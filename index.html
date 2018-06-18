@@ -52,11 +52,12 @@
     </ul>
   </li>
   <li>Parse and extract useful parts of the XML file</li>
-  <li>Use text mining to derive information from the raw text to turn it into <a href="https://neo4j.com/">Neo4j</a> graph database (e.g. with <a href="https://nlp.stanford.edu/software/lex-parser.shtml">Stanford Parser</a> / <a href="https://github.com/graphaware/neo4j-nlp">GraphAware Neo4j plugin</a>):
+  <li>Use text mining to derive information from the raw text and turn it into <a href="https://neo4j.com/">Neo4j</a> graph database:
     <ul>
-      <li>POS Tagging</li>
-      <li>Sentence structure tree</li>
-      <li>Grammatical relations</li>
+      <li>Tokenize sentences (<a href="http://www.nltk.org/">NLTK</a>)</li>
+      <li>POS tag the tokens (<a href="http://www.nactem.ac.uk/GENIA/tagger/">GENIA Tagger</a>)</li>
+      <li>Parse the tagged tokens into a sentence structure tree (<a href="https://nlp.stanford.edu/software/lex-parser.shtml">Stanford Parser</a> / <a href="https://github.com/graphaware/neo4j-nlp">GraphAware Neo4j plugin</a>)</li>
+      <li>Extract grammatical relations</li>
     </ul>
   </li>
   <li>Do a classfication / functional prediction of cytokines and cytokine receptors with machine learning</li>
