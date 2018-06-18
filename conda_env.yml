@@ -1,0 +1,7 @@
+name: cgdb
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - py2neo
+  - nltk
