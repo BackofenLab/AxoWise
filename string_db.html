@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>STRING database | Cytokine Graph DB</title>
+<meta name="generator" content="Jekyll v3.8.3" />
+<meta property="og:title" content="STRING database" />
+<meta name="author" content="Borna Bešić" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="https://bornabesic.github.io/cytokine-graph-db/string_db.html" />
+<meta property="og:url" content="https://bornabesic.github.io/cytokine-graph-db/string_db.html" />
+<meta property="og:site_name" content="Cytokine Graph DB" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Borna Bešić"},"@type":"WebPage","url":"https://bornabesic.github.io/cytokine-graph-db/string_db.html","headline":"STRING database","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/cytokine-graph-db/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://bornabesic.github.io/cytokine-graph-db/feed.xml" title="Cytokine Graph DB" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/cytokine-graph-db/">Cytokine Graph DB</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/cytokine-graph-db/string_db.html">STRING database</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <h1 id="summary">Summary</h1>
+
+<p><a href="https://academic.oup.com/nar/article/45/D1/D362/2290901">The STRING database in 2017: quality-controlled protein–protein association networks, made broadly accessible</a></p>
+
+<ul>
+  <li>Three main features:
+    <ul>
+      <li>Comprehensiveness
+        <ul>
+          <li>covers the largest number of organisms</li>
+          <li>uses the widest breadth of input sources (<em>automated text-mining and computational predictions</em>)</li>
+        </ul>
+      </li>
+      <li>Usability
+        <ul>
+          <li><a href="https://string-db.org">intuitive web interface</a></li>
+          <li><a href="http://www.cytoscape.org">Cytoscape</a> integration</li>
+          <li><a href="http://string-db.org/help/api/">programmatic access options</a></li>
+        </ul>
+      </li>
+      <li>Quality control &amp; traceability
+        <ul>
+          <li>each interaction is annotated with benchmarked confidence scores, separately per evidence type, and the underlying evidence can be tracked to its source</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Protein–protein association:
+    <ul>
+      <li>confidence score (i.e., the ‘edge weights’ in each network, scaled
+to [0, 1]) &lt;=&gt; estimated likelihood that a given interaction is biologically meaningful, specific and reproducible, given the supporting evidence.</li>
+    </ul>
+  </li>
+  <li>Supporting evidence is divided into 7 channels:
+    <ul>
+      <li>assembled, scored and benchmarked separately</li>
+      <li>edges of different color in the web interface
+  <img src="https://string-db.org/api/image/network?identifiers=CCR5" alt="" /></li>
+      <li>a combined into the confidence score for each interaction (final measure
+for networks, sorting, filtering)</li>
+      <li>Main channels:
+        <ul>
+          <li><strong>Experiments</strong>
+            <ul>
+              <li>actual experiments in the lab (biochemical, biophysical, genetic experiments).</li>
+              <li>populated mainly from the primary interaction databases (organized in the IMEx consortium, plus BioGRID)</li>
+            </ul>
+          </li>
+          <li><strong>Database</strong>
+            <ul>
+              <li>asserted by a human expert curator; this information is imported from pathway databases</li>
+            </ul>
+          </li>
+          <li><strong>Textmining</strong>
+            <ul>
+              <li>searching for mentions of protein names in all PubMed abstracts and in other text collections</li>
+              <li>pairs of proteins are given an association score when they are frequently mentioned together in the same paper, abstract or even sentence (relative to how often they are mentioned separately)</li>
+              <li>this score is raised further when it has been possible to parse one or more sentences through NLP, and a concept connecting the two proteins was encountered (such as ‘binding’ or ‘phosphorylation by’)</li>
+            </ul>
+          </li>
+          <li><strong>Coexpression</strong>
+            <ul>
+              <li>gene expression data originating from a variety of expression experiments are normalized, pruned and then correlated</li>
+              <li>pairs of proteins that are consistently similar in their expression patterns, under a variety of conditions, will receive a high association score</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>Genome-based prediction channels (functionality is generally most relevant for Bacteria and Archaea)
+        <ul>
+          <li><strong>Neighborhood</strong>
+            <ul>
+              <li>genes are given an association score where they are consistently observed in each other’s genome neighborhood</li>
+            </ul>
+          </li>
+          <li><strong>Fusion</strong>
+            <ul>
+              <li>pairs of proteins are given an association score when there is at least one organism where their respective orthologs have fused into a single, protein-coding gene</li>
+            </ul>
+          </li>
+          <li><strong>Co-occurrence</strong>
+            <ul>
+              <li>evaluating the phylogenetic distribution of orthologs of all proteins in a given organism</li>
+              <li>if two proteins show a high similarity in this distribution, i.e. if their orthologs tend to be observed as ‘present’ or ‘absent’ in the same subsets of organisms, then an association score is assigned</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/cytokine-graph-db/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Cytokine Graph DB</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Borna Bešić</li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/bornabesic"><svg class="svg-icon"><use xlink:href="/cytokine-graph-db/assets/minima-social-icons.svg#github"></use></svg> <span class="username">bornabesic</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p></p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
