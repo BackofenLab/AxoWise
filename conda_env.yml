@@ -1,7 +1,10 @@
 name: cgdb
 channels:
+  - criteo_infratools
   - conda-forge
   - defaults
 dependencies:
   - py2neo
   - nltk
+  - networkx
+  - pygraphviz
