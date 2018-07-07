@@ -3,16 +3,16 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.5.0 -->
-<title>Workflow | Cytokine Graph DB</title>
+<title>CCR5 Toy Graph DB | Cytokine Graph DB</title>
 <meta name="generator" content="Jekyll v3.8.3" />
-<meta property="og:title" content="Workflow" />
+<meta property="og:title" content="CCR5 Toy Graph DB" />
 <meta name="author" content="Borna Bešić" />
 <meta property="og:locale" content="en_US" />
-<link rel="canonical" href="https://bornabesic.github.io/cytokine-graph-db/" />
-<meta property="og:url" content="https://bornabesic.github.io/cytokine-graph-db/" />
+<link rel="canonical" href="https://bornabesic.github.io/cytokine-graph-db/ccr5_graph.html" />
+<meta property="og:url" content="https://bornabesic.github.io/cytokine-graph-db/ccr5_graph.html" />
 <meta property="og:site_name" content="Cytokine Graph DB" />
 <script type="application/ld+json">
-{"name":"Cytokine Graph DB","author":{"@type":"Person","name":"Borna Bešić"},"@type":"WebSite","url":"https://bornabesic.github.io/cytokine-graph-db/","headline":"Workflow","@context":"http://schema.org"}</script>
+{"author":{"@type":"Person","name":"Borna Bešić"},"@type":"WebPage","url":"https://bornabesic.github.io/cytokine-graph-db/ccr5_graph.html","headline":"CCR5 Toy Graph DB","@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/cytokine-graph-db/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://bornabesic.github.io/cytokine-graph-db/feed.xml" title="Cytokine Graph DB" /></head>
 <body><header class="site-header" role="banner">
@@ -32,49 +32,11 @@
 </header>
 <main class="page-content" aria-label="Content">
       <div class="wrapper">
-        <h1 id="workflow">Workflow</h1>
+        <h1 id="ccr5-toy-graph-db">CCR5 Toy Graph DB</h1>
 
-<h2 id="collect-the-data-not-automated">Collect the data <span style="color:red; font-size: small;">not automated</span></h2>
+<p>TODO</p>
 <ul>
-  <li>Using the <a href="http://www.uniprot.org/help/api">UniProt REST API</a> and <a href="http://string-db.org/help/api/">STRING REST API</a>:
-    <ul>
-      <li>Retrieve <strong>reviewed</strong> entries in XML using a  keyword query (e.g. <a href="http://www.uniprot.org/uniprot/P51681">CCR5</a>)</li>
-      <li>Retrieve XML of an individual top scoring entry which contains info about:
-        <ul>
-          <li>Synonyms</li>
-          <li>Function</li>
-          <li>Subcellular location</li>
-          <li>Pathology &amp; Biotech</li>
-          <li>Expression</li>
-          <li>Interaction</li>
-          <li>…</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>Parse and extract useful parts of the XML file</li>
-</ul>
-
-<h2 id="extract-the-information-from-the-data-not-automated">Extract the information from the data <span style="color:red; font-size: small;">not automated</span></h2>
-<ul>
-  <li>Use text mining to derive information from the raw text:
-    <ul>
-      <li>Tokenize sentences (<a href="http://www.nltk.org/">NLTK</a>)</li>
-      <li>POS-tag the tokens (<a href="http://www.nactem.ac.uk/GENIA/tagger/">GENIA Tagger</a> and <a href="https://github.com/bornabesic/genia-tagger-py">genia-tagger-py</a>)</li>
-      <li>Parse the tagged tokens into a sentence structure tree &amp; build a dependency graph of each sentence (<a href="https://nlp.stanford.edu/software/lex-parser.shtml">Stanford Parser</a> / <a href="https://stanfordnlp.github.io/CoreNLP/">Stanford CoreNLP</a>)</li>
-      <li>Extract grammatical relations (?)</li>
-    </ul>
-  </li>
-</ul>
-
-<h2 id="build-a-graph-database-not-automated">Build a graph database <span style="color:red; font-size: small;">not automated</span></h2>
-<ul>
-  <li>Turn the extracted information into <a href="https://neo4j.com/">Neo4j</a> graph database (e.g. use <a href="https://github.com/graphaware/neo4j-nlp">GraphAware Neo4j plugin</a>)</li>
-</ul>
-
-<h2 id="use-machine-learning-not-automated">Use machine learning <span style="color:red; font-size: small;">not automated</span></h2>
-<ul>
-  <li>Do a classfication / functional prediction of cytokines and cytokine receptors</li>
+  <li>Visualization of a handcrafted Neo4j graph database</li>
 </ul>
 
       </div>
