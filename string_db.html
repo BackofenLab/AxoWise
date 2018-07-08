@@ -177,6 +177,13 @@ for networks, sorting, filtering)</p>
       <li>MCL</li>
     </ul>
   </li>
+  <li>Interactions (edges of the graph, scored per evidence channel):
+    <ul>
+      <li>Evidence suggesting a functional link</li>
+      <li>Predictions for specific actions</li>
+      <li>Sequence similarities</li>
+    </ul>
+  </li>
 </ul>
 
 <h2 id="download">Download</h2>
@@ -188,7 +195,14 @@ for networks, sorting, filtering)</p>
 
 <p>STRING uses a <a href="https://stringdb-static.org/download/database.schema.v10.5.pdf">relational database scheme</a>, while we aim to construct the graph database. Having said that, graph databases allow more pratical inference on the data using machine learning algorithms.</p>
 
+<p>Observed conceptual differences:</p>
+<ul>
+  <li>STRING graph’s edges do not contain direct semantic relation (e.g. <em>“binds to”</em>)</li>
+</ul>
+
 <p>In order to say what more we can offer than STRING and vice versa, we need to define the scope of the information we are looking for.</p>
+
+<p>We could predict / approximate scores for <em>none / insignificant</em> channels</p>
 
       </div>
     </main><footer class="site-footer h-card">
