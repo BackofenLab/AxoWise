@@ -1,0 +1,7 @@
+.vscode/
+__pycache__/
+dep_graph.png
+geniatagger-3.0.2/
+geniatagger.py
+stanford-corenlp-full-2018-02-27/
+stanford-parser-full-2018-02-27/
