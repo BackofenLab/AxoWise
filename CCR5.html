@@ -47,6 +47,25 @@
   <li>Visualize handcrafted graph database</li>
 </ul>
 
+<h1 id="cypher-script">Cypher script</h1>
+<pre><code class="language-cypher">// Create nodes
+
+CREATE (ccr5:ChemokineReceptor {
+    name: "Chemokine (C-C motif) receptor 5",
+    structure: "CC"
+})
+
+CREATE (ccl5:ChemokineLigand {
+    name: "Chemokine (C-C motif) ligand 5",
+    structure: "CC"
+})
+
+CREATE (il10ra:CytokineReceptorSubunit {
+    receptor: "Interleukin 10 receptor",
+    subunit: "alpha"
+})
+</code></pre>
+
   </div>
 
 </article>
