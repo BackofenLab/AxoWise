@@ -1,5 +1,7 @@
 CREATE
+
     // Create nodes
+
     (ccr5:ChemokineReceptor {
         name: "Chemokine (C-C motif) receptor 5",
         structure: "CC"
@@ -12,31 +14,35 @@ CREATE
         receptor: "Interleukin 10 receptor",
         subunit: "alpha"
     }),
-    // Create edges
-    (ccl5)-[:LINK {
-        score: 0.993,
-        // Functional prediction
-        activation: 0.849,
-        binding: 0.849,
-        catalysis: 0.278,
-        ptmodification: 0.171,
-        reaction: 0.922
+
+    // Create relationships
+
+    // CCL5 <-> CCR5
+    (ccl5)-[:FUNC_EVIDENCE {
+        score: 0.993
     } ]->(ccr5),
-    (ccl5)-[:LINK {
-        score: 0.547,
-        // Functional prediction
-        activation: null,
-        binding: null,
-        catalysis: null,
-        ptmodification: null,
-        reaction: null
+    (ccl5)-[:ACTIVATION {
+        score: 0.849
+    } ]->(ccr5),
+    (ccl5)-[:BINDING {
+        score: 0.849
+    } ]->(ccr5),
+    (ccl5)-[:CATALYSIS {
+        score: 0.278
+    } ]->(ccr5),
+    (ccl5)-[:PT_MODIFICATION {
+        score: 0.171
+    } ]->(ccr5),
+    (ccl5)-[:REACTION {
+        score: 0.922
+    } ]->(ccr5),
+
+    // CCL5 <-> IL10RA
+    (ccl5)-[:FUNC_EVIDENCE {
+        score: 0.547
     } ]->(il10ra),
-    (il10ra)-[:LINK {
-        score: 0.469,
-        // Functional prediction
-        activation: null,
-        binding: null,
-        catalysis: null,
-        ptmodification: null,
-        reaction: null
+
+    // IL10RA <-> CCR5
+    (il10ra)-[:FUNC_EVIDENCE {
+        score: 0.469
     } ]->(ccr5)
