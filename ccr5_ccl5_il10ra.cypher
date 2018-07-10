@@ -22,10 +22,12 @@ CREATE
         score: 0.993
     } ]->(ccr5),
     (ccl5)-[:ACTIVATION {
-        score: 0.849
+        score: 0.849,
+        pathway: "Cytokine-cytokine receptor interaction"
     } ]->(ccr5),
     (ccl5)-[:BINDING {
-        score: 0.849
+        score: 0.849,
+        pathway: "Chemokine signaling pathway"
     } ]->(ccr5),
     (ccl5)-[:CATALYSIS {
         score: 0.278
@@ -34,7 +36,8 @@ CREATE
         score: 0.171
     } ]->(ccr5),
     (ccl5)-[:REACTION {
-        score: 0.922
+        score: 0.922,
+        biochemical_reaction: "The Ligand:GPCR:Gi complex dissociates"
     } ]->(ccr5),
 
     // CCL5 <-> IL10RA
