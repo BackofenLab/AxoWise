@@ -14,15 +14,7 @@ CREATE
     }),
     // Create edges
     (ccl5)-[:LINK {
-        // Evidence channels
-        experiments: null,
-        databases: 0.900,
-        textmining: 0.906,
-        coexpression: 0.092,
-        neighbourhood: null,
-        fusion: null,
-        cooccurence: null,
-        combined: 0.993,
+        score: 0.993,
         // Functional prediction
         activation: 0.849,
         binding: 0.849,
@@ -31,15 +23,7 @@ CREATE
         reaction: 0.922
     } ]->(ccr5),
     (ccl5)-[:LINK {
-        // Evidence channels
-        experiments: null,
-        databases: null,
-        textmining: 0.331,
-        coexpression: 0.345,
-        neighbourhood: null,
-        fusion: null,
-        cooccurence: null,
-        combined: 0.547,
+        score: 0.547,
         // Functional prediction
         activation: null,
         binding: null,
@@ -48,15 +32,7 @@ CREATE
         reaction: null
     } ]->(il10ra),
     (il10ra)-[:LINK {
-        // Evidence channels
-        experiments: null,
-        databases: null,
-        textmining: 0.318,
-        coexpression: 0.246,
-        neighbourhood: null,
-        fusion: null,
-        cooccurence: null,
-        combined: 0.469,
+        score: 0.469,
         // Functional prediction
         activation: null,
         binding: null,
