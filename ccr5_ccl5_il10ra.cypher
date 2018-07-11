@@ -3,14 +3,17 @@ CREATE
     // Create nodes
 
     (ccr5:ChemokineReceptor {
+        label: "CCR5",
         name: "Chemokine (C-C motif) receptor 5",
         structure: "CC"
     }),
     (ccl5:ChemokineLigand {
+        label: "CCL5",
         name: "Chemokine (C-C motif) ligand 5",
         structure: "CC"
     }),
     (il10ra:CytokineReceptorSubunit {
+        label: "IL10RA",
         receptor: "Interleukin 10 receptor",
         subunit: "alpha"
     }),
