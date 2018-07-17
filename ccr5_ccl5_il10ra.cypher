@@ -4,15 +4,18 @@ CREATE
 
     (ccr5:Protein {
         short_name: "CCR5",
-        full_name: "Chemokine (C-C motif) receptor 5"
+        full_name: "Chemokine (C-C motif) receptor 5",
+        ensembl_id: "ENSMUSP00000107069"
     }),
     (ccl5:Protein {
         short_name: "CCL5",
-        full_name: "Chemokine (C-C motif) ligand 5"
+        full_name: "Chemokine (C-C motif) ligand 5",
+        ensembl_id: "ENSMUSP00000039600"
     }),
     (il10ra:Protein {
         short_name: "IL10RA",
-        full_name: "Interleukin 10 receptor, alpha subunit"
+        full_name: "Interleukin 10 receptor, alpha subunit",
+        ensembl_id: "ENSMUSP00000034594"
     }),
 
     // ---------------- CCL5 <-> CCR5 ----------------
