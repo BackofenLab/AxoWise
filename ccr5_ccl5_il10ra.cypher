@@ -20,7 +20,7 @@ CREATE
 
     // ---------------- CCL5 <-> CCR5 ----------------
     // Interaction
-    (ccl5)-[:INTERACTION {
+    (ccl5)-[:ASSOCIATION {
         experiments: null,
         database: 0.900,
         textmining:	0.906,
@@ -73,7 +73,7 @@ CREATE
 
     // ---------------- CCL5 <-> IL10RA ----------------
     // Interaction
-    (ccl5)-[:INTERACTION {
+    (ccl5)-[:ASSOCIATION {
         experiments: null,
         database: null,
         textmining: 0.331,
@@ -86,7 +86,7 @@ CREATE
 
     // ---------------- IL10RA <-> CCR5 ----------------
     // Interaction
-    (il10ra)-[:INTERACTION {
+    (il10ra)-[:ASSOCIATION {
         experiments: null,
         database: null,
         textmining: 0.318,
@@ -100,15 +100,15 @@ CREATE
     // Functional context
     (ccri:Pathway {
         name: "Cytokine-cytokine receptor interaction",
-        source: "KEGG"
+        source: "annotated pathway (KEGG)"
     }),
     (csp:Pathway {
         name: "Chemokine signaling pathway",
-        source: "KEGG"
+        source: "annotated pathway (KEGG)"
     }),
-    (lcd:BiochemicalReaction {
+    (lcd:Pathway {
         name: "The Ligand:GPCR:Gi complex dissociates",
-        source: "curated"
+        source: "curated pathway"
     }),
 
     // Action - function relationships
