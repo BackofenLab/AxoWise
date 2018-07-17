@@ -1,54 +1,114 @@
 CREATE
 
-    // Create nodes
+    // Proteins
 
-    (ccr5:ChemokineReceptor {
-        label: "CCR5",
-        name: "Chemokine (C-C motif) receptor 5",
-        structure: "CC"
+    (ccr5:Protein {
+        short_name: "CCR5",
+        full_name: "Chemokine (C-C motif) receptor 5"
     }),
-    (ccl5:ChemokineLigand {
-        label: "CCL5",
-        name: "Chemokine (C-C motif) ligand 5",
-        structure: "CC"
+    (ccl5:Protein {
+        short_name: "CCL5",
+        full_name: "Chemokine (C-C motif) ligand 5"
     }),
-    (il10ra:CytokineReceptorSubunit {
-        label: "IL10RA",
-        receptor: "Interleukin 10 receptor",
-        subunit: "alpha"
+    (il10ra:Protein {
+        short_name: "IL10RA",
+        full_name: "Interleukin 10 receptor, alpha subunit"
     }),
 
-    // Create relationships
+    // ---------------- CCL5 <-> CCR5 ----------------
+    // Interaction
+    (ccl5)-[:INTERACTION {
+        experiments: null,
+        database: 0.900,
+        textmining:	0.906,
+        coexpression: 0.092,
+        neighborhood: null,
+        fusion:	null,
+        cooccurence: null,
+        combined: 0.993
+    } ]->(ccr5),
 
-    // CCL5 <-> CCR5
-    (ccl5)-[:FUNC_EVIDENCE {
-        score: 0.993
-    } ]->(ccr5),
-    (ccl5)-[:ACTIVATION {
-        score: 0.849,
-        pathway: "Cytokine-cytokine receptor interaction"
-    } ]->(ccr5),
-    (ccl5)-[:BINDING {
-        score: 0.849,
-        pathway: "Chemokine signaling pathway"
-    } ]->(ccr5),
-    (ccl5)-[:CATALYSIS {
+    // Activation
+    (ccl5_ccr5_activation:Action {
+        name: "activation",
+        score: 0.849
+    }),
+    (ccl5)-[:IN]->(ccl5_ccr5_activation),
+    (ccr5)-[:IN]->(ccl5_ccr5_activation),
+
+    // Binding
+    (ccl5_ccr5_binding:Action {
+        name: "binding",
+        score: 0.849
+    }),
+    (ccl5)-[:IN]->(ccl5_ccr5_binding),
+    (ccr5)-[:IN]->(ccl5_ccr5_binding),
+
+    // Catalysis
+    (ccl5_ccr5_catalysis:Action {
+        name: "catalysis",
         score: 0.278
-    } ]->(ccr5),
-    (ccl5)-[:PT_MODIFICATION {
-        score: 0.171
-    } ]->(ccr5),
-    (ccl5)-[:REACTION {
-        score: 0.922,
-        biochemical_reaction: "The Ligand:GPCR:Gi complex dissociates"
-    } ]->(ccr5),
+    }),
+    (ccl5)-[:IN]->(ccl5_ccr5_catalysis),
+    (ccr5)-[:IN]->(ccl5_ccr5_catalysis),
 
-    // CCL5 <-> IL10RA
-    (ccl5)-[:FUNC_EVIDENCE {
-        score: 0.547
+    // Post-translational modification
+    (ccl5_ccr5_ptmodification:Action {
+        name: "ptmodification",
+        score: 0.171
+    }),
+    (ccl5)-[:IN]->(ccl5_ccr5_ptmodification),
+    (ccr5)-[:IN]->(ccl5_ccr5_ptmodification),
+
+    // Reaction
+    (ccl5_ccr5_reaction:Action {
+        name: "reaction",
+        score: 0.922
+    }),
+    (ccl5)-[:IN]->(ccl5_ccr5_reaction),
+    (ccr5)-[:IN]->(ccl5_ccr5_reaction),
+
+    // ---------------- CCL5 <-> IL10RA ----------------
+    // Interaction
+    (ccl5)-[:INTERACTION {
+        experiments: null,
+        database: null,
+        textmining: 0.331,
+        coexpression: 0.345,
+        neighborhood: null,
+        fusion:	null,
+        cooccurence: null,
+        combined: 0.547
     } ]->(il10ra),
 
-    // IL10RA <-> CCR5
-    (il10ra)-[:FUNC_EVIDENCE {
-        score: 0.469
-    } ]->(ccr5)
+    // ---------------- IL10RA <-> CCR5 ----------------
+    // Interaction
+    (il10ra)-[:INTERACTION {
+        experiments: null,
+        database: null,
+        textmining: 0.318,
+        coexpression: 0.246,
+        neighborhood: null,
+        fusion:	null,
+        cooccurence: null,
+        combined: 0.469
+    } ]->(ccr5),
+
+    // Functional context
+    (ccri:Pathway {
+        name: "Cytokine-cytokine receptor interaction",
+        source: "KEGG"
+    }),
+    (csp:Pathway {
+        name: "Chemokine signaling pathway",
+        source: "KEGG"
+    }),
+    (lcd:BiochemicalReaction {
+        name: "The Ligand:GPCR:Gi complex dissociates",
+        source: "curated"
+    }),
+
+    // Action - function relationships
+    (ccl5_ccr5_activation)-[:IN]->(ccri),
+    (ccl5_ccr5_binding)-[:IN]->(csp),
+    (ccl5_ccr5_reaction)-[:IN]->(lcd)
