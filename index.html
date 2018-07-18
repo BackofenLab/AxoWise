@@ -41,13 +41,12 @@
   </header>
 
   <div class="post-content">
-    <h1 id="1-download-full-string-database-dumps-not-automated">1. Download full STRING database dumps <span style="color:red; font-size: small;">not automated</span></h1>
+    <h1 id="1-download-string-database-dumps-not-automated">1. Download STRING database dumps <span style="color:red; font-size: small;">not automated</span></h1>
 <ul>
   <li><a href="https://stringdb-static.org/download/database.schema.v10.5.pdf">database.schema.v10.5.pdf</a> (121.3 Kb) - Database scheme</li>
   <li><a href="https://stringdb-static.org/download/items_schema.v10.5.sql.gz">items_schema.v10.5.sql.gz</a> (4.9 Gb) - part I: the players (proteins, species, COGs,…)</li>
   <li><a href="https://stringdb-static.org/download/network_schema.v10.5.sql.gz">network_schema.v10.5.sql.gz</a> (41.3 Gb) - part II: the networks (nodes, edges, scores,…)</li>
   <li><a href="https://stringdb-static.org/download/evidence_schema.v10.5.sql.gz">evidence_schema.v10.5.sql.gz</a> (6.9 Gb) - part III: interaction evidence (but: excluding license-restricted data)</li>
-  <li><a href="https://stringdb-static.org/download/homology_schema.v10.5.sql.gz">homology_schema.v10.5.sql.gz</a> (459.7 Gb) - part IV: homology data (all-against-all SIMAP similarity searches)</li>
 </ul>
 
 <h1 id="2-extract-the-information-from-the-data-not-automated">2. Extract the information from the data <span style="color:red; font-size: small;">not automated</span></h1>
@@ -59,6 +58,7 @@
 <ul>
   <li>Turn the extracted information into <a href="https://neo4j.com/">Neo4j</a> graph database (using our defined <a href="graph-db-scheme">database scheme</a>)</li>
   <li>Build a separate graph for each of the species in the same database (add species label to the nodes)</li>
+  <li>Visualize the graph database</li>
 </ul>
 
 <h1 id="4-use-machine-learning-not-automated">4. Use machine learning <span style="color:red; font-size: small;">not automated</span></h1>
