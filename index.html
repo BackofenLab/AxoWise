@@ -41,45 +41,27 @@
   </header>
 
   <div class="post-content">
-    <h1 id="collect-the-data-not-automated">Collect the data <span style="color:red; font-size: small;">not automated</span></h1>
+    <h1 id="1-download-full-string-database-dumps-not-automated">1. Download full STRING database dumps <span style="color:red; font-size: small;">not automated</span></h1>
 <ul>
-  <li>Using the <a href="http://www.uniprot.org/help/api">UniProt REST API</a> and <a href="http://string-db.org/help/api/">STRING REST API</a>:
-    <ul>
-      <li>Retrieve <strong>reviewed</strong> entries in XML using a  keyword query (e.g. <a href="http://www.uniprot.org/uniprot/P51681">CCR5</a>)</li>
-      <li>Retrieve XML of an individual top scoring entry which contains info about:
-        <ul>
-          <li>Synonyms</li>
-          <li>Function</li>
-          <li>Subcellular location</li>
-          <li>Pathology &amp; Biotech</li>
-          <li>Expression</li>
-          <li>Interaction</li>
-          <li>…</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>Parse and extract useful parts of the XML file</li>
+  <li><a href="https://stringdb-static.org/download/database.schema.v10.5.pdf">database.schema.v10.5.pdf</a> (121.3 Kb) - Database scheme</li>
+  <li><a href="https://stringdb-static.org/download/items_schema.v10.5.sql.gz">items_schema.v10.5.sql.gz</a> (4.9 Gb) - part I: the players (proteins, species, COGs,…)</li>
+  <li><a href="https://stringdb-static.org/download/network_schema.v10.5.sql.gz">network_schema.v10.5.sql.gz</a> (41.3 Gb) - part II: the networks (nodes, edges, scores,…)</li>
+  <li><a href="https://stringdb-static.org/download/evidence_schema.v10.5.sql.gz">evidence_schema.v10.5.sql.gz</a> (6.9 Gb) - part III: interaction evidence (but: excluding license-restricted data)</li>
+  <li><a href="https://stringdb-static.org/download/homology_schema.v10.5.sql.gz">homology_schema.v10.5.sql.gz</a> (459.7 Gb) - part IV: homology data (all-against-all SIMAP similarity searches)</li>
 </ul>
 
-<h1 id="extract-the-information-from-the-data-not-automated">Extract the information from the data <span style="color:red; font-size: small;">not automated</span></h1>
+<h1 id="2-extract-the-information-from-the-data-not-automated">2. Extract the information from the data <span style="color:red; font-size: small;">not automated</span></h1>
 <ul>
-  <li>Use text mining to derive information from the raw text:
-    <ul>
-      <li>Tokenize sentences (<a href="http://www.nltk.org/">NLTK</a>)</li>
-      <li>POS-tag the tokens (<a href="http://www.nactem.ac.uk/GENIA/tagger/">GENIA Tagger</a> and <a href="https://github.com/bornabesic/genia-tagger-py">genia-tagger-py</a>)</li>
-      <li>Parse the tagged tokens into a sentence structure tree &amp; build a dependency graph of each sentence (<a href="https://nlp.stanford.edu/software/lex-parser.shtml">Stanford Parser</a> / <a href="https://stanfordnlp.github.io/CoreNLP/">Stanford CoreNLP</a>)</li>
-      <li>Extract grammatical relations (?)</li>
-    </ul>
-  </li>
+  <li>Derive the information we are interested in (i.e. for <em>Homo sapiens</em> &amp; <em>Mus musculus</em>) by parsing the SQL files mentioned above</li>
 </ul>
 
-<h1 id="build-a-graph-database-not-automated">Build a graph database <span style="color:red; font-size: small;">not automated</span></h1>
+<h1 id="3-build-a-graph-database-not-automated">3. Build a graph database <span style="color:red; font-size: small;">not automated</span></h1>
 <ul>
-  <li>Turn the extracted information into <a href="https://neo4j.com/">Neo4j</a> graph database (e.g. use <a href="https://github.com/graphaware/neo4j-nlp">GraphAware Neo4j plugin</a>)</li>
+  <li>Turn the extracted information into <a href="https://neo4j.com/">Neo4j</a> graph database (using our defined <a href="graph-db-scheme">database scheme</a>)</li>
+  <li>Build a separate graph for each of the species in the same database (add species label to the nodes)</li>
 </ul>
 
-<h1 id="use-machine-learning-not-automated">Use machine learning <span style="color:red; font-size: small;">not automated</span></h1>
+<h1 id="4-use-machine-learning-not-automated">4. Use machine learning <span style="color:red; font-size: small;">not automated</span></h1>
 <ul>
   <li>Do a classfication / functional prediction of cytokines and cytokine receptors</li>
 </ul>
