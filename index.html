@@ -41,17 +41,22 @@
   </header>
 
   <div class="post-content">
-    <h1 id="1-download-string-database-dumps-not-automated">1. Download STRING database dumps <span style="color:red; font-size: small;">not automated</span></h1>
+    <h1 id="1-collect-the-data-not-automated">1. Collect the data <span style="color:red; font-size: small;">not automated</span></h1>
 <ul>
-  <li><a href="https://stringdb-static.org/download/database.schema.v10.5.pdf">database.schema.v10.5.pdf</a> (121.3 Kb) - Database scheme</li>
-  <li><a href="https://stringdb-static.org/download/items_schema.v10.5.sql.gz">items_schema.v10.5.sql.gz</a> (4.9 Gb) - part I: the players (proteins, species, COGs,…)</li>
-  <li><a href="https://stringdb-static.org/download/network_schema.v10.5.sql.gz">network_schema.v10.5.sql.gz</a> (41.3 Gb) - part II: the networks (nodes, edges, scores,…)</li>
-  <li><a href="https://stringdb-static.org/download/evidence_schema.v10.5.sql.gz">evidence_schema.v10.5.sql.gz</a> (6.9 Gb) - part III: interaction evidence (but: excluding license-restricted data)</li>
+  <li>Download the following STRING database dumps:
+    <ul>
+      <li><a href="https://stringdb-static.org/download/database.schema.v10.5.pdf">database.schema.v10.5.pdf</a> (121.3 Kb) - Database scheme</li>
+      <li><a href="https://stringdb-static.org/download/items_schema.v10.5.sql.gz">items_schema.v10.5.sql.gz</a> (4.9 Gb) - part I: the players (proteins, species, COGs,…)</li>
+      <li><a href="https://stringdb-static.org/download/network_schema.v10.5.sql.gz">network_schema.v10.5.sql.gz</a> (41.3 Gb) - part II: the networks (nodes, edges, scores,…)</li>
+      <li><a href="https://stringdb-static.org/download/evidence_schema.v10.5.sql.gz">evidence_schema.v10.5.sql.gz</a> (6.9 Gb) - part III: interaction evidence (but: excluding license-restricted data)</li>
+    </ul>
+  </li>
+  <li>Load the dumps into PostgreSQL database</li>
 </ul>
 
 <h1 id="2-extract-the-information-from-the-data-not-automated">2. Extract the information from the data <span style="color:red; font-size: small;">not automated</span></h1>
 <ul>
-  <li>Derive the information we are interested in (i.e. for <em>Homo sapiens</em> &amp; <em>Mus musculus</em>) by parsing the SQL files mentioned above</li>
+  <li>Derive the information we are interested in (i.e. for <em>Homo sapiens</em> &amp; <em>Mus musculus</em>) by querying the PostgreSQL database</li>
 </ul>
 
 <h1 id="3-build-a-graph-database-not-automated">3. Build a graph database <span style="color:red; font-size: small;">not automated</span></h1>
