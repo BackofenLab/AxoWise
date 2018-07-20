@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>Benchmark | Cytokine Graph DB</title>
+<meta name="generator" content="Jekyll v3.7.3" />
+<meta property="og:title" content="Benchmark" />
+<meta name="author" content="Borna Bešić" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="https://bornabesic.github.io/cytokine-graph-db/benchmark" />
+<meta property="og:url" content="https://bornabesic.github.io/cytokine-graph-db/benchmark" />
+<meta property="og:site_name" content="Cytokine Graph DB" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Borna Bešić"},"@type":"WebPage","url":"https://bornabesic.github.io/cytokine-graph-db/benchmark","headline":"Benchmark","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/cytokine-graph-db/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://bornabesic.github.io/cytokine-graph-db/feed.xml" title="Cytokine Graph DB" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/cytokine-graph-db/">Cytokine Graph DB</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+              <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+              <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/cytokine-graph-db/benchmark">Benchmark</a><a class="page-link" href="/cytokine-graph-db/graph-db-scheme">Graph Database Scheme</a><a class="page-link" href="/cytokine-graph-db/">Workflow</a><a class="page-link" href="/cytokine-graph-db/notebooks.html">Notebooks</a><a class="page-link" href="/cytokine-graph-db/papers">Papers</a><a class="page-link" href="/cytokine-graph-db/STRING">STRING Database</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Benchmark</h1>
+  </header>
+
+  <div class="post-content">
+    <p>Paper: Huang et al., Systematic Evaluation of Molecular Networks for Discovery of Disease Genes</p>
+
+<h2 id="introduction">Introduction</h2>
+<ul>
+  <li>PathGuide website: over 700 pathway and molecular interaction databases available to the general public</li>
+  <li><a href="http://www.ndexbio.org/">Network Data Exchange (NDEx)</a> - an attempt to provide a common public repository for biological network models of all types</li>
+  <li>Benchmarks to aid in selecting the most appropriate networks for <em>a specific human disease</em> or <em>molecular pathway of interest</em></li>
+  <li>Score of 21 popular human gene interaction networks by their ability to recover gene
+sets that characterize a wide variety of diseases</li>
+</ul>
+
+<h2 id="results">Results</h2>
+
+<h1 id="databases">Databases</h1>
+<ul>
+  <li>Focusing on physical protein-protein interactions:
+    <ul>
+      <li><a href="http://dip.mbi.ucla.edu/">Database for Interacting Proteins (DIP)</a></li>
+      <li><a href="http://www.hprd.org/">Human Protein Reference Database (HPRD)</a></li>
+    </ul>
+  </li>
+  <li>Concatenating protein interactions from multiple molecular networks with many additional
+interaction types (e.g. genetic interactions):
+    <ul>
+      <li><a href="http://cpdb.molgen.mpg.de">ConsensusPathDB</a></li>
+      <li>MultiNet</li>
+    </ul>
+  </li>
+  <li>Quantitatively integrating different studies and interaction types into a <em>single integrated score</em> for each gene pair based on the total weight of evidence:
+    <ul>
+      <li><a href="http://www.functionalnet.org/humannet/">HumanNet</a></li>
+      <li><a href="https://string-db.org/">Search Tool for Recurring Instances of Neighboring Genes (STRING)</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="benchmark">Benchmark</h1>
+<ul>
+  <li>Score how well each network is able to recover a diverse collection of disease-associated gene sets</li>
+  <li>Each gene set was randomly split into two subsets</li>
+  <li>Ability of one subset to recover the other within the network, using the technique of network propagation under the random walk with restart model</li>
+  <li>Recovery was scored using the area under precision-recall curve (AUPRC)</li>
+  <li>The average AUPRC over repeated trials was calibrated against a null distribution of AUPRC scores from networks in which individual edges had been shuffled, preserving node degrees</li>
+  <li>Comparison with this null distribution allowed the AUPRC to be expressed as a Z score, henceforth called the network’s “performance
+score”</li>
+  <li>Recovery of 446 disease-associated gene sets from the <a href="http://www.disgenet.org/">DisGeNET</a> database</li>
+</ul>
+
+<h1 id="performance">Performance</h1>
+<ul>
+  <li>For recovery of these literature gene sets, we found that STRING had the best overall performance</li>
+  <li>Noticed that many of the larger networks appeared to be the best performing</li>
+  <li>Examined how performance rankings change when correcting each network’s performance for the number of interactions in the network:
+    <ul>
+      <li>The smallest network (DIP) moved to the top of the rankings, suggesting that, per edge, this network is most efficient</li>
+    </ul>
+  </li>
+  <li>Did not find any additional network properties, other than the size, that is significantly correlated with performance</li>
+  <li>Testing literature bias:
+    <ul>
+      <li>Removed all interactions in STRING and HumanNet that were based solely on text mining</li>
+      <li>Found that filtering greatly reduced the performance of HumanNet</li>
+      <li>In contrast, such filtering did not greatly affect the performance of STRING</li>
+    </ul>
+  </li>
+</ul>
+
+  </div>
+
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/cytokine-graph-db/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Cytokine Graph DB</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Borna Bešić</li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/bornabesic"><svg class="svg-icon"><use xlink:href="/cytokine-graph-db/assets/minima-social-icons.svg#github"></use></svg> <span class="username">bornabesic</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p></p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
