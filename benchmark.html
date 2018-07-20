@@ -101,9 +101,26 @@ score”</li>
   <li>Did not find any additional network properties, other than the size, that is significantly correlated with performance</li>
   <li>Testing literature bias:
     <ul>
-      <li>Removed all interactions in STRING and HumanNet that were based solely on text mining</li>
-      <li>Found that filtering greatly reduced the performance of HumanNet</li>
-      <li>In contrast, such filtering did not greatly affect the performance of STRING</li>
+      <li>Removed all interactions in STRING and HumanNet that were based solely on text mining
+        <ul>
+          <li>Found that filtering greatly reduced the performance of HumanNet</li>
+          <li>In contrast, such filtering did not greatly affect the performance of STRING</li>
+        </ul>
+      </li>
+      <li>Evaluated all networks on gene sets that had been constructed independently of literature mining:
+        <ul>
+          <li>Found that GeneMANIA and GIANT (Genome-scale Integrated
+Analysis of gene Networks in Tissues) were the best performing networks on these expression gene sets, with STRING
+ranking third</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Network integration:
+    <ul>
+      <li>Created a series of composite networks of decreasing size</li>
+      <li>By requiring a minimum of two networks supporting each interaction, the performance was significantly improved over the best individual network (STRING) despite having a much smaller network size</li>
+      <li>This configuration was optimal, and we call this optimal configuration the “Parsimonious Composite Network” (PCNet)</li>
     </ul>
   </li>
 </ul>
