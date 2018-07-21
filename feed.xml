@@ -1,4 +1,278 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://bornabesic.github.io/cytokine-graph-db/feed.xml" rel="self" type="application/atom+xml" /><link href="https://bornabesic.github.io/cytokine-graph-db/" rel="alternate" type="text/html" /><updated>2018-07-20T09:46:53+02:00</updated><id>https://bornabesic.github.io/cytokine-graph-db/</id><title type="html">Cytokine Graph DB</title><author><name>Borna Bešić</name></author><entry><title type="html">Dependency Graph Construction</title><link href="https://bornabesic.github.io/cytokine-graph-db/dependency-graph-construction" rel="alternate" type="text/html" title="Dependency Graph Construction" /><published>2018-07-08T00:00:00+02:00</published><updated>2018-07-08T00:00:00+02:00</updated><id>https://bornabesic.github.io/cytokine-graph-db/dependency-graph-construction</id><content type="html" xml:base="https://bornabesic.github.io/cytokine-graph-db/dependency-graph-construction">&lt;!DOCTYPE html&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://bornabesic.github.io/cytokine-graph-db/feed.xml" rel="self" type="application/atom+xml" /><link href="https://bornabesic.github.io/cytokine-graph-db/" rel="alternate" type="text/html" /><updated>2018-07-21T09:51:00+02:00</updated><id>https://bornabesic.github.io/cytokine-graph-db/</id><title type="html">Cytokine Graph DB</title><author><name>Borna Bešić</name></author><entry><title type="html">STRING Database</title><link href="https://bornabesic.github.io/cytokine-graph-db/STRING" rel="alternate" type="text/html" title="STRING Database" /><published>2018-07-21T00:00:00+02:00</published><updated>2018-07-21T00:00:00+02:00</updated><id>https://bornabesic.github.io/cytokine-graph-db/string-db</id><content type="html" xml:base="https://bornabesic.github.io/cytokine-graph-db/STRING">&lt;h1 id=&quot;summary&quot;&gt;Summary&lt;/h1&gt;
+
+&lt;p&gt;Paper:
+&lt;a href=&quot;https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5210637/&quot;&gt;The STRING database in 2017: quality-controlled protein–protein association networks, made broadly accessible&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Three main features:
+    &lt;ul&gt;
+      &lt;li&gt;Comprehensiveness
+        &lt;ul&gt;
+          &lt;li&gt;covers the largest number of organisms&lt;/li&gt;
+          &lt;li&gt;uses the widest breadth of input sources (&lt;em&gt;automated text-mining and computational predictions&lt;/em&gt;)&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;Usability
+        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;https://string-db.org&quot;&gt;intuitive web interface&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;http://www.cytoscape.org&quot;&gt;Cytoscape&lt;/a&gt; integration&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;http://string-db.org/help/api/&quot;&gt;programmatic access options&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;Quality control &amp;amp; traceability
+        &lt;ul&gt;
+          &lt;li&gt;each interaction is annotated with benchmarked confidence scores, separately per evidence type, and the underlying evidence can be tracked to its source&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;database-content&quot;&gt;Database content&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Protein–protein association:
+    &lt;ul&gt;
+      &lt;li&gt;confidence score (i.e., the ‘edge weights’ in each network, scaled
+to [0, 1]) &amp;lt;-&amp;gt; estimated likelihood that a given interaction is biologically meaningful, specific and reproducible, given the supporting evidence.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Supporting evidence is divided into 7 channels:
+    &lt;ul&gt;
+      &lt;li&gt;assembled, scored and benchmarked separately&lt;/li&gt;
+      &lt;li&gt;edges of different color in the web interface
+  &lt;img src=&quot;https://string-db.org/api/image/network?identifiers=CCR5&quot; alt=&quot;&quot; /&gt;&lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;a combined into the confidence score for each interaction (final measure
+for networks, sorting, filtering)&lt;/p&gt;
+      &lt;/li&gt;
+      &lt;li&gt;Main channels:
+        &lt;ul&gt;
+          &lt;li&gt;&lt;strong&gt;Experiments&lt;/strong&gt;
+            &lt;ul&gt;
+              &lt;li&gt;actual experiments in the lab (biochemical, biophysical, genetic experiments).&lt;/li&gt;
+              &lt;li&gt;populated mainly from the primary interaction databases (organized in the IMEx consortium, plus BioGRID)&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+          &lt;li&gt;&lt;strong&gt;Database&lt;/strong&gt;
+            &lt;ul&gt;
+              &lt;li&gt;asserted by a human expert curator; this information is imported from pathway databases&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+          &lt;li&gt;&lt;strong&gt;Textmining&lt;/strong&gt;
+            &lt;ul&gt;
+              &lt;li&gt;searching for mentions of protein names in all PubMed abstracts and in other text collections&lt;/li&gt;
+              &lt;li&gt;pairs of proteins are given an association score when they are frequently mentioned together in the same paper, abstract or even sentence (relative to how often they are mentioned separately)&lt;/li&gt;
+              &lt;li&gt;this score is raised further when it has been possible to parse one or more sentences through NLP, and a concept connecting the two proteins was encountered (such as ‘binding’ or ‘phosphorylation by’)&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+          &lt;li&gt;&lt;strong&gt;Coexpression&lt;/strong&gt;
+            &lt;ul&gt;
+              &lt;li&gt;gene expression data originating from a variety of expression experiments are normalized, pruned and then correlated&lt;/li&gt;
+              &lt;li&gt;pairs of proteins that are consistently similar in their expression patterns, under a variety of conditions, will receive a high association score&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;Genome-based prediction channels (functionality is generally most relevant for Bacteria and Archaea)
+        &lt;ul&gt;
+          &lt;li&gt;&lt;strong&gt;Neighborhood&lt;/strong&gt;
+            &lt;ul&gt;
+              &lt;li&gt;genes are given an association score where they are consistently observed in each other’s genome neighborhood&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+          &lt;li&gt;&lt;strong&gt;Fusion&lt;/strong&gt;
+            &lt;ul&gt;
+              &lt;li&gt;pairs of proteins are given an association score when there is at least one organism where their respective orthologs have fused into a single, protein-coding gene&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+          &lt;li&gt;&lt;strong&gt;Co-occurrence&lt;/strong&gt;
+            &lt;ul&gt;
+              &lt;li&gt;evaluating the phylogenetic distribution of orthologs of all proteins in a given organism&lt;/li&gt;
+              &lt;li&gt;if two proteins show a high similarity in this distribution, i.e. if their orthologs tend to be observed as ‘present’ or ‘absent’ in the same subsets of organisms, then an association score is assigned&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Using the transfer of evidence from one organism to another (‘interolog’ transfer):
+    &lt;ul&gt;
+      &lt;li&gt;based on the observation that orthologs of interacting proteins in one organism are often also interacting in another organism (better orthology relationships -&amp;gt; more confident inference)&lt;/li&gt;
+      &lt;li&gt;all-against-all transfer of interactions, benchmarked separately for each evidence channel&lt;/li&gt;
+      &lt;li&gt;transfers between closely related organisms are made more confidently, whereas the existence of paralogs (i.e., implied gene duplications) will lower the transfer score&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;web-interface&quot;&gt;Web interface&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;Exports:
+    &lt;ul&gt;
+      &lt;li&gt;as a bitmap image (PNG)&lt;/li&gt;
+      &lt;li&gt;as a high-resolution bitmap (PNG, resolution at 400 dpi)&lt;/li&gt;
+      &lt;li&gt;as a vector graphic (SVG)&lt;/li&gt;
+      &lt;li&gt;as simple tabular text output (TSV)&lt;/li&gt;
+      &lt;li&gt;as an XML summary (XML interaction data, according to the ‘PSI-MI’ data standard)&lt;/li&gt;
+      &lt;li&gt;network coordinates: (flat-file format describing the coordinates and colors of nodes in the network)&lt;/li&gt;
+      &lt;li&gt;protein sequences (MFA: multi-fasta format - containing the aminoacid sequences in the network)&lt;/li&gt;
+      &lt;li&gt;protein annotations (a tab-delimited file describing the names, domains and annotated functions of the network proteins)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Available downloads per query (TSV):
+    &lt;ul&gt;
+      &lt;li&gt;Biological Process&lt;/li&gt;
+      &lt;li&gt;Molecular Function&lt;/li&gt;
+      &lt;li&gt;Cellular Component&lt;/li&gt;
+      &lt;li&gt;KEGG Pathways&lt;/li&gt;
+      &lt;li&gt;PFAM Protein Domains&lt;/li&gt;
+      &lt;li&gt;INTERPRO Protein Domains and Features&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Clustering (metric ?):
+    &lt;ul&gt;
+      &lt;li&gt;k-means&lt;/li&gt;
+      &lt;li&gt;MCL&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;graph&quot;&gt;Graph&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Edges of the graph (interactions, scored per evidence channel):
+    &lt;ul&gt;
+      &lt;li&gt;Evidence suggesting a functional link&lt;/li&gt;
+      &lt;li&gt;Predictions for specific actions&lt;/li&gt;
+      &lt;li&gt;Sequence similarities&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Nodes of the graph (actions):
+    &lt;ul&gt;
+      &lt;li&gt;Show protein sequence&lt;/li&gt;
+      &lt;li&gt;Homologs among STRING organisms&lt;/li&gt;
+      &lt;li&gt;Pathways, Functions, Resources (GeneCards)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;download&quot;&gt;Download&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;Available bigger data downloads for offline analysis: &lt;a href=&quot;https://string-db.org/cgi/download.pl&quot;&gt;Downloads&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;differences-and-our-goal&quot;&gt;Differences and our goal&lt;/h1&gt;
+
+&lt;p&gt;STRING uses a &lt;a href=&quot;https://stringdb-static.org/download/database.schema.v10.5.pdf&quot;&gt;relational database scheme&lt;/a&gt;, while we aim to construct the graph database. Having said that, graph databases allow more pratical inference on the data using machine learning algorithms.&lt;/p&gt;
+
+&lt;p&gt;Observed conceptual differences:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;STRING graph’s edges do not contain direct semantic relation (e.g. &lt;em&gt;“binds to”&lt;/em&gt;)&lt;/li&gt;
+  &lt;li&gt;Their text mining is based mainly on frequency of two proteins mentioned together in the same paper&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In order to say what more we can offer than STRING and vice versa, we need to define the scope of the information we are looking for.&lt;/p&gt;
+
+&lt;p&gt;To start our project, we first focus on human (&lt;em&gt;Homo sapiens&lt;/em&gt;) and mouse (&lt;em&gt;Mus musculus&lt;/em&gt;).&lt;/p&gt;
+
+&lt;p&gt;Useful available properties for edges in the graph database:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;confidence score of an association&lt;/li&gt;
+  &lt;li&gt;predicted action&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;We could predict / approximate scores for &lt;em&gt;none / insignificant&lt;/em&gt; channels.&lt;/p&gt;</content><author><name>Borna Bešić</name></author><category term="papers" /><summary type="html">Summary</summary></entry><entry><title type="html">Benchmark</title><link href="https://bornabesic.github.io/cytokine-graph-db/benchmark" rel="alternate" type="text/html" title="Benchmark" /><published>2018-07-21T00:00:00+02:00</published><updated>2018-07-21T00:00:00+02:00</updated><id>https://bornabesic.github.io/cytokine-graph-db/db-benchmark</id><content type="html" xml:base="https://bornabesic.github.io/cytokine-graph-db/benchmark">&lt;p&gt;Paper: Huang et al., Systematic Evaluation of Molecular Networks for Discovery of Disease Genes, Cell Systems (2018),
+https://doi.org/10.1016/j.cels.2018.03.001&lt;/p&gt;
+
+&lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;PathGuide website: over 700 pathway and molecular interaction databases available to the general public&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.ndexbio.org/&quot;&gt;Network Data Exchange (NDEx)&lt;/a&gt; - an attempt to provide a common public repository for biological network models of all types&lt;/li&gt;
+  &lt;li&gt;Benchmarks to aid in selecting the most appropriate networks for &lt;em&gt;a specific human disease&lt;/em&gt; or &lt;em&gt;molecular pathway of interest&lt;/em&gt;&lt;/li&gt;
+  &lt;li&gt;Score of 21 popular human gene interaction networks by their ability to recover gene
+sets that characterize a wide variety of diseases&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;/h2&gt;
+
+&lt;h1 id=&quot;databases&quot;&gt;Databases&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;Focusing on physical protein-protein interactions:
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;http://dip.mbi.ucla.edu/&quot;&gt;Database for Interacting Proteins (DIP)&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;http://www.hprd.org/&quot;&gt;Human Protein Reference Database (HPRD)&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Concatenating protein interactions from multiple molecular networks with many additional
+interaction types (e.g. genetic interactions):
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;http://cpdb.molgen.mpg.de&quot;&gt;ConsensusPathDB&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;MultiNet&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Quantitatively integrating different studies and interaction types into a &lt;em&gt;single integrated score&lt;/em&gt; for each gene pair based on the total weight of evidence:
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;http://www.functionalnet.org/humannet/&quot;&gt;HumanNet&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;https://string-db.org/&quot;&gt;Search Tool for Recurring Instances of Neighboring Genes (STRING)&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;benchmark&quot;&gt;Benchmark&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;Score how well each network is able to recover a diverse collection of disease-associated gene sets&lt;/li&gt;
+  &lt;li&gt;Each gene set was randomly split into two subsets&lt;/li&gt;
+  &lt;li&gt;Ability of one subset to recover the other within the network, using the technique of network propagation under the random walk with restart model&lt;/li&gt;
+  &lt;li&gt;Recovery was scored using the area under precision-recall curve (AUPRC)&lt;/li&gt;
+  &lt;li&gt;The average AUPRC over repeated trials was calibrated against a null distribution of AUPRC scores from networks in which individual edges had been shuffled, preserving node degrees&lt;/li&gt;
+  &lt;li&gt;Comparison with this null distribution allowed the AUPRC to be expressed as a Z score, henceforth called the network’s “performance
+score”&lt;/li&gt;
+  &lt;li&gt;Recovery of 446 disease-associated gene sets from the &lt;a href=&quot;http://www.disgenet.org/&quot;&gt;DisGeNET&lt;/a&gt; database&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;performance&quot;&gt;Performance&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;For recovery of these literature gene sets, we found that STRING had the best overall performance&lt;/li&gt;
+  &lt;li&gt;Noticed that many of the larger networks appeared to be the best performing&lt;/li&gt;
+  &lt;li&gt;Examined how performance rankings change when correcting each network’s performance for the number of interactions in the network:
+    &lt;ul&gt;
+      &lt;li&gt;The smallest network (DIP) moved to the top of the rankings, suggesting that, per edge, this network is most efficient&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Did not find any additional network properties, other than the size, that is significantly correlated with performance&lt;/li&gt;
+  &lt;li&gt;Testing literature bias:
+    &lt;ul&gt;
+      &lt;li&gt;Removed all interactions in STRING and HumanNet that were based solely on text mining
+        &lt;ul&gt;
+          &lt;li&gt;Found that filtering greatly reduced the performance of HumanNet&lt;/li&gt;
+          &lt;li&gt;In contrast, such filtering did not greatly affect the performance of STRING&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;Evaluated all networks on gene sets that had been constructed independently of literature mining:
+        &lt;ul&gt;
+          &lt;li&gt;Found that &lt;a href=&quot;https://genemania.org/&quot;&gt;GeneMANIA&lt;/a&gt; and &lt;a href=&quot;http://giant.princeton.edu/&quot;&gt;GIANT (Genome-scale Integrated
+Analysis of gene Networks in Tissues)&lt;/a&gt; were the best performing networks on these expression gene sets, with STRING
+ranking third&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Network integration&lt;/strong&gt;:
+    &lt;ul&gt;
+      &lt;li&gt;Created a series of composite networks of decreasing size&lt;/li&gt;
+      &lt;li&gt;By requiring a minimum of two networks supporting each interaction, the performance was significantly improved over the best individual network (STRING) despite having a much smaller network size&lt;/li&gt;
+      &lt;li&gt;This configuration was optimal, and we call this optimal configuration the “Parsimonious Composite Network” (PCNet)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;discussion&quot;&gt;Discussion&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;When studying a particular disease, one might start with the networks that performed best on that particular gene set, instead of or in addition to the networks that were the best performers overall&lt;/li&gt;
+  &lt;li&gt;We were able to derive a much smaller PCNet that outperformed a network twice its size: this suggests at least one straightforward method of contracting the size of a reference network without sacrificing performance - requiring multiple database support for interactions&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Borna Bešić</name></author><category term="papers" /><summary type="html">Paper: Huang et al., Systematic Evaluation of Molecular Networks for Discovery of Disease Genes, Cell Systems (2018), https://doi.org/10.1016/j.cels.2018.03.001</summary></entry><entry><title type="html">Dependency Graph Construction</title><link href="https://bornabesic.github.io/cytokine-graph-db/dependency-graph-construction" rel="alternate" type="text/html" title="Dependency Graph Construction" /><published>2018-07-08T00:00:00+02:00</published><updated>2018-07-08T00:00:00+02:00</updated><id>https://bornabesic.github.io/cytokine-graph-db/dependency-graph-construction</id><content type="html" xml:base="https://bornabesic.github.io/cytokine-graph-db/dependency-graph-construction">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;
 &lt;title&gt;Dependency Graph Construction&lt;/title&gt;&lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js&quot;&gt;&lt;/script&gt;
