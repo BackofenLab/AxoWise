@@ -33,7 +33,7 @@
           </span>
         </label>
 
-        <div class="trigger"><a class="page-link" href="/cytokine-graph-db/graph-db-scheme">Graph Database Scheme</a><a class="page-link" href="/cytokine-graph-db/workflow">Workflow</a><a class="page-link" href="/cytokine-graph-db/notebooks.html">Notebooks</a><a class="page-link" href="/cytokine-graph-db/papers">Papers</a><a class="page-link" href="/cytokine-graph-db/TODO">TODO</a></div>
+        <div class="trigger"><a class="page-link" href="/cytokine-graph-db/graph-db-scheme">Graph Database Scheme</a><a class="page-link" href="/cytokine-graph-db/">Workflow</a><a class="page-link" href="/cytokine-graph-db/notebooks.html">Notebooks</a><a class="page-link" href="/cytokine-graph-db/papers">Papers</a><a class="page-link" href="/cytokine-graph-db/TODO">TODO</a></div>
       </nav></div>
 </header>
 <main class="page-content" aria-label="Content">
@@ -100,12 +100,22 @@ score”</li>
 <h1 id="performance">Performance</h1>
 <ul>
   <li>For recovery of these literature gene sets, we found that STRING had the best overall performance</li>
+</ul>
+
+<p><img src="https://preview.ibb.co/dNkueJ/benchmark1.png" alt="" /></p>
+
+<ul>
   <li>Noticed that many of the larger networks appeared to be the best performing</li>
   <li>Examined how performance rankings change when correcting each network’s performance for the number of interactions in the network:
     <ul>
       <li>The smallest network (DIP) moved to the top of the rankings, suggesting that, per edge, this network is most efficient</li>
     </ul>
   </li>
+</ul>
+
+<p><img src="https://image.ibb.co/jWMpDd/benchmark2.png" alt="" /></p>
+
+<ul>
   <li>Did not find any additional network properties, other than the size, that is significantly correlated with performance</li>
   <li>Testing literature bias:
     <ul>

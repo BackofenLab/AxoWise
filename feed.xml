@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://bornabesic.github.io/cytokine-graph-db/feed.xml" rel="self" type="application/atom+xml" /><link href="https://bornabesic.github.io/cytokine-graph-db/" rel="alternate" type="text/html" /><updated>2018-07-21T09:51:00+02:00</updated><id>https://bornabesic.github.io/cytokine-graph-db/</id><title type="html">Cytokine Graph DB</title><author><name>Borna Bešić</name></author><entry><title type="html">STRING Database</title><link href="https://bornabesic.github.io/cytokine-graph-db/STRING" rel="alternate" type="text/html" title="STRING Database" /><published>2018-07-21T00:00:00+02:00</published><updated>2018-07-21T00:00:00+02:00</updated><id>https://bornabesic.github.io/cytokine-graph-db/string-db</id><content type="html" xml:base="https://bornabesic.github.io/cytokine-graph-db/STRING">&lt;h1 id=&quot;summary&quot;&gt;Summary&lt;/h1&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://bornabesic.github.io/cytokine-graph-db/feed.xml" rel="self" type="application/atom+xml" /><link href="https://bornabesic.github.io/cytokine-graph-db/" rel="alternate" type="text/html" /><updated>2018-07-21T10:06:12+02:00</updated><id>https://bornabesic.github.io/cytokine-graph-db/</id><title type="html">Cytokine Graph DB</title><author><name>Borna Bešić</name></author><entry><title type="html">STRING Database</title><link href="https://bornabesic.github.io/cytokine-graph-db/STRING" rel="alternate" type="text/html" title="STRING Database" /><published>2018-07-21T00:00:00+02:00</published><updated>2018-07-21T00:00:00+02:00</updated><id>https://bornabesic.github.io/cytokine-graph-db/string-db</id><content type="html" xml:base="https://bornabesic.github.io/cytokine-graph-db/STRING">&lt;h1 id=&quot;summary&quot;&gt;Summary&lt;/h1&gt;
 
 &lt;p&gt;Paper:
 &lt;a href=&quot;https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5210637/&quot;&gt;The STRING database in 2017: quality-controlled protein–protein association networks, made broadly accessible&lt;/a&gt;&lt;/p&gt;
@@ -235,12 +235,22 @@ score”&lt;/li&gt;
 &lt;h1 id=&quot;performance&quot;&gt;Performance&lt;/h1&gt;
 &lt;ul&gt;
   &lt;li&gt;For recovery of these literature gene sets, we found that STRING had the best overall performance&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://preview.ibb.co/dNkueJ/benchmark1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
   &lt;li&gt;Noticed that many of the larger networks appeared to be the best performing&lt;/li&gt;
   &lt;li&gt;Examined how performance rankings change when correcting each network’s performance for the number of interactions in the network:
     &lt;ul&gt;
       &lt;li&gt;The smallest network (DIP) moved to the top of the rankings, suggesting that, per edge, this network is most efficient&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://image.ibb.co/jWMpDd/benchmark2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
   &lt;li&gt;Did not find any additional network properties, other than the size, that is significantly correlated with performance&lt;/li&gt;
   &lt;li&gt;Testing literature bias:
     &lt;ul&gt;
