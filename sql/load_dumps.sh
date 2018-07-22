@@ -1,10 +1,9 @@
 #!/bin/bash
 
-psql -c "CREATE DATABASE items;"
-psql items < items_schema.v10.5.sql
+# Create the database
+psql -c "CREATE DATABASE string;"
 
-psql -c "CREATE DATABASE network;"
-psql network < network_schema.v10.5.sql
-
-psql -c "CREATE DATABASE evidence;"
-psql evidence < evidence_schema.v10.5.sql
+# Load the schema dumps
+psql string < items_schema.v10.5.sql
+psql string < network_schema.v10.5.sql
+psql string < evidence_schema.v10.5.sql
