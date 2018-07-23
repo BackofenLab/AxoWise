@@ -19,8 +19,24 @@ CREATE OR REPLACE VIEW human_mouse_runs_orthgroups AS
 		WHERE human_mouse_runs.run_id = runs_orthgroups.run_id
 	);
 
+CREATE OR REPLACE VIEW human_mouse_genes_proteins AS
+	SELECT *
+	FROM items.genes_proteins AS genes_proteins
+	WHERE EXISTS (
+		SELECT 1
+		FROM human_mouse_proteins
+		WHERE human_mouse_proteins.protein_id = genes_proteins.protein_id
+	);
+
 /*
-Delete entries from the following tables based on protein_id (human_mouse_proteins):
+Delete entries from the following tables based on species_id:
+- species
+- species_nodes
+- species_to_levels
+- orthgroups_species
+- runs
+
+Delete entries from the following tables based on protein_id (from human_mouse_proteins):
 - proteins_names
 - proteins_linkouts
 - proteins_smartlinkouts
@@ -31,9 +47,18 @@ Delete entries from the following tables based on protein_id (human_mouse_protei
 - proteins_orthgroups
 - proteins_imagematches
 
-Delete entries from the following tables based on species_id (human_mouse_runs):
-- runs_orthgroups
 - runs_genes_proteins
+- genes_proteins
+
+Delete entries from the following tables based on species_id (from human_mouse_runs):
+- runs_orthgroups
+
+Delete entries from the following tables based on orthgroup_id (from human_mouse_runs_orthgroups):
+- orthgroups
+- orthgroups_species
+
+Delete entries from the following tables based on gene_id (from human_mouse_genes_proteins):
+- genes
 
 */
 
