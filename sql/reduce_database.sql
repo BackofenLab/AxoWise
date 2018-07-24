@@ -457,22 +457,94 @@ WHERE NOT EXISTS (
 
 Delete entries from the following tables based on species_id:
 - proteins
-- species
-- species_nodes
-- species_to_levels
-- orthgroups_species
-- runs
 - proteins_names
 - hierarchical_ogs_proteins
 - proteins_orthgroups
+- runs
+- species
 - species_names
+- species_nodes
+- species_to_levels
+- orthgroups_species
 
 */
 
 -- DELETE
-SELECT protein_id
+SELECT species_id
 FROM items.proteins AS proteins
 WHERE proteins.species_id NOT IN (
+	SELECT species_id
+	FROM interesting_species
+);
+
+-- DELETE
+SELECT species_id
+FROM items.proteins_names AS proteins_names
+WHERE proteins_names.species_id NOT IN (
+	SELECT species_id
+	FROM interesting_species
+);
+
+-- DELETE
+SELECT species_id
+FROM items.hierarchical_ogs_proteins AS hierarchical_ogs_proteins
+WHERE hierarchical_ogs_proteins.species_id NOT IN (
+	SELECT species_id
+	FROM interesting_species
+);
+
+-- DELETE
+SELECT species_id
+FROM items.proteins_orthgroups AS proteins_orthgroups
+WHERE proteins_orthgroups.species_id NOT IN (
+	SELECT species_id
+	FROM interesting_species
+);
+
+-- DELETE
+SELECT species_id
+FROM items.runs AS runs
+WHERE runs.species_id NOT IN (
+	SELECT species_id
+	FROM interesting_species
+);
+
+-- DELETE
+SELECT species_id
+FROM items.species AS species
+WHERE species.species_id NOT IN (
+	SELECT species_id
+	FROM interesting_species
+);
+
+-- DELETE
+SELECT species_id
+FROM items.species_names AS species_names
+WHERE species_names.species_id NOT IN (
+	SELECT species_id
+	FROM interesting_species
+);
+
+-- DELETE
+SELECT species_id
+FROM items.species_nodes AS species_nodes
+WHERE species_nodes.species_id NOT IN (
+	SELECT species_id
+	FROM interesting_species
+);
+
+-- DELETE
+SELECT species_id
+FROM items.species_to_levels AS species_to_levels
+WHERE species_to_levels.species_id NOT IN (
+	SELECT species_id
+	FROM interesting_species
+);
+
+-- DELETE
+SELECT species_id
+FROM items.orthgroups_species AS orthgroups_species
+WHERE orthgroups_species.species_id NOT IN (
 	SELECT species_id
 	FROM interesting_species
 );
