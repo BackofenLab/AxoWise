@@ -9,7 +9,7 @@ ON CONFLICT DO NOTHING;
 
 /* Useful views */
 
-/* Proteins in species we are interested in */
+-- Proteins in species we are interested in
 CREATE OR REPLACE VIEW interesting_proteins AS
 	SELECT *
 	FROM items.proteins AS proteins
@@ -18,6 +18,7 @@ CREATE OR REPLACE VIEW interesting_proteins AS
 		FROM interesting_species
 	);
 
+-- Neighborhood evidence in species we are interested
 CREATE OR REPLACE VIEW interesting_runs AS
 	SELECT *
 	FROM items.runs AS runs
@@ -318,6 +319,56 @@ WHERE NOT EXISTS (
 
 /*
 
+Delete entries from the following tables based on run_id (from interesting_runs):
+- runs_orthgroups
+
+*/
+
+/*
+
+------------------------------------------------------------------------------------------
+
+SELECT COUNT(run_id)
+FROM items.runs_orthgroups AS runs_orthgroups;
+-> 4 833 636 (total)
+
+SELECT COUNT(run_id)
+FROM items.runs_orthgroups AS runs_orthgroups
+WHERE EXISTS (
+	SELECT 1
+	FROM interesting_runs
+	WHERE interesting_runs.run_id = runs_orthgroups.run_id
+);
+-> 0
+
+SELECT COUNT(run_id)
+FROM items.runs_orthgroups AS runs_orthgroups
+WHERE NOT EXISTS (
+	SELECT 1
+	FROM interesting_runs
+	WHERE interesting_runs.run_id = runs_orthgroups.run_id
+);
+-> 4 833 636
+
+*/
+
+-- DELETE
+SELECT run_id
+FROM items.runs_orthgroups AS runs_orthgroups
+WHERE NOT EXISTS (
+	SELECT 1
+	FROM interesting_runs
+	WHERE interesting_runs.run_id = runs_orthgroups.run_id
+);
+
+/*
+
+Delete entries from the following tables based on orthgroup_id (from interesting_runs_orthgroups):
+- orthgroups
+
+Delete entries from the following tables based on gene_id (from interesting_genes_proteins):
+- genes
+
 Delete entries from the following tables based on species_id:
 - proteins
 - species
@@ -329,14 +380,5 @@ Delete entries from the following tables based on species_id:
 - hierarchical_ogs_proteins
 - proteins_orthgroups
 - species_names
-
-Delete entries from the following tables based on species_id (from interesting_runs):
-- runs_orthgroups
-
-Delete entries from the following tables based on orthgroup_id (from interesting_runs_orthgroups):
-- orthgroups
-
-Delete entries from the following tables based on gene_id (from interesting_genes_proteins):
-- genes
 
 */
