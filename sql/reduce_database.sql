@@ -38,6 +38,8 @@ CREATE OR REPLACE VIEW interesting_runs_orthgroups AS
 		WHERE interesting_runs.run_id = runs_orthgroups.run_id
 	);
 
+-- Mapping between the internal identifier of genes and proteins
+-- for species we are interested in
 CREATE OR REPLACE VIEW interesting_genes_proteins AS
 	SELECT *
 	FROM items.genes_proteins AS genes_proteins
@@ -412,6 +414,47 @@ WHERE NOT EXISTS (
 Delete entries from the following tables based on gene_id (from interesting_genes_proteins):
 - genes
 
+*/
+
+/*
+
+------------------------------------------------------------------------------------------
+
+SELECT COUNT(gene_id)
+FROM items.genes AS genes;
+-> 9 643 763 (total)
+
+SELECT COUNT(gene_id)
+FROM items.genes AS genes
+WHERE EXISTS (
+	SELECT 1
+	FROM interesting_genes_proteins
+	WHERE interesting_genes_proteins.gene_id = genes.gene_id
+);
+-> 43 125
+
+SELECT COUNT(gene_id)
+FROM items.genes AS genes
+WHERE NOT EXISTS (
+	SELECT 1
+	FROM interesting_genes_proteins
+	WHERE interesting_genes_proteins.gene_id = genes.gene_id
+);
+-> 9 600 638
+
+*/
+
+-- DELETE
+SELECT gene_id
+FROM items.genes AS genes
+WHERE NOT EXISTS (
+	SELECT 1
+	FROM interesting_genes_proteins
+	WHERE interesting_genes_proteins.gene_id = genes.gene_id
+);
+
+/*
+
 Delete entries from the following tables based on species_id:
 - proteins
 - species
@@ -425,3 +468,11 @@ Delete entries from the following tables based on species_id:
 - species_names
 
 */
+
+-- DELETE
+SELECT protein_id
+FROM items.proteins AS proteins
+WHERE proteins.species_id NOT IN (
+	SELECT species_id
+	FROM interesting_species
+);
