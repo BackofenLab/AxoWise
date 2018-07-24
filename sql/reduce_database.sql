@@ -27,6 +27,8 @@ CREATE OR REPLACE VIEW interesting_runs AS
 		FROM interesting_species
 	);
 		  
+-- Mapping of orthologous groups to an un-interrupted group of genes on the chromosome
+-- for species we are interesred in
 CREATE OR REPLACE VIEW interesting_runs_orthgroups AS
 	SELECT *
 	FROM items.runs_orthgroups AS runs_orthgroups
@@ -319,6 +321,50 @@ WHERE NOT EXISTS (
 
 /*
 
+Delete entries from the following tables based on orthgroup_id (from interesting_runs_orthgroups):
+- orthgroups
+
+*/
+
+/*
+
+------------------------------------------------------------------------------------------
+
+SELECT COUNT(orthgroup_id)
+FROM items.orthgroups AS orthgroups;
+-> 190 803 (total)
+
+SELECT COUNT(orthgroup_id)
+FROM items.orthgroups AS orthgroups
+WHERE EXISTS (
+	SELECT 1
+	FROM interesting_runs_orthgroups
+	WHERE orthgroups.orthgroup_id = interesting_runs_orthgroups.orthgroup_id
+);
+-> 0
+
+SELECT COUNT(orthgroup_id)
+FROM items.orthgroups AS orthgroups
+WHERE NOT EXISTS (
+	SELECT 1
+	FROM interesting_runs_orthgroups
+	WHERE orthgroups.orthgroup_id = interesting_runs_orthgroups.orthgroup_id
+);
+-> 190 803
+
+*/
+
+-- DELETE
+SELECT orthgroup_id
+FROM items.orthgroups AS orthgroups
+WHERE NOT EXISTS (
+	SELECT 1
+	FROM interesting_runs_orthgroups
+	WHERE orthgroups.orthgroup_id = interesting_runs_orthgroups.orthgroup_id
+);
+
+/*
+
 Delete entries from the following tables based on run_id (from interesting_runs):
 - runs_orthgroups
 
@@ -362,9 +408,6 @@ WHERE NOT EXISTS (
 );
 
 /*
-
-Delete entries from the following tables based on orthgroup_id (from interesting_runs_orthgroups):
-- orthgroups
 
 Delete entries from the following tables based on gene_id (from interesting_genes_proteins):
 - genes
