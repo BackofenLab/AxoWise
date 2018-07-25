@@ -20,7 +20,6 @@ graph = py2neo.Graph(password = "cgdb")
 species_id = get_species_id(postgre_cursor, "Homo sapiens")[0]
 pathways = get_pathways(postgre_cursor, species_id = species_id, protein1 = "CCR5", protein2 = "CCL5")
 for row in pathways:
-    id1, id2, name1, name2, mode, collection_id, title, comment = row
     print(row)
 
 # Close communication with the database
