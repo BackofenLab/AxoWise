@@ -147,9 +147,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.979899"
-     inkscape:cx="259.14907"
-     inkscape:cy="260.11709"
+     inkscape:zoom="5.6"
+     inkscape:cx="509.70555"
+     inkscape:cy="339.67216"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -334,56 +334,52 @@
          x="463.07556"
          sodipodi:role="line"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold'">IN</tspan></text>
-    <g
-       id="g4253"
-       transform="matrix(0.90882923,0,0,0.90882923,10.758728,77.564719)">
-      <rect
-         y="618.08752"
-         x="18.28826"
-         height="76.216713"
-         width="208.62753"
-         id="rect4136"
-         style="fill:#78bbd9;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <text
-         sodipodi:linespacing="125%"
-         id="text4138"
-         y="642.83997"
-         x="28.107117"
-         style="font-style:normal;font-weight:normal;font-size:20.80413055px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-         xml:space="preserve"><tspan
-           id="tspan4142"
-           y="642.83997"
-           x="28.107117"
-           sodipodi:role="line"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#ffffff;fill-opacity:1;stroke:none;stroke-opacity:1">Protein: Species</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:20.80413055px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-         x="122.6829"
-         y="662.51715"
-         id="text4146"
-         sodipodi:linespacing="125%"><tspan
-           style="font-size:10.6853466px;text-align:center;text-anchor:middle"
-           sodipodi:role="line"
-           x="122.6829"
-           y="662.51715"
-           id="tspan4148">label =  ?</tspan><tspan
-           id="tspan4150"
-           style="font-size:10.6853466px;text-align:center;text-anchor:middle"
-           sodipodi:role="line"
-           x="122.6829"
-           y="675.87384">name = ?</tspan><tspan
-           style="font-size:10.6853466px;text-align:center;text-anchor:middle"
-           sodipodi:role="line"
-           x="122.6829"
-           y="689.23053"
-           id="tspan6265">ensembl_id = ?</tspan></text>
-      <path
-         inkscape:connector-curvature="0"
-         id="path3400"
-         d="m 20,650.36216 204.60028,0"
-         style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:1.3057574px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    </g>
+    <rect
+       style="fill:#78bbd9;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4136"
+       width="189.6068"
+       height="69.267975"
+       x="27.379633"
+       y="639.30072" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:18.90740204px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="36.303299"
+       y="661.79645"
+       id="text4138"
+       sodipodi:linespacing="125%"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#ffffff;fill-opacity:1;stroke:none;stroke-opacity:1"
+         sodipodi:role="line"
+         x="36.303299"
+         y="661.79645"
+         id="tspan4142">Protein: Species</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text4146"
+       y="679.67969"
+       x="122.08345"
+       style="font-style:normal;font-weight:normal;font-size:18.90740204px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         id="tspan4148"
+         y="679.67969"
+         x="122.08345"
+         sodipodi:role="line"
+         style="font-size:9.71115494px;text-align:center;text-anchor:middle">preferred_name =  ?</tspan><tspan
+         y="691.8186"
+         x="122.08345"
+         sodipodi:role="line"
+         style="font-size:9.71115494px;text-align:center;text-anchor:middle"
+         id="tspan4150">annotation = ?</tspan><tspan
+         id="tspan6265"
+         y="703.95758"
+         x="122.08345"
+         sodipodi:role="line"
+         style="font-size:9.71115494px;text-align:center;text-anchor:middle">external_id = ?</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:1.18671048px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 28.935313,668.63286 185.946717,0"
+       id="path3400"
+       inkscape:connector-curvature="0" />
     <g
        id="g5072"
        transform="matrix(0.90882923,0,0,0.90882923,10.758728,77.564719)">
@@ -485,56 +481,30 @@
        sodipodi:nodetypes="cc"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
-    <g
-       id="g4263"
-       transform="matrix(0.90882923,0,0,0.90882923,405.19061,77.564719)">
-      <rect
-         style="fill:#78bbd9;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         id="rect4265"
-         width="208.62753"
-         height="76.216713"
-         x="18.28826"
-         y="618.08752" />
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:20.80413055px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-         x="28.107117"
-         y="642.83997"
-         id="text4267"
-         sodipodi:linespacing="125%"><tspan
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#ffffff;fill-opacity:1;stroke:none;stroke-opacity:1"
-           sodipodi:role="line"
-           x="28.107117"
-           y="642.83997"
-           id="tspan4269">Protein: Species</tspan></text>
-      <text
-         sodipodi:linespacing="125%"
-         id="text4271"
-         y="662.51715"
-         x="122.6829"
-         style="font-style:normal;font-weight:normal;font-size:20.80413055px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-         xml:space="preserve"><tspan
-           id="tspan4273"
-           y="662.51715"
-           x="122.6829"
-           sodipodi:role="line"
-           style="font-size:10.6853466px;text-align:center;text-anchor:middle">label =  ?</tspan><tspan
-           y="675.87384"
-           x="122.6829"
-           sodipodi:role="line"
-           style="font-size:10.6853466px;text-align:center;text-anchor:middle"
-           id="tspan4275">name = ?</tspan><tspan
-           id="tspan4277"
-           y="689.23053"
-           x="122.6829"
-           sodipodi:role="line"
-           style="font-size:10.6853466px;text-align:center;text-anchor:middle">ensembl_id = ?</tspan></text>
-      <path
-         style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:1.3057574px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-         d="m 20,650.36216 204.60028,0"
-         id="path4279"
-         inkscape:connector-curvature="0" />
-    </g>
+    <rect
+       y="639.30072"
+       x="421.81152"
+       height="69.267975"
+       width="189.6068"
+       id="rect4265"
+       style="fill:#78bbd9;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <text
+       sodipodi:linespacing="125%"
+       id="text4267"
+       y="661.79645"
+       x="430.73517"
+       style="font-style:normal;font-weight:normal;font-size:18.90740204px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         id="tspan4269"
+         y="661.79645"
+         x="430.73517"
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#ffffff;fill-opacity:1;stroke:none;stroke-opacity:1">Protein: Species</tspan></text>
+    <path
+       inkscape:connector-curvature="0"
+       id="path4279"
+       d="m 423.36719,668.63286 185.94672,0"
+       style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:1.18671048px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
     <path
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.77689236px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2Lend)"
        d="m 216.02171,677.95175 205.28948,0.91805"
@@ -550,5 +520,27 @@
        inkscape:connector-curvature="0"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:18.90740204px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="516.51532"
+       y="680.34723"
+       id="text4146-3"
+       sodipodi:linespacing="125%"><tspan
+         style="font-size:9.71115494px;text-align:center;text-anchor:middle"
+         sodipodi:role="line"
+         x="516.51532"
+         y="680.34723"
+         id="tspan4148-6">preferred_name =  ?</tspan><tspan
+         id="tspan4150-7"
+         style="font-size:9.71115494px;text-align:center;text-anchor:middle"
+         sodipodi:role="line"
+         x="516.51532"
+         y="692.48615">annotation = ?</tspan><tspan
+         style="font-size:9.71115494px;text-align:center;text-anchor:middle"
+         sodipodi:role="line"
+         x="516.51532"
+         y="704.62512"
+         id="tspan6265-5">external_id = ?</tspan></text>
   </g>
 </svg>
