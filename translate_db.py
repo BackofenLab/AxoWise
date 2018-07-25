@@ -1,7 +1,7 @@
 import psycopg2
 import py2neo
 
-from queries import get_pathways, get_species_id
+from sql_queries import get_pathways, get_species_id
 
 # Connect to the PostgreSQL database
 postgre_connection = psycopg2.connect(
