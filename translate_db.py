@@ -1,7 +1,7 @@
 import psycopg2
 import py2neo
 
-from queries import get_pathways
+from queries import get_pathways, get_species_id
 
 # Connect to the PostgreSQL database
 postgre_connection = psycopg2.connect(
@@ -17,8 +17,10 @@ postgre_cursor = postgre_connection.cursor()
 graph = py2neo.Graph(password = "cgdb")
 
 # Read the STRING database
-results = get_pathways(postgre_cursor, protein1 = "Ccr5", protein2 = "Ccl5")
-for row in results:
+species_id = get_species_id(postgre_cursor, "Homo sapiens")[0]
+pathways = get_pathways(postgre_cursor, species_id = species_id, protein1 = "CCR5", protein2 = "CCL5")
+for row in pathways:
+    id1, id2, name1, name2, mode, collection_id, title, comment = row
     print(row)
 
 # Close communication with the database
