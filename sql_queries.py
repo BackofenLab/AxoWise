@@ -1,5 +1,5 @@
 
-def get_pathways(cursor, species_id = 10090, protein1 = None, protein2 = None):
+def get_relationships(cursor, species_id = 10090, protein1 = None, protein2 = None):
     narrow = (protein1 is not None) and (protein2 is not None)
     query = """
         SELECT sets_items1.item_id, sets_items2.item_id,
