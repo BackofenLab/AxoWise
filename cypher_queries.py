@@ -56,7 +56,7 @@ def get_protein_subgraph(graph, preferred_name):
         MATCH (action)-[:IN]-(pathway:Pathway)
         RETURN *
     """
-    graph.run(query, dict(
+    return graph.data(query, dict(
         preferred_name = preferred_name
     ))
 
