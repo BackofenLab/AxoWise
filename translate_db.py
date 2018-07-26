@@ -18,12 +18,12 @@ postgre_cursor = postgre_connection.cursor()
 graph = py2neo.Graph(password = "cgdb")
 
 # Read the STRING database
-species_id = SQL.get_species_id(postgre_cursor, "Homo sapiens")[0]
-relationships = SQL.get_relationships(postgre_cursor, species_id = species_id)
+species_id = SQL.get_species_id(postgre_cursor, "Mus musculus")[0]
+relationships = SQL.get_relationships(postgre_cursor, species_id = species_id, protein1 = "Ccr5", protein2 = "Ccl5")
 for item in relationships:
+    print(item)
     # Create proteins if they do not exist
-    Cypher.update_protein(graph, item["id1"], item["external_id1"], item["annotation1"], item["preferred_name1"])
-    Cypher.update_protein(graph, item["id2"], item["external_id2"], item["annotation2"], item["preferred_name2"])
+    Cypher.update_proteins_and_action(graph, item)
 
 # Close communication with the database
 postgre_cursor.close()
