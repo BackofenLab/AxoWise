@@ -16,6 +16,16 @@ def update_proteins_and_action(graph, params):
             preferred_name: {preferred_name2}
         })
 
+        MERGE (protein1)-[a:ASSOCIATION]->(protein2)
+        ON CREATE SET a.experiments = null,
+                      a.database = null,
+                      a.textmining = null,
+                      a.coexpression = null,
+                      a.neighborhood = null,
+                      a.fusion = null,
+                      a.cooccurence = null,
+                      a.combined = null
+
         MERGE (action:Action {
             mode: {mode}
         }) ON CREATE SET action.score = null
