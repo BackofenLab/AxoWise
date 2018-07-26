@@ -47,6 +47,19 @@ def update_proteins_and_action(graph, params):
     """
     graph.run(query, params)
 
+def get_protein_subgraph(graph, preferred_name):
+    query = """
+        MATCH (protein:Protein {
+            preferred_name: {preferred_name}
+        })-[association:ASSOCIATION]-(other:Protein)
+        MATCH (protein)-[:IN]-(action:Action)
+        MATCH (action)-[:IN]-(pathway:Pathway)
+        RETURN *
+    """
+    graph.run(query, dict(
+        preferred_name = preferred_name
+    ))
+
 def remove_redundant_properties(graph):
     query = """
         MATCH (action:Action)
