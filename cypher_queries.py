@@ -53,3 +53,7 @@ def remove_redundant_properties(graph):
         REMOVE action.id1, action.id2
     """
     graph.run(query)
+
+def delete_all(graph):
+    query = "MATCH (n) DETACH DELETE (n)"
+    graph.run(query)
