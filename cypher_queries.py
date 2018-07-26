@@ -27,7 +27,9 @@ def update_proteins_and_action(graph, params):
                       a.combined = null
 
         MERGE (action:Action {
-            mode: {mode}
+            mode: {mode},
+            id1: {id1},
+            id2: {id2}
         }) ON CREATE SET action.score = null
 
         MERGE (protein1)-[:IN]->(action)
@@ -44,3 +46,10 @@ def update_proteins_and_action(graph, params):
 
     """
     graph.run(query, params)
+
+def remove_redundant_properties(graph):
+    query = """
+        MATCH (action:Action)
+        REMOVE action.id1, action.id2
+    """
+    graph.run(query)

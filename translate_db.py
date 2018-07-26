@@ -19,11 +19,12 @@ graph = py2neo.Graph(password = "cgdb")
 
 # Read the STRING database
 species_id = SQL.get_species_id(postgre_cursor, "Mus musculus")[0]
-relationships = SQL.get_relationships(postgre_cursor, species_id = species_id, protein1 = "Ccr5", protein2 = "Ccl5")
-for item in relationships:
-    print(item)
+relationships = SQL.get_relationships(postgre_cursor, species_id = species_id, limit = 100)
+for idx, item in enumerate(relationships):
     # Create proteins if they do not exist
     Cypher.update_proteins_and_action(graph, item)
+
+Cypher.remove_redundant_properties(graph)
 
 # Close communication with the database
 postgre_cursor.close()
