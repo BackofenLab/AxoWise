@@ -24,13 +24,21 @@ def get_relationships(cursor, species_id = 10090, protein1 = None, protein2 = No
         JOIN items.proteins AS proteins2 ON sets_items2.item_id = proteins2.protein_id
         WHERE sets_items1.species_id = %s
         """ + ("AND sets_items1.preferred_name = %s AND sets_items2.preferred_name = %s" if narrow else "") + ("LIMIT %s" if limit is not None else "") + ";" 
+
     cursor.execute(
         query,
         (species_id,) + ((protein1, protein2,) if narrow else ()) + ((limit,) if limit is not None else ())
     )
-    result = cursor.fetchall()
-    for row in result:
-        yield {
+    num_rows = cursor.rowcount
+
+    idx = 0
+    while True:
+        row = cursor.fetchone()
+        if row is None:
+            break
+
+        idx += 1
+        yield idx / num_rows,  {
             "id1": row[0],
             "id2": row[1],
             "external_id1": row[2],
