@@ -18,12 +18,12 @@ def get_relationships(cursor, species_id = 10090, protein1 = None, protein2 = No
                                                    AND actions_sets.item_id_b = sets_items2.item_id
         JOIN evidence.sets AS sets ON sets_items1.set_id = sets.set_id
                                    AND sets_items2.set_id = sets.set_id
-        JOIN network.actions AS actions ON actions.item_id_a = actions_sets.item_id_a
-                                        AND actions.item_id_b = actions_sets.item_id_b
-        JOIN items.proteins AS proteins1 ON sets_items1.item_id = proteins1.protein_id
-        JOIN items.proteins AS proteins2 ON sets_items2.item_id = proteins2.protein_id
+        RIGHT JOIN network.actions AS actions ON actions.item_id_a = actions_sets.item_id_a
+                                              AND actions.item_id_b = actions_sets.item_id_b
+        JOIN items.proteins AS proteins1 ON actions.item_id_a = proteins1.protein_id
+        JOIN items.proteins AS proteins2 ON actions.item_id_b = proteins2.protein_id
         WHERE sets_items1.species_id = %s
-        """ + ("AND sets_items1.preferred_name = %s AND sets_items2.preferred_name = %s" if narrow else "") + ("LIMIT %s" if limit is not None else "") + ";" 
+        """ + ("AND proteins1.preferred_name = %s AND proteins2.preferred_name = %s" if narrow else "") + ("LIMIT %s" if limit is not None else "") + ";" 
 
     cursor.execute(
         query,

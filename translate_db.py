@@ -17,7 +17,7 @@ relationships_cursor = postgres_connection.cursor(name = "server")
 # STRING
 print("Reading the STRING database...")
 species_id = SQL.get_species_id(default_cursor, "Mus musculus")[0]
-relationships = SQL.get_relationships(relationships_cursor, species_id = species_id, limit = 1000)
+relationships = SQL.get_relationships(relationships_cursor, species_id = species_id, protein1 = "Ccl5", protein2 = "Ccr5")
 
 # Neo4j
 Cypher.delete_all(neo4j_graph)
