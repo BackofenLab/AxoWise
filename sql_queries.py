@@ -12,7 +12,7 @@ def get_relationships(cursor, species_id = 10090, protein1 = None, protein2 = No
                sets.comment,
                sets.collection_id
         FROM evidence.sets_items AS sets_items1
-        CROSS JOIN evidence.sets_items AS sets_items2
+        JOIN evidence.sets_items AS sets_items2 ON sets_items1.item_id < sets_items2.item_id
         JOIN evidence.actions_sets AS actions_sets ON actions_sets.item_id_a = sets_items1.item_id
                                                    AND actions_sets.item_id_b = sets_items2.item_id
         JOIN evidence.sets AS sets ON sets_items1.set_id = sets.set_id
