@@ -28,9 +28,10 @@ def update_proteins_and_action(graph, params):
 
         MERGE (action:Action {
             mode: {mode},
+            score: {score},
             id1: {id1},
             id2: {id2}
-        }) ON CREATE SET action.score = null
+        })
 
         MERGE (protein1)-[:IN]->(action)
         MERGE (protein2)-[:IN]->(action)

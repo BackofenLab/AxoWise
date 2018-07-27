@@ -6,7 +6,8 @@ def get_relationships(cursor, species_id = 10090, protein1 = None, protein2 = No
                proteins1.protein_external_id, proteins2.protein_external_id,
                proteins1.annotation, proteins2.annotation,
                sets_items1.preferred_name, sets_items2.preferred_name,
-               actions_sets.mode,
+               actions.mode,
+               actions.score,
                sets.set_id,
                sets.title,
                sets.comment,
@@ -17,6 +18,8 @@ def get_relationships(cursor, species_id = 10090, protein1 = None, protein2 = No
                                                    AND actions_sets.item_id_b = sets_items2.item_id
         JOIN evidence.sets AS sets ON sets_items1.set_id = sets.set_id
                                    AND sets_items2.set_id = sets.set_id
+        JOIN network.actions AS actions ON actions.item_id_a = actions_sets.item_id_a
+                                        AND actions.item_id_b = actions_sets.item_id_b
         JOIN items.proteins AS proteins1 ON sets_items1.item_id = proteins1.protein_id
         JOIN items.proteins AS proteins2 ON sets_items2.item_id = proteins2.protein_id
         WHERE sets_items1.species_id = %s
@@ -37,10 +40,11 @@ def get_relationships(cursor, species_id = 10090, protein1 = None, protein2 = No
             "preferred_name1": row[6],
             "preferred_name2": row[7],
             "mode": row[8],
-            "set_id": row[9],
-            "title": row[10],
-            "comment": row[11],
-            "collection_id": row[12]
+            "score": row[9],
+            "set_id": row[10],
+            "title": row[11],
+            "comment": row[12],
+            "collection_id": row[13]
         }
 
 def get_species_id(cursor, compact_species_name):
