@@ -18,7 +18,6 @@ def connect(credentials_path = "credentials.json"):
         port = postgres["port"],
         host = postgres["host"]
     )
-    postgres_cursor = postgres_connection.cursor()
 
     # Connect to the Neo4j database
     neo4j_graph = py2neo.Graph(
@@ -27,4 +26,4 @@ def connect(credentials_path = "credentials.json"):
         password = neo4j["pw"]
     )
 
-    return (postgres_connection, postgres_cursor), neo4j_graph
+    return postgres_connection, neo4j_graph

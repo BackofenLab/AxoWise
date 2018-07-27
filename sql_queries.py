@@ -29,16 +29,13 @@ def get_relationships(cursor, species_id = 10090, protein1 = None, protein2 = No
         query,
         (species_id,) + ((protein1, protein2,) if narrow else ()) + ((limit,) if limit is not None else ())
     )
-    num_rows = cursor.rowcount
 
-    idx = 0
     while True:
         row = cursor.fetchone()
         if row is None:
             break
 
-        idx += 1
-        yield idx / num_rows,  {
+        yield {
             "id1": row[0],
             "id2": row[1],
             "external_id1": row[2],
