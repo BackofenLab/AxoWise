@@ -16,16 +16,6 @@ def update_proteins_and_action(graph, params):
             preferred_name: {preferred_name2}
         })
 
-        MERGE (protein1)-[a:ASSOCIATION]->(protein2)
-        ON CREATE SET a.experiments = null,
-                      a.database = null,
-                      a.textmining = null,
-                      a.coexpression = null,
-                      a.neighborhood = null,
-                      a.fusion = null,
-                      a.cooccurence = null,
-                      a.combined = null
-
         MERGE (action:Action {
             mode: {mode},
             id1: {id1},
@@ -64,6 +54,35 @@ def get_protein_subgraph(graph, preferred_name):
     return graph.data(query, dict(
         preferred_name = preferred_name
     ))
+
+def update_associations(graph, params):
+    query = """
+        MERGE (protein1:Protein {
+            id: {id1},
+            external_id: {external_id1},
+            annotation: {annotation1},
+            preferred_name: {preferred_name1}
+        })
+
+        MERGE (protein2:Protein {
+            id: {id2},
+            external_id: {external_id2},
+            annotation: {annotation2},
+            preferred_name: {preferred_name2}
+        })
+
+        CREATE (protein1)-[a:ASSOCIATION {
+            experiments: {experiments},
+            database: {database},
+            textmining: {textmining},
+            coexpression: {coexpression},
+            neighborhood: {neighborhood},
+            fusion: {fusion},
+            cooccurence: {cooccurence},
+            combined: {combined_score}
+        }]->(protein2)
+    """
+    graph.run(query, params)
 
 def remove_redundant_properties(graph):
     query = """
