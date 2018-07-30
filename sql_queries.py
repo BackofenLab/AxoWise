@@ -44,24 +44,25 @@ def get_actions_and_pathways(postgres_connection, species_id, protein1 = None, p
     cursor = postgres_connection.cursor(name = "actions_and_pathways")
     narrow = (protein1 is not None) and (protein2 is not None)
     query = """
-        SELECT sets_items1.item_id, sets_items2.item_id,
-               actions.mode,
-               actions.score,
-               sets.set_id,
-               sets.title,
-               sets.comment,
-               sets.collection_id
-        FROM evidence.sets_items AS sets_items1
-        JOIN evidence.sets_items AS sets_items2 ON sets_items1.item_id < sets_items2.item_id
-        JOIN evidence.actions_sets AS actions_sets ON actions_sets.item_id_a = sets_items1.item_id
-                                                   AND actions_sets.item_id_b = sets_items2.item_id
-        JOIN evidence.sets AS sets ON sets_items1.set_id = sets.set_id
-                                   AND sets_items2.set_id = sets.set_id
-        RIGHT JOIN network.actions AS actions ON actions.item_id_a = actions_sets.item_id_a
-                                              AND actions.item_id_b = actions_sets.item_id_b
+        SELECT proteins1.protein_id, proteins2.protein_id,
+            actions.mode,
+            actions.score,
+            sets.set_id,
+            sets.title,
+            sets.comment,
+            collections.collection_id
+        FROM network.actions AS actions
         JOIN items.proteins AS proteins1 ON actions.item_id_a = proteins1.protein_id
         JOIN items.proteins AS proteins2 ON actions.item_id_b = proteins2.protein_id
-        WHERE sets_items1.species_id = %s
+        LEFT JOIN evidence.actions_sets AS actions_sets ON actions_sets.item_id_a = proteins1.protein_id
+                                                        AND actions_sets.item_id_b = proteins2.protein_id
+                                                        AND actions_sets.mode = actions.mode
+        JOIN evidence.sets_items AS sets_items1 ON sets_items1.item_id = proteins1.protein_id
+        JOIN evidence.sets_items AS sets_items2 ON sets_items2.item_id = proteins2.protein_id
+                                                AND sets_items1.set_id = sets_items2.set_id
+        JOIN evidence.sets AS sets ON sets_items1.set_id = sets.set_id
+        JOIN evidence.collections AS collections ON sets.collection_id = collections.collection_id
+        WHERE proteins1.species_id = %s
         """ + ("AND proteins1.preferred_name = %s AND proteins2.preferred_name = %s" if narrow else "") + ("LIMIT %s" if limit is not None else "") + ";" 
 
     cursor.execute(
