@@ -108,4 +108,6 @@ def get_score_types(postgres_connection):
         FROM network.score_types AS score_types;
         """
     )
-    return cursor.fetchall()
+    result = cursor.fetchall()
+    cursor.close()
+    return result
