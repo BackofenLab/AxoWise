@@ -2,18 +2,12 @@
 def update_proteins_and_action(graph, params):
     # Create the node if the node does not exist, else match it
     query = """
-        MERGE (protein1:Protein {
-            id: {id1},
-            external_id: {external_id1},
-            annotation: {annotation1},
-            preferred_name: {preferred_name1}
+        MATCH (protein1:Protein {
+            id: {id1}
         })
 
-        MERGE (protein2:Protein {
-            id: {id2},
-            external_id: {external_id2},
-            annotation: {annotation2},
-            preferred_name: {preferred_name2}
+        MATCH (protein2:Protein {
+            id: {id2}
         })
 
         MERGE (action:Action {
@@ -57,14 +51,14 @@ def get_protein_subgraph(graph, preferred_name):
 
 def update_associations(graph, params):
     query = """
-        MERGE (protein1:Protein {
+        CREATE (protein1:Protein {
             id: {id1},
             external_id: {external_id1},
             annotation: {annotation1},
             preferred_name: {preferred_name1}
         })
 
-        MERGE (protein2:Protein {
+        CREATE (protein2:Protein {
             id: {id2},
             external_id: {external_id2},
             annotation: {annotation2},

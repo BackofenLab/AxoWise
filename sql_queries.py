@@ -1,5 +1,5 @@
 
-def get_associations(postgres_connection, species_id = 10090, protein1 = None, protein2 = None, limit = None):
+def get_associations(postgres_connection, species_id, protein1 = None, protein2 = None, limit = None):
     cursor = postgres_connection.cursor(name = "associations")
     narrow = (protein1 is not None) and (protein2 is not None)
     query = """
@@ -40,14 +40,11 @@ def get_associations(postgres_connection, species_id = 10090, protein1 = None, p
     
     cursor.close()
 
-def get_actions_and_pathways(postgres_connection, species_id = 10090, protein1 = None, protein2 = None, limit = None):
+def get_actions_and_pathways(postgres_connection, species_id, protein1 = None, protein2 = None, limit = None):
     cursor = postgres_connection.cursor(name = "actions_and_pathways")
     narrow = (protein1 is not None) and (protein2 is not None)
     query = """
         SELECT sets_items1.item_id, sets_items2.item_id,
-               proteins1.protein_external_id, proteins2.protein_external_id,
-               proteins1.annotation, proteins2.annotation,
-               sets_items1.preferred_name, sets_items2.preferred_name,
                actions.mode,
                actions.score,
                sets.set_id,
@@ -80,18 +77,12 @@ def get_actions_and_pathways(postgres_connection, species_id = 10090, protein1 =
         yield {
             "id1": row[0],
             "id2": row[1],
-            "external_id1": row[2],
-            "external_id2": row[3],
-            "annotation1": row[4],
-            "annotation2": row[5],
-            "preferred_name1": row[6],
-            "preferred_name2": row[7],
-            "mode": row[8],
-            "score": row[9],
-            "set_id": row[10],
-            "title": row[11],
-            "comment": row[12],
-            "collection_id": row[13]
+            "mode": row[2],
+            "score": row[3],
+            "set_id": row[4],
+            "title": row[5],
+            "comment": row[6],
+            "collection_id": row[7]
         }
 
     cursor.close()

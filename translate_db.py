@@ -32,21 +32,22 @@ postgres_connection, neo4j_graph = connect()
 
 # STRING
 print("Reading the STRING database...")
-score_types = SQL.get_score_types(postgres_connection)
 species_id = SQL.get_species_id(postgres_connection, "Mus musculus")
-actions_and_pathways = SQL.get_actions_and_pathways(postgres_connection, species_id = species_id, protein1 = "Ccl5", protein2 = "Ccr5")
-associations = SQL.get_associations(postgres_connection, species_id = species_id, protein1 = "Ccl5", protein2 = "Ccr5")
+associations = SQL.get_associations(
+    postgres_connection,
+    species_id = species_id,
+    protein1 = "Ccl5", protein2 = "Ccr5"
+)
+actions_and_pathways = SQL.get_actions_and_pathways(
+    postgres_connection,
+    species_id = species_id,
+    protein1 = "Ccl5", protein2 = "Ccr5"
+)
 
 # Neo4j
 Cypher.delete_all(neo4j_graph)
 
 print("Writing to the Neo4j database...")
-
-print("Actions & pathways")
-for idx, item in enumerate(actions_and_pathways):
-    print("{}".format(idx + 1), end = "\r")
-    Cypher.update_proteins_and_action(neo4j_graph, item)
-print()
 
 print("Associations")
 for idx, item in enumerate(associations):
@@ -54,6 +55,12 @@ for idx, item in enumerate(associations):
     item = {**item, **decode_evidence_scores(item["evidence_scores"])}
     del item["evidence_scores"]
     Cypher.update_associations(neo4j_graph, item)
+print()
+
+print("Actions & pathways")
+for idx, item in enumerate(actions_and_pathways):
+    print("{}".format(idx + 1), end = "\r")
+    Cypher.update_proteins_and_action(neo4j_graph, item)
 print()
 
 Cypher.remove_redundant_properties(neo4j_graph)
