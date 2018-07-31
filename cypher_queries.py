@@ -51,14 +51,14 @@ def get_protein_subgraph(graph, preferred_name):
 
 def update_associations(graph, params):
     query = """
-        CREATE (protein1:Protein {
+        MERGE (protein1:Protein {
             id: {id1},
             external_id: {external_id1},
             annotation: {annotation1},
             preferred_name: {preferred_name1}
         })
 
-        CREATE (protein2:Protein {
+        MERGE (protein2:Protein {
             id: {id2},
             external_id: {external_id2},
             annotation: {annotation2},

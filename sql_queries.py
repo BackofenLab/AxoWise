@@ -13,7 +13,7 @@ def get_associations(postgres_connection, species_id, protein1 = None, protein2 
         JOIN items.proteins AS proteins1 ON proteins1.protein_id = node_node_links.node_id_a
         JOIN items.proteins AS proteins2 ON proteins2.protein_id = node_node_links.node_id_b
         WHERE proteins1.species_id = %s
-    """ + ("AND proteins1.preferred_name = %s AND proteins2.preferred_name = %s" if narrow else "") + ("LIMIT %s" if limit is not None else "") + ";" 
+    """ + ("AND UPPER(proteins1.preferred_name) = UPPER(%s) AND UPPER(proteins2.preferred_name) = UPPER(%s)" if narrow else "") + ("LIMIT %s" if limit is not None else "") + ";" 
 
     cursor.execute(
         query,
@@ -58,12 +58,14 @@ def get_actions_and_pathways(postgres_connection, species_id, protein1 = None, p
                                                         AND actions_sets.item_id_b = proteins2.protein_id
                                                         AND actions_sets.mode = actions.mode
         JOIN evidence.sets_items AS sets_items1 ON sets_items1.item_id = proteins1.protein_id
+                                                AND sets_items1.species_id = proteins1.species_id
         JOIN evidence.sets_items AS sets_items2 ON sets_items2.item_id = proteins2.protein_id
                                                 AND sets_items1.set_id = sets_items2.set_id
+                                                AND sets_items1.species_id = proteins1.species_id
         JOIN evidence.sets AS sets ON sets_items1.set_id = sets.set_id
         JOIN evidence.collections AS collections ON sets.collection_id = collections.collection_id
         WHERE proteins1.species_id = %s
-        """ + ("AND proteins1.preferred_name = %s AND proteins2.preferred_name = %s" if narrow else "") + ("LIMIT %s" if limit is not None else "") + ";" 
+        """ + ("AND UPPER(proteins1.preferred_name) = UPPER(%s) AND UPPER(proteins2.preferred_name) = UPPER(%s)" if narrow else "") + ("LIMIT %s" if limit is not None else "") + ";" 
 
     cursor.execute(
         query,
@@ -93,7 +95,7 @@ def get_species_id(postgres_connection, compact_species_name):
     cursor.execute("""
         SELECT species_id
         FROM items.species
-        WHERE compact_name = %s;
+        WHERE UPPER(compact_name) = UPPER(%s);
         """,
         (compact_species_name,)
     )
