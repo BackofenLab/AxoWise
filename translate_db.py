@@ -78,17 +78,15 @@ for protein1, protein2 in pair_generator(proteins):
 	# Neo4j
 	print("Writing associations...")
 	for idx, item in enumerate(associations):
-	    # print("{}".format(idx + 1), end = "\r")
+	    print("{}".format(idx + 1), end = "\r")
 	    item = {**item, **decode_evidence_scores(item["evidence_scores"])}
 	    del item["evidence_scores"]
-	    print(item)
 	    Cypher.update_associations(neo4j_graph, item)
 	print()
 
 	print("Writing actions & pathways...")
 	for idx, item in enumerate(actions_and_pathways):
-	    # print("{}".format(idx + 1), end = "\r")
-	    print(item)
+	    print("{}".format(idx + 1), end = "\r")
 	    Cypher.update_proteins_and_action(neo4j_graph, item)
 	print()
 
