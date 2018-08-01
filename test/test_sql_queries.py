@@ -16,11 +16,8 @@ class TestSQLQueries(unittest.TestCase):
     
         assert species_id == 0
 
-        connect.return_value.cursor.return_value.execute.assert_called_once_with("""
-        SELECT species_id
-        FROM items.species
-        WHERE UPPER(compact_name) = UPPER(%s);
-        """, ("Homo sapiens",))
+        query, params = SQL.QueryBuilder.species_id_query("Homo sapiens")
+        connect.return_value.cursor.return_value.execute.assert_called_once_with(query, params)
 
 if __name__ == "__main__":
     unittest.main()
