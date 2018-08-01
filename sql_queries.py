@@ -1,5 +1,18 @@
 
 def get_associations(postgres_connection, species_id, protein1 = None, protein2 = None, limit = None):
+    """
+    Queries the database specified by postgres_connection and for each pair
+    of proteins yields an association, i.e.:
+    - internal ids
+    - external ids
+    - annotations
+    - combined score
+    - scores per evidence channels
+
+    The query can be narrowed by specifying names of proteins: protein1 and protein2.
+    To limit the number of fetched rows, provide limit as an integer.
+    """
+
     cursor = postgres_connection.cursor(name = "associations")
     narrow = (protein1 is not None) and (protein2 is not None)
     query = """
@@ -41,6 +54,21 @@ def get_associations(postgres_connection, species_id, protein1 = None, protein2 
     cursor.close()
 
 def get_actions_and_pathways(postgres_connection, species_id, protein1 = None, protein2 = None, limit = None):
+    """
+    Queries the database specified by postgres_connection and for each pair
+    of proteins yields an action and a pathway, i.e.:
+    - internal ids
+    - mode (activation, binding, catalysis etc.)
+    - score
+    - set id
+    - title (type of the pathway)
+    - comment (pathway description)
+    - collection id
+
+    The query can be narrowed by specifying names of proteins: protein1 and protein2.
+    To limit the number of fetched rows, provide limit as an integer.
+    """
+
     cursor = postgres_connection.cursor(name = "actions_and_pathways")
     narrow = (protein1 is not None) and (protein2 is not None)
     query = """
@@ -91,6 +119,12 @@ def get_actions_and_pathways(postgres_connection, species_id, protein1 = None, p
     cursor.close()
 
 def get_species_id(postgres_connection, compact_species_name):
+    """
+    Queries the database specified by postgres_connection and returns
+    the internal id of species defined by compact_species_name.
+    If such species are not matched, None is returned.
+    """
+
     cursor = postgres_connection.cursor()
     cursor.execute("""
         SELECT species_id
@@ -104,6 +138,11 @@ def get_species_id(postgres_connection, compact_species_name):
     return (species_id[0] if species_id is not None else None)
 
 def get_score_types(postgres_connection):
+    """
+    Queries the database specified by postgres_connection and returns
+    all score ids associated with a score type (evidence channel).
+    """
+
     cursor = postgres_connection.cursor()
     cursor.execute("""
         SELECT score_types.score_id,
