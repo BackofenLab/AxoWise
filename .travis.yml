@@ -9,6 +9,6 @@ install:
   - conda update -q conda
   - conda info -a
   - make env
-  - conda activate cgdb
+  - source activate cgdb
 script:
   - make run_tests
