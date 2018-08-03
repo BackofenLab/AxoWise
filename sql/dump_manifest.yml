@@ -12,6 +12,12 @@ tables:
       FROM items.proteins
       WHERE species_id = {{mouse_id}}
 
+  - table: items.species
+    query: >
+      SELECT *
+      FROM items.species
+      WHERE species_id = {{mouse_id}}
+
   # network
   - table: network.node_node_links
     query: >
