@@ -1,0 +1,60 @@
+---
+vars:
+  mouse_id: "10090"
+  # CCR5 (mouse), # CCL5 (mouse), # IL10RA (mouse)
+  protein_ids: "(2111533, 2100220, 2099183)"
+
+tables:
+  # items
+  - table: items.proteins
+    query: >
+      SELECT *
+      FROM items.proteins
+      WHERE species_id = {{mouse_id}}
+
+  # network
+  - table: network.node_node_links
+    query: >
+      SELECT *
+      FROM network.node_node_links
+      WHERE node_id_a IN {{protein_ids}}
+
+  - table: network.actions
+    query: >
+      SELECT *
+      FROM network.actions
+      WHERE item_id_a IN {{protein_ids}}
+
+  # evidence
+  - table: evidence.actions_sets
+    query: >
+      SELECT *
+      FROM evidence.actions_sets
+      WHERE item_id_a IN {{protein_ids}}
+
+  - table: evidence.sets_items
+    query: >
+      SELECT *
+      FROM evidence.sets_items
+      WHERE item_id IN {{protein_ids}}
+
+  - table: evidence.sets
+    query: >
+      SELECT sets.set_id,
+             sets.collection_id,
+             sets.title,
+             sets.comment,
+             sets.url
+      FROM evidence.sets AS sets
+      JOIN evidence.sets_items AS sets_items ON sets.set_id = sets_items.set_id
+      WHERE sets_items.item_id IN {{protein_ids}}
+
+  - table: evidence.collections
+    query: >
+      SELECT collections.collection_id,
+             collections.pubmed_id,
+             collections.comment
+      FROM evidence.collections AS collections
+      JOIN evidence.sets AS sets ON collections.collection_id = sets.collection_id
+      JOIN evidence.sets_items AS sets_items ON sets.set_id = sets_items.set_id
+      WHERE sets_items.item_id IN {{protein_ids}}
