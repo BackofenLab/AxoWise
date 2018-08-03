@@ -14,8 +14,8 @@ install:
   - make env
   - source activate cgdb
 before_script:
-  - cd sql/
-  - source load_test_dump.sh
-  - cd ..
+  - psql -U postgres -c "CREATE DATABASE string;"
+  - psql -U postgres string < dump.schema.psql
+  - psql -U postgres string < dump.test.psql
 script:
   - make run_tests
