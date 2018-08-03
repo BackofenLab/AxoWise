@@ -15,7 +15,7 @@ install:
   - source activate cgdb
 before_script:
   - psql -U postgres -c "CREATE DATABASE string;"
-  - psql -U postgres string < dump.schema.psql
-  - psql -U postgres string < dump.test.psql
+  - psql -U postgres string < sql/dump.schema.psql
+  - psql -U postgres string < sql/dump.test.psql
 script:
   - make run_tests
