@@ -15,5 +15,6 @@ install:
 before_script:
   - cd sql/
   - source load_test_dump.sh
+  - cd ..
 script:
   - make run_tests
