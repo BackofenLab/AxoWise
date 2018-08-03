@@ -1,4 +1,6 @@
 language: python
+services:
+  - postgresql
 install:
   - sudo apt update
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
@@ -10,5 +12,8 @@ install:
   - conda info -a
   - make env
   - source activate cgdb
+before_script:
+  - cd sql/
+  - source load_test_dump.sh
 script:
   - make run_tests
