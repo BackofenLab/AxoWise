@@ -3,14 +3,7 @@ services:
   - postgresql
   - neo4j
 addons:
-  postgresql: "10"
-  apt:
-    packages:
-    - postgresql-10
-    - postgresql-client-10
-env:
-  global:
-  - PGPORT=5432
+  postgresql: "9.6"
 install:
   - sudo apt update
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
