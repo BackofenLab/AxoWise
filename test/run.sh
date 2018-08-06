@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Load the toy database
-psql -U postgres -c "CREATE DATABASE IF NOT EXISTS string;"
+psql -U postgres -c "CREATE DATABASE string;"
 psql -U postgres string < sql/dump.schema.psql
 psql -U postgres string < sql/dump.test.psql
 
