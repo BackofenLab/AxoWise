@@ -7,15 +7,15 @@ class QueryBuilder:
 
         query = """
             SELECT proteins1.protein_id, proteins2.protein_id,
-                proteins1.protein_external_id, proteins2.protein_external_id,
-                proteins1.preferred_name, proteins2.preferred_name,
-                proteins1.annotation, proteins2.annotation,
-                node_node_links.combined_score,
-                node_node_links.evidence_scores
+                   proteins1.protein_external_id, proteins2.protein_external_id,
+                   proteins1.preferred_name, proteins2.preferred_name,
+                   proteins1.annotation, proteins2.annotation,
+                   node_node_links.combined_score,
+                   node_node_links.evidence_scores
             FROM network.node_node_links AS node_node_links
             JOIN items.proteins AS proteins1 ON proteins1.protein_id = node_node_links.node_id_a
             JOIN items.proteins AS proteins2 ON proteins2.protein_id = node_node_links.node_id_b
-            WHERE proteins1.species_id = %s
+            WHERE proteins1.species_id = %s AND proteins1.species_id = proteins2.species_id
         """
         query += ("AND UPPER(proteins1.preferred_name) = UPPER(%s) AND UPPER(proteins2.preferred_name) = UPPER(%s)" if narrow else "")
         query += ("LIMIT %s" if limit is not None else "")
