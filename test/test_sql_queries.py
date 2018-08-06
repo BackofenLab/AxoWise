@@ -1,6 +1,6 @@
 import unittest
-import database
 
+import database
 import sql_queries as SQL
 
 class TestSQLQueries(unittest.TestCase):
@@ -63,6 +63,29 @@ class TestSQLQueries(unittest.TestCase):
 
         postgres_connection.close()
 
+    def test_get_actions_and_pathways(self):
+
+        postgres_connection, _ = database.connect("test/credentials.test.json")
+
+        actions_and_pathways = list(SQL.get_actions_and_pathways(postgres_connection, species_id = 10090, protein1 = "ccr5", protein2 = "ccl5"))
+
+        self.assertTrue(len(actions_and_pathways) >= 5)
+
+        for ap in actions_and_pathways:
+            if ap["mode"] == "activation":
+                self.assertEqual(ap["score"], 849)
+            elif ap["mode"] == "binding":
+                self.assertEqual(ap["score"], 849)
+            elif ap["mode"] == "catalysis":
+                self.assertEqual(ap["score"], 278)
+            elif ap["mode"] == "ptmod":
+                self.assertEqual(ap["score"], 171)
+            elif ap["mode"] == "reaction":
+                self.assertIn(ap["score"], (922, 278))
+
+        # TODO Test pathways
+
+        postgres_connection.close()
 
 if __name__ == "__main__":
     unittest.main()
