@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://bornabesic.github.io/cytokine-graph-db/feed.xml" rel="self" type="application/atom+xml" /><link href="https://bornabesic.github.io/cytokine-graph-db/" rel="alternate" type="text/html" /><updated>2018-08-02T11:24:57+02:00</updated><id>https://bornabesic.github.io/cytokine-graph-db/</id><title type="html">Cytokine Graph DB</title><author><name>Borna Bešić</name></author><entry><title type="html">Setup guide</title><link href="https://bornabesic.github.io/cytokine-graph-db/setup-guide" rel="alternate" type="text/html" title="Setup guide" /><published>2018-08-02T00:00:00+02:00</published><updated>2018-08-02T00:00:00+02:00</updated><id>https://bornabesic.github.io/cytokine-graph-db/setup-guide</id><content type="html" xml:base="https://bornabesic.github.io/cytokine-graph-db/setup-guide">&lt;h2 id=&quot;prerequisites&quot;&gt;Prerequisites&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://bornabesic.github.io/cytokine-graph-db/feed.xml" rel="self" type="application/atom+xml" /><link href="https://bornabesic.github.io/cytokine-graph-db/" rel="alternate" type="text/html" /><updated>2018-08-06T11:24:37+02:00</updated><id>https://bornabesic.github.io/cytokine-graph-db/</id><title type="html">Cytokine Graph DB</title><author><name>Borna Bešić</name></author><entry><title type="html">Documentation</title><link href="https://bornabesic.github.io/cytokine-graph-db/documentation" rel="alternate" type="text/html" title="Documentation" /><published>2018-08-02T00:00:00+02:00</published><updated>2018-08-02T00:00:00+02:00</updated><id>https://bornabesic.github.io/cytokine-graph-db/setup-guide</id><content type="html" xml:base="https://bornabesic.github.io/cytokine-graph-db/documentation">&lt;h2 id=&quot;prerequisites&quot;&gt;Prerequisites&lt;/h2&gt;
 &lt;ul&gt;
   &lt;li&gt;&lt;a href=&quot;https://conda.io/docs/&quot;&gt;conda&lt;/a&gt; installed&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://www.postgresql.org/&quot;&gt;PostgreSQL&lt;/a&gt; server instance running (with the &lt;a href=&quot;index&quot;&gt;STRING schema dumps&lt;/a&gt; loaded)&lt;/li&gt;
@@ -26,6 +26,17 @@
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
   &lt;/li&gt;
 &lt;/ol&gt;
+
+&lt;h2 id=&quot;running-the-unit-tests&quot;&gt;Running the unit tests&lt;/h2&gt;
+
+&lt;p&gt;Unit tests assume the following local configuration:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Authentication mode for PostgreSQL user &lt;em&gt;postgres&lt;/em&gt; is set to &lt;em&gt;trust&lt;/em&gt;
+(in &lt;strong&gt;pg_hba.conf&lt;/strong&gt;; read more &lt;a href=&quot;https://www.postgresql.org/docs/9.6/static/auth-pg-hba-conf.html&quot;&gt;here&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;make run_tests
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;h2 id=&quot;translating-string-postgresql-database-to-neo4j-graph-database&quot;&gt;Translating STRING PostgreSQL database to Neo4j graph database&lt;/h2&gt;
 &lt;ol&gt;
