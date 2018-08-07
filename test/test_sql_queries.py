@@ -74,16 +74,20 @@ class TestSQLQueries(unittest.TestCase):
         for ap in actions_and_pathways:
             if ap["mode"] == "activation":
                 self.assertEqual(ap["score"], 849)
+                self.assertEqual(ap["title"], "annotated pathway (KEGG)")
+                self.assertEqual(ap["comment"], "Name: Cytokine-cytokine receptor interaction")
             elif ap["mode"] == "binding":
                 self.assertEqual(ap["score"], 849)
+                self.assertEqual(ap["title"], "annotated pathway (KEGG)")
+                self.assertEqual(ap["comment"], "Name: Chemokine signaling pathway")
             elif ap["mode"] == "catalysis":
                 self.assertEqual(ap["score"], 278)
             elif ap["mode"] == "ptmod":
                 self.assertEqual(ap["score"], 171)
             elif ap["mode"] == "reaction":
                 self.assertIn(ap["score"], (922, 278))
-
-        # TODO Test pathways
+                self.assertEqual(ap["title"], "curated pathway")
+                self.assertEqual(ap["comment"], "Biochemical Reaction: The Ligand:GPCR:Gi complex dissociates")
 
         postgres_connection.close()
 
