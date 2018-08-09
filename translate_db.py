@@ -1,7 +1,7 @@
 import sys
 import psycopg2
 import py2neo
-import fileinput
+import argparse
 
 import sql_queries as SQL
 import cypher_queries as Cypher
@@ -9,8 +9,24 @@ import database
 from utils import pair_generator, rstrip_line_generator
 
 def main():
+    # Parse CLI arguments
+    args_parser = argparse.ArgumentParser(
+        formatter_class = argparse.ArgumentDefaultsHelpFormatter
+    )
+
+    args_parser.add_argument(
+        "--credentials",
+        type = str,
+        help = "Path to the credentials JSON file that will be used",
+        default = "credentials.json"
+    )
+
+    args = args_parser.parse_args()
+
     # Parse the standard input
-    lines = list(rstrip_line_generator(fileinput.input(), skip_empty = True))
+    input_stdin = sys.stdin.read()
+    lines = input_stdin.split("\n")
+    lines.remove("")
 
     if len(lines) < 3:
         print(
@@ -50,7 +66,7 @@ def main():
 
 
     # Connect to the databases
-    postgres_connection, neo4j_graph = database.connect()
+    postgres_connection, neo4j_graph = database.connect(credentials_path = args.credentials)
 
     species_id = SQL.get_species_id(postgres_connection, species)
     if species_id is None:
