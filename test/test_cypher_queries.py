@@ -7,9 +7,11 @@ class TestCypherQueries(unittest.TestCase):
 
     def test_get_protein_subgraph(self):
 
-        _, neo4j_graph = database.connect("test/credentials.test.json")
+        postgres_connection, neo4j_graph = database.connect("test/credentials.test.json")
+        postgres_connection.close()
+
         subgraph = Cypher.get_protein_subgraph(neo4j_graph, "Ccr5")
-    
+
         for entry in subgraph:
             self.assertEqual(entry["protein"]["preferred_name"], "Ccr5")
             association = entry["association"]
