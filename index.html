@@ -50,10 +50,11 @@
       <li><a href="https://stringdb-static.org/download/database.schema.v10.5.pdf">database.schema.v10.5.pdf</a> (121.3 Kb) - Database scheme</li>
       <li><a href="https://stringdb-static.org/download/items_schema.v10.5.sql.gz">items_schema.v10.5.sql.gz</a> (4.9 Gb) - part I: the players (proteins, species, COGs,…)</li>
       <li><a href="https://stringdb-static.org/download/network_schema.v10.5.sql.gz">network_schema.v10.5.sql.gz</a> (41.3 Gb) - part II: the networks (nodes, edges, scores,…)</li>
-      <li><a href="https://stringdb-static.org/download/evidence_schema.v10.5.sql.gz">evidence_schema.v10.5.sql.gz</a> (6.9 Gb) - part III: interaction evidence (but: excluding license-restricted data)</li>
+      <li><a href="https://stringdb-static.org/download/evidence_schema.v10.5.sql.gz">evidence_schema.v10.5.sql.gz</a> (6.9 Gb) - part III: interaction evidence (but: excluding license-restricted data, such as <strong>KEGG pathways</strong>)</li>
     </ul>
   </li>
-  <li><a href="https://raw.githubusercontent.com/bornabesic/cytokine-graph-db/master/sql/load_dumps.sh">Load the dumps</a> into PostgreSQL database</li>
+  <li><a href="https://raw.githubusercontent.com/bornabesic/cytokine-graph-db/master/sql/load_dumps.sh">Load the dumps</a> into a PostgreSQL database</li>
+  <li>Find out how to connect KEGG pathways (available through <a href="https://string-db.org/help/api/#string-api">STRING API</a>) to a certain protein - protein action</li>
 </ul>
 
 <h1 id="2-extract-the-information-from-the-data-automated-testing">2. Extract the information from the data <span style="color:green; font-size: small;">automated (testing)</span></h1>
@@ -61,7 +62,7 @@
   <li>Derive the information we are interested in (i.e. for <em>Homo sapiens</em> &amp; <em>Mus musculus</em>) by querying the PostgreSQL database</li>
 </ul>
 
-<h1 id="3-build-a-graph-database-automated-testing">3. Build a graph database <span style="color:green; font-size: small;">automated (testing)</span></h1>
+<h1 id="3-build-a-graph-database-partially-automated-testing">3. Build a graph database <span style="color:brown; font-size: small;">partially automated (testing)</span></h1>
 <ul>
   <li>Turn the extracted information into <a href="https://neo4j.com/">Neo4j</a> graph database (using our defined <a href="graph-db-scheme">database scheme</a>)</li>
   <li>Build a separate graph for each of the species in the same database (add species label to the nodes)</li>
