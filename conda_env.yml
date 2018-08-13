@@ -6,3 +6,4 @@ dependencies:
   - python=3
   - py2neo
   - psycopg2
+  - plotly
