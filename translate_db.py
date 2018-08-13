@@ -23,7 +23,7 @@ def main():
 
     args = args_parser.parse_args()
 
-    # Parse the standard input
+    # Parse the standard input (until EOF)
     input_stdin = sys.stdin.read()
     lines = input_stdin.split("\n")
     lines.remove("")
@@ -54,6 +54,7 @@ def main():
         16: "cooccurence"
     }
 
+    # Maps evidence channel ids to channel names (score_channel_map values)
     def decode_evidence_scores(evidence_scores):
         params = { channel: None for channel in score_channel_map.values()}
         for score_id, score in evidence_scores:
@@ -68,22 +69,27 @@ def main():
     # Connect to the databases
     postgres_connection, neo4j_graph = database.connect(credentials_path = args.credentials)
 
+    # Get the species id
     species_id = SQL.get_species_id(postgres_connection, species)
     if species_id is None:
         print("Species not found!")
         sys.exit(1)
 
 
+    # Clear the Neo4j database
     Cypher.delete_all(neo4j_graph)
 
+    # For each pair of proteins...
     for protein1, protein2 in pair_generator(proteins):
         print("{} <---> {}".format(protein1, protein2))
         # STRING
+        # Get protein - protein association
         associations = SQL.get_associations(
             postgres_connection,
             species_id = species_id,
             protein1 = protein1, protein2 = protein2
         )
+        # Get protein - protein functional prediction
         actions_and_pathways = SQL.get_actions_and_pathways(
             postgres_connection,
             species_id = species_id,
@@ -105,10 +111,12 @@ def main():
             Cypher.update_proteins_and_action(neo4j_graph, item)
         print()
 
+    # Remove redundant properties of nodes used to correctly construct the graph
     Cypher.remove_redundant_properties(neo4j_graph)
 
     print("Done!")
 
+    # Close the PostgreSQL connection
     postgres_connection.close()
 
 if __name__ == "__main__":
