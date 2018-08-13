@@ -1,6 +1,13 @@
 
 def update_proteins_and_action(graph, params):
-    # Create the node if the node does not exist, else match it
+    """
+    For an existing protein - protein pair, create / update (merge) the given
+    action associated with the given pathway.
+
+    If the action's "mode" is the same, the action is updated only if the current
+    provided score is higher than the previous.
+    """
+    
     query = """
         MATCH (protein1:Protein {
             id: {id1}
@@ -37,6 +44,11 @@ def update_proteins_and_action(graph, params):
     graph.run(query, params)
 
 def get_protein_subgraph(graph, preferred_name):
+    """
+    For the given protein, return the Neo4j subgraph
+    of the protein and all other associated proteins.
+    """
+
     query = """
         MATCH (protein:Protein {
             preferred_name: {preferred_name}
@@ -50,6 +62,11 @@ def get_protein_subgraph(graph, preferred_name):
     ))
 
 def update_associations(graph, params):
+    """
+    For a given protein - protein pair, create / update (merge) the proteins
+    and the association between them.
+    """
+
     query = """
         MERGE (protein1:Protein {
             id: {id1},
@@ -79,6 +96,11 @@ def update_associations(graph, params):
     graph.run(query, params)
 
 def remove_redundant_properties(graph):
+    """
+    Remove redundant properties of nodes or edges that have been previously
+    used to correctly construct the graph.
+    """
+
     query = """
         MATCH (action:Action)
         REMOVE action.id1, action.id2
@@ -86,5 +108,9 @@ def remove_redundant_properties(graph):
     graph.run(query)
 
 def delete_all(graph):
+    """
+    Delete all nodes and edges from a Neo4j graph.
+    """
+
     query = "MATCH (n) DETACH DELETE (n)"
     graph.run(query)
