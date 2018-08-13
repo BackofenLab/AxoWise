@@ -49,17 +49,33 @@ def get_protein_subgraph(graph, preferred_name):
     of the protein and all other associated proteins.
     """
 
-    query = """
+    query_no_actions = """
+        MATCH (protein:Protein {
+            preferred_name: {preferred_name}
+        })-[association:ASSOCIATION]-(other:Protein)
+        WHERE NOT (protein)-[:IN]-()
+              AND (other)-[:IN]-()
+        RETURN other, association
+    """
+
+    query_actions = """
         MATCH (protein:Protein {
             preferred_name: {preferred_name}
         })-[association:ASSOCIATION]-(other:Protein)
         MATCH (protein)-[:IN]-(action:Action)
+        MATCH (other)-[:IN]-(action:Action)
         MATCH (action)-[:IN]-(pathway:Pathway)
-        RETURN *
+        RETURN other, association, action, pathway
     """
-    return graph.data(query, dict(
+
+    param_dict = dict(
         preferred_name = preferred_name
-    ))
+    )
+
+    data_no_actions = graph.data(query_no_actions, param_dict)
+    data_actions = graph.data(query_actions, param_dict)
+
+    return data_no_actions + data_actions
 
 def update_associations(graph, params):
     """
