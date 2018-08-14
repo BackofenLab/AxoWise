@@ -54,8 +54,8 @@ def get_protein_subgraph(graph, preferred_name):
             preferred_name: {preferred_name}
         })-[association:ASSOCIATION]-(other:Protein)
         WHERE NOT (protein)-[:IN]-()
-              AND (other)-[:IN]-()
-        RETURN other, association
+              OR NOT (other)-[:IN]-()
+        RETURN protein, other, association
     """
 
     query_actions = """
@@ -65,7 +65,7 @@ def get_protein_subgraph(graph, preferred_name):
         MATCH (protein)-[:IN]-(action:Action)
         MATCH (other)-[:IN]-(action:Action)
         MATCH (action)-[:IN]-(pathway:Pathway)
-        RETURN other, association, action, pathway
+        RETURN protein, other, association, action, pathway
     """
 
     param_dict = dict(
