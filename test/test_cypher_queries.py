@@ -15,12 +15,12 @@ class TestCypherQueries(unittest.TestCase):
         for entry in subgraph:
             self.assertEqual(entry["protein"]["preferred_name"], "Ccr5")
             association = entry["association"]
-            action = entry["action"]
             if entry["other"]["preferred_name"] == "Ccl5":
                 self.assertEqual(association["coexpression"], 92)
                 self.assertEqual(association["database"], 900)
                 self.assertEqual(association["textmining"], 906)
                 self.assertEqual(association["combined"], 993)
+                action = entry["action"]
                 if action["mode"] == "binding":
                     self.assertEqual(action["score"], 849)
                 elif action["mode"] == "ptmod":
