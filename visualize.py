@@ -1,6 +1,7 @@
 
 import argparse
-import plotly.plotly as plotly
+import networkx as nx
+from pyvis.network import Network
 
 import database
 import cypher_queries as Cypher
@@ -33,7 +34,18 @@ def main():
 
     subgraph = Cypher.get_protein_subgraph(neo4j_graph, args.protein)
 
-    # TODO Use plotly to visualize a protein network
+    # Build a networkx graph
+    G = nx.Graph()
+    for entry in subgraph:
+        G.add_node(entry["protein"])
+        G.add_node(entry["other"])
+        G.add_edge(entry["protein"], entry["other"])
+        # TODO Take care of actions & pathways
+
+    assert G.number_of_nodes() == 3
+
+    #TODO Visualize the protein network
+
 
 if __name__ == "__main__":
     main()

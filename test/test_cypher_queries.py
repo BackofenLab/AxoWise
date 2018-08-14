@@ -13,7 +13,7 @@ class TestCypherQueries(unittest.TestCase):
         subgraph = Cypher.get_protein_subgraph(neo4j_graph, "Ccr5")
 
         for entry in subgraph:
-            # self.assertEqual(entry["protein"]["preferred_name"], "Ccr5")
+            self.assertEqual(entry["protein"]["preferred_name"], "Ccr5")
             association = entry["association"]
             action = entry["action"]
             if entry["other"]["preferred_name"] == "Ccl5":
