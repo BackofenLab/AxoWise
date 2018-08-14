@@ -1,7 +1,8 @@
 
+import json
 import argparse
 import networkx as nx
-from pyvis.network import Network
+from networkx.readwrite import json_graph
 
 import database
 import cypher_queries as Cypher
@@ -45,6 +46,9 @@ def main():
     assert G.number_of_nodes() == 3
 
     #TODO Visualize the protein network
+    data = json_graph.node_link_data(G)
+    with open("visualize/subgraph.json", "w") as json_file:
+        json.dump(data, json_file)
 
 
 if __name__ == "__main__":
