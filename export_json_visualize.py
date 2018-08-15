@@ -38,9 +38,9 @@ def main():
     # Build a networkx graph
     G = nx.Graph()
     for entry in subgraph:
-        G.add_node(entry["protein"])
-        G.add_node(entry["other"])
-        G.add_edge(entry["protein"], entry["other"])
+        G.add_node(entry["protein"]["id"], **entry["protein"])
+        G.add_node(entry["other"]["id"], **entry["other"])
+        G.add_edge(entry["protein"]["id"], entry["other"]["id"], **entry["association"])
         # TODO Take care of actions & pathways
 
     assert G.number_of_nodes() == 3
