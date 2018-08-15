@@ -1,6 +1,7 @@
 
 import json
 import argparse
+import copy
 import networkx as nx
 from networkx.readwrite import json_graph
 
@@ -41,11 +42,19 @@ def main():
         G.add_node(entry["protein"]["id"], **entry["protein"])
         G.add_node(entry["other"]["id"], **entry["other"])
         G.add_edge(entry["protein"]["id"], entry["other"]["id"], **entry["association"])
-        # TODO Take care of actions & pathways
 
-    assert G.number_of_nodes() == 3
+        if "action" in entry:
+            entry["action"]["id1"] = entry["protein"]["id"]
+            entry["action"]["id2"] = entry["other"]["id"]
+            G.add_node(entry["action"])
+            G.add_edge(entry["protein"]["id"], entry["action"])
+            G.add_edge(entry["other"]["id"], entry["action"])
 
-    #TODO Visualize the protein network
+            if "pathway" in entry:
+                G.add_node(entry["pathway"]["set_id"], **entry["pathway"])
+                G.add_edge(entry["pathway"]["set_id"], entry["action"])
+
+    # Export graph JSON that can be read to visualize it
     data = json_graph.node_link_data(G)
     with open("visualize/subgraph.json", "w") as json_file:
         json.dump(data, json_file)
