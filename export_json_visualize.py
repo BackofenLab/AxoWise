@@ -17,14 +17,14 @@ def neo4j_to_json(neo4j_data):
         G.add_edge(entry["protein"]["id"], entry["other"]["id"], **entry["association"])
 
         if "action" in entry:
-            entry["action"]["id"] = str(entry["protein"]["id"]) + str(entry["other"]["id"]) 
-            G.add_node(entry["action"]["id"], **entry["action"])
-            G.add_edge(entry["protein"]["id"], entry["action"]["id"])
-            G.add_edge(entry["other"]["id"], entry["action"]["id"])
+            action_id = str(entry["protein"]["id"]) + entry["action"]["mode"] + str(entry["other"]["id"])
+            G.add_node(action_id, **entry["action"])
+            G.add_edge(entry["protein"]["id"], action_id)
+            G.add_edge(entry["other"]["id"], action_id)
 
             if "pathway" in entry:
                 G.add_node(entry["pathway"]["set_id"], **entry["pathway"])
-                G.add_edge(entry["pathway"]["set_id"], entry["action"]["id"])
+                G.add_edge(entry["pathway"]["set_id"], action_id)
 
     # Add node positions
     # pos = nx.spring_layout(G)
