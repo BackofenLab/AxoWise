@@ -27,7 +27,11 @@ d3.json("subgraph.json", function(error, graph) {
                 .data(graph.links)
                 .enter().append("line")
                 .style("transform", "translate(50%, 50%)")
-                .attr("stroke-width", function(d) { return 10; });
+                .attr("stroke-width", 10)
+                .attr("stroke", function(d){
+                    if ("combined" in d) return "#FF0000";
+                    return "#999";
+                });
 
   link.on("mouseover", function(d) {
     d3.select(this)
