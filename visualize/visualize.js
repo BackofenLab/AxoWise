@@ -1,16 +1,16 @@
 var tooltip = d3.select("body")
                      .append("div")
                      .attr("class", "node-tooltip")
-                     .attr("width", "300px")
+                     .style("width", "300px")
                      .style("word-wrap", "break-word")
                      .style("display", "none")
-                     .style("position", "absolute");
+                     .style("position", "absolute")
+                     .style("background-color", "#999")
+                     .style("color", "#FFFFFF");
 
 var svg = d3.select("svg"),
     width = +svg.attr("width"),
     height = +svg.attr("height");
-
-var color = d3.scaleOrdinal(d3.schemeCategory20);
 
 var simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(function(d) { return d.id; }))
@@ -29,11 +29,13 @@ d3.json("subgraph.json", function(error, graph) {
                 .style("transform", "translate(50%, 50%)")
                 .attr("stroke-width", 10)
                 .attr("stroke", function(d){
-                    if ("combined" in d) return "#FF0000";
+                    if ("combined" in d) return "#89c6ff";
                     return "#999";
                 });
 
   link.on("mouseover", function(d) {
+    if (!("combined" in d)) return;
+
     d3.select(this)
       .style("cursor", "pointer")
   });
@@ -56,7 +58,7 @@ d3.json("subgraph.json", function(error, graph) {
     html = "";
     for (var i = 0; i < channels.length; i++){
       channel = channels[i];
-      if (channel in d) html += (channel + ": " + d[channel] / 1000 + "<br/>");
+      if (channel in d) html += ("<b>" + channel + "</b>: " + d[channel] / 1000 + "<br/>");
     }
 
     tooltip.html(html)
@@ -76,10 +78,9 @@ d3.json("subgraph.json", function(error, graph) {
                 .enter().append("circle")
                 .attr("r", 30)
                 .attr("fill", function(d) {
-                  if ("preferred_name" in d) group = 1;
-                  else if ("mode" in d) group = 2;
-                  else if ("comment" in d) group = 3;
-                  return color(group);
+                  if ("preferred_name" in d) return "#89c6ff";
+                  else if ("mode" in d) return "#ff8989";
+                  else if ("comment" in d) return "#fdff89";
                  })
                 .style("transform", "translate(50%, 50%)")
                 .call(d3.drag()
@@ -96,7 +97,20 @@ d3.json("subgraph.json", function(error, graph) {
     tooltip.style("opacity", "1")
                 .style("display", "inline")
 
-    tooltip.html(d.annotation)
+    if ("preferred_name" in d) {
+      html = "<b>" + d.external_id + "</b><br/>";
+      html += d.annotation;
+    }
+    else if ("mode" in d) {
+      html = "score: " + d.score / 1000;
+    }
+    else if ("collection_id" in d) {
+      html = d.collection_id + "<br/>";
+      html += d.set_id + "<br/>";
+      html += d.title + "<br/>";
+    }
+
+    tooltip.html(html)
                 .style("left", (d3.event.pageX) + "px")
                 .style("top", (d3.event.pageY) + "px")
   });
