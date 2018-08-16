@@ -8,6 +8,35 @@ from networkx.readwrite import json_graph
 import database
 import cypher_queries as Cypher
 
+def neo4j_to_json(neo4j_data):
+    # Build a networkx graph
+    G = nx.Graph()
+    for entry in neo4j_data:
+        G.add_node(entry["protein"]["id"], **entry["protein"])
+        G.add_node(entry["other"]["id"], **entry["other"])
+        G.add_edge(entry["protein"]["id"], entry["other"]["id"], **entry["association"])
+
+        if "action" in entry:
+            entry["action"]["id"] = str(entry["protein"]["id"]) + str(entry["other"]["id"]) 
+            G.add_node(entry["action"]["id"], **entry["action"])
+            G.add_edge(entry["protein"]["id"], entry["action"]["id"])
+            G.add_edge(entry["other"]["id"], entry["action"]["id"])
+
+            if "pathway" in entry:
+                G.add_node(entry["pathway"]["set_id"], **entry["pathway"])
+                G.add_edge(entry["pathway"]["set_id"], entry["action"]["id"])
+
+    # Add node positions
+    # pos = nx.spring_layout(G)
+
+    # for n in G:
+    #     x, y = pos[n]
+    #     G.node[n]["x"] = x
+    #     G.node[n]["y"] = y
+
+    # Convert the networkx graph to JSON
+    return json_graph.node_link_data(G)
+
 def main():
     # Parse CLI arguments
     args_parser = argparse.ArgumentParser(
@@ -36,26 +65,8 @@ def main():
 
     subgraph = Cypher.get_protein_subgraph(neo4j_graph, args.protein)
 
-    # Build a networkx graph
-    G = nx.Graph()
-    for entry in subgraph:
-        G.add_node(entry["protein"]["id"], **entry["protein"])
-        G.add_node(entry["other"]["id"], **entry["other"])
-        G.add_edge(entry["protein"]["id"], entry["other"]["id"], **entry["association"])
-
-        if "action" in entry:
-            entry["action"]["id1"] = entry["protein"]["id"]
-            entry["action"]["id2"] = entry["other"]["id"]
-            G.add_node(entry["action"])
-            G.add_edge(entry["protein"]["id"], entry["action"])
-            G.add_edge(entry["other"]["id"], entry["action"])
-
-            if "pathway" in entry:
-                G.add_node(entry["pathway"]["set_id"], **entry["pathway"])
-                G.add_edge(entry["pathway"]["set_id"], entry["action"])
-
     # Export graph JSON that can be read to visualize it
-    data = json_graph.node_link_data(G)
+    data = neo4j_to_json(subgraph)
     with open("visualize/subgraph.json", "w") as json_file:
         json.dump(data, json_file)
 
