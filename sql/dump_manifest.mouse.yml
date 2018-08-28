@@ -1,8 +1,6 @@
 ---
 vars:
   mouse_id: "10090"
-  # CCR5 (mouse), # CCL5 (mouse), # IL10RA (mouse)
-  protein_ids: "(2111533, 2100220, 2099183)"
 
 tables:
   # items
