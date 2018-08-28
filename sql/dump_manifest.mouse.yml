@@ -1,0 +1,88 @@
+---
+vars:
+  mouse_id: "10090"
+  # CCR5 (mouse), # CCL5 (mouse), # IL10RA (mouse)
+  protein_ids: "(2111533, 2100220, 2099183)"
+
+tables:
+  # items
+  - table: items.proteins
+    query: >
+      SELECT *
+      FROM items.proteins
+      WHERE species_id = {{mouse_id}}
+
+  - table: items.species
+    query: >
+      SELECT *
+      FROM items.species
+      WHERE species_id = {{mouse_id}}
+
+  # network
+  - table: network.node_node_links
+    query: >
+      SELECT node_id_a,
+             node_type_b,
+             node_id_b,
+             combined_score,
+             evidence_scores
+      FROM network.node_node_links AS node_node_links
+      JOIN items.proteins AS proteins1 ON node_node_links.node_id_a = proteins1.protein_id
+      JOIN items.proteins AS proteins2 ON node_node_links.node_id_b = proteins2.protein_id
+      WHERE proteins1.species_id = {{mouse_id}} AND
+            proteins2.species_id = {{mouse_id}}
+
+  - table: network.actions
+    query: >
+      SELECT item_id_a,
+             item_id_b,
+             mode,
+             action,
+             is_directional,
+             a_is_acting,
+             score
+      FROM network.actions AS actions
+      JOIN items.proteins AS proteins1 ON actions.item_id_a = proteins1.protein_id
+      JOIN items.proteins AS proteins2 ON actions.item_id_b = proteins2.protein_id
+      WHERE proteins1.species_id = {{mouse_id}} AND
+            proteins2.species_id = {{mouse_id}}
+
+  # evidence
+  - table: evidence.actions_sets
+    query: >
+      SELECT item_id_a,
+             item_id_b,
+             mode,
+             sources
+      FROM evidence.actions_sets AS actions_sets
+      JOIN items.proteins AS proteins1 ON actions_sets.item_id_a = proteins1.protein_id
+      JOIN items.proteins AS proteins2 ON actions_sets.item_id_b = proteins2.protein_id
+      WHERE proteins1.species_id = {{mouse_id}} AND
+            proteins2.species_id = {{mouse_id}}
+
+  - table: evidence.sets_items
+    query: >
+      SELECT *
+      FROM evidence.sets_items
+      WHERE species_id = {{mouse_id}}
+
+  - table: evidence.sets
+    query: >
+      SELECT sets.set_id,
+             sets.collection_id,
+             sets.title,
+             sets.comment,
+             sets.url
+      FROM evidence.sets AS sets
+      JOIN evidence.sets_items AS sets_items ON sets.set_id = sets_items.set_id
+      WHERE sets_items.species_id = {{mouse_id}}
+
+  - table: evidence.collections
+    query: >
+      SELECT collections.collection_id,
+             collections.pubmed_id,
+             collections.comment
+      FROM evidence.collections AS collections
+      JOIN evidence.sets AS sets ON collections.collection_id = sets.collection_id
+      JOIN evidence.sets_items AS sets_items ON sets.set_id = sets_items.set_id
+      WHERE sets_items.species_id = {{mouse_id}}
