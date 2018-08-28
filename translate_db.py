@@ -28,13 +28,13 @@ def main():
     lines = input_stdin.split("\n")
     lines.remove("")
 
-    if len(lines) < 3:
+    only_species = (len(lines) == 1)
+
+    if not only_species and len(lines) < 3:
         print(
             """
-            Expected format (species and at least two proteins):
+            Expected format (species and optionally at least two proteins):
             <species name>
-            <protein>
-            <protein>
             [<protein> ...]
             """
         )
@@ -79,21 +79,18 @@ def main():
     # Clear the Neo4j database
     Cypher.delete_all(neo4j_graph)
 
-    # For each pair of proteins...
-    for protein1, protein2 in pair_generator(proteins):
-        print("{} <---> {}".format(protein1, protein2))
+    # Translate the database for all species proteins
+    if only_species:
         # STRING
         # Get protein - protein association
         associations = SQL.get_associations(
             postgres_connection,
-            species_id = species_id,
-            protein1 = protein1, protein2 = protein2
+            species_id = species_id
         )
         # Get protein - protein functional prediction
         actions_and_pathways = SQL.get_actions_and_pathways(
             postgres_connection,
-            species_id = species_id,
-            protein1 = protein1, protein2 = protein2
+            species_id = species_id
         )
 
         # Neo4j
@@ -110,6 +107,40 @@ def main():
             print("{}".format(idx + 1), end = "\r")
             Cypher.update_proteins_and_action(neo4j_graph, item)
         print()
+
+    # Translate the database only for specified proteins
+    else:
+        # For each pair of proteins...
+        for protein1, protein2 in pair_generator(proteins):
+            print("{} <---> {}".format(protein1, protein2))
+            # STRING
+            # Get protein - protein association
+            associations = SQL.get_associations(
+                postgres_connection,
+                species_id = species_id,
+                protein1 = protein1, protein2 = protein2
+            )
+            # Get protein - protein functional prediction
+            actions_and_pathways = SQL.get_actions_and_pathways(
+                postgres_connection,
+                species_id = species_id,
+                protein1 = protein1, protein2 = protein2
+            )
+
+            # Neo4j
+            print("Writing associations...")
+            for idx, item in enumerate(associations):
+                print("{}".format(idx + 1), end = "\r")
+                item = {**item, **decode_evidence_scores(item["evidence_scores"])}
+                del item["evidence_scores"]
+                Cypher.update_associations(neo4j_graph, item)
+            print()
+
+            print("Writing actions & pathways...")
+            for idx, item in enumerate(actions_and_pathways):
+                print("{}".format(idx + 1), end = "\r")
+                Cypher.update_proteins_and_action(neo4j_graph, item)
+            print()
 
     # Remove redundant properties of nodes used to correctly construct the graph
     Cypher.remove_redundant_properties(neo4j_graph)
