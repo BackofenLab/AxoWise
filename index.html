@@ -45,12 +45,21 @@
 
 <h1 id="1-collect-the-data-not-automated">1. Collect the data <span style="color:red; font-size: small;">not automated</span></h1>
 <ul>
-  <li>Download the following STRING database dumps:
+  <li>Download the STRING database dumps
     <ul>
-      <li><a href="https://stringdb-static.org/download/database.schema.v10.5.pdf">database.schema.v10.5.pdf</a> (121.3 Kb) - Database scheme</li>
-      <li><a href="https://stringdb-static.org/download/items_schema.v10.5.sql.gz">items_schema.v10.5.sql.gz</a> (4.9 Gb) - part I: the players (proteins, species, COGs,…)</li>
-      <li><a href="https://stringdb-static.org/download/network_schema.v10.5.sql.gz">network_schema.v10.5.sql.gz</a> (41.3 Gb) - part II: the networks (nodes, edges, scores,…)</li>
-      <li><a href="https://stringdb-static.org/download/evidence_schema.v10.5.sql.gz">evidence_schema.v10.5.sql.gz</a> (6.9 Gb) - part III: interaction evidence (but: excluding license-restricted data, such as <strong>KEGG pathways</strong>)</li>
+      <li>Full database
+        <ul>
+          <li><a href="https://stringdb-static.org/download/database.schema.v10.5.pdf">database.schema.v10.5.pdf</a> (121.3 kB) - Database scheme</li>
+          <li><a href="https://stringdb-static.org/download/items_schema.v10.5.sql.gz">items_schema.v10.5.sql.gz</a> (4.9 GB) - part I: the players (proteins, species, COGs,…)</li>
+          <li><a href="https://stringdb-static.org/download/network_schema.v10.5.sql.gz">network_schema.v10.5.sql.gz</a> (41.3 GB) - part II: the networks (nodes, edges, scores,…)</li>
+          <li><a href="https://stringdb-static.org/download/evidence_schema.v10.5.sql.gz">evidence_schema.v10.5.sql.gz</a> (6.9 GB) - part III: interaction evidence (but: excluding license-restricted data, such as <strong>KEGG pathways</strong>)</li>
+        </ul>
+      </li>
+      <li>Database subset for <em>Mus musculus</em> (mouse)
+        <ul>
+          <li><a href="https://drive.google.com/file/d/1-AL0M7KPqCGXETL9BTsFGFbj6FqoQPMB/view?usp=sharing">STRING_mouse.zip</a> (131 MB)</li>
+        </ul>
+      </li>
     </ul>
   </li>
   <li>Load the dumps into a PostgreSQL database</li>
