@@ -38,7 +38,8 @@ def update_proteins_and_action(graph, params):
             title: {title}
         })
 
-        MERGE (action)-[:IN]->(pathway)
+        MERGE (protein1)-[:IN]->(pathway)
+        MERGE (protein2)-[:IN]->(pathway)
 
     """
     graph.run(query, params)
