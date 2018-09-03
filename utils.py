@@ -5,10 +5,15 @@ def rstrip_line_generator(iterable, skip_empty = False):
         if skip_empty and new_line != "":	
             yield new_line
 
-def lines(file_path, encoding = "utf-8"):
-    with open(file_path, "rt", encoding = encoding) as f:
-        for rstripped_line in rstrip_line_generator(f):
-            yield rstripped_line
+def lines(buffer, encoding = "utf-8"):
+    if "\n" in buffer: # If it is a string, split by \n
+        iterable = buffer.split("\n")
+        for rstripped_line in rstrip_line_generator(iterable, skip_empty = True):
+                yield rstripped_line
+    else: # else assume it is a file handle
+        with open(buffer, "rt", encoding = encoding) as iterable:
+            for rstripped_line in rstrip_line_generator(iterable, skip_empty = True):
+                yield rstripped_line
 
 def read_table(file_path, types, delimiter = ","):
     expected_cols = len(types)
