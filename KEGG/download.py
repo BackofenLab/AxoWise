@@ -21,10 +21,14 @@ with open(organisms_path, mode = "w", encoding = "utf-8") as organisms_file:
 
 # Pathways
 print("Downloading pathways...")
-for id1, id2, name, taxonomy in utils.read_table(organisms, (str, str, str, str), "\t"):
-    print(name)
+for id1, id2, organism_name, taxonomy in utils.read_table(organisms, (str, str, str, str), "\t"):
+    print(organism_name)
     pathways = api.pathways(id2)
-    pathways_path = os.path.join(PATHWAYS_DIR, "{}.tsv".format(id2))
-    with open(pathways_path, mode = "w", encoding = "utf-8") as pathways_file:
-        pathways_file.write(pathways)
 
+    for pathway_id, pathway_name in utils.read_table(pathways, (str, str), "\t"):
+        print(pathway_name)
+        pathway = api.pathway(pathway_id, kgml = False)
+
+        pathway_path = os.path.join(PATHWAYS_DIR, pathway_id)
+        with open(pathway_path, mode = "w", encoding = "utf-8") as pathway_file:
+            pathway_file.write(pathway)
