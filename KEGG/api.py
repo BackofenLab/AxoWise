@@ -11,7 +11,7 @@ def organisms():
     organisms_file = get(_organisms_endpoint)
     return organisms_file
 
-def pathway(organism_id):
+def pathways(organism_id):
     endpoint = _pathway_template.substitute(organism_id = organism_id)
     pathway_file = get(endpoint)
     return pathway_file
