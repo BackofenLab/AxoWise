@@ -2,62 +2,74 @@
 import os
 import api
 import parse
+import argparse
 
 import sys
 sys.path.append("..")
 from utils import read_table
 
+# Parse CLI arguments
+args_parser = argparse.ArgumentParser(
+    formatter_class = argparse.ArgumentDefaultsHelpFormatter
+)
+
+args_parser.add_argument(
+    "--kegg_organism_id",
+    type = str,
+    help = "Download KEGG pathways only for this organism",
+    default = "hsa" # Homo sapiens
+)
+
+args_parser.add_argument(
+    "--string_organism_id",
+    type = str,
+    help = "Map KEGG pathways to this STRING organism",
+    default = "9606" # Homo sapiens
+)
+
+args = args_parser.parse_args()
+
 # Directory for saving the data
 DATA_DIR = "data"
-PATHWAYS_DIR = os.path.join(DATA_DIR, "pathways")
 os.makedirs(DATA_DIR, exist_ok = True)
-os.makedirs(PATHWAYS_DIR, exist_ok = True)
-
-# Organisms
-print("Downloading organisms list...")
-organisms = api.organisms()
-organisms_path = os.path.join(DATA_DIR, "organisms.tsv")
-with open(organisms_path, mode = "w", encoding = "utf-8") as organisms_file:
-    organisms_file.write(organisms)
 
 # Pathways
-print("Downloading pathways...")
-kegg2external_file = open(os.path.join(DATA_DIR, "kegg2external.tsv"), mode = "w", encoding = "utf-8")
-for id1, id2, organism_name, taxonomy in read_table(organisms, (str, str, str, str), "\t"):
-    print(organism_name)
-    pathways = api.pathways(id2)
+print("Downloading pathways for: {}".format(args.kegg_organism_id))
+pathways_file = open(os.path.join(DATA_DIR, "kegg_pathways.{}.tsv".format(args.kegg_organism_id)), mode = "w", encoding = "utf-8")
 
-    # Get the pathway
-    for pathway_id, pathway_name in read_table(pathways, (str, str), "\t"):
-        pathway = api.pathway(pathway_id, kgml = True)
+pathways = api.pathways(args.kegg_organism_id)
 
-        pathway_path = os.path.join(PATHWAYS_DIR, pathway_id)
-        with open(pathway_path, mode = "w", encoding = "utf-8") as pathway_file:
-            pathway_file.write(pathway)
+# Get the pathway
+pathway_table = list(read_table(pathways, (str, str), "\t"))
+for idx, (pathway_id, pathway_name) in enumerate(pathway_table):
+    pathway = api.pathway(pathway_id, kgml = True)
 
-        # Parse KGML
-        pathway_title, gene_ids = parse.parse_KGML(pathway)
-        print(pathway_title)
-        print("Number of genes:", len(gene_ids))
+    # Parse KGML
+    pathway_title, gene_ids = parse.parse_KGML(pathway)
+    print("[{} / {}]".format(idx + 1, len(pathway_table)), pathway_title)
+    print("\tGenes:", len(gene_ids))
 
-        # Map KEGG identifiers to STRING external identifiers        
-        mapped_identifiers = api.map_identifiers_to_STRING(gene_ids)
-
-        kegg2external = dict()
+    # Map KEGG identifiers to STRING external identifiers
+    kegg2external = dict()
+    for mapped_identifiers, idx_offset in api.map_identifiers_to_STRING(gene_ids, args.string_organism_id):
         for idx, external_id, species_id, species_name, preferred_name, annotation in read_table(
             mapped_identifiers,
             (int, str, int, str, str, str),
             delimiter = "\t"
         ):
-            assert gene_ids[idx] not in kegg2external # Make sure the mapping is unique
-            kegg2external[gene_ids[idx]] = external_id
-        
-        num_not_mapped = len(gene_ids) - len(kegg2external)
-        if num_not_mapped > 0:
-            print("{} gene(s) could not be mapped to STRING external ID!".format(num_not_mapped))
+            gene_id = gene_ids[idx + idx_offset]
+            if gene_id in kegg2external:
+                print("\tMapping for {} not unique!".format(gene_id))
+            else:
+                kegg2external[gene_id] = external_id
+    
+    num_not_mapped = len(gene_ids) - len(kegg2external)
+    if num_not_mapped > 0:
+        print("\t{} gene(s) could not be mapped to STRING external ID!".format(num_not_mapped))
 
-        # Save the mappings
-        for mapping in kegg2external.items():
-            kegg2external_file.write("{}\t{}\n".format(*mapping))
+    # Save the pathway
+    # TODO Add more info: DESCRIPTION, DISEASE, DRUG, COMPOUND (parse flat file)
+    genes_column = ";".join(kegg2external.values())
+    pathways_file.write("{}\t{}\t{}\n".format(pathway_id, pathway_title, genes_column))
 
-kegg2external_file.close()
+pathways_file.close()
