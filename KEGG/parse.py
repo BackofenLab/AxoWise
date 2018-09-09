@@ -24,6 +24,36 @@ def parse_flat_file(pathway):
     genes = None
     compounds = None
 
+    def last_index(string, substring):
+        return len(string) - len(substring) - string[::-1].index(substring)
+        
+    def parse_disease_line(line):
+        disease_id, disease_name = line.strip().split("  ")
+        return disease_id, disease_name
+
+    def parse_drug_line(line):
+        drug_id, drug_name = line.strip().split("  ")
+        return drug_id, drug_name
+
+    def parse_gene_line(line):
+        gene_id, gene_names = line.strip().split("  ")
+        if ";" in gene_names: # Mutliple names
+            short_name, long_name = list(map(lambda string: string.strip(), gene_names.split(";")))
+            long_name = long_name[: long_name.index("[") - 1]
+        else: # One name
+            short_name = ""
+            long_name = gene_names[: gene_names.index("[") - 1]
+        return gene_id, short_name, long_name
+
+    def parse_compound_line(line):
+        line = line.strip()
+        if "  " in line:
+            compound_id, compound_name = line.split("  ")
+        else:
+            compound_id = line
+            compound_name = ""
+        return compound_id, compound_name
+
     state = None
     for line in re.split("\n+", pathway):
         if not line.startswith(" "):
@@ -31,24 +61,19 @@ def parse_flat_file(pathway):
 
         # List continuation
         if state == "DISEASE":
-            disease_id, disease_name = line.strip().split("  ")
-            diseases.append((disease_id, disease_name))
+            diseases.append(parse_disease_line(line))
         elif state == "DRUG":
-            drug_id, drug_name = line.strip().split("  ")
-            drugs.append((drug_id, drug_name))
+            drugs.append(parse_drug_line(line))
         elif state == "GENE":
-            gene_id, gene_names = line.strip().split("  ")
-            short_name, long_name = map(lambda string: string.strip(), gene_names.split(";"))
-            long_name = long_name[: long_name.index("[") - 1]
-            genes.append((gene_id, short_name, long_name))
+            genes.append(parse_gene_line(line))
         elif state == "COMPOUND":
-            compound_id, compound_name = line.strip().split("  ")
-            compounds.append((compound_id, compound_name))
+            compounds.append(parse_compound_line(line))
 
         # One-line entries
         elif line.startswith("NAME"):
             name = line.lstrip("NAME").lstrip()
-            name = name[ : name.index("-") - 1]
+            name = name[ : last_index(name, " - ")]
+            assert name.strip() != ""
         elif line.startswith("DESCRIPTION"):
             description = line.lstrip("DESCRIPTION").lstrip()
         elif line.startswith("CLASS"):
@@ -58,21 +83,15 @@ def parse_flat_file(pathway):
         # List start
         elif line.startswith("DISEASE"):
             state = "DISEASE"
-            disease_id, disease_name = line.lstrip("DISEASE").strip().split("  ")
-            diseases = [(disease_id, disease_name)]
+            diseases = [parse_disease_line(line.lstrip("DISEASE"))]
         elif line.startswith("DRUG"):
             state = "DRUG"
-            drug_id, drug_name = line.lstrip("DRUG").strip().split("  ")
-            drugs = [(drug_id, drug_name)]
+            drugs = [parse_drug_line(line.lstrip("DRUG"))]
         elif line.startswith("GENE"):
             state = "GENE"
-            gene_id, gene_names = line.lstrip("GENE").strip().split("  ")
-            short_name, long_name = map(lambda string: string.strip(), gene_names.split(";"))
-            long_name = long_name[: long_name.index("[") - 1]
-            genes = [(gene_id, short_name, long_name)]
+            genes = [parse_gene_line(line.lstrip("GENE"))]
         elif line.startswith("COMPOUND"):
             state = "COMPOUND"
-            compound_id, compound_name = line.lstrip("COMPOUND").strip().split("  ")
-            compounds = [(compound_id, compound_name)]
+            compounds = [parse_compound_line(line.lstrip("COMPOUND"))]
 
     return name, description, classes, diseases, drugs, genes, compounds
