@@ -38,11 +38,15 @@ def parse_flat_file(pathway):
     def parse_gene_line(line):
         gene_id, gene_names = line.strip().split("  ")
         if ";" in gene_names: # Mutliple names
-            short_name, long_name = list(map(lambda string: string.strip(), gene_names.split(";")))
-            long_name = long_name[: long_name.index("[") - 1]
+            names = list(map(lambda string: string.strip(), gene_names.split(";")))
+            short_name, long_name = names[0], "; ".join(names[1:])
+            if "[" in long_name:
+                long_name = long_name[: long_name.index("[") - 1]
         else: # One name
             short_name = ""
-            long_name = gene_names[: gene_names.index("[") - 1]
+            long_name = gene_names
+            if "[" in long_name:
+                long_name = long_name[: long_name.index("[") - 1]
         return gene_id, short_name, long_name
 
     def parse_compound_line(line):
