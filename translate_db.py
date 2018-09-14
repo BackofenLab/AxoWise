@@ -6,7 +6,7 @@ import argparse
 import sql_queries as SQL
 import cypher_queries as Cypher
 import database
-from utils import pair_generator, rstrip_line_generator
+from utils import pair_generator, rstrip_line_generator, read_table
 
 def main():
     # Parse CLI arguments
@@ -65,6 +65,39 @@ def main():
             params[score_type] = score
         return params
 
+    # Read KEGG data
+    compounds = dict()
+    for id, name in read_table("KEGG/data/kegg_compounds.mmu.tsv", (str, str), delimiter = "\t", header = True):
+        compounds[id] = name
+
+    diseases = dict()
+    for id, name in read_table("KEGG/data/kegg_diseases.mmu.tsv", (str, str), delimiter = "\t", header = True):
+        diseases[id] = name
+
+    drugs = dict()
+    for id, name in read_table("KEGG/data/kegg_drugs.mmu.tsv", (str, str), delimiter = "\t", header = True):
+        drugs[id] = name
+
+    genes2pathways = dict()
+    for id, name, description, classes, genes_external_ids, diseases_ids, drugs_ids, compounds_ids in read_table(
+        "KEGG/data/kegg_pathways.mmu.tsv",
+        (str, str, str, str, str, str, str, str),
+        delimiter = "\t",
+        header = True
+    ):
+        for gene_external_id in genes_external_ids.split(";"):
+            if gene_external_id not in genes2pathways:
+                genes2pathways[gene_external_id] = list()
+
+            genes2pathways[gene_external_id].append((
+                id,
+                name,
+                description,
+                classes.split(";"),
+                diseases_ids.split(";"),
+                drugs_ids.split(";"),
+                compounds_ids.split(";")
+            ))
 
     # Connect to the databases
     postgres_connection, neo4j_graph = database.connect(credentials_path = args.credentials)
