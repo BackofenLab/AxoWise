@@ -46,6 +46,22 @@ written_compounds = set()
 print("Downloading pathways for: {}".format(args.kegg_organism_id))
 pathways_file = open(os.path.join(DATA_DIR, "kegg_pathways.{}.tsv".format(args.kegg_organism_id)), mode = "w", encoding = "utf-8")
 
+# Write headers
+diseases_file.write("\t".join(["id", "name"]) + "\n")
+drugs_file.write("\t".join(["id", "name"]) + "\n")
+compounds_file.write("\t".join(["id", "name"]) + "\n")
+pathways_file.write("\t".join([
+    "id",
+    "name",
+    "description",
+    "classes",
+    "genes_external_ids",
+    "diseases_ids",
+    "drugs_ids",
+    "compounds_ids"
+]) + "\n")
+
+
 pathways = api.pathways(args.kegg_organism_id)
 
 # Get the pathway
