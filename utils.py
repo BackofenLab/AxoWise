@@ -15,9 +15,13 @@ def lines(buffer, encoding = "utf-8"):
             for rstripped_line in rstrip_line_generator(iterable, skip_empty = True):
                 yield rstripped_line
 
-def read_table(file_path, types, delimiter = ","):
+def read_table(file_path, types, delimiter = ",", header = False):
     expected_cols = len(types)
     for line in lines(file_path):
+        if header:
+            header = False
+            continue
+
         cols = line.split(delimiter)
         try:
             true_cols = [t(c) for (t, c) in zip(types, cols)]
