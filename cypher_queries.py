@@ -63,11 +63,18 @@ def get_protein_subgraph(graph, preferred_name):
         MATCH (protein:Protein {
             preferred_name: {preferred_name}
         })-[association:ASSOCIATION]-(other:Protein)
+
         MATCH (protein)-[:IN]-(action:Action)
-        MATCH (other)-[:IN]-(action:Action)
-        MATCH (protein)-[:IN]-(pathway:Pathway)
-        MATCH (other)-[:IN]-(pathway:Pathway)
-        RETURN protein, other, association, action, pathway
+        MATCH (other)-[:IN]-(action)
+
+        MATCH (protein)-[:IN]->(pathway:Pathway)
+        MATCH (other)-[:IN]->(pathway)
+
+        MATCH (drug:Drug)-[:IN]->(pathway)
+        MATCH (disease:Disease)-[:IN]->(pathway)
+        MATCH (compound:Compound)-[:IN]->(pathway)
+
+        RETURN protein, other, association, action, pathway, drug, disease, compound
     """
 
     param_dict = dict(
