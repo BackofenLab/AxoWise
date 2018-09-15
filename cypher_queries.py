@@ -65,7 +65,8 @@ def get_protein_subgraph(graph, preferred_name):
         })-[association:ASSOCIATION]-(other:Protein)
         MATCH (protein)-[:IN]-(action:Action)
         MATCH (other)-[:IN]-(action:Action)
-        MATCH (action)-[:IN]-(pathway:Pathway)
+        MATCH (protein)-[:IN]-(pathway:Pathway)
+        MATCH (other)-[:IN]-(pathway:Pathway)
         RETURN protein, other, association, action, pathway
     """
 
@@ -109,6 +110,24 @@ def update_associations(graph, params):
             cooccurence: {cooccurence},
             combined: {combined_score}
         }]->(protein2)
+
+        FOREACH (p1 IN {pathways1} |
+            MERGE (pathway1:Pathway {
+                id: p1.id,
+                name: p1.name,
+                description: p1.description
+            })
+            MERGE (protein1)-[:IN]->(pathway1)
+        )
+        FOREACH (p2 IN {pathways2} |
+            MERGE (pathway2:Pathway {
+                id: p2.id,
+                name: p2.name,
+                description: p2.description
+            })
+            MERGE (protein2)-[:IN]->(pathway2)
+        )
+
     """
     graph.run(query, params)
 

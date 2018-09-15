@@ -68,36 +68,49 @@ def main():
     # Read KEGG data
     compounds = dict()
     for id, name in read_table("KEGG/data/kegg_compounds.mmu.tsv", (str, str), delimiter = "\t", header = True):
-        compounds[id] = name
+        compounds[id] = {
+            "id": id,
+            "name": name
+        }
 
     diseases = dict()
     for id, name in read_table("KEGG/data/kegg_diseases.mmu.tsv", (str, str), delimiter = "\t", header = True):
-        diseases[id] = name
+        diseases[id] = {
+            "id": id,
+            "name": name
+        }
 
     drugs = dict()
     for id, name in read_table("KEGG/data/kegg_drugs.mmu.tsv", (str, str), delimiter = "\t", header = True):
-        drugs[id] = name
+        drugs[id] = {
+            "id": id,
+            "name": name
+        }
 
-    genes2pathways = dict()
+    pathways = dict()
+
+    gene2pathways = dict()
     for id, name, description, classes, genes_external_ids, diseases_ids, drugs_ids, compounds_ids in read_table(
         "KEGG/data/kegg_pathways.mmu.tsv",
         (str, str, str, str, str, str, str, str),
         delimiter = "\t",
         header = True
     ):
-        for gene_external_id in genes_external_ids.split(";"):
-            if gene_external_id not in genes2pathways:
-                genes2pathways[gene_external_id] = list()
+        pathways[id] = {
+            "id": id,
+            "name": name,
+            "description": description,
+            "classes": classes.split(";"),
+            "diseases": list(map(lambda did: diseases[did], diseases_ids.split(";"))) if len(diseases_ids) > 0 else [],
+            "drugs": list(map(lambda did: drugs[did], drugs_ids.split(";"))) if len(drugs_ids) > 0 else [],
+            "compounds": list(map(lambda cid: compounds[cid], compounds_ids.split(";")))  if len(compounds_ids) > 0 else []
+        }
 
-            genes2pathways[gene_external_id].append((
-                id,
-                name,
-                description,
-                classes.split(";"),
-                diseases_ids.split(";"),
-                drugs_ids.split(";"),
-                compounds_ids.split(";")
-            ))
+        for gene_external_id in genes_external_ids.split(";"):
+            if gene_external_id not in gene2pathways:
+                gene2pathways[gene_external_id] = list()
+
+            gene2pathways[gene_external_id].append(id)
 
     # Connect to the databases
     postgres_connection, neo4j_graph = database.connect(credentials_path = args.credentials)
@@ -166,6 +179,15 @@ def main():
                 print("{}".format(idx + 1), end = "\r")
                 item = {**item, **decode_evidence_scores(item["evidence_scores"])}
                 del item["evidence_scores"]
+                # KEGG data
+                external_id1 = item["external_id1"]
+                external_id2 = item["external_id2"]
+                pathways_ids1 = gene2pathways[external_id1] if external_id1 in gene2pathways else []
+                pathways_ids2 = gene2pathways[external_id2] if external_id2 in gene2pathways else []
+
+                item["pathways1"] = list(map(lambda pid: pathways[pid], pathways_ids1))
+                item["pathways2"] = list(map(lambda pid: pathways[pid], pathways_ids2))
+
                 Cypher.update_associations(neo4j_graph, item)
             print()
 
