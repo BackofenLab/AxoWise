@@ -120,6 +120,22 @@ def update_associations(graph, params):
             })
             MERGE (protein1)-[:IN]->(pathway1)
 
+            FOREACH (dis1 IN p1.diseases |
+                MERGE (disease1:Disease {
+                    id: dis1.id,
+                    name: dis1.name
+                })
+                MERGE (disease1)-[:IN]->(pathway1)
+            )
+
+            FOREACH (dr1 IN p1.drugs |
+                MERGE (drug1:Drug {
+                    id: dr1.id,
+                    name: dr1.name
+                })
+                MERGE (drug1)-[:IN]->(pathway1)
+            )
+
             FOREACH (com1 IN p1.compounds |
                 MERGE (compound1:Compound {
                     id: com1.id,
@@ -137,6 +153,22 @@ def update_associations(graph, params):
                 description: p2.description
             })
             MERGE (protein2)-[:IN]->(pathway2)
+
+            FOREACH (dis2 IN p2.diseases |
+                MERGE (disease2:Disease {
+                    id: dis2.id,
+                    name: dis2.name
+                })
+                MERGE (disease2)-[:IN]->(pathway2)
+            )
+
+            FOREACH (dr2 IN p2.drugs |
+                MERGE (drug2:Drug {
+                    id: dr2.id,
+                    name: dr2.name
+                })
+                MERGE (drug2)-[:IN]->(pathway2)
+            )
 
             FOREACH (com2 IN p2.compounds |
                 MERGE (compound2:Compound {
