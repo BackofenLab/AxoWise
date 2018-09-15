@@ -1,7 +1,7 @@
 var tooltip = d3.select("body")
                      .append("div")
                      .attr("class", "node-tooltip")
-                     .style("width", "300px")
+                     .style("width", "500px")
                      .style("word-wrap", "break-word")
                      .style("display", "none")
                      .style("position", "absolute")
@@ -78,9 +78,13 @@ d3.json("subgraph.json", function(error, graph) {
                 .enter().append("circle")
                 .attr("r", 30)
                 .attr("fill", function(d) {
-                  if ("preferred_name" in d) return "#89c6ff";
-                  else if ("mode" in d) return "#ff8989";
-                  else if ("comment" in d) return "#fdff89";
+                  if (d.type == "protein") return "#89c6ff";
+                  else if (d.type == "action") return "#ff8989";
+                  else if (d.type == "compound") return "#d1b5ff";
+                  else if (d.type == "pathway") return "#ffffb5";
+                  else if (d.type == "drug") return "#ccc4a7";
+                  else if (d.type == "disease") return "#fdff89";
+                  else return "#99ff99";
                  })
                 .style("transform", "translate(50%, 50%)")
                 .call(d3.drag()
@@ -97,17 +101,18 @@ d3.json("subgraph.json", function(error, graph) {
     tooltip.style("opacity", "1")
                 .style("display", "inline")
 
-    if ("preferred_name" in d) {
+    html = "";
+
+    if (d.type == "protein") {
       html = "<b>" + d.external_id + "</b><br/>";
       html += d.annotation;
     }
-    else if ("mode" in d) {
+    else if (d.type == "action") {
       html = "score: " + d.score / 1000;
     }
-    else if ("collection_id" in d) {
-      html = d.collection_id + "<br/>";
-      html += d.set_id + "<br/>";
-      html += d.title + "<br/>";
+    else if (d.type == "pathway") {
+      html = "<b>" + d.id + "</b><br/>";
+      html += d.description + "<br/>";
     }
 
     tooltip.html(html)
@@ -126,9 +131,13 @@ d3.json("subgraph.json", function(error, graph) {
                    .data(graph.nodes)
                    .enter().append("text")
                    .text(function(d) {
-                     if ("preferred_name" in d) return d.preferred_name;
-                     else if ("mode" in d) return d.mode;
-                     else if ("comment" in d) return d.comment;
+                      if (d.type == "protein") return d.preferred_name;
+                      else if (d.type == "action") return d.mode;
+                      else if (d.type == "pathway" ||
+                              d.type == "disease" ||
+                              d.type == "compound" ||
+                              d.type == "drug") return d.name;
+                      return "null";
                     })
                    .style("transform", "translate(50%, 50%)")
                    .style("text-anchor", "middle");
