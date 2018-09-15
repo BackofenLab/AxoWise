@@ -31,15 +31,15 @@ def update_proteins_and_action(graph, params):
         MERGE (protein1)-[:IN]->(action)
         MERGE (protein2)-[:IN]->(action)
 
-        MERGE (pathway:Pathway {
-            set_id: {set_id},
-            collection_id: {collection_id},
-            comment: {comment},
-            title: {title}
-        })
+        // MERGE (pathway:Pathway {
+        //     set_id: {set_id},
+        //     collection_id: {collection_id},
+        //     comment: {comment},
+        //     title: {title}
+        // })
 
-        MERGE (protein1)-[:IN]->(pathway)
-        MERGE (protein2)-[:IN]->(pathway)
+        // MERGE (protein1)-[:IN]->(pathway)
+        // MERGE (protein2)-[:IN]->(pathway)
 
     """
     graph.run(query, params)
@@ -50,29 +50,22 @@ def get_protein_subgraph(graph, preferred_name):
     of the protein and all other associated proteins.
     """
 
-    query_no_actions = """
+    query = """
         MATCH (protein:Protein {
             preferred_name: {preferred_name}
-        })-[association:ASSOCIATION]-(other:Protein)
-        WHERE NOT (protein)-[:IN]-()
-              OR NOT (other)-[:IN]-()
-        RETURN protein, other, association
-    """
+        })
 
-    query_actions = """
-        MATCH (protein:Protein {
-            preferred_name: {preferred_name}
-        })-[association:ASSOCIATION]-(other:Protein)
+        OPTIONAL MATCH (protein)-[association:ASSOCIATION]-(other:Protein)
 
-        MATCH (protein)-[:IN]-(action:Action)
-        MATCH (other)-[:IN]-(action)
+        OPTIONAL MATCH (protein)-[:IN]-(action:Action)
+        OPTIONAL MATCH (other)-[:IN]-(action)
 
-        MATCH (protein)-[:IN]->(pathway:Pathway)
-        MATCH (other)-[:IN]->(pathway)
+        OPTIONAL MATCH (protein)-[:IN]->(pathway:Pathway)
+        OPTIONAL MATCH (other)-[:IN]->(pathway)
 
-        MATCH (drug:Drug)-[:IN]->(pathway)
-        MATCH (disease:Disease)-[:IN]->(pathway)
-        MATCH (compound:Compound)-[:IN]->(pathway)
+        OPTIONAL MATCH (drug:Drug)-[:IN]->(pathway)
+        OPTIONAL MATCH (disease:Disease)-[:IN]->(pathway)
+        OPTIONAL MATCH (compound:Compound)-[:IN]->(pathway)
 
         RETURN protein, other, association, action, pathway, drug, disease, compound
     """
@@ -81,10 +74,7 @@ def get_protein_subgraph(graph, preferred_name):
         preferred_name = preferred_name
     )
 
-    data_no_actions = graph.data(query_no_actions, param_dict)
-    data_actions = graph.data(query_actions, param_dict)
-
-    return data_no_actions + data_actions
+    return graph.data(query, param_dict)
 
 def update_associations(graph, params):
     """
