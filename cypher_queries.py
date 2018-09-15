@@ -111,6 +111,7 @@ def update_associations(graph, params):
             combined: {combined_score}
         }]->(protein2)
 
+
         FOREACH (p1 IN {pathways1} |
             MERGE (pathway1:Pathway {
                 id: p1.id,
@@ -118,7 +119,17 @@ def update_associations(graph, params):
                 description: p1.description
             })
             MERGE (protein1)-[:IN]->(pathway1)
+
+            FOREACH (com1 IN p1.compounds |
+                MERGE (compound1:Compound {
+                    id: com1.id,
+                    name: com1.name
+                })
+                MERGE (compound1)-[:IN]->(pathway1)
+            )
         )
+
+
         FOREACH (p2 IN {pathways2} |
             MERGE (pathway2:Pathway {
                 id: p2.id,
@@ -126,6 +137,14 @@ def update_associations(graph, params):
                 description: p2.description
             })
             MERGE (protein2)-[:IN]->(pathway2)
+
+            FOREACH (com2 IN p2.compounds |
+                MERGE (compound2:Compound {
+                    id: com2.id,
+                    name: com2.name
+                })
+                MERGE (compound2)-[:IN]->(pathway2)
+            )
         )
 
     """
