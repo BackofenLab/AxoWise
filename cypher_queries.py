@@ -117,6 +117,20 @@ def update_associations(graph, params):
             })
             MERGE (protein1)-[:IN]->(pathway1)
 
+            MERGE (fClass:Class {
+                name: p1.classes[length(p1.classes) - 1]
+            })
+            MERGE (pathway1)-[:IN]->(fClass)
+            FOREACH (i IN RANGE(length(p1.classes) - 1, 1) |
+                MERGE (cClass:Class {
+                        name: p1.classes[i]
+                })
+                MERGE (nClass:Class {
+                        name: p1.classes[i - 1]
+                })
+                MERGE (cClass)-[:IN]->(nClass)
+            )
+
             FOREACH (dis1 IN p1.diseases |
                 MERGE (disease1:Disease {
                     id: dis1.id,
@@ -150,6 +164,20 @@ def update_associations(graph, params):
                 description: p2.description
             })
             MERGE (protein2)-[:IN]->(pathway2)
+
+            MERGE (fClass:Class {
+                name: p2.classes[length(p2.classes) - 1]
+            })
+            MERGE (pathway2)-[:IN]->(fClass)
+            FOREACH (i IN RANGE(length(p2.classes) - 1, 1) |
+                MERGE (cClass:Class {
+                        name: p2.classes[i]
+                })
+                MERGE (nClass:Class {
+                        name: p2.classes[i - 1]
+                })
+                MERGE (cClass)-[:IN]->(nClass)
+            )
 
             FOREACH (dis2 IN p2.diseases |
                 MERGE (disease2:Disease {
