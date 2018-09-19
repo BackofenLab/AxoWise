@@ -39,7 +39,7 @@
   <div class="post-content">
     <p><a href="https://travis-ci.org/BackofenLab/cytokine-graph-db"><img src="https://travis-ci.org/BackofenLab/cytokine-graph-db.svg?branch=master" alt="Build Status" /></a></p>
 
-<h1 id="1-collect-the-data-not-automated">1. Collect the data <span style="color:red; font-size: small;">not automated</span></h1>
+<h1 id="1-collect-the-data-partially-automated">1. Collect the data <span style="color:brown; font-size: small;">partially automated</span></h1>
 <ul>
   <li>Download the STRING database dumps
     <ul>
@@ -64,7 +64,12 @@
 
 <h1 id="2-extract-the-information-from-the-data-automated-testing">2. Extract the information from the data <span style="color:green; font-size: small;">automated (testing)</span></h1>
 <ul>
-  <li>Derive the information we are interested in (i.e. for <em>Homo sapiens</em> &amp; <em>Mus musculus</em>) by querying the PostgreSQL database</li>
+  <li>Derive the information we are interested in (i.e. for <em>Homo sapiens</em> &amp; <em>Mus musculus</em>)
+    <ul>
+      <li>Query the PostgreSQL database</li>
+      <li>Parse the downloaded KEGG data</li>
+    </ul>
+  </li>
 </ul>
 
 <h1 id="3-build-a-graph-database-partially-automated-testing">3. Build a graph database <span style="color:brown; font-size: small;">partially automated (testing)</span></h1>
