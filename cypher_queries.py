@@ -17,19 +17,20 @@ def update_proteins_and_action(graph, params):
             id: {id2}
         })
 
-        MERGE (action:Action {
+        MERGE (protein1)-[action:ACTION {
             mode: {mode},
             id1: {id1},
             id2: {id2}
-        }) ON CREATE SET action.score = {score}
-           ON MATCH SET action.score = CASE action.score
+        }]->(protein2)
+            ON CREATE SET action.score = {score}
+            ON MATCH SET action.score = CASE action.score
                                        WHEN {score} > action.score
                                        THEN action.score = {score}
                                        ELSE action.score
                                        END
 
-        MERGE (protein1)-[:IN]->(action)
-        MERGE (protein2)-[:IN]->(action)
+        // MERGE (protein1)-[:IN]->(action)
+        // MERGE (protein2)-[:IN]->(action)
 
         // MERGE (pathway:Pathway {
         //     set_id: {set_id},
@@ -57,8 +58,7 @@ def get_protein_subgraph(graph, preferred_name):
 
         OPTIONAL MATCH (protein)-[association:ASSOCIATION]-(other:Protein)
 
-        OPTIONAL MATCH (protein)-[:IN]-(action:Action)
-        OPTIONAL MATCH (other)-[:IN]-(action)
+        OPTIONAL MATCH (protein)-[action:ACTION]-(other)
 
         OPTIONAL MATCH (protein)-[:IN]->(pathway:Pathway)
         OPTIONAL MATCH (other)-[:IN]->(pathway)
