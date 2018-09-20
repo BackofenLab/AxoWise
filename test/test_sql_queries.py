@@ -63,31 +63,25 @@ class TestSQLQueries(unittest.TestCase):
 
         postgres_connection.close()
 
-    def test_get_actions_and_pathways(self):
+    def test_get_actions(self):
 
         postgres_connection, _ = database.connect("test/credentials.test.json")
 
-        actions_and_pathways = list(SQL.get_actions_and_pathways(postgres_connection, species_id = 10090, protein1 = "ccr5", protein2 = "ccl5"))
+        actions = list(SQL.get_actions(postgres_connection, species_id = 10090, protein1 = "ccr5", protein2 = "ccl5"))
 
-        self.assertTrue(len(actions_and_pathways) >= 5)
+        self.assertTrue(len(actions) >= 5)
 
-        for ap in actions_and_pathways:
+        for ap in actions:
             if ap["mode"] == "activation":
                 self.assertEqual(ap["score"], 849)
-                # self.assertEqual(ap["title"], "annotated pathway (KEGG)")
-                # self.assertEqual(ap["comment"], "Name: Cytokine-cytokine receptor interaction")
             elif ap["mode"] == "binding":
                 self.assertEqual(ap["score"], 849)
-                # self.assertEqual(ap["title"], "annotated pathway (KEGG)")
-                # self.assertEqual(ap["comment"], "Name: Chemokine signaling pathway")
             elif ap["mode"] == "catalysis":
                 self.assertEqual(ap["score"], 278)
             elif ap["mode"] == "ptmod":
                 self.assertEqual(ap["score"], 171)
             elif ap["mode"] == "reaction":
                 self.assertIn(ap["score"], (922, 278))
-                # self.assertEqual(ap["title"], "curated pathway")
-                # self.assertEqual(ap["comment"], "Biochemical Reaction: The Ligand:GPCR:Gi complex dissociates")
 
         postgres_connection.close()
 

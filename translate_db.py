@@ -134,7 +134,7 @@ def main():
             species_id = species_id
         )
         # Get protein - protein functional prediction
-        actions_and_pathways = SQL.get_actions_and_pathways(
+        actions = SQL.get_actions(
             postgres_connection,
             species_id = species_id
         )
@@ -145,11 +145,11 @@ def main():
             print("{}".format(idx + 1), end = "\r")
             item = {**item, **decode_evidence_scores(item["evidence_scores"])}
             del item["evidence_scores"]
-            Cypher.update_associations(neo4j_graph, item)
+            Cypher.update_associations_and_pathways(neo4j_graph, item)
         print()
 
-        print("Writing actions & pathways...")
-        for idx, item in enumerate(actions_and_pathways):
+        print("Writing actions...")
+        for idx, item in enumerate(actions):
             print("{}".format(idx + 1), end = "\r")
             Cypher.update_proteins_and_action(neo4j_graph, item)
         print()
@@ -167,7 +167,7 @@ def main():
                 protein1 = protein1, protein2 = protein2
             )
             # Get protein - protein functional prediction
-            actions_and_pathways = SQL.get_actions_and_pathways(
+            actions = SQL.get_actions(
                 postgres_connection,
                 species_id = species_id,
                 protein1 = protein1, protein2 = protein2
@@ -188,11 +188,11 @@ def main():
                 item["pathways1"] = list(map(lambda pid: pathways[pid], pathways_ids1))
                 item["pathways2"] = list(map(lambda pid: pathways[pid], pathways_ids2))
 
-                Cypher.update_associations(neo4j_graph, item)
+                Cypher.update_associations_and_pathways(neo4j_graph, item)
             print()
 
-            print("Writing actions & pathways...")
-            for idx, item in enumerate(actions_and_pathways):
+            print("Writing actions...")
+            for idx, item in enumerate(actions):
                 print("{}".format(idx + 1), end = "\r")
                 Cypher.update_proteins_and_action(neo4j_graph, item)
             print()

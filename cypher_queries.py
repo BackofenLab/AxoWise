@@ -28,20 +28,6 @@ def update_proteins_and_action(graph, params):
                                        THEN action.score = {score}
                                        ELSE action.score
                                        END
-
-        // MERGE (protein1)-[:IN]->(action)
-        // MERGE (protein2)-[:IN]->(action)
-
-        // MERGE (pathway:Pathway {
-        //     set_id: {set_id},
-        //     collection_id: {collection_id},
-        //     comment: {comment},
-        //     title: {title}
-        // })
-
-        // MERGE (protein1)-[:IN]->(pathway)
-        // MERGE (protein2)-[:IN]->(pathway)
-
     """
     graph.run(query, params)
 
@@ -76,7 +62,7 @@ def get_protein_subgraph(graph, preferred_name):
 
     return graph.data(query, param_dict)
 
-def update_associations(graph, params):
+def update_associations_and_pathways(graph, params):
     """
     For a given protein - protein pair, create / update (merge) the proteins
     and the association between them.
