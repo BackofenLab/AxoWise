@@ -140,11 +140,20 @@ def main():
         )
 
         # Neo4j
-        print("Writing associations...")
+        print("Writing associations & pathways...")
         for idx, item in enumerate(associations):
             print("{}".format(idx + 1), end = "\r")
             item = {**item, **decode_evidence_scores(item["evidence_scores"])}
             del item["evidence_scores"]
+            # KEGG data
+            external_id1 = item["external_id1"]
+            external_id2 = item["external_id2"]
+            pathways_ids1 = gene2pathways[external_id1] if external_id1 in gene2pathways else []
+            pathways_ids2 = gene2pathways[external_id2] if external_id2 in gene2pathways else []
+
+            item["pathways1"] = list(map(lambda pid: pathways[pid], pathways_ids1))
+            item["pathways2"] = list(map(lambda pid: pathways[pid], pathways_ids2))
+
             Cypher.update_associations_and_pathways(neo4j_graph, item)
         print()
 
@@ -174,7 +183,7 @@ def main():
             )
 
             # Neo4j
-            print("Writing associations...")
+            print("Writing associations & pathways...")
             for idx, item in enumerate(associations):
                 print("{}".format(idx + 1), end = "\r")
                 item = {**item, **decode_evidence_scores(item["evidence_scores"])}
