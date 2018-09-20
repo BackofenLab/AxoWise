@@ -18,40 +18,38 @@ class TestCypherQueries(unittest.TestCase):
 
             if entry["other"] is not None:
                 self.assertIn(entry["other"]["preferred_name"], ["Ccl5", "Ccr5", "Il10ra"])
-
-                if entry["action"] is not None:
-                    self.assertIn(entry["action"]["mode"], [
-                        "ptmod",
-                        "reaction",
-                        "binding",
-                        "catalysis",
-                        "activation"
-                    ])
                 
                 if entry["other"]["preferred_name"] == "Ccl5":
                     self.assertEqual(association["coexpression"], 92)
                     self.assertEqual(association["database"], 900)
                     self.assertEqual(association["textmining"], 906)
                     self.assertEqual(association["combined"], 993)
-                    action = entry["action"]
 
-                    if action["mode"] == "binding":
-                        self.assertEqual(action["score"], 849)
-                    elif action["mode"] == "ptmod":
-                        self.assertEqual(action["score"], 171)
-                    elif action["mode"] == "catalysis":
-                        self.assertEqual(action["score"], 278)
-                    elif action["mode"] == "reaction":
-                        self.assertEqual(action["score"], 278)
-                    elif action["mode"] == "activation":
-                        self.assertEqual(action["score"], 849)
+                    if entry["action"] is not None:
+                        self.assertIn(entry["action"]["mode"], [
+                            "ptmod",
+                            "reaction",
+                            "binding",
+                            "catalysis",
+                            "activation"
+                        ])
+                        action = entry["action"]
 
-                elif entry["other"]["preferred_name"] == "Il10ra":
-                    self.assertEqual(association["coexpression"], 246) 
-                    self.assertEqual(association["textmining"], 318)
-                    self.assertEqual(association["combined"], 469)
+                        if action["mode"] == "binding":
+                            self.assertEqual(action["score"], 849)
+                        elif action["mode"] == "ptmod":
+                            self.assertEqual(action["score"], 171)
+                        elif action["mode"] == "catalysis":
+                            self.assertEqual(action["score"], 278)
+                        elif action["mode"] == "reaction":
+                            self.assertEqual(action["score"], 278)
+                        elif action["mode"] == "activation":
+                            self.assertEqual(action["score"], 849)
 
-
+                    elif entry["other"]["preferred_name"] == "Il10ra":
+                        self.assertEqual(association["coexpression"], 246) 
+                        self.assertEqual(association["textmining"], 318)
+                        self.assertEqual(association["combined"], 469)
 
             if entry["pathway"] is not None:
                 self.assertIn(entry["pathway"]["name"], [
