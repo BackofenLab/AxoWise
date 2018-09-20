@@ -37,12 +37,17 @@
   </header>
 
   <div class="post-content">
-    <h1 id="1-get-the-organism-identifier">1. Get the organism identifier</h1>
-<p><strong><a href="http://rest.kegg.jp/list/organism">http://rest.kegg.jp/list/organism</a></strong></p>
+    <h1 id="1-get-the-organism-identifiers">1. Get the organism identifiers</h1>
+<p><strong><a href="http://rest.kegg.jp/list/genome">http://rest.kegg.jp/list/genome</a></strong></p>
 
 <p>Example:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>T01001	hsa	Homo sapiens (human)	Eukaryotes;Animals;Vertebrates;Mammals
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>gn:T01001	hsa, HUMAN, 9606; Homo sapiens (human)
 </code></pre></div></div>
+
+<ul>
+  <li>KEGG string identifier: <em>hsa</em></li>
+  <li>NCBI Taxomony identifier: <em>9606</em></li>
+</ul>
 
 <h1 id="2-get-all-pathways-in-the-organism">2. Get all pathways in the organism</h1>
 <p><strong>http://rest.kegg.jp/list/pathway/[organism_id]</strong></p>
@@ -53,20 +58,54 @@
 </code></pre></div></div>
 
 <h1 id="3-query-each-pathway">3. Query each pathway</h1>
-<p><strong>http://rest.kegg.jp/get/[pathway_id]</strong><br />
-<span style="color:red; font-size: small;">(KGML differs from the flat file ?)</span></p>
+<p><strong>http://rest.kegg.jp/get/[pathway_id]</strong></p>
 
 <ul>
-  <li>Get the list of genes in the pathway</li>
+  <li>Get the following by parsing the flat file:
+    <ul>
+      <li>description</li>
+      <li>classes</li>
+      <li>diseases</li>
+      <li>drugs</li>
+      <li>genes</li>
+      <li>compounds</li>
+    </ul>
+  </li>
 </ul>
 
 <p>Example:
 <a href="http://rest.kegg.jp/get/path:hsa00010">http://rest.kegg.jp/get/path:hsa00010</a></p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>GENE        3101  HK3; hexokinase 3 [KO:K00844] [EC:2.7.1.1]
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>DESCRIPTION Glycolysis is the process of converting glucose into pyruvate...
+...
+CLASS       Metabolism; Carbohydrate metabolism
+...
+DISEASE     H00069  Glycogen storage disease
+            H00071  Hereditary fructose intolerance
+            H00072  Pyruvate dehydrogenase complex deficiency
+...
+DRUG        D00123  Cyanamide (JP17)
+            D00131  Disulfiram (JP17/USP/INN)
+            D07257  Lonidamine (INN)
+...
+GENE        3101  HK3; hexokinase 3 [KO:K00844] [EC:2.7.1.1]
             3098  HK1; hexokinase 1 [KO:K00844] [EC:2.7.1.1]
             3099  HK2; hexokinase 2 [KO:K00844] [EC:2.7.1.1]
 ...
+COMPOUND    C00022  Pyruvate
+            C00024  Acetyl-CoA
+            C00031  D-Glucose
+            C00033  Acetate
+...
 </code></pre></div></div>
+
+<h1 id="4-turn-the-genes-from-the-pathway-into-unique-identifiers">4. Turn the genes from the pathway into unique identifiers</h1>
+
+<p>Example:</p>
+<ul>
+  <li>HK3 —&gt; <em>hsa:3101</em></li>
+  <li>HK1 —&gt; <em>hsa:3098</em></li>
+  <li>HK2 —&gt; <em>hsa:3099</em></li>
+</ul>
 
 <h1 id="4-use-string-api-to-map-the-gene-names-to-the-external-ids-also-available-in-string">4. Use STRING API to map the gene names to the external IDs (also available in STRING)</h1>
 <p><strong>https://string-db.org/api/[output-format]/get_string_ids?identifiers=[identifiers]&amp;[optional]</strong></p>
@@ -75,20 +114,14 @@
   <li><em>output-format</em> = tsv</li>
   <li><em>optional</em>:
     <ul>
-      <li><em>species</em> (NCBI taxon identifier)</li>
-      <li><em>limit</em> = 1 (return the best match)</li>
+      <li><em>species</em> (NCBI Taxomony identifier; from step 1)</li>
+      <li><em>limit</em> = 1 (return the best match; do not use to see if there is a unique match or not)</li>
     </ul>
   </li>
 </ul>
 
 <p>Example:<br />
-<span style="color:red; font-size: small;">(organism name &lt;-&gt; NCBI taxon ID mapping should be somehow automated)</span>
-<a href="https://www.ncbi.nlm.nih.gov/Taxonomy/TaxIdentifier/tax_identifier.cgi">https://www.ncbi.nlm.nih.gov/Taxonomy/TaxIdentifier/tax_identifier.cgi</a></p>
-<ul>
-  <li>Homo sapiens NCBI taxon ID is 9606</li>
-</ul>
-
-<p><a href="https://string-db.org/api/tsv/get_string_ids?identifiers=HK3%0dHK1%0dHK2&amp;species=9606&amp;limit=1">https://string-db.org/api/tsv/get_string_ids?identifiers=HK3%0dHK1%0dHK2&amp;species=9606&amp;limit=1</a></p>
+<a href="https://string-db.org/api/tsv/get_string_ids?identifiers=hsa:3101%0dhsa:3098%0dhsa:3099&amp;species=9606">https://string-db.org/api/tsv/get_string_ids?identifiers=hsa:3101%0dhsa:3098%0dhsa:3099&amp;species=9606</a></p>
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>queryIndex	stringId	ncbiTaxonId	taxonName	preferredName	annotation
 0	9606.ENSP00000292432	9606	Homo sapiens	HK3	Hexokinase 3 (white cell)
 1	9606.ENSP00000384774	9606	Homo sapiens	HK1	Hexokinase 1
