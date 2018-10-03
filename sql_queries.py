@@ -79,22 +79,23 @@ def get_associations(postgres_connection, species_id, protein1 = None, protein2 
     cursor.execute(query, params)
 
     while True:
-        row = cursor.fetchone()
-        if row is None:
+        rows = cursor.fetchmany(size = 4096)
+        if len(rows) == 0:
             break
 
-        yield {
-            "id1": row[0],
-            "id2": row[1],
-            "external_id1": row[2],
-            "external_id2": row[3],
-            "preferred_name1": row[4],
-            "preferred_name2": row[5],
-            "annotation1": row[6],
-            "annotation2": row[7],
-            "combined_score": row[8],
-            "evidence_scores": row[9]
-        }
+        for row in rows:
+            yield {
+                "id1": row[0],
+                "id2": row[1],
+                "external_id1": row[2],
+                "external_id2": row[3],
+                "preferred_name1": row[4],
+                "preferred_name2": row[5],
+                "annotation1": row[6],
+                "annotation2": row[7],
+                "combined_score": row[8],
+                "evidence_scores": row[9]
+            }
     
     cursor.close()
 
@@ -119,16 +120,17 @@ def get_actions(postgres_connection, species_id, protein1 = None, protein2 = Non
     cursor.execute(query, params)
 
     while True:
-        row = cursor.fetchone()
-        if row is None:
+        rows = cursor.fetchmany(size = 4096)
+        if len(rows) == 0:
             break
 
-        yield {
-            "id1": row[0],
-            "id2": row[1],
-            "mode": row[2],
-            "score": row[3]
-        }
+        for row in rows:
+            yield {
+                "id1": row[0],
+                "id2": row[1],
+                "mode": row[2],
+                "score": row[3]
+            }
 
     cursor.close()
 
