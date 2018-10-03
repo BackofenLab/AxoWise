@@ -21,7 +21,15 @@ def main():
         default = "credentials.json"
     )
 
+    args_parser.add_argument(
+        "--kegg_organism_id",
+        type = str,
+        help = "KEGG organism ID",
+        default = "mmu"
+    )
+
     args = args_parser.parse_args()
+    KOID = args.kegg_organism_id
 
     # Parse the standard input (until EOF)
     input_stdin = sys.stdin.read()
@@ -67,21 +75,21 @@ def main():
 
     # Read KEGG data
     compounds = dict()
-    for id, name in read_table("KEGG/data/kegg_compounds.mmu.tsv", (str, str), delimiter = "\t", header = True):
+    for id, name in read_table("KEGG/data/kegg_compounds.{}.tsv".format(KOID), (str, str), delimiter = "\t", header = True):
         compounds[id] = {
             "id": id,
             "name": name
         }
 
     diseases = dict()
-    for id, name in read_table("KEGG/data/kegg_diseases.mmu.tsv", (str, str), delimiter = "\t", header = True):
+    for id, name in read_table("KEGG/data/kegg_diseases.{}.tsv".format(KOID), (str, str), delimiter = "\t", header = True):
         diseases[id] = {
             "id": id,
             "name": name
         }
 
     drugs = dict()
-    for id, name in read_table("KEGG/data/kegg_drugs.mmu.tsv", (str, str), delimiter = "\t", header = True):
+    for id, name in read_table("KEGG/data/kegg_drugs.{}.tsv".format(KOID), (str, str), delimiter = "\t", header = True):
         drugs[id] = {
             "id": id,
             "name": name
@@ -91,7 +99,7 @@ def main():
 
     gene2pathways = dict()
     for id, name, description, classes, genes_external_ids, diseases_ids, drugs_ids, compounds_ids in read_table(
-        "KEGG/data/kegg_pathways.mmu.tsv",
+        "KEGG/data/kegg_pathways.{}.tsv".format(KOID),
         (str, str, str, str, str, str, str, str),
         delimiter = "\t",
         header = True
