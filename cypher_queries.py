@@ -18,9 +18,7 @@ def update_proteins_and_action(graph, params):
         })
 
         MERGE (protein1)-[action:ACTION {
-            mode: {mode},
-            id1: {id1},
-            id2: {id2}
+            mode: {mode}
         }]->(protein2)
             ON CREATE SET action.score = {score}
             ON MATCH SET action.score = CASE action.score
@@ -62,7 +60,7 @@ def get_protein_subgraph(graph, preferred_name):
 
     return graph.data(query, param_dict)
 
-def update_associations_and_pathways(graph, params):
+def update_associations(graph, params):
     """
     For a given protein - protein pair, create / update (merge) the proteins
     and the association between them.
@@ -93,7 +91,19 @@ def update_associations_and_pathways(graph, params):
             cooccurence: {cooccurence},
             combined: {combined_score}
         }]->(protein2)
+    """
+    graph.run(query, params)
 
+def update_pathways(graph, params):
+    """
+    For each protein in the pathway collection, create / update (merge)
+    the pathway and associated classes, compounds, drugs and diseases.
+    """
+
+    query = """
+        MATCH (protein1:Protein {
+            external_id: {external_id}
+        })
 
         FOREACH (p1 IN {pathways1} |
             MERGE (pathway1:Pathway {
@@ -101,7 +111,7 @@ def update_associations_and_pathways(graph, params):
                 name: p1.name,
                 description: p1.description
             })
-            MERGE (protein1)-[:IN]->(pathway1)
+            CREATE (protein1)-[:IN]->(pathway1)
 
             MERGE (fClass:Class {
                 name: p1.classes[length(p1.classes) - 1]
@@ -141,69 +151,20 @@ def update_associations_and_pathways(graph, params):
                 MERGE (compound1)-[:IN]->(pathway1)
             )
         )
-
-
-        FOREACH (p2 IN {pathways2} |
-            MERGE (pathway2:Pathway {
-                id: p2.id,
-                name: p2.name,
-                description: p2.description
-            })
-            MERGE (protein2)-[:IN]->(pathway2)
-
-            MERGE (fClass:Class {
-                name: p2.classes[length(p2.classes) - 1]
-            })
-            MERGE (pathway2)-[:IN]->(fClass)
-            FOREACH (i IN RANGE(length(p2.classes) - 1, 1) |
-                MERGE (cClass:Class {
-                        name: p2.classes[i]
-                })
-                MERGE (nClass:Class {
-                        name: p2.classes[i - 1]
-                })
-                MERGE (cClass)-[:IN]->(nClass)
-            )
-
-            FOREACH (dis2 IN p2.diseases |
-                MERGE (disease2:Disease {
-                    id: dis2.id,
-                    name: dis2.name
-                })
-                MERGE (disease2)-[:IN]->(pathway2)
-            )
-
-            FOREACH (dr2 IN p2.drugs |
-                MERGE (drug2:Drug {
-                    id: dr2.id,
-                    name: dr2.name
-                })
-                MERGE (drug2)-[:IN]->(pathway2)
-            )
-
-            FOREACH (com2 IN p2.compounds |
-                MERGE (compound2:Compound {
-                    id: com2.id,
-                    name: com2.name
-                })
-                MERGE (compound2)-[:IN]->(pathway2)
-            )
-        )
-
     """
     graph.run(query, params)
 
-def remove_redundant_properties(graph):
-    """
-    Remove redundant properties of nodes or edges that have been previously
-    used to correctly construct the graph.
-    """
+# def remove_redundant_properties(graph):
+#     """
+#     Remove redundant properties of nodes or edges that have been previously
+#     used to correctly construct the graph.
+#     """
 
-    query = """
-        MATCH (action:Action)
-        REMOVE action.id1, action.id2
-    """
-    graph.run(query)
+#     query = """
+#         MATCH (action:Action)
+#         REMOVE action.id1, action.id2
+#     """
+#     graph.run(query)
 
 def delete_all(graph):
     """

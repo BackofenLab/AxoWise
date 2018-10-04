@@ -15,7 +15,8 @@ class QueryBuilder:
             FROM network.node_node_links AS node_node_links
             JOIN items.proteins AS proteins1 ON proteins1.protein_id = node_node_links.node_id_a
             JOIN items.proteins AS proteins2 ON proteins2.protein_id = node_node_links.node_id_b
-            WHERE proteins1.species_id = %s AND proteins1.species_id = proteins2.species_id
+            WHERE proteins1.species_id = %s
+              AND proteins1.species_id = proteins2.species_id
         """
         query += ("AND UPPER(proteins1.preferred_name) = UPPER(%s) AND UPPER(proteins2.preferred_name) = UPPER(%s)" if narrow else "")
         query += ("LIMIT %s" if limit is not None else "")
@@ -38,6 +39,7 @@ class QueryBuilder:
             JOIN items.proteins AS proteins1 ON actions.item_id_a = proteins1.protein_id
             JOIN items.proteins AS proteins2 ON actions.item_id_b = proteins2.protein_id
             WHERE proteins1.species_id = %s
+              AND proteins1.species_id = proteins2.species_id
         """
         query += ("AND UPPER(proteins1.preferred_name) = UPPER(%s) AND UPPER(proteins2.preferred_name) = UPPER(%s)" if narrow else "")
         query += ("LIMIT %s" if limit is not None else "")

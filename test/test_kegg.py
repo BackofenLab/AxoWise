@@ -170,4 +170,5 @@ class TestKEGG(unittest.TestCase):
 
 
 if __name__ == "__main__":
+    print("Testing KEGG data...")
     unittest.main()

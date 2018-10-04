@@ -133,4 +133,5 @@ class TestCypherQueries(unittest.TestCase):
                     ])
 
 if __name__ == "__main__":
+    print("Testing Cypher queries...")
     unittest.main()

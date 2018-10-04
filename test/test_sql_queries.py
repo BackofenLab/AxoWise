@@ -86,4 +86,5 @@ class TestSQLQueries(unittest.TestCase):
         postgres_connection.close()
 
 if __name__ == "__main__":
+    print("Testing SQL queries...")
     unittest.main()

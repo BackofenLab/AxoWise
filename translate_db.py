@@ -148,21 +148,13 @@ def main():
         )
 
         # Neo4j
-        print("Writing associations & pathways...")
+        print("Writing associations...")
         for idx, item in enumerate(associations):
             print("{}".format(idx + 1), end = "\r")
             item = {**item, **decode_evidence_scores(item["evidence_scores"])}
             del item["evidence_scores"]
-            # KEGG data
-            external_id1 = item["external_id1"]
-            external_id2 = item["external_id2"]
-            pathways_ids1 = gene2pathways[external_id1] if external_id1 in gene2pathways else []
-            pathways_ids2 = gene2pathways[external_id2] if external_id2 in gene2pathways else []
 
-            item["pathways1"] = list(map(lambda pid: pathways[pid], pathways_ids1))
-            item["pathways2"] = list(map(lambda pid: pathways[pid], pathways_ids2))
-
-            Cypher.update_associations_and_pathways(neo4j_graph, item)
+            Cypher.update_associations(neo4j_graph, item)
         print()
 
         print("Writing actions...")
@@ -191,21 +183,13 @@ def main():
             )
 
             # Neo4j
-            print("Writing associations & pathways...")
+            print("Writing associations...")
             for idx, item in enumerate(associations):
-                print("{}".format(idx + 1), end = "\r")
+                print("{}a".format(idx + 1), end = "\r")
                 item = {**item, **decode_evidence_scores(item["evidence_scores"])}
                 del item["evidence_scores"]
-                # KEGG data
-                external_id1 = item["external_id1"]
-                external_id2 = item["external_id2"]
-                pathways_ids1 = gene2pathways[external_id1] if external_id1 in gene2pathways else []
-                pathways_ids2 = gene2pathways[external_id2] if external_id2 in gene2pathways else []
 
-                item["pathways1"] = list(map(lambda pid: pathways[pid], pathways_ids1))
-                item["pathways2"] = list(map(lambda pid: pathways[pid], pathways_ids2))
-
-                Cypher.update_associations_and_pathways(neo4j_graph, item)
+                Cypher.update_associations(neo4j_graph, item)
             print()
 
             print("Writing actions...")
@@ -214,8 +198,16 @@ def main():
                 Cypher.update_proteins_and_action(neo4j_graph, item)
             print()
 
-    # Remove redundant properties of nodes used to correctly construct the graph
-    Cypher.remove_redundant_properties(neo4j_graph)
+    print("Writing pathways...")
+    for idx, gene_external_id in enumerate(gene2pathways):
+        print("{}".format(idx + 1), end = "\r")
+        item = {
+            "external_id": gene_external_id
+        }
+        pathways_ids1 = gene2pathways[gene_external_id]
+        item["pathways1"] = list(map(lambda pid: pathways[pid], pathways_ids1))
+        Cypher.update_pathways(neo4j_graph, item)
+    print()
 
     print("Done!")
 
