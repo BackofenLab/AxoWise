@@ -129,7 +129,6 @@ def main():
         print("Species not found!")
         sys.exit(1)
 
-
     # Clear the Neo4j database
     Cypher.delete_all(neo4j_graph)
 
@@ -137,7 +136,7 @@ def main():
     if only_species:
         # STRING
         # Get all proteins
-        proteins = SQL.get_proteins()
+        proteins = SQL.get_proteins(postgres_connection)
         # Get protein - protein association
         associations = SQL.get_associations(
             postgres_connection,
