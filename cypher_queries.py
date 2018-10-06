@@ -76,25 +76,19 @@ def get_protein_subgraph(graph, preferred_name):
 
     return graph.data(query, param_dict)
 
-def update_associations(graph, params):
+def add_association(graph, params):
     """
-    For a given protein - protein pair, create / update (merge) the proteins
-    and the association between them.
+    For an existing protein - protein pair, create the association
+    between them.
     """
 
     query = """
-        MERGE (protein1:Protein {
-            id: {id1},
-            external_id: {external_id1},
-            annotation: {annotation1},
-            preferred_name: {preferred_name1}
+        MATCH (protein1:Protein {
+            id: {id1}
         })
 
-        MERGE (protein2:Protein {
-            id: {id2},
-            external_id: {external_id2},
-            annotation: {annotation2},
-            preferred_name: {preferred_name2}
+        MATCH (protein2:Protein {
+            id: {id2}
         })
 
         CREATE (protein1)-[a:ASSOCIATION {
