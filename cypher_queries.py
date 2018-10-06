@@ -1,4 +1,20 @@
 
+def add_protein(graph, params):
+    """
+    Create a protein with the specified id, external id,
+    preferred name and annotation.
+    """
+
+    query = """
+        CREATE (protein:Protein {
+            id: {id},
+            external_id: {external_id},
+            preferred_name: {preferred_name},
+            annotation: {annotation}
+        })
+    """
+    graph.run(query, params)
+
 def update_proteins_and_action(graph, params):
     """
     For an existing protein - protein pair, create / update (merge) the given
