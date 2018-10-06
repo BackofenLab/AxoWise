@@ -14,27 +14,23 @@ class QueryBuilder:
         return query
 
     @staticmethod
-    def associations_query(species_id, protein1 = None, protein2 = None, limit = None):
-        narrow = (protein1 is not None) and (protein2 is not None)
+    def associations_query(species_id):
+        # narrow = (protein1 is not None) and (protein2 is not None)
 
         query = """
-            SELECT proteins1.protein_id, proteins2.protein_id,
-                   proteins1.protein_external_id, proteins2.protein_external_id,
-                   proteins1.preferred_name, proteins2.preferred_name,
-                   proteins1.annotation, proteins2.annotation,
+            SELECT node_node_links.node_id_a, node_node_links.node_id_b,
                    node_node_links.combined_score,
                    node_node_links.evidence_scores
             FROM network.node_node_links AS node_node_links
-            JOIN items.proteins AS proteins1 ON proteins1.protein_id = node_node_links.node_id_a
-            JOIN items.proteins AS proteins2 ON proteins2.protein_id = node_node_links.node_id_b
-            WHERE proteins1.species_id = %s
-              AND proteins1.species_id = proteins2.species_id
+            JOIN items.proteins AS proteins ON proteins.protein_id = node_node_links.node_id_a
+            WHERE proteins.species_id = %s;
         """
-        query += ("AND UPPER(proteins1.preferred_name) = UPPER(%s) AND UPPER(proteins2.preferred_name) = UPPER(%s)" if narrow else "")
-        query += ("LIMIT %s" if limit is not None else "")
-        query += ";" 
+        # query += ("AND UPPER(proteins1.preferred_name) = UPPER(%s) AND UPPER(proteins2.preferred_name) = UPPER(%s)" if narrow else "")
+        # query += ("LIMIT %s" if limit is not None else "")
+        # query += ";"
 
-        params = (species_id,) + ((protein1, protein2,) if narrow else ()) + ((limit,) if limit is not None else ())
+        # params = (species_id,) + ((protein1, protein2,) if narrow else ()) + ((limit,) if limit is not None else ())
+        params = (species_id,)
 
         return query, params
 
@@ -103,13 +99,11 @@ def get_proteins(postgres_connection):
     
     cursor.close()
 
-def get_associations(postgres_connection, species_id, protein1 = None, protein2 = None, limit = None):
+def get_associations(postgres_connection, species_id):
     """
     Queries the database specified by postgres_connection and for each pair
     of proteins yields an association, i.e.:
     - internal ids
-    - external ids
-    - annotations
     - combined score
     - scores per evidence channels
 
@@ -118,7 +112,7 @@ def get_associations(postgres_connection, species_id, protein1 = None, protein2 
     """
 
     cursor = postgres_connection.cursor(name = "associations")
-    query, params = QueryBuilder.associations_query(species_id, protein1, protein2, limit)
+    query, params = QueryBuilder.associations_query(species_id)
     cursor.execute(query, params)
 
     while True:
@@ -130,14 +124,8 @@ def get_associations(postgres_connection, species_id, protein1 = None, protein2 
             yield {
                 "id1": row[0],
                 "id2": row[1],
-                "external_id1": row[2],
-                "external_id2": row[3],
-                "preferred_name1": row[4],
-                "preferred_name2": row[5],
-                "annotation1": row[6],
-                "annotation2": row[7],
-                "combined_score": row[8],
-                "evidence_scores": row[9]
+                "combined_score": row[2],
+                "evidence_scores": row[3]
             }
     
     cursor.close()
