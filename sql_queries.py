@@ -2,6 +2,18 @@
 class QueryBuilder:
 
     @staticmethod
+    def proteins_query():
+        query = """
+            SELECT protein_id,
+                   protein_external_id,
+                   preferred_name,
+                   annotation
+            FROM items.proteins;
+        """
+
+        return query
+
+    @staticmethod
     def associations_query(species_id, protein1 = None, protein2 = None, limit = None):
         narrow = (protein1 is not None) and (protein2 is not None)
 
@@ -61,6 +73,35 @@ class QueryBuilder:
 
         return query, params
 
+
+def get_proteins(postgres_connection):
+    """
+    Queries the database specified by postgres_connection and for each protein
+    yields the following:
+    - internal id
+    - external_id
+    - preferred name
+    - annotation
+    """
+
+    cursor = postgres_connection.cursor(name = "proteins")
+    query = QueryBuilder.proteins_query()
+    cursor.execute(query)
+
+    while True:
+        rows = cursor.fetchmany(size = 4096)
+        if len(rows) == 0:
+            break
+
+        for row in rows:
+            yield {
+                "id": row[0],
+                "external_id": row[1],
+                "preferred_name": row[2],
+                "annotation": row[3]
+            }
+    
+    cursor.close()
 
 def get_associations(postgres_connection, species_id, protein1 = None, protein2 = None, limit = None):
     """
