@@ -136,6 +136,8 @@ def main():
     # Translate the database for all species proteins
     if only_species:
         # STRING
+        # Get all proteins
+        proteins = SQL.get_proteins()
         # Get protein - protein association
         associations = SQL.get_associations(
             postgres_connection,
@@ -148,19 +150,25 @@ def main():
         )
 
         # Neo4j
+        print("Writing proteins...")
+        for idx, item in enumerate(proteins):
+            print("{}".format(idx + 1), end = "\r")
+            Cypher.add_protein(neo4j_graph, item)
+        print()
+
         print("Writing associations...")
         for idx, item in enumerate(associations):
             print("{}".format(idx + 1), end = "\r")
             item = {**item, **decode_evidence_scores(item["evidence_scores"])}
             del item["evidence_scores"]
 
-            Cypher.update_associations(neo4j_graph, item)
+            Cypher.add_association(neo4j_graph, item)
         print()
 
         print("Writing actions...")
         for idx, item in enumerate(actions):
             print("{}".format(idx + 1), end = "\r")
-            Cypher.update_proteins_and_action(neo4j_graph, item)
+            Cypher.add_action(neo4j_graph, item)
         print()
 
     # Translate the database only for specified proteins
@@ -183,19 +191,25 @@ def main():
             )
 
             # Neo4j
+            print("Writing proteins...")
+            for idx, item in enumerate(proteins):
+                print("{}".format(idx + 1), end = "\r")
+                Cypher.add_protein(neo4j_graph, item)
+            print()
+
             print("Writing associations...")
             for idx, item in enumerate(associations):
                 print("{}a".format(idx + 1), end = "\r")
                 item = {**item, **decode_evidence_scores(item["evidence_scores"])}
                 del item["evidence_scores"]
 
-                Cypher.update_associations(neo4j_graph, item)
+                Cypher.add_association(neo4j_graph, item)
             print()
 
             print("Writing actions...")
             for idx, item in enumerate(actions):
                 print("{}".format(idx + 1), end = "\r")
-                Cypher.update_proteins_and_action(neo4j_graph, item)
+                Cypher.add_action(neo4j_graph, item)
             print()
 
     print("Writing pathways...")

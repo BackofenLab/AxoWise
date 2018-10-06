@@ -35,7 +35,7 @@ class QueryBuilder:
         return query, params
 
     @staticmethod
-    def actions_query(species_id, protein1 = None, protein2 = None, limit = None):
+    def actions_query(species_id):
         narrow = (protein1 is not None) and (protein2 is not None)
 
         query = """
@@ -44,16 +44,15 @@ class QueryBuilder:
                    mode,
                    score
             FROM network.actions AS actions
-            JOIN items.proteins AS proteins1 ON actions.item_id_a = proteins1.protein_id
-            JOIN items.proteins AS proteins2 ON actions.item_id_b = proteins2.protein_id
-            WHERE proteins1.species_id = %s
-              AND proteins1.species_id = proteins2.species_id
+            JOIN items.proteins AS proteins ON actions.item_id_a = proteins.protein_id
+            WHERE proteins.species_id = %s;
         """
-        query += ("AND UPPER(proteins1.preferred_name) = UPPER(%s) AND UPPER(proteins2.preferred_name) = UPPER(%s)" if narrow else "")
-        query += ("LIMIT %s" if limit is not None else "")
-        query += ";"
+        # query += ("AND UPPER(proteins1.preferred_name) = UPPER(%s) AND UPPER(proteins2.preferred_name) = UPPER(%s)" if narrow else "")
+        # query += ("LIMIT %s" if limit is not None else "")
+        # query += ";"
 
-        params = (species_id,) + ((protein1, protein2,) if narrow else ()) + ((limit,) if limit is not None else ())
+        # params = (species_id,) + ((protein1, protein2,) if narrow else ()) + ((limit,) if limit is not None else ())
+        params = (species_id,)
 
         return query, params
 
@@ -106,9 +105,6 @@ def get_associations(postgres_connection, species_id):
     - internal ids
     - combined score
     - scores per evidence channels
-
-    The query can be narrowed by specifying names of proteins: protein1 and protein2.
-    To limit the number of fetched rows, provide limit as an integer.
     """
 
     cursor = postgres_connection.cursor(name = "associations")
@@ -130,24 +126,17 @@ def get_associations(postgres_connection, species_id):
     
     cursor.close()
 
-def get_actions(postgres_connection, species_id, protein1 = None, protein2 = None, limit = None):
+def get_actions(postgres_connection, species_id):
     """
     Queries the database specified by postgres_connection and for each pair
-    of proteins yields an action and a pathway, i.e.:
+    of proteins yields an action, i.e.:
     - internal ids
     - mode (activation, binding, catalysis etc.)
     - score
-    - set id
-    - title (type of the pathway)
-    - comment (pathway description)
-    - collection id
-
-    The query can be narrowed by specifying names of proteins: protein1 and protein2.
-    To limit the number of fetched rows, provide limit as an integer.
     """
 
-    cursor = postgres_connection.cursor(name = "actions_and_pathways")
-    query, params = QueryBuilder.actions_query(species_id, protein1, protein2, limit)
+    cursor = postgres_connection.cursor(name = "actions")
+    query, params = QueryBuilder.actions_query(species_id)
     cursor.execute(query, params)
 
     while True:
