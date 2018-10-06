@@ -15,7 +15,7 @@ def add_protein(graph, params):
     """
     graph.run(query, params)
 
-def update_proteins_and_action(graph, params):
+def add_action(graph, params):
     """
     For an existing protein - protein pair, create / update (merge) the given
     action associated with the given pathway.
