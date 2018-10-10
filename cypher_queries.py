@@ -115,11 +115,13 @@ def update_pathways(graph, params):
     """
 
     query = """
+        UNWIND {batch} as entry
+
         MATCH (protein1:Protein {
-            external_id: {external_id}
+            external_id: entry.external_id
         })
 
-        FOREACH (p1 IN {pathways1} |
+        FOREACH (p1 IN entry.pathways1 |
             MERGE (pathway1:Pathway {
                 id: p1.id,
                 name: p1.name,
