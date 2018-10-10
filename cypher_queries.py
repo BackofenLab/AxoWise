@@ -176,6 +176,14 @@ def update_pathways(graph, params):
 #     """
 #     graph.run(query)
 
+def create_protein_index(graph):
+
+    query = """
+        CREATE INDEX ON :Protein(id)
+    """
+
+    graph.run(query)
+
 def delete_all(graph):
     """
     Delete all nodes and edges from a Neo4j graph.

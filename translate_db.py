@@ -157,6 +157,8 @@ def main():
             print("{}".format(idx + 1), end = "\r")
             Cypher.add_protein(neo4j_graph, item)
         print()
+        # Create protein index
+        Cypher.create_protein_index(neo4j_graph)
 
         print("Writing associations...")
         for idx, item in enumerate(associations):
