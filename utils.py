@@ -36,3 +36,11 @@ def pair_generator(elements):
         for j in range(i + 1, n):
             yield elements[i], elements[j]
 
+def batches(generator, batch_size):
+    batch = []
+    for item in generator:
+        batch.append(item)
+        if len(batch) == batch_size:
+            yield batch
+            batch = []
+    yield batch

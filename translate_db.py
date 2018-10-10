@@ -6,7 +6,7 @@ import argparse
 import sql_queries as SQL
 import cypher_queries as Cypher
 import database
-from utils import pair_generator, rstrip_line_generator, read_table
+from utils import pair_generator, rstrip_line_generator, read_table, batches
 
 def main():
     # Parse CLI arguments
@@ -153,26 +153,43 @@ def main():
 
         # Neo4j
         print("Writing proteins...")
-        for idx, item in enumerate(proteins):
-            print("{}".format(idx + 1), end = "\r")
-            Cypher.add_protein(neo4j_graph, item)
+        num_proteins = 0
+        for batch in batches(proteins, batch_size = 1024):
+            num_proteins += len(batch)
+            print("{}".format(num_proteins), end = "\r")
+            Cypher.add_protein(neo4j_graph, {
+                "batch": batch
+            })
         print()
         # Create protein index
         Cypher.create_protein_index(neo4j_graph)
 
         print("Writing associations...")
-        for idx, item in enumerate(associations):
-            print("{}".format(idx + 1), end = "\r")
-            item = {**item, **decode_evidence_scores(item["evidence_scores"])}
-            del item["evidence_scores"]
+        num_associations = 0
+        for batch in batches(associations, batch_size = 16384):
+            num_associations += len(batch)
+            print("{}".format(num_associations), end = "\r")
 
-            Cypher.add_association(neo4j_graph, item)
+            def map_batch_item(item):
+                item = {**item, **decode_evidence_scores(item["evidence_scores"])}
+                del item["evidence_scores"]
+                return item
+
+            batch = list(map(map_batch_item, batch))
+
+            Cypher.add_association(neo4j_graph, {
+                "batch": batch
+            })
         print()
 
         print("Writing actions...")
-        for idx, item in enumerate(actions):
-            print("{}".format(idx + 1), end = "\r")
-            Cypher.add_action(neo4j_graph, item)
+        num_actions = 0
+        for batch in batches(actions, batch_size = 16384):
+            num_actions += len(batch)
+            print("{}".format(num_actions), end = "\r")
+            Cypher.add_action(neo4j_graph, {
+                "batch": batch
+            })
         print()
 
     # Translate the database only for specified proteins

@@ -6,11 +6,12 @@ def add_protein(graph, params):
     """
 
     query = """
+        UNWIND {batch} as entry
         CREATE (protein:Protein {
-            id: {id},
-            external_id: {external_id},
-            preferred_name: {preferred_name},
-            annotation: {annotation}
+            id: entry.id,
+            external_id: entry.external_id,
+            preferred_name: entry.preferred_name,
+            annotation: entry.annotation
         })
     """
     graph.run(query, params)
@@ -25,21 +26,22 @@ def add_action(graph, params):
     """
     
     query = """
+        UNWIND {batch} as entry
         MATCH (protein1:Protein {
-            id: {id1}
+            id: entry.id1
         })
 
         MATCH (protein2:Protein {
-            id: {id2}
+            id: entry.id2
         })
 
         MERGE (protein1)-[action:ACTION {
-            mode: {mode}
+            mode: entry.mode
         }]->(protein2)
-            ON CREATE SET action.score = {score}
+            ON CREATE SET action.score = entry.score
             ON MATCH SET action.score = CASE action.score
-                                       WHEN {score} > action.score
-                                       THEN action.score = {score}
+                                       WHEN entry.score > action.score
+                                       THEN action.score = entry.score
                                        ELSE action.score
                                        END
     """
@@ -83,23 +85,25 @@ def add_association(graph, params):
     """
 
     query = """
+        UNWIND {batch} as entry
+
         MATCH (protein1:Protein {
-            id: {id1}
+            id: entry.id1
         })
 
         MATCH (protein2:Protein {
-            id: {id2}
+            id: entry.id2
         })
 
         CREATE (protein1)-[a:ASSOCIATION {
-            experiments: {experiments},
-            database: {database},
-            textmining: {textmining},
-            coexpression: {coexpression},
-            neighborhood: {neighborhood},
-            fusion: {fusion},
-            cooccurence: {cooccurence},
-            combined: {combined_score}
+            experiments: entry.experiments,
+            database: entry.database,
+            textmining: entry.textmining,
+            coexpression: entry.coexpression,
+            neighborhood: entry.neighborhood,
+            fusion: entry.fusion,
+            cooccurence: entry.cooccurence,
+            combined: entry.combined_score
         }]->(protein2)
     """
     graph.run(query, params)
