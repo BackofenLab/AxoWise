@@ -136,7 +136,10 @@ def main():
     if only_species:
         # STRING
         # Get all proteins
-        proteins = SQL.get_proteins(postgres_connection)
+        proteins = SQL.get_proteins(
+            postgres_connection,
+            species_id = species_id
+        )
         # Get protein - protein association
         associations = SQL.get_associations(
             postgres_connection,

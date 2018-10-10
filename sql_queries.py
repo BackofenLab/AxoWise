@@ -2,16 +2,19 @@
 class QueryBuilder:
 
     @staticmethod
-    def proteins_query():
+    def proteins_query(species_id):
         query = """
             SELECT protein_id,
                    protein_external_id,
                    preferred_name,
                    annotation
-            FROM items.proteins;
+            FROM items.proteins
+            WHERE species_id = %s;
         """
 
-        return query
+        params = (species_id,)
+
+        return query, params
 
     @staticmethod
     def associations_query(species_id):
@@ -69,7 +72,7 @@ class QueryBuilder:
         return query, params
 
 
-def get_proteins(postgres_connection):
+def get_proteins(postgres_connection, species_id):
     """
     Queries the database specified by postgres_connection and for each protein
     yields the following:
@@ -80,8 +83,8 @@ def get_proteins(postgres_connection):
     """
 
     cursor = postgres_connection.cursor(name = "proteins")
-    query = QueryBuilder.proteins_query()
-    cursor.execute(query)
+    query, params = QueryBuilder.proteins_query(species_id)
+    cursor.execute(query, params)
 
     while True:
         rows = cursor.fetchmany(size = 4096)
@@ -95,7 +98,7 @@ def get_proteins(postgres_connection):
                 "preferred_name": row[2],
                 "annotation": row[3]
             }
-    
+
     cursor.close()
 
 def get_associations(postgres_connection, species_id):
@@ -123,7 +126,7 @@ def get_associations(postgres_connection, species_id):
                 "combined_score": row[2],
                 "evidence_scores": row[3]
             }
-    
+
     cursor.close()
 
 def get_actions(postgres_connection, species_id):
