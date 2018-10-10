@@ -25,7 +25,7 @@ def main():
         "--kegg_organism_id",
         type = str,
         help = "KEGG organism ID",
-        default = "mmu"
+        default = "hsa"
     )
 
     args = args_parser.parse_args()
@@ -234,13 +234,20 @@ def main():
             print()
 
     print("Writing pathways...")
-    for idx, gene_external_id in enumerate(gene2pathways):
-        print("{}".format(idx + 1), end = "\r")
-        item = {
-            "external_id": gene_external_id
-        }
-        pathways_ids1 = gene2pathways[gene_external_id]
-        item["pathways1"] = list(map(lambda pid: pathways[pid], pathways_ids1))
+    num_pathways = 0
+    for batch in batches(gene2pathways, batch_size = 1024):
+        num_pathways += len(batch)
+        print("{}".format(num_pathways), end = "\r")
+
+        def map_batch_item(gene_external_id):
+            item = {
+                "external_id": gene_external_id
+            }
+            pathways_ids1 = gene2pathways[gene_external_id]
+            item["pathways1"] = list(map(lambda pid: pathways[pid], pathways_ids1))
+            return item
+
+        batch = list(map(map_batch_item, batch))
         Cypher.update_pathways(neo4j_graph, item)
     print()
 

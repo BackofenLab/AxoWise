@@ -39,7 +39,7 @@ class QueryBuilder:
 
     @staticmethod
     def actions_query(species_id):
-        narrow = (protein1 is not None) and (protein2 is not None)
+        # narrow = (protein1 is not None) and (protein2 is not None)
 
         query = """
             SELECT item_id_a,
