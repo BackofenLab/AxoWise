@@ -248,7 +248,9 @@ def main():
             return item
 
         batch = list(map(map_batch_item, batch))
-        Cypher.update_pathways(neo4j_graph, item)
+        Cypher.update_pathways(neo4j_graph, {
+                "batch": batch
+            })
     print()
 
     print("Done!")
