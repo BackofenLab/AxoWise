@@ -32,6 +32,29 @@ def add_drug(graph, params):
     """
     graph.run(query, params)
 
+def add_class(graph, params):
+
+    query = """
+        UNWIND {batch} as entry
+        CREATE (class:Class {
+            name: entry.name
+        })
+    """
+    graph.run(query, params)
+
+def add_pathway(graph, params):
+
+    query = """
+        UNWIND {batch} as entry
+        CREATE (pathway:Pathway {
+            id: entry.id,
+            name: entry.name,
+            description: entry.description
+        })
+    """
+
+    graph.run(query, params)
+
 def add_protein(graph, params):
     """
     Create a protein with the specified id, external id,
@@ -141,100 +164,152 @@ def add_association(graph, params):
     """
     graph.run(query, params)
 
-def update_pathways(graph, params):
-    """
-    For each protein in the pathway collection, create / update (merge)
-    the pathway and associated classes, compounds, drugs and diseases.
-    """
+def connect_protein_and_pathway(graph, params):
 
     query = """
         UNWIND {batch} as entry
 
-        MATCH (protein1:Protein {
-            external_id: entry.external_id
+        MATCH (protein:Protein {
+            external_id: entry.protein_external_id
         })
 
-        FOREACH (p1 IN entry.pathways1 |
-            MERGE (pathway1:Pathway {
-                id: p1.id,
-                name: p1.name,
-                description: p1.description
-            })
-            CREATE (protein1)-[:IN]->(pathway1)
+        MATCH(pathway:Pathway {
+            id: entry.pathway_id
+        })
 
-            MERGE (fClass:Class {
-                name: p1.classes[length(p1.classes) - 1]
-            })
-            MERGE (pathway1)-[:IN]->(fClass)
-            FOREACH (i IN RANGE(length(p1.classes) - 1, 1) |
-                MERGE (cClass:Class {
-                        name: p1.classes[i]
-                })
-                MERGE (nClass:Class {
-                        name: p1.classes[i - 1]
-                })
-                MERGE (cClass)-[:IN]->(nClass)
-            )
-
-            FOREACH (dis1 IN p1.diseases |
-                MATCH (disease1:Disease {
-                    id: dis1.id
-                })
-                MERGE (disease1)-[:IN]->(pathway1)
-            )
-
-            FOREACH (dr1 IN p1.drugs |
-                MATCH (drug1:Drug {
-                    id: dr1.id
-                })
-                MERGE (drug1)-[:IN]->(pathway1)
-            )
-
-            FOREACH (com1 IN p1.compounds |
-                MATCH (compound1:Compound {
-                    id: com1.id
-                })
-                MERGE (compound1)-[:IN]->(pathway1)
-            )
-        )
+        CREATE (protein)-[:IN]->(pathway)
     """
     graph.run(query, params)
 
-# def remove_redundant_properties(graph):
+def connect_compound_and_pathway(graph, params):
+
+    query = """
+        UNWIND {batch} as entry
+
+        MATCH (compound:Compound {
+            id: entry.compound_id
+        })
+
+        MATCH (pathway:Pathway {
+            id: entry.pathway_id
+        })
+
+        CREATE (compound)-[:IN]->(pathway)
+    """
+    graph.run(query, params)
+
+def connect_disease_and_pathway(graph, params):
+
+    query = """
+        UNWIND {batch} as entry
+
+        MATCH (disease:Disease {
+            id: entry.disease_id
+        })
+
+        MATCH (pathway:Pathway {
+            id: entry.pathway_id
+        })
+
+        CREATE (disease)-[:IN]->(pathway)
+    """
+    graph.run(query, params)
+
+def connect_drug_and_pathway(graph, params):
+
+    query = """
+        UNWIND {batch} as entry
+
+        MATCH (drug:Drug {
+            id: entry.drug_id
+        })
+
+        MATCH (pathway:Pathway {
+            id: entry.pathway_id
+        })
+
+        CREATE (drug)-[:IN]->(pathway)
+    """
+    graph.run(query, params)
+
+# def update_pathways(graph, params):
 #     """
-#     Remove redundant properties of nodes or edges that have been previously
-#     used to correctly construct the graph.
+#     For each protein in the pathway collection, create / update (merge)
+#     the pathway and associated classes, compounds, drugs and diseases.
 #     """
 
 #     query = """
-#         MATCH (action:Action)
-#         REMOVE action.id1, action.id2
+#         UNWIND {batch} as entry
+
+#         MATCH (protein1:Protein {
+#             external_id: entry.external_id
+#         })
+
+#         FOREACH (p1 IN entry.pathways1 |
+#             MERGE (pathway1:Pathway {
+#                 id: p1.id,
+#                 name: p1.name,
+#                 description: p1.description
+#             })
+#             CREATE (protein1)-[:IN]->(pathway1)
+
+#             MERGE (fClass:Class {
+#                 name: p1.classes[length(p1.classes) - 1]
+#             })
+#             MERGE (pathway1)-[:IN]->(fClass)
+#             FOREACH (i IN RANGE(length(p1.classes) - 1, 1) |
+#                 MERGE (cClass:Class {
+#                         name: p1.classes[i]
+#                 })
+#                 MERGE (nClass:Class {
+#                         name: p1.classes[i - 1]
+#                 })
+#                 MERGE (cClass)-[:IN]->(nClass)
+#             )
+
+#             FOREACH (dis1 IN p1.diseases |
+#                 MATCH (disease1:Disease {
+#                     id: dis1.id
+#                 })
+#                 MERGE (disease1)-[:IN]->(pathway1)
+#             )
+
+#             FOREACH (dr1 IN p1.drugs |
+#                 MATCH (drug1:Drug {
+#                     id: dr1.id
+#                 })
+#                 MERGE (drug1)-[:IN]->(pathway1)
+#             )
+
+#             FOREACH (com1 IN p1.compounds |
+#                 MATCH (compound1:Compound {
+#                     id: com1.id
+#                 })
+#                 MERGE (compound1)-[:IN]->(pathway1)
+#             )
+#         )
 #     """
-#     graph.run(query)
+#     graph.run(query, params)
 
 def create_protein_index(graph):
 
-    query = """
-        CREATE INDEX ON :Protein(id)
-    """
+    queries = [
+        "CREATE INDEX ON :Protein(id)",
+        "CREATE INDEX ON :Protein(external_id)"
+    ]
 
-    graph.run(query)
+    for query in queries:
+        graph.run(query)
 
 def create_kegg_index(graph):
 
     queries = [
         "CREATE INDEX ON :Compound(id)",
         "CREATE INDEX ON :Drug(id)",
-        "CREATE INDEX ON :Disease(id)"
+        "CREATE INDEX ON :Disease(id)",
+        "CREATE INDEX ON :Pathway(id)"
     ]
 
     for query in queries:
         graph.run(query)
 
-def delete_all(graph):
-    """
-    Delete all nodes and edges from a Neo4j graph.
-    """
-
-    query = "MATCH (n) DETACH DELETE (n)"
-    graph.run(query)
