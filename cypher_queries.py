@@ -177,25 +177,22 @@ def update_pathways(graph, params):
             )
 
             FOREACH (dis1 IN p1.diseases |
-                MERGE (disease1:Disease {
-                    id: dis1.id,
-                    name: dis1.name
+                MATCH (disease1:Disease {
+                    id: dis1.id
                 })
                 MERGE (disease1)-[:IN]->(pathway1)
             )
 
             FOREACH (dr1 IN p1.drugs |
-                MERGE (drug1:Drug {
-                    id: dr1.id,
-                    name: dr1.name
+                MATCH (drug1:Drug {
+                    id: dr1.id
                 })
                 MERGE (drug1)-[:IN]->(pathway1)
             )
 
             FOREACH (com1 IN p1.compounds |
-                MERGE (compound1:Compound {
-                    id: com1.id,
-                    name: com1.name
+                MATCH (compound1:Compound {
+                    id: com1.id
                 })
                 MERGE (compound1)-[:IN]->(pathway1)
             )
