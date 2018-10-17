@@ -220,6 +220,16 @@ def create_protein_index(graph):
 
     graph.run(query)
 
+def create_kegg_index(graph):
+
+    query = """
+        CREATE INDEX ON :Compound(id)
+        CREATE INDEX ON :Drug(id)
+        CREATE INDEX ON :Disease(id)
+    """
+
+    graph.run(query)
+
 def delete_all(graph):
     """
     Delete all nodes and edges from a Neo4j graph.

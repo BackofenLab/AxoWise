@@ -131,6 +131,10 @@ def main():
         })
     print()
 
+    # Create KEGG data index
+    Cypher.create_kegg_index(neo4j_graph)
+
+    # Pathways
     pathways = dict()
 
     gene2pathways = dict()
