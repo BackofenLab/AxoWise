@@ -73,7 +73,11 @@ def main():
             params[score_type] = score
         return params
 
+    # Connect to the databases
+    postgres_connection, neo4j_graph = database.connect(credentials_path = args.credentials)
+
     # Read KEGG data
+    # Compounds
     compounds = dict()
     for id, name in read_table("KEGG/data/kegg_compounds.{}.tsv".format(KOID), (str, str), delimiter = "\t", header = True):
         compounds[id] = {
@@ -81,6 +85,17 @@ def main():
             "name": name
         }
 
+    print("Writing compounds...")
+    num_compounds = 0
+    for batch in batches(compounds.values(), batch_size = 1024):
+        num_compounds += len(batch)
+        print("{}".format(num_compounds), end = "\r")
+        Cypher.add_compound(neo4j_graph, {
+            "batch": batch
+        })
+    print()
+
+    # Diseases
     diseases = dict()
     for id, name in read_table("KEGG/data/kegg_diseases.{}.tsv".format(KOID), (str, str), delimiter = "\t", header = True):
         diseases[id] = {
@@ -88,12 +103,33 @@ def main():
             "name": name
         }
 
+    print("Writing diseases...")
+    num_diseases = 0
+    for batch in batches(diseases.values(), batch_size = 1024):
+        num_diseases += len(batch)
+        print("{}".format(num_diseases), end = "\r")
+        Cypher.add_disease(neo4j_graph, {
+            "batch": batch
+        })
+    print()
+
+    # Drugs
     drugs = dict()
     for id, name in read_table("KEGG/data/kegg_drugs.{}.tsv".format(KOID), (str, str), delimiter = "\t", header = True):
         drugs[id] = {
             "id": id,
             "name": name
         }
+
+    print("Writing drugs...")
+    num_drugs = 0
+    for batch in batches(drugs.values(), batch_size = 1024):
+        num_drugs += len(batch)
+        print("{}".format(num_drugs), end = "\r")
+        Cypher.add_drug(neo4j_graph, {
+            "batch": batch
+        })
+    print()
 
     pathways = dict()
 
@@ -119,9 +155,6 @@ def main():
                 gene2pathways[gene_external_id] = list()
 
             gene2pathways[gene_external_id].append(id)
-
-    # Connect to the databases
-    postgres_connection, neo4j_graph = database.connect(credentials_path = args.credentials)
 
     # Get the species id
     species_id = SQL.get_species_id(postgres_connection, species)
