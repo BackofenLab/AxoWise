@@ -314,6 +314,7 @@ def main():
         Cypher.connect_protein_and_pathway(neo4j_graph, {
             "batch": batch
         })
+    print()
 
     print("Done!")
 
