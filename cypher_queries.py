@@ -1,4 +1,37 @@
 
+def add_compound(graph, params):
+
+    query = """
+        UNWIND {batch} as entry
+        CREATE (compound:Compound {
+            id: entry.id,
+            name: entry.name
+        })
+    """
+    graph.run(query, params)
+
+def add_disease(graph, params):
+
+    query = """
+        UNWIND {batch} as entry
+        CREATE (disease:Disease {
+            id: entry.id,
+            name: entry.name
+        })
+    """
+    graph.run(query, params)
+
+def add_drug(graph, params):
+
+    query = """
+        UNWIND {batch} as entry
+        CREATE (drug:Drug {
+            id: entry.id,
+            name: entry.name
+        })
+    """
+    graph.run(query, params)
+
 def add_protein(graph, params):
     """
     Create a protein with the specified id, external id,
