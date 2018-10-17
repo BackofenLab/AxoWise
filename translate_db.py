@@ -166,8 +166,9 @@ def main():
         print("Species not found!")
         sys.exit(1)
 
-    # Clear the Neo4j database
-    Cypher.delete_all(neo4j_graph)
+    # Clean the Neo4j database
+    print("Cleaning the old data from Neo4j database...")
+    neo4j_graph.delete_all()
 
     # Translate the database for all species proteins
     if only_species:

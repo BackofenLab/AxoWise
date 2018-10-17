@@ -222,13 +222,14 @@ def create_protein_index(graph):
 
 def create_kegg_index(graph):
 
-    query = """
-        CREATE INDEX ON :Compound(id)
-        CREATE INDEX ON :Drug(id)
-        CREATE INDEX ON :Disease(id)
-    """
+    queries = [
+        "CREATE INDEX ON :Compound(id)",
+        "CREATE INDEX ON :Drug(id)",
+        "CREATE INDEX ON :Disease(id)"
+    ]
 
-    graph.run(query)
+    for query in queries:
+        graph.run(query)
 
 def delete_all(graph):
     """
