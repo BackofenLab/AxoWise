@@ -113,19 +113,24 @@ def get_protein_subgraph(graph, preferred_name):
         MATCH (protein:Protein {
             preferred_name: {preferred_name}
         })
+        USING INDEX protein:Protein(preferred_name)
 
-        OPTIONAL MATCH (protein)-[association:ASSOCIATION]-(other:Protein)
+        WITH DISTINCT protein
+        MATCH (protein)-[relationship:ASSOCIATION | :ACTION]-(other:Protein)
 
-        OPTIONAL MATCH (protein)-[action:ACTION]-(other)
+        WITH DISTINCT protein, other, relationship
+        MATCH (protein)-[:IN]->(pathway:Pathway)<-[:IN]-(other)
 
-        OPTIONAL MATCH (protein)-[:IN]->(pathway:Pathway)
-        OPTIONAL MATCH (other)-[:IN]->(pathway)
+        WITH DISTINCT protein, other, relationship, pathway
+        MATCH (drug:Drug)-[:IN]->(pathway)
 
-        OPTIONAL MATCH (drug:Drug)-[:IN]->(pathway)
-        OPTIONAL MATCH (disease:Disease)-[:IN]->(pathway)
-        OPTIONAL MATCH (compound:Compound)-[:IN]->(pathway)
+        WITH DISTINCT protein, other, relationship, pathway, drug
+        MATCH (disease:Disease)-[:IN]->(pathway)
 
-        RETURN protein, other, association, action, pathway, drug, disease, compound
+        WITH DISTINCT protein, other, relationship, pathway, drug, disease
+        MATCH (compound:Compound)-[:IN]->(pathway)
+
+        RETURN protein, other, relationship, pathway, drug, disease, compound
     """
 
     param_dict = dict(
@@ -295,7 +300,8 @@ def create_protein_index(graph):
 
     queries = [
         "CREATE INDEX ON :Protein(id)",
-        "CREATE INDEX ON :Protein(external_id)"
+        "CREATE INDEX ON :Protein(external_id)",
+        "CREATE INDEX ON :Protein(preferred_name)"
     ]
 
     for query in queries:
