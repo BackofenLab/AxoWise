@@ -26,7 +26,8 @@ class QueryBuilder:
                    node_node_links.evidence_scores
             FROM network.node_node_links AS node_node_links
             JOIN items.proteins AS proteins ON proteins.protein_id = node_node_links.node_id_a
-            WHERE proteins.species_id = %s;
+            WHERE proteins.species_id = %s AND
+                  node_id_a < node_id_b;
         """
         # query += ("AND UPPER(proteins1.preferred_name) = UPPER(%s) AND UPPER(proteins2.preferred_name) = UPPER(%s)" if narrow else "")
         # query += ("LIMIT %s" if limit is not None else "")
@@ -48,7 +49,8 @@ class QueryBuilder:
                    score
             FROM network.actions AS actions
             JOIN items.proteins AS proteins ON actions.item_id_a = proteins.protein_id
-            WHERE proteins.species_id = %s;
+            WHERE proteins.species_id = %s AND
+                  item_id_a < item_id_b;
         """
         # query += ("AND UPPER(proteins1.preferred_name) = UPPER(%s) AND UPPER(proteins2.preferred_name) = UPPER(%s)" if narrow else "")
         # query += ("LIMIT %s" if limit is not None else "")
