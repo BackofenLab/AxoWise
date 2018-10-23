@@ -2,11 +2,12 @@ import sys
 import psycopg2
 import py2neo
 import argparse
+import os.path
 
 import sql_queries as SQL
 import cypher_queries as Cypher
 import database
-from utils import pair_generator, rstrip_line_generator, read_table, batches, concat
+from utils import pair_generator, rstrip_line_generator, read_table, batches, concat, lines
 
 def main():
     # Parse CLI arguments
@@ -28,11 +29,28 @@ def main():
         default = "hsa"
     )
 
+    args_parser.add_argument(
+        "--species_name",
+        type = str,
+        help = "Species name",
+        default = "Homo sapiens"
+    )
+
+    args_parser.add_argument(
+        "--protein_list",
+        type = str,
+        help = "Path to the file containing protein Ensembl IDs"
+    )
+
     args = args_parser.parse_args()
     KOID = args.kegg_organism_id
 
-    # Parse the standard input (until EOF)
-    species = input()
+    protein_ensembl_ids_set = set()
+    protein_ids_set = set()
+    if args.protein_list is not None:
+        protein_ensembl_ids_set = set(lines(os.path.abspath(args.protein_list)))
+
+    species = args.species_name
 
     # Useful functions
     score_channel_map = {
@@ -246,16 +264,32 @@ def main():
         postgres_connection,
         species_id = species_id
     )
+    if args.protein_list is not None:
+        def filter_proteins(protein):
+            valid = protein["external_id"] in protein_ensembl_ids_set
+            if valid:
+                protein_ids_set.add(protein["id"])
+            return valid
+
+        proteins = filter(filter_proteins, proteins)
+
     # Get protein - protein association
     associations = SQL.get_associations(
         postgres_connection,
         species_id = species_id
     )
-    # Get protein - protein functional prediction
-    actions = SQL.get_actions(
-        postgres_connection,
-        species_id = species_id
-    )
+    if args.protein_list is not None:
+        associations = filter(
+            lambda association: association["id1"] in protein_ids_set and association["id2"] in protein_ids_set,
+            associations
+        )
+
+    if args.protein_list is not None:
+        # Get protein - protein functional prediction
+        actions = SQL.get_actions(
+            postgres_connection,
+            species_id = species_id
+        )
 
     print("Creating proteins...")
     num_proteins = 0
@@ -287,15 +321,16 @@ def main():
         })
     print()
 
-    print("Creating protein - protein actions...")
-    num_actions = 0
-    for batch in batches(actions, batch_size = 16384):
-        num_actions += len(batch)
-        print("{}".format(num_actions), end = "\r")
-        Cypher.add_action(neo4j_graph, {
-            "batch": batch
-        })
-    print()
+    if args.protein_list is None:
+        print("Creating protein - protein actions...")
+        num_actions = 0
+        for batch in batches(actions, batch_size = 16384):
+            num_actions += len(batch)
+            print("{}".format(num_actions), end = "\r")
+            Cypher.add_action(neo4j_graph, {
+                "batch": batch
+            })
+        print()
 
     print("Connecting proteins and pathways...")
     num_protein_pathway_connections = 0
@@ -305,7 +340,12 @@ def main():
             "protein_external_id": gene_external_id
         }, gene2pathways[gene_external_id])
 
-    gene_pathway_lists = map(lambda geid: map_gene_to_pathways(geid), gene2pathways.keys())
+    if args.protein_list is not None:
+        external_id_source = protein_ensembl_ids_set
+    else:
+        external_id_source = gene2pathways.keys()
+
+    gene_pathway_lists = map(lambda geid: map_gene_to_pathways(geid), external_id_source)
     gene_pathway_list = concat(gene_pathway_lists)
 
     for batch in batches(gene_pathway_list, batch_size = 4096):
