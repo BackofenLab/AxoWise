@@ -1,6 +1,4 @@
 import sys
-import psycopg2
-import py2neo
 import argparse
 import os.path
 
@@ -40,6 +38,12 @@ def main():
         "--protein_list",
         type = str,
         help = "Path to the file containing protein Ensembl IDs"
+    )
+
+    args_parser.add_argument(
+        "--combined_score_threshold",
+        type = int,
+        help = "Threshold above which the associations between proteins will be considered"
     )
 
     args = args_parser.parse_args()
@@ -279,10 +283,15 @@ def main():
         species_id = species_id
     )
     if args.protein_list is not None:
-        associations = filter(
-            lambda association: association["id1"] in protein_ids_set and association["id2"] in protein_ids_set,
-            associations
-        )
+        def filter_associations(association):
+            if args.combined_score_threshold is None:
+                above_threshold = True
+            else:
+                above_threshold = association["combined_score"] >= args.combined_score_threshold
+            in_list = association["id1"] in protein_ids_set and association["id2"] in protein_ids_set
+            return above_threshold and in_list
+
+        associations = filter(filter_associations, associations)
 
     if args.protein_list is not None:
         # Get protein - protein functional prediction
