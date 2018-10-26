@@ -66,8 +66,8 @@ def add_protein(graph, params):
         CREATE (protein:Protein {
             id: entry.id,
             external_id: entry.external_id,
-            preferred_name: entry.preferred_name,
-            annotation: entry.annotation
+            name: toUpper(entry.preferred_name),
+            description: entry.annotation
         })
     """
     graph.run(query, params)
@@ -110,27 +110,12 @@ def get_protein_subgraph(graph, preferred_name):
     """
 
     query = """
-        MATCH (protein:Protein {
-            preferred_name: {preferred_name}
-        })
-        USING INDEX protein:Protein(preferred_name)
-
-        WITH DISTINCT protein
-        MATCH (protein)-[relationship:ASSOCIATION | :ACTION]-(other:Protein)
-
-        WITH DISTINCT protein, other, relationship
-        MATCH (protein)-[:IN]->(pathway:Pathway)<-[:IN]-(other)
-
-        WITH DISTINCT protein, other, relationship, pathway
-        MATCH (drug:Drug)-[:IN]->(pathway)
-
-        WITH DISTINCT protein, other, relationship, pathway, drug
-        MATCH (disease:Disease)-[:IN]->(pathway)
-
-        WITH DISTINCT protein, other, relationship, pathway, drug, disease
-        MATCH (compound:Compound)-[:IN]->(pathway)
-
-        RETURN protein, other, relationship, pathway, drug, disease, compound
+        MATCH (protein:Protein)-[:IN]->(pathway:Pathway),
+              (compound:Compound)-[:IN]->(pathway),
+              (drug:Drug)-[:IN]->(pathway),
+              (disease:Disease)-[:IN]->(pathway)
+        WHERE toUpper(protein.preferred_name) = toUpper({preferred_name})
+        RETURN protein, pathway, compound, drug, disease
     """
 
     param_dict = dict(
@@ -301,7 +286,7 @@ def create_protein_index(graph):
     queries = [
         "CREATE INDEX ON :Protein(id)",
         "CREATE INDEX ON :Protein(external_id)",
-        "CREATE INDEX ON :Protein(preferred_name)"
+        "CREATE INDEX ON :Protein(name)"
     ]
 
     for query in queries:
