@@ -117,24 +117,16 @@
     <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code> python translate_db.py
 </code></pre></div>    </div>
 
-    <p>The script expects to read the following format from the standard input (stdin):</p>
+    <p>The script expects to read the name of the species from the standard input (stdin):</p>
     <ul>
-      <li>First line: species name (e.g. Homo sapiens)</li>
-      <li>All other lines: protein name (e.g. CCR5)</li>
+      <li>e.g. Homo sapiens</li>
     </ul>
   </li>
 </ol>
 
 <h1 id="example">Example:</h1>
-<p><strong>input.txt</strong>:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Mus musculus
-CCR5
-CCL5
-IL10RA
-</code></pre></div></div>
-
 <p>Executing the script through the terminal:</p>
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python translate_db.py &lt; input.txt
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="s2">"Homo sapiens"</span> | python translate_db.py
 </code></pre></div></div>
 
 <p>Output:</p>
