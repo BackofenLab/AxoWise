@@ -164,15 +164,18 @@ def main():
         delimiter = "\t",
         header = True
     ):
-        pathways.append({
+        pathway_dict = {
             "id": id,
             "name": name,
             "description": description
-        })
+        }
         pathway2classes[id] = classes.split(";")
         pathway2diseases[id] = diseases_ids.split(";")
         pathway2drugs[id] = drugs_ids.split(";")
         pathway2compounds[id] = compounds_ids.split(";")
+
+        pathway_dict["class"] = pathway2classes[id][-1]
+        pathways.append(pathway_dict)
 
         for gene_external_id in genes_external_ids.split(";"):
             if gene_external_id not in gene2pathways:
@@ -180,22 +183,32 @@ def main():
 
             gene2pathways[gene_external_id].append(id)
 
-    print("Creating classes...")
+    print("Creating classes and class hierarchy...")
     num_classes = 0
-    classes = list(set(concat(pathway2classes.values())))
-    classes = map(
-        lambda class_name: { "name": class_name },
-        classes
+    class_chains = list(pathway2classes.values())
+    class_pairs = set()
+    for chain in class_chains:
+        for i in range(len(chain) - 1):
+            parent = chain[i]
+            child = chain[i + 1]
+            class_pairs.add((parent, child))
+
+    class_pairs = map(
+        lambda pair: {
+            "name_parent": pair[0],
+            "name_child": pair[1]
+        },
+        class_pairs
     )
-    for batch in batches(classes, batch_size = 32):
+    for batch in batches(class_pairs, batch_size = 32):
         num_classes += len(batch)
         print("{}".format(num_classes), end = "\r")
-        Cypher.add_class(neo4j_graph, {
+        Cypher.add_class_parent_and_child(neo4j_graph, {
             "batch": batch
         })
     print()
 
-    print("Creating pathways...")
+    print("Creating pathways and connecting them to classes...")
     num_pathways = 0
     for batch in batches(pathways, batch_size = 1024):
         num_pathways += len(batch)
@@ -204,9 +217,6 @@ def main():
             "batch": batch
         })
     print()
-
-    print("Connecting classes and pathways...")
-    print("TODO")
 
     print("Connecting compounds and pathways...")
     num_compound_pathway_connections = 0

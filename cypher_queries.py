@@ -32,13 +32,17 @@ def add_drug(graph, params):
     """
     graph.run(query, params)
 
-def add_class(graph, params):
+def add_class_parent_and_child(graph, params):
 
     query = """
         UNWIND {batch} as entry
-        CREATE (class:Class {
-            name: entry.name
+        MERGE (parent:Class {
+            name: entry.name_parent
         })
+        MERGE (child:Class {
+            name: entry.name_child
+        })
+        MERGE (child)-[:IN]->(parent)
     """
     graph.run(query, params)
 
@@ -46,11 +50,14 @@ def add_pathway(graph, params):
 
     query = """
         UNWIND {batch} as entry
+        MATCH (class:Class {
+            name: entry.class
+        })
         CREATE (pathway:Pathway {
             id: entry.id,
             name: entry.name,
             description: entry.description
-        })
+        })-[:IN]->(class)
     """
 
     graph.run(query, params)
