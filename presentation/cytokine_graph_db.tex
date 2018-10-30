@@ -145,16 +145,52 @@ Albert-Ludwigs-Universität, Freiburg  % Your institution for the title page
     \end{figure}
 \end{frame}
 
+\begin{frame}{Neo4j \& Cypher}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{neo4j_logo.png}
+    \caption{Neo4j - a graph database management system}
+\end{figure}
+\begin{block}{Example of a Cypher query}
+MATCH (:Person \{ name: "Alan" \})-[p:PURCHASED]-\textgreater(b:book) \\
+RETURN p.date, b
+\end{block}
+\end{frame}
+
 %------------------------------------------------
 
 \section{What?}
 
 \begin{frame}
-\frametitle{Graph database scheme}
+\frametitle{Database scheme}
 \begin{figure}
     \centering
-    \includegraphics[width=0.8\linewidth]{database_scheme.png}
+    \includegraphics[width=0.9\linewidth]{database_scheme.png}
 \end{figure}
+\end{frame}
+
+\definecolor{protein}{HTML}{178ab7}
+\definecolor{disease}{HTML}{15a52f}
+\definecolor{compound}{HTML}{8f17b7}
+
+\begin{frame}{Statistics}
+\begin{itemize}
+    \item Nodes
+    \begin{itemize}
+        \item \textcolor{protein}{Protein}:
+        \item \textcolor{orange}{Pathway}:
+        \item \textcolor{red}{Drug}:
+        \item \textcolor{disease}{Disease}:
+        \item \textcolor{compound}{Compound}:
+        \item \textcolor{gray}{Class}:
+    \end{itemize}
+    \vfill
+    \item Relationships
+    \begin{itemize}
+        \item \textbf{ASSOCIATION}:
+        \item \textbf{IN}:
+    \end{itemize}
+\end{itemize}
 \end{frame}
 
 %------------------------------------------------
@@ -179,13 +215,14 @@ Albert-Ludwigs-Universität, Freiburg  % Your institution for the title page
 \column{.5\textwidth}
 \begin{figure}
     \centering
-    \includegraphics[width=0.8\linewidth]{kegg_logo.png}
+    \includegraphics[width=0.9\linewidth]{kegg_logo.png}
 \end{figure}
 \begin{itemize}
     \item \href{https://www.genome.jp/kegg/pathway.html}{KEGG PATHWAY}
     \begin{itemize}
         \item pathways
         \begin{itemize}
+            \item classes
             \item compounds
             \item drugs
             \item diseases
@@ -196,14 +233,50 @@ Albert-Ludwigs-Universität, Freiburg  % Your institution for the title page
 \end{columns}
 \end{frame}
 
-\begin{frame}{Technologies}
-    \centering
-\begin{figure}
-    \includegraphics[width=0.7\linewidth]{python_logo.png}
-\end{figure}
-\begin{figure}
-    \includegraphics[width=0.5\linewidth]{neo4j_logo.png}
-\end{figure}
+\begin{frame}{STRING score channels}
+    \begin{itemize}
+        \item 7 score channels $ \rightarrow $ combined score
+        \begin{enumerate}
+            \item Experiments
+            \item Database
+            \item Textmining
+            \item Co-expression
+            \item Neighbourhood
+            \item Fusion
+            \item Co-occurence
+        \end{enumerate}
+    \end{itemize}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.9\linewidth]{score_channels.png}
+        \caption{Scores for CCR5 and CCL5}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Workflow}
+\begin{enumerate}
+    \item Collect the data
+    \begin{itemize}
+        \item STRING: SQL dumps
+        \item KEGG PATHWAY: flat text files
+    \end{itemize}
+    \vfill
+    \item Extract the useful information
+    \begin{itemize}
+        \item Query the STRING SQL database
+        \item Parse the KEGG flat files
+    \end{itemize}
+    \vfill
+    \item Merge the databases
+    \begin{itemize}
+        \item Map KEGG identifiers to STRING identifiers
+    \end{itemize}
+    \vfill
+    \item  Build a graph database
+    \begin{itemize}
+        \item Translate the associative data into a graph
+    \end{itemize}
+\end{enumerate}
 \end{frame}
 
 %------------------------------------------------
@@ -229,15 +302,18 @@ Albert-Ludwigs-Universität, Freiburg  % Your institution for the title page
 \begin{itemize}
     \item Extend the database
     \begin{itemize}
-        \item Classes of pathways
         \item Protein - protein actions
         \item \href{https://www.genome.jp/kegg/drug/}{KEGG DRUG}
         \item \href{https://www.genome.jp/kegg/disease/}{KEGG DISEASE}
         \item \href{https://www.genome.jp/kegg/compound/}{KEGG COMPOUND}
     \end{itemize}
+    \vfill
     \item Other species
+    \vfill
     \item All proteins
+    \vfill
     \item Web server
+    \vfill
     \item Machine learning
 \end{itemize}
 \end{frame}
