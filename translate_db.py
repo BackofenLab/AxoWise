@@ -46,6 +46,27 @@ def main():
         help = "Threshold above which the associations between proteins will be considered"
     )
 
+    args_parser.add_argument(
+        "--skip_drugs",
+        type = bool,
+        help = "Do not add drugs to the resulting graph database",
+        default = False
+    )
+
+    args_parser.add_argument(
+        "--skip_compounds",
+        type = bool,
+        help = "Do not add compounds to the resulting graph database",
+        default = False
+    )
+
+    args_parser.add_argument(
+        "--skip_diseases",
+        type = bool,
+        help = "Do not add diseases to the resulting graph database",
+        default = False
+    )
+
     args = args_parser.parse_args()
     KOID = args.kegg_organism_id
 
@@ -53,6 +74,7 @@ def main():
     protein_ids_set = set()
     if args.protein_list is not None:
         protein_ensembl_ids_set = set(lines(os.path.abspath(args.protein_list)))
+        print(len(protein_ensembl_ids_set), "protein external IDs loaded.")
 
     species = args.species_name
 
@@ -93,58 +115,61 @@ def main():
 
     # Read KEGG data
     # Compounds
-    compounds = dict()
-    for id, name in read_table("KEGG/data/kegg_compounds.{}.tsv".format(KOID), (str, str), delimiter = "\t", header = True):
-        compounds[id] = {
-            "id": id,
-            "name": name
-        }
+    if not args.skip_compounds:
+        compounds = dict()
+        for id, name in read_table("KEGG/data/kegg_compounds.{}.tsv".format(KOID), (str, str), delimiter = "\t", header = True):
+            compounds[id] = {
+                "id": id,
+                "name": name
+            }
 
-    print("Creating compounds...")
-    num_compounds = 0
-    for batch in batches(compounds.values(), batch_size = 1024):
-        num_compounds += len(batch)
-        print("{}".format(num_compounds), end = "\r")
-        Cypher.add_compound(neo4j_graph, {
-            "batch": batch
-        })
-    print()
+        print("Creating compounds...")
+        num_compounds = 0
+        for batch in batches(compounds.values(), batch_size = 1024):
+            num_compounds += len(batch)
+            print("{}".format(num_compounds), end = "\r")
+            Cypher.add_compound(neo4j_graph, {
+                "batch": batch
+            })
+        print()
 
     # Diseases
-    diseases = dict()
-    for id, name in read_table("KEGG/data/kegg_diseases.{}.tsv".format(KOID), (str, str), delimiter = "\t", header = True):
-        diseases[id] = {
-            "id": id,
-            "name": name
-        }
+    if not args.skip_diseases:
+        diseases = dict()
+        for id, name in read_table("KEGG/data/kegg_diseases.{}.tsv".format(KOID), (str, str), delimiter = "\t", header = True):
+            diseases[id] = {
+                "id": id,
+                "name": name
+            }
 
-    print("Creating diseases...")
-    num_diseases = 0
-    for batch in batches(diseases.values(), batch_size = 1024):
-        num_diseases += len(batch)
-        print("{}".format(num_diseases), end = "\r")
-        Cypher.add_disease(neo4j_graph, {
-            "batch": batch
-        })
-    print()
+        print("Creating diseases...")
+        num_diseases = 0
+        for batch in batches(diseases.values(), batch_size = 1024):
+            num_diseases += len(batch)
+            print("{}".format(num_diseases), end = "\r")
+            Cypher.add_disease(neo4j_graph, {
+                "batch": batch
+            })
+        print()
 
     # Drugs
-    drugs = dict()
-    for id, name in read_table("KEGG/data/kegg_drugs.{}.tsv".format(KOID), (str, str), delimiter = "\t", header = True):
-        drugs[id] = {
-            "id": id,
-            "name": name
-        }
+    if not args.skip_drugs:
+        drugs = dict()
+        for id, name in read_table("KEGG/data/kegg_drugs.{}.tsv".format(KOID), (str, str), delimiter = "\t", header = True):
+            drugs[id] = {
+                "id": id,
+                "name": name
+            }
 
-    print("Creating drugs...")
-    num_drugs = 0
-    for batch in batches(drugs.values(), batch_size = 1024):
-        num_drugs += len(batch)
-        print("{}".format(num_drugs), end = "\r")
-        Cypher.add_drug(neo4j_graph, {
-            "batch": batch
-        })
-    print()
+        print("Creating drugs...")
+        num_drugs = 0
+        for batch in batches(drugs.values(), batch_size = 1024):
+            num_drugs += len(batch)
+            print("{}".format(num_drugs), end = "\r")
+            Cypher.add_drug(neo4j_graph, {
+                "batch": batch
+            })
+        print()
 
     # Create KEGG data index
     Cypher.create_kegg_index(neo4j_graph)
@@ -218,59 +243,62 @@ def main():
         })
     print()
 
-    print("Connecting compounds and pathways...")
-    num_compound_pathway_connections = 0
-    for pathway_id in pathway2compounds:
-        pathway_compound_list = map(
-            lambda compound_id: {
-                "compound_id": compound_id,
-                "pathway_id": pathway_id
-            },
-            pathway2compounds[pathway_id]
-        )
-        for batch in batches(pathway_compound_list, batch_size = 1024):
-            num_compound_pathway_connections += len(batch)
-            print("{}".format(num_compound_pathway_connections), end = "\r")
-            Cypher.connect_compound_and_pathway(neo4j_graph, {
-                "batch": batch
-            })
-    print()
+    if not args.skip_compounds:
+        print("Connecting compounds and pathways...")
+        num_compound_pathway_connections = 0
+        for pathway_id in pathway2compounds:
+            pathway_compound_list = map(
+                lambda compound_id: {
+                    "compound_id": compound_id,
+                    "pathway_id": pathway_id
+                },
+                pathway2compounds[pathway_id]
+            )
+            for batch in batches(pathway_compound_list, batch_size = 1024):
+                num_compound_pathway_connections += len(batch)
+                print("{}".format(num_compound_pathway_connections), end = "\r")
+                Cypher.connect_compound_and_pathway(neo4j_graph, {
+                    "batch": batch
+                })
+        print()
 
-    print("Connecting diseases and pathways...")
-    num_disease_pathway_connections = 0
-    for pathway_id in pathway2diseases:
-        pathway_disease_list = map(
-            lambda disease_id: {
-                "disease_id": disease_id,
-                "pathway_id": pathway_id
-            },
-            pathway2diseases[pathway_id]
-        )
-        for batch in batches(pathway_disease_list, batch_size = 1024):
-            num_disease_pathway_connections += len(batch)
-            print("{}".format(num_disease_pathway_connections), end = "\r")
-            Cypher.connect_disease_and_pathway(neo4j_graph, {
-                "batch": batch
-            })
-    print()
+    if not args.skip_diseases:
+        print("Connecting diseases and pathways...")
+        num_disease_pathway_connections = 0
+        for pathway_id in pathway2diseases:
+            pathway_disease_list = map(
+                lambda disease_id: {
+                    "disease_id": disease_id,
+                    "pathway_id": pathway_id
+                },
+                pathway2diseases[pathway_id]
+            )
+            for batch in batches(pathway_disease_list, batch_size = 1024):
+                num_disease_pathway_connections += len(batch)
+                print("{}".format(num_disease_pathway_connections), end = "\r")
+                Cypher.connect_disease_and_pathway(neo4j_graph, {
+                    "batch": batch
+                })
+        print()
 
-    print("Connecting drugs and pathways...")
-    num_drug_pathway_connections = 0
-    for pathway_id in pathway2drugs:
-        pathway_drug_list = map(
-            lambda drug_id: {
-                "drug_id": drug_id,
-                "pathway_id": pathway_id
-            },
-            pathway2drugs[pathway_id]
-        )
-        for batch in batches(pathway_drug_list, batch_size = 1024):
-            num_drug_pathway_connections += len(batch)
-            print("{}".format(num_drug_pathway_connections), end = "\r")
-            Cypher.connect_drug_and_pathway(neo4j_graph, {
-                "batch": batch
-            })
-    print()
+    if not args.skip_drugs:
+        print("Connecting drugs and pathways...")
+        num_drug_pathway_connections = 0
+        for pathway_id in pathway2drugs:
+            pathway_drug_list = map(
+                lambda drug_id: {
+                    "drug_id": drug_id,
+                    "pathway_id": pathway_id
+                },
+                pathway2drugs[pathway_id]
+            )
+            for batch in batches(pathway_drug_list, batch_size = 1024):
+                num_drug_pathway_connections += len(batch)
+                print("{}".format(num_drug_pathway_connections), end = "\r")
+                Cypher.connect_drug_and_pathway(neo4j_graph, {
+                    "batch": batch
+                })
+        print()
 
     # STRING
     # Get all proteins
@@ -354,6 +382,8 @@ def main():
     print("Connecting proteins and pathways...")
     num_protein_pathway_connections = 0
     def map_gene_to_pathways(gene_external_id):
+        if gene_external_id not in gene2pathways:
+            return []
         return map(lambda pathway_id: {
             "pathway_id": pathway_id,
             "protein_external_id": gene_external_id
