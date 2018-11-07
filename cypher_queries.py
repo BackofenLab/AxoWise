@@ -208,65 +208,6 @@ def connect_drug_and_pathway(graph, params):
     """
     graph.run(query, params)
 
-# def update_pathways(graph, params):
-#     """
-#     For each protein in the pathway collection, create / update (merge)
-#     the pathway and associated classes, compounds, drugs and diseases.
-#     """
-
-#     query = """
-#         UNWIND {batch} as entry
-
-#         MATCH (protein1:Protein {
-#             external_id: entry.external_id
-#         })
-
-#         FOREACH (p1 IN entry.pathways1 |
-#             MERGE (pathway1:Pathway {
-#                 id: p1.id,
-#                 name: p1.name,
-#                 description: p1.description
-#             })
-#             CREATE (protein1)-[:IN]->(pathway1)
-
-#             MERGE (fClass:Class {
-#                 name: p1.classes[length(p1.classes) - 1]
-#             })
-#             MERGE (pathway1)-[:IN]->(fClass)
-#             FOREACH (i IN RANGE(length(p1.classes) - 1, 1) |
-#                 MERGE (cClass:Class {
-#                         name: p1.classes[i]
-#                 })
-#                 MERGE (nClass:Class {
-#                         name: p1.classes[i - 1]
-#                 })
-#                 MERGE (cClass)-[:IN]->(nClass)
-#             )
-
-#             FOREACH (dis1 IN p1.diseases |
-#                 MATCH (disease1:Disease {
-#                     id: dis1.id
-#                 })
-#                 MERGE (disease1)-[:IN]->(pathway1)
-#             )
-
-#             FOREACH (dr1 IN p1.drugs |
-#                 MATCH (drug1:Drug {
-#                     id: dr1.id
-#                 })
-#                 MERGE (drug1)-[:IN]->(pathway1)
-#             )
-
-#             FOREACH (com1 IN p1.compounds |
-#                 MATCH (compound1:Compound {
-#                     id: com1.id
-#                 })
-#                 MERGE (compound1)-[:IN]->(pathway1)
-#             )
-#         )
-#     """
-#     graph.run(query, params)
-
 def create_protein_index(graph):
 
     queries = [
