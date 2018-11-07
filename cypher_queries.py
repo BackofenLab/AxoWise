@@ -284,7 +284,8 @@ def create_kegg_index(graph):
         "CREATE INDEX ON :Compound(id)",
         "CREATE INDEX ON :Drug(id)",
         "CREATE INDEX ON :Disease(id)",
-        "CREATE INDEX ON :Pathway(id)"
+        "CREATE INDEX ON :Pathway(id)",
+        "CREATE INDEX ON :Pathway(name)"
     ]
 
     for query in queries:
