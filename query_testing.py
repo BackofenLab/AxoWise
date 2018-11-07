@@ -8,11 +8,14 @@ def time_query(neo4j_graph, query, *args):
     start = time.time()
     cursor = query(neo4j_graph, *args)
     num_rows = 0
+    first_row = None
     for row in cursor:
+        if first_row is None:
+            first_row = row
         num_rows += 1
     end = time.time()
     elapsed_time = end - start
-    return num_rows, elapsed_time 
+    return first_row, num_rows, elapsed_time 
 
 def main():
     args_parser = argparse.ArgumentParser(
@@ -50,11 +53,11 @@ def main():
     """
 
     print("[Protein-centric query]")
-    num_rows, elapsed_time = time_query(neo4j_graph, Cypher.search_protein, "ccr5")
+    first_row, num_rows, elapsed_time = time_query(neo4j_graph, Cypher.search_protein, "il10")
     print(num_rows, "row(s) returned in", elapsed_time, "second(s)")
 
     print("[Pathway-centric query]")
-    num_rows, elapsed_time = time_query(neo4j_graph, Cypher.search_pathway, "chemokine signaling pathway")
+    first_row, num_rows, elapsed_time = time_query(neo4j_graph, Cypher.search_pathway, "chemokine")
     print(num_rows, "row(s) returned in", elapsed_time, "second(s)")
 
 if __name__ == "__main__":
