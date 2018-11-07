@@ -299,7 +299,7 @@ def search_protein(graph, name):
 
     query = """
         MATCH (pathway:Pathway)<-[:IN]-(protein:Protein)-[association:ASSOCIATION]-(other:Protein)
-        WHERE toUpper(protein.name) = toUpper({name})
+        WHERE toUpper(protein.name) =~ (".*" + toUpper({name}) + ".*")
         RETURN protein, association, other, pathway
     """
 
@@ -315,7 +315,7 @@ def search_pathway(graph, name):
 
     query = """
         MATCH (class:Class)<-[:IN*]-(pathway:Pathway)<-[:IN]-(protein:Protein)
-        WHERE toUpper(pathway.name) = toUpper({name})
+        WHERE toUpper(pathway.name) =~ (".*" + toUpper({name}) + ".*")
         RETURN pathway, COLLECT(DISTINCT class) AS classes, COLLECT(protein)
     """
 
