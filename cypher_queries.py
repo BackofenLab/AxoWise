@@ -110,27 +110,6 @@ def add_action(graph, params):
     """
     graph.run(query, params)
 
-def get_protein_subgraph(graph, preferred_name):
-    """
-    For the given protein, return the Neo4j subgraph
-    of the protein and all other associated proteins.
-    """
-
-    query = """
-        MATCH (protein:Protein)-[:IN]->(pathway:Pathway),
-              (compound:Compound)-[:IN]->(pathway),
-              (drug:Drug)-[:IN]->(pathway),
-              (disease:Disease)-[:IN]->(pathway)
-        WHERE toUpper(protein.preferred_name) = toUpper({preferred_name})
-        RETURN protein, pathway, compound, drug, disease
-    """
-
-    param_dict = dict(
-        preferred_name = preferred_name
-    )
-
-    return graph.data(query, param_dict)
-
 def add_association(graph, params):
     """
     For an existing protein - protein pair, create the association
@@ -310,4 +289,36 @@ def create_kegg_index(graph):
 
     for query in queries:
         graph.run(query)
+
+def search_protein(graph, name):
+    """
+    For the given protein, return the Neo4j subgraph
+    of the protein, all other associated proteins and
+    the common pathways.
+    """
+
+    query = """
+        MATCH (pathway:Pathway)<-[:IN]-(protein:Protein)-[association:ASSOCIATION]-(other:Protein)
+        WHERE toUpper(protein.name) = toUpper({name})
+        RETURN protein, association, other, pathway
+    """
+
+    param_dict = dict(name = name)
+    return graph.run(query, param_dict)
+
+def search_pathway(graph, name):
+    """
+    For the given pathway, return the Neo4j subgraph
+    of the pathway, all contained proteins and
+    the class hierarchy of the pathway.
+    """
+
+    query = """
+        MATCH (class:Class)<-[:IN*]-(pathway:Pathway)<-[:IN]-(protein:Protein)
+        WHERE toUpper(pathway.name) = toUpper({name})
+        RETURN pathway, COLLECT(DISTINCT class) AS classes, COLLECT(protein)
+    """
+
+    param_dict = dict(name = name)
+    return graph.run(query, param_dict)
 
