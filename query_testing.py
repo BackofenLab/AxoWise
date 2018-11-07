@@ -4,9 +4,9 @@ import database
 import argparse
 import cypher_queries as Cypher
 
-def time_query(neo4j_graph, query):
+def time_query(neo4j_graph, query, *args):
     start = time.time()
-    cursor = neo4j_graph.run(query)
+    cursor = query(neo4j_graph, *args)
     num_rows = 0
     for row in cursor:
         num_rows += 1
@@ -49,16 +49,12 @@ def main():
         RETURN pathway, COLLECT(other) AS compounds_diseases_drugs, COLLECT(DISTINCT class) AS classes
     """
 
-    print("[Protein - Protein - Pathway query]")
-    num_rows, elapsed_time = time_query(neo4j_graph, query1)
+    print("[Protein-centric query]")
+    num_rows, elapsed_time = time_query(neo4j_graph, Cypher.search_protein, "ccr5")
     print(num_rows, "row(s) returned in", elapsed_time, "second(s)")
 
-    print("[Pathway - Compound - Drug - Disease query]")
-    num_rows, elapsed_time = time_query(neo4j_graph, query2)
-    print(num_rows, "row(s) returned in", elapsed_time, "second(s)")
-
-    print("[Classes - Pathway - Compound - Drug - Disease query]")
-    num_rows, elapsed_time = time_query(neo4j_graph, query3)
+    print("[Pathway-centric query]")
+    num_rows, elapsed_time = time_query(neo4j_graph, Cypher.search_pathway, "chemokine signaling pathway")
     print(num_rows, "row(s) returned in", elapsed_time, "second(s)")
 
 if __name__ == "__main__":
