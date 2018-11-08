@@ -119,18 +119,50 @@ Albert-Ludwigs-Universität, Freiburg  % Your institution for the title page
 \section{Introduction} % Sections can be created in order to organize your presentation into discrete blocks, all sections and subsections are automatically printed in the table of contents as an overview of the talk
 %------------------------------------------------
 
-\begin{frame}
-\frametitle{Cytokines}
+\begin{frame}{What do we want?}
 \begin{itemize}
-    \item Molecular messengers between cells
-    \item Interact with cells of the immune system
-    \item Regulate the body's response to disease and infection
-    \item Mediate normal cellular processes in the body
+    \item Easier access to data
+    \begin{itemize}
+        \item More flexible searches
+        \item Faster queries
+        \item Dynamic user interfaces
+    \end{itemize}
+    \vfill
+    \item Associated data in one place
+    \begin{itemize}
+        \item Unification of databases
+    \end{itemize}
+    \vfill
+    \item This leads to
+    \begin{itemize}
+        \item Accessible protein - disease data
+        \item Faster drug discovery
+    \end{itemize}
+    \vfill
+    \item ...
 \end{itemize}
-\begin{figure}
-    \centering
-    \includegraphics[width=0.5\linewidth]{cytokines.jpg}
-\end{figure}
+\end{frame}
+%------------------------------------------------
+
+\begin{frame}{STRING}
+    \begin{itemize}
+        \item Database of known and predicted protein-protein interactions
+        \vfill
+        \item 7 score channels $ \rightarrow $ combined score
+        \begin{enumerate}
+            \item Experiments
+            \item Database
+            \item Textmining
+            \item Co-expression
+            \item Neighbourhood
+            \item Fusion
+            \item Co-occurence
+        \end{enumerate}
+        \vfill
+        \item Best overall performance for gene set recovery by propagation (\href{https://www.ncbi.nlm.nih.gov/pubmed/29605183}{Huang et al., Systematic Evaluation of Molecular Networks for Discovery of Disease Genes, Cell Systems})
+        \vfill
+        \item Full database dumps available for download: 512.8 GB (compressed)
+    \end{itemize}
 \end{frame}
 
 \begin{frame}{Graph databases}
@@ -146,56 +178,51 @@ Albert-Ludwigs-Universität, Freiburg  % Your institution for the title page
 \end{frame}
 
 \begin{frame}{Neo4j \& Cypher}
-\begin{figure}
-    \centering
-    \includegraphics[width=0.5\linewidth]{neo4j_logo.png}
-    \caption{Neo4j - a graph database management system}
-\end{figure}
 \begin{block}{Example of a Cypher query}
-MATCH (:Person \{ name: "Alan" \})-[p:PURCHASED]-\textgreater(b:book) \\
+MATCH (:person \{ name: "Alan" \})-[p:PURCHASED]-\textgreater(b:book) \\
 RETURN p.date, b
 \end{block}
-\end{frame}
-
-%------------------------------------------------
-
-\section{What?}
-
-\begin{frame}
-\frametitle{Database scheme}
-\begin{figure}
-    \centering
-    \includegraphics[width=0.9\linewidth]{database_scheme.png}
-\end{figure}
-\end{frame}
-
-\definecolor{protein}{HTML}{178ab7}
-\definecolor{disease}{HTML}{15a52f}
-\definecolor{compound}{HTML}{8f17b7}
-
-\begin{frame}{Statistics}
 \begin{itemize}
-    \item Nodes
+    \item Pros:
     \begin{itemize}
-        \item \textcolor{protein}{Protein}:
-        \item \textcolor{orange}{Pathway}:
-        \item \textcolor{red}{Drug}:
-        \item \textcolor{disease}{Disease}:
-        \item \textcolor{compound}{Compound}:
-        \item \textcolor{gray}{Class}:
+        \item Outperforming RDBMS for associative data
+        \item No redundancy
+        \item Easier to change the design
     \end{itemize}
     \vfill
-    \item Relationships
+    \item Cons:
     \begin{itemize}
-        \item \textbf{ASSOCIATION}:
-        \item \textbf{IN}:
+        \item Not standard; new query language (Cypher)
+        \item Harder to do summing queries and max queries efficiently
     \end{itemize}
 \end{itemize}
 \end{frame}
 
+\begin{frame}{Why Neo4j?}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.7\linewidth]{graph-dbs-benchmark.png}
+        \caption{\href{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3842757/}{Have CT, Jensen LJ. Are graph databases ready for bioinformatics?}}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Cytokines}
+\begin{itemize}
+    \item Molecular messengers between cells
+    \item Interact with cells of the immune system
+    \item Regulate the body's response to disease and infection
+    \item Mediate normal cellular processes in the body
+\end{itemize}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{cytokines.jpg}
+\end{figure}
+\end{frame}
+
 %------------------------------------------------
 
-\section{How?}
+\section{Methodology}
 \begin{frame}{Sources of data}
 \begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
 
@@ -233,65 +260,65 @@ RETURN p.date, b
 \end{columns}
 \end{frame}
 
-\begin{frame}{STRING score channels}
-    \begin{itemize}
-        \item 7 score channels $ \rightarrow $ combined score
-        \begin{enumerate}
-            \item Experiments
-            \item Database
-            \item Textmining
-            \item Co-expression
-            \item Neighbourhood
-            \item Fusion
-            \item Co-occurence
-        \end{enumerate}
-    \end{itemize}
-    \begin{figure}
-        \centering
-        \includegraphics[width=0.9\linewidth]{score_channels.png}
-        \caption{Scores for CCR5 and CCL5}
-    \end{figure}
+\begin{frame}{STRING Schema}
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{string-tables.png}
+\end{figure}
+\end{frame}
+
+\begin{frame}{KEGG PATHWAY Flat file}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\linewidth]{kegg-flat-file.png}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Cytokine Graph DB Scheme}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{database_scheme.png}
+\end{figure}
 \end{frame}
 
 \begin{frame}{Workflow}
-\begin{enumerate}
-    \item Collect the data
-    \begin{itemize}
-        \item STRING: SQL dumps
-        \item KEGG PATHWAY: flat text files
-    \end{itemize}
-    \vfill
-    \item Extract the useful information
-    \begin{itemize}
-        \item Query the STRING SQL database
-        \item Parse the KEGG flat files
-    \end{itemize}
-    \vfill
-    \item Merge the databases
-    \begin{itemize}
-        \item Map KEGG identifiers to STRING identifiers
-    \end{itemize}
-    \vfill
-    \item  Build a graph database
-    \begin{itemize}
-        \item Translate the associative data into a graph
-    \end{itemize}
-\end{enumerate}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{workflow2.png}
+\end{figure}
 \end{frame}
 
-%------------------------------------------------
-\section{Why?}
-%------------------------------------------------
+\section{Results}
 
-\begin{frame}{What is the point?}
+\definecolor{protein}{HTML}{178ab7}
+\definecolor{disease}{HTML}{15a52f}
+\definecolor{compound}{HTML}{8f17b7}
+
+\begin{frame}{Cytokine Graph DB in numbers}
 \begin{itemize}
-    \item Drug discovery
-    \item ...
+    \item Cytokine-cytokine receptor interaction - Human (Homo sapiens)
+    \vfill
+    \item Nodes
+    \begin{itemize}
+        \item \textcolor{protein}{Protein}: 282
+        \item \textcolor{orange}{Pathway}: 325
+        \item \textcolor{red}{Drug}: 3 731
+        \item \textcolor{disease}{Disease}: 969
+        \item \textcolor{compound}{Compound}: 3 465
+        \item \textcolor{gray}{Class}: 49
+    \end{itemize}
+    \vfill
+    \item Relationships
+    \begin{itemize}
+        \item \textbf{ASSOCIATION}: 13 900
+        \item \textbf{IN}: 17 752
+    \end{itemize}
 \end{itemize}
 \end{frame}
+
 %------------------------------------------------
 
-\section{Demo}
 \begin{frame}
 \centering
 \huge{(demo)}
