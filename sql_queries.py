@@ -98,7 +98,7 @@ def get_proteins(postgres_connection, species_id):
                 "id": row[0],
                 "external_id": row[1],
                 "preferred_name": row[2],
-                "annotation": row[3]
+                "annotation": row[3].strip()
             }
 
     cursor.close()
