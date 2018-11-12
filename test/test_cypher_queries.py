@@ -5,21 +5,21 @@ import cypher_queries as Cypher
 
 class TestCypherQueries(unittest.TestCase):
 
-    def test_get_protein_subgraph(self):
+    def test_search_protein(self):
 
         postgres_connection, neo4j_graph = database.connect("test/credentials.test.json")
         postgres_connection.close()
 
-        subgraph = Cypher.get_protein_subgraph(neo4j_graph, "Ccr5")
+        result = Cypher.search_protein(neo4j_graph, "ccr5")
 
-        for entry in subgraph:
-            self.assertEqual(entry["protein"]["preferred_name"], "Ccr5")
+        for entry in result:
+            self.assertEqual(entry["protein"]["name"], "CCR5")
             association = entry["association"]
 
             if entry["other"] is not None:
-                self.assertIn(entry["other"]["preferred_name"], ["Ccl5", "Ccr5", "Il10ra"])
+                self.assertIn(entry["other"]["name"], ["CCL5", "CCR5", "IL10RA"])
                 
-                if entry["other"]["preferred_name"] == "Ccl5":
+                if entry["other"]["preferred_name"] == "CCL5":
                     self.assertEqual(association["coexpression"], 92)
                     self.assertEqual(association["database"], 900)
                     self.assertEqual(association["textmining"], 906)
@@ -46,7 +46,7 @@ class TestCypherQueries(unittest.TestCase):
                         elif action["mode"] == "activation":
                             self.assertEqual(action["score"], 849)
 
-                    elif entry["other"]["preferred_name"] == "Il10ra":
+                    elif entry["other"]["name"] == "IL10RA":
                         self.assertEqual(association["coexpression"], 246) 
                         self.assertEqual(association["textmining"], 318)
                         self.assertEqual(association["combined"], 469)

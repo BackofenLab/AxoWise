@@ -10,5 +10,5 @@ psql -U postgres string < sql/dump.test.psql
 export PYTHONPATH=$PYTHONPATH:$(pwd)
 python test/test_kegg.py
 python test/test_sql_queries.py
-python translate_db.py --credentials test/credentials.test.json --kegg_organism_id "hsa" --species_name "Homo sapiens" --protein_list "test/cytokines.txt"
+python translate_db.py --credentials test/credentials.test.json --kegg_organism_id "mmu" --species_name "Mus musculus" --protein_list "test/cytokines.txt"
 python test/test_cypher_queries.py
