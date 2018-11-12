@@ -8,16 +8,16 @@ class TestSQLQueries(unittest.TestCase):
     def test_get_species_id(self):
 
         postgres_connection, _ = database.connect("test/credentials.test.json")
-        species_id = SQL.get_species_id(postgres_connection, "homo sapiens")
+        species_id = SQL.get_species_id(postgres_connection, "mus musculus")
     
-        self.assertEqual(species_id, 9606)
+        self.assertEqual(species_id, 10090)
 
         postgres_connection.close()
 
     def test_get_proteins(self):
         postgres_connection, _ = database.connect("test/credentials.test.json")
         
-        proteins = SQL.get_proteins(postgres_connection, species_id = 9606)
+        proteins = SQL.get_proteins(postgres_connection, species_id = 10090)
 
         entered_if_1 = False
         entered_if_2 = False
@@ -26,29 +26,29 @@ class TestSQLQueries(unittest.TestCase):
             num_proteins += 1
             if protein["preferred_name"].upper() == "ccl5".upper():
                 entered_if_1 = True
-                self.assertEqual(protein["id"], 1847396)
-                self.assertEqual(protein["external_id"], "9606.ENSP00000293272")
+                self.assertEqual(protein["id"], 2100220)
+                self.assertEqual(protein["external_id"], "10090.ENSMUSP00000039600")
                 self.assertEqual(
                     protein["annotation"],
-                    "Chemokine (C-C motif) ligand 5; Chemoattractant for blood monocytes, memory T-helper cells "
-                    "and eosinophils. Causes the release of histamine from basophils and activates eosinophils. "
-                    "May activate several chemokine receptors including CCR1, CCR3, CCR4 and CCR5. One of the major "
-                    "HIV-suppressive factors produced by CD8+ T-cells. Recombinant RANTES protein induces a dose-dependent "
-                    "inhibition of different strains of HIV-1, HIV-2, and simian immunodeficiency virus (SIV). The "
-                    "processed form RANTES(3-68) acts as a natural chemotaxis inhibitor and is a more potent inhibitor of "
-                    "HIV-1- infection.  [...]"
+                    "Chemokine (C-C motif) ligand 5; "
+                    "Chemoattractant for blood monocytes, memory T-helper cells and eosinophils. Causes "
+                    "the release of histamine from basophils and activates eosinophils. May activate "
+                    "several chemokine receptors including CCR1, CCR3, CCR4 and CCR5. May also be an "
+                    "agonist of the G protein-coupled receptor GPR75. Together with GPR75, may play a "
+                    "role in neuron survival through activation of a downstream signaling pathway "
+                    "involving the PI3, Akt and MAP kinases. By activating GPR75 may also play a role in "
+                    "insulin secretion by islet cells"
                 )
             elif protein["preferred_name"].upper() == "ccr5".upper():
                 entered_if_2 = True
-                self.assertEqual(protein["id"], 1847342)
-                self.assertEqual(protein["external_id"], "9606.ENSP00000292303")
+                self.assertEqual(protein["id"], 2111533)
+                self.assertEqual(protein["external_id"], "10090.ENSMUSP00000107069")
                 self.assertEqual(
                     protein["annotation"],
-                    "Chemokine (C-C motif) receptor 5 (gene/pseudogene); Receptor for a number of inflammatory "
-                    "CC-chemokines including MIP-1-alpha, MIP-1-beta and RANTES and subsequently transduces a "
-                    "signal by increasing the intracellular calcium ion level. May play a role in the control "
-                    "of granulocytic lineage proliferation or differentiation. Acts as a coreceptor (CD4 being "
-                    "the primary receptor) for HIV-1 R5 isolates"
+                    "Chemokine (C-C motif) receptor 5; Receptor for a number of inflammatory CC-chemokines "
+                    "including MIP-1-alpha, MIP-1-beta and RANTES and subsequently transduces a signal "
+                    "by increasing the intracellular calcium ion level. May play a role in the control of "
+                    "granulocytic lineage proliferation or differentiation (By similarity)"
                 )
 
         self.assertGreater(num_proteins, 0)
@@ -60,24 +60,24 @@ class TestSQLQueries(unittest.TestCase):
 
         postgres_connection, _ = database.connect("test/credentials.test.json")
 
-        associations = SQL.get_associations(postgres_connection, species_id = 9606)
+        associations = SQL.get_associations(postgres_connection, species_id = 10090)
 
         num_associations = 0
         entered_if = False
         for association in associations:
             num_associations += 1
-            if association["id1"] == 1847342 and association["id2"] == 1847396:
+            if association["id1"] == 2100220 and association["id2"] == 2111533:
                 entered_if = True
-                self.assertEqual(association["combined_score"], 997)
+                self.assertEqual(association["combined_score"], 993)
                 self.assertEqual(
                     association["evidence_scores"],
                     [
-                        [6, 152],   # array_score
-                        [7, 43],   # array_score_transferred
-                        [8, 360],  # experimental_score_transferred
+                        [6, 92],   # array_score
+                        [7, 52],   # array_score_transferred
+                        [9, 111],  # experimental_score_transferred
                         [10, 900], # database_score
-                        [12, 962], # textmining_score
-                        [13, 127]  # textmining_score_transferred
+                        [12, 906], # textmining_score
+                        [13, 278]  # textmining_score_transferred
                     ]
                 )
 
