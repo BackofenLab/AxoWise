@@ -87,6 +87,19 @@ class TestCypherQueries(unittest.TestCase):
         self.assertTrue(has_il10ra_other)
         self.assertTrue(has_pathway)
 
+    def test_search_pathway(self):
+        postgres_connection, neo4j_graph = database.connect("test/credentials.test.json")
+        postgres_connection.close()
+
+        result = Cypher.search_pathway(neo4j_graph, "chemokine")
+
+        num_entries = 0
+        for entry in result:
+            num_entries += 1
+
+        self.assertEqual(num_entries, 1)
+
+
 if __name__ == "__main__":
     print("Testing Cypher queries...")
     unittest.main()
