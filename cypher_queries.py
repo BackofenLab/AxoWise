@@ -1,5 +1,9 @@
 
 def add_compound(graph, params):
+    """
+    Create a compound with the specified id and
+    name.
+    """
 
     query = """
         UNWIND {batch} as entry
@@ -11,6 +15,10 @@ def add_compound(graph, params):
     graph.run(query, params)
 
 def add_disease(graph, params):
+    """
+    Create a disease with the specified id and
+    name.
+    """
 
     query = """
         UNWIND {batch} as entry
@@ -22,6 +30,10 @@ def add_disease(graph, params):
     graph.run(query, params)
 
 def add_drug(graph, params):
+    """
+    Create a drug with the specified id and
+    name.
+    """
 
     query = """
         UNWIND {batch} as entry
@@ -33,6 +45,10 @@ def add_drug(graph, params):
     graph.run(query, params)
 
 def add_class_parent_and_child(graph, params):
+    """
+    Create parent - child relationship between
+    two pathway classes.
+    """
 
     query = """
         UNWIND {batch} as entry
@@ -47,6 +63,11 @@ def add_class_parent_and_child(graph, params):
     graph.run(query, params)
 
 def add_pathway(graph, params):
+    """
+    Create a pathway with the specified id, name and
+    description and connect it to the corresponding
+    class.
+    """
 
     query = """
         UNWIND {batch} as entry
