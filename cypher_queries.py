@@ -258,7 +258,7 @@ def search_pathway(graph, name):
     query = """
         MATCH (class:Class)<-[:IN*]-(pathway:Pathway)<-[:IN]-(protein:Protein)
         WHERE toUpper(pathway.name) =~ (".*" + toUpper({name}) + ".*")
-        RETURN pathway, COLLECT(DISTINCT class) AS classes, COLLECT(protein)
+        RETURN pathway, COLLECT(DISTINCT class) AS classes, COLLECT(DISTINCT protein) as proteins
     """
 
     param_dict = dict(name = name)

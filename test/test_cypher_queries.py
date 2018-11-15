@@ -93,11 +93,20 @@ class TestCypherQueries(unittest.TestCase):
 
         result = Cypher.search_pathway(neo4j_graph, "chemokine")
 
-        num_entries = 0
         for entry in result:
-            num_entries += 1
-
-        self.assertEqual(num_entries, 1)
+            self.assertEqual(entry["pathway"]["name"], "Chemokine signaling pathway")
+            self.assertEqual(
+                entry["pathway"]["description"],
+                "Inflammatory immune response requires the recruitment of leukocytes to the site "
+                "of inflammation upon foreign insult. Chemokines are small chemoattractant peptides "
+                "that provide directional cues for the cell trafficking and thus are vital for "
+                "protective host response. In addition, chemokines regulate plethora of biological "
+                "processes of hematopoietic cells to lead cellular activation, differentiation and "
+                "survival."
+            )
+            self.assertEqual(entry["pathway"]["id"], "path:mmu04062")
+            self.assertEqual(sorted(map(lambda c: c["name"], entry["classes"])), ["Immune system", "Organismal Systems"])
+            self.assertEqual(len(entry["proteins"]), 180)
 
 
 if __name__ == "__main__":
