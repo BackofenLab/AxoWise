@@ -14,9 +14,9 @@
 <meta property="og:url" content="https://bornabesic.github.io/cytokine-graph-db/documentation" />
 <meta property="og:site_name" content="Cytokine Graph DB" />
 <meta property="og:type" content="article" />
-<meta property="article:published_time" content="2018-08-02T00:00:00+02:00" />
+<meta property="article:published_time" content="2018-11-15T00:00:00+01:00" />
 <script type="application/ld+json">
-{"description":"Prerequisites conda installed PostgreSQL server instance running (with the STRING schema dumps loaded) Neo4j server instance running","author":{"@type":"Person","name":"Borna Bešić"},"@type":"BlogPosting","url":"https://bornabesic.github.io/cytokine-graph-db/documentation","headline":"Documentation","dateModified":"2018-08-02T00:00:00+02:00","datePublished":"2018-08-02T00:00:00+02:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://bornabesic.github.io/cytokine-graph-db/documentation"},"@context":"http://schema.org"}</script>
+{"description":"Prerequisites conda installed PostgreSQL server instance running (with the STRING schema dumps loaded) Neo4j server instance running","author":{"@type":"Person","name":"Borna Bešić"},"@type":"BlogPosting","url":"https://bornabesic.github.io/cytokine-graph-db/documentation","headline":"Documentation","dateModified":"2018-11-15T00:00:00+01:00","datePublished":"2018-11-15T00:00:00+01:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://bornabesic.github.io/cytokine-graph-db/documentation"},"@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/cytokine-graph-db/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://bornabesic.github.io/cytokine-graph-db/feed.xml" title="Cytokine Graph DB" /></head>
 <body><header class="site-header" role="banner">
@@ -39,7 +39,7 @@
   <header class="post-header">
     <h1 class="post-title p-name" itemprop="name headline">Documentation</h1>
     <p class="post-meta">
-      <time class="dt-published" datetime="2018-08-02T00:00:00+02:00" itemprop="datePublished">Aug 2, 2018
+      <time class="dt-published" datetime="2018-11-15T00:00:00+01:00" itemprop="datePublished">Nov 15, 2018
       </time></p>
   </header>
 
@@ -108,6 +108,7 @@
       </span><span class="p">}</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span></code></pre></div>        </div>
+        <p>One credentials file is already available for tesing at <em>test/credentials.test.json</em>.</p>
       </li>
     </ul>
   </li>
@@ -117,34 +118,71 @@
     <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code> python translate_db.py
 </code></pre></div>    </div>
 
-    <p>The script expects to read the name of the species from the standard input (stdin):</p>
-    <ul>
-      <li>e.g. Homo sapiens</li>
-    </ul>
+    <p>Available arguments:</p>
+
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">--credentials</span> CREDENTIALS
+                         Path to the credentials JSON file that will be used
+                         <span class="o">(</span>default: credentials.json<span class="o">)</span>
+ <span class="nt">--kegg_organism_id</span> KEGG_ORGANISM_ID
+                         KEGG organism ID <span class="o">(</span>default: hsa<span class="o">)</span>
+ <span class="nt">--species_name</span> SPECIES_NAME
+                         Species name <span class="o">(</span>default: Homo sapiens<span class="o">)</span>
+ <span class="nt">--protein_list</span> PROTEIN_LIST
+                         Path to the file containing protein Ensembl IDs
+                         <span class="o">(</span>default: None<span class="o">)</span>
+ <span class="nt">--combined_score_threshold</span> COMBINED_SCORE_THRESHOLD
+                         Threshold above which the associations between
+                         proteins will be considered <span class="o">(</span>default: None<span class="o">)</span>
+ <span class="nt">--skip_drugs</span> SKIP_DRUGS
+                         Do not add drugs to the resulting graph database
+                         <span class="o">(</span>default: False<span class="o">)</span>
+ <span class="nt">--skip_compounds</span> SKIP_COMPOUNDS
+                         Do not add compounds to the resulting graph database
+                         <span class="o">(</span>default: False<span class="o">)</span>
+ <span class="nt">--skip_diseases</span> SKIP_DISEASES
+                         Do not add diseases to the resulting graph database
+                         <span class="o">(</span>default: False<span class="o">)</span>
+
+</code></pre></div>    </div>
   </li>
 </ol>
 
 <h1 id="example">Example:</h1>
-<p>Executing the script through the terminal:</p>
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="s2">"Homo sapiens"</span> | python translate_db.py
+
+<p>The following command builds a Neo4j database out of the mouse proteins and associations between them that have the combined score greater than 0.750.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python translate_db.py <span class="nt">--credentials</span> <span class="nb">test</span>/credentials.test.json <span class="se">\</span>
+                       <span class="nt">--kegg_organism_id</span> <span class="s2">"mmu"</span> <span class="se">\</span>
+                       <span class="nt">--species_name</span> <span class="s2">"Mus musculus"</span> <span class="se">\</span>
+                       <span class="nt">--combined_score_threshold</span> 750
 </code></pre></div></div>
 
 <p>Output:</p>
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CCR5 &lt;<span class="nt">---</span><span class="o">&gt;</span> CCL5
-Writing associations...
-1
-Writing actions &amp; pathways...
-168
-CCR5 &lt;<span class="nt">---</span><span class="o">&gt;</span> IL10RA
-Writing associations...
-1
-Writing actions &amp; pathways...
-
-CCL5 &lt;<span class="nt">---</span><span class="o">&gt;</span> IL10RA
-Writing associations...
-1
-Writing actions &amp; pathways...
-
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Cleaning the old data from Neo4j database...
+Creating compounds...
+3460
+Creating diseases...
+0
+Creating drugs...
+0
+Creating classes and class hierarchy...
+43
+Creating pathways and connecting them to classes...
+326
+Connecting compounds and pathways...
+5984
+Connecting diseases and pathways...
+326
+Connecting drugs and pathways...
+326
+Creating proteins...
+22668
+Creating protein - protein associations...
+1322
+Creating protein - protein actions...
+0
+Connecting proteins and pathways...
+27750
 Done!
 </code></pre></div></div>
 
