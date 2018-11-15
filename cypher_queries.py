@@ -264,3 +264,19 @@ def search_pathway(graph, name):
     param_dict = dict(name = name)
     return graph.run(query, param_dict)
 
+def search_class(graph, name):
+    """
+    For the given pathway class, return the Neo4j subgraph
+    of the class hierarchy and pathways attached to the
+    leaves of the hierarchy tree.
+    """
+
+    query = """
+        MATCH (class:Class)<-[:IN*]-(pathway:Pathway)
+        WHERE toUpper(class.name) =~ (".*" + toUpper({name}) + ".*")
+        RETURN class, COLLECT(DISTINCT pathway) as pathways
+    """
+
+    param_dict = dict(name = name)
+    return graph.run(query, param_dict)
+

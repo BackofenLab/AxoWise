@@ -108,6 +108,24 @@ class TestCypherQueries(unittest.TestCase):
             self.assertEqual(sorted(map(lambda c: c["name"], entry["classes"])), ["Immune system", "Organismal Systems"])
             self.assertEqual(len(entry["proteins"]), 180)
 
+    def test_search_class(self):
+        postgres_connection, neo4j_graph = database.connect("test/credentials.test.json")
+        postgres_connection.close()
+
+        result = Cypher.search_class(neo4j_graph, "immune")
+
+        num_entries = 0
+        for entry in result:
+            num_entries += 1
+            class_name = entry["class"]["name"]
+            self.assertIn(class_name, ["Immune system", "Immune diseases"])
+            num_pathways = len(entry["pathways"])
+            if class_name == "Immune system":
+                self.assertEqual(num_pathways, 20)
+            elif class_name == "Immune diseases":
+                self.assertEqual(num_pathways, 8)
+
+        self.assertEqual(num_entries, 2)
 
 if __name__ == "__main__":
     print("Testing Cypher queries...")
