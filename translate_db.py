@@ -331,6 +331,7 @@ def main():
 
         associations = filter(filter_associations, associations)
 
+    actions = []
     if args.protein_list is not None:
         # Get protein - protein functional prediction
         actions = SQL.get_actions(
