@@ -39,6 +39,8 @@
   <div class="post-content">
     <p><a href="https://travis-ci.org/BackofenLab/cytokine-graph-db"><img src="https://travis-ci.org/BackofenLab/cytokine-graph-db.svg?branch=master" alt="Build Status" /></a></p>
 
+<p><img src="workflow2.svg" alt="" /></p>
+
 <h1 id="1-collect-the-data-partially-automated">1. Collect the data <span style="color:brown; font-size: small;">partially automated</span></h1>
 <ul>
   <li>Download the STRING database dumps
@@ -60,7 +62,6 @@
     </ul>
   </li>
   <li>Load the dumps into a PostgreSQL database</li>
-  <li><a href="KEGG">Connect KEGG pathways and STRING database</a></li>
 </ul>
 
 <h1 id="2-extract-the-information-from-the-data-automated-testing">2. Extract the information from the data <span style="color:green; font-size: small;">automated (testing)</span></h1>
@@ -73,7 +74,9 @@
   </li>
 </ul>
 
-<h1 id="3-build-a-graph-database-partially-automated-testing">3. Build a graph database <span style="color:brown; font-size: small;">partially automated (testing)</span></h1>
+<h1 id="3-connect-kegg-pathways-and-string-database">3. <a href="KEGG">Connect KEGG pathways and STRING database</a></h1>
+
+<h1 id="4-build-a-graph-database-partially-automated-testing">4. Build a graph database <span style="color:brown; font-size: small;">partially automated (testing)</span></h1>
 <ul>
   <li>Turn the extracted information into <a href="https://neo4j.com/">Neo4j</a> graph database (using our defined <a href="graph-db-scheme">database scheme</a>)
     <ul>
@@ -84,7 +87,7 @@
   <li>Visualize the graph database</li>
 </ul>
 
-<h1 id="4-use-machine-learning-not-automated">4. Use machine learning <span style="color:red; font-size: small;">not automated</span></h1>
+<h1 id="5-use-machine-learning-not-automated">5. Use machine learning <span style="color:red; font-size: small;">not automated</span></h1>
 <ul>
   <li>Do a classfication / functional prediction of cytokines and cytokine receptors</li>
 </ul>
