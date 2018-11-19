@@ -1,13 +1,12 @@
 import unittest
 
-import KEGG.parse as parse
-from KEGG import get_species_identifiers
+from context import parse, get_species_identifiers
 
 class TestKEGG(unittest.TestCase):
 
     def test_parse_flat_file(self):
 
-        with open("test/path_hsa00010.txt") as file:
+        with open("tests/path_hsa00010.txt") as file:
             kegg_flat_file = file.read()
 
         # Parse the KEGG pathway flat file

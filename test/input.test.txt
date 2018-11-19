@@ -1,4 +1,0 @@
-Mus musculus
-CCR5
-CCL5
-IL10RA

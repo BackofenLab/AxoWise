@@ -16,4 +16,4 @@ install:
   - make env
   - source activate cgdb
 script:
-  - make run_tests
+  - make test
