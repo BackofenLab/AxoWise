@@ -20,6 +20,3 @@ def get_species_identifiers(query_name):
         if query_name.lower() in name.lower():
             return entry
     return None, None, None
-
-if __name__ == "__main__":
-    print(get_species_identifiers("chimpanze"))
