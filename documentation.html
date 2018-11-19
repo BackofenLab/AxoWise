@@ -121,31 +121,27 @@
     <p>Available arguments:</p>
 
     <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">--credentials</span> CREDENTIALS
-                         Path to the credentials JSON file that will be used
-                         <span class="o">(</span>default: credentials.json<span class="o">)</span>
- <span class="nt">--kegg_organism_id</span> KEGG_ORGANISM_ID
-                         KEGG organism ID <span class="o">(</span>default: hsa<span class="o">)</span>
+                     Path to the credentials JSON file that will be used
+                     <span class="o">(</span>default: credentials.json<span class="o">)</span>
  <span class="nt">--species_name</span> SPECIES_NAME
-                         Species name <span class="o">(</span>default: Homo sapiens<span class="o">)</span>
+                     Species name <span class="o">(</span>default: Homo sapiens<span class="o">)</span>
  <span class="nt">--protein_list</span> PROTEIN_LIST
-                         Path to the file containing protein Ensembl IDs
-                         <span class="o">(</span>default: None<span class="o">)</span>
+                     Path to the file containing protein Ensembl IDs
+                     <span class="o">(</span>default: None<span class="o">)</span>
  <span class="nt">--combined_score_threshold</span> COMBINED_SCORE_THRESHOLD
-                         Threshold above which the associations between
-                         proteins will be considered <span class="o">(</span>default: None<span class="o">)</span>
+                     Threshold above which the associations between
+                     proteins will be considered <span class="o">(</span>default: None<span class="o">)</span>
  <span class="nt">--skip_drugs</span> SKIP_DRUGS
-                         Do not add drugs to the resulting graph database
-                         <span class="o">(</span>default: False<span class="o">)</span>
+                     Do not add drugs to the resulting graph database
+                     <span class="o">(</span>default: False<span class="o">)</span>
  <span class="nt">--skip_compounds</span> SKIP_COMPOUNDS
-                         Do not add compounds to the resulting graph database
-                         <span class="o">(</span>default: False<span class="o">)</span>
+                     Do not add compounds to the resulting graph database
+                     <span class="o">(</span>default: False<span class="o">)</span>
  <span class="nt">--skip_diseases</span> SKIP_DISEASES
-                         Do not add diseases to the resulting graph database
-                         <span class="o">(</span>default: False<span class="o">)</span>
+                     Do not add diseases to the resulting graph database
+                     <span class="o">(</span>default: False<span class="o">)</span>
 
 </code></pre></div>    </div>
-
-    <p><span style="color:red; font-size: small;">Redundancy regarding the specification of both species ID and name should be resolved in the future.</span></p>
   </li>
 </ol>
 
@@ -154,8 +150,7 @@
 <p>The following command builds a Neo4j database out of the mouse proteins and associations between them that have the combined score greater than 0.750.</p>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python translate_db.py <span class="nt">--credentials</span> <span class="nb">test</span>/credentials.test.json <span class="se">\</span>
-                       <span class="nt">--kegg_organism_id</span> <span class="s2">"mmu"</span> <span class="se">\</span>
-                       <span class="nt">--species_name</span> <span class="s2">"Mus musculus"</span> <span class="se">\</span>
+                       <span class="nt">--species_name</span> <span class="s2">"mus musculus"</span> <span class="se">\</span>
                        <span class="nt">--combined_score_threshold</span> 750
 </code></pre></div></div>
 
@@ -202,21 +197,13 @@ Done!
   <li>
     <p>Run the download script:</p>
 
-    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code> python download.py
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code> python download.py species_name
 </code></pre></div>    </div>
 
-    <p>Available arguments:</p>
+    <p>Positional arguments:</p>
 
-    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">--kegg_organism_id</span> KEGG_ORGANISM_ID
-                         Download KEGG pathways only <span class="k">for </span>this organism
-                         <span class="o">(</span>default: hsa<span class="o">)</span>
- <span class="nt">--string_organism_id</span> STRING_ORGANISM_ID
-                         Map KEGG pathways to this STRING organism <span class="o">(</span>default:
-                         9606<span class="o">)</span>
-
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code> species_name  Species name <span class="o">(</span>e.g. Homo sapiens / human<span class="o">)</span>
 </code></pre></div>    </div>
-
-    <p><span style="color:red; font-size: small;">Redundancy regarding the specification of multiple species IDs should be resolved in the future.</span></p>
   </li>
 </ol>
 
@@ -224,21 +211,21 @@ Done!
 
 <p>To download KEGG data for chimpanzee (<em>Pan troglodytes</em>), run the following command:</p>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python download.py <span class="nt">--kegg_organism_id</span> <span class="s2">"ptr"</span> <span class="se">\</span>
-                   <span class="nt">--string_organism_id</span> <span class="s2">"9598"</span>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python download.py <span class="nt">--species_name</span> <span class="s2">"chimpanzee"</span>
 </code></pre></div></div>
 
 <p>Output:</p>
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Downloading pathways <span class="k">for</span>: ptr
-<span class="o">[</span>1 / 326] Glycolysis / Gluconeogenesis
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Downloading KEGG data for Pan troglodytes (chimpanzee).
+Downloading pathways for: ptr
+[1 / 326] Glycolysis / Gluconeogenesis
 	Genes: 69
-	10 gene<span class="o">(</span>s<span class="o">)</span> could not be mapped to STRING external ID!
-<span class="o">[</span>2 / 326] Citrate cycle <span class="o">(</span>TCA cycle<span class="o">)</span>
+	10 gene(s) could not be mapped to STRING external ID!
+[2 / 326] Citrate cycle (TCA cycle)
 	Genes: 30
-	4 gene<span class="o">(</span>s<span class="o">)</span> could not be mapped to STRING external ID!
-<span class="o">[</span>3 / 326] Pentose phosphate pathway
+	4 gene(s) could not be mapped to STRING external ID!
+[3 / 326] Pentose phosphate pathway
 	Genes: 30
-	9 gene<span class="o">(</span>s<span class="o">)</span> could not be mapped to STRING external ID!
+	9 gene(s) could not be mapped to STRING external ID!
 ...
 </code></pre></div></div>
 

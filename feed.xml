@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://bornabesic.github.io/cytokine-graph-db/feed.xml" rel="self" type="application/atom+xml" /><link href="https://bornabesic.github.io/cytokine-graph-db/" rel="alternate" type="text/html" /><updated>2018-11-18T18:17:44+01:00</updated><id>https://bornabesic.github.io/cytokine-graph-db/</id><title type="html">Cytokine Graph DB</title><author><name>Borna Bešić</name></author><entry><title type="html">Documentation</title><link href="https://bornabesic.github.io/cytokine-graph-db/documentation" rel="alternate" type="text/html" title="Documentation" /><published>2018-11-18T00:00:00+01:00</published><updated>2018-11-18T00:00:00+01:00</updated><id>https://bornabesic.github.io/cytokine-graph-db/setup-guide</id><content type="html" xml:base="https://bornabesic.github.io/cytokine-graph-db/documentation">&lt;h2 id=&quot;prerequisites&quot;&gt;Prerequisites&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://bornabesic.github.io/cytokine-graph-db/feed.xml" rel="self" type="application/atom+xml" /><link href="https://bornabesic.github.io/cytokine-graph-db/" rel="alternate" type="text/html" /><updated>2018-11-19T10:21:29+01:00</updated><id>https://bornabesic.github.io/cytokine-graph-db/</id><title type="html">Cytokine Graph DB</title><author><name>Borna Bešić</name></author><entry><title type="html">Documentation</title><link href="https://bornabesic.github.io/cytokine-graph-db/documentation" rel="alternate" type="text/html" title="Documentation" /><published>2018-11-18T00:00:00+01:00</published><updated>2018-11-18T00:00:00+01:00</updated><id>https://bornabesic.github.io/cytokine-graph-db/setup-guide</id><content type="html" xml:base="https://bornabesic.github.io/cytokine-graph-db/documentation">&lt;h2 id=&quot;prerequisites&quot;&gt;Prerequisites&lt;/h2&gt;
 &lt;ul&gt;
   &lt;li&gt;&lt;a href=&quot;https://conda.io/docs/&quot;&gt;conda&lt;/a&gt; installed&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://www.postgresql.org/&quot;&gt;PostgreSQL&lt;/a&gt; server instance running (with the &lt;a href=&quot;index&quot;&gt;STRING schema dumps&lt;/a&gt; loaded)&lt;/li&gt;
@@ -75,31 +75,27 @@
     &lt;p&gt;Available arguments:&lt;/p&gt;
 
     &lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nt&quot;&gt;--credentials&lt;/span&gt; CREDENTIALS
-                         Path to the credentials JSON file that will be used
-                         &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;default: credentials.json&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
- &lt;span class=&quot;nt&quot;&gt;--kegg_organism_id&lt;/span&gt; KEGG_ORGANISM_ID
-                         KEGG organism ID &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;default: hsa&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+                     Path to the credentials JSON file that will be used
+                     &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;default: credentials.json&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
  &lt;span class=&quot;nt&quot;&gt;--species_name&lt;/span&gt; SPECIES_NAME
-                         Species name &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;default: Homo sapiens&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+                     Species name &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;default: Homo sapiens&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
  &lt;span class=&quot;nt&quot;&gt;--protein_list&lt;/span&gt; PROTEIN_LIST
-                         Path to the file containing protein Ensembl IDs
-                         &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;default: None&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+                     Path to the file containing protein Ensembl IDs
+                     &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;default: None&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
  &lt;span class=&quot;nt&quot;&gt;--combined_score_threshold&lt;/span&gt; COMBINED_SCORE_THRESHOLD
-                         Threshold above which the associations between
-                         proteins will be considered &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;default: None&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+                     Threshold above which the associations between
+                     proteins will be considered &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;default: None&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
  &lt;span class=&quot;nt&quot;&gt;--skip_drugs&lt;/span&gt; SKIP_DRUGS
-                         Do not add drugs to the resulting graph database
-                         &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;default: False&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+                     Do not add drugs to the resulting graph database
+                     &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;default: False&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
  &lt;span class=&quot;nt&quot;&gt;--skip_compounds&lt;/span&gt; SKIP_COMPOUNDS
-                         Do not add compounds to the resulting graph database
-                         &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;default: False&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+                     Do not add compounds to the resulting graph database
+                     &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;default: False&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
  &lt;span class=&quot;nt&quot;&gt;--skip_diseases&lt;/span&gt; SKIP_DISEASES
-                         Do not add diseases to the resulting graph database
-                         &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;default: False&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+                     Do not add diseases to the resulting graph database
+                     &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;default: False&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
 
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-
-    &lt;p&gt;&lt;span style=&quot;color:red; font-size: small;&quot;&gt;Redundancy regarding the specification of both species ID and name should be resolved in the future.&lt;/span&gt;&lt;/p&gt;
   &lt;/li&gt;
 &lt;/ol&gt;
 
@@ -108,8 +104,7 @@
 &lt;p&gt;The following command builds a Neo4j database out of the mouse proteins and associations between them that have the combined score greater than 0.750.&lt;/p&gt;
 
 &lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;python translate_db.py &lt;span class=&quot;nt&quot;&gt;--credentials&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;test&lt;/span&gt;/credentials.test.json &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-                       &lt;span class=&quot;nt&quot;&gt;--kegg_organism_id&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;mmu&quot;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-                       &lt;span class=&quot;nt&quot;&gt;--species_name&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Mus musculus&quot;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+                       &lt;span class=&quot;nt&quot;&gt;--species_name&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;mus musculus&quot;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
                        &lt;span class=&quot;nt&quot;&gt;--combined_score_threshold&lt;/span&gt; 750
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
@@ -156,21 +151,13 @@ Done!
   &lt;li&gt;
     &lt;p&gt;Run the download script:&lt;/p&gt;
 
-    &lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; python download.py
+    &lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; python download.py species_name
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
 
-    &lt;p&gt;Available arguments:&lt;/p&gt;
+    &lt;p&gt;Positional arguments:&lt;/p&gt;
 
-    &lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nt&quot;&gt;--kegg_organism_id&lt;/span&gt; KEGG_ORGANISM_ID
-                         Download KEGG pathways only &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;this organism
-                         &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;default: hsa&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
- &lt;span class=&quot;nt&quot;&gt;--string_organism_id&lt;/span&gt; STRING_ORGANISM_ID
-                         Map KEGG pathways to this STRING organism &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;default:
-                         9606&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-
+    &lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; species_name  Species name &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;e.g. Homo sapiens / human&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-
-    &lt;p&gt;&lt;span style=&quot;color:red; font-size: small;&quot;&gt;Redundancy regarding the specification of multiple species IDs should be resolved in the future.&lt;/span&gt;&lt;/p&gt;
   &lt;/li&gt;
 &lt;/ol&gt;
 
@@ -178,21 +165,21 @@ Done!
 
 &lt;p&gt;To download KEGG data for chimpanzee (&lt;em&gt;Pan troglodytes&lt;/em&gt;), run the following command:&lt;/p&gt;
 
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;python download.py &lt;span class=&quot;nt&quot;&gt;--kegg_organism_id&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ptr&quot;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-                   &lt;span class=&quot;nt&quot;&gt;--string_organism_id&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;9598&quot;&lt;/span&gt;
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;python download.py &lt;span class=&quot;nt&quot;&gt;--species_name&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;chimpanzee&quot;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;Output:&lt;/p&gt;
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Downloading pathways &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;: ptr
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;1 / 326] Glycolysis / Gluconeogenesis
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Downloading KEGG data for Pan troglodytes (chimpanzee).
+Downloading pathways for: ptr
+[1 / 326] Glycolysis / Gluconeogenesis
 	Genes: 69
-	10 gene&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;s&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; could not be mapped to STRING external ID!
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;2 / 326] Citrate cycle &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;TCA cycle&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+	10 gene(s) could not be mapped to STRING external ID!
+[2 / 326] Citrate cycle (TCA cycle)
 	Genes: 30
-	4 gene&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;s&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; could not be mapped to STRING external ID!
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;3 / 326] Pentose phosphate pathway
+	4 gene(s) could not be mapped to STRING external ID!
+[3 / 326] Pentose phosphate pathway
 	Genes: 30
-	9 gene&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;s&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; could not be mapped to STRING external ID!
+	9 gene(s) could not be mapped to STRING external ID!
 ...
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Borna Bešić</name></author><category term="notebooks" /><summary type="html">Prerequisites conda installed PostgreSQL server instance running (with the STRING schema dumps loaded) Neo4j server instance running</summary></entry><entry><title type="html">STRING Database</title><link href="https://bornabesic.github.io/cytokine-graph-db/STRING" rel="alternate" type="text/html" title="STRING Database" /><published>2018-07-21T00:00:00+02:00</published><updated>2018-07-21T00:00:00+02:00</updated><id>https://bornabesic.github.io/cytokine-graph-db/string-db</id><content type="html" xml:base="https://bornabesic.github.io/cytokine-graph-db/STRING">&lt;h1 id=&quot;summary&quot;&gt;Summary&lt;/h1&gt;
 
