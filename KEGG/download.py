@@ -3,10 +3,13 @@ import os
 import api
 import parse
 import argparse
+import sys
 
 import sys
 sys.path.append("..")
 from utils import read_table
+
+from KEGG import get_species_identifiers
 
 # Parse CLI arguments
 args_parser = argparse.ArgumentParser(
@@ -14,37 +17,36 @@ args_parser = argparse.ArgumentParser(
 )
 
 args_parser.add_argument(
-    "--kegg_organism_id",
+    "species_name",
     type = str,
-    help = "Download KEGG pathways only for this organism",
-    default = "hsa" # Homo sapiens
-)
-
-args_parser.add_argument(
-    "--string_organism_id",
-    type = str,
-    help = "Map KEGG pathways to this STRING organism",
-    default = "9606" # Homo sapiens
+    help = "Species name (e.g. Homo sapiens / human)", 
 )
 
 args = args_parser.parse_args()
+
+species_name, kegg_id, ncbi_id = get_species_identifiers(args.species_name)
+if kegg_id is None:
+    print("Species not found!")
+    sys.exit(1)
+else:
+    print("Downloading KEGG data for {}.".format(species_name))
 
 # Directory for saving the data
 DATA_DIR = "data"
 os.makedirs(DATA_DIR, exist_ok = True)
 
 # Diseases, drugs & compounds
-diseases_file = open(os.path.join(DATA_DIR, "kegg_diseases.{}.tsv".format(args.kegg_organism_id)), mode = "w", encoding = "utf-8")
-drugs_file = open(os.path.join(DATA_DIR, "kegg_drugs.{}.tsv".format(args.kegg_organism_id)), mode = "w", encoding = "utf-8")
-compounds_file = open(os.path.join(DATA_DIR, "kegg_compounds.{}.tsv".format(args.kegg_organism_id)), mode = "w", encoding = "utf-8")
+diseases_file = open(os.path.join(DATA_DIR, "kegg_diseases.{}.tsv".format(kegg_id)), mode = "w", encoding = "utf-8")
+drugs_file = open(os.path.join(DATA_DIR, "kegg_drugs.{}.tsv".format(kegg_id)), mode = "w", encoding = "utf-8")
+compounds_file = open(os.path.join(DATA_DIR, "kegg_compounds.{}.tsv".format(kegg_id)), mode = "w", encoding = "utf-8")
 
 written_diseases = set()
 written_drugs = set()
 written_compounds = set()
 
 # Pathways
-print("Downloading pathways for: {}".format(args.kegg_organism_id))
-pathways_file = open(os.path.join(DATA_DIR, "kegg_pathways.{}.tsv".format(args.kegg_organism_id)), mode = "w", encoding = "utf-8")
+print("Downloading pathways for: {}".format(kegg_id))
+pathways_file = open(os.path.join(DATA_DIR, "kegg_pathways.{}.tsv".format(kegg_id)), mode = "w", encoding = "utf-8")
 
 # Write headers
 diseases_file.write("\t".join(["id", "name"]) + "\n")
@@ -62,7 +64,7 @@ pathways_file.write("\t".join([
 ]) + "\n")
 
 
-pathways = api.pathways(args.kegg_organism_id)
+pathways = api.pathways(kegg_id)
 
 # Get the pathway
 pathway_table = list(read_table(pathways, (str, str), "\t"))
@@ -91,12 +93,12 @@ for idx, (pathway_id, pathway_name) in enumerate(pathway_table):
     has_genes = pathway_genes is not None
     if has_genes:
         gene_ids, gene_short_names, gene_long_names = zip(*pathway_genes)
-        gene_ids = list(map(lambda gene_id: "{}:{}".format(args.kegg_organism_id, gene_id), list(gene_ids)))
+        gene_ids = list(map(lambda gene_id: "{}:{}".format(kegg_id, gene_id), list(gene_ids)))
         print("\tGenes:", len(gene_ids))
 
         # Map KEGG gene identifiers to STRING external identifiers
         kegg2external = dict()
-        for mapped_identifiers, idx_offset in api.map_identifiers_to_STRING(gene_ids, args.string_organism_id):
+        for mapped_identifiers, idx_offset in api.map_identifiers_to_STRING(gene_ids, ncbi_id):
             for idx, external_id, species_id, species_name, preferred_name, annotation in read_table(
                 mapped_identifiers,
                 (int, str, int, str, str, str),

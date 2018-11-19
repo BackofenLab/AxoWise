@@ -7,6 +7,8 @@ import cypher_queries as Cypher
 import database
 from utils import pair_generator, rstrip_line_generator, read_table, batches, concat, lines
 
+from KEGG import get_species_identifiers
+
 def main():
     # Parse CLI arguments
     args_parser = argparse.ArgumentParser(
@@ -18,13 +20,6 @@ def main():
         type = str,
         help = "Path to the credentials JSON file that will be used",
         default = "credentials.json"
-    )
-
-    args_parser.add_argument(
-        "--kegg_organism_id",
-        type = str,
-        help = "KEGG organism ID",
-        default = "hsa"
     )
 
     args_parser.add_argument(
@@ -68,15 +63,24 @@ def main():
     )
 
     args = args_parser.parse_args()
-    KOID = args.kegg_organism_id
 
+    # Get the species id
+    species_name, kegg_id, ncbi_id = get_species_identifiers(args.species_name)
+    species_id = ncbi_id
+    if species_id is None:
+        print("Species not found!")
+        sys.exit(1)
+    else:
+        print("Translating the database for {}.".format(species_name))
+    
+    KOID = kegg_id
+
+    # List of proteins
     protein_ensembl_ids_set = set()
     protein_ids_set = set()
     if args.protein_list is not None:
         protein_ensembl_ids_set = set(lines(os.path.abspath(args.protein_list)))
         print(len(protein_ensembl_ids_set), "protein external IDs loaded.")
-
-    species = args.species_name
 
     # Useful functions
     score_channel_map = {
@@ -102,12 +106,6 @@ def main():
 
     # Connect to the databases
     postgres_connection, neo4j_graph = database.connect(credentials_path = args.credentials)
-
-    # Get the species id
-    species_id = SQL.get_species_id(postgres_connection, species)
-    if species_id is None:
-        print("Species not found!")
-        sys.exit(1)
 
     # Clean the Neo4j database
     print("Cleaning the old data from Neo4j database...")
