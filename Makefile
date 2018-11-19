@@ -4,7 +4,7 @@ env:
 
 test:
 	# Load the toy database
-	psql -U postgres -c "DROP DATABASE string;"
+	-psql -U postgres -c "DROP DATABASE string;"
 	psql -U postgres -c "CREATE DATABASE string;"
 	psql -U postgres string < sql/dump.schema.psql
 	psql -U postgres string < sql/dump.test.psql
