@@ -9,7 +9,7 @@ from utils import pair_generator, rstrip_line_generator, read_table, batches, co
 
 from KEGG import get_species_identifiers
 
-def main():
+def parse_cli_args():
     # Parse CLI arguments
     args_parser = argparse.ArgumentParser(
         formatter_class = argparse.ArgumentDefaultsHelpFormatter
@@ -63,26 +63,17 @@ def main():
     )
 
     args = args_parser.parse_args()
+    return args
 
-    # Get the species id
-    species_name, kegg_id, ncbi_id = get_species_identifiers(args.species_name)
-    species_id = ncbi_id
-    if species_id is None:
-        print("Species not found!")
-        sys.exit(1)
-    else:
-        print("Translating the database for {}.".format(species_name))
-    
-    KOID = kegg_id
-
-    # List of proteins
+def read_proteins_list(args):
     protein_ensembl_ids_set = set()
-    protein_ids_set = set()
     if args.protein_list is not None:
         protein_ensembl_ids_set = set(lines(os.path.abspath(args.protein_list)))
         print(len(protein_ensembl_ids_set), "protein external IDs loaded.")
+    return protein_ensembl_ids_set
 
-    # Useful functions
+# Maps evidence channel ids to channel names (score_channel_map values)
+def decode_evidence_scores(evidence_scores):
     score_channel_map = {
         6: "coexpression",
         8: "experiments",
@@ -93,86 +84,85 @@ def main():
         16: "cooccurence"
     }
 
-    # Maps evidence channel ids to channel names (score_channel_map values)
-    def decode_evidence_scores(evidence_scores):
-        params = { channel: None for channel in score_channel_map.values()}
-        for score_id, score in evidence_scores:
-            if score_id not in score_channel_map:
-                continue
+    params = { channel: None for channel in score_channel_map.values()}
+    for score_id, score in evidence_scores:
+        if score_id not in score_channel_map:
+            continue
 
-            score_type = score_channel_map[score_id]
-            params[score_type] = score
-        return params
+        score_type = score_channel_map[score_id]
+        params[score_type] = score
+    return params
 
-    # Connect to the databases
-    postgres_connection, neo4j_graph = database.connect(credentials_path = args.credentials)
-
-    # Clean the Neo4j database
-    print("Cleaning the old data from Neo4j database...")
-    neo4j_graph.delete_all()
-
-    # Read KEGG data
-    # Compounds
+# KEGG data
+# Compounds
+def read_kegg_compounds(args, kegg_id):
+    compounds = dict()
     if not args.skip_compounds:
-        compounds = dict()
-        for id, name in read_table("KEGG/data/kegg_compounds.{}.tsv".format(KOID), (str, str), delimiter = "\t", header = True):
+        for id, name in read_table("KEGG/data/kegg_compounds.{}.tsv".format(kegg_id), (str, str), delimiter = "\t", header = True):
             compounds[id] = {
                 "id": id,
                 "name": name
             }
+    return compounds
 
-        print("Creating compounds...")
-        num_compounds = 0
-        for batch in batches(compounds.values(), batch_size = 1024):
-            num_compounds += len(batch)
-            print("{}".format(num_compounds), end = "\r")
-            Cypher.add_compound(neo4j_graph, {
-                "batch": batch
-            })
-        print()
+def write_kegg_compounds(neo4j_graph, compounds):
+    print("Creating compounds...")
+    num_compounds = 0
+    for batch in batches(compounds.values(), batch_size = 1024):
+        num_compounds += len(batch)
+        print("{}".format(num_compounds), end = "\r")
+        Cypher.add_compound(neo4j_graph, {
+            "batch": batch
+        })
+    print()
 
-    # Diseases
+# Diseases
+def read_kegg_diseases(args, kegg_id):
+    diseases = dict()
     if not args.skip_diseases:
-        diseases = dict()
-        for id, name in read_table("KEGG/data/kegg_diseases.{}.tsv".format(KOID), (str, str), delimiter = "\t", header = True):
+        for id, name in read_table("KEGG/data/kegg_diseases.{}.tsv".format(kegg_id), (str, str), delimiter = "\t", header = True):
             diseases[id] = {
                 "id": id,
                 "name": name
             }
 
-        print("Creating diseases...")
-        num_diseases = 0
-        for batch in batches(diseases.values(), batch_size = 1024):
-            num_diseases += len(batch)
-            print("{}".format(num_diseases), end = "\r")
-            Cypher.add_disease(neo4j_graph, {
-                "batch": batch
-            })
-        print()
+    return diseases
 
-    # Drugs
+def write_kegg_diseases(neo4j_graph, diseases):
+    print("Creating diseases...")
+    num_diseases = 0
+    for batch in batches(diseases.values(), batch_size = 1024):
+        num_diseases += len(batch)
+        print("{}".format(num_diseases), end = "\r")
+        Cypher.add_disease(neo4j_graph, {
+            "batch": batch
+        })
+    print()
+
+# Drugs
+def read_kegg_drugs(args, kegg_id):
+    drugs = dict()
     if not args.skip_drugs:
-        drugs = dict()
-        for id, name in read_table("KEGG/data/kegg_drugs.{}.tsv".format(KOID), (str, str), delimiter = "\t", header = True):
+        for id, name in read_table("KEGG/data/kegg_drugs.{}.tsv".format(kegg_id), (str, str), delimiter = "\t", header = True):
             drugs[id] = {
                 "id": id,
                 "name": name
             }
+    return drugs
 
-        print("Creating drugs...")
-        num_drugs = 0
-        for batch in batches(drugs.values(), batch_size = 1024):
-            num_drugs += len(batch)
-            print("{}".format(num_drugs), end = "\r")
-            Cypher.add_drug(neo4j_graph, {
-                "batch": batch
-            })
-        print()
+def write_kegg_drugs(neo4j_graph, drugs):
+    print("Creating drugs...")
+    num_drugs = 0
+    for batch in batches(drugs.values(), batch_size = 1024):
+        num_drugs += len(batch)
+        print("{}".format(num_drugs), end = "\r")
+        Cypher.add_drug(neo4j_graph, {
+            "batch": batch
+        })
+    print()
 
-    # Create KEGG data index
-    Cypher.create_kegg_index(neo4j_graph)
-
-    # Pathways
+# Pathways
+def read_kegg_pathways(kegg_id):
     pathways = list()
     pathway2classes = dict()
     pathway2diseases = dict()
@@ -182,7 +172,7 @@ def main():
     gene2pathways = dict()
 
     for id, name, description, classes, genes_external_ids, diseases_ids, drugs_ids, compounds_ids in read_table(
-        "KEGG/data/kegg_pathways.{}.tsv".format(KOID),
+        "KEGG/data/kegg_pathways.{}.tsv".format(kegg_id),
         (str, str, str, str, str, str, str, str),
         delimiter = "\t",
         header = True
@@ -206,6 +196,28 @@ def main():
 
             gene2pathways[gene_external_id].append(id)
 
+    return (
+        pathways,
+        pathway2classes,
+        pathway2diseases,
+        pathway2drugs,
+        pathway2compounds,
+        gene2pathways
+    )
+
+def write_kegg_pathways(neo4j_graph, pathways):
+    print("Creating pathways and connecting them to classes...")
+    num_pathways = 0
+    for batch in batches(pathways, batch_size = 1024):
+        num_pathways += len(batch)
+        print("{}".format(num_pathways), end = "\r")
+        Cypher.add_pathway(neo4j_graph, {
+            "batch": batch
+        })
+    print()
+
+# Classes
+def write_classes(neo4j_graph, pathway2classes):
     print("Creating classes and class hierarchy...")
     num_classes = 0
     class_chains = list(pathway2classes.values())
@@ -231,15 +243,56 @@ def main():
         })
     print()
 
-    print("Creating pathways and connecting them to classes...")
-    num_pathways = 0
-    for batch in batches(pathways, batch_size = 1024):
-        num_pathways += len(batch)
-        print("{}".format(num_pathways), end = "\r")
-        Cypher.add_pathway(neo4j_graph, {
-            "batch": batch
-        })
-    print()
+def main():
+
+    args = parse_cli_args()
+
+    # Get the species IDs from the name
+    species_name, kegg_id, ncbi_id = get_species_identifiers(args.species_name)
+    species_id = ncbi_id
+    if species_id is None:
+        print("Species not found!")
+        sys.exit(1)
+    else:
+        print("Translating the database for {}.".format(species_name))
+    
+    KOID = kegg_id
+
+    # Read the provided list of proteins (if available)
+    protein_ids_set = set()
+    protein_ensembl_ids_set = read_proteins_list(args)
+
+    # Connect to the databases
+    postgres_connection, neo4j_graph = database.connect(credentials_path = args.credentials)
+
+    # Clean the Neo4j database
+    print("Cleaning the old data from Neo4j database...")
+    neo4j_graph.delete_all()
+
+    # KEGG data
+    # Compounds
+    compounds = read_kegg_compounds(args, kegg_id)
+    write_kegg_compounds(neo4j_graph, compounds)
+
+    # Diseases
+    diseases = read_kegg_diseases(args, kegg_id)
+    write_kegg_diseases(neo4j_graph, diseases)
+
+    # Drugs
+    drugs = read_kegg_drugs(args, kegg_id)
+    write_kegg_drugs(neo4j_graph, drugs)
+
+    # Create KEGG data index
+    Cypher.create_kegg_index(neo4j_graph)
+
+    # Read pathways
+    pathways, pathway2classes, pathway2diseases, pathway2drugs, pathway2compounds, gene2pathways = read_kegg_pathways(kegg_id)
+
+    # Classes
+    write_classes(neo4j_graph, pathway2classes)
+
+    # Create pathways
+    write_kegg_pathways(neo4j_graph, pathways)
 
     if not args.skip_compounds:
         print("Connecting compounds and pathways...")
