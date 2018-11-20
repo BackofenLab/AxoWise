@@ -10,7 +10,6 @@ from utils import pair_generator, rstrip_line_generator, read_table, batches, co
 from KEGG import get_species_identifiers
 
 def parse_cli_args():
-    # Parse CLI arguments
     args_parser = argparse.ArgumentParser(
         formatter_class = argparse.ArgumentDefaultsHelpFormatter
     )
@@ -72,8 +71,11 @@ def read_proteins_list(args):
         print(len(protein_ensembl_ids_set), "protein external IDs loaded.")
     return protein_ensembl_ids_set
 
-# Maps evidence channel ids to channel names (score_channel_map values)
 def decode_evidence_scores(evidence_scores):
+    """
+    Maps evidence channel IDs to channel names.
+    """
+
     score_channel_map = {
         6: "coexpression",
         8: "experiments",
@@ -93,7 +95,7 @@ def decode_evidence_scores(evidence_scores):
         params[score_type] = score
     return params
 
-# KEGG data
+# ======================================== KEGG ========================================
 # Compounds
 def read_kegg_compounds(args, kegg_id):
     compounds = dict()
@@ -304,11 +306,128 @@ def connect_drugs_and_pathways(args, neo4j_graph, pathway2drugs):
                 })
         print()
 
+# ======================================== STRING ========================================
+# Proteins
+def read_string_proteins(args, postgres_connection, species_id, protein_ensembl_ids_set):
+    proteins = SQL.get_proteins(
+    postgres_connection,
+    species_id = species_id
+    )
+    protein_ids_set = set()
+    if args.protein_list is not None:
+        def filter_proteins(protein):
+            valid = protein["external_id"] in protein_ensembl_ids_set
+            if valid:
+                protein_ids_set.add(protein["id"])
+            return valid
+
+        proteins = filter(filter_proteins, proteins)
+
+    return proteins, protein_ids_set
+
+def write_string_proteins(neo4j_graph, proteins):
+    print("Creating proteins...")
+    num_proteins = 0
+    for batch in batches(proteins, batch_size = 1024):
+        num_proteins += len(batch)
+        print("{}".format(num_proteins), end = "\r")
+        Cypher.add_protein(neo4j_graph, {
+            "batch": batch
+        })
+    print()
+
+# Associations
+def read_string_associations(args, postgres_connection, species_id, protein_ids_set):
+    # Get protein - protein association
+    associations = SQL.get_associations(
+        postgres_connection,
+        species_id = species_id
+    )
+    if args.protein_list is not None:
+        def filter_associations(association):
+            if args.combined_score_threshold is None:
+                above_threshold = True
+            else:
+                above_threshold = association["combined_score"] >= args.combined_score_threshold
+            in_list = association["id1"] in protein_ids_set and association["id2"] in protein_ids_set
+            return above_threshold and in_list
+
+        associations = filter(filter_associations, associations)
+
+    return associations
+
+def write_string_associations(neo4j_graph, associations):
+    print("Creating protein - protein associations...")
+    num_associations = 0
+    for batch in batches(associations, batch_size = 16384):
+        num_associations += len(batch)
+        print("{}".format(num_associations), end = "\r")
+
+        def map_batch_item(item):
+            item = {**item, **decode_evidence_scores(item["evidence_scores"])}
+            del item["evidence_scores"]
+            return item
+
+        batch = list(map(map_batch_item, batch))
+
+        Cypher.add_association(neo4j_graph, {
+            "batch": batch
+        })
+    print()
+
+def read_string_actions(postgres_connection, species_id):
+    # Get protein - protein functional prediction
+    actions = SQL.get_actions(
+        postgres_connection,
+        species_id = species_id
+    )
+
+    return actions
+
+def write_string_actions(neo4j_graph, actions):
+    print("Creating protein - protein actions...")
+    num_actions = 0
+    for batch in batches(actions, batch_size = 16384):
+        num_actions += len(batch)
+        print("{}".format(num_actions), end = "\r")
+        Cypher.add_action(neo4j_graph, {
+            "batch": batch
+        })
+    print()
+
+def connect_proteins_and_pathways(args, neo4j_graph, gene2pathways, protein_ensembl_ids_set):
+    print("Connecting proteins and pathways...")
+    num_protein_pathway_connections = 0
+    def map_gene_to_pathways(gene_external_id):
+        if gene_external_id not in gene2pathways:
+            return []
+        return map(lambda pathway_id: {
+            "pathway_id": pathway_id,
+            "protein_external_id": gene_external_id
+        }, gene2pathways[gene_external_id])
+
+    if args.protein_list is not None:
+        external_id_source = protein_ensembl_ids_set
+    else:
+        external_id_source = gene2pathways.keys()
+
+    gene_pathway_lists = map(lambda geid: map_gene_to_pathways(geid), external_id_source)
+    gene_pathway_list = concat(gene_pathway_lists)
+
+    for batch in batches(gene_pathway_list, batch_size = 4096):
+        num_protein_pathway_connections += len(batch)
+        print("{}".format(num_protein_pathway_connections), end = "\r")
+        Cypher.connect_protein_and_pathway(neo4j_graph, {
+            "batch": batch
+        })
+    print()
+
 def main():
 
+    # Parse the CLI arguments
     args = parse_cli_args()
 
-    # Get the species IDs from the name
+    # Get species IDs from the name
     species_name, kegg_id, ncbi_id = get_species_identifiers(args.species_name)
     species_id = ncbi_id
     if species_id is None:
@@ -316,11 +435,8 @@ def main():
         sys.exit(1)
     else:
         print("Translating the database for {}.".format(species_name))
-    
-    KOID = kegg_id
 
     # Read the provided list of proteins (if available)
-    protein_ids_set = set()
     protein_ensembl_ids_set = read_proteins_list(args)
 
     # Connect to the databases
@@ -330,7 +446,7 @@ def main():
     print("Cleaning the old data from Neo4j database...")
     neo4j_graph.delete_all()
 
-    # KEGG data
+    # ======================================== KEGG ========================================
     # Compounds
     compounds = read_kegg_compounds(args, kegg_id)
     write_kegg_compounds(neo4j_graph, compounds)
@@ -364,116 +480,27 @@ def main():
     # Drug <-> Pathway
     connect_drugs_and_pathways(args, neo4j_graph, pathway2drugs)
 
-    # STRING
-    # Get all proteins
-    proteins = SQL.get_proteins(
-        postgres_connection,
-        species_id = species_id
-    )
-    if args.protein_list is not None:
-        def filter_proteins(protein):
-            valid = protein["external_id"] in protein_ensembl_ids_set
-            if valid:
-                protein_ids_set.add(protein["id"])
-            return valid
-
-        proteins = filter(filter_proteins, proteins)
-
-    # Get protein - protein association
-    associations = SQL.get_associations(
-        postgres_connection,
-        species_id = species_id
-    )
-    if args.protein_list is not None:
-        def filter_associations(association):
-            if args.combined_score_threshold is None:
-                above_threshold = True
-            else:
-                above_threshold = association["combined_score"] >= args.combined_score_threshold
-            in_list = association["id1"] in protein_ids_set and association["id2"] in protein_ids_set
-            return above_threshold and in_list
-
-        associations = filter(filter_associations, associations)
-
-    actions = []
-    if args.protein_list is not None:
-        # Get protein - protein functional prediction
-        actions = SQL.get_actions(
-            postgres_connection,
-            species_id = species_id
-        )
-
-    print("Creating proteins...")
-    num_proteins = 0
-    for batch in batches(proteins, batch_size = 1024):
-        num_proteins += len(batch)
-        print("{}".format(num_proteins), end = "\r")
-        Cypher.add_protein(neo4j_graph, {
-            "batch": batch
-        })
-    print()
-    # Create protein index
+    # ======================================== STRING ========================================
+    # Proteins
+    proteins, protein_ids_set = read_string_proteins(args, postgres_connection, species_id, protein_ensembl_ids_set)
+    write_string_proteins(neo4j_graph, proteins)
     Cypher.create_protein_index(neo4j_graph)
 
-    print("Creating protein - protein associations...")
-    num_associations = 0
-    for batch in batches(associations, batch_size = 16384):
-        num_associations += len(batch)
-        print("{}".format(num_associations), end = "\r")
+    # Associations
+    associations = read_string_associations(args, postgres_connection, species_id, protein_ids_set)
+    write_string_associations(neo4j_graph, associations)
 
-        def map_batch_item(item):
-            item = {**item, **decode_evidence_scores(item["evidence_scores"])}
-            del item["evidence_scores"]
-            return item
+    # Actions
+    actions = read_string_actions(postgres_connection, species_id)
+    write_string_actions(neo4j_graph, actions)
 
-        batch = list(map(map_batch_item, batch))
-
-        Cypher.add_association(neo4j_graph, {
-            "batch": batch
-        })
-    print()
-
-    if args.protein_list is None:
-        print("Creating protein - protein actions...")
-        num_actions = 0
-        for batch in batches(actions, batch_size = 16384):
-            num_actions += len(batch)
-            print("{}".format(num_actions), end = "\r")
-            Cypher.add_action(neo4j_graph, {
-                "batch": batch
-            })
-        print()
-
-    print("Connecting proteins and pathways...")
-    num_protein_pathway_connections = 0
-    def map_gene_to_pathways(gene_external_id):
-        if gene_external_id not in gene2pathways:
-            return []
-        return map(lambda pathway_id: {
-            "pathway_id": pathway_id,
-            "protein_external_id": gene_external_id
-        }, gene2pathways[gene_external_id])
-
-    if args.protein_list is not None:
-        external_id_source = protein_ensembl_ids_set
-    else:
-        external_id_source = gene2pathways.keys()
-
-    gene_pathway_lists = map(lambda geid: map_gene_to_pathways(geid), external_id_source)
-    gene_pathway_list = concat(gene_pathway_lists)
-
-    for batch in batches(gene_pathway_list, batch_size = 4096):
-        num_protein_pathway_connections += len(batch)
-        print("{}".format(num_protein_pathway_connections), end = "\r")
-        Cypher.connect_protein_and_pathway(neo4j_graph, {
-            "batch": batch
-        })
-    print()
-
-    print("Done!")
+    # ======================================== Merge STRING and KEGG ========================================
+    connect_proteins_and_pathways(args, neo4j_graph, gene2pathways, protein_ensembl_ids_set)
 
     # Close the PostgreSQL connection
     postgres_connection.close()
+
+    print("Done!")
 
 if __name__ == "__main__":
     main()
