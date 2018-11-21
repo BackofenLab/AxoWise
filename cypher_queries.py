@@ -1,4 +1,6 @@
 
+# ========================= Creating queries =========================
+
 def add_compound(graph, params):
     """
     Create a compound with the specified id and
@@ -161,6 +163,8 @@ def add_association(graph, params):
     """
     graph.run(query, params)
 
+# ========================= Connecting queries =========================
+
 def connect_protein_and_pathway(graph, params):
 
     query = """
@@ -229,11 +233,30 @@ def connect_drug_and_pathway(graph, params):
     """
     graph.run(query, params)
 
+# ========================= Schema queries =========================
+
+def create_constraints(graph):
+
+    queries = [
+        # Protein
+        "CREATE CONSTRAINT ON (protein:Protein) ASSERT protein.id IS UNIQUE",
+        "CREATE CONSTRAINT ON (protein:Protein) ASSERT protein.external_id IS UNIQUE",
+        # Pathway
+        "CREATE CONSTRAINT ON (pathway:Pathway) ASSERT pathway.id IS UNIQUE",
+        # Compound
+        "CREATE CONSTRAINT ON (compound:Compound) ASSERT compound.id IS UNIQUE",
+        # Drug
+        "CREATE CONSTRAINT ON (drug:Drug) ASSERT drug.id IS UNIQUE",
+        # Disease
+        "CREATE CONSTRAINT ON (disease:Disease) ASSERT disease.id IS UNIQUE"
+    ]
+
+    for query in queries:
+        graph.run(query)
+
 def create_protein_index(graph):
 
     queries = [
-        "CREATE INDEX ON :Protein(id)",
-        "CREATE INDEX ON :Protein(external_id)",
         "CREATE INDEX ON :Protein(name)"
     ]
 
@@ -243,17 +266,16 @@ def create_protein_index(graph):
 def create_kegg_index(graph):
 
     queries = [
-        "CREATE INDEX ON :Compound(id)",
-        "CREATE INDEX ON :Drug(id)",
-        "CREATE INDEX ON :Disease(id)",
-        "CREATE INDEX ON :Pathway(id)",
         "CREATE INDEX ON :Pathway(name)"
+        "CREATE INDEX ON :Class(name)"
     ]
 
     for query in queries:
         graph.run(query)
 
-def search_protein(graph, name):
+# ========================= Search queries =========================
+
+def search_protein(graph, name, threshold = 0):
     """
     For the given protein, return the Neo4j subgraph
     of the protein, all other associated proteins and
@@ -261,12 +283,19 @@ def search_protein(graph, name):
     """
 
     query = """
-        MATCH (pathway:Pathway)<-[:IN]-(protein:Protein)-[association:ASSOCIATION]-(other:Protein)
-        WHERE toUpper(protein.name) =~ (".*" + toUpper({name}) + ".*")
+        MATCH (protein:Protein)
+        WHERE protein.name = {name}
+        // fuzzy search: WHERE protein.name =~ (".*" + toUpper({name}) + ".*")
+        WITH protein
+        MATCH (pathway:Pathway)<-[:IN]-(protein)-[association:ASSOCIATION]-(other:Protein)
+        WHERE association.combined >= {threshold}
         RETURN protein, association, other, pathway
     """
 
-    param_dict = dict(name = name)
+    param_dict = dict(
+        name = name,
+        threshold = threshold
+    )
     return graph.run(query, param_dict)
 
 def search_pathway(graph, name):
@@ -277,8 +306,11 @@ def search_pathway(graph, name):
     """
 
     query = """
-        MATCH (class:Class)<-[:IN*]-(pathway:Pathway)<-[:IN]-(protein:Protein)
-        WHERE toUpper(pathway.name) =~ (".*" + toUpper({name}) + ".*")
+        MATCH (pathway:Pathway)
+        WHERE pathway.name = {name}
+        // fuzzy search: WHERE toUpper(pathway.name) =~ (".*" + toUpper({name}) + ".*")
+        WITH pathway
+        MATCH (class:Class)<-[:IN*]-(pathway)<-[:IN]-(protein:Protein)
         RETURN pathway, COLLECT(DISTINCT class) AS classes, COLLECT(DISTINCT protein) as proteins
     """
 
@@ -293,8 +325,11 @@ def search_class(graph, name):
     """
 
     query = """
-        MATCH (class:Class)<-[:IN*]-(pathway:Pathway)
-        WHERE toUpper(class.name) =~ (".*" + toUpper({name}) + ".*")
+        MATCH (class:Class)
+        WHERE class.name = {name}
+        // fuzzy search: WHERE toUpper(class.name) =~ (".*" + toUpper({name}) + ".*")
+        WITH class
+        MATCH (class)<-[:IN*]-(pathway:Pathway)
         RETURN class, COLLECT(DISTINCT pathway) as pathways
     """
 

@@ -26,7 +26,7 @@ def main():
         "--credentials",
         type = str,
         help = "Path to the credentials JSON file that will be used",
-        default = "test/credentials.test.json"
+        default = "tests/credentials.test.json"
     )
 
     args = args_parser.parse_args()
@@ -35,29 +35,16 @@ def main():
     postgres_connection, neo4j_graph = database.connect(credentials_path = args.credentials)
     postgres_connection.close()
 
-    query1 = """
-        MATCH (pathway:Pathway)<-[:IN]-(p1:Protein {name: "CCR5"})-[p1p2:ASSOCIATION]->(p2:Protein)-[:IN]->(pathway)
-        RETURN p1, p2, p1p2, COLLECT(pathway) AS pathways
-    """
-
-    query2 = """
-        MATCH (pathway:Pathway { name: "Cytokine-cytokine receptor interaction" })<-[:IN]-(other)
-        WHERE NOT other:Protein
-        RETURN pathway, COLLECT(other) AS compounds_diseases_drugs
-    """
-
-    query3 = """
-        MATCH (class:Class)<-[:IN*]-(pathway:Pathway { name: "Cytokine-cytokine receptor interaction" })<-[:IN]-(other)
-        WHERE NOT other:Protein
-        RETURN pathway, COLLECT(other) AS compounds_diseases_drugs, COLLECT(DISTINCT class) AS classes
-    """
-
     print("[Protein-centric query]")
-    first_row, num_rows, elapsed_time = time_query(neo4j_graph, Cypher.search_protein, "il10")
+    first_row, num_rows, elapsed_time = time_query(neo4j_graph, Cypher.search_protein, "CCR5", 650)
     print(num_rows, "row(s) returned in", elapsed_time, "second(s)")
 
     print("[Pathway-centric query]")
-    first_row, num_rows, elapsed_time = time_query(neo4j_graph, Cypher.search_pathway, "chemokine")
+    first_row, num_rows, elapsed_time = time_query(neo4j_graph, Cypher.search_pathway, "Chemokine signaling pathway")
+    print(num_rows, "row(s) returned in", elapsed_time, "second(s)")
+
+    print("[Class-centric query]")
+    first_row, num_rows, elapsed_time = time_query(neo4j_graph, Cypher.search_class, "Immune diseases")
     print(num_rows, "row(s) returned in", elapsed_time, "second(s)")
 
 if __name__ == "__main__":

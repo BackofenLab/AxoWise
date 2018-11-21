@@ -446,6 +446,9 @@ def main():
     print("Cleaning the old data from Neo4j database...")
     neo4j_graph.delete_all()
 
+    # Create Neo4j database constraints
+    Cypher.create_constraints(neo4j_graph)
+
     # ======================================== KEGG ========================================
     # Compounds
     compounds = read_kegg_compounds(args, kegg_id)
