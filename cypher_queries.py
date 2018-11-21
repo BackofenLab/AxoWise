@@ -283,17 +283,21 @@ def search_protein(graph, name, threshold = 0):
     """
 
     query = """
-        MATCH (protein:Protein)
-        WHERE protein.name = {name}
-        // fuzzy search: WHERE protein.name =~ (".*" + toUpper({name}) + ".*")
+        MATCH (protein:Protein {
+            name: {name}
+        })
+        USING INDEX protein:Protein(name)
+        // "fuzzy" search: WHERE protein.name =~ (".*" + toUpper({name}) + ".*")
         WITH protein
-        MATCH (pathway:Pathway)<-[:IN]-(protein)-[association:ASSOCIATION]-(other:Protein)
+        MATCH (protein)-[association:ASSOCIATION]-(other:Protein)
         WHERE association.combined >= {threshold}
+        WITH protein, association, other
+        MATCH (protein)-[:IN]->(pathway:Pathway)<-[:IN]-(other)
         RETURN protein, association, other, pathway
     """
 
     param_dict = dict(
-        name = name,
+        name = name.upper(),
         threshold = threshold
     )
     return graph.run(query, param_dict)
@@ -306,9 +310,11 @@ def search_pathway(graph, name):
     """
 
     query = """
-        MATCH (pathway:Pathway)
-        WHERE pathway.name = {name}
-        // fuzzy search: WHERE toUpper(pathway.name) =~ (".*" + toUpper({name}) + ".*")
+        MATCH (pathway:Pathway {
+            name: {name}
+        })
+        USING INDEX pathway:Pathway(name)
+        // "fuzzy" search: WHERE toUpper(pathway.name) =~ (".*" + toUpper({name}) + ".*")
         WITH pathway
         MATCH (class:Class)<-[:IN*]-(pathway)<-[:IN]-(protein:Protein)
         RETURN pathway, COLLECT(DISTINCT class) AS classes, COLLECT(DISTINCT protein) as proteins
@@ -325,9 +331,11 @@ def search_class(graph, name):
     """
 
     query = """
-        MATCH (class:Class)
-        WHERE class.name = {name}
-        // fuzzy search: WHERE toUpper(class.name) =~ (".*" + toUpper({name}) + ".*")
+        MATCH (class:Class {
+            name: {name}
+        })
+        USING INDEX class:Class(name)
+        // "fuzzy" search: WHERE toUpper(class.name) =~ (".*" + toUpper({name}) + ".*")
         WITH class
         MATCH (class)<-[:IN*]-(pathway:Pathway)
         RETURN class, COLLECT(DISTINCT pathway) as pathways

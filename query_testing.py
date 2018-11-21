@@ -36,7 +36,7 @@ def main():
     postgres_connection.close()
 
     print("[Protein-centric query]")
-    first_row, num_rows, elapsed_time = time_query(neo4j_graph, Cypher.search_protein, "CCR5", 650)
+    first_row, num_rows, elapsed_time = time_query(neo4j_graph, Cypher.search_protein, "ccr5", 750)
     print(num_rows, "row(s) returned in", elapsed_time, "second(s)")
 
     print("[Pathway-centric query]")
