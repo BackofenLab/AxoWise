@@ -266,7 +266,7 @@ def create_protein_index(graph):
 def create_kegg_index(graph):
 
     queries = [
-        "CREATE INDEX ON :Pathway(name)"
+        "CREATE INDEX ON :Pathway(name)",
         "CREATE INDEX ON :Class(name)"
     ]
 
