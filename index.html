@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="/cytokine-graph-db/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://bornabesic.github.io/cytokine-graph-db/feed.xml" title="Cytokine Graph DB" /></head>
 <body><header class="site-header" role="banner">
 
-    <div class="wrapper"><a class="site-title" rel="author" href="/cytokine-graph-db/">Cytokine Graph DB</a><nav class="site-nav">
+    <div class="wrapper"><a class="site-title" rel="author" href="/cytokine-graph-db/">Cytokine Graph DB</a><nav class="site-nav" style="padding-left: 20px;">
           <input type="checkbox" id="nav-trigger" class="nav-trigger" />
           <label for="nav-trigger">
             <span class="menu-icon">
@@ -26,7 +26,7 @@
               </svg>
             </span>
           </label>
-          <div class="trigger"><a class="page-link" href="/cytokine-graph-db/graph-db-scheme">Graph Database Scheme</a><a class="page-link" href="/cytokine-graph-db/">Workflow</a><a class="page-link" href="/cytokine-graph-db/assets/main.css"></a><a class="page-link" href="/cytokine-graph-db/notebooks.html">Notebooks</a><a class="page-link" href="/cytokine-graph-db/papers">Papers</a><a class="page-link" href="/cytokine-graph-db/TODO">TODO</a><a class="page-link" href="/cytokine-graph-db/feed.xml"></a></div>
+          <div class="trigger"><a class="page-link" href="/cytokine-graph-db/documentation">Documentation</a><a class="page-link" href="/cytokine-graph-db/graph-db-scheme">Graph Database Scheme</a><a class="page-link" href="/cytokine-graph-db/">Workflow</a><a class="page-link" href="/cytokine-graph-db/assets/main.css"></a><a class="page-link" href="/cytokine-graph-db/papers">Papers</a><a class="page-link" href="/cytokine-graph-db/feed.xml"></a></div>
         </nav></div>
   </header><main class="page-content" aria-label="Content">
       <div class="wrapper">
@@ -37,11 +37,15 @@
   </header>
 
   <div class="post-content">
-    <p><a href="https://travis-ci.org/BackofenLab/cytokine-graph-db"><img src="https://travis-ci.org/BackofenLab/cytokine-graph-db.svg?branch=master" alt="Build Status" /></a></p>
+    <p><a href="https://travis-ci.org/BackofenLab/cytokine-graph-db"><img src="https://travis-ci.org/BackofenLab/cytokine-graph-db.svg?branch=master" alt="Build Status" /></a>
+<a href="documentation"><img src="https://img.shields.io/badge/docs-Read%20me!-blue.svg" alt="" /></a></p>
+
+<p><br /></p>
 
 <p><img src="workflow2.svg" alt="" /></p>
 
-<h1 id="1-collect-the-data-partially-automated">1. Collect the data <span style="color:brown; font-size: small;">partially automated</span></h1>
+<h1 id="1-collect-the-data">1. Collect the data</h1>
+
 <ul>
   <li>Download the STRING database dumps
     <ul>
@@ -62,35 +66,52 @@
     </ul>
   </li>
   <li>Load the dumps into a PostgreSQL database</li>
+  <li><a href="documentation#downloading-kegg-data-for-a-certain-species">Download KEGG data for a certain species</a></li>
 </ul>
 
-<h1 id="2-extract-the-information-from-the-data-automated-testing">2. Extract the information from the data <span style="color:green; font-size: small;">automated (testing)</span></h1>
+<p style="color:brown; font-size: small;">partially automated</p>
+
+<h1 id="2-extract-the-information-from-the-data">2. Extract the information from the data</h1>
+
 <ul>
-  <li>Derive the information we are interested in (i.e. for <em>Homo sapiens</em> &amp; <em>Mus musculus</em>)
+  <li>Derive the information we are interested in (e.g. for <em>Homo sapiens</em> or <em>Mus musculus</em>)
     <ul>
-      <li>Query the PostgreSQL database</li>
-      <li>Parse the downloaded KEGG data</li>
+      <li>Query the PostgreSQL database from STRING</li>
+      <li>Parse the downloaded KEGG PATHWAY data</li>
     </ul>
   </li>
 </ul>
 
-<h1 id="3-connect-kegg-pathways-and-string-database">3. <a href="KEGG">Connect KEGG pathways and STRING database</a></h1>
+<p style="color:green; font-size: small;">automated (testing)</p>
 
-<h1 id="4-build-a-graph-database-partially-automated-testing">4. Build a graph database <span style="color:brown; font-size: small;">partially automated (testing)</span></h1>
+<h1 id="3-merge-kegg-pathway-and-string">3. <a href="KEGG">Merge KEGG PATHWAY and STRING</a></h1>
+
+<h1 id="4-build-a-graph-database">4. <a href="documentation#building-a-neo4j-graph-database">Build a graph database</a></h1>
+
 <ul>
   <li>Turn the extracted information into <a href="https://neo4j.com/">Neo4j</a> graph database (using our defined <a href="graph-db-scheme">database scheme</a>)
     <ul>
-      <li>Neo4j database dump for <em>Homo sapiens</em> (human): <a href="https://drive.google.com/file/d/1LpKRevT_hUy5_-0Q6EnWcU-unsXuJ_I-/view?usp=sharing">neo4j_human.dump</a> (1.2 GB)</li>
+      <li>Example: Neo4j database dump for <em>Homo sapiens</em> (human): <a href="https://drive.google.com/file/d/1LpKRevT_hUy5_-0Q6EnWcU-unsXuJ_I-/view?usp=sharing">neo4j_human.dump</a> (1.2 GB)</li>
     </ul>
   </li>
   <li>Build a separate graph for each of the species in the same database (add species label to the nodes)</li>
   <li>Visualize the graph database</li>
 </ul>
 
-<h1 id="5-use-machine-learning-not-automated">5. Use machine learning <span style="color:red; font-size: small;">not automated</span></h1>
+<p style="color:green; font-size: small;">automated (testing)</p>
+
+<p><br /></p>
+<hr />
+
+<p><br /></p>
+
+<h1 id="5-use-machine-learning">5. Use machine learning</h1>
+
 <ul>
   <li>Do a classfication / functional prediction of cytokines and cytokine receptors</li>
 </ul>
+
+<p style="color:red; font-size: small;">not automated</p>
 
   </div>
 
