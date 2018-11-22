@@ -1,8 +1,20 @@
+"""
+Collection of SQL queries for reading the STRING's PostgreSQL database.
+"""
 
 class QueryBuilder:
+    """
+    Class containing static methods for building the SQL query strings
+    from the given parameters.
+    """
 
     @staticmethod
     def proteins_query(species_id):
+        """
+        Builds an SQL query for retrieving proteins
+        for a species defined by 'species_id'.
+        """
+
         query = """
             SELECT protein_id,
                    protein_external_id,
@@ -18,7 +30,10 @@ class QueryBuilder:
 
     @staticmethod
     def associations_query(species_id):
-        # narrow = (protein1 is not None) and (protein2 is not None)
+        """
+        Builds an SQL query for retrieving protein - protein
+        associations for a species defined by 'species_id'.
+        """
 
         query = """
             SELECT node_node_links.node_id_a, node_node_links.node_id_b,
@@ -29,18 +44,17 @@ class QueryBuilder:
             WHERE proteins.species_id = %s AND
                   node_id_a < node_id_b;
         """
-        # query += ("AND UPPER(proteins1.preferred_name) = UPPER(%s) AND UPPER(proteins2.preferred_name) = UPPER(%s)" if narrow else "")
-        # query += ("LIMIT %s" if limit is not None else "")
-        # query += ";"
 
-        # params = (species_id,) + ((protein1, protein2,) if narrow else ()) + ((limit,) if limit is not None else ())
         params = (species_id,)
 
         return query, params
 
     @staticmethod
     def actions_query(species_id):
-        # narrow = (protein1 is not None) and (protein2 is not None)
+        """
+        Builds an SQL query for retrieving protein - protein
+        actions for a species defined by 'species_id'.
+        """
 
         query = """
             SELECT item_id_a,
@@ -52,17 +66,18 @@ class QueryBuilder:
             WHERE proteins.species_id = %s AND
                   item_id_a < item_id_b;
         """
-        # query += ("AND UPPER(proteins1.preferred_name) = UPPER(%s) AND UPPER(proteins2.preferred_name) = UPPER(%s)" if narrow else "")
-        # query += ("LIMIT %s" if limit is not None else "")
-        # query += ";"
 
-        # params = (species_id,) + ((protein1, protein2,) if narrow else ()) + ((limit,) if limit is not None else ())
         params = (species_id,)
 
         return query, params
 
     @staticmethod
     def species_id_query(compact_species_name):
+        """
+        Builds an SQL query for retrieving species ID
+        from a species name ('compact_species_name').
+        """
+
         query = """
             SELECT species_id
             FROM items.species
@@ -84,13 +99,13 @@ def get_proteins(postgres_connection, species_id):
     - annotation
     """
 
-    cursor = postgres_connection.cursor(name = "proteins")
+    cursor = postgres_connection.cursor(name="proteins")
     query, params = QueryBuilder.proteins_query(species_id)
     cursor.execute(query, params)
 
     while True:
-        rows = cursor.fetchmany(size = 4096)
-        if len(rows) == 0:
+        rows = cursor.fetchmany(size=4096)
+        if not rows: # if rows is empty
             break
 
         for row in rows:
@@ -112,13 +127,13 @@ def get_associations(postgres_connection, species_id):
     - scores per evidence channels
     """
 
-    cursor = postgres_connection.cursor(name = "associations")
+    cursor = postgres_connection.cursor(name="associations")
     query, params = QueryBuilder.associations_query(species_id)
     cursor.execute(query, params)
 
     while True:
-        rows = cursor.fetchmany(size = 4096)
-        if len(rows) == 0:
+        rows = cursor.fetchmany(size=4096)
+        if not rows: # if rows is empty
             break
 
         for row in rows:
@@ -140,13 +155,13 @@ def get_actions(postgres_connection, species_id):
     - score
     """
 
-    cursor = postgres_connection.cursor(name = "actions")
+    cursor = postgres_connection.cursor(name="actions")
     query, params = QueryBuilder.actions_query(species_id)
     cursor.execute(query, params)
 
     while True:
-        rows = cursor.fetchmany(size = 4096)
-        if len(rows) == 0:
+        rows = cursor.fetchmany(size=4096)
+        if not rows: # if rows is empty
             break
 
         for row in rows:
@@ -171,4 +186,4 @@ def get_species_id(postgres_connection, compact_species_name):
     cursor.execute(query, params)
     species_id = cursor.fetchone()
     cursor.close()
-    return (species_id[0] if species_id is not None else None)
+    return species_id[0] if species_id is not None else None
