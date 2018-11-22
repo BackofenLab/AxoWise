@@ -1,3 +1,8 @@
+"""
+Collection of Cypher queries for writing and reading the resulting
+Neo4j graph database.
+"""
+
 
 # ========================= Creating queries =========================
 
@@ -110,7 +115,7 @@ def add_action(graph, params):
     If the action's "mode" is the same, the action is updated only if the current
     provided score is higher than the previous.
     """
-    
+
     query = """
         UNWIND {batch} as entry
         MATCH (protein1:Protein {
@@ -166,6 +171,10 @@ def add_association(graph, params):
 # ========================= Connecting queries =========================
 
 def connect_protein_and_pathway(graph, params):
+    """
+    Creates IN association for the given protein and
+    pathway.
+    """
 
     query = """
         UNWIND {batch} as entry
@@ -183,6 +192,10 @@ def connect_protein_and_pathway(graph, params):
     graph.run(query, params)
 
 def connect_compound_and_pathway(graph, params):
+    """
+    Creates IN association for the given compound and
+    pathway.
+    """
 
     query = """
         UNWIND {batch} as entry
@@ -200,6 +213,10 @@ def connect_compound_and_pathway(graph, params):
     graph.run(query, params)
 
 def connect_disease_and_pathway(graph, params):
+    """
+    Creates IN association for the given disease and
+    pathway.
+    """
 
     query = """
         UNWIND {batch} as entry
@@ -217,6 +234,10 @@ def connect_disease_and_pathway(graph, params):
     graph.run(query, params)
 
 def connect_drug_and_pathway(graph, params):
+    """
+    Creates IN association for the given drug and
+    pathway.
+    """
 
     query = """
         UNWIND {batch} as entry
@@ -236,6 +257,9 @@ def connect_drug_and_pathway(graph, params):
 # ========================= Schema queries =========================
 
 def create_constraints(graph):
+    """
+    Creates node constraints for the Neo4j graph database.
+    """
 
     queries = [
         # Protein
@@ -255,6 +279,9 @@ def create_constraints(graph):
         graph.run(query)
 
 def create_protein_index(graph):
+    """
+    Creates 'Protein' node index on the attribute 'name'.
+    """
 
     queries = [
         "CREATE INDEX ON :Protein(name)"
@@ -264,6 +291,11 @@ def create_protein_index(graph):
         graph.run(query)
 
 def create_kegg_index(graph):
+    """
+    Creates KEGG data node indexes:
+    - for 'Protein' on 'name'
+    - for 'Class' on 'name'
+    """
 
     queries = [
         "CREATE INDEX ON :Pathway(name)",
@@ -275,7 +307,7 @@ def create_kegg_index(graph):
 
 # ========================= Search queries =========================
 
-def search_protein(graph, name, threshold = 0):
+def search_protein(graph, name, threshold=0):
     """
     For the given protein, return the Neo4j subgraph
     of the protein, all other associated proteins and
@@ -297,8 +329,8 @@ def search_protein(graph, name, threshold = 0):
     """
 
     param_dict = dict(
-        name = name.upper(),
-        threshold = threshold
+        name=name.upper(),
+        threshold=threshold
     )
     return graph.run(query, param_dict)
 
@@ -320,7 +352,7 @@ def search_pathway(graph, name):
         RETURN pathway, COLLECT(DISTINCT class) AS classes, COLLECT(DISTINCT protein) as proteins
     """
 
-    param_dict = dict(name = name)
+    param_dict = dict(name=name)
     return graph.run(query, param_dict)
 
 def search_class(graph, name):
@@ -341,6 +373,5 @@ def search_class(graph, name):
         RETURN class, COLLECT(DISTINCT pathway) as pathways
     """
 
-    param_dict = dict(name = name)
+    param_dict = dict(name=name)
     return graph.run(query, param_dict)
-
