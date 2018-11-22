@@ -1,13 +1,13 @@
-import sys
 import argparse
 import os.path
+import sys
 
-import sql_queries as SQL
 import cypher_queries as Cypher
 import database
-from utils import pair_generator, rstrip_line_generator, read_table, batches, concat, lines
-
+import sql_queries as SQL
 from KEGG import get_species_identifiers
+from utils import batches, concat, lines, read_table
+
 
 def parse_cli_args():
     args_parser = argparse.ArgumentParser(
@@ -420,7 +420,7 @@ def connect_proteins_and_pathways(args, neo4j_graph, gene2pathways, protein_ense
     else:
         external_id_source = gene2pathways.keys()
 
-    gene_pathway_lists = map(lambda geid: map_gene_to_pathways(geid), external_id_source)
+    gene_pathway_lists = map(map_gene_to_pathways, external_id_source)
     gene_pathway_list = concat(gene_pathway_lists)
 
     for batch in batches(gene_pathway_list, batch_size = 4096):
