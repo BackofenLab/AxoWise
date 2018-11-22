@@ -1,10 +1,9 @@
-name: cgdb
+name: pgdb
 channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3
+  - python=3.6
   - py2neo
   - psycopg2
-  - networkx
-  - biopython
+  - pylint
