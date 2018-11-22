@@ -14,6 +14,6 @@ install:
   - conda update -q conda
   - conda info -a
   - make env
-  - source activate cgdb
+  - source activate pgdb
 script:
   - make test
