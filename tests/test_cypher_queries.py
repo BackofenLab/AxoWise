@@ -56,30 +56,31 @@ class TestCypherQueries(unittest.TestCase):
                     self.assertEqual(association["textmining"], 318)
                     self.assertEqual(association["combined"], 469)
 
-            if entry["pathway"] is not None:
+            if entry["pathways"] is not None:
                 has_pathway = True
-                self.assertIn(entry["pathway"]["name"], [
-                    "Toll-like receptor signaling pathway",
-                    "NOD-like receptor signaling pathway",
-                    "Cytosolic DNA-sensing pathway",
-                    "TNF signaling pathway",
-                    "Prion diseases",
-                    "Chagas disease (American trypanosomiasis)",
-                    "Influenza A",
-                    "Herpes simplex infection",
-                    "Rheumatoid arthritis",
-                    "JAK-STAT signaling pathway",
-                    "Tuberculosis",
-                    "Epstein-Barr virus infection",
-                    "Cytokine-cytokine receptor interaction",
-                    "Chemokine signaling pathway",
-                    "Endocytosis",
-                    "Toxoplasmosis",
-                    "Human cytomegalovirus infection",
-                    "Kaposi sarcoma-associated herpesvirus infection",
-                    "Human immunodeficiency virus 1 infection",
-                    "Viral carcinogenesis"
-                ])
+                for pathway in entry["pathways"]:
+                    self.assertIn(entry["pathway"]["name"], [
+                        "Toll-like receptor signaling pathway",
+                        "NOD-like receptor signaling pathway",
+                        "Cytosolic DNA-sensing pathway",
+                        "TNF signaling pathway",
+                        "Prion diseases",
+                        "Chagas disease (American trypanosomiasis)",
+                        "Influenza A",
+                        "Herpes simplex infection",
+                        "Rheumatoid arthritis",
+                        "JAK-STAT signaling pathway",
+                        "Tuberculosis",
+                        "Epstein-Barr virus infection",
+                        "Cytokine-cytokine receptor interaction",
+                        "Chemokine signaling pathway",
+                        "Endocytosis",
+                        "Toxoplasmosis",
+                        "Human cytomegalovirus infection",
+                        "Kaposi sarcoma-associated herpesvirus infection",
+                        "Human immunodeficiency virus 1 infection",
+                        "Viral carcinogenesis"
+                    ])
 
         self.assertGreater(num_entries, 0)
         self.assertTrue(has_ccl5_other)
