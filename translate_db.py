@@ -41,6 +41,13 @@ def parse_cli_args():
     )
 
     args_parser.add_argument(
+        "--skip_actions",
+        type = bool,
+        help = "Do not add protein - protein actions to the resulting graph database",
+        default = True
+    )
+
+    args_parser.add_argument(
         "--skip_drugs",
         type = bool,
         help = "Do not add drugs to the resulting graph database",
@@ -375,12 +382,14 @@ def write_string_associations(neo4j_graph, associations):
         })
     print()
 
-def read_string_actions(postgres_connection, species_id):
+def read_string_actions(args, postgres_connection, species_id):
     # Get protein - protein functional prediction
-    actions = SQL.get_actions(
-        postgres_connection,
-        species_id = species_id
-    )
+    actions = []
+    if not args.skip_actions:
+        actions = SQL.get_actions(
+            postgres_connection,
+            species_id = species_id
+        )
 
     return actions
 
@@ -494,7 +503,7 @@ def main():
     write_string_associations(neo4j_graph, associations)
 
     # Actions
-    actions = read_string_actions(postgres_connection, species_id)
+    actions = read_string_actions(args, postgres_connection, species_id)
     write_string_actions(neo4j_graph, actions)
 
     # ======================================== Merge STRING and KEGG ========================================
