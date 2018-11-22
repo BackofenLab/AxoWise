@@ -9,8 +9,10 @@ import py2neo
 def connect(credentials_path="credentials.json"):
     """
     Connects to the PostgreSQL and Neo4j databases described
-    in credentials file ('credentials_path') and returns
-
+    in credentials file ('credentials_path').
+    Returns:
+    - 'connection' object for PostgreSQL database
+    - 'Graph' object for Neo4j database
     """
 
     with open(credentials_path, "rt", encoding="utf-8") as credentials_file:
