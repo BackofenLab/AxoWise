@@ -90,7 +90,7 @@ class TestCypherQueries(unittest.TestCase):
         postgres_connection, neo4j_graph = database.connect("tests/credentials.test.json")
         postgres_connection.close()
 
-        result = Cypher.search_pathway(neo4j_graph, "chemokine")
+        result = Cypher.search_pathway(neo4j_graph, "Chemokine signaling pathway")
 
         for entry in result:
             self.assertEqual(entry["pathway"]["name"], "Chemokine signaling pathway")
@@ -111,20 +111,17 @@ class TestCypherQueries(unittest.TestCase):
         postgres_connection, neo4j_graph = database.connect("tests/credentials.test.json")
         postgres_connection.close()
 
-        result = Cypher.search_class(neo4j_graph, "immune")
+        result = Cypher.search_class(neo4j_graph, "Immune system")
 
         num_entries = 0
         for entry in result:
             num_entries += 1
             class_name = entry["class"]["name"]
-            self.assertIn(class_name, ["Immune system", "Immune diseases"])
+            self.assertEqual(class_name, "Immune system")
             num_pathways = len(entry["pathways"])
-            if class_name == "Immune system":
-                self.assertEqual(num_pathways, 20)
-            elif class_name == "Immune diseases":
-                self.assertEqual(num_pathways, 8)
+            self.assertEqual(num_pathways, 20)
 
-        self.assertEqual(num_entries, 2)
+        self.assertEqual(num_entries, 1)
 
 if __name__ == "__main__":
     print("Testing Cypher queries...")
