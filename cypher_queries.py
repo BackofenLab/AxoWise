@@ -293,7 +293,7 @@ def search_protein(graph, name, threshold = 0):
         WHERE association.combined >= {threshold}
         WITH protein, association, other
         MATCH (protein)-[:IN]->(pathway:Pathway)<-[:IN]-(other)
-        RETURN protein, association, other, pathway
+        RETURN protein, association, other, COLLECT(pathway) AS pathways
     """
 
     param_dict = dict(
