@@ -348,6 +348,34 @@ def search_protein(graph, protein_name, species_name, threshold=0):
     )
     return graph.run(query, param_dict)
 
+def search_proteins(graph, protein_names, threshold=0):
+    """
+    For the given list of proteins, return the Neo4j
+    subgraph of the proteins and all associations between
+    them.
+    """
+
+    # TODO fuzzy search
+
+    # Neo4j query
+    query = """
+        MATCH (protein1:Protein)
+        WHERE protein1.name IN {protein_names}
+        WITH protein1
+        MATCH (protein2:Protein)
+        WHERE protein2.name in {protein_names}
+        WITH protein1, protein2
+        MATCH (protein1)-[association:ASSOCIATION]->(protein2)
+        WHERE association.combined >= {threshold}
+        RETURN protein1, association, protein2
+    """
+
+    param_dict = dict(
+        protein_names=protein_names,
+        threshold=threshold
+    )
+    return graph.run(query, param_dict)
+
 def search_pathway(graph, pathway_name, species_name):
     """
     For the given pathway, return the Neo4j subgraph
