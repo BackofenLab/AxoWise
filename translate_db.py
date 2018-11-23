@@ -78,6 +78,10 @@ def parse_cli_args():
     )
 
     args = args_parser.parse_args()
+
+    # Preprocess
+    args.species_name = args.species_name.strip()
+
     return args
 
 def read_proteins_list(args):
@@ -548,14 +552,15 @@ def main():
     # Parse the CLI arguments
     args = parse_cli_args()
 
+    # Check species name
+    if len(args.species_name) <= 3:
+        print("Species name should be longer than 3 characters.")
+        sys.exit(1)
+
     # Get species IDs from the name
     species_name, kegg_id, ncbi_id = get_species_identifiers(args.species_name)
     species_id = ncbi_id
-    if species_id is None:
-        print("Species not found!")
-        sys.exit(1)
-    else:
-        print("Translating the database for {}.".format(species_name))
+    print("Translating the database for {}.".format(species_name))
 
     # Read the provided list of proteins (if available)
     protein_ensembl_ids_set = read_proteins_list(args)
