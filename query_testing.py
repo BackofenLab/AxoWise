@@ -36,11 +36,11 @@ def main():
     postgres_connection.close()
 
     print("[Protein-centric query]")
-    first_row, num_rows, elapsed_time = time_query(neo4j_graph, Cypher.search_protein, "ccr5")
+    first_row, num_rows, elapsed_time = time_query(neo4j_graph, Cypher.search_protein, "ccr5", "homo")
     print(f"{num_rows} row(s) returned in {elapsed_time:.4f} second(s)")
 
     print("[Pathway-centric query]")
-    first_row, num_rows, elapsed_time = time_query(neo4j_graph, Cypher.search_pathway, "Chemokine signaling pathway")
+    first_row, num_rows, elapsed_time = time_query(neo4j_graph, Cypher.search_pathway, "Chemokine", "human")
     print(f"{num_rows} row(s) returned in {elapsed_time:.4f} second(s)")
 
     print("[Class-centric query]")

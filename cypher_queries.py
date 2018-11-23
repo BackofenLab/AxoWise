@@ -3,6 +3,9 @@ Collection of Cypher queries for writing and reading the resulting
 Neo4j graph database.
 """
 
+from fuzzywuzzy import process
+from indexing import open_pickled_proteins, open_pickled_pathways
+from KEGG import get_species_identifiers
 
 # ========================= Creating queries =========================
 
@@ -307,19 +310,30 @@ def create_kegg_index(graph):
 
 # ========================= Search queries =========================
 
-def search_protein(graph, name, threshold=0):
+def search_protein(graph, protein_name, species_name, threshold=0):
     """
     For the given protein, return the Neo4j subgraph
     of the protein, all other associated proteins and
     the common pathways.
     """
 
+    # Get species IDs from species name
+    _, kegg_id, _ = get_species_identifiers(species_name)
+
+    # Read name-to-ID index from disk
+    protein2id = open_pickled_proteins(kegg_id)
+
+    # Fuzzy search protein by name
+    protein_name, _ = process.extractOne(protein_name, protein2id.keys())
+    protein_id = protein2id[protein_name]
+    #print(f"{protein_name}")
+
+    # Neo4j query
     query = """
         MATCH (protein:Protein {
-            name: {name}
+            id: {id}
         })
-        USING INDEX protein:Protein(name)
-        // "fuzzy" search: WHERE protein.name =~ (".*" + toUpper({name}) + ".*")
+        USING INDEX protein:Protein(id)
         WITH protein
         MATCH (protein)-[association:ASSOCIATION]-(other:Protein)
         WHERE association.combined >= {threshold}
@@ -329,30 +343,41 @@ def search_protein(graph, name, threshold=0):
     """
 
     param_dict = dict(
-        name=name.upper(),
+        id=protein_id,
         threshold=threshold
     )
     return graph.run(query, param_dict)
 
-def search_pathway(graph, name):
+def search_pathway(graph, pathway_name, species_name):
     """
     For the given pathway, return the Neo4j subgraph
     of the pathway, all contained proteins and
     the class hierarchy of the pathway.
     """
 
+    # Get species IDs from species name
+    _, kegg_id, _ = get_species_identifiers(species_name)
+
+    # Read name-to-ID index from disk
+    pathway2id = open_pickled_pathways(kegg_id)
+
+    # Fuzzy search pathway by name
+    pathway_name, _ = process.extractOne(pathway_name, pathway2id.keys())
+    pathway_id = pathway2id[pathway_name]
+    #print(f"{pathway_name}")
+
+    # Neo4j query
     query = """
         MATCH (pathway:Pathway {
-            name: {name}
+            id: {id}
         })
-        USING INDEX pathway:Pathway(name)
-        // "fuzzy" search: WHERE toUpper(pathway.name) =~ (".*" + toUpper({name}) + ".*")
+        USING INDEX pathway:Pathway(id)
         WITH pathway
         MATCH (class:Class)<-[:IN*]-(pathway)<-[:IN]-(protein:Protein)
         RETURN pathway, COLLECT(DISTINCT class) AS classes, COLLECT(DISTINCT protein) as proteins
     """
 
-    param_dict = dict(name=name)
+    param_dict = dict(id=pathway_id)
     return graph.run(query, param_dict)
 
 def search_class(graph, name):
