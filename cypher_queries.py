@@ -351,8 +351,8 @@ def search_protein(graph, protein_name, species_name, threshold=0):
 def search_proteins(graph, protein_names, threshold=0):
     """
     For the given list of proteins, return the Neo4j
-    subgraph of the proteins and all associations between
-    them.
+    subgraph of the proteins, all associations between
+    them and common pathways.
     """
 
     # TODO fuzzy search
@@ -367,7 +367,9 @@ def search_proteins(graph, protein_names, threshold=0):
         WITH protein1, protein2
         MATCH (protein1)-[association:ASSOCIATION]->(protein2)
         WHERE association.combined >= {threshold}
-        RETURN protein1, association, protein2
+        WITH protein1, association, protein2
+        OPTIONAL MATCH (protein1)-[:IN]->(pathway:Pathway)<-[:IN]-(protein2)
+        RETURN protein1, association, protein2, COLLECT(pathway) AS pathways
     """
 
     param_dict = dict(
