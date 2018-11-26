@@ -59,7 +59,7 @@ class TestCypherQueries(unittest.TestCase):
             if entry["pathways"] is not None:
                 has_pathway = True
                 for pathway in entry["pathways"]:
-                    self.assertIn(entry["pathway"]["name"], [
+                    self.assertIn(pathway["name"], [
                         "Toll-like receptor signaling pathway",
                         "NOD-like receptor signaling pathway",
                         "Cytosolic DNA-sensing pathway",
