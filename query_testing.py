@@ -107,7 +107,7 @@ def main():
         "IRF9",
         "TGIF1",
         "USF2"
-    ], 900)
+    ], 9606)
     print(f"{num_rows} row(s) returned in {elapsed_time:.4f} second(s)")
 
     print("[Pathway-centric query]")
