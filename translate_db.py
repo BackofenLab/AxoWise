@@ -78,6 +78,13 @@ def parse_cli_args():
         default=False
     )
 
+    args_parser.add_argument(
+        "--keep_old_database",
+        type=bool,
+        help="Do not overwrite the existing Neo4j graph database",
+        default=False
+    )
+
     args = args_parser.parse_args()
 
     # Preprocess
@@ -569,9 +576,10 @@ def main():
     # Connect to the databases
     postgres_connection, neo4j_graph = database.connect(credentials_path=args.credentials)
 
-    # Clean the Neo4j database
-    print("Cleaning the old data from Neo4j database...")
-    neo4j_graph.delete_all()
+    if not args.keep_old_database:
+        # Clean the Neo4j database
+        print("Cleaning the old data from Neo4j database...")
+        neo4j_graph.delete_all()
 
     # Create Neo4j database constraints
     Cypher.create_constraints(neo4j_graph)
