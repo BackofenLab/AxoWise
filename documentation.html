@@ -72,7 +72,7 @@
   <li>
     <p>Activate the conda environment</p>
 
-    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code> conda activate cgdb
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code> conda activate pgdb
 </code></pre></div>    </div>
   </li>
 </ol>
@@ -173,26 +173,31 @@ Downloading pathways for: ptr
     <p>Available arguments:</p>
 
     <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">--credentials</span> CREDENTIALS
-                     Path to the credentials JSON file that will be used
-                     <span class="o">(</span>default: credentials.json<span class="o">)</span>
+                         Path to the credentials JSON file that will be used
+                         <span class="o">(</span>default: credentials.json<span class="o">)</span>
  <span class="nt">--species_name</span> SPECIES_NAME
-                     Species name <span class="o">(</span>default: Homo sapiens<span class="o">)</span>
+                         Species name <span class="o">(</span>default: Homo sapiens<span class="o">)</span>
  <span class="nt">--protein_list</span> PROTEIN_LIST
-                     Path to the file containing protein Ensembl IDs
-                     <span class="o">(</span>default: None<span class="o">)</span>
+                         Path to the file containing protein Ensembl IDs
+                         <span class="o">(</span>default: None<span class="o">)</span>
  <span class="nt">--combined_score_threshold</span> COMBINED_SCORE_THRESHOLD
-                     Threshold above which the associations between
-                     proteins will be considered <span class="o">(</span>default: None<span class="o">)</span>
+                         Threshold above which the associations between
+                         proteins will be considered <span class="o">(</span>default: None<span class="o">)</span>
+ <span class="nt">--skip_actions</span> SKIP_ACTIONS
+                         Do not add protein - protein actions to the resulting
+                         graph database <span class="o">(</span>default: True<span class="o">)</span>
  <span class="nt">--skip_drugs</span> SKIP_DRUGS
-                     Do not add drugs to the resulting graph database
-                     <span class="o">(</span>default: False<span class="o">)</span>
+                         Do not add drugs to the resulting graph database
+                         <span class="o">(</span>default: False<span class="o">)</span>
  <span class="nt">--skip_compounds</span> SKIP_COMPOUNDS
-                     Do not add compounds to the resulting graph database
-                     <span class="o">(</span>default: False<span class="o">)</span>
+                         Do not add compounds to the resulting graph database
+                         <span class="o">(</span>default: False<span class="o">)</span>
  <span class="nt">--skip_diseases</span> SKIP_DISEASES
-                     Do not add diseases to the resulting graph database
-                     <span class="o">(</span>default: False<span class="o">)</span>
-
+                         Do not add diseases to the resulting graph database
+                         <span class="o">(</span>default: False<span class="o">)</span>
+ <span class="nt">--keep_old_database</span> KEEP_OLD_DATABASE
+                         Do not overwrite the existing Neo4j graph database
+                         <span class="o">(</span>default: False<span class="o">)</span>
 </code></pre></div>    </div>
   </li>
 </ol>
