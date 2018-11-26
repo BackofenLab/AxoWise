@@ -17,7 +17,7 @@ def add_compound(graph, params):
 
     query = """
         UNWIND {batch} as entry
-        CREATE (compound:Compound {
+        MERGE (compound:Compound {
             id: entry.id,
             name: entry.name
         })
@@ -32,7 +32,7 @@ def add_disease(graph, params):
 
     query = """
         UNWIND {batch} as entry
-        CREATE (disease:Disease {
+        MERGE (disease:Disease {
             id: entry.id,
             name: entry.name
         })
@@ -47,7 +47,7 @@ def add_drug(graph, params):
 
     query = """
         UNWIND {batch} as entry
-        CREATE (drug:Drug {
+        MERGE (drug:Drug {
             id: entry.id,
             name: entry.name
         })
@@ -74,9 +74,9 @@ def add_class_parent_and_child(graph, params):
 
 def add_pathway(graph, params):
     """
-    Create a pathway with the specified id, name and
-    description and connect it to the corresponding
-    class.
+    Create a pathway with the specified id, name,
+    description and species to which it belongs.
+    After that, connect it to the corresponding class.
     """
 
     query = """
@@ -87,7 +87,8 @@ def add_pathway(graph, params):
         CREATE (pathway:Pathway {
             id: entry.id,
             name: entry.name,
-            description: entry.description
+            description: entry.description,
+            species_id: entry.species_id
         })-[:IN]->(class)
     """
 
@@ -96,7 +97,7 @@ def add_pathway(graph, params):
 def add_protein(graph, params):
     """
     Create a protein with the specified id, external id,
-    preferred name and annotation.
+    name, description and species to which it belongs.
     """
 
     query = """
@@ -105,7 +106,8 @@ def add_protein(graph, params):
             id: entry.id,
             external_id: entry.external_id,
             name: toUpper(entry.preferred_name),
-            description: entry.annotation
+            description: entry.annotation,
+            species_id: entry.species_id
         })
     """
     graph.run(query, params)

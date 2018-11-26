@@ -284,10 +284,12 @@ def read_kegg_pathways(kegg_id):
         gene2pathways
     )
 
-def write_kegg_pathways(neo4j_graph, pathways):
+def write_kegg_pathways(neo4j_graph, pathways, species_id):
     """
     Writes KEGG pathways to the Neo4j database.
     """
+
+    pathways = map(lambda pw: {**pw, "species_id": species_id}, pathways)
 
     print("Creating pathways and connecting them to classes...")
     num_pathways = 0
@@ -427,10 +429,12 @@ def read_string_proteins(args, postgres_connection, species_id, protein_ensembl_
 
     return proteins, protein_ids_set
 
-def write_string_proteins(neo4j_graph, proteins):
+def write_string_proteins(neo4j_graph, proteins, species_id):
     """
     Writes STRING proteins to the Neo4j database.
     """
+
+    proteins = map(lambda p: {**p, "species_id": species_id}, proteins)
 
     print("Creating proteins...")
     num_proteins = 0
@@ -607,7 +611,7 @@ def main():
     write_classes(neo4j_graph, pathway2classes)
 
     # Create pathways
-    write_kegg_pathways(neo4j_graph, pathways)
+    write_kegg_pathways(neo4j_graph, pathways, species_id)
 
     # Compound <-> Pathway
     connect_compounds_and_pathways(args, neo4j_graph, pathway2compounds)
@@ -622,7 +626,7 @@ def main():
     # Proteins
     proteins, protein_ids_set = read_string_proteins(args, postgres_connection, species_id, protein_ensembl_ids_set)
     proteins = list(proteins)
-    write_string_proteins(neo4j_graph, proteins)
+    write_string_proteins(neo4j_graph, proteins, species_id)
     Cypher.create_protein_index(neo4j_graph)
 
     # Search indexing
