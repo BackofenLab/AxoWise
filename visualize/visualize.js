@@ -105,7 +105,7 @@ d3.json("subgraph.json", function(error, graph) {
 
     if (d.type == "protein") {
       html = "<b>" + d.external_id + "</b><br/>";
-      html += d.annotation;
+      html += d.description;
     }
     else if (d.type == "action") {
       html = "score: " + d.score / 1000;
@@ -131,7 +131,7 @@ d3.json("subgraph.json", function(error, graph) {
                    .data(graph.nodes)
                    .enter().append("text")
                    .text(function(d) {
-                      if (d.type == "protein") return d.preferred_name;
+                      if (d.type == "protein") return d.name;
                       else if (d.type == "action") return d.mode;
                       else if (d.type == "pathway" ||
                               d.type == "disease" ||
