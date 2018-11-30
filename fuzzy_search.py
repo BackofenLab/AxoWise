@@ -4,13 +4,16 @@ suggest top matches based on fuzzy search techniques.
 """
 
 # ========================= Species =========================
+from indexing import create_species_q_gram_index, search_species_q_gram_index
+
+species_index = create_species_q_gram_index()
 
 def search_species(query):
     """
     Retrieve top-matching species for a given
     species name or NCBI ID.
     """
-    pass
+    return search_species_q_gram_index(query, species_index)
 
 # ========================= Protein =========================
 
