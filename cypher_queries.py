@@ -308,7 +308,7 @@ def create_kegg_index(graph):
 
 # ========================= Search queries =========================
 
-def search_protein(graph, protein_id, threshold=0):
+def get_protein_subgraph(graph, protein_id, threshold=0):
     """
     For the given protein, return the Neo4j subgraph
     of the protein, all other associated proteins and
@@ -335,7 +335,7 @@ def search_protein(graph, protein_id, threshold=0):
     )
     return graph.run(query, param_dict)
 
-def search_proteins(graph, protein_ids, threshold=0):
+def get_proteins_subgraph(graph, protein_ids, threshold=0):
     """
     For the given list of proteins, return the Neo4j
     subgraph of the proteins, all associations between
@@ -363,7 +363,7 @@ def search_proteins(graph, protein_ids, threshold=0):
     )
     return graph.run(query, param_dict)
 
-def search_pathway(graph, pathway_id):
+def get_pathway_subgraph(graph, pathway_id):
     """
     For the given pathway, return the Neo4j subgraph
     of the pathway, all contained proteins and
@@ -384,7 +384,7 @@ def search_pathway(graph, pathway_id):
     param_dict = dict(pathway_id=pathway_id)
     return graph.run(query, param_dict)
 
-def search_class(graph, name):
+def get_class_subgraph(graph, name):
     """
     For the given pathway class, return the Neo4j subgraph
     of the class hierarchy and pathways attached to the
