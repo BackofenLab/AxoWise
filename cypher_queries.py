@@ -315,7 +315,9 @@ def get_protein_list(graph):
 
     query = """
         MATCH (protein:Protein)
-        RETURN protein.id AS id, protein.name AS name
+        RETURN protein.id AS id,
+               protein.name AS name,
+               protein.species_id AS species_id
     """
 
     return graph.run(query)
@@ -328,7 +330,9 @@ def get_pathway_list(graph):
 
     query = """
         MATCH (pathway:Pathway)
-        RETURN pathway.id AS id, pathway.name AS name
+        RETURN pathway.id AS id,
+               pathway.name AS name,
+               pathway.species_id AS species_id
     """
 
     return graph.run(query)
