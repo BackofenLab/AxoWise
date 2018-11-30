@@ -19,15 +19,15 @@ def make_q_grams(string, q=3):
     """
     q_grams = list()
 
-    padding = "".join([_Q_GRAM_PAD_CHAR for _ in range(q-1)])
+    padding = _Q_GRAM_PAD_CHAR * (q - 1)
     string_padded = padding + string + padding
 
-    for i in range(len(string_padded) - q):
+    for i in range(len(string_padded) - q + 1):
         q_grams.append(string_padded[i : i + q])
 
     return q_grams
 
-def search_q_gram_index(query, index, top=5):
+def search_q_gram_index(query, index, condition=None, top=5):
     """
     Retrieve the best 'top' results for a query
     based on a given q-gram index.
@@ -37,6 +37,9 @@ def search_q_gram_index(query, index, top=5):
 
     counts = defaultdict(int)
     for item_set in map(lambda q_gram: index[q_gram], q_grams):
+        if condition is not None:
+            item_set = filter(condition, item_set)
+
         for item in item_set:
             counts[item] += 1
 
@@ -56,9 +59,9 @@ def create_protein_q_gram_index():
 
     index = defaultdict(set)
     for protein in Cypher.get_protein_list(neo4j_graph):
-        id, name = protein["id"], protein["name"]
+        id, name, species_id = protein["id"], protein["name"], protein["species_id"]
         for q_gram in make_q_grams(name.lower()):
-            index[q_gram].add((name, id))
+            index[q_gram].add((name, id, species_id))
 
     return index
 
@@ -73,9 +76,9 @@ def create_pathway_q_gram_index():
 
     index = defaultdict(set)
     for pathway in Cypher.get_pathway_list(neo4j_graph):
-        id, name = pathway["id"], pathway["name"]
+        id, name, species_id = pathway["id"], pathway["name"], pathway["species_id"]
         for q_gram in make_q_grams(name.lower()):
-            index[q_gram].add((name, id))
+            index[q_gram].add((name, id, species_id))
 
     return index
 
