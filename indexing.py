@@ -1,3 +1,7 @@
+"""
+Collection of functions for creating and searching
+q-gram indexes for various entities.
+"""
 
 import os
 import os.path
