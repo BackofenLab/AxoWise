@@ -39,14 +39,14 @@ def search_pathway(query):
     """
     return search_q_gram_index(query, pathway_index)
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     while True:
         query = input("Species > ")
-        print(search_q_gram_index(query, species_index))
+        print(search_species(query))
 
         query = input("Protein > ")
-        print(search_q_gram_index(query, protein_index))
+        print(search_protein(query))
 
         query = input("Pathway > ")
-        print(search_q_gram_index(query, pathway_index))
+        print(search_pathway(query))
