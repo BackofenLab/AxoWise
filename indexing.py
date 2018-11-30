@@ -4,51 +4,12 @@ import os.path
 import pickle
 from collections import defaultdict
 
+import cypher_queries as Cypher
+import database
+
 _INDEX_DIR = "index"
 
-# Proteins
-def create_pickled_proteins(proteins, kegg_id):
-    protein2id = dict()
-    for protein in proteins:
-        protein2id[protein["preferred_name"]] = protein["id"]
-
-    os.makedirs(_INDEX_DIR, exist_ok=True)
-
-    path = os.path.join(_INDEX_DIR, f"proteins.{kegg_id}.pkl.gz")
-    with open(path, "wb") as file:
-        pickle.dump(protein2id, file, pickle.HIGHEST_PROTOCOL)
-
-def open_pickled_proteins(kegg_id):
-    protein2id = dict()
-
-    path = os.path.join(_INDEX_DIR, f"proteins.{kegg_id}.pkl.gz")
-    with open(path, "rb") as file:
-        protein2id = pickle.load(file)
-
-    return protein2id
-
-# Pathways
-def create_pickled_pathways(pathways, kegg_id):
-    pathway2id = dict()
-    for pathway in pathways:
-        pathway2id[pathway["name"]] = pathway["id"]
-
-    os.makedirs(_INDEX_DIR, exist_ok=True)
-
-    path = os.path.join(_INDEX_DIR, f"pathways.{kegg_id}.pkl.gz")
-    with open(path, "wb") as file:
-        pickle.dump(pathway2id, file, pickle.HIGHEST_PROTOCOL)
-
-def open_pickled_pathways(kegg_id):
-    pathway2id = dict()
-
-    path = os.path.join(_INDEX_DIR, f"pathways.{kegg_id}.pkl.gz")
-    with open(path, "rb") as file:
-        pathway2id = pickle.load(file)
-
-    return pathway2id
-
-# Species q-gram index
+# ========================= q-gram index =========================
 
 _Q_GRAM_PAD_CHAR = "$"
 
@@ -65,6 +26,60 @@ def make_q_grams(string, q=3):
         q_grams.append(string_padded[i : i + 3])
 
     return q_grams
+
+def search_q_gram_index(query, index, top=5):
+    """
+    Retrieve the best 'top' results for a query
+    based on a given q-gram index.
+    """
+
+    q_grams = make_q_grams(query.strip().strip(_Q_GRAM_PAD_CHAR).lower())
+
+    counts = defaultdict(int)
+    for item_set in map(lambda q_gram: index[q_gram], q_grams):
+        for item in item_set:
+            counts[item] += 1
+
+    return list(map(
+        lambda item: item[0],
+        sorted(counts.items(), key=lambda item: item[1], reverse=True)
+    ))[:top]
+
+#  ========================= Protein =========================
+
+def create_protein_q_gram_index():
+    """
+    Create a q-gram index for protein names.
+    """
+
+    neo4j_graph = database.connect_neo4j()
+
+    index = defaultdict(set)
+    for protein in Cypher.get_protein_list(neo4j_graph):
+        id, name = protein["id"], protein["name"]
+        for q_gram in make_q_grams(name.lower()):
+            index[q_gram].add((name, id))
+
+    return index
+
+# ========================= Pathway =========================
+
+def create_pathway_q_gram_index():
+    """
+    Create a q-gram index for pathway names.
+    """
+
+    neo4j_graph = database.connect_neo4j()
+
+    index = defaultdict(set)
+    for pathway in Cypher.get_pathway_list(neo4j_graph):
+        id, name = pathway["id"], pathway["name"]
+        for q_gram in make_q_grams(name.lower()):
+            index[q_gram].add((name, id))
+
+    return index
+
+# ========================= Species =========================
 
 def create_species_q_gram_index():
     """
@@ -87,27 +102,3 @@ def create_species_q_gram_index():
                 index[q_gram].add((name, kegg_id, int(ncbi_id)))
 
     return index
-
-def search_species_q_gram_index(query, index, top=5):
-    """
-    Retrieve the best 'top' results for a species query
-    based on a given q-gram index.
-    """
-
-    q_grams = make_q_grams(query.strip().strip(_Q_GRAM_PAD_CHAR).lower())
-
-    counts = defaultdict(int)
-    for species_set in map(lambda q_gram: index[q_gram], q_grams):
-        for species in species_set:
-            counts[species] += 1
-
-    return list(map(
-        lambda item: item[0],
-        sorted(counts.items(), key=lambda item: item[1], reverse=True)
-    ))[:top]
-
-if __name__ == "__main__":
-    index = create_species_q_gram_index()
-    while True:
-        query = input("> ")
-        print(search_species_q_gram_index(query, index))
