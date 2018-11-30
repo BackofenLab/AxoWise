@@ -10,7 +10,7 @@ import sys
 import cypher_queries as Cypher
 import database
 import sql_queries as SQL
-from KEGG import get_species_identifiers
+from fuzzy_search import search_species
 from utils import batches, concat, lines, read_table
 from indexing import create_pickled_proteins, create_pickled_pathways
 
@@ -570,7 +570,7 @@ def main():
         sys.exit(1)
 
     # Get species IDs from the name
-    species_name, kegg_id, ncbi_id = get_species_identifiers(args.species_name)
+    species_name, kegg_id, ncbi_id = search_species(args.species_name)[0]
     species_id = ncbi_id
     print("Translating the database for {}.".format(species_name))
 
