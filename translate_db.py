@@ -12,7 +12,6 @@ import database
 import sql_queries as SQL
 from fuzzy_search import search_species
 from utils import batches, concat, lines, read_table
-from indexing import create_pickled_proteins, create_pickled_pathways
 
 
 def parse_cli_args():
@@ -628,10 +627,6 @@ def main():
     proteins = list(proteins)
     write_string_proteins(neo4j_graph, proteins, species_id)
     Cypher.create_protein_index(neo4j_graph)
-
-    # Search indexing
-    create_pickled_proteins(proteins, kegg_id)
-    create_pickled_pathways(pathways, kegg_id)
 
     # Associations
     associations = read_string_associations(args, postgres_connection, species_id, protein_ids_set)
