@@ -22,8 +22,8 @@ def make_q_grams(string, q=3):
     padding = "".join([_Q_GRAM_PAD_CHAR for _ in range(q-1)])
     string_padded = padding + string + padding
 
-    for i in range(len(string_padded) - 3):
-        q_grams.append(string_padded[i : i + 3])
+    for i in range(len(string_padded) - q):
+        q_grams.append(string_padded[i : i + q])
 
     return q_grams
 
