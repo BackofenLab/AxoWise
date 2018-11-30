@@ -306,7 +306,34 @@ def create_kegg_index(graph):
     for query in queries:
         graph.run(query)
 
-# ========================= Search queries =========================
+# ========================= List queries =========================
+def get_protein_list(graph):
+    """
+    Retrieve a list of proteins including the protein ID
+    and the protein name.
+    """
+
+    query = """
+        MATCH (protein:Protein)
+        RETURN protein.id AS id, protein.name AS name
+    """
+
+    return graph.run(query)
+
+def get_pathway_list(graph):
+    """
+    Retrieve a list of pathways including the pathway ID
+    and the pathway name.
+    """
+
+    query = """
+        MATCH (pathway:Pathway)
+        RETURN pathway.id AS id, pathway.name AS name
+    """
+
+    return graph.run(query)
+
+# ========================= Subgraph queries =========================
 
 def get_protein_subgraph(graph, protein_id, threshold=0):
     """
