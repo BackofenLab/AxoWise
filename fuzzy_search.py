@@ -47,6 +47,18 @@ def search_pathway(query, species_id=None):
 
     return search_q_gram_index(query, pathway_index, condition if (species_id is not None) else None)
 
+# ========================= Class =========================
+
+from indexing import create_class_q_gram_index
+class_index = create_class_q_gram_index()
+
+def search_class(query):
+    """
+    Retrieve top-matching pathway class names
+    for a given class name.
+    """
+    return search_q_gram_index(query, class_index)
+
 
 if __name__ == "__main__":
     while True:
@@ -64,4 +76,8 @@ if __name__ == "__main__":
         query = input("Pathway > ")
         print("Without species ID:", search_pathway(query))
         print("With species ID:", search_pathway(query, species_id=ncbi_id))
+        print()
+
+        query = input("Class > ")
+        print(search_class(query))
         print()

@@ -109,3 +109,20 @@ def create_species_q_gram_index():
                 index[q_gram].add((name, kegg_id, int(ncbi_id)))
 
     return index
+
+# ========================= Class =========================
+
+def create_class_q_gram_index():
+    """
+    Create a q-gram index for pathway class names.
+    """
+
+    neo4j_graph = database.connect_neo4j()
+
+    index = defaultdict(set)
+    for klass in Cypher.get_class_list(neo4j_graph):
+        name = klass["name"]
+        for q_gram in make_q_grams(name.lower()):
+            index[q_gram].add(name)
+
+    return index
