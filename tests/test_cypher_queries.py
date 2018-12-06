@@ -114,7 +114,9 @@ class TestCypherQueries(unittest.TestCase):
     def test_get_class_subgraph(self):
         neo4j_graph = database.connect_neo4j("tests/credentials.test.json")
 
-        result = Cypher.get_class_subgraph(neo4j_graph, "Immune system")
+        class_name = fuzzy_search.search_class("Immun sstem")[0]
+
+        result = Cypher.get_class_subgraph(neo4j_graph, class_name)
 
         num_entries = 0
         for entry in result:
