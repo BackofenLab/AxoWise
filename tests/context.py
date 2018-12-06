@@ -2,6 +2,9 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+# Test database is for a mouse (Mus musculus)
+SPECIES_ID = 10090
+
 # Databases
 import database
 
@@ -13,4 +16,7 @@ import sql_queries as SQL
 
 # KEGG data
 import KEGG.parse as parse
-from KEGG import get_species_identifiers
+
+# Fuzzy search
+import indexing, fuzzy_search
+
