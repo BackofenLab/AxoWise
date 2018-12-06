@@ -1,14 +1,17 @@
 import unittest
 
-from context import database, Cypher
+import context
+from context import database, Cypher, fuzzy_search
 
 class TestCypherQueries(unittest.TestCase):
 
-    def test_search_protein(self):
+    def test_get_protein_subgraph(self):
 
         neo4j_graph = database.connect_neo4j("tests/credentials.test.json")
 
-        result = Cypher.search_protein(neo4j_graph, "ccr5")
+        protein_name, protein_id, species_id = fuzzy_search.search_protein("ccr5", context.SPECIES_ID)[0]
+
+        result = Cypher.get_protein_subgraph(neo4j_graph, protein_id)
 
         num_entries = 0
         has_pathway = False
@@ -86,10 +89,12 @@ class TestCypherQueries(unittest.TestCase):
         self.assertTrue(has_il10ra_other)
         self.assertTrue(has_pathway)
 
-    def test_search_pathway(self):
+    def test_get_pathway_subgraph(self):
         neo4j_graph = database.connect_neo4j("tests/credentials.test.json")
 
-        result = Cypher.search_pathway(neo4j_graph, "Chemokine signaling pathway")
+        pathway_name, pathway_id, species_id = fuzzy_search.search_pathway("chemo signaling path", species_id=context.SPECIES_ID)[0]
+
+        result = Cypher.get_pathway_subgraph(neo4j_graph, pathway_id)
 
         for entry in result:
             self.assertEqual(entry["pathway"]["name"], "Chemokine signaling pathway")
@@ -106,10 +111,10 @@ class TestCypherQueries(unittest.TestCase):
             self.assertEqual(sorted(map(lambda c: c["name"], entry["classes"])), ["Immune system", "Organismal Systems"])
             self.assertEqual(len(entry["proteins"]), 180)
 
-    def test_search_class(self):
+    def test_get_class_subgraph(self):
         neo4j_graph = database.connect_neo4j("tests/credentials.test.json")
 
-        result = Cypher.search_class(neo4j_graph, "Immune system")
+        result = Cypher.get_class_subgraph(neo4j_graph, "Immune system")
 
         num_entries = 0
         for entry in result:
