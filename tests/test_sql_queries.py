@@ -6,7 +6,7 @@ class TestSQLQueries(unittest.TestCase):
 
     def test_get_species_id(self):
 
-        postgres_connection, _ = database.connect("tests/credentials.test.json")
+        postgres_connection = database.connect_postgres("tests/credentials.test.json")
         species_id = SQL.get_species_id(postgres_connection, "mus musculus")
     
         self.assertEqual(species_id, 10090)
@@ -14,7 +14,7 @@ class TestSQLQueries(unittest.TestCase):
         postgres_connection.close()
 
     def test_get_proteins(self):
-        postgres_connection, _ = database.connect("tests/credentials.test.json")
+        postgres_connection = database.connect_postgres("tests/credentials.test.json")
         
         proteins = SQL.get_proteins(postgres_connection, species_id = 10090)
 
@@ -57,7 +57,7 @@ class TestSQLQueries(unittest.TestCase):
 
     def test_get_associations(self):
 
-        postgres_connection, _ = database.connect("tests/credentials.test.json")
+        postgres_connection = database.connect_postgres("tests/credentials.test.json")
 
         associations = SQL.get_associations(postgres_connection, species_id = 10090)
 
@@ -87,7 +87,7 @@ class TestSQLQueries(unittest.TestCase):
 
     # def test_get_actions(self):
 
-    #     postgres_connection, _ = database.connect("tests/credentials.test.json")
+    #     postgres_connection = database.connect_postgres("tests/credentials.test.json")
 
     #     actions = list(SQL.get_actions(postgres_connection, species_id = 10090))
 

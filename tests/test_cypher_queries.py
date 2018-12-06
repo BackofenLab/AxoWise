@@ -6,8 +6,7 @@ class TestCypherQueries(unittest.TestCase):
 
     def test_search_protein(self):
 
-        postgres_connection, neo4j_graph = database.connect("tests/credentials.test.json")
-        postgres_connection.close()
+        neo4j_graph = database.connect_neo4j("tests/credentials.test.json")
 
         result = Cypher.search_protein(neo4j_graph, "ccr5")
 
@@ -88,8 +87,7 @@ class TestCypherQueries(unittest.TestCase):
         self.assertTrue(has_pathway)
 
     def test_search_pathway(self):
-        postgres_connection, neo4j_graph = database.connect("tests/credentials.test.json")
-        postgres_connection.close()
+        neo4j_graph = database.connect_neo4j("tests/credentials.test.json")
 
         result = Cypher.search_pathway(neo4j_graph, "Chemokine signaling pathway")
 
@@ -109,8 +107,7 @@ class TestCypherQueries(unittest.TestCase):
             self.assertEqual(len(entry["proteins"]), 180)
 
     def test_search_class(self):
-        postgres_connection, neo4j_graph = database.connect("tests/credentials.test.json")
-        postgres_connection.close()
+        neo4j_graph = database.connect_neo4j("tests/credentials.test.json")
 
         result = Cypher.search_class(neo4j_graph, "Immune system")
 
