@@ -13,4 +13,5 @@ test:
 	python tests/test_kegg.py
 	python tests/test_sql_queries.py
 	python translate_db.py --credentials tests/credentials.test.json --species_name "Mus musculus"
+	python tests/test_fuzzy_search.py
 	python tests/test_cypher_queries.py
