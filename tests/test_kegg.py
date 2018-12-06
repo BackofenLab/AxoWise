@@ -1,6 +1,6 @@
 import unittest
 
-from context import parse, get_species_identifiers
+from context import parse
 
 class TestKEGG(unittest.TestCase):
 
@@ -167,29 +167,6 @@ class TestKEGG(unittest.TestCase):
             ("5105", "PCK1", "phosphoenolpyruvate carboxykinase 1"),
             ("5106", "PCK2", "phosphoenolpyruvate carboxykinase 2, mitochondrial")
         ])
-
-    def test_get_species_identifiers(self):
-
-        species_name, kegg_id, ncbi_id = get_species_identifiers("Homo sapiens")
-        self.assertEqual(species_name, "Homo sapiens (human)")
-        self.assertEqual(kegg_id, "hsa")
-        self.assertEqual(ncbi_id, 9606)
-
-        species_name, kegg_id, ncbi_id = get_species_identifiers("mus musculus")
-        self.assertEqual(species_name, "Mus musculus (house mouse)")
-        self.assertEqual(kegg_id, "mmu")
-        self.assertEqual(ncbi_id, 10090)
-
-        species_name, kegg_id, ncbi_id = get_species_identifiers("chimpanze")
-        self.assertEqual(species_name, "Pan troglodytes (chimpanzee)")
-        self.assertEqual(kegg_id, "ptr")
-        self.assertEqual(ncbi_id, 9598)
-
-        species_name, kegg_id, ncbi_id = get_species_identifiers("Escherichia coli")
-        self.assertEqual(species_name, "Escherichia coli K-12 MG1655")
-        self.assertEqual(kegg_id, "eco")
-        self.assertEqual(ncbi_id, 511145)
-
 
 
 if __name__ == "__main__":
