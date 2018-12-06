@@ -337,6 +337,19 @@ def get_pathway_list(graph):
 
     return graph.run(query)
 
+def get_class_list(graph):
+    """
+    Retrieve a list of all available pathway
+    class names.
+    """
+
+    query = """
+        MATCH (class:Class)
+        RETURN class.name AS name
+    """
+
+    return graph.run(query)
+
 # ========================= Subgraph queries =========================
 
 def get_protein_subgraph(graph, protein_id, threshold=0):
