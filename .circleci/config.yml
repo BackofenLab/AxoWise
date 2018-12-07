@@ -13,7 +13,7 @@ jobs:
           NEO4J_AUTH: none
     steps:
     - checkout
-    - run:
+    - run: # Set up the conda environment
         command: |
           sudo apt update
           sudo apt install -y postgresql-client
@@ -26,7 +26,16 @@ jobs:
           conda info -a
           make env
           source activate pgdb
-    - run:
+    - run: # Wait for PostgreSQL to start
+        command: |
+          for i in `seq 1 10`;
+          do
+            nc -z localhost 5432 && echo Success && exit 0
+            echo -n .
+            sleep 2
+          done
+          echo Failed waiting for Postgres && exit 1
+    - run: # Run tests
         command: |
           make test
 
