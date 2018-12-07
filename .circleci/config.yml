@@ -13,7 +13,8 @@ jobs:
           NEO4J_AUTH: none
     steps:
     - checkout
-    - run: # Set up the conda environment
+    - run:
+        name: Set up the conda environment
         command: |
           sudo apt update
           sudo apt install -y postgresql-client
@@ -25,7 +26,12 @@ jobs:
           conda update -q conda
           conda info -a
           make env
-    - run: # Wait for PostgreSQL to start
+    - run:
+        name: Set the environment variables
+        command: |
+          echo 'export PATH="$HOME/miniconda/bin:$PATH"' >> $BASH_ENV
+    - run:
+        name: Wait for PostgreSQL to start
         command: |
           for i in `seq 1 10`;
           do
@@ -34,8 +40,9 @@ jobs:
             sleep 2
           done
           echo Failed waiting for Postgres && exit 1
-    - run: # Run tests
+    - run:
+        name: Run tests
         command: |
-          conda activate pgdb
+          source activate pgdb
           make test
 
