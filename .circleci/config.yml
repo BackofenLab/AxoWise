@@ -11,20 +11,20 @@ jobs:
       - image: neo4j:latest
         environment:
           NEO4J_AUTH: none
-            steps:
-            - checkout
-            - run:
-                command: |
-                  wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-                  bash miniconda.sh -b -p $HOME/miniconda
-                  export PATH="$HOME/miniconda/bin:$PATH"
-                  hash -r
-                  conda config --set always_yes yes --set changeps1 no
-                  conda update -q conda
-                  conda info -a
-                  make env
-                  source activate pgdb
-            - run:
-                command: |
-                  make test
+    steps:
+    - checkout
+    - run:
+        command: |
+          wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+          bash miniconda.sh -b -p $HOME/miniconda
+          export PATH="$HOME/miniconda/bin:$PATH"
+          hash -r
+          conda config --set always_yes yes --set changeps1 no
+          conda update -q conda
+          conda info -a
+          make env
+          source activate pgdb
+    - run:
+        command: |
+          make test
 
