@@ -6,7 +6,7 @@ jobs:
       - image: circleci/python:3.6
       - image: circleci/postgres:9.6
         environment:
-          POSTGRES_USER: root
+          POSTGRES_USER: postgres
           POSTGRES_DB: string
       - image: neo4j:latest
         environment:
