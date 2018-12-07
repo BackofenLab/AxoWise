@@ -4,10 +4,10 @@ env:
 
 test:
 	# Load the toy database
-	-psql -U postgres -c "DROP DATABASE string;"
-	psql -U postgres -c "CREATE DATABASE string;"
-	psql -U postgres string < sql/dump.schema.psql
-	psql -U postgres string < sql/dump.test.psql
+	-psql -U postgres -h localhost -p 5432 -c "DROP DATABASE string;"
+	psql -U postgres -h localhost -p 5432 -c "CREATE DATABASE string;"
+	psql -U postgres -h localhost -p 5432 string < sql/dump.schema.psql
+	psql -U postgres -h localhost -p 5432 string < sql/dump.test.psql
 
 	# Run the unit tests
 	python tests/test_kegg.py
