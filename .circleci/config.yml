@@ -25,7 +25,6 @@ jobs:
           conda update -q conda
           conda info -a
           make env
-          source activate pgdb
     - run: # Wait for PostgreSQL to start
         command: |
           for i in `seq 1 10`;
@@ -37,5 +36,6 @@ jobs:
           echo Failed waiting for Postgres && exit 1
     - run: # Run tests
         command: |
+          source activate pgdb
           make test
 
