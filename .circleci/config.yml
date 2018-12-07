@@ -43,6 +43,7 @@ jobs:
     - run:
         name: Run tests
         command: |
+          ln -s tests/credentials.test.json credentials.json
           source activate pgdb
           make test
 
