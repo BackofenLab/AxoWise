@@ -112,7 +112,7 @@
   </li>
 </ol>
 
-<p style="color: red;">When specifying the species name, please be as precise as possible. Otherwise, the scripts may yield an unwanted result. Fuzzy search is yet to be implemented.</p>
+<p style="color: red;">When specifying the species name, please be as precise as possible. Otherwise, the scripts may yield an unwanted result. Fuzzy search is still not perfect.</p>
 
 <h1 id="example">Example:</h1>
 
@@ -165,9 +165,9 @@ Downloading pathways for: ptr
     </ul>
   </li>
   <li>
-    <p>Run the Python script (<strong>translate_db.py</strong>)</p>
+    <p>Run the Python script (<strong>build_graph_db.py</strong>)</p>
 
-    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code> python translate_db.py
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code> python build_graph_db.py
 </code></pre></div>    </div>
 
     <p>Available arguments:</p>
@@ -206,7 +206,7 @@ Downloading pathways for: ptr
 
 <p>The following command builds a Neo4j database out of the mouse proteins and associations between them that have the combined score greater than 0.750.</p>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python translate_db.py <span class="nt">--credentials</span> <span class="nb">test</span>/credentials.test.json <span class="se">\</span>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python build_graph_db.py <span class="nt">--credentials</span> <span class="nb">test</span>/credentials.test.json <span class="se">\</span>
                        <span class="nt">--species_name</span> <span class="s2">"mus musculus"</span> <span class="se">\</span>
                        <span class="nt">--combined_score_threshold</span> 750
 </code></pre></div></div>
