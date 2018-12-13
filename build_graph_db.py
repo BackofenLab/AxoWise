@@ -140,12 +140,16 @@ def read_kegg_compounds(args, kegg_id):
     """
 
     compounds = dict()
+    kegg_compounds_file_path = "KEGG/data/kegg_compounds.{}.tsv".format(kegg_id)
     if not args.skip_compounds:
-        for id, name in read_table(
-            "KEGG/data/kegg_compounds.{}.tsv".format(kegg_id), (str, str), delimiter="\t", header=True):
-            compounds[id] = {
-                "id": id,
-                "name": name
+        for compound_id, compound_name in read_table(
+                kegg_compounds_file_path,
+                (str, str), delimiter="\t",
+                header=True
+        ):
+            compounds[compound_id] = {
+                "id": compound_id,
+                "name": compound_name
             }
     return compounds
 
@@ -172,11 +176,16 @@ def read_kegg_diseases(args, kegg_id):
     """
 
     diseases = dict()
+    kegg_diseases_file_path = "KEGG/data/kegg_diseases.{}.tsv".format(kegg_id)
     if not args.skip_diseases:
-        for id, name in read_table("KEGG/data/kegg_diseases.{}.tsv".format(kegg_id), (str, str), delimiter="\t", header=True):
-            diseases[id] = {
-                "id": id,
-                "name": name
+        for disease_id, disease_name in read_table(
+                kegg_diseases_file_path,
+                (str, str), delimiter="\t",
+                header=True
+        ):
+            diseases[disease_id] = {
+                "id": disease_id,
+                "name": disease_name
             }
 
     return diseases
@@ -204,11 +213,16 @@ def read_kegg_drugs(args, kegg_id):
     """
 
     drugs = dict()
+    kegg_drugs_file_path = "KEGG/data/kegg_drugs.{}.tsv".format(kegg_id)
     if not args.skip_drugs:
-        for id, name in read_table("KEGG/data/kegg_drugs.{}.tsv".format(kegg_id), (str, str), delimiter="\t", header=True):
-            drugs[id] = {
-                "id": id,
-                "name": name
+        for drug_id, drug_name in read_table(
+                kegg_drugs_file_path,
+                (str, str), delimiter="\t",
+                header=True
+        ):
+            drugs[drug_id] = {
+                "id": drug_id,
+                "name": drug_name
             }
     return drugs
 
@@ -249,30 +263,34 @@ def read_kegg_pathways(kegg_id):
 
     gene2pathways = dict()
 
-    for id, name, description, classes, genes_external_ids, diseases_ids, drugs_ids, compounds_ids in read_table(
-        "KEGG/data/kegg_pathways.{}.tsv".format(kegg_id),
-        (str, str, str, str, str, str, str, str),
-        delimiter="\t",
-        header=True
+    kegg_pathways_file_path = "KEGG/data/kegg_pathways.{}.tsv".format(kegg_id)
+    for row in read_table(
+            kegg_pathways_file_path,
+            (str, str, str, str, str, str, str, str),
+            delimiter="\t",
+            header=True
     ):
-        pathway_dict = {
-            "id": id,
-            "name": name,
-            "description": description
-        }
-        pathway2classes[id] = classes.split(";")
-        pathway2diseases[id] = diseases_ids.split(";")
-        pathway2drugs[id] = drugs_ids.split(";")
-        pathway2compounds[id] = compounds_ids.split(";")
+        pathway_id, pathway_name, pathway_description, classes = row[:4]
+        genes_external_ids, diseases_ids, drugs_ids, compounds_ids = row[4:]
 
-        pathway_dict["class"] = pathway2classes[id][-1]
+        pathway_dict = {
+            "id": pathway_id,
+            "name": pathway_name,
+            "description": pathway_description
+        }
+        pathway2classes[pathway_id] = classes.split(";")
+        pathway2diseases[pathway_id] = diseases_ids.split(";")
+        pathway2drugs[pathway_id] = drugs_ids.split(";")
+        pathway2compounds[pathway_id] = compounds_ids.split(";")
+
+        pathway_dict["class"] = pathway2classes[pathway_id][-1]
         pathways.append(pathway_dict)
 
         for gene_external_id in genes_external_ids.split(";"):
             if gene_external_id not in gene2pathways:
                 gene2pathways[gene_external_id] = list()
 
-            gene2pathways[gene_external_id].append(id)
+            gene2pathways[gene_external_id].append(pathway_id)
 
     return (
         pathways,
@@ -462,8 +480,10 @@ def read_string_associations(args, postgres_connection, species_id, protein_ids_
                 above_threshold = True
             else:
                 above_threshold = association["combined_score"] >= args.combined_score_threshold
-            in_list = association["id1"] in protein_ids_set and association["id2"] in protein_ids_set
-            return above_threshold and in_list
+
+            first_in_list = (association["id1"] in protein_ids_set)
+            second_in_list = (association["id2"] in protein_ids_set)
+            return above_threshold and first_in_list and second_in_list
 
         associations = filter(filter_associations, associations)
 
@@ -604,7 +624,8 @@ def main():
     Cypher.create_kegg_index(neo4j_graph)
 
     # Read pathways
-    pathways, pathway2classes, pathway2diseases, pathway2drugs, pathway2compounds, gene2pathways = read_kegg_pathways(kegg_id)
+    pathways, *pathway2others, gene2pathways = read_kegg_pathways(kegg_id)
+    pathway2classes, pathway2diseases, pathway2drugs, pathway2compounds = pathway2others
 
     # Classes
     write_classes(neo4j_graph, pathway2classes)
@@ -623,7 +644,12 @@ def main():
 
     # ======================================== STRING ========================================
     # Proteins
-    proteins, protein_ids_set = read_string_proteins(args, postgres_connection, species_id, protein_ensembl_ids_set)
+    proteins, protein_ids_set = read_string_proteins(
+        args,
+        postgres_connection,
+        species_id,
+        protein_ensembl_ids_set
+    )
     proteins = list(proteins)
     write_string_proteins(neo4j_graph, proteins, species_id)
     Cypher.create_protein_index(neo4j_graph)
@@ -636,7 +662,7 @@ def main():
     actions = read_string_actions(args, postgres_connection, species_id)
     write_string_actions(neo4j_graph, actions)
 
-    # ======================================== Merge STRING and KEGG ========================================
+    # ================================== Merge STRING and KEGG ==================================
     connect_proteins_and_pathways(args, neo4j_graph, gene2pathways, protein_ensembl_ids_set)
 
     # Close the PostgreSQL connection
