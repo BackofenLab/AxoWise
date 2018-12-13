@@ -33,6 +33,7 @@ def search_q_gram_index(query, index, condition=None, top=5):
     Retrieve the best 'top' results for a query
     based on a given q-gram index.
     """
+    assert top > 0
 
     q_grams = make_q_grams(query.strip().strip(_Q_GRAM_PAD_CHAR).lower())
 
@@ -43,6 +44,9 @@ def search_q_gram_index(query, index, condition=None, top=5):
 
         for item in item_set:
             counts[item] += 1
+
+    if top == 1:
+        return [max(counts.items(), key=lambda item: item[1])[0]]
 
     return list(map(
         lambda item: item[0],

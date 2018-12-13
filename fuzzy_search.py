@@ -37,6 +37,27 @@ def search_protein(query, species_id=None):
         condition if (species_id is not None) else None
     )
 
+def search_protein_list(query_list, species_id=None):
+    """
+    Retrieve a single top-matching protein for each
+    protein name in the given list.
+    """
+    def condition(item):
+        _, _, item_species_id = item
+        return species_id == item_species_id
+
+    result = list()
+    for query in query_list:
+        best_match = search_q_gram_index(
+            query,
+            _PROTEIN_INDEX,
+            condition if (species_id is not None) else None,
+            top=1
+        )[0]
+        result.append(best_match)
+
+    return result
+
 # ========================= Pathway =========================
 _PATHWAY_INDEX = create_pathway_q_gram_index()
 
