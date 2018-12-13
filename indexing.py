@@ -5,13 +5,10 @@ q-gram indexes for various entities.
 
 import os
 import os.path
-import pickle
 from collections import defaultdict
 
 import cypher_queries as Cypher
 import database
-
-_INDEX_DIR = "index"
 
 # ========================= q-gram index =========================
 
@@ -63,9 +60,9 @@ def create_protein_q_gram_index():
 
     index = defaultdict(set)
     for protein in Cypher.get_protein_list(neo4j_graph):
-        id, name, species_id = protein["id"], protein["name"], protein["species_id"]
-        for q_gram in make_q_grams(name.lower()):
-            index[q_gram].add((name, id, species_id))
+        protein_id, protein_name, species_id = protein["id"], protein["name"], protein["species_id"]
+        for q_gram in make_q_grams(protein_name.lower()):
+            index[q_gram].add((protein_id, protein_name, species_id))
 
     return index
 
@@ -80,9 +77,9 @@ def create_pathway_q_gram_index():
 
     index = defaultdict(set)
     for pathway in Cypher.get_pathway_list(neo4j_graph):
-        id, name, species_id = pathway["id"], pathway["name"], pathway["species_id"]
-        for q_gram in make_q_grams(name.lower()):
-            index[q_gram].add((name, id, species_id))
+        pathway_id, pathway_name, species_id = pathway["id"], pathway["name"], pathway["species_id"]
+        for q_gram in make_q_grams(pathway_name.lower()):
+            index[q_gram].add((pathway_id, pathway_name, species_id))
 
     return index
 
@@ -94,7 +91,8 @@ def create_species_q_gram_index():
     """
 
     index = defaultdict(set)
-    with open(os.path.join(os.path.dirname(__file__), "KEGG", "data", "kegg_genomes.txt")) as kegg_genomes:
+    genomes_file_path = os.path.join(os.path.dirname(__file__), "KEGG", "data", "kegg_genomes.txt")
+    with open(genomes_file_path) as kegg_genomes:
         for line in kegg_genomes:
             line = line.rstrip()
             mapping = line.split("\t")[1]
