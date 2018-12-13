@@ -577,7 +577,7 @@ def connect_proteins_and_pathways(args, neo4j_graph, gene2pathways, protein_ense
 
 def main():
     """
-    Main procedure.
+    The main procedure.
     """
 
     # Parse the CLI arguments
