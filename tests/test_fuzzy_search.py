@@ -1,4 +1,5 @@
 import unittest
+import random
 
 import context
 from context import fuzzy_search
@@ -51,6 +52,15 @@ class TestFuzzySearch(unittest.TestCase):
         )
 
     def test_search_protein_list(self):
+
+        def randomize_case(string):
+            result = ""
+            for character in string:
+                if random.choice([True, False]):
+                    result += character.lower()
+                else:
+                    result += character.upper()
+            return result
 
         proteins = [
             ("SFPI1", 2093346, 10090),
@@ -121,7 +131,7 @@ class TestFuzzySearch(unittest.TestCase):
             ("USF2", 2114274, 10090)
         ]
 
-        protein_list = list(map(lambda p: p[0], proteins))
+        protein_list = list(map(lambda p: randomize_case(p[0]), proteins))
         results = fuzzy_search.search_protein_list(protein_list)
 
         self.assertEqual(len(protein_list), len(results))
