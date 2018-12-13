@@ -7,3 +7,4 @@ dependencies:
   - py2neo
   - psycopg2
   - pylint
+  - flask
