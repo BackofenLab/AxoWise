@@ -25,7 +25,9 @@
     $(document).ready(function () {
         var species = $("#species");
         var protein = $("#protein"); protein.prop("disabled", true);
+        var protein_btn = $("#protein-btn"); protein_btn.prop("disabled", true);
         var pathway = $("#pathway"); pathway.prop("disabled", true);
+        var pathway_btn = $("#pathway-btn"); pathway_btn.prop("disabled", true);
 
         // --------------- Species ---------------
         var species_list = {};
@@ -44,8 +46,8 @@
             select: (event, ui) => {
                 species_name = ui["item"]["value"];
                 selected_species = species_list[species_name];
-                protein.prop("disabled", false);
-                pathway.prop("disabled", false);
+                protein.prop("disabled", false); protein_btn.prop("disabled", false);
+                pathway.prop("disabled", false); pathway_btn.prop("disabled", false);
             }
         });
 
@@ -74,6 +76,13 @@
             }
         });
 
+        $("#protein-btn").click(() => {
+            $.get("api/subgraph/protein", { protein_id: selected_protein.protein_id })
+                .done(function (data) {
+                    $("#data").text(JSON.stringify(data));
+                });
+        });
+
         // --------------- Pathway ---------------
         var pathway_list = {};
         var selected_pathway = null;
@@ -99,12 +108,22 @@
             }
         });
 
+        pathway_btn.click(() => {
+            $.get("api/subgraph/pathway", { pathway_id: selected_pathway.pathway_id })
+                .done(function (data) {
+                    $("#data").text(JSON.stringify(data));
+                });
+        });
+
     });
     </script>
 </head>
 <body>
-    <h1>Protein Graph Database</h1>
+    <h1 style="text-align: center;">Protein Graph Database</h1>
     <div class="container">
+        <div class="row">
+            
+        </div>
         <div class="row">
             <div class="col-md-4 ui-widget">
                 Species:
@@ -114,12 +133,17 @@
             <div class="col-md-4 ui-widget">
                 Protein:
                 <input id="protein" name="protein" type="text"></input>
+                <button id="protein-btn" class="btn btn-primary">Submit</button>
             </div>
 
             <div class="col-md-4 ui-widget">
                 Pathway:
                 <input id="pathway" name="pathway" type="text"></input>
+                <button id="pathway-btn" class="btn btn-primary">Submit</button>
             </div>
+        </div>
+        <div id="data" class="row">
+
         </div>
     </div>
 </body>

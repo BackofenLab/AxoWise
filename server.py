@@ -3,10 +3,12 @@ import json
 from flask import Flask, Response, request, send_from_directory
 
 import fuzzy_search
+import database
+import cypher_queries as Cypher
 
 app = Flask(__name__)
 
-# Index
+# ====================== Index page ======================
 
 @app.route("/")
 def index():
@@ -82,11 +84,26 @@ def classes_to_dicts(classes):
     }, classes))    
 
 @app.route("/api/search/class", methods=["GET"])
-def search_Class_api():
+def search_class_api():
     query = request.args.get("query")
     results = fuzzy_search.search_class(query)
     return_object = classes_to_dicts(results)
     return Response(json.dumps(return_object), mimetype="application/json")
+
+# ====================== Subgraph API ======================
+neo4j_graph = database.connect_neo4j()
+
+@app.route("/api/subgraph/protein")
+def protein_subgraph_api():
+    protein_id = int(request.args.get("protein_id"))
+    cursor = Cypher.get_protein_subgraph(neo4j_graph, protein_id)
+    return Response(json.dumps(cursor.data()), mimetype="application/json")
+
+@app.route("/api/subgraph/pathway")
+def pathway_subgraph_api():
+    pathway_id = request.args.get("pathway_id")
+    cursor = Cypher.get_pathway_subgraph(neo4j_graph, pathway_id)
+    return Response(json.dumps(cursor.data()), mimetype="application/json")
 
 if __name__ == "__main__":
     app.run()
