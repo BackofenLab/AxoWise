@@ -1,9 +1,16 @@
+import os.path
 import json
-from flask import Flask, Response, request
+from flask import Flask, Response, request, send_from_directory
 
 import fuzzy_search
 
 app = Flask(__name__)
+
+# Index
+
+@app.route("/")
+def index():
+    return send_from_directory(os.path.dirname(__file__), "demo.html")
 
 # ====================== Fuzzy search API ======================
 
@@ -35,7 +42,8 @@ def proteins_to_dicts(proteins):
 @app.route("/api/search/protein", methods=["GET"])
 def search_protein_api():
     query = request.args.get("query")
-    results = fuzzy_search.search_protein(query)
+    species_id = int(request.args.get("species_id"))
+    results = fuzzy_search.search_protein(query, species_id)
     return_object = proteins_to_dicts(results)
     return Response(json.dumps(return_object), mimetype="application/json")
 
@@ -61,7 +69,8 @@ def pathways_to_dicts(pathways):
 @app.route("/api/search/pathway", methods=["GET"])
 def search_pathway_api():
     query = request.args.get("query")
-    results = fuzzy_search.search_pathway(query)
+    species_id = int(request.args.get("species_id"))
+    results = fuzzy_search.search_pathway(query, species_id)
     return_object = pathways_to_dicts(results)
     return Response(json.dumps(return_object), mimetype="application/json")
 

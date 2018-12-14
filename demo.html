@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<title>Protein Graph Database</title>
+<head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+    crossorigin="anonymous">
+
+    <script
+    src="https://code.jquery.com/jquery-3.3.1.js"
+    integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+    crossorigin="anonymous"></script>
+
+    <script
+    src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
+    integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
+    crossorigin="anonymous"></script>
+
+    <script>
+    $(document).ready(function () {
+        var species = $("#species");
+        var protein = $("#protein"); protein.prop("disabled", true);
+        var pathway = $("#pathway"); pathway.prop("disabled", true);
+
+        // --------------- Species ---------------
+        var species_list = {};
+        var selected_species = null;
+
+        species.autocomplete({
+            source: (request, response) => {
+                $.get("api/search/species", { query: species.val() })
+                    .done(function (data) {
+                        data.forEach((e) => {
+                            species_list[e.species_name] = {ncbi_id: e.ncbi_id, kegg_id: e.kegg_id};
+                        });
+                        response(data.map(x => x.species_name));
+                    });
+            },
+            select: (event, ui) => {
+                species_name = ui["item"]["value"];
+                selected_species = species_list[species_name];
+                protein.prop("disabled", false);
+                pathway.prop("disabled", false);
+            }
+        });
+
+        // --------------- Protein ---------------
+        var protein_list = {};
+        var selected_protein = null;
+
+        protein.autocomplete({
+            source: (request, response) => {
+                if (selected_species == null) {
+                    alert("Select the species first!")
+                    return;
+                }
+
+                $.get("api/search/protein", { query: protein.val(), species_id: selected_species["ncbi_id"] })
+                    .done(function (data) {
+                        data.forEach((e) => {
+                            protein_list[e.protein_name] = {protein_id: e.protein_id};
+                        });
+                        response(data.map(x => x.protein_name));
+                    });
+            },
+            select: (event, ui) => {
+                protein_name = ui["item"]["value"];
+                selected_protein = protein_list[protein_name];
+            }
+        });
+
+        // --------------- Pathway ---------------
+        var pathway_list = {};
+        var selected_pathway = null;
+
+        pathway.autocomplete({
+            source: (request, response) => {
+                if (selected_species == null) {
+                    alert("Select the species first!")
+                    return;
+                }
+
+                $.get("api/search/pathway", { query: pathway.val(), species_id: selected_species["ncbi_id"] })
+                    .done(function (data) {
+                        data.forEach((e) => {
+                            pathway_list[e.pathway_name] = {pathway_id: e.pathway_id};
+                        });
+                        response(data.map(x => x.pathway_name));
+                    });
+            },
+            select: (event, ui) => {
+                pathway_name = ui["item"]["value"];
+                selected_pathway = pathway_list[pathway_name];
+            }
+        });
+
+    });
+    </script>
+</head>
+<body>
+    <h1>Protein Graph Database</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 ui-widget">
+                Species:
+                <input id="species" name="species" type="text"></input>
+            </div>
+
+            <div class="col-md-4 ui-widget">
+                Protein:
+                <input id="protein" name="protein" type="text"></input>
+            </div>
+
+            <div class="col-md-4 ui-widget">
+                Pathway:
+                <input id="pathway" name="pathway" type="text"></input>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
