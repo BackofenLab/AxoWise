@@ -55,7 +55,8 @@ def search_protein_api():
 def search_protein_list_api():
     query = request.args.get("query")
     protein_list = query.split(";")
-    results = fuzzy_search.search_protein_list(protein_list)
+    species_id = int(request.args.get("species_id"))
+    results = fuzzy_search.search_protein_list(protein_list, species_id)
     return_object = proteins_to_dicts(results)
     return Response(json.dumps(return_object), mimetype="application/json")
 
@@ -97,6 +98,12 @@ neo4j_graph = database.connect_neo4j()
 def protein_subgraph_api():
     protein_id = int(request.args.get("protein_id"))
     cursor = Cypher.get_protein_subgraph(neo4j_graph, protein_id)
+    return Response(json.dumps(cursor.data()), mimetype="application/json")
+
+@app.route("/api/subgraph/protein_list")
+def protein_list_subgraph_api():
+    protein_ids = list(map(int, request.args.get("protein_ids").split(";")))
+    cursor = Cypher.get_proteins_subgraph(neo4j_graph, protein_ids)
     return Response(json.dumps(cursor.data()), mimetype="application/json")
 
 @app.route("/api/subgraph/pathway")
