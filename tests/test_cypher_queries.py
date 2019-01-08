@@ -7,7 +7,7 @@ class TestCypherQueries(unittest.TestCase):
 
     def test_get_protein_subgraph(self):
 
-        neo4j_graph = database.connect_neo4j("tests/credentials.test.yml")
+        neo4j_graph = database.connect_neo4j(context.CREDENTIALS_FILE_PATH)
 
         protein_name, protein_id, species_id = fuzzy_search.search_protein("ccr5", context.SPECIES_ID)[0]
 
@@ -90,7 +90,7 @@ class TestCypherQueries(unittest.TestCase):
         self.assertTrue(has_pathway)
 
     def test_get_pathway_subgraph(self):
-        neo4j_graph = database.connect_neo4j("tests/credentials.test.yml")
+        neo4j_graph = database.connect_neo4j(context.CREDENTIALS_FILE_PATH)
 
         pathway_name, pathway_id, species_id = fuzzy_search.search_pathway("chemo signaling path", species_id=context.SPECIES_ID)[0]
 
@@ -112,7 +112,7 @@ class TestCypherQueries(unittest.TestCase):
             self.assertEqual(len(entry["proteins"]), 180)
 
     def test_get_class_subgraph(self):
-        neo4j_graph = database.connect_neo4j("tests/credentials.test.yml")
+        neo4j_graph = database.connect_neo4j(context.CREDENTIALS_FILE_PATH)
 
         class_name = fuzzy_search.search_class("Immun sstem")[0]
 
