@@ -6,7 +6,9 @@ import yaml
 import psycopg2
 import py2neo
 
-def connect_neo4j(credentials_path="credentials.yml"):
+_DEFAULT_CREDENTIALS_PATH = "credentials.yml"
+
+def connect_neo4j(credentials_path=_DEFAULT_CREDENTIALS_PATH):
     """
     Connects to the Neo4j database described in credentials
     file ('credentials_path') and returns a 'Graph' object.
@@ -26,7 +28,7 @@ def connect_neo4j(credentials_path="credentials.yml"):
 
     return neo4j_graph
 
-def connect_postgres(credentials_path="credentials.yml"):
+def connect_postgres(credentials_path=_DEFAULT_CREDENTIALS_PATH):
     """
     Connects to the PostgreSQL database described in credentials
     file ('credentials_path') and returns a 'connection' object.
@@ -48,7 +50,7 @@ def connect_postgres(credentials_path="credentials.yml"):
 
     return postgres_connection
 
-def connect(credentials_path="credentials.yml"):
+def connect(credentials_path=_DEFAULT_CREDENTIALS_PATH):
     """
     Connects to the PostgreSQL and Neo4j databases described
     in credentials file ('credentials_path').
