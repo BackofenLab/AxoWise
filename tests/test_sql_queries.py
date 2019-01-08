@@ -1,5 +1,6 @@
 import unittest
 
+import context
 from context import database, SQL
 
 class TestSQLQueries(unittest.TestCase):
