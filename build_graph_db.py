@@ -26,8 +26,8 @@ def parse_cli_args():
     args_parser.add_argument(
         "--credentials",
         type=str,
-        help="Path to the credentials JSON file that will be used",
-        default="credentials.json"
+        help="Path to the credentials YAML file that will be used",
+        default="credentials.yml"
     )
 
     args_parser.add_argument(
