@@ -2,18 +2,18 @@
 Connection interface towards the PostgreSQL and Neo4j databases.
 """
 
-import json
+import yaml
 import psycopg2
 import py2neo
 
-def connect_neo4j(credentials_path="credentials.json"):
+def connect_neo4j(credentials_path="credentials.yml"):
     """
     Connects to the Neo4j database described in credentials
     file ('credentials_path') and returns a 'Graph' object.
     """
 
     with open(credentials_path, "rt", encoding="utf-8") as credentials_file:
-        credentials = json.load(credentials_file)
+        credentials = yaml.load(credentials_file)
 
     neo4j = credentials["neo4j"]
 
@@ -26,14 +26,14 @@ def connect_neo4j(credentials_path="credentials.json"):
 
     return neo4j_graph
 
-def connect_postgres(credentials_path="credentials.json"):
+def connect_postgres(credentials_path="credentials.yml"):
     """
     Connects to the PostgreSQL database described in credentials
     file ('credentials_path') and returns a 'connection' object.
     """
 
     with open(credentials_path, "rt", encoding="utf-8") as credentials_file:
-        credentials = json.load(credentials_file)
+        credentials = yaml.load(credentials_file)
 
     postgres = credentials["postgres"]
 
@@ -48,7 +48,7 @@ def connect_postgres(credentials_path="credentials.json"):
 
     return postgres_connection
 
-def connect(credentials_path="credentials.json"):
+def connect(credentials_path="credentials.yml"):
     """
     Connects to the PostgreSQL and Neo4j databases described
     in credentials file ('credentials_path').
