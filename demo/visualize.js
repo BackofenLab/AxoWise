@@ -65,7 +65,11 @@ $(document).ready(function (){
         },
         nodes: {
             shape: "dot"
-        }
+        },
+        edges: {
+            color: {inherit: true},
+            smooth: false
+        },
     };
     
     network = new vis.Network(container, {
