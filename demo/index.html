@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<title>Protein Graph Database</title>
+<head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+    crossorigin="anonymous">
+
+    <script
+    src="https://code.jquery.com/jquery-3.3.1.js"
+    integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+    crossorigin="anonymous"></script>
+
+    <script
+    src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
+    integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
+    crossorigin="anonymous"></script>
+
+    <script src="api.js"></script>
+</head>
+<body>
+    <h1 style="text-align: center;">Protein Graph Database</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 ui-widget">
+                Species:
+                <br/>
+                <input id="species" name="species" type="text"></input>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 ui-widget">
+                Protein:
+                <br/>
+                <input id="protein" name="protein" type="text"></input>
+                <br/>
+                <button id="protein-btn" class="btn btn-primary">Submit</button>
+            </div>
+
+            <div class="col-md-4 ui-widget">
+                Pathway:
+                <br/>
+                <input id="pathway" name="pathway" type="text"></input>
+                <br/>
+                <button id="pathway-btn" class="btn btn-primary">Submit</button>
+            </div>
+
+            <div class="col-md-4 ui-widget">
+                Protein list:
+                <br/>
+                <textarea id="protein-list" name="protein-list"></textarea>
+                <br/>
+                <button id="protein-list-btn" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </div>
+    <textarea id="data" style="width: 100vw; height: 100vh" disabled="true">
+    </textarea>
+</body>
+</html>

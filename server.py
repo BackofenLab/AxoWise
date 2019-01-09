@@ -10,9 +10,9 @@ app = Flask(__name__)
 
 # ====================== Index page ======================
 
-@app.route("/")
-def index():
-    return send_from_directory(os.path.dirname(__file__), "demo.html")
+@app.route("/<path:path>")
+def index(path):
+    return send_from_directory(os.path.join(os.path.dirname(__file__), "demo"), path)
 
 # ====================== Fuzzy search API ======================
 
