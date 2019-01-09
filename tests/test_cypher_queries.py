@@ -9,7 +9,7 @@ class TestCypherQueries(unittest.TestCase):
 
         neo4j_graph = database.connect_neo4j(context.CREDENTIALS_FILE_PATH)
 
-        protein_name, protein_id, species_id = fuzzy_search.search_protein("ccr5", context.SPECIES_ID)[0]
+        protein_id = fuzzy_search.search_protein("ccr5", context.SPECIES_ID)[0].id
 
         result = Cypher.get_protein_subgraph(neo4j_graph, protein_id)
 
@@ -114,7 +114,7 @@ class TestCypherQueries(unittest.TestCase):
     def test_get_class_subgraph(self):
         neo4j_graph = database.connect_neo4j(context.CREDENTIALS_FILE_PATH)
 
-        class_name = fuzzy_search.search_class("Immun sstem")[0]
+        class_name = fuzzy_search.search_class("Immun sstem")[0].name
 
         result = Cypher.get_class_subgraph(neo4j_graph, class_name)
 
