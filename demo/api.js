@@ -58,8 +58,10 @@ $(document).ready(function () {
 
     protein_btn.click(() => {
         $.get("api/subgraph/protein", { protein_id: selected_protein.protein_id })
-            .done(function (data) {
-                $("#data").text(JSON.stringify(data, null, '\t'));
+            .done(function (subgraph) {
+                $("#data").text(JSON.stringify(subgraph, null, '\t'));
+                data = protein_subgraph_to_visjs_data(subgraph);
+                visualize_visjs_data(data);
             });
     });
 
