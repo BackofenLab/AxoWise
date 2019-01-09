@@ -5,7 +5,7 @@ q-gram indexes for various entities.
 
 import os
 import os.path
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 
 import cypher_queries as Cypher
 import database
@@ -55,6 +55,8 @@ def search_q_gram_index(query, index, condition=None, top=5):
 
 #  ========================= Protein =========================
 
+Protein = namedtuple("Protein", ["id", "name", "species_id"])
+
 def create_protein_q_gram_index():
     """
     Create a q-gram index for protein names.
@@ -63,14 +65,16 @@ def create_protein_q_gram_index():
     neo4j_graph = database.connect_neo4j()
 
     index = defaultdict(set)
-    for protein in Cypher.get_protein_list(neo4j_graph):
-        protein_id, protein_name, species_id = protein["id"], protein["name"], protein["species_id"]
-        for q_gram in make_q_grams(protein_name.lower()):
-            index[q_gram].add((protein_name, protein_id, species_id))
+    for row in Cypher.get_protein_list(neo4j_graph):
+        protein = Protein(**row)
+        for q_gram in make_q_grams(protein.name.lower()):
+            index[q_gram].add(protein)
 
     return index
 
 # ========================= Pathway =========================
+
+Pathway = namedtuple("Pathway", ["id", "name", "species_id"])
 
 def create_pathway_q_gram_index():
     """
@@ -80,14 +84,16 @@ def create_pathway_q_gram_index():
     neo4j_graph = database.connect_neo4j()
 
     index = defaultdict(set)
-    for pathway in Cypher.get_pathway_list(neo4j_graph):
-        pathway_id, pathway_name, species_id = pathway["id"], pathway["name"], pathway["species_id"]
-        for q_gram in make_q_grams(pathway_name.lower()):
-            index[q_gram].add((pathway_name, pathway_id, species_id))
+    for row in Cypher.get_pathway_list(neo4j_graph):
+        pathway = Pathway(**row)
+        for q_gram in make_q_grams(pathway.name.lower()):
+            index[q_gram].add(pathway)
 
     return index
 
 # ========================= Species =========================
+
+Species = namedtuple("Species", ["name", "kegg_id", "ncbi_id"])
 
 def create_species_q_gram_index():
     """
@@ -106,13 +112,16 @@ def create_species_q_gram_index():
             ids, species_name = mapping.split("; ")
             ids = ids.split(", ")
             kegg_id, ncbi_id = ids[0], ids[-1]
-            # (name, kegg_id, ncbi_id)
-            for q_gram in make_q_grams(species_name.lower()):
-                index[q_gram].add((species_name, kegg_id, int(ncbi_id)))
+
+            species = Species(species_name, kegg_id, int(ncbi_id))
+            for q_gram in make_q_grams(species.name.lower()):
+                index[q_gram].add(species)
 
     return index
 
 # ========================= Class =========================
+
+Class = namedtuple("Class", ["name"])
 
 def create_class_q_gram_index():
     """
@@ -122,9 +131,9 @@ def create_class_q_gram_index():
     neo4j_graph = database.connect_neo4j()
 
     index = defaultdict(set)
-    for klass in Cypher.get_class_list(neo4j_graph):
-        class_name = klass["name"]
-        for q_gram in make_q_grams(class_name.lower()):
-            index[q_gram].add(class_name)
+    for row in Cypher.get_class_list(neo4j_graph):
+        klass = Class(**row)
+        for q_gram in make_q_grams(klass.name.lower()):
+            index[q_gram].add(klass)
 
     return index

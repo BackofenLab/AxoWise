@@ -20,9 +20,9 @@ def index():
 
 def species_to_dict(species):
     return list(map(lambda s: {
-        "species_name": s[0],
-        "kegg_id": s[1],
-        "ncbi_id": s[2]
+        "species_name": s.name,
+        "kegg_id": s.kegg_id,
+        "ncbi_id": s.ncbi_id
     }, species))
 
 @app.route("/api/search/species", methods=["GET"])
@@ -35,10 +35,10 @@ def search_species_api():
 # Protein
 
 def proteins_to_dicts(proteins):
-    return list(map(lambda r: {
-        "protein_name": r[0],
-        "protein_id": r[1],
-        "species_id": r[2]
+    return list(map(lambda p: {
+        "protein_name": p.name,
+        "protein_id": p.id,
+        "species_id": p.species_id
     }, proteins))
 
 @app.route("/api/search/protein", methods=["GET"])
@@ -64,9 +64,9 @@ def search_protein_list_api():
 
 def pathways_to_dicts(pathways):
     return list(map(lambda p: {
-        "pathway_name": p[0],
-        "pathway_id": p[1],
-        "species_id": p[2]
+        "pathway_name": p.name,
+        "pathway_id": p.id,
+        "species_id": p.species_id
     }, pathways))
 
 @app.route("/api/search/pathway", methods=["GET"])
@@ -81,7 +81,7 @@ def search_pathway_api():
 
 def classes_to_dicts(classes):
     return list(map(lambda c: {
-        "class_name": c
+        "class_name": c.name
     }, classes))    
 
 @app.route("/api/search/class", methods=["GET"])
