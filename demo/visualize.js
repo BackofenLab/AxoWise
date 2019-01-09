@@ -31,6 +31,7 @@ function protein_subgraph_to_visjs_data(subgraph) {
 
     for (var i = 0; i < subgraph.length; i++) {
         row = subgraph[i];
+
         nodes.update({
             id: row.protein.id,
             label: row.protein.name
@@ -39,6 +40,11 @@ function protein_subgraph_to_visjs_data(subgraph) {
         nodes.update({
             id: row.other.id,
             label: row.other.name
+        })
+
+        edges.update({
+            from: row.protein.id,
+            to: row.other.id
         })
     }
 
