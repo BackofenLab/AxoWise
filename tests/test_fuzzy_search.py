@@ -2,7 +2,7 @@ import unittest
 import random
 
 import context
-from context import fuzzy_search
+from context import fuzzy_search, indexing
 
 class TestFuzzySearch(unittest.TestCase):
 
@@ -10,21 +10,21 @@ class TestFuzzySearch(unittest.TestCase):
 
         for query in ["hom", "human", "sapiens"]:
             self.assertIn(
-                ("Homo sapiens (human)", "hsa", 9606),
+                indexing.Species("Homo sapiens (human)", "hsa", 9606),
                 fuzzy_search.search_species(query),
                 query
             )
 
         for query in ["mouse", "mus", "mus muscul"]:
             self.assertIn(
-                ("Mus musculus (house mouse)", "mmu", 10090),
+                indexing.Species("Mus musculus (house mouse)", "mmu", 10090),
                 fuzzy_search.search_species(query),
                 query
             )
 
         for query in ["chimpanz", "pan t", "Pan troglodytes"]:
             self.assertIn(
-                ("Pan troglodytes (chimpanzee)", "ptr", 9598),
+                indexing.Species("Pan troglodytes (chimpanzee)", "ptr", 9598),
                 fuzzy_search.search_species(query),
                 query
             )
@@ -32,22 +32,22 @@ class TestFuzzySearch(unittest.TestCase):
     def test_search_protein(self):
 
         self.assertIn(
-            ("CCR5", 2111533, context.SPECIES_ID),
+            indexing.Protein("CCR5", 2111533, context.SPECIES_ID),
             fuzzy_search.search_protein("ccr5", species_id=context.SPECIES_ID)
         )
 
         self.assertIn(
-            ("IL10", 2094384, context.SPECIES_ID),
+            indexing.Protein("IL10", 2094384, context.SPECIES_ID),
             fuzzy_search.search_protein("Il10", species_id=context.SPECIES_ID)
         )
 
         self.assertIn(
-            ("IL10RA", 2099183, context.SPECIES_ID),
+            indexing.Protein("IL10RA", 2099183, context.SPECIES_ID),
             fuzzy_search.search_protein("il10RA", species_id=context.SPECIES_ID)
         )
 
         self.assertIn(
-            ("CCL5", 2100220, context.SPECIES_ID),
+            indexing.Protein("CCL5", 2100220, context.SPECIES_ID),
             fuzzy_search.search_protein("CCL5", species_id=context.SPECIES_ID)
         )
 
@@ -62,7 +62,7 @@ class TestFuzzySearch(unittest.TestCase):
                     result += character.upper()
             return result
 
-        proteins = [
+        proteins = list(map(lambda p: indexing.Protein(*p), [
             ("SFPI1", 2093346, 10090),
             ("FOSB", 2093526, 10090),
             ("MLXIPL", 2093704, 10090),
@@ -129,9 +129,9 @@ class TestFuzzySearch(unittest.TestCase):
             ("IRF9", 2112825, 10090),
             ("TGIF1", 2114069, 10090),
             ("USF2", 2114274, 10090)
-        ]
+        ]))
 
-        protein_list = list(map(lambda p: randomize_case(p[0]), proteins))
+        protein_list = list(map(lambda p: randomize_case(p.name), proteins))
         results = fuzzy_search.search_protein_list(protein_list)
 
         self.assertEqual(len(protein_list), len(results))
@@ -141,14 +141,14 @@ class TestFuzzySearch(unittest.TestCase):
 
         for query in ["cytok", "Cytokine-cytokine", "cytokine interaction"]:
             self.assertIn(
-                ("Cytokine-cytokine receptor interaction", "path:mmu04060", context.SPECIES_ID),
+                indexing.Pathway("Cytokine-cytokine receptor interaction", "path:mmu04060", context.SPECIES_ID),
                 fuzzy_search.search_pathway(query, species_id=context.SPECIES_ID),
                 query
             )
 
         for query in ["chemokine", "chemo signaling", "chemokine pathway"]:
             self.assertIn(
-                ("Chemokine signaling pathway", "path:mmu04062", context.SPECIES_ID),
+                indexing.Pathway("Chemokine signaling pathway", "path:mmu04062", context.SPECIES_ID),
                 fuzzy_search.search_pathway(query, species_id=context.SPECIES_ID),
                 query
             )
@@ -157,13 +157,13 @@ class TestFuzzySearch(unittest.TestCase):
 
         for klass in ["Immune diseases", "Immune system"]:
             self.assertIn(
-                klass,
+                indexing.Class(klass),
                 fuzzy_search.search_class("immun")
             )
 
         for query in ["meta", "metabolism"]:
             self.assertIn(
-                "Metabolism",
+                indexing.Class("Metabolism"),
                 fuzzy_search.search_class(query),
                 query
             )
