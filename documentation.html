@@ -143,24 +143,23 @@ Downloading pathways for: ptr
 
     <ul>
       <li>
-        <p>Create <strong>credentials.json</strong> file in the root directory of the cloned repository. The format should be the following:</p>
+        <p>Create <strong>credentials.yml</strong> file in the root directory of the cloned repository. The format should be the following:</p>
 
-        <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w">  </span><span class="p">{</span><span class="w">
-      </span><span class="s2">"postgres"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-          </span><span class="s2">"host"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;hostname&gt;"</span><span class="p">,</span><span class="w">
-          </span><span class="s2">"port"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;port&gt;"</span><span class="p">,</span><span class="w">
-          </span><span class="s2">"database"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;database name&gt;"</span><span class="p">,</span><span class="w">
-          </span><span class="s2">"user"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;username&gt;"</span><span class="p">,</span><span class="w">
-          </span><span class="s2">"pw"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;password&gt;"</span><span class="w">
-      </span><span class="p">},</span><span class="w">
-      </span><span class="s2">"neo4j"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-          </span><span class="s2">"host"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;hostname&gt;"</span><span class="p">,</span><span class="w">
-          </span><span class="s2">"port"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;port&gt;"</span><span class="p">,</span><span class="w">
-          </span><span class="s2">"pw"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;password&gt;"</span><span class="w">
-      </span><span class="p">}</span><span class="w">
-  </span><span class="p">}</span><span class="w">
-</span></code></pre></div>        </div>
-        <p>One credentials file is already available for tesing at <em>test/credentials.test.json</em>.</p>
+        <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1"># PostgreSQL Database Credentials</span>
+  <span class="na">postgres</span><span class="pi">:</span>
+      <span class="na">host</span><span class="pi">:</span> <span class="s">&lt;hostname&gt;</span>
+      <span class="na">port</span><span class="pi">:</span> <span class="s">&lt;port&gt;</span>
+      <span class="na">database</span><span class="pi">:</span> <span class="s">&lt;database name&gt;</span>
+      <span class="na">user</span><span class="pi">:</span> <span class="s">&lt;username&gt;</span>
+      <span class="na">pw</span><span class="pi">:</span> <span class="s">&lt;password&gt;</span>
+
+  <span class="c1"># Neo4j Database Credentials</span>
+  <span class="na">neo4j</span><span class="pi">:</span>
+      <span class="na">host</span><span class="pi">:</span> <span class="s">&lt;hostname&gt;</span>
+      <span class="na">port</span><span class="pi">:</span> <span class="s">&lt;port&gt;</span>
+      <span class="na">pw</span><span class="pi">:</span> <span class="s">&lt;password&gt;</span>
+</code></pre></div>        </div>
+        <p>One credentials file is already available for tesing at <em>test/credentials.test.yml</em>.</p>
       </li>
     </ul>
   </li>
@@ -173,8 +172,8 @@ Downloading pathways for: ptr
     <p>Available arguments:</p>
 
     <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">--credentials</span> CREDENTIALS
-                         Path to the credentials JSON file that will be used
-                         <span class="o">(</span>default: credentials.json<span class="o">)</span>
+                         Path to the credentials YAML file that will be used
+                         <span class="o">(</span>default: credentials.yml<span class="o">)</span>
  <span class="nt">--species_name</span> SPECIES_NAME
                          Species name <span class="o">(</span>default: Homo sapiens<span class="o">)</span>
  <span class="nt">--protein_list</span> PROTEIN_LIST
@@ -206,7 +205,7 @@ Downloading pathways for: ptr
 
 <p>The following command builds a Neo4j database out of the mouse proteins and associations between them that have the combined score greater than 0.750.</p>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python build_graph_db.py <span class="nt">--credentials</span> <span class="nb">test</span>/credentials.test.json <span class="se">\</span>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python build_graph_db.py <span class="nt">--credentials</span> <span class="nb">test</span>/credentials.test.yml <span class="se">\</span>
                        <span class="nt">--species_name</span> <span class="s2">"mus musculus"</span> <span class="se">\</span>
                        <span class="nt">--combined_score_threshold</span> 750
 </code></pre></div></div>
