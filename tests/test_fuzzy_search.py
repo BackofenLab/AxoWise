@@ -32,22 +32,22 @@ class TestFuzzySearch(unittest.TestCase):
     def test_search_protein(self):
 
         self.assertIn(
-            indexing.Protein("CCR5", 2111533, context.SPECIES_ID),
+            indexing.Protein(2111533, "CCR5", context.SPECIES_ID),
             fuzzy_search.search_protein("ccr5", species_id=context.SPECIES_ID)
         )
 
         self.assertIn(
-            indexing.Protein("IL10", 2094384, context.SPECIES_ID),
+            indexing.Protein(2094384, "IL10", context.SPECIES_ID),
             fuzzy_search.search_protein("Il10", species_id=context.SPECIES_ID)
         )
 
         self.assertIn(
-            indexing.Protein("IL10RA", 2099183, context.SPECIES_ID),
+            indexing.Protein(2099183, "IL10RA", context.SPECIES_ID),
             fuzzy_search.search_protein("il10RA", species_id=context.SPECIES_ID)
         )
 
         self.assertIn(
-            indexing.Protein("CCL5", 2100220, context.SPECIES_ID),
+            indexing.Protein(2100220, "CCL5", context.SPECIES_ID),
             fuzzy_search.search_protein("CCL5", species_id=context.SPECIES_ID)
         )
 
@@ -63,72 +63,72 @@ class TestFuzzySearch(unittest.TestCase):
             return result
 
         proteins = list(map(lambda p: indexing.Protein(*p), [
-            ("SFPI1", 2093346, 10090),
-            ("FOSB", 2093526, 10090),
-            ("MLXIPL", 2093704, 10090),
-            ("ELK3", 2093960, 10090),
-            ("FLI1", 2094351, 10090),
-            ("IL10", 2094384, 10090),
-            ("IRF1", 2094594, 10090),
-            ("NFIC", 2094875, 10090),
-            ("SREBF1", 2094987, 10090),
-            ("ID2", 2095028, 10090),
-            ("HIF1A", 2095207, 10090),
-            ("FOS", 2095256, 10090),
-            ("MYC", 2095683, 10090),
-            ("TEF", 2095696, 10090),
-            ("RUNX1", 2095905, 10090),
-            ("ATF1", 2095940, 10090),
-            ("TFEB", 2096088, 10090),
-            ("BACH1", 2096699, 10090),
-            ("ATF3", 2097050, 10090),
-            ("BATF3", 2097051, 10090),
-            ("BHLHE41", 2098470, 10090),
-            ("IL10RA", 2099183, 10090),
-            ("SMAD3", 2099315, 10090),
-            ("ZFP281", 2100108, 10090),
-            ("CCL5", 2100220, 10090),
-            ("CREB3L2", 2100325, 10090),
-            ("BATF", 2100419, 10090),
-            ("ERF", 2100648, 10090),
-            ("KLF9", 2101330, 10090),
-            ("ZFP691", 2102647, 10090),
-            ("JUN", 2102864, 10090),
-            ("KLF7",2102933, 10090),
-            ("XBP1", 2102968, 10090),
-            ("FOXO1", 2103045, 10090),
-            ("JDP2", 2103806, 10090),
-            ("CREB1", 2103842, 10090),
-            ("JUNB", 2104561, 10090),
-            ("CEBPG", 2104603, 10090),
-            ("NFIL3", 2104650, 10090),
-            ("SP100", 2104785, 10090),
-            ("STAT1", 2104843, 10090),
-            ("KLF13", 2104964, 10090),
-            ("EGR1", 2105219, 10090),
-            ("CEBPB", 2105262, 10090),
-            ("NFKB2", 2105791, 10090),
-            ("RXRA", 2106444, 10090),
-            ("TFE3", 2106500, 10090),
-            ("ETV5", 2106818, 10090),
-            ("ETV6", 2107042, 10090),
-            ("NFE2L1", 2107155, 10090),
-            ("STAT2", 2107486, 10090),
-            ("CENPB", 2107964, 10090),
-            ("RELB", 2108666, 10090),
-            ("CEBPA", 2109370, 10090),
-            ("MAFB", 2109530, 10090),
-            ("SP3", 2110338, 10090),
-            ("REL", 2110420, 10090),
-            ("KLF4", 2110976, 10090),
-            ("BACH2", 2111058, 10090),
-            ("MAF", 2111212, 10090),
-            ("ATF4", 2111287, 10090),
-            ("NFIX", 2111318, 10090),
-            ("CCR5", 2111533, 10090),
-            ("IRF9", 2112825, 10090),
-            ("TGIF1", 2114069, 10090),
-            ("USF2", 2114274, 10090)
+            (2093346, "SFPI1", 10090),
+            (2093526, "FOSB", 10090),
+            (2093704, "MLXIPL", 10090),
+            (2093960, "ELK3", 10090),
+            (2094351, "FLI1", 10090),
+            (2094384, "IL10", 10090),
+            (2094594, "IRF1", 10090),
+            (2094875, "NFIC", 10090),
+            (2094987, "SREBF1", 10090),
+            (2095028, "ID2", 10090),
+            (2095207, "HIF1A", 10090),
+            (2095256, "FOS", 10090),
+            (2095683, "MYC", 10090),
+            (2095696, "TEF", 10090),
+            (2095905, "RUNX1", 10090),
+            (2095940, "ATF1", 10090),
+            (2096088, "TFEB", 10090),
+            (2096699, "BACH1", 10090),
+            (2097050, "ATF3", 10090),
+            (2097051, "BATF3", 10090),
+            (2098470, "BHLHE41", 10090),
+            (2099183, "IL10RA", 10090),
+            (2099315, "SMAD3", 10090),
+            (2100108, "ZFP281", 10090),
+            (2100220, "CCL5", 10090),
+            (2100325, "CREB3L2", 10090),
+            (2100419, "BATF", 10090),
+            (2100648, "ERF", 10090),
+            (2101330, "KLF9", 10090),
+            (2102647, "ZFP691", 10090),
+            (2102864, "JUN", 10090),
+            (2102933, "KLF7", 10090),
+            (2102968, "XBP1", 10090),
+            (2103045, "FOXO1", 10090),
+            (2103806, "JDP2", 10090),
+            (2103842, "CREB1", 10090),
+            (2104561, "JUNB", 10090),
+            (2104603, "CEBPG", 10090),
+            (2104650, "NFIL3", 10090),
+            (2104785, "SP100", 10090),
+            (2104843, "STAT1", 10090),
+            (2104964, "KLF13", 10090),
+            (2105219, "EGR1", 10090),
+            (2105262, "CEBPB", 10090),
+            (2105791, "NFKB2", 10090),
+            (2106444, "RXRA", 10090),
+            (2106500, "TFE3", 10090),
+            (2106818, "ETV5", 10090),
+            (2107042, "ETV6", 10090),
+            (2107155, "NFE2L1", 10090),
+            (2107486, "STAT2", 10090),
+            (2107964, "CENPB", 10090),
+            (2108666, "RELB", 10090),
+            (2109370, "CEBPA", 10090),
+            (2109530, "MAFB", 10090),
+            (2110338, "SP3", 10090),
+            (2110420, "REL", 10090),
+            (2110976, "KLF4", 10090),
+            (2111058, "BACH2", 10090),
+            (2111212, "MAF", 10090),
+            (2111287, "ATF4", 10090),
+            (2111318, "NFIX", 10090),
+            (2111533, "CCR5", 10090),
+            (2112825, "IRF9", 10090),
+            (2114069, "TGIF1", 10090),
+            (2114274, "USF2", 10090)
         ]))
 
         protein_list = list(map(lambda p: randomize_case(p.name), proteins))
@@ -141,14 +141,14 @@ class TestFuzzySearch(unittest.TestCase):
 
         for query in ["cytok", "Cytokine-cytokine", "cytokine interaction"]:
             self.assertIn(
-                indexing.Pathway("Cytokine-cytokine receptor interaction", "path:mmu04060", context.SPECIES_ID),
+                indexing.Pathway("path:mmu04060", "Cytokine-cytokine receptor interaction", context.SPECIES_ID),
                 fuzzy_search.search_pathway(query, species_id=context.SPECIES_ID),
                 query
             )
 
         for query in ["chemokine", "chemo signaling", "chemokine pathway"]:
             self.assertIn(
-                indexing.Pathway("Chemokine signaling pathway", "path:mmu04062", context.SPECIES_ID),
+                indexing.Pathway("path:mmu04062", "Chemokine signaling pathway", context.SPECIES_ID),
                 fuzzy_search.search_pathway(query, species_id=context.SPECIES_ID),
                 query
             )
