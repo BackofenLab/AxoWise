@@ -15,5 +15,6 @@ install:
   - conda info -a
   - make env
   - source activate pgdb
+  - ln -s tests/credentials.test.yml credentials.yml
 script:
   - make test
