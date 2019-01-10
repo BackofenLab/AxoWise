@@ -110,7 +110,7 @@ def protein_list_subgraph_api():
 def pathway_subgraph_api():
     pathway_id = request.args.get("pathway_id")
     cursor = Cypher.get_pathway_subgraph(neo4j_graph, pathway_id)
-    return Response(json.dumps(cursor.data()), mimetype="application/json")
+    return Response(json.dumps(cursor.data()[0]), mimetype="application/json")
 
 if __name__ == "__main__":
     app.run()

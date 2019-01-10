@@ -5,12 +5,14 @@ var colors = {
     protein: "#52b6e5", queried_protein: "#00a5f2",
     pathway: "#f2b500",
     white: "#ffffff",
-    black: "#000000"
+    black: "#000000",
+    gray: "#c6c6c6"
 };
 
 function visualize_visjs_data(data) {
     if (network) {
         network.setData(data);
+        network.stabilize(100);
     }
 }
 
@@ -58,8 +60,7 @@ function protein_subgraph_to_visjs_data(subgraph) {
                 id: pathway.id,
                 label: pathway.name,
                 title: get_tooltip(pathway.description),
-                color: colors.pathway,
-                level: 3
+                color: colors.pathway
             });
 
             edges.update([
@@ -87,10 +88,49 @@ function pathway_subgraph_to_visjs_data(subgraph) {
     var nodes = new vis.DataSet();
     var edges = new vis.DataSet();
 
-    for (var i = 0; i < subgraph.length; i++) {
-        var row = subgraph[i];
+    var pathway = subgraph.pathway;
 
+    nodes.update({
+        id: pathway.id,
+        label: pathway.name,
+        title: get_tooltip(pathway.description),
+        color: colors.pathway
+    });
 
+    for (var i = 0; i < subgraph.classes.length; i++) {
+        var klass = subgraph.classes[i];
+
+        nodes.update({
+            id: klass.name,
+            label: klass.name,
+            color: colors.gray
+        });
+
+        edges.update({
+            from: pathway.id,
+            to: klass.name
+        });
+    }
+
+    for (var i = 0; i < subgraph.proteins.length; i++) {
+        var protein = subgraph.proteins[i];
+
+        nodes.update({
+            id: protein.id,
+            label: protein.name,
+            title: get_tooltip(protein.description),
+            color: colors.protein
+        });
+
+        edges.update({
+            from: protein.id,
+            to: pathway.id
+        });
+    }
+
+    return {
+        nodes: nodes,
+        edges: edges
     }
 }
 
@@ -99,7 +139,13 @@ $(document).ready(function (){
     var container = document.getElementById("visualization");
 
     var options = {
-        physics: false,
+        physics: {
+            enabled: false,
+            barnesHut: {
+                springConstant: 0.001,
+                avoidOverlap: 0.2,
+            }
+        },
         interaction: {
             hideEdgesOnDrag: true
         },
@@ -112,6 +158,9 @@ $(document).ready(function (){
             font: {
                 size: 12
             },
+        },
+        layout: {
+            improvedLayout: true
         }
     };
     
