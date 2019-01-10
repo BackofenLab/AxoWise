@@ -1,23 +1,12 @@
 
-// // create an array with nodes
-// var nodes = new vis.DataSet([
-// {id: 1, label: 'Node 1'},
-// {id: 2, label: 'Node 2'},
-// {id: 3, label: 'Node 3'},
-// {id: 4, label: 'Node 4'},
-// {id: 5, label: 'Node 5'}
-// ]);
-
-// // create an array with edges
-// var edges = new vis.DataSet([
-// {from: 1, to: 3},
-// {from: 1, to: 2},
-// {from: 2, to: 4},
-// {from: 2, to: 5},
-// {from: 3, to: 3}
-// ]);
-
 var network = null;
+
+var colors = {
+    protein: "#52b6e5", queried_protein: "#00a5f2",
+    pathway: "#f2b500",
+    white: "#ffffff",
+    black: "#000000"
+};
 
 function visualize_visjs_data(data) {
     if (network) {
@@ -25,32 +14,83 @@ function visualize_visjs_data(data) {
     }
 }
 
+function get_tooltip(text) {
+    var div = document.createElement("div");
+    div.style.width = "500px";
+    div.innerHTML = text;
+    div.style.wordWrap = "break-word";
+    div.style.whiteSpace = "pre-wrap";
+    return div;
+}
+
 function protein_subgraph_to_visjs_data(subgraph) {
     var nodes = new vis.DataSet();
     var edges = new vis.DataSet();
 
     for (var i = 0; i < subgraph.length; i++) {
-        row = subgraph[i];
+        var row = subgraph[i];
 
         nodes.update({
             id: row.protein.id,
-            label: row.protein.name
-        })
+            label: row.protein.name,
+            title: get_tooltip(row.protein.description),
+            color: colors.queried_protein
+        });
 
         nodes.update({
             id: row.other.id,
-            label: row.other.name
-        })
+            label: row.other.name,
+            title: get_tooltip(row.other.description),
+            color: colors.protein
+        });
 
         edges.update({
             from: row.protein.id,
-            to: row.other.id
+            to: row.other.id,
+            label: (row.association.combined / 1000).toString(),
+            color: colors.protein
         })
+
+        for (var j = 0; j < row.pathways.length; j++) {
+            var pathway = row.pathways[j];
+
+            nodes.update({
+                id: pathway.id,
+                label: pathway.name,
+                title: get_tooltip(pathway.description),
+                color: colors.pathway,
+                level: 3
+            });
+
+            edges.update([
+                // {
+                //     from: row.protein.id,
+                //     to: pathway.id,
+                //     color: colors.pathway
+                // },
+                {
+                    from: row.other.id,
+                    to: pathway.id,
+                    color: colors.pathway
+                }
+            ]);
+        }
     }
 
     return {
         nodes: nodes,
         edges: edges
+    }
+}
+
+function pathway_subgraph_to_visjs_data(subgraph) {
+    var nodes = new vis.DataSet();
+    var edges = new vis.DataSet();
+
+    for (var i = 0; i < subgraph.length; i++) {
+        var row = subgraph[i];
+
+
     }
 }
 
@@ -68,8 +108,11 @@ $(document).ready(function (){
         },
         edges: {
             color: {inherit: true},
-            smooth: false
-        },
+            smooth: false,
+            font: {
+                size: 12
+            },
+        }
     };
     
     network = new vis.Network(container, {
