@@ -84,6 +84,69 @@ function protein_subgraph_to_visjs_data(subgraph) {
     }
 }
 
+function protein_list_subgraph_to_visjs_data(subgraph) {
+    var nodes = new vis.DataSet();
+    var edges = new vis.DataSet();
+
+    for (var i = 0; i < subgraph.length; i++) {
+        var row = subgraph[i];
+        var protein1 = row.protein1;
+        var protein2 = row.protein2;
+        var association = row.association;
+        var pathways = row.pathways;
+
+        nodes.update({
+            id: protein1.id,
+            label: protein1.name,
+            title: get_tooltip(protein1.description),
+            color: colors.protein
+        });
+
+        nodes.update({
+            id: protein2.id,
+            label: protein2.name,
+            title: get_tooltip(protein2.description),
+            color: colors.protein
+        });
+
+        edges.update({
+            from: protein1.id,
+            to: protein2.id,
+            label: (association.combined / 1000).toString(),
+            color: colors.protein
+        })
+
+        for (var j = 0; j < pathways.length; j++) {
+            var pathway = pathways[j];
+
+            nodes.update({
+                id: pathway.id,
+                label: pathway.name,
+                title: get_tooltip(pathway.description),
+                color: colors.pathway
+            });
+
+            edges.update([
+                {
+                    from: protein1.id,
+                    to: pathway.id,
+                    color: colors.pathway
+                },
+                {
+                    from: protein2.id,
+                    to: pathway.id,
+                    color: colors.pathway
+                }
+            ]);
+        }
+    }
+
+    return {
+        nodes: nodes,
+        edges: edges
+    }
+}
+
 function pathway_subgraph_to_visjs_data(subgraph) {
     var nodes = new vis.DataSet();
     var edges = new vis.DataSet();

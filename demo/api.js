@@ -123,8 +123,10 @@ $(document).ready(function () {
                     var protein_ids = data.map(x => x.protein_id);
 
                     $.get("api/subgraph/protein_list", { protein_ids: protein_ids.join(';') })
-                        .done(function (data) {
-                            $("#data").text(JSON.stringify(data, null, '\t'));
+                        .done(function (subgraph) {
+                            $("#data").text(JSON.stringify(subgraph, null, '\t'));
+                            data = protein_list_subgraph_to_visjs_data(subgraph);
+                            visualize_visjs_data(data);
                         });
                 });
     });
