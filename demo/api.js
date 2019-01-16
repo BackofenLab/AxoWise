@@ -123,7 +123,8 @@ $(document).ready(function () {
                 .done(function (data) {
                     var protein_ids = data.map(x => x.protein_id);
 
-                    $.get("api/subgraph/protein_list", { protein_ids: protein_ids.join(';') })
+                    var threshold = parseFloat($("#threshold-value").text());
+                    $.get("api/subgraph/protein_list", { protein_ids: protein_ids.join(';'), threshold: threshold })
                         .done(function (subgraph) {
                             $("#data").text(JSON.stringify(subgraph, null, '\t'));
                             data = protein_list_subgraph_to_visjs_data(subgraph);
