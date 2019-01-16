@@ -113,4 +113,4 @@ def pathway_subgraph_api():
     return Response(json.dumps(cursor.data()[0]), mimetype="application/json")
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
