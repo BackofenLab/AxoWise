@@ -2,7 +2,7 @@
 var network = null;
 
 var colors = {
-    protein: "#52b6e5", queried_protein: "#00a5f2",
+    protein: "#52b6e5",
     pathway: "#f2b500",
     white: "#ffffff",
     black: "#000000",
@@ -27,6 +27,8 @@ function visualize_visjs_data(data) {
     if (network) {
         network.setData(data);
         network.stabilize(100);
+        if (data.selected_nodes)
+            network.selectNodes(data.selected_nodes);
     }
 }
 
@@ -42,6 +44,9 @@ function get_tooltip(text) {
 function protein_subgraph_to_visjs_data(subgraph) {
     var nodes = new vis.DataSet();
     var edges = new vis.DataSet();
+    var selected_nodes = [];
+    if (subgraph.length >=1)
+        selected_nodes.push(subgraph[0].protein.id);
 
     for (var i = 0; i < subgraph.length; i++) {
         var row = subgraph[i];
@@ -53,7 +58,7 @@ function protein_subgraph_to_visjs_data(subgraph) {
             id: protein.id,
             label: protein.name,
             title: get_tooltip(protein.description),
-            color: colors.queried_protein
+            color: colors.protein
         });
 
         if (other) {
@@ -99,7 +104,8 @@ function protein_subgraph_to_visjs_data(subgraph) {
 
     return {
         nodes: nodes,
-        edges: edges
+        edges: edges,
+        selected_nodes: selected_nodes
     }
 }
 
