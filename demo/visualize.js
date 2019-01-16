@@ -9,6 +9,20 @@ var colors = {
     gray: "#c6c6c6"
 };
 
+function generate_legend(legend){
+    var html = "<div><ul class=\"legend\">";
+
+    for (var name in legend) {
+        var color = legend[name];
+        html += "<li><span style=\"background-color: " + color + ";\"></span> " + name + "</li>";
+    }
+
+    html += "</ul></div>";
+
+    var visualization = $("#visualization");
+    $(html).insertBefore(visualization);
+}
+
 function visualize_visjs_data(data) {
     if (network) {
         network.setData(data);
@@ -204,6 +218,13 @@ function pathway_subgraph_to_visjs_data(subgraph) {
 }
 
 $(document).ready(function (){
+    // generate legend
+    generate_legend({
+        "Protein": colors.protein,
+        "Pathway": colors.pathway,
+        "Class": colors.gray
+    });
+
     // create a network
     var container = document.getElementById("visualization");
 
