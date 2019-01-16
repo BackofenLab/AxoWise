@@ -244,6 +244,18 @@ $(document).ready(function (){
             $("#threshold-value").text($("#threshold-slider").slider("value"));
         }
     });
+
+    // reduce graph button
+    $("#reduce-graph-btn").click(() => {
+        if (!network) return;
+
+        selected = network.getSelection();
+        /* TODO:
+        selected.node_ids, selected.edge_ids
+        visualize_visjs_data(selected);
+        */
+    });
+
     // create a network
     var container = document.getElementById("visualization");
 
@@ -256,7 +268,8 @@ $(document).ready(function (){
             }
         },
         interaction: {
-            hideEdgesOnDrag: true
+            hideEdgesOnDrag: true,
+            multiselect: true
         },
         nodes: {
             shape: "dot"
