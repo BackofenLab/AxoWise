@@ -26,7 +26,7 @@ function generate_legend(legend){
 function visualize_visjs_data(data) {
     if (network) {
         network.setData(data);
-        network.stabilize(100);
+        network.stabilize(50);
         if (data.selected_nodes)
             network.selectNodes(data.selected_nodes);
     }
@@ -239,10 +239,11 @@ $(document).ready(function (){
         value: 0.75,
         slide: function (event, ui) {
             $("#threshold-value").text(ui.value);
+        },
+        create: function () {
+            $("#threshold-value").text($("#threshold-slider").slider("value"));
         }
     });
-    $("#threshold-value").text($("#threshold-slider").slider("value"));
-
     // create a network
     var container = document.getElementById("visualization");
 

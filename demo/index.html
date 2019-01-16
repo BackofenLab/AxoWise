@@ -31,13 +31,21 @@
     <!-- Our -->
     <style type="text/css">
         #visualization {
-          width: 100%;
-          height: 700px;
-          border: 1px solid lightgray;
+            width: 100%;
+            height: 700px;
+            border: 1px solid lightgray;
         }
         .legend { list-style: none; }
         .legend li { float: left; margin-right: 10px; }
         .legend span { border: 1px solid #ccc; float: left; width: 24px; height: 24px; margin: 2px;  border-radius: 50%; }
+        #threshold-value {
+            width: 3em;
+            height: 1.6em;
+            top: 50%;
+            margin-top: -.8em;
+            text-align: center;
+            line-height: 1.6em;
+        }
     </style>
 
     <script src="visualize.js"></script>
@@ -57,8 +65,9 @@
             <div class="col-md-4 ui-widget">
                 Protein - protein score threshold:
                 <br/>
-                <div id="threshold-slider"></div>
-                <span id="threshold-value"></span>
+                <div id="threshold-slider">
+                    <div id="threshold-value" class="ui-slider-handle"></div>
+                </div>
             </div>
         </div>
         <div class="row">
