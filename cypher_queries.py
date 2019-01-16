@@ -366,10 +366,10 @@ def get_protein_subgraph(graph, protein_id, threshold=0):
         })
         USING INDEX protein:Protein(id)
         WITH protein
-        MATCH (protein)-[association:ASSOCIATION]-(other:Protein)
+        OPTIONAL MATCH (protein)-[association:ASSOCIATION]-(other:Protein)
         WHERE association.combined >= {threshold}
         WITH protein, association, other
-        MATCH (protein)-[:IN]->(pathway:Pathway)<-[:IN]-(other)
+        OPTIONAL MATCH (protein)-[:IN]->(pathway:Pathway)<-[:IN]-(other)
         RETURN protein, association, other, COLLECT(pathway) AS pathways
     """
 
@@ -394,7 +394,7 @@ def get_proteins_subgraph(graph, protein_ids, threshold=0):
         MATCH (protein2:Protein)
         WHERE protein2.id in {protein_ids}
         WITH protein1, protein2
-        MATCH (protein1)-[association:ASSOCIATION]->(protein2)
+        OPTIONAL MATCH (protein1)-[association:ASSOCIATION]->(protein2)
         WHERE association.combined >= {threshold}
         WITH protein1, association, protein2
         OPTIONAL MATCH (protein1)-[:IN]->(pathway:Pathway)<-[:IN]-(protein2)
@@ -421,7 +421,7 @@ def get_pathway_subgraph(graph, pathway_id):
         })
         USING INDEX pathway:Pathway(id)
         WITH pathway
-        MATCH (class:Class)<-[:IN*]-(pathway)<-[:IN]-(protein:Protein)
+        OPTIONAL MATCH (class:Class)<-[:IN*]-(pathway)<-[:IN]-(protein:Protein)
         RETURN pathway, COLLECT(DISTINCT class) AS classes, COLLECT(DISTINCT protein) as proteins
     """
 
@@ -442,7 +442,7 @@ def get_class_subgraph(graph, name):
         USING INDEX class:Class(name)
         // "fuzzy" search: WHERE toUpper(class.name) =~ (".*" + toUpper({name}) + ".*")
         WITH class
-        MATCH (class)<-[:IN*]-(pathway:Pathway)
+        OPTIONAL MATCH (class)<-[:IN*]-(pathway:Pathway)
         RETURN class, COLLECT(DISTINCT pathway) as pathways
     """
 
