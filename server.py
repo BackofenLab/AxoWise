@@ -97,7 +97,9 @@ neo4j_graph = database.connect_neo4j()
 @app.route("/api/subgraph/protein")
 def protein_subgraph_api():
     protein_id = int(request.args.get("protein_id"))
-    cursor = Cypher.get_protein_subgraph(neo4j_graph, protein_id)
+    threshold = int(float(request.args.get("threshold")) * 1000)
+    print(threshold)
+    cursor = Cypher.get_protein_subgraph(neo4j_graph, protein_id, threshold)
     return Response(json.dumps(cursor.data()), mimetype="application/json")
 
 @app.route("/api/subgraph/protein_list")
