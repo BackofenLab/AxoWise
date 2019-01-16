@@ -31,27 +31,32 @@ function protein_subgraph_to_visjs_data(subgraph) {
 
     for (var i = 0; i < subgraph.length; i++) {
         var row = subgraph[i];
+        var protein = row.protein;
+        var other = row.other;
+        var association = row.association;
 
         nodes.update({
-            id: row.protein.id,
-            label: row.protein.name,
-            title: get_tooltip(row.protein.description),
+            id: protein.id,
+            label: protein.name,
+            title: get_tooltip(protein.description),
             color: colors.queried_protein
         });
 
-        nodes.update({
-            id: row.other.id,
-            label: row.other.name,
-            title: get_tooltip(row.other.description),
-            color: colors.protein
-        });
+        if (other) {
+            nodes.update({
+                id: other.id,
+                label: other.name,
+                title: get_tooltip(other.description),
+                color: colors.protein
+            });
 
-        edges.update({
-            from: row.protein.id,
-            to: row.other.id,
-            label: (row.association.combined / 1000).toString(),
-            color: colors.protein
-        })
+            edges.update({
+                from: protein.id,
+                to: other.id,
+                label: (association.combined / 1000).toString(),
+                color: colors.protein
+            })
+        }
 
         for (var j = 0; j < row.pathways.length; j++) {
             var pathway = row.pathways[j];
@@ -109,12 +114,13 @@ function protein_list_subgraph_to_visjs_data(subgraph) {
             color: colors.protein
         });
 
-        edges.update({
-            from: protein1.id,
-            to: protein2.id,
-            label: (association.combined / 1000).toString(),
-            color: colors.protein
-        })
+        if (association)
+            edges.update({
+                from: protein1.id,
+                to: protein2.id,
+                label: (association.combined / 1000).toString(),
+                color: colors.protein
+            })
 
         for (var j = 0; j < pathways.length; j++) {
             var pathway = pathways[j];
