@@ -231,6 +231,18 @@ $(document).ready(function (){
         "Class": colors.gray
     });
 
+    // threshold slider
+    $("#threshold-slider").slider({
+        min: 0,
+        max: 1,
+        step: 0.01,
+        value: 0.75,
+        slide: function (event, ui) {
+            $("#threshold-value").text(ui.value);
+        }
+    });
+    $("#threshold-value").text($("#threshold-slider").slider("value"));
+
     // create a network
     var container = document.getElementById("visualization");
 
