@@ -132,7 +132,8 @@ function protein_subgraph_to_visjs_data(subgraph) {
                 id: pathway.id,
                 label: pathway.name,
                 title: get_tooltip(pathway.description),
-                color: colors.pathway
+                color: colors.pathway,
+                shape: "square"
             });
 
             edges.update([
@@ -202,7 +203,8 @@ function protein_list_subgraph_to_visjs_data(subgraph) {
                 id: pathway.id,
                 label: pathway.name,
                 title: get_tooltip(pathway.description),
-                color: colors.pathway
+                color: colors.pathway,
+                shape: "square"
             });
 
             edges.update([
@@ -236,7 +238,8 @@ function pathway_subgraph_to_visjs_data(subgraph) {
         id: pathway.id,
         label: pathway.name,
         title: get_tooltip(pathway.description),
-        color: colors.pathway
+        color: colors.pathway,
+        shape: "square"
     });
 
     for (var i = 0; i < subgraph.classes.length; i++) {
