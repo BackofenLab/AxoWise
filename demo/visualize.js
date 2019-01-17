@@ -11,17 +11,18 @@ var colors = {
 };
 
 function generate_legend(legend){
-    var html = "<div><ul class=\"legend\">";
+    var container = $("#legend-container");
+
+    var html = "<ul class=\"legend\">";
 
     for (var name in legend) {
         var color = legend[name];
         html += "<li><span style=\"background-color: " + color + ";\"></span> " + name + "</li>";
     }
 
-    html += "</ul></div>";
+    html += "</ul>";
 
-    var visualization = $("#visualization");
-    $(html).insertBefore(visualization);
+    container.html(html);
 }
 
 function get_edge_color(score) {
