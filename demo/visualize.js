@@ -77,7 +77,7 @@ function protein_subgraph_to_visjs_data(subgraph) {
             edges.update({
                 from: protein.id,
                 to: other.id,
-                label: (association.combined / 1000).toString(),
+                title: (association.combined / 1000).toString(),
                 color: colors.protein
             })
         }
@@ -143,7 +143,7 @@ function protein_list_subgraph_to_visjs_data(subgraph) {
             edges.update({
                 from: protein1.id,
                 to: protein2.id,
-                label: (association.combined / 1000).toString(),
+                title: (association.combined / 1000).toString(),
                 color: colors.protein
             })
 
