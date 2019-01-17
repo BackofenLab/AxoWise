@@ -3,11 +3,11 @@ var network = null;
 var current_data = null;
 
 var colors = {
-    protein: "#52b6e5",
-    pathway: "#f2b500",
-    white: "#ffffff",
-    black: "#000000",
-    gray: "#c6c6c6"
+    protein: "rgb(82,182,229)",
+    pathway: "rgb(242,181,0)",
+    white: "rgb(255,255,255)",
+    black: "rgb(0,0,0)",
+    gray: "rgb(198,198,198)"
 };
 
 function generate_legend(legend){
@@ -22,6 +22,44 @@ function generate_legend(legend){
 
     var visualization = $("#visualization");
     $(html).insertBefore(visualization);
+}
+
+function get_edge_color(score) {
+
+    function color_to_string(color) {
+        return "rgb(" + color.r + "," + color.g + "," + color.b + ")";
+    }
+
+    function weight_average_colors(c1, c2, w) {
+        return {
+            r: Math.floor((1 - w) * c1.r + w * c2.r),
+            g: Math.floor((1 - w) * c1.g + w * c2.g),
+            b: Math.floor((1 - w) * c1.b + w * c2.b)
+        }
+    }
+
+    var high = {r: 255, g: 0, b: 0};
+    var medium = {r: 0, g: 255, b: 0};
+    var low = {r: 0, g: 0, b: 255};
+
+    var color = null;
+
+    if (score <=0) {
+        color = color_to_string(low);
+    }
+    else if (score > 0 && score <= 500) {
+        var w = score / 500;
+        color = weight_average_colors(low, medium, w);
+    }
+    else if (score > 500 && score <= 1000) {
+        var w = (score - 500) / 500;
+        color = weight_average_colors(medium, high, w);
+    }
+    else {
+        color = high;
+    }
+
+    return color_to_string(color);
 }
 
 function visualize_visjs_data(data, reducing) {
@@ -74,12 +112,16 @@ function protein_subgraph_to_visjs_data(subgraph) {
                 color: colors.protein
             });
 
+            var edge_color = get_edge_color(association.combined);
             edges.update({
                 from: protein.id,
                 to: other.id,
+                value: association.combined,
                 title: (association.combined / 1000).toString(),
-                color: colors.protein
-            })
+                color: {
+                    color: edge_color, highlight: edge_color
+                }
+            });
         }
 
         for (var j = 0; j < row.pathways.length; j++) {
@@ -139,13 +181,18 @@ function protein_list_subgraph_to_visjs_data(subgraph) {
             color: colors.protein
         });
 
-        if (association)
+        if (association) {
+            var edge_color = get_edge_color(association.combined);
             edges.update({
                 from: protein1.id,
                 to: protein2.id,
+                value: association.combined,
                 title: (association.combined / 1000).toString(),
-                color: colors.protein
-            })
+                color: {
+                    color: edge_color, highlight: edge_color
+                }
+            });
+        }
 
         for (var j = 0; j < pathways.length; j++) {
             var pathway = pathways[j];
@@ -301,13 +348,20 @@ $(document).ready(function (){
             shape: "dot"
         },
         edges: {
-            color: {inherit: true},
+            color: {
+                color: colors.gray
+            },
             smooth: false,
             font: {
                 size: 12
             },
+            scaling: {
+                min: 1,
+                max: 3
+            }
         },
         layout: {
+            randomSeed: 42,
             improvedLayout: false
         }
     };
