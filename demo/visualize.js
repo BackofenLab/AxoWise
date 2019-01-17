@@ -1,5 +1,6 @@
 
 var network = null;
+var current_data = null;
 
 var colors = {
     protein: "#52b6e5",
@@ -23,13 +24,17 @@ function generate_legend(legend){
     $(html).insertBefore(visualization);
 }
 
-function visualize_visjs_data(data) {
-    if (network) {
-        network.setData(data);
-        network.stabilize(50);
-        if (data.selected_nodes)
-            network.selectNodes(data.selected_nodes);
-    }
+function visualize_visjs_data(data, reducing) {
+    if (!network) return;
+
+    network.setData(data);
+    network.stabilize(50);
+
+    if (!reducing)
+        current_data = data;
+
+    if (data.selected_nodes)
+        network.selectNodes(data.selected_nodes);
 }
 
 function get_tooltip(text) {
@@ -247,13 +252,33 @@ $(document).ready(function (){
 
     // reduce graph button
     $("#reduce-graph-btn").click(() => {
-        if (!network) return;
+        if (!network || !current_data) return;
 
         selected = network.getSelection();
-        /* TODO:
-        selected.node_ids, selected.edge_ids
-        visualize_visjs_data(selected);
-        */
+
+        var nodes = current_data.nodes.get({
+            filter: function (node) {
+                return (selected.nodes.indexOf(node.id) >= 0);
+            }
+        });
+
+        var edges = current_data.edges.get({
+            filter: function (edge) {
+                return (selected.edges.indexOf(edge.id) >= 0);
+            }
+        });
+
+        visualize_visjs_data({
+            nodes: nodes,
+            edges: edges
+        }, true);
+    });
+
+    // reset graph button
+    $("#reset-graph-btn").click(() => {
+        if (!network || !current_data) return;
+
+        visualize_visjs_data(current_data, false);
     });
 
     // create a network
@@ -269,7 +294,8 @@ $(document).ready(function (){
         },
         interaction: {
             hideEdgesOnDrag: true,
-            multiselect: true
+            multiselect: true,
+            navigationButtons: true
         },
         nodes: {
             shape: "dot"
@@ -282,7 +308,7 @@ $(document).ready(function (){
             },
         },
         layout: {
-            improvedLayout: true
+            improvedLayout: false
         }
     };
     

@@ -33,7 +33,7 @@
         #visualization {
             width: 100%;
             height: 700px;
-            border: 1px solid lightgray;
+            /* border: 1px solid lightgray; */
         }
         .legend { list-style: none; }
         .legend li { float: left; margin-right: 10px; }
@@ -68,6 +68,10 @@
                 <div id="threshold-slider">
                     <div id="threshold-value" class="ui-slider-handle"></div>
                 </div>
+            </div>
+            <div class="col-md-4 ui-widget">
+                <button id="reduce-graph-btn" class="btn btn-primary">Reduce</button>
+                <button id="reset-graph-btn" class="btn btn-primary">Reset</button>
             </div>
         </div>
         <div class="row">

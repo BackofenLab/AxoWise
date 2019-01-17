@@ -62,7 +62,7 @@ $(document).ready(function () {
             .done(function (subgraph) {
                 $("#data").text(JSON.stringify(subgraph, null, '\t'));
                 data = protein_subgraph_to_visjs_data(subgraph);
-                visualize_visjs_data(data);
+                visualize_visjs_data(data, false);
             });
     });
 
@@ -96,7 +96,7 @@ $(document).ready(function () {
             .done(function (subgraph) {
                 $("#data").text(JSON.stringify(subgraph, null, '\t'));
                 data = pathway_subgraph_to_visjs_data(subgraph);
-                visualize_visjs_data(data);
+                visualize_visjs_data(data, false);
             });
     });
 
@@ -128,7 +128,7 @@ $(document).ready(function () {
                         .done(function (subgraph) {
                             $("#data").text(JSON.stringify(subgraph, null, '\t'));
                             data = protein_list_subgraph_to_visjs_data(subgraph);
-                            visualize_visjs_data(data);
+                            visualize_visjs_data(data, false);
                         });
                 });
     });
