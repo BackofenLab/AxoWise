@@ -392,9 +392,9 @@ def get_proteins_subgraph(graph, protein_ids, threshold=0):
         WHERE protein1.id IN {protein_ids}
         WITH protein1
         MATCH (protein2:Protein)
-        WHERE protein2.id in {protein_ids}
+        WHERE protein2.id IN {protein_ids} AND protein1.id > protein2.id
         WITH protein1, protein2
-        OPTIONAL MATCH (protein1)-[association:ASSOCIATION]->(protein2)
+        OPTIONAL MATCH (protein1)-[association:ASSOCIATION]-(protein2)
         WHERE association.combined >= {threshold}
         WITH protein1, association, protein2
         OPTIONAL MATCH (protein1)-[:IN]->(pathway:Pathway)<-[:IN]-(protein2)
