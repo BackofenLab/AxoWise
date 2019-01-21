@@ -37,6 +37,21 @@
     <script src="api.js"></script>
 
     <style type="text/css">
+        .legend {
+            list-style: none;
+        }
+        .legend li {
+            float: left;
+            margin-right: 10px;
+        }
+        .legend span {
+            border: 1px solid #ccc;
+            float: left;
+            width: 24px;
+            height: 24px;
+            margin: 2px;
+            border-radius: 50%;
+        }
         #visualization {
             width: 100%;
             height: 640px;
@@ -44,23 +59,27 @@
             margin-top: 20px;
             margin-bottom: 20px;
         }
-        .legend { list-style: none; }
-        .legend li { float: left; margin-right: 10px; }
-        .legend span { border: 1px solid #ccc; float: left; width: 24px; height: 24px; margin: 2px;  border-radius: 50%; }
-        #threshold-value {
-            width: 3em;
-            height: 1.6em;
-            top: 50%;
-            margin-top: -.8em;
+        #legend-container {
+            overflow: hidden;
+            margin: 0
+        }
+        #title-container {
+            /* display: inline; */
             text-align: center;
-            line-height: 1.6em;
+            margin: 0;
+            margin-left: 20px;
+            position: relative;
+            top: 60px;
+            font-size: 20pt;
+            z-index: 1;
         }
     </style>
 </head>
 
 <body><div id="pgdb-app">
     <h1 style="text-align: center;">Protein Graph Database</h1>
-    <div id="legend-container" style="overflow: hidden;"></div>
+    <div id="legend-container"></div>
+    <div id="title-container">{{visualization.title}}</div>
     <div id="visualization"></div>
     <div class="container">
         <div class="row">

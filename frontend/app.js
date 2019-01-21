@@ -4,7 +4,22 @@ $(document).ready(function () {
     APP = new Vue({
         el: '#pgdb-app',
         data: {
-            title: null,
+            api: {
+                search: {
+                    species: "api/search/species",
+                    protein: "api/search/protein",
+                    protein_list: "api/search/protein_list",
+                    pathway: "api/search/pathway"
+                },
+                subgraph: {
+                    protein: "api/subgraph/protein",
+                    protein_list: "api/subgraph/protein_list",
+                    pathway: "api/subgraph/pathway"
+                }
+            },
+            visualization: {
+                title: "",
+            },
             species: {
                 ncbi_id: null,
                 kegg_id: null,

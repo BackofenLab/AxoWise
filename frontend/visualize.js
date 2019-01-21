@@ -1,6 +1,6 @@
 
-var network = null;
-var current_data = null;
+var NETWORK = null;
+var NETWORK_DATA = null;
 
 var colors = {
     protein: "rgb(82,182,229)",
@@ -64,16 +64,17 @@ function get_edge_color(score) {
 }
 
 function visualize_visjs_data(data, reducing) {
-    if (!network) return;
+    if (!NETWORK) return;
 
-    network.setData(data);
-    network.stabilize(50);
+    NETWORK.setData(data);
+    NETWORK.stabilize(50);
+    NETWORK.storePositions();
 
     if (!reducing)
-        current_data = data;
+        NETWORK_DATA = data;
 
     if (data.selected_nodes)
-        network.selectNodes(data.selected_nodes);
+        NETWORK.selectNodes(data.selected_nodes);
 }
 
 function get_tooltip(text) {
@@ -289,17 +290,17 @@ $(document).ready(function (){
 
     // reduce graph button
     $("#reduce-graph-btn").click(() => {
-        if (!network || !current_data) return;
+        if (!NETWORK || !NETWORK_DATA) return;
 
-        selected = network.getSelection();
+        var selected = NETWORK.getSelection();
 
-        var nodes = current_data.nodes.get({
+        var nodes = NETWORK_DATA.nodes.get({
             filter: function (node) {
                 return (selected.nodes.indexOf(node.id) >= 0);
             }
         });
 
-        var edges = current_data.edges.get({
+        var edges = NETWORK_DATA.edges.get({
             filter: function (edge) {
                 return (selected.edges.indexOf(edge.id) >= 0);
             }
@@ -313,9 +314,9 @@ $(document).ready(function (){
 
     // reset graph button
     $("#reset-graph-btn").click(() => {
-        if (!network || !current_data) return;
+        if (!NETWORK || !NETWORK_DATA) return;
 
-        visualize_visjs_data(current_data, false);
+        visualize_visjs_data(NETWORK_DATA, false);
     });
 
     // create a network
@@ -356,7 +357,7 @@ $(document).ready(function (){
         }
     };
     
-    network = new vis.Network(container, {
+    NETWORK = new vis.Network(container, {
         nodes: new vis.DataSet([]),
         edges: new vis.DataSet([])
     }, options);
