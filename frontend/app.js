@@ -20,6 +20,13 @@ $(document).ready(function () {
             visualization: {
                 title: "",
             },
+            rectangular_select: {
+                canvas: null,
+                context: null,
+                rectangle: {},
+                active: false,
+                surface_backup: null
+            },
             species: {
                 ncbi_id: null,
                 kegg_id: null,

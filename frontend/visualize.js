@@ -280,6 +280,43 @@ function pathway_subgraph_to_visjs_data(subgraph) {
     }
 }
 
+// rectangular select
+function backup_surface() {
+    var canvas = APP.rectangular_select.canvas;
+    var context = APP.rectangular_select.context;
+    APP.rectangular_select.surface_backup = context.getImageData(0, 0, canvas.width, canvas.height);
+}
+
+function restore_surface() {
+    var context = APP.rectangular_select.context;
+    var surface = APP.rectangular_select.surface_backup;
+    context.putImageData(surface, 0, 0);
+}
+
+function select_nodes_rectangular() {
+    if(!NETWORK_DATA) return;
+    var rectangle = APP.rectangular_select.rectangle;
+
+    var selected_nodes = [];
+    var x_range = get_select_range(rectangle.startX, rectangle.w);
+    var y_range = get_select_range(rectangle.startY, rectangle.h);
+
+    var nodes = NETWORK_DATA.nodes.get();
+    for (var i = 0; i < nodes.length; i++) {
+        var node = nodes[i];
+        var node_position = NETWORK.getPositions([node.id]);
+        var node_XY = NETWORK.canvasToDOM({x: node_position[node.id].x, y: node_position[node.id].y});
+        if (x_range.start <= node_XY.x && node_XY.x <= x_range.end && y_range.start <= node_XY.y && node_XY.y <= y_range.end) {
+            selected_nodes.push(node.id);
+        }
+    }
+    NETWORK.selectNodes(selected_nodes);
+}
+
+function get_select_range(start, length) {
+    return length > 0 ? {start: start, end: start + length} : {start: start + length, end: start};
+}
+
 $(document).ready(function (){
     // generate legend
     generate_legend({
@@ -362,4 +399,49 @@ $(document).ready(function (){
         edges: new vis.DataSet([])
     }, options);
 
+
+    // rectangular select
+    container.oncontextmenu = function() { return false; };
+    APP.rectangular_select.canvas = NETWORK.canvas.frame.canvas;
+    APP.rectangular_select.context = APP.rectangular_select.canvas.getContext("2d");
+
+    $(container).on("mousemove", function(e) {
+        if (APP.rectangular_select.active) {
+            var context = APP.rectangular_select.context;
+            var rectangle = APP.rectangular_select.rectangle;
+            restore_surface();
+            rectangle.w = (e.pageX - this.offsetLeft) - rectangle.startX;
+            rectangle.h = (e.pageY - this.offsetTop) - rectangle.startY ;
+
+            context.setLineDash([5]);
+            context.strokeStyle = "rgb(82,182,229)";
+            context.strokeRect(rectangle.startX, rectangle.startY, rectangle.w, rectangle.h);
+            context.setLineDash([]);
+            context.fillStyle = "rgba(82,182,229,0.2)";
+            context.fillRect(rectangle.startX, rectangle.startY, rectangle.w, rectangle.h);
+        }
+    });
+
+    $(container).on("mousedown", function(e) {
+        if (e.button == 2) {
+            selectedNodes = e.ctrlKey ? network.getSelectedNodes() : null;
+            backup_surface();
+            var that = this;
+            var rectangle = APP.rectangular_select.rectangle;
+            rectangle.startX = e.pageX - this.offsetLeft;
+            rectangle.startY = e.pageY - this.offsetTop;
+            APP.rectangular_select.active = true;
+            $(container)[0].style.cursor = "crosshair";
+        }
+    });
+
+    $(container).on("mouseup", function(e) {
+        if (e.button == 2) {
+            restore_surface();
+            APP.rectangular_select.active = false;
+
+            $(container)[0].style.cursor = "default";
+            select_nodes_rectangular();
+        }
+    });
 });
