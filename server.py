@@ -64,7 +64,7 @@ def search_protein_api():
 @app.route("/api/search/protein_list", methods=["GET"])
 def search_protein_list_api():
     query = request.args.get("query")
-    protein_list = query.split(";")
+    protein_list = list(filter(None, query.split(";")))
     species_id = int(request.args.get("species_id"))
     results = fuzzy_search.search_protein_list(protein_list, species_id)
     return_object = proteins_to_dicts(results)
