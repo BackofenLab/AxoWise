@@ -305,6 +305,8 @@ function select_nodes_rectangular() {
     for (var i = 0; i < nodes.length; i++) {
         var node = nodes[i];
         var node_position = NETWORK.getPositions([node.id]);
+        if (!node_position[node.id]) continue;
+
         var node_XY = NETWORK.canvasToDOM({x: node_position[node.id].x, y: node_position[node.id].y});
         if (x_range.start <= node_XY.x && node_XY.x <= x_range.end && y_range.start <= node_XY.y && node_XY.y <= y_range.end) {
             selected_nodes.push(node.id);

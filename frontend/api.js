@@ -104,7 +104,6 @@ $(document).ready(function () {
         $.get(APP.api.subgraph.pathway, { pathway_id: APP.pathway.id })
             .done(function (subgraph) {
                 var data = pathway_subgraph_to_visjs_data(subgraph);
-                console.log(data);
                 visualize_visjs_data(data, false);
 
                 // Vue.js
