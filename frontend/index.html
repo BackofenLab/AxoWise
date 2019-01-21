@@ -28,7 +28,14 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css"/>
 
+    <!-- Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
     <!-- Our -->
+    <script src="app.js"></script>
+    <script src="visualize.js"></script>
+    <script src="api.js"></script>
+
     <style type="text/css">
         #visualization {
             width: 100%;
@@ -49,12 +56,9 @@
             line-height: 1.6em;
         }
     </style>
-
-    <script src="visualize.js"></script>
-    <script src="api.js"></script>
 </head>
 
-<body>
+<body><div id="pgdb-app">
     <h1 style="text-align: center;">Protein Graph Database</h1>
     <div id="legend-container" style="overflow: hidden;"></div>
     <div id="visualization"></div>
@@ -63,14 +67,13 @@
             <div class="col-md-4 ui-widget">
                 Species:
                 <br/>
-                <input id="species" name="species" type="text"></input>
+                <input id="species-input" type="text" v-model="species.name"></input>
             </div>
             <div class="col-md-4 ui-widget">
                 Protein - protein score threshold:
                 <br/>
-                <div id="threshold-slider">
-                    <div id="threshold-value" class="ui-slider-handle"></div>
-                </div>
+                <input type="range" v-bind:min="threshold.min" v-bind:max="threshold.max" v-bind:step="threshold.step" v-model="threshold.value" class="ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"/>
+                <input type="number" v-bind:min="threshold.min" v-bind:max="threshold.max" v-bind:step="threshold.step" v-model="threshold.value"/>
             </div>
             <div class="col-md-4 ui-widget">
                 <button id="reduce-graph-btn" class="btn btn-primary">Reduce</button>
@@ -81,7 +84,7 @@
             <div class="col-md-4 ui-widget">
                 Protein:
                 <br/>
-                <input id="protein" name="protein" type="text"></input>
+                <input id="protein-input" type="text" v-model="protein.name"></input>
                 <br/>
                 <button id="protein-btn" class="btn btn-primary">Submit</button>
             </div>
@@ -89,7 +92,7 @@
             <div class="col-md-4 ui-widget">
                 Pathway:
                 <br/>
-                <input id="pathway" name="pathway" type="text"></input>
+                <input id="pathway-input" type="text" v-model="pathway.name"></input>
                 <br/>
                 <button id="pathway-btn" class="btn btn-primary">Submit</button>
             </div>
@@ -97,13 +100,11 @@
             <div class="col-md-4 ui-widget">
                 Protein list:
                 <br/>
-                <textarea id="protein-list" name="protein-list"></textarea>
+                <textarea id="protein-list-input" v-model="protein_list.value"></textarea>
                 <br/>
                 <button id="protein-list-btn" class="btn btn-primary">Submit</button>
             </div>
         </div>
     </div>
-    <textarea id="data" style="width: 100vw; height: 100vh" disabled="true" hidden="true">
-    </textarea>
-</body>
+</div></body>
 </html>

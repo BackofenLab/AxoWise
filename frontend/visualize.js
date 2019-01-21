@@ -287,20 +287,6 @@ $(document).ready(function (){
         "Class": colors.gray
     });
 
-    // threshold slider
-    $("#threshold-slider").slider({
-        min: 0,
-        max: 1,
-        step: 0.01,
-        value: 0.75,
-        slide: function (event, ui) {
-            $("#threshold-value").text(ui.value);
-        },
-        create: function () {
-            $("#threshold-value").text($("#threshold-slider").slider("value"));
-        }
-    });
-
     // reduce graph button
     $("#reduce-graph-btn").click(() => {
         if (!network || !current_data) return;
