@@ -10,9 +10,19 @@ app = Flask(__name__)
 
 # ====================== Index page ======================
 
+_SCRIPT_DIR = os.path.dirname(__file__)
+_SERVE_DIR = "frontend"
+_INDEX_FILE = "index.html"
+
+@app.route("/")
+def index():
+    return send_from_directory(os.path.join(_SCRIPT_DIR, _SERVE_DIR), _INDEX_FILE)
+
+# ====================== Other files ======================
+
 @app.route("/<path:path>")
-def index(path):
-    return send_from_directory(os.path.join(os.path.dirname(__file__), "demo"), path)
+def files(path):
+    return send_from_directory(os.path.join(_SCRIPT_DIR, _SERVE_DIR), path)
 
 # ====================== Fuzzy search API ======================
 
@@ -98,7 +108,6 @@ neo4j_graph = database.connect_neo4j()
 def protein_subgraph_api():
     protein_id = int(request.args.get("protein_id"))
     threshold = int(float(request.args.get("threshold")) * 1000)
-    print(threshold)
     cursor = Cypher.get_protein_subgraph(neo4j_graph, protein_id, threshold)
     return Response(json.dumps(cursor.data()), mimetype="application/json")
 
