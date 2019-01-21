@@ -101,7 +101,8 @@ $(document).ready(function () {
     });
 
     pathway_btn.click(() => {
-        $.get(APP.api.subgraph.pathway, { pathway_id: APP.pathway.id })
+        var threshold = parseFloat(APP.threshold.value);
+        $.get(APP.api.subgraph.pathway, { pathway_id: APP.pathway.id, threshold: threshold })
             .done(function (subgraph) {
                 var data = pathway_subgraph_to_visjs_data(subgraph);
                 visualize_visjs_data(data, false);

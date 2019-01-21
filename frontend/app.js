@@ -19,6 +19,8 @@ $(document).ready(function () {
             },
             visualization: {
                 title: "",
+                num_nodes: 0,
+                num_edges: 0
             },
             rectangular_select: {
                 canvas: null,

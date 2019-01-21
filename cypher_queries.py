@@ -398,7 +398,7 @@ def get_proteins_subgraph(graph, protein_ids, threshold=0):
         WHERE association.combined >= {threshold}
         WITH protein1, association, protein2
         OPTIONAL MATCH (protein1)-[:IN]->(pathway:Pathway)<-[:IN]-(protein2)
-        RETURN protein1, association, protein2, COLLECT(pathway) AS pathways
+        RETURN DISTINCT protein1, association, protein2, COLLECT(pathway) AS pathways
     """
 
     param_dict = dict(
@@ -407,7 +407,7 @@ def get_proteins_subgraph(graph, protein_ids, threshold=0):
     )
     return graph.run(query, param_dict)
 
-def get_pathway_subgraph(graph, pathway_id):
+def get_pathway_subgraph(graph, pathway_id, threshold=0):
     """
     For the given pathway, return the Neo4j subgraph
     of the pathway, all contained proteins and
@@ -421,11 +421,23 @@ def get_pathway_subgraph(graph, pathway_id):
         })
         USING INDEX pathway:Pathway(id)
         WITH pathway
-        OPTIONAL MATCH (class:Class)<-[:IN*]-(pathway)<-[:IN]-(protein:Protein)
-        RETURN pathway, COLLECT(DISTINCT class) AS classes, COLLECT(DISTINCT protein) as proteins
+        OPTIONAL MATCH (class:Class)<-[:IN*]-(pathway)
+        WITH pathway, COLLECT(DISTINCT class) AS classes
+        MATCH (protein:Protein)-->(pathway)
+        WITH classes, COLLECT(protein) AS proteins
+        WITH classes, proteins, SIZE(proteins) AS num_proteins
+        UNWIND RANGE(0, num_proteins - 1) AS i
+        UNWIND RANGE(i + 1, num_proteins - 1) AS j
+        WITH classes, proteins, proteins[i] AS protein1, proteins[j] AS protein2
+        MATCH (protein1)-[association:ASSOCIATION]-(protein2)
+        WHERE association.combined >= {threshold}
+        RETURN classes, proteins, COLLECT([protein1.id, association.combined, protein2.id]) AS scores
     """
 
-    param_dict = dict(pathway_id=pathway_id)
+    param_dict = dict(
+        pathway_id=pathway_id,
+        threshold=threshold
+    )
     return graph.run(query, param_dict)
 
 def get_class_subgraph(graph, name):

@@ -55,23 +55,27 @@
         #visualization {
             width: 100%;
             height: 640px;
-            border: 1px solid lightgray;
+            /* border: 1px solid lightgray; */
             margin-top: 20px;
             margin-bottom: 20px;
         }
         #legend-container {
+            position: absolute;
+            top: 0;
+            left: 0;
             overflow: hidden;
-            margin: 0
+            margin-top: 20px;
         }
         #title-container {
-            /* display: inline; */
-            text-align: center;
-            margin: 0;
-            margin-left: 20px;
-            position: relative;
-            top: 60px;
-            font-size: 20pt;
+            overflow: hidden;
+            position: absolute;
+            margin-top: 20px;
+            margin-right: 10px;
+            top: 0;
+            right: 0;
+            font-size: 16pt;
             z-index: 1;
+            text-align: right;
         }
     </style>
 </head>
@@ -79,7 +83,11 @@
 <body><div id="pgdb-app">
     <h1 style="text-align: center;">Protein Graph Database</h1>
     <div id="legend-container"></div>
-    <div id="title-container">{{visualization.title}}</div>
+    <div id="title-container">
+        {{visualization.title}}<br/>
+        Nodes: {{visualization.num_nodes}}<br/>
+        Edges: {{visualization.num_edges}}
+    </div>
     <div id="visualization"></div>
     <div class="container">
         <div class="row">
@@ -95,8 +103,8 @@
                 <input type="number" v-bind:min="threshold.min" v-bind:max="threshold.max" v-bind:step="threshold.step" v-model="threshold.value"/>
             </div>
             <div class="col-md-4 ui-widget">
-                <button id="reduce-graph-btn" class="btn btn-primary">Reduce</button>
-                <button id="reset-graph-btn" class="btn btn-primary">Reset</button>
+                <button id="reduce-graph-btn" class="btn btn-warning">Reduce</button>
+                <button id="undo-graph-btn" class="btn btn-secondary">Undo</button>
             </div>
         </div>
         <div class="row">

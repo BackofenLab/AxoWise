@@ -121,7 +121,8 @@ def protein_list_subgraph_api():
 @app.route("/api/subgraph/pathway")
 def pathway_subgraph_api():
     pathway_id = request.args.get("pathway_id")
-    cursor = Cypher.get_pathway_subgraph(neo4j_graph, pathway_id)
+    threshold = int(float(request.args.get("threshold")) * 1000)
+    cursor = Cypher.get_pathway_subgraph(neo4j_graph, pathway_id, threshold)
     return Response(json.dumps(cursor.data()[0]), mimetype="application/json")
 
 if __name__ == "__main__":
