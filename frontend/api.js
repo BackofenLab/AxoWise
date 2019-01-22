@@ -8,6 +8,8 @@ $(document).ready(function () {
     var protein_list = $("#protein-list-input"); protein_list.prop("disabled", true);
     var protein_list_btn = $("#protein-list-btn"); protein_list_btn.prop("disabled", true);
 
+    var progressbar = $("#progressbar");
+
     // --------------- Species ---------------
     var suggested_species_list = {};
 
@@ -62,6 +64,13 @@ $(document).ready(function () {
     });
 
     protein_btn.click(() => {
+        // wait
+        progressbar.progressbar("option", "value", false);
+        protein_btn.prop("disabled", true);
+        pathway_btn.prop("disabled", true);
+        protein_list_btn.prop("disabled", true);
+
+
         var threshold = parseFloat(APP.threshold.value);
         $.get(APP.api.subgraph.protein, { protein_id: APP.protein.id, threshold: threshold })
             .done(function (subgraph) {
@@ -70,6 +79,12 @@ $(document).ready(function () {
 
                 // Vue.js
                 APP.visualization.title = APP.protein.name;
+
+                // wait is over
+                progressbar.progressbar("option", "value", 0);
+                protein_btn.prop("disabled", false);
+                pathway_btn.prop("disabled", false);
+                protein_list_btn.prop("disabled", false);
             });
     });
 
@@ -101,6 +116,12 @@ $(document).ready(function () {
     });
 
     pathway_btn.click(() => {
+        // wait
+        progressbar.progressbar("option", "value", false);
+        protein_btn.prop("disabled", true);
+        pathway_btn.prop("disabled", true);
+        protein_list_btn.prop("disabled", true);
+
         var threshold = parseFloat(APP.threshold.value);
         $.get(APP.api.subgraph.pathway, { pathway_id: APP.pathway.id, threshold: threshold })
             .done(function (subgraph) {
@@ -109,6 +130,12 @@ $(document).ready(function () {
 
                 // Vue.js
                 APP.visualization.title = APP.pathway.name;
+
+                // wait is over
+                progressbar.progressbar("option", "value", 0);
+                protein_btn.prop("disabled", false);
+                pathway_btn.prop("disabled", false);
+                protein_list_btn.prop("disabled", false);
             });
     });
 
@@ -122,6 +149,12 @@ $(document).ready(function () {
         // Vue.js
         APP.visualization.title = "";
 
+        // wait
+        progressbar.progressbar("option", "value", false);
+        protein_btn.prop("disabled", true);
+        pathway_btn.prop("disabled", true);
+        protein_list_btn.prop("disabled", true);
+
         $.get(APP.api.search.protein_list, { query: APP.protein_list.value.split('\n').join(';'), species_id: APP.species.ncbi_id })
                 .done(function (data) {
                     APP.protein_list.ids = data.map(x => x.protein_id);
@@ -131,6 +164,12 @@ $(document).ready(function () {
                         .done(function (subgraph) {
                             var data = protein_list_subgraph_to_visjs_data(subgraph);
                             visualize_visjs_data(data, false);
+
+                            // wait is over
+                            progressbar.progressbar("option", "value", 0);
+                            protein_btn.prop("disabled", false);
+                            pathway_btn.prop("disabled", false);
+                            protein_list_btn.prop("disabled", false);
                         });
                 });
     });

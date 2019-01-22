@@ -77,6 +77,15 @@
             z-index: 1;
             text-align: right;
         }
+        #progressbar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+        }
+        #progressbar .ui-progressbar-value {
+            background: rgb(82,182,229);
+        }
     </style>
 </head>
 
@@ -86,7 +95,7 @@
     <div id="title-container">
         {{visualization.title}}<br/>
         Nodes: {{visualization.num_nodes}}<br/>
-        Edges: {{visualization.num_edges}}
+        Edges: {{visualization.num_edges}}<br/>
     </div>
     <div id="visualization"></div>
     <div class="container">
@@ -133,5 +142,6 @@
             </div>
         </div>
     </div>
+    <div id="progressbar"></div>
 </div></body>
 </html>

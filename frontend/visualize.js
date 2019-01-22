@@ -270,11 +270,11 @@ function pathway_subgraph_to_visjs_data(subgraph) {
         });
     }
 
-    for (var i = 0; i < subgraph.scores.length; i++) {
-        var entry = subgraph.scores[i];
-        var protein1_id = entry[0];
-        var combined_score = entry[1];
-        var protein2_id = entry[2];
+    for (var i = 0; i < subgraph.associations.length; i++) {
+        var entry = subgraph.associations[i];
+        var protein1_id = entry.protein1_id;
+        var combined_score = entry.combined_score;
+        var protein2_id = entry.protein2_id;
 
         var edge_color = get_edge_color(combined_score);
         edges.update({
@@ -339,6 +339,11 @@ $(document).ready(function (){
         "Protein": colors.protein,
         "Pathway": colors.pathway,
         "Class": colors.gray
+    });
+
+    // progress bar
+    $("#progressbar").progressbar({
+        value: 0
     });
 
     // reduce graph button

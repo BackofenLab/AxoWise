@@ -431,7 +431,11 @@ def get_pathway_subgraph(graph, pathway_id, threshold=0):
         WITH classes, proteins, proteins[i] AS protein1, proteins[j] AS protein2
         MATCH (protein1)-[association:ASSOCIATION]-(protein2)
         WHERE association.combined >= {threshold}
-        RETURN classes, proteins, COLLECT([protein1.id, association.combined, protein2.id]) AS scores
+        RETURN classes, proteins, COLLECT({
+            protein1_id: protein1.id,
+            combined_score: association.combined,
+            protein2_id: protein2.id
+        }) AS associations
     """
 
     param_dict = dict(
