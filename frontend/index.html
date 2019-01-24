@@ -25,7 +25,6 @@
 
     <!-- Our -->
     <script src="js/app.js"></script>
-    <script src="js/api.js"></script>
     <script src="js/visualize.js"></script>
 
     <script src="js/components/species-search.js"></script>
@@ -71,7 +70,10 @@
                      v-bind:species="species"
                      v-bind:threshold="threshold"
             ></pathway>
-            <protein-list></protein-list>
+            <protein-list v-model="protein_list"
+                          v-bind:species="species"
+                          v-bind:threshold="threshold"
+            ></protein-list>
         </div>
         <div class="row">
             <node-filter></node-filter>

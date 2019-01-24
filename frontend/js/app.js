@@ -4,14 +4,6 @@ $(document).ready(function () {
     APP = new Vue({
         el: '#pgdb-app',
         data: {
-            api: {
-                search: {
-                    protein_list: "api/search/protein_list"
-                },
-                subgraph: {
-                    protein_list: "api/subgraph/protein_list"
-                }
-            },
             wait: true,
             last_clicked: null,
             visualization: {
@@ -42,10 +34,7 @@ $(document).ready(function () {
                 id: null,
                 name: null  
             },
-            protein_list: {
-                value: null,
-                ids: []
-            },
+            protein_list: null,
             threshold: 0.75
         },
         methods: {
