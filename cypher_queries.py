@@ -388,12 +388,13 @@ def get_proteins_subgraph(graph, protein_ids, threshold=0):
 
     # Neo4j query
     query = """
-        MATCH (protein1:Protein)
-        WHERE protein1.id IN {protein_ids}
-        WITH protein1
-        MATCH (protein2:Protein)
-        WHERE protein2.id IN {protein_ids} AND protein1.id > protein2.id
-        WITH protein1, protein2
+        MATCH (protein:Protein)
+        WHERE protein.id IN {protein_ids}
+        WITH COLLECT(protein) AS proteins
+        WITH proteins, SIZE(proteins) AS num_proteins
+        UNWIND RANGE(0, num_proteins - 1) AS i
+        UNWIND RANGE(i + 1, num_proteins - 1) AS j
+        WITH proteins[i] AS protein1, proteins[j] AS protein2
         OPTIONAL MATCH (protein1)-[association:ASSOCIATION]-(protein2)
         WHERE association.combined >= {threshold}
         WITH protein1, association, protein2
@@ -428,13 +429,14 @@ def get_pathway_subgraph(graph, pathway_id, threshold=0):
         WITH classes, proteins, SIZE(proteins) AS num_proteins
         UNWIND RANGE(0, num_proteins - 1) AS i
         UNWIND RANGE(i + 1, num_proteins - 1) AS j
-        WITH classes, proteins, proteins[i] AS protein1, proteins[j] AS protein2
+        WITH classes, proteins[i] AS protein1, proteins[j] AS protein2
         MATCH (protein1)-[association:ASSOCIATION]-(protein2)
         WHERE association.combined >= {threshold}
-        RETURN classes, proteins, COLLECT({
-            protein1_id: protein1.id,
+        WITH classes, protein1, association, protein2
+        RETURN classes, COLLECT({
+            protein1: protein1,
             combined_score: association.combined,
-            protein2_id: protein2.id
+            protein2: protein2
         }) AS associations
     """
 
