@@ -18,7 +18,7 @@ Vue.component("protein", {
             var com = this;
 
             // wait
-            APP.wait = true
+            APP.wait = true;
             var progressbar = $("#progressbar");
             progressbar.progressbar("option", "value", false);
 

@@ -67,7 +67,10 @@
                      v-bind:species="species"
                      v-bind:threshold="threshold"
             ></protein>
-            <pathway></pathway>
+            <pathway v-model="pathway"
+                     v-bind:species="species"
+                     v-bind:threshold="threshold"
+            ></pathway>
             <protein-list></protein-list>
         </div>
         <div class="row">
