@@ -61,10 +61,12 @@ $(document).ready(function () {
         $.get(APP.api.subgraph.protein, { protein_id: APP.protein.id, threshold: threshold })
             .done(function (subgraph) {
                 var data = protein_subgraph_to_visjs_data(subgraph);
-                visualize_visjs_data(data, false);
+                NETWORK_DATA_ALL = data;
+                visualize_visjs_data(data);
 
                 // Vue.js
                 APP.visualization.title = APP.protein.name;
+                APP.last_clicked = $("#protein-btn");
 
                 // wait is over
                 progressbar.progressbar("option", "value", 0);
@@ -107,10 +109,12 @@ $(document).ready(function () {
         $.get(APP.api.subgraph.pathway, { pathway_id: APP.pathway.id, threshold: threshold })
             .done(function (subgraph) {
                 var data = pathway_subgraph_to_visjs_data(subgraph);
-                visualize_visjs_data(data, false);
+                NETWORK_DATA_ALL = data;
+                visualize_visjs_data(data);
 
                 // Vue.js
                 APP.visualization.title = APP.pathway.name;
+                APP.last_clicked = $("#pathway-btn");
 
                 // wait is over
                 progressbar.progressbar("option", "value", 0);
@@ -139,7 +143,11 @@ $(document).ready(function () {
                     $.get(APP.api.subgraph.protein_list, { protein_ids: APP.protein_list.ids.join(';'), threshold: threshold })
                         .done(function (subgraph) {
                             var data = protein_list_subgraph_to_visjs_data(subgraph);
-                            visualize_visjs_data(data, false);
+                            NETWORK_DATA_ALL = data;
+                            visualize_visjs_data(data);
+
+                            // Vue.js
+                            APP.last_clicked = $("#protein-list-btn");
 
                             // wait is over
                             progressbar.progressbar("option", "value", 0);

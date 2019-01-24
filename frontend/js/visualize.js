@@ -1,6 +1,7 @@
 
 var NETWORK = null;
-var NETWORK_DATA = null;
+var NETWORK_DATA_ALL = null;
+var NETWORK_DATA_CURRENT = null;
 
 var colors = {
     protein: "rgb(82,182,229)",
@@ -11,9 +12,12 @@ var colors = {
 };
 
 function generate_legend(legend){
-    var container = $("#legend-container");
+    var container = $("#legend");
 
-    var html = "<ul class=\"legend\">";
+    var html = "Score:<br/>";
+    html += "0.0 <div id=\"grad\"></div> 1.0<br/>";
+
+    html += "<ul class=\"legend-entry\">";
 
     for (var name in legend) {
         var color = legend[name];
@@ -63,8 +67,11 @@ function get_edge_color(score) {
     return color_to_string(color);
 }
 
-function visualize_visjs_data(data, reducing) {
+function visualize_visjs_data(data) {
     if (!NETWORK) return;
+
+    data = APP.filter_nodes(data);
+    NETWORK_DATA_CURRENT = data;
 
     NETWORK.setData(data);
 
@@ -73,9 +80,6 @@ function visualize_visjs_data(data, reducing) {
     APP.visualization.num_edges = data.edges.length;
 
     NETWORK.stabilize(50);
-
-    if (!reducing)
-        NETWORK_DATA = data;
 
     if (data.selected_nodes)
         NETWORK.selectNodes(data.selected_nodes);
@@ -308,14 +312,14 @@ function restore_surface() {
 }
 
 function select_nodes_rectangular() {
-    if(!NETWORK_DATA) return;
+    if(!NETWORK_DATA_CURRENT) return;
     var rectangle = APP.rectangular_select.rectangle;
 
     var selected_nodes = [];
     var x_range = get_select_range(rectangle.startX, rectangle.w);
     var y_range = get_select_range(rectangle.startY, rectangle.h);
 
-    var nodes = NETWORK_DATA.nodes.get();
+    var nodes = NETWORK_DATA_CURRENT.nodes.get();
     for (var i = 0; i < nodes.length; i++) {
         var node = nodes[i];
         var node_position = NETWORK.getPositions([node.id]);
@@ -348,33 +352,44 @@ $(document).ready(function (){
 
     // reduce graph button
     $("#reduce-graph-btn").click(() => {
-        if (!NETWORK || !NETWORK_DATA) return;
+        if (!NETWORK || !NETWORK_DATA_CURRENT) return;
 
         var selected = NETWORK.getSelection();
 
-        var nodes = NETWORK_DATA.nodes.get({
+        var nodes = NETWORK_DATA_CURRENT.nodes.get({
             filter: function (node) {
                 return (selected.nodes.indexOf(node.id) >= 0);
             }
         });
 
-        var edges = NETWORK_DATA.edges.get({
+        var edges = NETWORK_DATA_CURRENT.edges.get({
             filter: function (edge) {
                 return (selected.edges.indexOf(edge.id) >= 0);
             }
         });
 
         visualize_visjs_data({
-            nodes: nodes,
-            edges: edges
+            nodes: new vis.DataSet(nodes),
+            edges: new vis.DataSet(edges)
         }, true);
     });
 
     // reset graph button
     $("#undo-graph-btn").click(() => {
-        if (!NETWORK || !NETWORK_DATA) return;
+        if (!NETWORK || !NETWORK_DATA_ALL) return;
 
-        visualize_visjs_data(NETWORK_DATA, false);
+        visualize_visjs_data(NETWORK_DATA_ALL, false);
+    });
+
+    // threshold
+    $("#threshold-slider").on("change", function() {
+        if(!APP.last_clicked) return;
+        APP.last_clicked.click();
+    });
+
+    // filters
+    $("input[type=\"checkbox\"]").checkboxradio({
+        icon: false
     });
 
     // create a network

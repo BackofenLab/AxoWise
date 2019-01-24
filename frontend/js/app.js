@@ -18,6 +18,7 @@ $(document).ready(function () {
                 }
             },
             wait: true,
+            last_clicked: null,
             visualization: {
                 title: "",
                 num_nodes: 0,
@@ -55,6 +56,38 @@ $(document).ready(function () {
                 max: 1.0,
                 step: 0.001,
                 value: 0.75
+            }
+        },
+        methods: {
+            filter_nodes: function(data) {
+                if (!data) return;
+
+                var visualization = this.visualization;
+
+                var filtered_nodes = data.nodes.get({
+                    filter: function (node) {
+                        if (node.color == colors.protein) return visualization.proteins;
+                        else if (node.color == colors.pathway) return visualization.pathways;
+                        else if (node.color == colors.gray) return visualization.classes;
+                        return true;
+                    }
+                });
+
+                return {
+                    nodes: new vis.DataSet(filtered_nodes),
+                    edges: data.edges
+                };
+            }
+        },
+        watch: {
+            "visualization.proteins": function (value) {
+                visualize_visjs_data(NETWORK_DATA_ALL);
+            },
+            "visualization.pathways": function (value) {
+                visualize_visjs_data(NETWORK_DATA_ALL);
+            },
+            "visualization.classes": function (value) {
+                visualize_visjs_data(NETWORK_DATA_ALL);
             }
         }
     });

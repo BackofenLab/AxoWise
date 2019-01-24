@@ -1,22 +1,23 @@
 Vue.component("node-filter", {
     template: `
         <div class="col-md-4 ui-widget">
-            <label for="protein">Protein</label>
+            Filter nodes by type:<br/>
+            <label for="show-proteins">Protein</label>
             <input type="checkbox"
                    v-model="$root.visualization.proteins"
-                   name="protein"
+                   id="show-proteins"
             >
 
-            <label for="pathway">Pathway</label>
+            <label for="show-pathways">Pathway</label>
             <input type="checkbox"
                    v-model="$root.visualization.pathways"
-                   name="pathway"
+                   id="show-pathways"
             >
 
-            <label for="class">Class</label>
+            <label for="show-classes">Class</label>
             <input type="checkbox"
                    v-model="$root.visualization.classes"
-                   name="class"
+                   id="show-classes"
             >
         </div>
     `
