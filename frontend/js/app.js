@@ -6,13 +6,10 @@ $(document).ready(function () {
         data: {
             api: {
                 search: {
-                    species: "api/search/species",
-                    protein: "api/search/protein",
                     protein_list: "api/search/protein_list",
                     pathway: "api/search/pathway"
                 },
                 subgraph: {
-                    protein: "api/subgraph/protein",
                     protein_list: "api/subgraph/protein_list",
                     pathway: "api/subgraph/pathway"
                 }

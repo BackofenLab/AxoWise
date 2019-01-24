@@ -56,12 +56,12 @@
     </div>
     <div class="container">
         <div class="row">
-            <species-search></species-search>
+            <species-search v-model="species"></species-search>
             <threshold></threshold>
             <subgraph-buttons></subgraph-buttons>
         </div>
         <div class="row">
-            <protein></protein>
+            <protein v-model="protein" v-bind:species="species"></protein>
             <pathway></pathway>
             <protein-list></protein-list>
         </div>
