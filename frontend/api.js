@@ -1,19 +1,11 @@
 
 $(document).ready(function () {
-    var species = $("#species-input");
-    var protein = $("#protein-input"); protein.prop("disabled", true);
-    var protein_btn = $("#protein-btn"); protein_btn.prop("disabled", true);
-    var pathway = $("#pathway-input"); pathway.prop("disabled", true);
-    var pathway_btn = $("#pathway-btn"); pathway_btn.prop("disabled", true);
-    var protein_list = $("#protein-list-input"); protein_list.prop("disabled", true);
-    var protein_list_btn = $("#protein-list-btn"); protein_list_btn.prop("disabled", true);
-
     var progressbar = $("#progressbar");
 
     // --------------- Species ---------------
     var suggested_species_list = {};
 
-    species.autocomplete({
+    $("#species-input").autocomplete({
         source: (request, response) => {
             $.get(APP.api.search.species, { query: APP.species.name })
                 .done(function (data) {
@@ -29,17 +21,14 @@ $(document).ready(function () {
             // Vue.js
             APP.species = suggested_species_list[species_name];
             APP.species.name = species_name;
-
-            protein.prop("disabled", false); protein_btn.prop("disabled", false);
-            pathway.prop("disabled", false); pathway_btn.prop("disabled", false);
-            protein_list.prop("disabled", false); protein_list_btn.prop("disabled", false);
+            APP.wait = false;
         }
     });
 
     // --------------- Protein ---------------
     var suggested_protein_list = {};
 
-    protein.autocomplete({
+    $("#protein-input").autocomplete({
         source: (request, response) => {
             if (!APP.species.ncbi_id) {
                 alert("Select the species first!")
@@ -63,12 +52,9 @@ $(document).ready(function () {
         }
     });
 
-    protein_btn.click(() => {
+    $("#protein-btn").click(() => {
         // wait
         progressbar.progressbar("option", "value", false);
-        protein_btn.prop("disabled", true);
-        pathway_btn.prop("disabled", true);
-        protein_list_btn.prop("disabled", true);
 
 
         var threshold = parseFloat(APP.threshold.value);
@@ -82,16 +68,14 @@ $(document).ready(function () {
 
                 // wait is over
                 progressbar.progressbar("option", "value", 0);
-                protein_btn.prop("disabled", false);
-                pathway_btn.prop("disabled", false);
-                protein_list_btn.prop("disabled", false);
+                APP.wait = false;
             });
     });
 
     // --------------- Pathway ---------------
     var suggested_pathway_list = {};
 
-    pathway.autocomplete({
+    $("#pathway-input").autocomplete({
         source: (request, response) => {
             if (!APP.species.ncbi_id) {
                 alert("Select the species first!")
@@ -115,12 +99,9 @@ $(document).ready(function () {
         }
     });
 
-    pathway_btn.click(() => {
+    $("#pathway-btn").click(() => {
         // wait
         progressbar.progressbar("option", "value", false);
-        protein_btn.prop("disabled", true);
-        pathway_btn.prop("disabled", true);
-        protein_list_btn.prop("disabled", true);
 
         var threshold = parseFloat(APP.threshold.value);
         $.get(APP.api.subgraph.pathway, { pathway_id: APP.pathway.id, threshold: threshold })
@@ -133,14 +114,12 @@ $(document).ready(function () {
 
                 // wait is over
                 progressbar.progressbar("option", "value", 0);
-                protein_btn.prop("disabled", false);
-                pathway_btn.prop("disabled", false);
-                protein_list_btn.prop("disabled", false);
+                APP.wait = false;
             });
     });
 
     // --------------- Protein list ---------------
-    protein_list_btn.click(() => {
+    $("#protein-list-btn").click(() => {
         if (!APP.species.ncbi_id) {
             alert("Select the species first!")
             return;
@@ -151,9 +130,6 @@ $(document).ready(function () {
 
         // wait
         progressbar.progressbar("option", "value", false);
-        protein_btn.prop("disabled", true);
-        pathway_btn.prop("disabled", true);
-        protein_list_btn.prop("disabled", true);
 
         $.get(APP.api.search.protein_list, { query: APP.protein_list.value.split('\n').join(';'), species_id: APP.species.ncbi_id })
                 .done(function (data) {
@@ -167,9 +143,7 @@ $(document).ready(function () {
 
                             // wait is over
                             progressbar.progressbar("option", "value", 0);
-                            protein_btn.prop("disabled", false);
-                            pathway_btn.prop("disabled", false);
-                            protein_list_btn.prop("disabled", false);
+                            APP.wait = false;
                         });
                 });
     });

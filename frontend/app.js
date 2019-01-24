@@ -17,6 +17,7 @@ $(document).ready(function () {
                     pathway: "api/subgraph/pathway"
                 }
             },
+            wait: true,
             visualization: {
                 title: "",
                 num_nodes: 0,
