@@ -3,7 +3,7 @@ Vue.component("protein", {
         prop: "protein",
         event: "protein-selected"
     },
-    props: ["protein", "species"],
+    props: ["protein", "species", "threshold"],
     data: function() {
         return {
             api: {
@@ -22,7 +22,7 @@ Vue.component("protein", {
             var progressbar = $("#progressbar");
             progressbar.progressbar("option", "value", false);
 
-            var threshold = parseFloat(APP.threshold.value);
+            var threshold = parseFloat(com.threshold);
             $.get(com.api.subgraph, { protein_id: com.protein.id, threshold: threshold })
                 .done(function (subgraph) {
                     var data = protein_subgraph_to_visjs_data(subgraph);
@@ -72,7 +72,8 @@ Vue.component("protein", {
                    v-bind:disabled="$root.wait">
             </input>
             <br/>
-            <button class="btn btn-primary btn-xs"
+            <button id="protein-btn"
+                    class="btn btn-primary btn-xs"
                     v-bind:disabled="$root.wait"
                     v-on:click="submit()"
             >Submit</button>

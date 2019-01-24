@@ -57,11 +57,16 @@
     <div class="container">
         <div class="row">
             <species-search v-model="species"></species-search>
-            <threshold></threshold>
+            <threshold v-model="threshold"
+                       v-on:change="threshold_resubmit"
+            ></threshold>
             <subgraph-buttons></subgraph-buttons>
         </div>
         <div class="row">
-            <protein v-model="protein" v-bind:species="species"></protein>
+            <protein v-model="protein"
+                     v-bind:species="species"
+                     v-bind:threshold="threshold"
+            ></protein>
             <pathway></pathway>
             <protein-list></protein-list>
         </div>

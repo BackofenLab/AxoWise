@@ -48,12 +48,7 @@ $(document).ready(function () {
                 value: null,
                 ids: []
             },
-            threshold: {
-                min: 0.4,
-                max: 1.0,
-                step: 0.001,
-                value: 0.75
-            }
+            threshold: 0.75
         },
         methods: {
             filter_nodes: function(data) {
@@ -75,7 +70,7 @@ $(document).ready(function () {
                     edges: data.edges
                 };
             },
-            threshold_resubmit: function(event) {
+            threshold_resubmit: function() {
                 if(!this.last_clicked) return;
                 this.last_clicked.click();
             }

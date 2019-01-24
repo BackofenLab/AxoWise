@@ -1,25 +1,39 @@
 Vue.component("threshold", {
+    model: {
+        prop: "threshold",
+        event: "threshold-changed"
+    },
+    props: ["threshold"],
+    data: function() {
+        return {
+            min: 0.4,
+            max: 1.0,
+            step: 0.001
+        }
+    },
     template: `
         <div class="col-md-4 ui-widget">
             Protein - protein score threshold:
             <br/>
             <input id="threshold-slider"
                    type="range"
-                   v-bind:min="$root.threshold.min"
-                   v-bind:max="$root.threshold.max"
-                   v-bind:step="$root.threshold.step"
+                   v-bind:min="min"
+                   v-bind:max="max"
+                   v-bind:step="step"
                    v-bind:disabled="$root.wait"
-                   v-on:change="$root.threshold_resubmit"
-                   v-model="$root.threshold.value"
+                   v-on:input="$emit('threshold-changed', $event.target.value)"
+                   v-on:change="$emit('change')"
+                   v-bind:value="threshold"
             />
             <input id="threshold-input"
                    type="number"
-                   v-bind:min="$root.threshold.min"
-                   v-bind:max="$root.threshold.max"
-                   v-bind:step="$root.threshold.step"
+                   v-bind:min="min"
+                   v-bind:max="max"
+                   v-bind:step="step"
                    v-bind:disabled="$root.wait"
-                   v-on:change="$root.threshold_resubmit"
-                   v-model="$root.threshold.value"
+                   v-on:input="$emit('threshold-changed', $event.target.value)"
+                   v-on:change="$emit('change')"
+                   v-bind:value="threshold"
             />
         </div>
     `
