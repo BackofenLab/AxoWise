@@ -33,117 +33,35 @@
 
     <!-- Our -->
     <script src="app.js"></script>
-    <script src="visualize.js"></script>
     <script src="api.js"></script>
+    <script src="visualize.js"></script>
 
-    <style type="text/css">
-        .legend {
-            list-style: none;
-        }
-        .legend li {
-            float: left;
-            margin-right: 10px;
-        }
-        .legend span {
-            border: 1px solid #ccc;
-            float: left;
-            width: 24px;
-            height: 24px;
-            margin: 2px;
-            border-radius: 50%;
-        }
-        #visualization {
-            width: 100%;
-            height: 640px;
-            /* border: 1px solid lightgray; */
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-        #legend-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            overflow: hidden;
-            margin-top: 20px;
-        }
-        #title-container {
-            overflow: hidden;
-            position: absolute;
-            margin-top: 20px;
-            margin-right: 10px;
-            top: 0;
-            right: 0;
-            font-size: 16pt;
-            z-index: 1;
-            text-align: right;
-        }
-        #progressbar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-        }
-        #progressbar .ui-progressbar-value {
-            background: rgb(82,182,229);
-        }
+    <script src="components/species-search.js"></script>
+    <script src="components/threshold.js"></script>
+    <script src="components/info.js"></script>
+    <script src="components/subgraph-buttons.js"></script>
+    <script src="components/protein.js"></script>
+    <script src="components/protein-list.js"></script>
+    <script src="components/pathway.js"></script>
 
-        .ui-progressbar {
-            height: 1em;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
 <body><div id="pgdb-app">
     <h1 style="text-align: center;">Protein Graph Database</h1>
     <div id="legend-container"></div>
-    <div id="title-container">
-        {{visualization.title}}<br/>
-        Nodes: {{visualization.num_nodes}}<br/>
-        Edges: {{visualization.num_edges}}<br/>
-    </div>
+    <info></info>
     <div id="visualization"></div>
     <div class="container">
         <div class="row">
-            <div class="col-md-4 ui-widget">
-                Species:
-                <br/>
-                <input id="species-input" type="text" v-model="species.name"></input>
-            </div>
-            <div class="col-md-4 ui-widget">
-                Protein - protein score threshold:
-                <br/>
-                <input type="range" v-bind:min="threshold.min" v-bind:max="threshold.max" v-bind:step="threshold.step" v-bind:disabled="wait" v-model="threshold.value" class="ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"/>
-                <input type="number" v-bind:min="threshold.min" v-bind:max="threshold.max" v-bind:step="threshold.step" v-bind:disabled="wait" v-model="threshold.value"/>
-            </div>
-            <div class="col-md-4 ui-widget">
-                <button id="reduce-graph-btn" class="btn btn-warning" v-bind:disabled="wait">Reduce</button>
-                <button id="undo-graph-btn" class="btn btn-secondary" v-bind:disabled="wait">Undo</button>
-            </div>
+            <species-search></species-search>
+            <threshold></threshold>
+            <subgraph-buttons></subgraph-buttons>
         </div>
         <div class="row">
-            <div class="col-md-4 ui-widget">
-                Protein:
-                <br/>
-                <input id="protein-input" type="text" v-model="protein.name" v-bind:disabled="wait"></input>
-                <br/>
-                <button id="protein-btn" class="btn btn-primary" v-bind:disabled="wait" v-on:click="wait = true">Submit</button>
-            </div>
-
-            <div class="col-md-4 ui-widget">
-                Pathway:
-                <br/>
-                <input id="pathway-input" type="text" v-model="pathway.name" v-bind:disabled="wait"></input>
-                <br/>
-                <button id="pathway-btn" class="btn btn-primary" v-bind:disabled="wait" v-on:click="wait = true">Submit</button>
-            </div>
-
-            <div class="col-md-4 ui-widget">
-                Protein list:
-                <br/>
-                <textarea id="protein-list-input" v-model="protein_list.value" v-bind:disabled="wait"></textarea>
-                <br/>
-                <button id="protein-list-btn" class="btn btn-primary" v-bind:disabled="wait" v-on:click="wait = true">Submit</button>
-            </div>
+            <protein></protein>
+            <pathway></pathway>
+            <protein-list></protein-list>
         </div>
     </div>
     <div id="progressbar"></div>
