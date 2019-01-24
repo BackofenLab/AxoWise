@@ -21,7 +21,10 @@ $(document).ready(function () {
             visualization: {
                 title: "",
                 num_nodes: 0,
-                num_edges: 0
+                num_edges: 0,
+                proteins: true,
+                pathways: true,
+                classes: true
             },
             rectangular_select: {
                 canvas: null,
