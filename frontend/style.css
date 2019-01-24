@@ -22,18 +22,14 @@
     /* border: 1px solid lightgray; */
     margin-bottom: 20px;
 }
-#legend {
+/* #legend {
     float: left;
     width: 30%;
     overflow: hidden;
     height: 20%;
-}
+} */
 #info {
-    font-size: 16pt;
-    z-index: 1;
     text-align: right;
-    height: 20%;
-    width: 30%;
 }
 #progressbar {
     position: fixed;
@@ -55,7 +51,7 @@
     background-image: linear-gradient(to right, rgb(0, 0, 255), rgb(0, 255, 0), rgb(255, 0, 0));
 }
 
-#title {
+/* #title {
     height: 20%;
     width: 70%;
-}
+} */

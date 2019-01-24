@@ -381,12 +381,6 @@ $(document).ready(function (){
         visualize_visjs_data(NETWORK_DATA_ALL, false);
     });
 
-    // threshold
-    $("#threshold-slider").on("change", function() {
-        if(!APP.last_clicked) return;
-        APP.last_clicked.click();
-    });
-
     // filters
     $("input[type=\"checkbox\"]").checkboxradio({
         icon: false

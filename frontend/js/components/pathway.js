@@ -10,7 +10,7 @@ Vue.component("pathway", {
             ></input>
             <br/>
             <button id="pathway-btn"
-                    class="btn btn-primary"
+                    class="btn btn-primary btn-xs"
                     v-bind:disabled="$root.wait"
                     v-on:click="$root.wait = true"
             >Submit</button>

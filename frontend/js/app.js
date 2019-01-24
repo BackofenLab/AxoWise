@@ -77,6 +77,10 @@ $(document).ready(function () {
                     nodes: new vis.DataSet(filtered_nodes),
                     edges: data.edges
                 };
+            },
+            threshold_resubmit: function(event) {
+                if(!this.last_clicked) return;
+                this.last_clicked.click();
             }
         },
         watch: {

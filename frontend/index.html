@@ -41,12 +41,19 @@
 </head>
 
 <body><div id="pgdb-app">
-    <div id="legend"></div>
-    <div id="title">
-        <h1 style="text-align: center;">Protein Graph Database</h1>
+    <div class="container-fluid">
+        <div class="row">
+            <div id="legend" class="col-md-4">
+            </div>
+            <div class="col-md-4" style="text-align: center;">
+                <h1>Protein Graph Database</h1>
+            </div>
+            <info></info>
+        </div>
+        <div class="row">
+            <div id="visualization" class="col-md-12"></div>
+        </div>
     </div>
-    <info></info>
-    <div id="visualization"></div>
     <div class="container">
         <div class="row">
             <species-search></species-search>

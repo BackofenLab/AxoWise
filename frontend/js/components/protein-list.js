@@ -9,7 +9,7 @@ Vue.component("protein-list", {
             ></textarea>
             <br/>
             <button id="protein-list-btn"
-                    class="btn btn-primary"
+                    class="btn btn-primary btn-xs"
                     v-bind:disabled="$root.wait"
                     v-on:click="$root.wait = true"
             >Submit</button>
