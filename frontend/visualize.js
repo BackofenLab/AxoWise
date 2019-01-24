@@ -72,11 +72,7 @@ function visualize_visjs_data(data, reducing) {
     APP.visualization.num_nodes = data.nodes.length;
     APP.visualization.num_edges = data.edges.length;
 
-    if (data != NETWORK_DATA) {
-        NETWORK.stabilize(50);
-        NETWORK.storePositions();
-        console.log("Stabilizing");
-    }
+    NETWORK.stabilize(50);
 
     if (!reducing)
         NETWORK_DATA = data;
