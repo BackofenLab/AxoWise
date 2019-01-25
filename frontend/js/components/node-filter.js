@@ -4,6 +4,11 @@ Vue.component("node-filter", {
         event: "checked"
     },
     props: ["show"],
+    mounted: function() {
+        $("input[type=\"checkbox\"]").checkboxradio({
+            icon: false
+        });
+    },
     template: `
         <div class="col-md-4 ui-widget">
             Filter nodes by type:<br/>

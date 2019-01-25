@@ -89,40 +89,4 @@ $(document).ready(function (){
     $("#progressbar").progressbar({
         value: 0
     });
-
-    // reduce graph button
-    $("#reduce-graph-btn").click(() => {
-        if (!NETWORK) return;
-
-        var selected = NETWORK.getSelection();
-
-        var nodes = NETWORK_DATA_CURRENT.nodes.get({
-            filter: function (node) {
-                return (selected.nodes.indexOf(node.id) >= 0);
-            }
-        });
-
-        var edges = NETWORK_DATA_CURRENT.edges.get({
-            filter: function (edge) {
-                return (selected.edges.indexOf(edge.id) >= 0);
-            }
-        });
-
-        visualize_visjs_data({
-            nodes: new vis.DataSet(nodes),
-            edges: new vis.DataSet(edges)
-        }, true);
-    });
-
-    // reset graph button
-    $("#undo-graph-btn").click(() => {
-        if (!NETWORK || !NETWORK_DATA_ALL) return;
-
-        visualize_visjs_data(NETWORK_DATA_ALL, false);
-    });
-
-    // filters
-    $("input[type=\"checkbox\"]").checkboxradio({
-        icon: false
-    });
 });

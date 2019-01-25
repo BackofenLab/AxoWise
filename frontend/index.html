@@ -25,7 +25,7 @@
 
     <!-- Our -->
     <script src="js/app.js"></script>
-    <script src="js/visualize.js"></script>
+    <script src="js/helpers.js"></script>
 
     <script src="js/components/visualization.js"></script>
     <script src="js/components/species-search.js"></script>
@@ -62,7 +62,9 @@
             <threshold v-model="threshold"
                        v-bind:last_clicked="last_clicked"
             ></threshold>
-            <subgraph-buttons></subgraph-buttons>
+            <subgraph-buttons v-bind:data="data"
+                              v-on:data-changed="data = $event"
+            ></subgraph-buttons>
         </div>
         <div class="row">
             <protein v-model="protein"
