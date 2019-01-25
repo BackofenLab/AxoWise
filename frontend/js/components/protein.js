@@ -14,6 +14,78 @@ Vue.component("protein", {
         }
     },
     methods: {
+        subgraph_to_visjs_data: function(subgraph) {
+            var nodes = new vis.DataSet();
+            var edges = new vis.DataSet();
+            var selected_nodes = [];
+            if (subgraph.length >=1)
+                selected_nodes.push(subgraph[0].protein.id);
+
+            for (var i = 0; i < subgraph.length; i++) {
+                var row = subgraph[i];
+                var protein = row.protein;
+                var other = row.other;
+                var association = row.association;
+
+                nodes.update({
+                    id: protein.id,
+                    label: protein.name,
+                    title: get_tooltip(protein.id, protein.description),
+                    color: colors.protein
+                });
+
+                if (other) {
+                    nodes.update({
+                        id: other.id,
+                        label: other.name,
+                        title: get_tooltip(other.id, other.description),
+                        color: colors.protein
+                    });
+
+                    var edge_color = get_edge_color(association.combined);
+                    edges.update({
+                        from: protein.id,
+                        to: other.id,
+                        value: association.combined,
+                        title: (association.combined / 1000).toString(),
+                        color: {
+                            color: edge_color, highlight: edge_color
+                        }
+                    });
+                }
+
+                for (var j = 0; j < row.pathways.length; j++) {
+                    var pathway = row.pathways[j];
+
+                    nodes.update({
+                        id: pathway.id,
+                        label: pathway.name,
+                        title: get_tooltip(pathway.id, pathway.description),
+                        color: colors.pathway,
+                        shape: "square"
+                    });
+
+                    edges.update([
+                        // {
+                        //     from: row.protein.id,
+                        //     to: pathway.id,
+                        //     color: colors.pathway
+                        // },
+                        {
+                            from: row.other.id,
+                            to: pathway.id,
+                            color: colors.pathway
+                        }
+                    ]);
+                }
+            }
+
+            return {
+                nodes: nodes,
+                edges: edges,
+                selected_nodes: selected_nodes
+            }
+        },
         submit: function() {
             var com = this;
 
@@ -25,13 +97,11 @@ Vue.component("protein", {
             var threshold = parseFloat(com.threshold);
             $.get(com.api.subgraph, { protein_id: com.protein.id, threshold: threshold })
                 .done(function (subgraph) {
-                    var data = protein_subgraph_to_visjs_data(subgraph);
-                    NETWORK_DATA_ALL = data;
-                    visualize_visjs_data(data);
+                    var data = com.subgraph_to_visjs_data(subgraph);
 
-                    // Vue.js
-                    APP.visualization.title = com.protein.name;
-                    APP.last_clicked = $("#protein-btn");
+                    com.$emit("data-changed", data);
+                    com.$emit("last-clicked-changed", $("#protein-btn"));
+                    com.$emit("title-changed", com.protein.name);
 
                     // wait is over
                     progressbar.progressbar("option", "value", 0);

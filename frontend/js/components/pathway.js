@@ -14,6 +14,59 @@ Vue.component("pathway", {
         }
     },
     methods: {
+        subgraph_to_visjs_data: function(subgraph) {
+            var nodes = new vis.DataSet();
+            var edges = new vis.DataSet();
+
+            for (var i = 0; i < subgraph.classes.length; i++) {
+                var klass = subgraph.classes[i];
+
+                nodes.update({
+                    id: klass.name,
+                    label: klass.name,
+                    color: colors.gray
+                });
+            }
+
+            for (var i = 0; i < subgraph.associations.length; i++) {
+                var association = subgraph.associations[i];
+                var protein1 = association.protein1;
+                var combined_score = association.combined_score;
+                var protein2 = association.protein2;
+
+                nodes.update({
+                    id: protein1.id,
+                    label: protein1.name,
+                    title: get_tooltip(protein1.id, protein1.description),
+                    color: colors.protein
+                });
+
+                nodes.update({
+                    id: protein2.id,
+                    label: protein2.name,
+                    title: get_tooltip(protein2.id, protein2.description),
+                    color: colors.protein
+                });
+
+                if (combined_score) {
+                    var edge_color = get_edge_color(combined_score);
+                    edges.update({
+                        from: protein1.id,
+                        to: protein2.id,
+                        value: combined_score,
+                        title: (combined_score / 1000).toString(),
+                        color: {
+                            color: edge_color, highlight: edge_color
+                        }
+                    });
+                }
+            }
+
+            return {
+                nodes: nodes,
+                edges: edges
+            }
+        },
         submit: function() {
             var com = this;
 
@@ -25,13 +78,11 @@ Vue.component("pathway", {
             var threshold = parseFloat(com.threshold);
             $.get(com.api.subgraph, { pathway_id: com.pathway.id, threshold: threshold })
                 .done(function (subgraph) {
-                    var data = pathway_subgraph_to_visjs_data(subgraph);
-                    NETWORK_DATA_ALL = data;
-                    visualize_visjs_data(data);
+                    var data = com.subgraph_to_visjs_data(subgraph);
 
-                    // Vue.js
-                    APP.visualization.title = APP.pathway.name;
-                    APP.last_clicked = $("#pathway-btn");
+                    com.$emit("data-changed", data);
+                    com.$emit("last-clicked-changed", $("#pathway-btn"));
+                    com.$emit("title-changed", com.pathway.name);
 
                     // wait is over
                     progressbar.progressbar("option", "value", 0);

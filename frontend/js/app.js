@@ -6,20 +6,22 @@ $(document).ready(function () {
         data: {
             wait: true,
             last_clicked: null,
-            visualization: {
-                title: "",
-                num_nodes: 0,
-                num_edges: 0,
-                proteins: true,
-                pathways: true,
-                classes: true
-            },
+            title: "",
             rectangular_select: {
                 canvas: null,
                 context: null,
                 rectangle: {},
                 active: false,
                 surface_backup: null
+            },
+            data: {
+                nodes: new vis.DataSet(),
+                edges: new vis.DataSet(),
+            },
+            show: {
+                proteins: true,
+                pathways: true,
+                classes: true
             },
             species: {
                 ncbi_id: null,
@@ -38,25 +40,6 @@ $(document).ready(function () {
             threshold: 0.75
         },
         methods: {
-            filter_nodes: function(data) {
-                if (!data) return;
-
-                var visualization = this.visualization;
-
-                var filtered_nodes = data.nodes.get({
-                    filter: function (node) {
-                        if (node.color == colors.protein) return visualization.proteins;
-                        else if (node.color == colors.pathway) return visualization.pathways;
-                        else if (node.color == colors.gray) return visualization.classes;
-                        return true;
-                    }
-                });
-
-                return {
-                    nodes: new vis.DataSet(filtered_nodes),
-                    edges: data.edges
-                };
-            },
             threshold_resubmit: function() {
                 if(!this.last_clicked) return;
                 this.last_clicked.click();

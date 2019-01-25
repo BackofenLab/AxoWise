@@ -14,11 +14,79 @@ Vue.component("protein-list", {
         }
     },
     methods: {
+        subgraph_to_visjs_data: function(subgraph) {
+            var nodes = new vis.DataSet();
+            var edges = new vis.DataSet();
+
+            for (var i = 0; i < subgraph.length; i++) {
+                var row = subgraph[i];
+                var protein1 = row.protein1;
+                var protein2 = row.protein2;
+                var association = row.association;
+                var pathways = row.pathways;
+
+                nodes.update({
+                    id: protein1.id,
+                    label: protein1.name,
+                    title: get_tooltip(protein1.id, protein1.description),
+                    color: colors.protein
+                });
+
+                nodes.update({
+                    id: protein2.id,
+                    label: protein2.name,
+                    title: get_tooltip(protein2.id, protein2.description),
+                    color: colors.protein
+                });
+
+                if (association) {
+                    var edge_color = get_edge_color(association.combined);
+                    edges.update({
+                        from: protein1.id,
+                        to: protein2.id,
+                        value: association.combined,
+                        title: (association.combined / 1000).toString(),
+                        color: {
+                            color: edge_color, highlight: edge_color
+                        }
+                    });
+                }
+
+                for (var j = 0; j < pathways.length; j++) {
+                    var pathway = pathways[j];
+
+                    nodes.update({
+                        id: pathway.id,
+                        label: pathway.name,
+                        title: get_tooltip(pathway.id, pathway.description),
+                        color: colors.pathway,
+                        shape: "square"
+                    });
+
+                    edges.update(
+                        {
+                            from: protein1.id,
+                            to: pathway.id,
+                            color: colors.pathway
+                        }
+                    );
+                    edges.update(
+                        {
+                            from: protein2.id,
+                            to: pathway.id,
+                            color: colors.pathway
+                        }
+                    );
+                }
+            }
+
+            return {
+                nodes: nodes,
+                edges: edges
+            }
+        },
         submit: function() {
             var com = this;
-
-            // Vue.js
-            APP.visualization.title = "";
 
             // wait
             APP.wait = true;
@@ -33,12 +101,11 @@ Vue.component("protein-list", {
                         var threshold = parseFloat(com.threshold);
                         $.get(com.api.subgraph, { protein_ids: protein_ids.join(';'), threshold: threshold })
                             .done(function (subgraph) {
-                                var data = protein_list_subgraph_to_visjs_data(subgraph);
-                                NETWORK_DATA_ALL = data;
-                                visualize_visjs_data(data);
+                                var data = com.subgraph_to_visjs_data(subgraph);
 
-                                // Vue.js
-                                APP.last_clicked = $("#protein-list-btn");
+                                com.$emit("data-changed", data);
+                                com.$emit("last-clicked-changed", $("#protein-list-btn"));
+                                com.$emit("title-changed", "");
 
                                 // wait is over
                                 progressbar.progressbar("option", "value", 0);
