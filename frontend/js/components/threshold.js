@@ -13,9 +13,9 @@ Vue.component("threshold", {
     },
     methods: {
         resubmit: function() {
-            var com = this;
-            if(!com.last_clicked) return;
-            com.last_clicked.click();
+            // var com = this;
+            // if(!com.last_clicked) return;
+            // com.last_clicked.click();
         }
     },
     template: `

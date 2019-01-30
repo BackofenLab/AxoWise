@@ -94,7 +94,8 @@ Vue.component("protein", {
             var progressbar = $("#progressbar");
             progressbar.progressbar("option", "value", false);
 
-            var threshold = parseFloat(com.threshold);
+            // var threshold = parseFloat(com.threshold);
+            var threshold = 0.4;
             $.get(com.api.subgraph, { protein_id: com.protein.id, threshold: threshold })
                 .done(function (subgraph) {
                     var data = com.subgraph_to_visjs_data(subgraph);

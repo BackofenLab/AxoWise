@@ -98,7 +98,8 @@ Vue.component("protein-list", {
                         var protein_ids = data.map(x => x.protein_id);
                         com.$emit("protein-list-changed", protein_ids);
 
-                        var threshold = parseFloat(com.threshold);
+                        // var threshold = parseFloat(com.threshold);
+                        var threshold = 0.4;
                         $.get(com.api.subgraph, { protein_ids: protein_ids.join(';'), threshold: threshold })
                             .done(function (subgraph) {
                                 var data = com.subgraph_to_visjs_data(subgraph);

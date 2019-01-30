@@ -1,7 +1,7 @@
 var NETWORK = null;
 
 Vue.component("visualization", {
-    props: ["data", "show", "title"],
+    props: ["data", "show", "title", "threshold"],
     data: function() {
         return {
             container: null,
@@ -59,7 +59,7 @@ Vue.component("visualization", {
             if (!com.data) return;
 
             var filtered_nodes = com.data.nodes.get({
-                filter: function (node) {
+                filter: function(node) {
                     if (node.color == colors.protein) return com.show.proteins;
                     else if (node.color == colors.pathway) return com.show.pathways;
                     else if (node.color == colors.gray) return com.show.classes;
@@ -67,26 +67,32 @@ Vue.component("visualization", {
                 }
             });
 
+            var filtered_edges = com.data.edges.get({
+                filter: function(edge) {
+                    return edge.value / 1000 >= com.threshold;
+                }
+            });
+
             return {
                 nodes: new vis.DataSet(filtered_nodes),
-                edges: com.data.edges
+                edges: new vis.DataSet(filtered_edges)
             };
         }
     },
     methods: {
         draw: function(data) {
             if (!NETWORK) return;
-            var com = this;
-        
             NETWORK.setData(data);
-            NETWORK.stabilize(50);
-        
+
             // Vis.js
             this.stats.nodes = data.nodes.length;
             this.stats.edges = data.edges.length;
         
             if (data.selected_nodes)
                 NETWORK.selectNodes(data.selected_nodes);
+        },
+        stabilize: function() {
+            NETWORK.stabilize(50);
         },
         mousedown: function(e) {
             var com = this;
@@ -170,6 +176,7 @@ Vue.component("visualization", {
         "filtered_data": function(data) {
             var com = this;
             com.draw(data);
+            com.stabilize();
         }
     },
     mounted: function() {

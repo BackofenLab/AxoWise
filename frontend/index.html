@@ -30,7 +30,6 @@
     <script src="js/components/visualization.js"></script>
     <script src="js/components/species-search.js"></script>
     <script src="js/components/threshold.js"></script>
-    <script src="js/components/info.js"></script>
     <script src="js/components/subgraph-buttons.js"></script>
     <script src="js/components/protein.js"></script>
     <script src="js/components/protein-list.js"></script>
@@ -52,7 +51,8 @@
         <div class="row">
             <visualization v-bind:data="data"
                            v-bind:show="show"
-                           v-bind:title="title">
+                           v-bind:title="title"
+                           v-bind:threshold="threshold">
             </visualization>
         </div>
     </div>
