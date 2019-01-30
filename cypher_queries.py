@@ -373,10 +373,8 @@ def get_protein_subgraph(graph, protein_id, threshold=0):
         RETURN protein, association, other, COLLECT(pathway) AS pathways
     """
 
-    assert (
-        0 <= threshold <= 1000,
-        "Combined score threshold should be in range [0, 1000]!"
-    )
+    assert 0 <= threshold <= 1000,\
+           "Combined score threshold should be in range [0, 1000]!"
 
     param_dict = dict(
         protein_id=protein_id,
@@ -407,10 +405,8 @@ def get_proteins_subgraph(graph, protein_ids, threshold=0):
         RETURN DISTINCT protein1, association, protein2, COLLECT(pathway) AS pathways
     """
 
-    assert (
-        0 <= threshold <= 1000,
-        "Combined score threshold should be in range [0, 1000]!"
-    )
+    assert 0 <= threshold <= 1000,\
+           "Combined score threshold should be in range [0, 1000]!"
 
     param_dict = dict(
         protein_ids=protein_ids,
@@ -449,10 +445,8 @@ def get_pathway_subgraph(graph, pathway_id, threshold=0):
         }) AS associations
     """
 
-    assert (
-        0 <= threshold <= 1000,
-        "Combined score threshold should be in range [0, 1000]!"
-    )
+    assert 0 <= threshold <= 1000,\
+           "Combined score threshold should be in range [0, 1000]!"
 
     param_dict = dict(
         pathway_id=pathway_id,

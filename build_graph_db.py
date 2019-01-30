@@ -89,10 +89,9 @@ def parse_cli_args():
 
     # Check
     if args.combined_score_threshold:
-        assert (
-            0 <= args.combined_score_threshold <= 1000,
-            "Combined score threshold should be in range [0, 1000]!"
-        )
+        assert 0 <= args.combined_score_threshold <= 1000,\
+               "Combined score threshold should be in range [0, 1000]!"
+
 
     # Preprocess
     args.species_name = args.species_name.strip()
