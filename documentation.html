@@ -41,7 +41,8 @@
 <a href="#setting-up-the-environment">Setting up the environment</a><br />
 <a href="#running-unit-tests">Running unit tests</a><br />
 <a href="#downloading-kegg-data-for-a-certain-species">Downloading KEGG data for a certain species</a><br />
-<a href="#building-a-neo4j-graph-database">Building a Neo4j graph database</a></p>
+<a href="#building-a-neo4j-graph-database">Building a Neo4j graph database</a><br />
+<a href="#running-the-server">Running the server</a></p>
 
 <p><br /></p>
 <hr />
@@ -238,6 +239,26 @@ Connecting proteins and pathways...
 27750
 Done!
 </code></pre></div></div>
+
+<h2 id="running-the-server">Running the server</h2>
+
+<p>Starting a server that exposes a REST API and serves the frontend files is as easy as running:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python server.py
+</code></pre></div></div>
+<p>The output should resemble the following:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: on
+ * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+ ...
+
+</code></pre></div></div>
+
+<p>The server can then be accessed locally @ <a href="http://127.0.0.1:5000/">http://127.0.0.1:5000/</a></p>
+
+<p style="color: red;">This is a development server, and it is not by any means ready to be used in production.</p>
 
   </div>
 
