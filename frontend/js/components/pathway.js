@@ -17,51 +17,46 @@ Vue.component("pathway", {
         subgraph_to_visjs_data: function(subgraph) {
             var nodes = new vis.DataSet();
             var edges = new vis.DataSet();
-
+        
             for (var i = 0; i < subgraph.classes.length; i++) {
                 var klass = subgraph.classes[i];
-
+        
                 nodes.update({
                     id: klass.name,
                     label: klass.name,
                     color: colors.gray
                 });
             }
-
-            for (var i = 0; i < subgraph.associations.length; i++) {
-                var association = subgraph.associations[i];
-                var protein1 = association.protein1;
-                var combined_score = association.combined_score;
-                var protein2 = association.protein2;
-
+        
+            for (var i = 0; i < subgraph.proteins.length; i++) {
+                var protein = subgraph.proteins[i];
+        
                 nodes.update({
-                    id: protein1.id,
-                    label: protein1.name,
-                    title: get_tooltip(protein1.id, protein1.description),
+                    id: protein.id,
+                    label: protein.name,
+                    title: get_tooltip(protein.id, protein.description),
                     color: colors.protein
                 });
-
-                nodes.update({
-                    id: protein2.id,
-                    label: protein2.name,
-                    title: get_tooltip(protein2.id, protein2.description),
-                    color: colors.protein
-                });
-
-                if (combined_score) {
-                    var edge_color = get_edge_color(combined_score);
-                    edges.update({
-                        from: protein1.id,
-                        to: protein2.id,
-                        value: combined_score,
-                        title: (combined_score / 1000).toString(),
-                        color: {
-                            color: edge_color, highlight: edge_color
-                        }
-                    });
-                }
             }
-
+        
+            for (var i = 0; i < subgraph.associations.length; i++) {
+                var entry = subgraph.associations[i];
+                var protein1_id = entry.protein1_id;
+                var combined_score = entry.combined_score;
+                var protein2_id = entry.protein2_id;
+        
+                var edge_color = get_edge_color(combined_score);
+                edges.update({
+                    from: protein1_id,
+                    to: protein2_id,
+                    value: combined_score,
+                    title: (combined_score / 1000).toString(),
+                    color: {
+                        color: edge_color, highlight: edge_color
+                    }
+                });
+            }
+        
             return {
                 nodes: nodes,
                 edges: edges
