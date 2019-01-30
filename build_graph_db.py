@@ -46,6 +46,7 @@ def parse_cli_args():
     args_parser.add_argument(
         "--combined_score_threshold",
         type=int,
+        default=400,
         help="Threshold above which the associations between proteins will be considered"
     )
 
@@ -85,6 +86,13 @@ def parse_cli_args():
     )
 
     args = args_parser.parse_args()
+
+    # Check
+    if args.combined_score_threshold:
+        assert (
+            0 <= args.combined_score_threshold <= 1000,
+            "Combined score threshold should be in range [0, 1000]!"
+        )
 
     # Preprocess
     args.species_name = args.species_name.strip()
