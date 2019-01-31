@@ -53,12 +53,22 @@ Vue.component("visualization", {
         }
     },
     computed: {
+        positioned_data: function() {
+            var com = this;
+            var data = com.data;
+            if (!NETWORK) return;
+
+            NETWORK.setData(data);
+            NETWORK.stabilize(50);
+            NETWORK.storePositions();
+            return data;
+        },
         filtered_data: function() {
             var com = this;
 
-            if (!com.data) return;
+            if (!com.positioned_data) return;
 
-            var filtered_nodes = com.data.nodes.get({
+            var filtered_nodes = com.positioned_data.nodes.get({
                 filter: function(node) {
                     if (node.color == colors.protein) return com.show.proteins;
                     else if (node.color == colors.pathway) return com.show.pathways;
@@ -67,20 +77,26 @@ Vue.component("visualization", {
                 }
             });
 
-            var filtered_edges = com.data.edges.get({
+            var filtered_edges = com.positioned_data.edges.get({
                 filter: function(edge) {
                     return edge.value / 1000 >= com.threshold;
                 }
             });
 
             return {
-                nodes: new vis.DataSet(filtered_nodes),
-                edges: new vis.DataSet(filtered_edges)
+                nodes: filtered_nodes,
+                edges: filtered_edges
             };
         }
     },
+    watch: {
+        "filtered_data": function(data) {
+            var com = this;
+            com.draw(data);
+        }
+    },
     methods: {
-        draw: function(data) {
+        draw: _.debounce(function(data) {
             if (!NETWORK) return;
             NETWORK.setData(data);
 
@@ -90,10 +106,7 @@ Vue.component("visualization", {
         
             if (data.selected_nodes)
                 NETWORK.selectNodes(data.selected_nodes);
-        },
-        stabilize: function() {
-            NETWORK.stabilize(50);
-        },
+        }, 100),
         mousedown: function(e) {
             var com = this;
             if (e.button == 2) {
@@ -170,13 +183,6 @@ Vue.component("visualization", {
         },
         get_select_range: function(start, length) {
             return length > 0 ? {start: start, end: start + length} : {start: start + length, end: start};
-        }
-    },
-    watch: {
-        "filtered_data": function(data) {
-            var com = this;
-            com.draw(data);
-            com.stabilize();
         }
     },
     mounted: function() {
