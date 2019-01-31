@@ -72,7 +72,7 @@ Vue.component("pathway", {
 
             // var threshold = parseFloat(com.threshold);
             var threshold = 0.4;
-            $.get(com.api.subgraph, { pathway_id: com.pathway.id, threshold: threshold })
+            $.post(com.api.subgraph, { pathway_id: com.pathway.id, threshold: threshold })
                 .done(function (subgraph) {
                     var data = com.subgraph_to_visjs_data(subgraph);
 

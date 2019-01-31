@@ -366,11 +366,14 @@ def get_protein_subgraph(graph, protein_id, threshold=0):
         })
         USING INDEX protein:Protein(id)
         WITH protein
-        OPTIONAL MATCH (protein)-[association:ASSOCIATION]-(other:Protein)
+        MATCH (protein)-[:IN]->(pathway:Pathway)
+        WITH protein, COLLECT(pathway) AS pathways
+        MATCH (protein)-[association:ASSOCIATION]-(other:Protein)
         WHERE association.combined >= {threshold}
-        WITH protein, association, other
-        OPTIONAL MATCH (protein)-[:IN]->(pathway:Pathway)<-[:IN]-(other)
-        RETURN protein, association, other, COLLECT(pathway) AS pathways
+        RETURN protein, pathways, COLLECT({
+            combined_score: association.combined,
+            other: other
+        }) AS associations
     """
 
     assert 0 <= threshold <= 1000,\
@@ -397,12 +400,16 @@ def get_proteins_subgraph(graph, protein_ids, threshold=0):
         WITH proteins, SIZE(proteins) AS num_proteins
         UNWIND RANGE(0, num_proteins - 1) AS i
         UNWIND RANGE(i + 1, num_proteins - 1) AS j
-        WITH proteins[i] AS protein1, proteins[j] AS protein2
+        WITH proteins, proteins[i] AS protein1, proteins[j] AS protein2
         OPTIONAL MATCH (protein1)-[association:ASSOCIATION]-(protein2)
         WHERE association.combined >= {threshold}
-        WITH protein1, association, protein2
+        WITH proteins, protein1, association, protein2
         OPTIONAL MATCH (protein1)-[:IN]->(pathway:Pathway)<-[:IN]-(protein2)
-        RETURN DISTINCT protein1, association, protein2, COLLECT(pathway) AS pathways
+        RETURN proteins AS proteins, COLLECT(pathway) AS pathways, COLLECT({
+            protein1_id: protein1.id,
+            combined_score: association.combined,
+            protein2_id: protein2.id
+        }) AS associations
     """
 
     assert 0 <= threshold <= 1000,\
@@ -437,7 +444,7 @@ def get_pathway_subgraph(graph, pathway_id, threshold=0):
         UNWIND RANGE(i + 1, num_proteins - 1) AS j
         WITH classes, proteins, proteins[i] AS protein1, proteins[j] AS protein2
         MATCH (protein1)-[association:ASSOCIATION]-(protein2)
-        WHERE association.combined >= {threshold}
+        // WHERE association.combined >= {threshold}
         RETURN classes, proteins, COLLECT({
             protein1_id: protein1.id,
             combined_score: association.combined,

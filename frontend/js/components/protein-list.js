@@ -17,67 +17,57 @@ Vue.component("protein-list", {
         subgraph_to_visjs_data: function(subgraph) {
             var nodes = new vis.DataSet();
             var edges = new vis.DataSet();
-
-            for (var i = 0; i < subgraph.length; i++) {
-                var row = subgraph[i];
-                var protein1 = row.protein1;
-                var protein2 = row.protein2;
-                var association = row.association;
-                var pathways = row.pathways;
-
-                nodes.update({
-                    id: protein1.id,
-                    label: protein1.name,
-                    title: get_tooltip(protein1.id, protein1.description),
-                    color: colors.protein
-                });
-
-                nodes.update({
-                    id: protein2.id,
-                    label: protein2.name,
-                    title: get_tooltip(protein2.id, protein2.description),
-                    color: colors.protein
-                });
-
-                if (association) {
-                    var edge_color = get_edge_color(association.combined);
-                    edges.update({
-                        from: protein1.id,
-                        to: protein2.id,
-                        value: association.combined,
-                        title: (association.combined / 1000).toString(),
-                        color: {
-                            color: edge_color, highlight: edge_color
-                        }
-                    });
+            if (!subgraph)
+                return {
+                    nodes: nodes,
+                    edges: edges
                 }
 
-                for (var j = 0; j < pathways.length; j++) {
-                    var pathway = pathways[j];
+            console.log(subgraph);
 
-                    nodes.update({
-                        id: pathway.id,
-                        label: pathway.name,
-                        title: get_tooltip(pathway.id, pathway.description),
-                        color: colors.pathway,
-                        shape: "square"
-                    });
+            var proteins = subgraph.proteins;
+            var pathways = subgraph.pathways;
+            var associations = subgraph.associations;
 
-                    edges.update(
-                        {
-                            from: protein1.id,
-                            to: pathway.id,
-                            color: colors.pathway
-                        }
-                    );
-                    edges.update(
-                        {
-                            from: protein2.id,
-                            to: pathway.id,
-                            color: colors.pathway
-                        }
-                    );
-                }
+            for (var i = 0; i < proteins.length; i++) {
+                var protein = proteins[i];
+
+                nodes.update({
+                    id: protein.id,
+                    label: protein.name,
+                    title: get_tooltip(protein.id, protein.description),
+                    color: colors.protein
+                });
+            }
+
+            for (var i = 0; i < associations.length; i++) {
+                var association = associations[i];
+                var combined_score = association.combined_score;
+                var protein1_id = association.protein1_id;
+                var protein2_id = association.protein2_id;
+
+                var edge_color = get_edge_color(combined_score);
+                edges.update({
+                    from: protein1_id,
+                    to: protein2_id,
+                    value: combined_score,
+                    title: (combined_score / 1000).toString(),
+                    color: {
+                        color: edge_color, highlight: edge_color
+                    }
+                });
+            }
+
+            for (var i = 0; i < pathways.length; i++) {
+                var pathway = pathways[i];
+
+                nodes.update({
+                    id: pathway.id,
+                    label: pathway.name,
+                    title: get_tooltip(pathway.id, pathway.description),
+                    color: colors.pathway,
+                    shape: "square"
+                });
             }
 
             return {
@@ -100,7 +90,7 @@ Vue.component("protein-list", {
 
                         // var threshold = parseFloat(com.threshold);
                         var threshold = 0.4;
-                        $.get(com.api.subgraph, { protein_ids: protein_ids.join(';'), threshold: threshold })
+                        $.post(com.api.subgraph, { protein_ids: protein_ids.join(';'), threshold: threshold })
                             .done(function (subgraph) {
                                 var data = com.subgraph_to_visjs_data(subgraph);
 

@@ -104,26 +104,41 @@ def search_class_api():
 # ====================== Subgraph API ======================
 neo4j_graph = database.connect_neo4j()
 
-@app.route("/api/subgraph/protein")
+@app.route("/api/subgraph/protein", methods=["POST"])
 def protein_subgraph_api():
-    protein_id = int(request.args.get("protein_id"))
-    threshold = int(float(request.args.get("threshold")) * 1000)
+    protein_id = int(request.form.get("protein_id"))
+    threshold = int(float(request.form.get("threshold")) * 1000)
     cursor = Cypher.get_protein_subgraph(neo4j_graph, protein_id, threshold)
-    return Response(json.dumps(cursor.data()), mimetype="application/json")
+    data = cursor.data()
+    if not data:
+        data = None
+    else:
+        data = data[0]
+    return Response(json.dumps(data), mimetype="application/json")
 
-@app.route("/api/subgraph/protein_list")
+@app.route("/api/subgraph/protein_list", methods=["POST"])
 def protein_list_subgraph_api():
-    protein_ids = list(map(int, request.args.get("protein_ids").split(";")))
-    threshold = int(float(request.args.get("threshold")) * 1000)
+    protein_ids = list(map(int, request.form.get("protein_ids").split(";")))
+    threshold = int(float(request.form.get("threshold")) * 1000)
     cursor = Cypher.get_proteins_subgraph(neo4j_graph, protein_ids, threshold)
-    return Response(json.dumps(cursor.data()), mimetype="application/json")
+    data = cursor.data()
+    if not data:
+        data = None
+    else:
+        data = data[0]
+    return Response(json.dumps(data), mimetype="application/json")
 
-@app.route("/api/subgraph/pathway")
+@app.route("/api/subgraph/pathway", methods=["POST"])
 def pathway_subgraph_api():
-    pathway_id = request.args.get("pathway_id")
-    threshold = int(float(request.args.get("threshold")) * 1000)
+    pathway_id = request.form.get("pathway_id")
+    threshold = int(float(request.form.get("threshold")) * 1000)
     cursor = Cypher.get_pathway_subgraph(neo4j_graph, pathway_id, threshold)
-    return Response(json.dumps(cursor.data()[0]), mimetype="application/json")
+    data = cursor.data()
+    if not data:
+        data = None
+    else:
+        data = data[0]
+    return Response(json.dumps(data), mimetype="application/json")
 
 if __name__ == "__main__":
     app.run(debug=True)
