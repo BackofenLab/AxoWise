@@ -15,7 +15,8 @@ Vue.component("visualization", {
                     barnesHut: {
                         springConstant: 0.001,
                         avoidOverlap: 0.2,
-                    }
+                    },
+                    stabilization: false
                 },
                 interaction: {
                     hideEdgesOnDrag: true,
@@ -49,26 +50,47 @@ Vue.component("visualization", {
                 rectangle: {},
                 active: false,
                 surface_backup: null
+            },
+            data_draw: {
+                nodes: new vis.DataSet(),
+                edges: new vis.DataSet(),
             }
         }
     },
-    computed: {
-        positioned_data: function() {
+    watch: {
+        "data": function(data) {
             var com = this;
             var data = com.data;
             if (!NETWORK) return;
 
+            if (data.nodes.get().length <= 0)
+               return;
+
+            var has_x = "x" in data.nodes.get()[0];
+            var has_y = "y" in data.nodes.get()[0];
+            if (has_x && has_y)
+                return;
+
             NETWORK.setData(data);
             NETWORK.stabilize(50);
-            NETWORK.storePositions();
-            return data;
         },
-        filtered_data: function() {
+        "threshold": _.debounce(function() {
             var com = this;
+            NETWORK.storePositions();
+            var filtered_data = com.filter_data(com.data);
 
-            if (!com.positioned_data) return;
+            NETWORK.setData(filtered_data);
 
-            var filtered_nodes = com.positioned_data.nodes.get({
+            com.stats.nodes = com.data_draw.nodes.length;
+            com.stats.edges = com.data_draw.edges.length;
+        }, 100)
+    },
+    methods: {
+        filter_data: function(data) {
+            var com = this;
+            if (!data) return;
+
+            var filtered_nodes = data.nodes.get({
                 filter: function(node) {
                     if (node.color == colors.protein) return com.show.proteins;
                     else if (node.color == colors.pathway) return com.show.pathways;
@@ -77,7 +99,7 @@ Vue.component("visualization", {
                 }
             });
 
-            var filtered_edges = com.positioned_data.edges.get({
+            var filtered_edges = data.edges.get({
                 filter: function(edge) {
                     return edge.value / 1000 >= com.threshold;
                 }
@@ -86,27 +108,19 @@ Vue.component("visualization", {
             return {
                 nodes: filtered_nodes,
                 edges: filtered_edges
-            };
-        }
-    },
-    watch: {
-        "filtered_data": function(data) {
+            }
+        },
+        stabilized: function(e) {
             var com = this;
-            com.draw(data);
-        }
-    },
-    methods: {
-        draw: _.debounce(function(data) {
-            if (!NETWORK) return;
-            NETWORK.setData(data);
+            console.log("Stabilized");
+            NETWORK.storePositions();
+            var filtered_data = com.filter_data(com.data);
 
-            // Vis.js
-            this.stats.nodes = data.nodes.length;
-            this.stats.edges = data.edges.length;
-        
-            if (data.selected_nodes)
-                NETWORK.selectNodes(data.selected_nodes);
-        }, 100),
+            NETWORK.setData(filtered_data);
+
+            com.stats.nodes = com.data_draw.nodes.length;
+            com.stats.edges = com.data_draw.edges.length;
+        },
         mousedown: function(e) {
             var com = this;
             if (e.button == 2) {
@@ -191,10 +205,8 @@ Vue.component("visualization", {
         com.container = container;
 
         // create a network
-        NETWORK = new vis.Network(container, {
-            nodes: new vis.DataSet([]),
-            edges: new vis.DataSet([])
-        }, com.network_options);
+        NETWORK = new vis.Network(container, com.data_draw, com.network_options);
+        NETWORK.on("stabilized", com.stabilized);
 
         // rectangular select
         container.oncontextmenu = function() { return false; };
