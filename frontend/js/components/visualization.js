@@ -51,7 +51,7 @@ Vue.component("visualization", {
                 active: false,
                 surface_backup: null
             },
-            data_draw: {
+            filtered_data: {
                 nodes: new vis.DataSet(),
                 edges: new vis.DataSet(),
             }
@@ -68,8 +68,10 @@ Vue.component("visualization", {
 
             var has_x = "x" in data.nodes.get()[0];
             var has_y = "y" in data.nodes.get()[0];
-            if (has_x && has_y)
+            if (has_x && has_y) {
+                com.filtered_data = data;
                 return;
+            }
 
             NETWORK.setData(data);
             NETWORK.stabilize(50);
@@ -77,13 +79,15 @@ Vue.component("visualization", {
         "threshold": _.debounce(function() {
             var com = this;
             NETWORK.storePositions();
-            var filtered_data = com.filter_data(com.data);
+            com.filtered_data = com.filter_data(com.data);
+        }, 100),
+        "filtered_data": function() {
+            var com = this;
+            NETWORK.setData(com.filtered_data);
 
-            NETWORK.setData(filtered_data);
-
-            com.stats.nodes = com.data_draw.nodes.length;
-            com.stats.edges = com.data_draw.edges.length;
-        }, 100)
+            com.stats.nodes = com.filtered_data.nodes.length;
+            com.stats.edges = com.filtered_data.edges.length;
+        }
     },
     methods: {
         filter_data: function(data) {
@@ -110,16 +114,14 @@ Vue.component("visualization", {
                 edges: filtered_edges
             }
         },
-        stabilized: function(e) {
+        stabilization_progress: function(e) { // For some reason the event 'stabilized' is not triggered
             var com = this;
-            console.log("Stabilized");
+
+            if (e.iterations < e.total)
+                return;
+
             NETWORK.storePositions();
-            var filtered_data = com.filter_data(com.data);
-
-            NETWORK.setData(filtered_data);
-
-            com.stats.nodes = com.data_draw.nodes.length;
-            com.stats.edges = com.data_draw.edges.length;
+            com.filtered_data = com.filter_data(com.data);
         },
         mousedown: function(e) {
             var com = this;
@@ -205,8 +207,8 @@ Vue.component("visualization", {
         com.container = container;
 
         // create a network
-        NETWORK = new vis.Network(container, com.data_draw, com.network_options);
-        NETWORK.on("stabilized", com.stabilized);
+        NETWORK = new vis.Network(container, com.filtered_data, com.network_options);
+        NETWORK.on("stabilizationProgress", com.stabilization_progress);
 
         // rectangular select
         container.oncontextmenu = function() { return false; };
