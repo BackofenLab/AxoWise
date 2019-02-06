@@ -38,6 +38,7 @@
     <script src="js/components/protein-list.js"></script>
     <script src="js/components/pathway.js"></script>
     <script src="js/components/node-filter.js"></script>
+    <script src="js/components/view-tree.js"></script>
 
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
@@ -57,6 +58,8 @@
                            v-bind:title="title"
                            v-bind:threshold="threshold">
             </visualization>
+            <view-tree>
+            </view-tree>
         </div>
     </div>
     <div class="container">

@@ -54,6 +54,10 @@ Vue.component("visualization", {
             filtered_data: {
                 nodes: new vis.DataSet(),
                 edges: new vis.DataSet(),
+            },
+            scale: 1,
+            view_position: {
+                x: 0, y:0
             }
         }
     },
@@ -78,16 +82,32 @@ Vue.component("visualization", {
         },
         "threshold": _.debounce(function() {
             var com = this;
-            NETWORK.storePositions();
+            // NETWORK.storePositions();
             com.filtered_data = com.filter_data(com.data);
         }, 100),
+        "show.proteins": function() {
+            var com = this;
+            com.filtered_data = com.filter_data(com.data);
+        },
+        "show.pathways": function() {
+            var com = this;
+            com.filtered_data = com.filter_data(com.data);
+        },
+        "show.classes": function() {
+            var com = this;
+            com.filtered_data = com.filter_data(com.data);
+        },
         "filtered_data": function() {
             var com = this;
             NETWORK.setData(com.filtered_data);
+            NETWORK.moveTo({
+                position: com.view_position,
+                scale: com.scale
+            });
 
             com.stats.nodes = com.filtered_data.nodes.length;
             com.stats.edges = com.filtered_data.edges.length;
-        }
+        },
     },
     methods: {
         filter_data: function(data) {
@@ -114,6 +134,7 @@ Vue.component("visualization", {
                 edges: filtered_edges
             }
         },
+        // Vis.js event handlers
         stabilization_progress: function(e) { // For some reason the event 'stabilized' is not triggered
             var com = this;
 
@@ -123,6 +144,15 @@ Vue.component("visualization", {
             NETWORK.storePositions();
             com.filtered_data = com.filter_data(com.data);
         },
+        drag_end: function(e) {
+            var com = this;
+            com.view_position = NETWORK.getViewPosition();
+        },
+        zoom: _.debounce(function(e) {
+            var com = this;
+            com.scale = e.scale;
+        }, 100),
+        // Rectangular select callbacks
         mousedown: function(e) {
             var com = this;
             if (e.button == 2) {
@@ -162,7 +192,6 @@ Vue.component("visualization", {
                 com.select_nodes_rectangular();
             }
         },
-        // rectangular select
         backup_surface: function() {
             var com = this;
             var canvas = com.rectangular_select.canvas;
@@ -209,6 +238,8 @@ Vue.component("visualization", {
         // create a network
         NETWORK = new vis.Network(container, com.filtered_data, com.network_options);
         NETWORK.on("stabilizationProgress", com.stabilization_progress);
+        NETWORK.on("zoom", com.zoom);
+        NETWORK.on("dragEnd", com.drag_end);
 
         // rectangular select
         container.oncontextmenu = function() { return false; };
@@ -218,12 +249,12 @@ Vue.component("visualization", {
     template: `
         <div>
         <div id="visualization"
-             class="col-md-12"
+             class="col-md-10"
              v-on:mousedown="mousedown"
              v-on:mousemove="mousemove"
              v-on:mouseup="mouseup"
         ></div>
-        <div id="info" class="col-md-4">
+        <div id="info" class="col-md-1">
             {{title}}<br/>
             Nodes: {{stats.nodes}}<br/>
             Edges: {{stats.edges}}<br/>

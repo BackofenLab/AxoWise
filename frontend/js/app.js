@@ -30,7 +30,7 @@ $(document).ready(function () {
                 name: null  
             },
             protein_list: null,
-            threshold: 0.4
+            threshold: 0.75
         }
     });
 });
