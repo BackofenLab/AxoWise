@@ -24,13 +24,6 @@ Vue.component("subgraph-buttons", {
                 nodes: new vis.DataSet(nodes),
                 edges: new vis.DataSet(edges)
             });
-        },
-        // reset graph button
-        undo: function() {
-            // TODO
-            // var com = this;
-            // if (!NETWORK) return;
-            // visualize_visjs_data(NETWORK_DATA_ALL, false);
         }
     },
     template: `
@@ -40,11 +33,6 @@ Vue.component("subgraph-buttons", {
                     v-bind:disabled="$root.wait"
                     v-on:click="reduce()"
             >Reduce</button>
-            <button id="undo-graph-btn"
-                    class="btn btn-secondary"
-                    v-bind:disabled="$root.wait"
-                    v-on:click="undo()"
-            >Undo</button>
         </div>
     `
 });

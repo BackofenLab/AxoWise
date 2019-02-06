@@ -1,13 +1,50 @@
+Vue.component("tree-node", {
+    props: ["node"],
+    template:
+        `
+        <li>
+            <span>{{ node.name }}</span>
+
+            <ul v-if="node.children && node.children.length">
+                <tree-node v-for="child in node.children"
+                           v-bind:node="child"
+                >
+                </tree-node>
+            </ul>
+        </li>
+        `
+});
+
 Vue.component("view-tree", {
     data: function () {
         return {
-            tree: []
+            trees: [
+                {
+                    name: "Chemokine signaling pathway",
+                    children: [
+                        {
+                            name: "Chemokine signaling pathway #2"
+                        }
+                    ]
+                },
+                {
+                    name: "CCR5",
+                    children: [
+                        {
+                            name: "CCR5 #2"
+                        }
+                    ]
+                }
+            ]
         }
     },
     template:
         `
         <div class="col-md-1">
         View Tree
+        <ul>
+            <tree-node v-for="tree in trees" v-bind:node="tree"></tree-node>
+        </ul>
         </div>
         `
 });
