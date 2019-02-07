@@ -17,16 +17,11 @@
     border-radius: 50%;
 }
 #visualization {
-    height: 500px;
+    height: 600px;
     border: 1px solid lightgray;
     margin-bottom: 20px;
 }
-/* #legend {
-    float: left;
-    width: 30%;
-    overflow: hidden;
-    height: 20%;
-} */
+
 #info {
     text-align: right;
 }
@@ -50,7 +45,3 @@
     background-image: linear-gradient(to right, rgb(0, 0, 255), rgb(0, 255, 255), rgb(0, 255, 0), rgb(255, 255, 0), rgb(255, 0, 0));
 }
 
-/* #title {
-    height: 20%;
-    width: 70%;
-} */
