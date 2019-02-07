@@ -2,7 +2,7 @@ Vue.component("tree-node", {
     props: ["node"],
     template:
         `
-        <li>
+        <li data-jstree='{"icon": "glyphicon glyphicon-leaf", "opened": true}'>
             <span>{{ node.name }}</span>
 
             <ul v-if="node.children && node.children.length">
@@ -38,10 +38,13 @@ Vue.component("view-tree", {
             ]
         }
     },
+    mounted: function() {
+        var tree = $("#view-tree");
+        tree.jstree();
+    },
     template:
         `
-        <div class="col-md-1">
-        View Tree
+        <div id="view-tree" class="col-md-2">
         <ul>
             <tree-node v-for="tree in trees" v-bind:node="tree"></tree-node>
         </ul>

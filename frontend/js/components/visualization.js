@@ -254,11 +254,11 @@ Vue.component("visualization", {
              v-on:mousemove="mousemove"
              v-on:mouseup="mouseup"
         ></div>
-        <div id="info" class="col-md-1">
+        <!--<div id="info" class="col-md-1">
             {{title}}<br/>
             Nodes: {{stats.nodes}}<br/>
             Edges: {{stats.edges}}<br/>
-        </div>
+        </div>-->
         </div>
     `
 });
