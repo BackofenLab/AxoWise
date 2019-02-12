@@ -82,7 +82,6 @@ Vue.component("visualization", {
         },
         "threshold": _.debounce(function() {
             var com = this;
-            // NETWORK.storePositions();
             com.filtered_data = com.filter_data(com.data);
         }, 100),
         "show.proteins": function() {
@@ -147,6 +146,23 @@ Vue.component("visualization", {
         drag_end: function(e) {
             var com = this;
             com.view_position = NETWORK.getViewPosition();
+            NETWORK.storePositions();
+
+            // If node(s) was/were dragged, its/their position(s) has to be remembered
+            var dragged_nodes = e.nodes;
+            if (dragged_nodes.length <= 0) return;
+
+            var dragged_positions = NETWORK.getPositions(dragged_nodes);
+            com.data.nodes.forEach(function (node) {
+                if (node.id in dragged_positions) {
+                    node.x = dragged_positions[node.id].x;
+                    node.y = dragged_positions[node.id].y;
+                    com.data.nodes.update(node);
+                }
+            });
+        },
+        release: function(e) {
+            NETWORK.storePositions();
         },
         zoom: _.debounce(function(e) {
             var com = this;
@@ -240,6 +256,7 @@ Vue.component("visualization", {
         NETWORK.on("stabilizationProgress", com.stabilization_progress);
         NETWORK.on("zoom", com.zoom);
         NETWORK.on("dragEnd", com.drag_end);
+        NETWORK.on("release", com.release);
 
         // rectangular select
         container.oncontextmenu = function() { return false; };
