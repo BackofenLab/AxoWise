@@ -115,9 +115,9 @@ Vue.component("visualization", {
 
             var filtered_nodes = data.nodes.get({
                 filter: function(node) {
-                    if (node.color == colors.protein) return com.show.proteins;
-                    else if (node.color == colors.pathway) return com.show.pathways;
-                    else if (node.color == colors.gray) return com.show.classes;
+                    if (node.color.background == colors.protein) return com.show.proteins;
+                    else if (node.color.background == colors.pathway) return com.show.pathways;
+                    else if (node.color.background == colors.gray) return com.show.classes;
                     return true;
                 }
             });

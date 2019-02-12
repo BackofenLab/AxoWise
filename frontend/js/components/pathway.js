@@ -70,7 +70,7 @@ Vue.component("pathway", {
                 edges: edges
             }
         },
-        submit: function() {
+        submit: function(pathway) {
             var com = this;
 
             // wait
@@ -80,13 +80,13 @@ Vue.component("pathway", {
 
             // var threshold = parseFloat(com.threshold);
             var threshold = 0.4;
-            $.post(com.api.subgraph, { pathway_id: com.pathway.id, threshold: threshold })
+            $.post(com.api.subgraph, { pathway_id: pathway.id, threshold: threshold })
                 .done(function (subgraph) {
                     var data = com.subgraph_to_visjs_data(subgraph);
 
                     com.$emit("data-changed", data);
                     com.$emit("last-clicked-changed", $("#pathway-btn"));
-                    com.$emit("title-changed", com.pathway.name);
+                    com.$emit("title-changed", pathway.name);
 
                     // wait is over
                     progressbar.progressbar("option", "value", 0);
@@ -113,6 +113,7 @@ Vue.component("pathway", {
                 var pathway = com.suggested_pathway_list[pathway_name];
                 pathway.name = pathway_name;
                 com.$emit("pathway-selected", pathway);
+                com.submit(pathway);
             }
         });
     },
@@ -124,12 +125,6 @@ Vue.component("pathway", {
                    type="text"
                    v-bind:disabled="$root.wait"
             ></input>
-            <br/>
-            <button id="pathway-btn"
-                    class="btn btn-primary btn-xs"
-                    v-bind:disabled="$root.wait"
-                    v-on:click="submit()"
-            >Submit</button>
         </div>
     `
 });

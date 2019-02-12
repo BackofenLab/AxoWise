@@ -32,7 +32,7 @@ Vue.component("subgraph-buttons", {
                     class="btn btn-warning"
                     v-bind:disabled="$root.wait"
                     v-on:click="reduce()"
-            >Reduce</button>
+            ><span class="glyphicon glyphicon-scissors"></span> Reduce</button>
         </div>
     `
 });

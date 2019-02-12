@@ -2,7 +2,7 @@ Vue.component("tree-node", {
     props: ["node"],
     template:
         `
-        <li data-jstree='{"icon": "glyphicon glyphicon-leaf", "opened": true}'>
+        <li data-jstree='{"icon": "glyphicon glyphicon-th", "opened": true}'>
             <span>{{ node.name }}</span>
 
             <ul v-if="node.children && node.children.length">

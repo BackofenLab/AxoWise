@@ -102,7 +102,7 @@ Vue.component("protein", {
                 selected_nodes: selected_nodes
             }
         },
-        submit: function() {
+        submit: function(protein) {
             var com = this;
 
             // wait
@@ -112,13 +112,13 @@ Vue.component("protein", {
 
             // var threshold = parseFloat(com.threshold);
             var threshold = 0.4;
-            $.post(com.api.subgraph, { protein_id: com.protein.id, threshold: threshold })
+            $.post(com.api.subgraph, { protein_id: protein.id, threshold: threshold })
                 .done(function (subgraph) {
                     var data = com.subgraph_to_visjs_data(subgraph);
 
                     com.$emit("data-changed", data);
                     com.$emit("last-clicked-changed", $("#protein-btn"));
-                    com.$emit("title-changed", com.protein.name);
+                    com.$emit("title-changed", protein.name);
 
                     // wait is over
                     progressbar.progressbar("option", "value", 0);
@@ -147,6 +147,7 @@ Vue.component("protein", {
                 var protein = com.suggested_protein_list[protein_name];
                 protein.name = protein_name;
                 com.$emit("protein-selected", protein);
+                com.submit(protein);
             }
         });
     },
@@ -158,12 +159,6 @@ Vue.component("protein", {
                    type="text"
                    v-bind:disabled="$root.wait">
             </input>
-            <br/>
-            <button id="protein-btn"
-                    class="btn btn-primary btn-xs"
-                    v-bind:disabled="$root.wait"
-                    v-on:click="submit()"
-            >Submit</button>
         </div>
     `
 });

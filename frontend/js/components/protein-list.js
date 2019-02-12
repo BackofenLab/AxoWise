@@ -126,7 +126,7 @@ Vue.component("protein-list", {
                     class="btn btn-primary btn-xs"
                     v-bind:disabled="$root.wait"
                     v-on:click="submit()"
-            >Submit</button>
+            ><span class="glyphicon glyphicon-list" aria-hidden="true"></span> Submit</button>
         </div>
     `
 });
