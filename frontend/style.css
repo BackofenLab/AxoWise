@@ -45,3 +45,17 @@
     background-image: linear-gradient(to right, rgb(0, 0, 255), rgb(0, 255, 255), rgb(0, 255, 0), rgb(255, 255, 0), rgb(255, 0, 0));
 }
 
+.protein-color {
+    background-color: rgb(82,182,229);
+    border: 0;
+}
+
+.pathway-color {
+    background-color: rgb(242,181,0);
+    border: 0;
+}
+
+.class-color {
+    background-color: rgb(198,198,198);
+    border: 0;
+}
