@@ -24,7 +24,11 @@ Vue.component("pathway", {
                 nodes.update({
                     id: klass.name,
                     label: klass.name,
-                    color: colors.gray
+                    color: {
+                        background: colors.gray,
+                        border: colors.gray,
+                        highlight: "#FFFF00"
+                    }
                 });
             }
         
@@ -35,7 +39,11 @@ Vue.component("pathway", {
                     id: protein.id,
                     label: protein.name,
                     title: get_tooltip(protein.id, protein.description),
-                    color: colors.protein
+                    color: {
+                        background: colors.protein,
+                        border: colors.protein,
+                        highlight: "#FFFF00"
+                    }
                 });
             }
         

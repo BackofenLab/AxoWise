@@ -36,7 +36,11 @@ Vue.component("protein-list", {
                     id: protein.id,
                     label: protein.name,
                     title: get_tooltip(protein.id, protein.description),
-                    color: colors.protein
+                    color: {
+                        background: colors.protein,
+                        border: colors.protein,
+                        highlight: "#FFFF00"
+                    }
                 });
             }
 
@@ -65,7 +69,11 @@ Vue.component("protein-list", {
                     id: pathway.id,
                     label: pathway.name,
                     title: get_tooltip(pathway.id, pathway.description),
-                    color: colors.pathway,
+                    color: {
+                        background: colors.pathway,
+                        border: colors.pathway,
+                        highlight: "#FFFF00"
+                    },
                     shape: "square"
                 });
             }

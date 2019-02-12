@@ -34,7 +34,11 @@ Vue.component("protein", {
                 id: protein.id,
                 label: protein.name,
                 title: get_tooltip(protein.id, protein.description),
-                color: colors.protein
+                color: {
+                    background: colors.protein,
+                    border: colors.protein,
+                    highlight: "#FFFF00"
+                }
             });
             selected_nodes.push(protein.id);
 
@@ -46,7 +50,11 @@ Vue.component("protein", {
                     id: pathway.id,
                     label: pathway.name,
                     title: get_tooltip(pathway.id, pathway.description),
-                    color: colors.pathway,
+                    color: {
+                        background: colors.pathway,
+                        border: colors.pathway,
+                        highlight: "#FFFF00"
+                    },
                     shape: "square"
                 });
 
@@ -69,7 +77,11 @@ Vue.component("protein", {
                     id: other.id,
                     label: other.name,
                     title: get_tooltip(other.id, other.description),
-                    color: colors.protein
+                    color: {
+                        background: colors.protein,
+                        border: colors.protein,
+                        highlight: "#FFFF00"
+                    }
                 });
 
                 var edge_color = get_edge_color(combined_score);
