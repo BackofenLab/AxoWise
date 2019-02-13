@@ -67,7 +67,7 @@ Vue.component("visualization", {
             var data = com.data;
             if (!NETWORK) return;
 
-            if (data.nodes.get().length <= 0)
+            if (!data.nodes || data.nodes.get().length <= 0)
                return;
 
             var has_x = "x" in data.nodes.get()[0];

@@ -1,28 +1,35 @@
 Vue.component("subgraph-buttons", {
-    props: ["data"],
+    props: ["data_node"],
     methods: {
         // reduce graph button
         reduce: function() {
             var com = this;
-            if (!NETWORK) return;
+            if (!NETWORK || !com.data_node) return;
 
+            var data = com.data_node.data;
             var selected = NETWORK.getSelection();
 
-            var nodes = com.data.nodes.get({
+            var nodes = data.nodes.get({
                 filter: function (node) {
                     return (selected.nodes.indexOf(node.id) >= 0);
                 }
             });
 
-            var edges = com.data.edges.get({
+            var edges = data.edges.get({
                 filter: function (edge) {
                     return (selected.edges.indexOf(edge.id) >= 0);
                 }
             });
 
-            com.$emit("data-changed", {
+            var data = {
                 nodes: new vis.DataSet(nodes),
                 edges: new vis.DataSet(edges)
+            };
+
+            com.$emit("data-child-created", {
+                name: "dummy",
+                data: data,
+                children: []
             });
         }
     },

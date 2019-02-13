@@ -58,12 +58,13 @@
             </div>
         </div>
         <div class="row">
-            <visualization v-bind:data="data"
+            <visualization v-bind:data="current_data_node.data"
                            v-bind:show="show"
                            v-bind:title="title"
                            v-bind:threshold="threshold">
             </visualization>
-            <view-tree>
+            <view-tree v-bind:data_trees="data_trees"
+                       v-on:data-node-changed="current_data_node = $event">
             </view-tree>
         </div>
     </div>
@@ -73,29 +74,29 @@
             <threshold v-model="threshold"
                        v-bind:last_clicked="last_clicked"
             ></threshold>
-            <subgraph-buttons v-bind:data="data"
-                              v-on:data-changed="data = $event"
+            <subgraph-buttons v-bind:data_node="current_data_node"
+                              v-on:data-child-created="current_data_node.children.push($event)"
             ></subgraph-buttons>
         </div>
         <div class="row">
             <protein v-model="protein"
                      v-bind:species="species"
                      v-bind:threshold="threshold"
-                     v-on:data-changed="data = $event"
+                     v-on:data-tree-added="data_trees.push($event)"
                      v-on:last-clicked-changed="last_clicked = $event"
                      v-on:title-changed="title = $event"
             ></protein>
             <pathway v-model="pathway"
                      v-bind:species="species"
                      v-bind:threshold="threshold"
-                     v-on:data-changed="data = $event"
+                     v-on:data-tree-added="data_trees.push($event)"
                      v-on:last-clicked-changed="last_clicked = $event"
                      v-on:title-changed="title = $event"
             ></pathway>
             <protein-list v-model="protein_list"
                           v-bind:species="species"
                           v-bind:threshold="threshold"
-                          v-on:data-changed="data = $event"
+                          v-on:data-tree-added="data_trees.push($event)"
                           v-on:last-clicked-changed="last_clicked = $event"
                           v-on:title-changed="title = $event"
             ></protein-list>

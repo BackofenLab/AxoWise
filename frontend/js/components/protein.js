@@ -116,7 +116,11 @@ Vue.component("protein", {
                 .done(function (subgraph) {
                     var data = com.subgraph_to_visjs_data(subgraph);
 
-                    com.$emit("data-changed", data);
+                    com.$emit("data-tree-added", {
+                        name: protein.name,
+                        data: data,
+                        children: []
+                    });
                     com.$emit("last-clicked-changed", $("#protein-btn"));
                     com.$emit("title-changed", protein.name);
 

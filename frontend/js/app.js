@@ -7,10 +7,10 @@ $(document).ready(function () {
             wait: true,
             last_clicked: null,
             title: "",
-            data: {
-                nodes: new vis.DataSet(),
-                edges: new vis.DataSet(),
-            },
+            current_data_node: {},
+            data_trees: [
+                // name, data, children
+            ],
             show: {
                 proteins: true,
                 pathways: true,

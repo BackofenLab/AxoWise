@@ -59,3 +59,9 @@
     background-color: rgb(198,198,198);
     border: 0;
 }
+
+#view-tree li { 
+    cursor: pointer;
+    list-style-type: none;
+    background: #CCC;
+}
