@@ -18,7 +18,7 @@
 }
 #visualization {
     height: 600px;
-    border: 1px solid lightgray;
+    /* border: 1px solid lightgray; */
     margin-bottom: 20px;
 }
 

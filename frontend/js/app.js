@@ -5,7 +5,6 @@ $(document).ready(function () {
         el: '#pgdb-app',
         data: {
             wait: true,
-            last_clicked: null,
             title: "",
             current_data_node: {},
             data_trees: [

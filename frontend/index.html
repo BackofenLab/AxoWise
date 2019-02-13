@@ -72,7 +72,6 @@
         <div class="row">
             <species-search v-model="species"></species-search>
             <threshold v-model="threshold"
-                       v-bind:last_clicked="last_clicked"
             ></threshold>
             <subgraph-buttons v-bind:data_node="current_data_node"
                               v-on:data-child-created="create_child($event)"
@@ -83,21 +82,18 @@
                      v-bind:species="species"
                      v-bind:threshold="threshold"
                      v-on:data-tree-added="add_data_tree($event)"
-                     v-on:last-clicked-changed="last_clicked = $event"
                      v-on:title-changed="title = $event"
             ></protein>
             <pathway v-model="pathway"
                      v-bind:species="species"
                      v-bind:threshold="threshold"
                      v-on:data-tree-added="add_data_tree($event)"
-                     v-on:last-clicked-changed="last_clicked = $event"
                      v-on:title-changed="title = $event"
             ></pathway>
             <protein-list v-model="protein_list"
                           v-bind:species="species"
                           v-bind:threshold="threshold"
                           v-on:data-tree-added="add_data_tree($event)"
-                          v-on:last-clicked-changed="last_clicked = $event"
                           v-on:title-changed="title = $event"
             ></protein-list>
         </div>

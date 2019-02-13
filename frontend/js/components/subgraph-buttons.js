@@ -8,6 +8,7 @@ Vue.component("subgraph-buttons", {
 
             var data = com.data_node.data;
             var selected = NETWORK.getSelection();
+            if (selected.nodes.length <=0) return;
 
             var nodes = data.nodes.get({
                 filter: function (node) {

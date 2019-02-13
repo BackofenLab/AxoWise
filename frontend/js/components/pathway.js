@@ -84,13 +84,14 @@ Vue.component("pathway", {
                 .done(function (subgraph) {
                     var data = com.subgraph_to_visjs_data(subgraph);
 
-                    com.$emit("data-tree-added", {
-                        name: pathway.name,
-                        data: data,
-                        children: []
-                    });
-                    com.$emit("last-clicked-changed", $("#pathway-btn"));
-                    com.$emit("title-changed", pathway.name);
+                    if (data.nodes.get().length > 0) {
+                        com.$emit("title-changed", pathway.name);
+                        com.$emit("data-tree-added", {
+                            name: pathway.name,
+                            data: data,
+                            children: []
+                        });
+                    }
 
                     // wait is over
                     progressbar.progressbar("option", "value", 0);

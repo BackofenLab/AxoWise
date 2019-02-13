@@ -21,7 +21,7 @@ Vue.component("visualization", {
                 interaction: {
                     hideEdgesOnDrag: true,
                     multiselect: true,
-                    navigationButtons: true
+                    navigationButtons: false
                 },
                 nodes: {
                     shape: "dot"
@@ -73,7 +73,7 @@ Vue.component("visualization", {
             var has_x = "x" in data.nodes.get()[0];
             var has_y = "y" in data.nodes.get()[0];
             if (has_x && has_y) {
-                com.filtered_data = data;
+                com.filtered_data = com.filter_data(com.current_data_node.data, false);
                 return;
             }
 
@@ -82,19 +82,19 @@ Vue.component("visualization", {
         },
         "threshold": _.debounce(function() {
             var com = this;
-            com.filtered_data = com.filter_data(com.current_data_node.data);
+            com.filtered_data = com.filter_data(com.current_data_node.data, true);
         }, 100),
         "show.proteins": function() {
             var com = this;
-            com.filtered_data = com.filter_data(com.current_data_node.data);
+            com.filtered_data = com.filter_data(com.current_data_node.data, true);
         },
         "show.pathways": function() {
             var com = this;
-            com.filtered_data = com.filter_data(com.current_data_node.data);
+            com.filtered_data = com.filter_data(com.current_data_node.data, true);
         },
         "show.classes": function() {
             var com = this;
-            com.filtered_data = com.filter_data(com.current_data_node.data);
+            com.filtered_data = com.filter_data(com.current_data_node.data, true);
         },
         "filtered_data": function() {
             var com = this;
@@ -109,18 +109,22 @@ Vue.component("visualization", {
         },
     },
     methods: {
-        filter_data: function(data) {
+        filter_data: function(data, filter_by_type) {
             var com = this;
             if (!data) return;
 
-            var filtered_nodes = data.nodes.get({
-                filter: function(node) {
-                    if (node.color.background == colors.protein) return com.show.proteins;
-                    else if (node.color.background == colors.pathway) return com.show.pathways;
-                    else if (node.color.background == colors.gray) return com.show.classes;
-                    return true;
-                }
-            });
+            var filtered_nodes = null;
+            if (!filter_by_type)
+                filtered_nodes = data.nodes.get();
+            else
+                filtered_nodes = data.nodes.get({
+                    filter: function(node) {
+                        if (node.color.background == colors.protein) return com.show.proteins;
+                        else if (node.color.background == colors.pathway) return com.show.pathways;
+                        else if (node.color.background == colors.gray) return com.show.classes;
+                        return true;
+                    }
+                });
 
             var filtered_edges = data.edges.get({
                 filter: function(edge) {
@@ -153,11 +157,11 @@ Vue.component("visualization", {
             if (dragged_nodes.length <= 0) return;
 
             var dragged_positions = NETWORK.getPositions(dragged_nodes);
-            com.data.nodes.forEach(function (node) {
+            com.current_data_node.data.nodes.forEach(function (node) {
                 if (node.id in dragged_positions) {
                     node.x = dragged_positions[node.id].x;
                     node.y = dragged_positions[node.id].y;
-                    com.data.nodes.update(node);
+                    com.current_data_node.data.nodes.update(node);
                 }
             });
         },

@@ -102,13 +102,14 @@ Vue.component("protein-list", {
                             .done(function (subgraph) {
                                 var data = com.subgraph_to_visjs_data(subgraph);
 
-                                com.$emit("data-tree-added", {
-                                    name: "Protein list",
-                                    data: data,
-                                    children: []
-                                });
-                                com.$emit("last-clicked-changed", $("#protein-list-btn"));
-                                com.$emit("title-changed", "");
+                                if (data.nodes.get().length > 0) {
+                                    com.$emit("title-changed", "");
+                                    com.$emit("data-tree-added", {
+                                        name: "Protein list",
+                                        data: data,
+                                        children: []
+                                    });
+                                }
 
                                 // wait is over
                                 progressbar.progressbar("option", "value", 0);
