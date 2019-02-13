@@ -60,8 +60,6 @@
     border: 0;
 }
 
-#view-tree li { 
+#view-tree span {
     cursor: pointer;
-    list-style-type: none;
-    background: #CCC;
 }

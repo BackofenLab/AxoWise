@@ -31,6 +31,18 @@ $(document).ready(function () {
             },
             protein_list: null,
             threshold: 0.75
+        },
+        methods: {
+            add_data_tree: function(data_tree) {
+                var com = this;
+                com.data_trees.push(data_tree);
+                com.current_data_node = data_tree;
+            },
+            create_child: function(child) {
+                var com = this;
+                com.current_data_node.children.push(child);
+                com.current_data_node = child;
+            }
         }
     });
 });

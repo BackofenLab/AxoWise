@@ -1,7 +1,7 @@
 var NETWORK = null;
 
 Vue.component("visualization", {
-    props: ["data", "show", "title", "threshold"],
+    props: ["current_data_node", "show", "title", "threshold"],
     data: function() {
         return {
             container: null,
@@ -62,10 +62,10 @@ Vue.component("visualization", {
         }
     },
     watch: {
-        "data": function(data) {
+        "current_data_node": function() {
             var com = this;
-            var data = com.data;
-            if (!NETWORK) return;
+            var data = com.current_data_node.data;
+            if (!NETWORK || !data) return;
 
             if (!data.nodes || data.nodes.get().length <= 0)
                return;
@@ -82,19 +82,19 @@ Vue.component("visualization", {
         },
         "threshold": _.debounce(function() {
             var com = this;
-            com.filtered_data = com.filter_data(com.data);
+            com.filtered_data = com.filter_data(com.current_data_node.data);
         }, 100),
         "show.proteins": function() {
             var com = this;
-            com.filtered_data = com.filter_data(com.data);
+            com.filtered_data = com.filter_data(com.current_data_node.data);
         },
         "show.pathways": function() {
             var com = this;
-            com.filtered_data = com.filter_data(com.data);
+            com.filtered_data = com.filter_data(com.current_data_node.data);
         },
         "show.classes": function() {
             var com = this;
-            com.filtered_data = com.filter_data(com.data);
+            com.filtered_data = com.filter_data(com.current_data_node.data);
         },
         "filtered_data": function() {
             var com = this;
@@ -141,7 +141,7 @@ Vue.component("visualization", {
                 return;
 
             NETWORK.storePositions();
-            com.filtered_data = com.filter_data(com.data);
+            com.filtered_data = com.filter_data(com.current_data_node.data);
         },
         drag_end: function(e) {
             var com = this;
@@ -222,14 +222,14 @@ Vue.component("visualization", {
         },
         select_nodes_rectangular: function() {
             var com = this;
-            if(!com.data) return;
+            if(!com.current_data_node.data) return;
             var rectangle = com.rectangular_select.rectangle;
 
             var selected_nodes = [];
             var x_range = com.get_select_range(rectangle.startX, rectangle.w);
             var y_range = com.get_select_range(rectangle.startY, rectangle.h);
 
-            var nodes = com.data.nodes.get();
+            var nodes = com.current_data_node.data.nodes.get();
             for (var i = 0; i < nodes.length; i++) {
                 var node = nodes[i];
                 var node_position = NETWORK.getPositions([node.id]);

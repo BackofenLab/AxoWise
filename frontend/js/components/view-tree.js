@@ -8,12 +8,13 @@ Vue.component("tree-node", {
     },
     template:
         `
-        <li data-jstree='{"icon": "glyphicon glyphicon-th", "opened": true}' v-on:click="select(node);">
-            <span>{{ node.name }}</span>
+        <li data-jstree='{"icon": "glyphicon glyphicon-th", "opened": true}'>
+            <span v-on:click="select(node);">{{ node.name }}</span>
 
             <ul v-if="node.children && node.children.length">
                 <tree-node v-for="child in node.children"
                            v-bind:node="child"
+                           v-on:data-node-changed="select($event)"
                 >
                 </tree-node>
             </ul>

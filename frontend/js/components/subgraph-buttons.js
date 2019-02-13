@@ -27,7 +27,7 @@ Vue.component("subgraph-buttons", {
             };
 
             com.$emit("data-child-created", {
-                name: "dummy",
+                name: com.data_node.name + " (reduced)",
                 data: data,
                 children: []
             });
@@ -36,7 +36,7 @@ Vue.component("subgraph-buttons", {
     template: `
         <div class="col-md-4 ui-widget">
             <button id="reduce-graph-btn"
-                    class="btn btn-warning"
+                    class="btn btn-danger"
                     v-bind:disabled="$root.wait"
                     v-on:click="reduce()"
             ><span class="glyphicon glyphicon-scissors"></span> Reduce</button>
