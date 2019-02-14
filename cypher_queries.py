@@ -306,6 +306,16 @@ def create_kegg_index(graph):
     for query in queries:
         graph.run(query)
 
+# ========================= Server warm-up =========================
+
+def warm_up(graph):
+    query = """
+        MATCH (n)
+        OPTIONAL MATCH (n)-[r]->()
+        RETURN count(n.id) + count(r.combined);
+    """
+    graph.run(query)
+
 # ========================= List queries =========================
 def get_protein_list(graph):
     """
@@ -408,8 +418,7 @@ def get_proteins_subgraph(graph, protein_ids, threshold=0):
         RETURN proteins AS proteins, COLLECT(pathway) AS pathways, COLLECT({
             protein1_id: protein1.id,
             combined_score: association.combined,
-            protein2_id: protein2.id,
-            pathway_id: pathway.id
+            protein2_id: protein2.id
         }) AS associations
     """
 

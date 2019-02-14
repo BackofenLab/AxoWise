@@ -103,6 +103,7 @@ def search_class_api():
 
 # ====================== Subgraph API ======================
 neo4j_graph = database.connect_neo4j()
+Cypher.warm_up(neo4j_graph)
 
 @app.route("/api/subgraph/protein", methods=["POST"])
 def protein_subgraph_api():
