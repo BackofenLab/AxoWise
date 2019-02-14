@@ -3,19 +3,12 @@ Vue.component("threshold", {
         prop: "threshold",
         event: "threshold-changed"
     },
-    props: ["threshold", "last_clicked"],
+    props: ["threshold"],
     data: function() {
         return {
             min: 0.4,
             max: 1.0,
             step: 0.001
-        }
-    },
-    methods: {
-        resubmit: function() {
-            // var com = this;
-            // if(!com.last_clicked) return;
-            // com.last_clicked.click();
         }
     },
     template: `
@@ -29,7 +22,6 @@ Vue.component("threshold", {
                    v-bind:step="step"
                    v-bind:disabled="$root.wait"
                    v-on:input="$emit('threshold-changed', $event.target.value)"
-                   v-on:change="resubmit()"
                    v-bind:value="threshold"
             />
             <input id="threshold-input"
@@ -39,7 +31,6 @@ Vue.component("threshold", {
                    v-bind:step="step"
                    v-bind:disabled="$root.wait"
                    v-on:input="$emit('threshold-changed', $event.target.value)"
-                   v-on:change="resubmit()"
                    v-bind:value="threshold"
             />
         </div>
