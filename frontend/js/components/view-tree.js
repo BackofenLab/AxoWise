@@ -8,7 +8,7 @@ Vue.component("tree-node", {
     },
     template:
         `
-        <li data-jstree='{"icon": "glyphicon glyphicon-th", "opened": true}'>
+        <li class="list-group-item">
             <span v-on:click="select(node);">{{ node.name }}</span>
 
             <ul v-if="node.children && node.children.length">
@@ -24,10 +24,6 @@ Vue.component("tree-node", {
 
 Vue.component("view-tree", {
     props: ["data_trees"],
-    mounted: function() {
-        var tree = $("#view-tree");
-        //tree.jstree();
-    },
     methods: {
         select: function(node) {
             var com = this;
@@ -37,7 +33,7 @@ Vue.component("view-tree", {
     template:
         `
         <div id="view-tree" class="col-md-2">
-        <ul>
+        <ul class="list-group">
             <tree-node v-for="tree in data_trees"
                        v-bind:node="tree"
                        v-on:data-node-changed="select($event)">

@@ -60,6 +60,7 @@
     border: 0;
 }
 
-#view-tree span {
+#view-tree span:hover {
     cursor: pointer;
+    color: #337ab7;
 }
