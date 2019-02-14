@@ -39,12 +39,25 @@ Vue.component("species-search", {
                 APP.wait = false;
             }
         });
+
+        //jQuery tooltip
+        $("[title]").tooltip({
+                position: {
+                my: "left",
+                at: "right bottom",
+                collision: "none"
+            }
+        }).tooltip("open");
     },
     template: `
         <div class="col-md-4 ui-widget">
             Species:
             <br/>
-            <input id="species-input" type="text"></input>
+            <input id="species-input"
+                   type="text"
+                   title="Please select a species."
+            >
+            </input>
         </div>
     `,
 });
