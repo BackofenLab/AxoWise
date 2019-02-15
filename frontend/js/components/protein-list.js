@@ -66,7 +66,6 @@ Vue.component("protein-list", {
                 var protein1_id = association.protein1_id;
                 var protein2_id = association.protein2_id;
                 var pathway_id = association.pathway_id;
-                console.log(pathway_id);
 
                 var edge_color = get_edge_color(combined_score);
                 edges.update({

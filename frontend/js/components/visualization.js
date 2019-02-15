@@ -78,9 +78,6 @@ Vue.component("visualization", {
             }
 
             data.nodes = data.nodes_protein;
-            for (var i in data) {
-                console.log(i);
-            }
 
             NETWORK.setData(data);
             NETWORK.stabilize(50);
@@ -120,17 +117,21 @@ Vue.component("visualization", {
             var com = this;
             if (!data) return;
 
-            var filtered_nodes = [];
-            if (com.show.proteins) filtered_nodes = filtered_nodes.concat(data.nodes_protein.get());
-            if (data.nodes_pathway && com.show.pathways) filtered_nodes = filtered_nodes.concat(data.nodes_pathway.get());
-            if (data.nodes_class && com.show.classes) filtered_nodes = filtered_nodes.concat(data.nodes_class.get());
-
             var filtered_edges = data.edges.get({
                 filter: function(edge) {
                     if (edge.color == colors.pathway) return true;
                     return edge.value / 1000 >= com.threshold;
                 }
             });
+
+            var filtered_nodes = [];
+            if (com.show.proteins) filtered_nodes = filtered_nodes.concat(data.nodes_protein.get());
+            if (data.nodes_pathway && com.show.pathways) {
+                var pathway_nodes = data.nodes_pathway.get();
+                var connected_pathways = remove_disconnected_nodes(pathway_nodes, filtered_nodes, filtered_edges);
+                filtered_nodes = filtered_nodes.concat(connected_pathways);
+            }
+            if (data.nodes_class && com.show.classes) filtered_nodes = filtered_nodes.concat(data.nodes_class.get());
 
             return {
                 nodes: filtered_nodes,

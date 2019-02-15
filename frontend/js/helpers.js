@@ -11,6 +11,25 @@ function make_graph_layout(data) {
     // TODO
 }
 
+function remove_disconnected_nodes(nodes, allowed_nodes, edges) {
+    var node_degree = {};
+    var allowed_ids = allowed_nodes.map((node) => (node.id));
+    var filtered_nodes = [];
+    for (var i = 0; i < edges.length; i++) {
+        var edge = edges[i];
+        var from = edge.from;
+        var to = edge.to;
+        if (!allowed_ids.includes(from)) continue;
+        node_degree[from] = node_degree[from] ? (node_degree[from] + 1) : 1;
+        node_degree[to] = node_degree[to] ? (node_degree[to] + 1) : 1;
+    }
+    for (var i = 0; i < nodes.length; i++) {
+        var node = nodes[i];
+        if (node_degree[node.id] > 0) filtered_nodes.push(node);
+    }
+    return filtered_nodes;
+}
+
 function generate_legend(legend){
     var container = $("#legend");
 
