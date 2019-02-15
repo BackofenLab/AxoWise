@@ -77,7 +77,10 @@ Vue.component("visualization", {
                 return;
             }
 
-            data.nodes = data.nodes_protein;
+            data.nodes = new vis.DataSet();
+            data.nodes.update(data.nodes_protein.get());
+            if (data.nodes_pathway) data.nodes.update(data.nodes_pathway.get());
+            if (data.nodes_class) data.nodes.update(data.nodes_class.get());
 
             NETWORK.setData(data);
             NETWORK.stabilize(50);
@@ -146,6 +149,45 @@ Vue.component("visualization", {
                 return;
 
             NETWORK.storePositions();
+            var positions = {};
+            com.current_data_node.data.nodes.get().forEach(function (node) {
+                positions[node.id] = {
+                    x: node.x,
+                    y: node.y
+                };
+            });
+
+            // Proteins
+            com.current_data_node.data.nodes_protein.forEach(function (node) {
+                com.current_data_node.data.nodes_protein.update({
+                    id: node.id,
+                    x: positions[node.id].x,
+                    y: positions[node.id].y
+                });
+            });
+
+            // Pathways
+            if (com.current_data_node.data.nodes_pathway)
+                com.current_data_node.data.nodes_pathway.forEach(function (node) {
+                    com.current_data_node.data.nodes_pathway.update({
+                        id: node.id,
+                        x: positions[node.id].x,
+                        y: positions[node.id].y
+                    });
+                });
+
+            // Classes
+            if (com.current_data_node.data.nodes_class)
+                com.current_data_node.data.nodes_class.forEach(function (node) {
+                    com.current_data_node.data.nodes_class.update({
+                        id: node.id,
+                        x: positions[node.id].x,
+                        y: positions[node.id].y
+                    });
+                });
+
+            delete com.current_data_node.data.nodes;
+
             com.filtered_data = com.filter_data(com.current_data_node.data, true);
         },
         drag_end: function(e) {
