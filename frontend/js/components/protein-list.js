@@ -23,8 +23,6 @@ Vue.component("protein-list", {
                     edges: edges
                 }
 
-            console.log(subgraph);
-
             var proteins = subgraph.proteins;
             var pathways = subgraph.pathways;
             var associations = subgraph.associations;
