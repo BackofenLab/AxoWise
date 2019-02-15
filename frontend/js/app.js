@@ -12,8 +12,8 @@ $(document).ready(function () {
             ],
             show: {
                 proteins: true,
-                pathways: true,
-                classes: true
+                pathways: false,
+                classes: false
             },
             species: {
                 ncbi_id: null,

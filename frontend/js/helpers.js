@@ -7,6 +7,10 @@ var colors = {
     gray: "rgb(198,198,198)"
 };
 
+function make_graph_layout(data) {
+    // TODO
+}
+
 function generate_legend(legend){
     var container = $("#legend");
 

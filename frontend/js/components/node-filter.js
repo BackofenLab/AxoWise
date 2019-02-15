@@ -8,24 +8,21 @@ Vue.component("node-filter", {
         $("#show-proteins").checkboxradio({
             icon: false,
             classes: {
-                "ui-checkboxradio-checked": "protein-color",
-                "ui-state-hover": "protein-color"
+                "ui-checkboxradio-checked": "protein-color"
             }
         });
 
         $("#show-pathways").checkboxradio({
             icon: false,
             classes: {
-                "ui-checkboxradio-checked": "pathway-color",
-                "ui-state-hover": "pathway-color"
+                "ui-checkboxradio-checked": "pathway-color"
             }
         });
 
         $("#show-classes").checkboxradio({
             icon: false,
             classes: {
-                "ui-checkboxradio-checked": "class-color",
-                "ui-state-hover": "class-color"
+                "ui-checkboxradio-checked": "class-color"
             }
         });
     },

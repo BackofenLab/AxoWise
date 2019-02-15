@@ -145,7 +145,7 @@ Vue.component("visualization", {
                 return;
 
             NETWORK.storePositions();
-            com.filtered_data = com.filter_data(com.current_data_node.data);
+            com.filtered_data = com.filter_data(com.current_data_node.data, true);
         },
         drag_end: function(e) {
             var com = this;
