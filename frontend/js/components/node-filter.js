@@ -5,26 +5,9 @@ Vue.component("node-filter", {
     },
     props: ["show"],
     mounted: function() {
-        $("#show-proteins").checkboxradio({
-            icon: false,
-            classes: {
-                "ui-checkboxradio-checked": "protein-color"
-            }
-        });
-
-        $("#show-pathways").checkboxradio({
-            icon: false,
-            classes: {
-                "ui-checkboxradio-checked": "pathway-color"
-            }
-        });
-
-        $("#show-classes").checkboxradio({
-            icon: false,
-            classes: {
-                "ui-checkboxradio-checked": "class-color"
-            }
-        });
+        $("#show-proteins").checkboxradio();
+        $("#show-pathways").checkboxradio();
+        $("#show-classes").checkboxradio();
     },
     template: `
         <div class="col-md-4 ui-widget">

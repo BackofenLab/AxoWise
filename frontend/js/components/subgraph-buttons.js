@@ -10,7 +10,7 @@ Vue.component("subgraph-buttons", {
             var selected = NETWORK.getSelection();
             if (selected.nodes.length <=0) return;
 
-            var nodes = data.nodes.get({
+            var nodes_protein = data.nodes_protein.get({
                 filter: function (node) {
                     return (selected.nodes.indexOf(node.id) >= 0);
                 }
@@ -18,12 +18,14 @@ Vue.component("subgraph-buttons", {
 
             var edges = data.edges.get({
                 filter: function (edge) {
-                    return (selected.edges.indexOf(edge.id) >= 0);
+                    return (selected.edges.indexOf(edge.id) >= 0) || edge.color == colors.pathway;
                 }
             });
 
             var data = {
-                nodes: new vis.DataSet(nodes),
+                nodes_protein: new vis.DataSet(nodes_protein),
+                nodes_pathway: data.nodes_pathway,
+                nodes_class: data.nodes_class,
                 edges: new vis.DataSet(edges)
             };
 

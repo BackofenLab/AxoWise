@@ -15,7 +15,9 @@ Vue.component("protein-list", {
     },
     methods: {
         subgraph_to_visjs_data: function(subgraph) {
-            var nodes = new vis.DataSet();
+            var nodes_protein = new vis.DataSet();
+            var nodes_pathway = new vis.DataSet();
+            var nodes_class = new vis.DataSet();
             var edges = new vis.DataSet();
             if (!subgraph)
                 return {
@@ -30,7 +32,7 @@ Vue.component("protein-list", {
             for (var i = 0; i < proteins.length; i++) {
                 var protein = proteins[i];
 
-                nodes.update({
+                nodes_protein.update({
                     id: protein.id,
                     label: protein.name,
                     title: get_tooltip(protein.id, protein.description),
@@ -42,28 +44,10 @@ Vue.component("protein-list", {
                 });
             }
 
-            for (var i = 0; i < associations.length; i++) {
-                var association = associations[i];
-                var combined_score = association.combined_score;
-                var protein1_id = association.protein1_id;
-                var protein2_id = association.protein2_id;
-
-                var edge_color = get_edge_color(combined_score);
-                edges.update({
-                    from: protein1_id,
-                    to: protein2_id,
-                    value: combined_score,
-                    title: (combined_score / 1000).toString(),
-                    color: {
-                        color: edge_color, highlight: edge_color
-                    }
-                });
-            }
-
             for (var i = 0; i < pathways.length; i++) {
                 var pathway = pathways[i];
 
-                nodes.update({
+                nodes_pathway.update({
                     id: pathway.id,
                     label: pathway.name,
                     title: get_tooltip(pathway.id, pathway.description),
@@ -76,8 +60,42 @@ Vue.component("protein-list", {
                 });
             }
 
+            for (var i = 0; i < associations.length; i++) {
+                var association = associations[i];
+                var combined_score = association.combined_score;
+                var protein1_id = association.protein1_id;
+                var protein2_id = association.protein2_id;
+                var pathway_id = association.pathway_id;
+                console.log(pathway_id);
+
+                var edge_color = get_edge_color(combined_score);
+                edges.update({
+                    from: protein1_id,
+                    to: protein2_id,
+                    value: combined_score,
+                    title: (combined_score / 1000).toString(),
+                    color: {
+                        color: edge_color, highlight: edge_color
+                    }
+                });
+                if (pathway_id)
+                    edges.update([
+                        {
+                            from: protein1_id,
+                            to: pathway_id,
+                            color: colors.pathway
+                        },
+                        {
+                            from: protein2_id,
+                            to: pathway_id,
+                            color: colors.pathway
+                        }
+                    ]);
+            }
+
             return {
-                nodes: nodes,
+                nodes_protein: nodes_protein,
+                nodes_pathway: nodes_pathway,
                 edges: edges
             }
         },
@@ -100,7 +118,7 @@ Vue.component("protein-list", {
                             .done(function (subgraph) {
                                 var data = com.subgraph_to_visjs_data(subgraph);
 
-                                if (data.nodes.get().length > 0) {
+                                if (data.nodes_protein.get().length > 0) {
                                     com.$emit("title-changed", "");
                                     com.$emit("data-tree-added", {
                                         name: "Protein list",

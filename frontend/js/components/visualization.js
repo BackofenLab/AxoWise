@@ -67,14 +67,19 @@ Vue.component("visualization", {
             var data = com.current_data_node.data;
             if (!NETWORK || !data) return;
 
-            if (!data.nodes || data.nodes.get().length <= 0)
+            if (!data.nodes_protein || data.nodes_protein.get().length <= 0)
                return;
 
-            var has_x = "x" in data.nodes.get()[0];
-            var has_y = "y" in data.nodes.get()[0];
+            var has_x = "x" in data.nodes_protein.get()[0];
+            var has_y = "y" in data.nodes_protein.get()[0];
             if (has_x && has_y) {
                 com.filtered_data = com.filter_data(com.current_data_node.data, false);
                 return;
+            }
+
+            data.nodes = data.nodes_protein;
+            for (var i in data) {
+                console.log(i);
             }
 
             NETWORK.setData(data);
@@ -98,6 +103,8 @@ Vue.component("visualization", {
         },
         "filtered_data": function() {
             var com = this;
+            if (!com.filtered_data) return;
+
             NETWORK.setData(com.filtered_data);
             NETWORK.moveTo({
                 position: com.view_position,
@@ -113,21 +120,14 @@ Vue.component("visualization", {
             var com = this;
             if (!data) return;
 
-            var filtered_nodes = null;
-            if (!filter_by_type)
-                filtered_nodes = data.nodes.get();
-            else
-                filtered_nodes = data.nodes.get({
-                    filter: function(node) {
-                        if (node.color.background == colors.protein) return com.show.proteins;
-                        else if (node.color.background == colors.pathway) return com.show.pathways;
-                        else if (node.color.background == colors.gray) return com.show.classes;
-                        return true;
-                    }
-                });
+            var filtered_nodes = [];
+            if (com.show.proteins) filtered_nodes = filtered_nodes.concat(data.nodes_protein.get());
+            if (data.nodes_pathway && com.show.pathways) filtered_nodes = filtered_nodes.concat(data.nodes_pathway.get());
+            if (data.nodes_class && com.show.classes) filtered_nodes = filtered_nodes.concat(data.nodes_class.get());
 
             var filtered_edges = data.edges.get({
                 filter: function(edge) {
+                    if (edge.color == colors.pathway) return true;
                     return edge.value / 1000 >= com.threshold;
                 }
             });
@@ -157,13 +157,35 @@ Vue.component("visualization", {
             if (dragged_nodes.length <= 0) return;
 
             var dragged_positions = NETWORK.getPositions(dragged_nodes);
-            com.current_data_node.data.nodes.forEach(function (node) {
+
+            // Proteins
+            com.current_data_node.data.nodes_protein.forEach(function (node) {
                 if (node.id in dragged_positions) {
                     node.x = dragged_positions[node.id].x;
                     node.y = dragged_positions[node.id].y;
-                    com.current_data_node.data.nodes.update(node);
+                    com.current_data_node.data.nodes_protein.update(node);
                 }
             });
+
+            // Pathways
+            if (com.current_data_node.data.nodes_pathway)
+                com.current_data_node.data.nodes_pathway.forEach(function (node) {
+                    if (node.id in dragged_positions) {
+                        node.x = dragged_positions[node.id].x;
+                        node.y = dragged_positions[node.id].y;
+                        com.current_data_node.data.nodes_pathway.update(node);
+                    }
+                });
+
+            // Classes
+            if (com.current_data_node.data.nodes_class)
+                com.current_data_node.data.nodes_class.forEach(function (node) {
+                    if (node.id in dragged_positions) {
+                        node.x = dragged_positions[node.id].x;
+                        node.y = dragged_positions[node.id].y;
+                        com.current_data_node.data.nodes_class.update(node);
+                    }
+                });
         },
         release: function(e) {
             NETWORK.storePositions();
@@ -233,7 +255,7 @@ Vue.component("visualization", {
             var x_range = com.get_select_range(rectangle.startX, rectangle.w);
             var y_range = com.get_select_range(rectangle.startY, rectangle.h);
 
-            var nodes = com.current_data_node.data.nodes.get();
+            var nodes = com.current_data_node.data.nodes_protein.get();
             for (var i = 0; i < nodes.length; i++) {
                 var node = nodes[i];
                 var node_position = NETWORK.getPositions([node.id]);

@@ -15,13 +15,14 @@ Vue.component("pathway", {
     },
     methods: {
         subgraph_to_visjs_data: function(subgraph) {
-            var nodes = new vis.DataSet();
+            var nodes_protein = new vis.DataSet();
+            var nodes_class = new vis.DataSet();
             var edges = new vis.DataSet();
         
             for (var i = 0; i < subgraph.classes.length; i++) {
                 var klass = subgraph.classes[i];
         
-                nodes.update({
+                nodes_class.update({
                     id: klass.name,
                     label: klass.name,
                     color: {
@@ -35,7 +36,7 @@ Vue.component("pathway", {
             for (var i = 0; i < subgraph.proteins.length; i++) {
                 var protein = subgraph.proteins[i];
         
-                nodes.update({
+                nodes_protein.update({
                     id: protein.id,
                     label: protein.name,
                     title: get_tooltip(protein.id, protein.description),
@@ -66,7 +67,8 @@ Vue.component("pathway", {
             }
         
             return {
-                nodes: nodes,
+                nodes_protein: nodes_protein,
+                nodes_class: nodes_class,
                 edges: edges
             }
         },
@@ -84,7 +86,7 @@ Vue.component("pathway", {
                 .done(function (subgraph) {
                     var data = com.subgraph_to_visjs_data(subgraph);
 
-                    if (data.nodes.get().length > 0) {
+                    if (data.nodes_protein.get().length > 0) {
                         com.$emit("title-changed", pathway.name);
                         com.$emit("data-tree-added", {
                             name: pathway.name,

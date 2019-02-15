@@ -418,7 +418,8 @@ def get_proteins_subgraph(graph, protein_ids, threshold=0):
         RETURN proteins AS proteins, COLLECT(pathway) AS pathways, COLLECT({
             protein1_id: protein1.id,
             combined_score: association.combined,
-            protein2_id: protein2.id
+            protein2_id: protein2.id,
+            pathway_id: pathway.id
         }) AS associations
     """
 

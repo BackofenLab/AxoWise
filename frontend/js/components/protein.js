@@ -15,12 +15,14 @@ Vue.component("protein", {
     },
     methods: {
         subgraph_to_visjs_data: function(subgraph) {
-            var nodes = new vis.DataSet();
+            var nodes_protein = new vis.DataSet();
+            var nodes_pathway = new vis.DataSet();
             var edges = new vis.DataSet();
             var selected_nodes = [];
             if (!subgraph)
                 return {
-                    nodes: nodes,
+                    nodes_protein: nodes_protein,
+                    nodes_pathway: nodes_pathway,
                     edges: edges,
                     selected_nodes: selected_nodes
                 }
@@ -30,7 +32,7 @@ Vue.component("protein", {
             var associations = subgraph.associations;
 
             // Queried protein
-            nodes.update({
+            nodes_protein.update({
                 id: protein.id,
                 label: protein.name,
                 title: get_tooltip(protein.id, protein.description),
@@ -46,7 +48,7 @@ Vue.component("protein", {
             for (var i = 0; i < pathways.length; i++) {
                 var pathway = pathways[i];
 
-                nodes.update({
+                nodes_pathway.update({
                     id: pathway.id,
                     label: pathway.name,
                     title: get_tooltip(pathway.id, pathway.description),
@@ -73,7 +75,7 @@ Vue.component("protein", {
                 var other = association.other;
                 var combined_score = association.combined_score;
 
-                nodes.update({
+                nodes_protein.update({
                     id: other.id,
                     label: other.name,
                     title: get_tooltip(other.id, other.description),
@@ -97,7 +99,8 @@ Vue.component("protein", {
             }
 
             return {
-                nodes: nodes,
+                nodes_protein: nodes_protein,
+                nodes_pathway: nodes_pathway,
                 edges: edges,
                 selected_nodes: selected_nodes
             }
@@ -116,7 +119,7 @@ Vue.component("protein", {
                 .done(function (subgraph) {
                     var data = com.subgraph_to_visjs_data(subgraph);
 
-                    if (data.nodes.get().length > 0) {
+                    if (data.nodes_protein.get().length > 0) {
                         com.$emit("title-changed", protein.name);
                         com.$emit("data-tree-added", {
                             name: protein.name,
