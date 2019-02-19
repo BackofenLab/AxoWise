@@ -121,7 +121,6 @@ Vue.component("protein-list", {
                                 }).slice(0, 3);
 
                                 if (data.nodes_protein.get().length > 0) {
-                                    com.$emit("title-changed", "");
                                     com.$emit("data-tree-added", {
                                         name: protein_names.join(", ") + "...",
                                         data: data,

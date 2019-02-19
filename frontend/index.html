@@ -55,7 +55,6 @@
         <div class="row">
             <visualization v-bind:current_data_node="current_data_node"
                            v-bind:show="show"
-                           v-bind:title="title"
                            v-bind:threshold="threshold">
             </visualization>
             <view-tree v-bind:data_trees="data_trees"
@@ -77,19 +76,16 @@
                      v-bind:species="species"
                      v-bind:threshold="threshold"
                      v-on:data-tree-added="add_data_tree($event)"
-                     v-on:title-changed="title = $event"
             ></protein>
             <pathway v-model="pathway"
                      v-bind:species="species"
                      v-bind:threshold="threshold"
                      v-on:data-tree-added="add_data_tree($event)"
-                     v-on:title-changed="title = $event"
             ></pathway>
             <protein-list v-model="protein_list"
                           v-bind:species="species"
                           v-bind:threshold="threshold"
                           v-on:data-tree-added="add_data_tree($event)"
-                          v-on:title-changed="title = $event"
             ></protein-list>
         </div>
         <div class="row">

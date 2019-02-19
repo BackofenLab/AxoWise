@@ -87,7 +87,6 @@ Vue.component("pathway", {
                     var data = com.subgraph_to_visjs_data(subgraph);
 
                     if (data.nodes_protein.get().length > 0) {
-                        com.$emit("title-changed", pathway.name);
                         com.$emit("data-tree-added", {
                             name: pathway.name,
                             data: data,

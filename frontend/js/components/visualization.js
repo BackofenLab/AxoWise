@@ -1,7 +1,7 @@
 var NETWORK = null;
 
 Vue.component("visualization", {
-    props: ["current_data_node", "show", "title", "threshold"],
+    props: ["current_data_node", "show", "threshold"],
     data: function() {
         return {
             container: null,
@@ -340,11 +340,11 @@ Vue.component("visualization", {
              v-on:mousemove="mousemove"
              v-on:mouseup="mouseup"
         ></div>
-        <!--<div id="info" class="col-md-1">
-            {{title}}<br/>
+        <div id="info" class="col-md-2">
+            {{current_data_node.name}}<br/>
             Nodes: {{stats.nodes}}<br/>
             Edges: {{stats.edges}}<br/>
-        </div>-->
+        </div>
         </div>
     `
 });

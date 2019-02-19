@@ -120,7 +120,6 @@ Vue.component("protein", {
                     var data = com.subgraph_to_visjs_data(subgraph);
 
                     if (data.nodes_protein.get().length > 0) {
-                        com.$emit("title-changed", protein.name);
                         com.$emit("data-tree-added", {
                             name: protein.name,
                             data: data,
