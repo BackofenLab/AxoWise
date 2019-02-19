@@ -32,7 +32,7 @@ Vue.component("subgraph-buttons", {
             com.$emit("data-child-created", {
                 name: com.data_node.name,
                 data: data,
-                index: com.data_node.index + 1,
+                index: com.data_node.index.slice(),
                 children: []
             });
         }

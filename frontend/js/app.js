@@ -39,6 +39,8 @@ $(document).ready(function () {
             },
             create_child: function(child) {
                 var com = this;
+                var num_children = com.current_data_node.children.length;
+                child.index.push(num_children + 1);
                 com.current_data_node.children.push(child);
                 com.current_data_node = child;
             }

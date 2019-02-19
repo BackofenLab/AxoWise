@@ -125,7 +125,7 @@ Vue.component("protein-list", {
                                     com.$emit("data-tree-added", {
                                         name: protein_names.join(", ") + "...",
                                         data: data,
-                                        index: 0,
+                                        index: [],
                                         children: []
                                     });
                                 }

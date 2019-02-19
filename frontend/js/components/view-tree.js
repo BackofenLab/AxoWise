@@ -10,7 +10,7 @@ Vue.component("tree-node", {
         `
         <li class="list-group-item">
             <span v-on:click="select(node);">
-            {{ node.name }} <span v-if="node.index > 0">[{{ node.index }}]</span>
+            {{ node.name }} <span v-if="node.index.length > 0">[{{ node.index.join(".") }}]</span>
             </span>
 
             <ul v-if="node.children && node.children.length">
