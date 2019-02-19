@@ -9,7 +9,9 @@ Vue.component("tree-node", {
     template:
         `
         <li class="list-group-item">
-            <span v-on:click="select(node);">{{ node.name }}</span>
+            <span v-on:click="select(node);">
+            {{ node.name }} <span v-if="node.index > 0">[{{ node.index }}]</span>
+            </span>
 
             <ul v-if="node.children && node.children.length">
                 <tree-node v-for="child in node.children"

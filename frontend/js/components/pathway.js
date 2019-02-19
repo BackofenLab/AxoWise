@@ -91,6 +91,7 @@ Vue.component("pathway", {
                         com.$emit("data-tree-added", {
                             name: pathway.name,
                             data: data,
+                            index: 0,
                             children: []
                         });
                     }

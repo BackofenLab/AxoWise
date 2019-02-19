@@ -116,12 +116,16 @@ Vue.component("protein-list", {
                         $.post(com.api.subgraph, { protein_ids: protein_ids.join(';'), threshold: threshold })
                             .done(function (subgraph) {
                                 var data = com.subgraph_to_visjs_data(subgraph);
+                                var protein_names = data.nodes_protein.get().map(function (node) {
+                                    return node.label
+                                }).slice(0, 3);
 
                                 if (data.nodes_protein.get().length > 0) {
                                     com.$emit("title-changed", "");
                                     com.$emit("data-tree-added", {
-                                        name: "Protein list",
+                                        name: protein_names.join(", ") + "...",
                                         data: data,
+                                        index: 0,
                                         children: []
                                     });
                                 }

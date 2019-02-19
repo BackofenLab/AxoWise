@@ -124,6 +124,7 @@ Vue.component("protein", {
                         com.$emit("data-tree-added", {
                             name: protein.name,
                             data: data,
+                            index: 0,
                             children: []
                         });
                     }
