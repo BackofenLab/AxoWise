@@ -105,6 +105,98 @@ def search_class_api():
 neo4j_graph = database.connect_neo4j()
 Cypher.warm_up(neo4j_graph)
 
+import networkx as nx
+from networkx.readwrite import json_graph
+from networkx.drawing.layout import rescale_layout, _process_params
+
+def shell_layout(G, nlist=None, center=None, nsize=10):
+    import numpy as np
+
+    G, center = _process_params(G, center, 2)
+
+    radius = 1.0
+    L = 10 * nsize
+
+    npos = {}
+    for nodes in nlist:
+        step = (2 * np.pi) / len(nodes)
+        # Discard the extra angle since it matches 0 radians.
+        theta = np.linspace(0, 1, len(nodes) + 1)[:-1] * 2 * np.pi
+        theta = theta.astype(np.float32)
+        radius += max(L / step, L)
+        pos = np.column_stack([np.cos(theta), np.sin(theta)])
+        pos = rescale_layout(pos, scale=radius / len(nlist)) + center
+        assert len(pos) == len(nodes), f"{len(pos)} != {len(nodes)}"
+        npos.update(zip(nodes, pos))
+
+    return npos
+
+def protein_subgraph_to_nx_json(subgraph):
+    G = nx.DiGraph()
+    if subgraph is None:
+        data = json_graph.node_link_data(G)
+        return json.dumps(data)
+
+    proteins = []
+    pathways = []
+
+    protein = subgraph["protein"]
+    G.add_node(
+        protein["id"],
+        label=protein["name"],
+        description=protein["description"],
+        type=0 # Protein
+    )
+
+    proteins.append(protein["id"])
+
+    for pathway in subgraph["pathways"]:
+        G.add_node(
+            pathway["id"],
+            label=pathway["name"],
+            description=pathway["description"],
+            type=1 # Pathway
+        )
+        G.add_edge(
+            protein["id"],
+            pathway["id"],
+            weight=0
+        )
+        pathways.append(pathway["id"])
+
+    for association in subgraph["associations"]:
+        other = association["other"]
+        combined_score = association["combined_score"]
+
+        G.add_node(
+            other["id"],
+            label=other["name"],
+            type=0 # Protein
+        )
+
+        G.add_edge(
+            protein["id"],
+            other["id"],
+            weight=combined_score
+        )
+
+        proteins.append(other["id"])
+
+    layout = shell_layout(
+        G,
+        nlist=[
+            proteins,
+            pathways
+        ]
+    )
+    
+    for node,(x,y) in layout.items():
+        G.node[node]["x"] = float(x)
+        G.node[node]["y"] = float(y)
+
+    data = json_graph.node_link_data(G)
+    return json.dumps(data)
+
 @app.route("/api/subgraph/protein", methods=["POST"])
 def protein_subgraph_api():
     protein_id = int(request.form.get("protein_id"))
@@ -115,7 +207,8 @@ def protein_subgraph_api():
         data = None
     else:
         data = data[0]
-    return Response(json.dumps(data), mimetype="application/json")
+    data_json = protein_subgraph_to_nx_json(data)
+    return Response(data_json, mimetype="application/json")
 
 @app.route("/api/subgraph/protein_list", methods=["POST"])
 def protein_list_subgraph_api():

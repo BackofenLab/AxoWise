@@ -7,6 +7,72 @@ var colors = {
     gray: "rgb(198,198,198)"
 };
 
+function json_to_visjs_data(data) {
+    var nodes_protein = new vis.DataSet();
+    var nodes_pathway = new vis.DataSet();
+    var nodes_class = new vis.DataSet();
+    var edges = new vis.DataSet();
+
+    var nodes = data.nodes;
+    for (var i = 0; i < nodes.length; i++) {
+        var node = nodes[i];
+        // Protein
+        if (node.type == 0) {
+            nodes_protein.update({
+                id: node.id,
+                label: node.label,
+                x: node.x,
+                y: node.y,
+                title: get_tooltip(node.id, node.description),
+                color: {
+                    background: colors.protein,
+                    border: colors.protein,
+                    highlight: "#FFFF00"
+                }
+            });
+        }
+        // Pathway
+        else if (node.type == 1) {
+            nodes_pathway.update({
+                id: node.id,
+                label: node.label,
+                x: node.x,
+                y: node.y,
+                title: get_tooltip(node.id, node.description),
+                color: {
+                    background: colors.pathway,
+                    border: colors.pathway,
+                    highlight: "#FFFF00"
+                },
+                shape: "square"
+            });
+        }
+        // Class
+        else if (node.type == 2) {
+            // TODO
+        }
+    }
+
+    var links = data.links;
+    for (var i = 0; i < links.length; i++) {
+        var link = links[i];
+        edges.update([
+            {
+                from: link.source,
+                to: link.target,
+                color: colors.pathway
+            }
+        ]);
+    }
+
+    return {
+        nodes_protein: nodes_protein,
+        nodes_pathway: nodes_pathway,
+        nodes_class: nodes_class,
+        edges: edges
+    }
+}
+
 function make_graph_layout(data) {
     // TODO
 }

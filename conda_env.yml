@@ -9,3 +9,4 @@ dependencies:
   - pyyaml
   - pylint
   - flask
+  - networkx

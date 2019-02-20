@@ -24,7 +24,8 @@ Vue.component("visualization", {
                     navigationButtons: false
                 },
                 nodes: {
-                    shape: "dot"
+                    shape: "dot",
+                    size: 10
                 },
                 edges: {
                     color: {
