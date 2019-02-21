@@ -149,6 +149,7 @@ def protein_subgraph_to_nx_json(subgraph):
         G.add_node(
             other["id"],
             label=other["name"],
+            description=other["description"],
             type=0 # Protein
         )
 
