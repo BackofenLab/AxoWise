@@ -84,7 +84,7 @@ Vue.component("pathway", {
             var threshold = 0.4;
             $.post(com.api.subgraph, { pathway_id: pathway.id, threshold: threshold })
                 .done(function (subgraph) {
-                    var data = com.subgraph_to_visjs_data(subgraph);
+                    var data = json_to_visjs_data(subgraph);
 
                     if (data.nodes_protein.get().length > 0) {
                         com.$emit("data-tree-added", {
