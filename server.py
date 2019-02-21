@@ -188,6 +188,70 @@ def protein_subgraph_api():
     data_json = protein_subgraph_to_nx_json(data)
     return Response(data_json, mimetype="application/json")
 
+def protein_list_subgraph_to_nx_json(subgraph):
+    G = nx.DiGraph()
+    if subgraph is None:
+        data = json_graph.node_link_data(G)
+        return json.dumps(data)
+
+    proteins = []
+    pathways = []
+
+    for protein in subgraph["proteins"]:
+        G.add_node(
+            protein["id"],
+            label=protein["name"],
+            description=protein["description"],
+            type=0 # Protein
+        )
+        proteins.append(protein["id"])
+
+    for pathway in subgraph["pathways"]:
+        G.add_node(
+            pathway["id"],
+            label=pathway["name"],
+            description=pathway["description"],
+            type=1 # Pathway
+        )
+        pathways.append(pathway["id"])
+
+    for association in subgraph["associations"]:
+        combined_score = association["combined_score"]
+        protein1_id = association["protein1_id"]
+        protein2_id = association["protein2_id"]
+        pathway_id = association["pathway_id"]
+        G.add_edge(
+            protein1_id,
+            protein2_id,
+            weight=combined_score
+        )
+        if pathway_id is not None:
+            G.add_edge(
+                protein1_id,
+                pathway_id,
+                weight=0
+            )
+            G.add_edge(
+                protein2_id,
+                pathway_id,
+                weight=0
+            )
+
+    layout = shell_layout(
+        G,
+        nlist=[
+            proteins,
+            pathways
+        ]
+    )
+
+    for node,(x,y) in layout.items():
+        G.node[node]["x"] = float(x)
+        G.node[node]["y"] = float(y)
+
+    data = json_graph.node_link_data(G)
+    return json.dumps(data)
+
 @app.route("/api/subgraph/protein_list", methods=["POST"])
 def protein_list_subgraph_api():
     protein_ids = list(map(int, request.form.get("protein_ids").split(";")))
@@ -198,7 +262,8 @@ def protein_list_subgraph_api():
         data = None
     else:
         data = data[0]
-    return Response(json.dumps(data), mimetype="application/json")
+    data_json = protein_list_subgraph_to_nx_json(data)
+    return Response(data_json, mimetype="application/json")
 
 @app.route("/api/subgraph/pathway", methods=["POST"])
 def pathway_subgraph_api():

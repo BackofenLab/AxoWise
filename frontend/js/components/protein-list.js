@@ -115,7 +115,7 @@ Vue.component("protein-list", {
                         var threshold = 0.4;
                         $.post(com.api.subgraph, { protein_ids: protein_ids.join(';'), threshold: threshold })
                             .done(function (subgraph) {
-                                var data = com.subgraph_to_visjs_data(subgraph);
+                                var data = json_to_visjs_data(subgraph);
                                 var protein_names = data.nodes_protein.get().map(function (node) {
                                     return node.label
                                 }).slice(0, 3);

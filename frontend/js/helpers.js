@@ -78,6 +78,7 @@ function make_graph_layout(data) {
 }
 
 function remove_disconnected_nodes(nodes, allowed_nodes, edges) {
+    // TODO: some pathways disappear for protein list
     var node_degree = {};
     var allowed_ids = allowed_nodes.map((node) => (node.id));
     var filtered_nodes = [];
