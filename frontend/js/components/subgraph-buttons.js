@@ -18,7 +18,7 @@ Vue.component("subgraph-buttons", {
 
             var edges = data.edges.get({
                 filter: function (edge) {
-                    return (selected.edges.indexOf(edge.id) >= 0) || edge.color == colors.pathway;
+                    return (edge.color == colors.pathway) || (selected.edges.indexOf(edge.id) >= 0);
                 }
             });
 

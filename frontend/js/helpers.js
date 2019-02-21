@@ -143,21 +143,33 @@ function get_edge_color(score) {
     }
 
     var high = {r: 255, g: 0, b: 0};
+    var medium_high = {r: 255, g: 255, b: 0};
     var medium = {r: 0, g: 255, b: 0};
+    var medium_low = {r: 0, g: 255, b: 255};
     var low = {r: 0, g: 0, b: 255};
 
     var color = null;
 
+    score = (score - 400) * (1000 / 600); // lowest threshold is 0.4
+
     if (score <=0) {
         color = color_to_string(low);
     }
-    else if (score > 0 && score <= 500) {
+    else if (score > 0 && score <= 250) {
         var w = score / 500;
-        color = weight_average_colors(low, medium, w);
+        color = weight_average_colors(low, medium_low, w);
     }
-    else if (score > 500 && score <= 1000) {
-        var w = (score - 500) / 500;
-        color = weight_average_colors(medium, high, w);
+    else if (score > 250 && score <= 500) {
+        var w = (score - 250 / 250);
+        color = weight_average_colors(medium_low, medium, w);
+    }
+    else if (score > 500 && score <= 750) {
+        var w = (score - 500) / 250;
+        color = weight_average_colors(medium, medium_high, w);
+    }
+    else if (score > 750 && score <= 1000) {
+        var w = (score - 750) / 250;
+        color = weight_average_colors(medium_high, high, w);
     }
     else {
         color = high;

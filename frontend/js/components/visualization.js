@@ -124,7 +124,7 @@ Vue.component("visualization", {
 
             var filtered_edges = data.edges.get({
                 filter: function(edge) {
-                    if (edge.color == colors.pathway) return true;
+                    if (edge.color == colors.pathway) return com.show.pathways;
                     return edge.value / 1000 >= com.threshold;
                 }
             });
