@@ -74,7 +74,7 @@ Vue.component("visualization", {
             var has_x = "x" in data.nodes_protein.get()[0];
             var has_y = "y" in data.nodes_protein.get()[0];
             if (has_x && has_y) {
-                com.filtered_data = com.filter_data(com.current_data_node.data, false);
+                com.filtered_data = com.filter_data(com.current_data_node.data);
                 return;
             }
 
@@ -88,19 +88,19 @@ Vue.component("visualization", {
         },
         "threshold": _.debounce(function() {
             var com = this;
-            com.filtered_data = com.filter_data(com.current_data_node.data, true);
+            com.filtered_data = com.filter_data(com.current_data_node.data);
         }, 100),
         "show.proteins": function() {
             var com = this;
-            com.filtered_data = com.filter_data(com.current_data_node.data, true);
+            com.filtered_data = com.filter_data(com.current_data_node.data);
         },
         "show.pathways": function() {
             var com = this;
-            com.filtered_data = com.filter_data(com.current_data_node.data, true);
+            com.filtered_data = com.filter_data(com.current_data_node.data);
         },
         "show.classes": function() {
             var com = this;
-            com.filtered_data = com.filter_data(com.current_data_node.data, true);
+            com.filtered_data = com.filter_data(com.current_data_node.data);
         },
         "filtered_data": function() {
             var com = this;
@@ -118,7 +118,7 @@ Vue.component("visualization", {
         },
     },
     methods: {
-        filter_data: function(data, filter_by_type) {
+        filter_data: function(data) {
             var com = this;
             if (!data) return;
 
@@ -193,7 +193,7 @@ Vue.component("visualization", {
 
             delete com.current_data_node.data.nodes;
 
-            com.filtered_data = com.filter_data(com.current_data_node.data, true);
+            com.filtered_data = com.filter_data(com.current_data_node.data);
         },
         drag_end: function(e) {
             var com = this;
