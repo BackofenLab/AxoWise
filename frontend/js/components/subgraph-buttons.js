@@ -35,6 +35,10 @@ Vue.component("subgraph-buttons", {
                 index: com.data_node.index.slice(),
                 children: []
             });
+        },
+        stabilize: function() {
+            if (!NETWORK) return;
+            NETWORK.stabilize(50);
         }
     },
     template: `
@@ -44,6 +48,11 @@ Vue.component("subgraph-buttons", {
                     v-bind:disabled="$root.wait"
                     v-on:click="reduce()"
             ><span class="glyphicon glyphicon-scissors"></span> Reduce</button>
+            <button id="reduce-graph-btn"
+                    class="btn btn-success"
+                    v-bind:disabled="$root.wait"
+                    v-on:click="stabilize()"
+            ><span class="glyphicon glyphicon-refresh"></span> Stabilize</button>
         </div>
     `
 });

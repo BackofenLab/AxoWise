@@ -150,6 +150,9 @@ Vue.component("visualization", {
                 return;
 
             NETWORK.storePositions();
+
+            if (!com.current_data_node.data.nodes) return;
+
             var positions = {};
             com.current_data_node.data.nodes.get().forEach(function (node) {
                 positions[node.id] = {
