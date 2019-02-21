@@ -153,11 +153,12 @@ def protein_subgraph_to_nx_json(subgraph):
             type=0 # Protein
         )
 
-        G.add_edge(
-            protein["id"],
-            other["id"],
-            weight=combined_score
-        )
+        if combined_score is not None:
+            G.add_edge(
+                protein["id"],
+                other["id"],
+                weight=combined_score
+            )
 
         proteins.append(other["id"])
 
@@ -221,11 +222,12 @@ def protein_list_subgraph_to_nx_json(subgraph):
         protein1_id = association["protein1_id"]
         protein2_id = association["protein2_id"]
         pathway_id = association["pathway_id"]
-        G.add_edge(
-            protein1_id,
-            protein2_id,
-            weight=combined_score
-        )
+        if combined_score is not None:
+            G.add_edge(
+                protein1_id,
+                protein2_id,
+                weight=combined_score
+            )
         if pathway_id is not None:
             G.add_edge(
                 protein1_id,
@@ -296,6 +298,8 @@ def pathway_subgraph_to_nx_json(subgraph):
         protein1_id = association["protein1_id"]
         protein2_id = association["protein2_id"]
         combined_score = association["combined_score"]
+        if combined_score is None:
+            continue
 
         G.add_edge(
             protein1_id,

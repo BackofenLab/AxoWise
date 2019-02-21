@@ -56,13 +56,26 @@ function json_to_visjs_data(data) {
     var links = data.links;
     for (var i = 0; i < links.length; i++) {
         var link = links[i];
-        edges.update([
-            {
+        if (link.weight) {
+            var edge_color = get_edge_color(link.weight);
+            var title = (link.weight / 1000).toString();
+            edges.update({
+                from: link.source,
+                to: link.target,
+                title: title,
+                value: link.weight,
+                color: {
+                    color: edge_color, highlight: edge_color
+                }
+            });
+        }
+        else
+            edges.update({
                 from: link.source,
                 to: link.target,
                 color: colors.pathway
-            }
-        ]);
+            });
+
     }
 
     return {

@@ -117,7 +117,6 @@ Vue.component("protein", {
             var threshold = 0.4;
             $.post(com.api.subgraph, { protein_id: protein.id, threshold: threshold })
                 .done(function (subgraph) {
-                    console.log(subgraph);
                     var data = json_to_visjs_data(subgraph);
 
                     if (data.nodes_protein.get().length > 0) {

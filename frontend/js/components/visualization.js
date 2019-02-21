@@ -111,6 +111,7 @@ Vue.component("visualization", {
                 position: com.view_position,
                 scale: com.scale
             });
+            NETWORK.fit();
 
             com.stats.nodes = com.filtered_data.nodes.length;
             com.stats.edges = com.filtered_data.edges.length;
