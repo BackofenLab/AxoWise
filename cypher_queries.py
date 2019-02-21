@@ -377,7 +377,7 @@ def get_protein_subgraph(graph, protein_id, threshold=0):
         USING INDEX protein:Protein(id)
         WITH protein
         MATCH (protein)-[:IN]->(pathway:Pathway)
-        WITH protein, COLLECT(pathway) AS pathways
+        WITH protein, COLLECT(DISTINCT pathway) AS pathways
         MATCH (protein)-[association:ASSOCIATION]-(other:Protein)
         WHERE association.combined >= {threshold}
         RETURN protein, pathways, COLLECT({
@@ -415,7 +415,7 @@ def get_proteins_subgraph(graph, protein_ids, threshold=0):
         WHERE association.combined >= {threshold}
         WITH proteins, protein1, association, protein2
         OPTIONAL MATCH (protein1)-[:IN]->(pathway:Pathway)<-[:IN]-(protein2)
-        RETURN proteins AS proteins, COLLECT(pathway) AS pathways, COLLECT({
+        RETURN proteins AS proteins, COLLECT(DISTINCT pathway) AS pathways, COLLECT({
             protein1_id: protein1.id,
             combined_score: association.combined,
             protein2_id: protein2.id,
