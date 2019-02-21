@@ -1,10 +1,14 @@
-import os.path
 import json
-from flask import Flask, Response, request, send_from_directory
+import os.path
 
-import fuzzy_search
-import database
+import networkx as nx
+from flask import Flask, Response, request, send_from_directory
+from networkx.readwrite import json_graph
+
 import cypher_queries as Cypher
+import database
+import fuzzy_search
+from layout import shell_layout
 
 app = Flask(__name__)
 
@@ -104,32 +108,6 @@ def search_class_api():
 # ====================== Subgraph API ======================
 neo4j_graph = database.connect_neo4j()
 Cypher.warm_up(neo4j_graph)
-
-import networkx as nx
-from networkx.readwrite import json_graph
-from networkx.drawing.layout import rescale_layout, _process_params
-
-def shell_layout(G, nlist=None, center=None, nsize=10):
-    import numpy as np
-
-    G, center = _process_params(G, center, 2)
-
-    radius = 1.0
-    L = 10 * nsize
-
-    npos = {}
-    for nodes in nlist:
-        step = (2 * np.pi) / len(nodes)
-        # Discard the extra angle since it matches 0 radians.
-        theta = np.linspace(0, 1, len(nodes) + 1)[:-1] * 2 * np.pi
-        theta = theta.astype(np.float32)
-        radius += max(L / step, L)
-        pos = np.column_stack([np.cos(theta), np.sin(theta)])
-        pos = rescale_layout(pos, scale=radius / len(nlist)) + center
-        assert len(pos) == len(nodes), f"{len(pos)} != {len(nodes)}"
-        npos.update(zip(nodes, pos))
-
-    return npos
 
 def protein_subgraph_to_nx_json(subgraph):
     G = nx.DiGraph()
