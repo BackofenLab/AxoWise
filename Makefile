@@ -1,6 +1,6 @@
 
 env:
-	conda env create -f conda_env.yml
+	conda env create -f environment.yml
 
 test:
 	# Load the toy database
