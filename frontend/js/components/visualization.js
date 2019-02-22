@@ -113,6 +113,7 @@ Vue.component("visualization", {
             });
             NETWORK.fit();
 
+            // TODO: number of edges is wrong after reducing the graph
             com.stats.nodes = com.filtered_data.nodes.length;
             com.stats.edges = com.filtered_data.edges.length;
         },

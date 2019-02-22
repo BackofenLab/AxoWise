@@ -14,64 +14,6 @@ Vue.component("pathway", {
         }
     },
     methods: {
-        subgraph_to_visjs_data: function(subgraph) {
-            var nodes_protein = new vis.DataSet();
-            var nodes_class = new vis.DataSet();
-            var edges = new vis.DataSet();
-        
-            for (var i = 0; i < subgraph.classes.length; i++) {
-                var klass = subgraph.classes[i];
-        
-                nodes_class.update({
-                    id: klass.name,
-                    label: klass.name,
-                    color: {
-                        background: colors.gray,
-                        border: colors.gray,
-                        highlight: "#FFFF00"
-                    }
-                });
-            }
-        
-            for (var i = 0; i < subgraph.proteins.length; i++) {
-                var protein = subgraph.proteins[i];
-        
-                nodes_protein.update({
-                    id: protein.id,
-                    label: protein.name,
-                    title: get_tooltip(protein.id, protein.description),
-                    color: {
-                        background: colors.protein,
-                        border: colors.protein,
-                        highlight: "#FFFF00"
-                    }
-                });
-            }
-        
-            for (var i = 0; i < subgraph.associations.length; i++) {
-                var entry = subgraph.associations[i];
-                var protein1_id = entry.protein1_id;
-                var combined_score = entry.combined_score;
-                var protein2_id = entry.protein2_id;
-        
-                var edge_color = get_edge_color(combined_score);
-                edges.update({
-                    from: protein1_id,
-                    to: protein2_id,
-                    value: combined_score,
-                    title: (combined_score / 1000).toString(),
-                    color: {
-                        color: edge_color, highlight: edge_color
-                    }
-                });
-            }
-        
-            return {
-                nodes_protein: nodes_protein,
-                nodes_class: nodes_class,
-                edges: edges
-            }
-        },
         submit: function(pathway) {
             var com = this;
 
