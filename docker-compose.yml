@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  database:
+    # image: pgdb-database
+    build: ./docker/database
+    ports:
+      - 7474:7474
+  web:
+    # image: pgdb-web
+    context: .
+    build: ./docker/web
+    ports:
+      - 5000:5000
