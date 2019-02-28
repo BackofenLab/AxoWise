@@ -9,4 +9,5 @@ dependencies:
   - pyyaml
   - pylint
   - flask
-  - networkx
+  - networkx>=2.2
+  - numpy
