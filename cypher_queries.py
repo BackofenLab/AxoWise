@@ -314,7 +314,9 @@ def warm_up(graph):
         OPTIONAL MATCH (n)-[r]->()
         RETURN count(n.id) + count(r.combined);
     """
+    print("Warming up Neo4j...")
     graph.run(query)
+    print("Done.")
 
 # ========================= List queries =========================
 def get_protein_list(graph):

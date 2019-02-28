@@ -26,6 +26,16 @@ def connect_neo4j(credentials_path=_DEFAULT_CREDENTIALS_PATH):
         password=neo4j["pw"]
     )
 
+    connected = False
+    while not connected:
+        try:
+            neo4j_graph.run("RETURN 0")
+            connected = True
+        except Exception as e:
+            import time
+            print(f"{e}. Retrying...")
+            time.sleep(10)
+
     return neo4j_graph
 
 def connect_postgres(credentials_path=_DEFAULT_CREDENTIALS_PATH):
