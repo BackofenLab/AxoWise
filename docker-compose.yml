@@ -2,7 +2,7 @@ version: "2"
 
 services:
   database:
-    image: pgdb-database:0.1
+    image: bornabesic/pgdb-database:0.1
     container_name: pgdb-database
     ports:
       - 7474:7474
@@ -10,7 +10,7 @@ services:
     networks:
       - pgdb-network
   web:
-    image: pgdb-web:0.1
+    image: bornabesic/pgdb-web:0.1
     container_name: pgdb-web
     ports:
       - 5000:5000
