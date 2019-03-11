@@ -88,7 +88,7 @@
 %	TITLE PAGE
 %----------------------------------------------------------------------------------------
 
-\title[Cytokine Graph DB]{ Cytokine Graph Database } % The short title appears at the bottom of every slide, the full title is only on the title page
+\title[Protein Graph DB]{ Protein Graph Database } % The short title appears at the bottom of every slide, the full title is only on the title page
 
 \author{ Borna Bešić, Dilmurat Yusuf } % Your name
 \institute[] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
@@ -138,8 +138,6 @@ Albert-Ludwigs-Universität, Freiburg  % Your institution for the title page
         \item Accessible protein - disease data
         \item Faster drug discovery
     \end{itemize}
-    \vfill
-    \item ...
 \end{itemize}
 \end{frame}
 %------------------------------------------------
@@ -206,19 +204,19 @@ RETURN p.date, b
     \end{figure}
 \end{frame}
 
-\begin{frame}
-\frametitle{Cytokines}
-\begin{itemize}
-    \item Molecular messengers between cells
-    \item Interact with cells of the immune system
-    \item Regulate the body's response to disease and infection
-    \item Mediate normal cellular processes in the body
-\end{itemize}
-\begin{figure}
-    \centering
-    \includegraphics[width=0.5\linewidth]{cytokines.jpg}
-\end{figure}
-\end{frame}
+% \begin{frame}
+% \frametitle{Cytokines}
+% \begin{itemize}
+%     \item Molecular messengers between cells
+%     \item Interact with cells of the immune system
+%     \item Regulate the body's response to disease and infection
+%     \item Mediate normal cellular processes in the body
+% \end{itemize}
+% \begin{figure}
+%     \centering
+%     \includegraphics[width=0.5\linewidth]{cytokines.jpg}
+% \end{figure}
+% \end{frame}
 
 %------------------------------------------------
 
@@ -275,7 +273,7 @@ RETURN p.date, b
 \end{frame}
 
 \begin{frame}
-\frametitle{Cytokine Graph DB Scheme}
+\frametitle{Protein Graph DB Scheme}
 \begin{figure}
     \centering
     \includegraphics[width=0.9\linewidth]{database_scheme.png}
@@ -295,14 +293,14 @@ RETURN p.date, b
 \definecolor{disease}{HTML}{15a52f}
 \definecolor{compound}{HTML}{8f17b7}
 
-\begin{frame}{Cytokine Graph DB in numbers}
+\begin{frame}{Protein Graph DB in numbers}
 \begin{itemize}
-    \item Cytokine-cytokine receptor interaction - Human (Homo sapiens)
+    \item Species: Homo sapiens (human) \& Mus musculus (house mouse)
     \vfill
     \item Nodes
     \begin{itemize}
-        \item \textcolor{protein}{Protein}: 282
-        \item \textcolor{orange}{Pathway}: 325
+        \item \textcolor{protein}{Protein}: 43 125
+        \item \textcolor{orange}{Pathway}: 646
         \item \textcolor{red}{Drug}: 3 731
         \item \textcolor{disease}{Disease}: 969
         \item \textcolor{compound}{Compound}: 3 465
@@ -311,8 +309,8 @@ RETURN p.date, b
     \vfill
     \item Relationships
     \begin{itemize}
-        \item \textbf{ASSOCIATION}: 13 900
-        \item \textbf{IN}: 17 752
+        \item \textbf{ASSOCIATION}: 11 983 549
+        \item \textbf{IN}: 76 715
     \end{itemize}
 \end{itemize}
 \end{frame}
@@ -337,9 +335,7 @@ RETURN p.date, b
     \vfill
     \item Other species
     \vfill
-    \item All proteins
-    \vfill
-    \item Web server
+    \item Production-level web server
     \vfill
     \item Machine learning
 \end{itemize}
@@ -350,8 +346,8 @@ RETURN p.date, b
 \huge{Thanks :)}
 \bigskip \\
 \small{
-    \href{https://backofenlab.github.io/cytokine-graph-db/}{https://backofenlab.github.io/cytokine-graph-db/} \\
-    \href{https://github.com/BackofenLab/cytokine-graph-db}{https://github.com/BackofenLab/cytokine-graph-db}
+    \href{https://backofenlab.github.io/protein-graph-database/}{https://backofenlab.github.io/protein-graph-database/} \\
+    \href{https://github.com/BackofenLab/protein-graph-database}{https://github.com/BackofenLab/protein-graph-database}
 }
 \end{frame}
 
