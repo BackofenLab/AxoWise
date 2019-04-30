@@ -52,10 +52,10 @@ class GEXF:
         self.root.append(graph)
 
         # Attributes
-        self.node_attributes = ET.Element("attributes", {"class": "node"})
+        self.node_attributes = ET.Element("attributes", {"class": "node", "mode": "dynamic"})
         graph.append(self.node_attributes)
 
-        self.edge_attributes = ET.Element("attributes", {"class": "edge"})
+        self.edge_attributes = ET.Element("attributes", {"class": "edge", "mode": "dynamic"})
         graph.append(self.edge_attributes)
 
         self._node_attr2id = dict()
@@ -96,8 +96,13 @@ class GEXF:
             self._edge_attr2id[title] = id
             self.edge_attributes.append(attribute)
 
-    def add_node(self, id: str, label: str, **attrs):
-        node = ET.Element("node", id=id, label=label)
+    def add_node(self, id: str, label: str, start=None, end=None, **attrs):
+        kwargs = dict(id=id, label=label)
+        if start is not None:
+            kwargs["start"] = str(start)
+        if end is not None:
+            kwargs["end"] = str(end)
+        node = ET.Element("node", **kwargs)
         attvalues = ET.Element("attvalues")
         node.append(attvalues)
 
@@ -113,8 +118,13 @@ class GEXF:
 
         self.nodes.append(node)
 
-    def add_edge(self, source: str, target: str, **attrs):
-        edge = ET.Element("edge", source=source, target=target)
+    def add_edge(self, source: str, target: str, start=None, end=None, **attrs):
+        kwargs = dict(source=source, target=target)
+        if start is not None:
+            kwargs["start"] = str(start)
+        if end is not None:
+            kwargs["end"] = str(end)
+        edge = ET.Element("edge", **kwargs)
         attvalues = ET.Element("attvalues")
         edge.append(attvalues)
 
@@ -129,6 +139,56 @@ class GEXF:
             attvalues.append(attvalue)
 
         self.edges.append(edge)
+
+    def _find_node(self, node_id):
+        return self.nodes.find(f"./node[@id='{node_id}']")
+
+    def _find_edge(self, source, target):
+        return self.edges.find(f"./edge[@source='{source}'][@target='{target}']")
+
+    def set_dynamic_node_attribute(self, node_id, title, value, start, end):
+        # Find node
+        node = self._find_node(node_id)
+        if node is None:
+            raise ValueError(f"Node {node_id} does not exist!")
+
+        # Find attvalues
+        attvalues = node.find("./attvalues")
+
+        # Add the attribute
+        id = self._node_attr2id.get(title, None)
+        if id is None:
+            raise ValueError(f"Attribute {title} not set before adding nodes!")
+
+        attvalue = ET.Element("attvalue", {
+            "for": id,
+            "value": str(value),
+            "start": str(start),
+            "end": str(end)
+        })
+        attvalues.append(attvalue)
+
+    def set_dynamic_edge_attribute(self, source, target, title, value, start, end):
+        # Find edge
+        edge = self._find_edge(source, target)
+        if edge is None:
+            raise ValueError(f"Edge connecting nodes {source} and {target} does not exist!")
+
+        # Find attvalues
+        attvalues = edge.find("./attvalues")
+
+        # Add the attribute
+        id = self._edge_attr2id.get(title, None)
+        if id is None:
+            raise ValueError(f"Attribute {title} not set before adding edges!")
+
+        attvalue = ET.Element("attvalue", {
+            "for": id,
+            "value": str(value),
+            "start": str(start),
+            "end": str(end)
+        })
+        attvalues.append(attvalue)
 
     def __enter__(self):
         return self
@@ -146,7 +206,6 @@ if __name__ == "__main__":
             score=float
         )
 
-        # TODO Support `start` and `end` keys
-        gexf.add_node("1", "CCR5", description="Receptor")
-        gexf.add_node("2", "CCL5", description="Ligand")
-        gexf.add_edge("1", "2", score=0.9)
+        gexf.add_node("1", "CCR5", start=0, end=10, description="Receptor")
+        gexf.add_node("2", "CCL5", start=0, end=10, description="Ligand")
+        gexf.add_edge("1", "2", start=3, end=7)
