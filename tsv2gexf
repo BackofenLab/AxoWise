@@ -1,0 +1,106 @@
+#!/usr/bin/env python
+
+import argparse
+import os
+import re
+
+import pandas as pd
+
+from gexf import GEXF
+
+
+def parse_cli_args():
+
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        "tsv_path",
+        type=str
+    )
+
+    parser.add_argument(
+        "--clusters",
+        nargs="+",
+        type=int
+    )
+
+    args = parser.parse_args()
+
+    return args
+
+def filter_clusters(df, clusters):
+    mask = False
+    for idx in clusters:
+        mask = mask | (df.gene_cluster == f"cluster {idx}")
+    return df[mask]
+
+def calculate_timesteps(df):
+    # Column names
+    col_names = df.columns.values.tolist()
+
+    # Find the time columns
+    pattern = re.compile(r"wt(\d+)h_wt(\d+)h")
+
+    # Column-to-timestep map
+    col2timestep = dict()
+    for col_name in col_names:
+        match = pattern.match(col_name)
+        if not match:
+            continue
+
+        referent = int(match.group(2))
+        relative = int(match.group(1))
+        col2timestep[col_name] = referent + relative
+
+    return col2timestep
+
+def build_dynamic_graph(df, gexf_path):
+    # Calculate timesteps
+    col2timestep = calculate_timesteps(df)
+    t_min = min(col2timestep.values())
+    t_max = max(col2timestep.values())
+
+    # Graph
+    with GEXF(gexf_path) as gexf:
+        gexf.set_node_attributes(
+            GEXF.Attribute("DE", type=float, default=0.)
+        )
+
+        # Iterate rows
+        for _, row in df.iterrows():
+            attrvals = []
+            prev_timestep = 0
+            for col, timestep in sorted(col2timestep.items(), key=lambda t: t[1]):
+                value = row[col]
+                attrval = GEXF.AttributeValue("DE", value, prev_timestep, timestep)
+                attrvals.append(attrval)
+                prev_timestep = timestep
+
+            gexf.add_node(GEXF.Node(row.ENSEMBL, row.SYMBOL, start=t_min, end=t_max, attrvals=attrvals))
+
+def main():
+    # Parse the arguments
+    args = parse_cli_args()
+
+    # Make sure the file exists
+    if not os.path.exists(args.tsv_path):
+        print("The specified TSV file does not exist!")
+        return
+
+    # Read the TSV file
+    df = pd.read_csv(args.tsv_path, sep="\t")
+
+    # Remove rows containing NaN values
+    df = df.dropna()
+
+    # Filter the clusters
+    if args.clusters is not None:
+        df = filter_clusters(df, args.clusters)
+
+    # Build a dynamic graph
+    root, ext = os.path.splitext(args.tsv_path)
+    gexf_path = f"{root}.gexf"
+    build_dynamic_graph(df, gexf_path)
+
+if __name__ == "__main__":
+    main()
