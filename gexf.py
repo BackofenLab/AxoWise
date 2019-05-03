@@ -33,7 +33,8 @@ class GEXF:
                 if self.type is None:
                     raise ValueError(f"An attribute cannot be of type {type}!")
 
-                assert isinstance(default, type), "Default value of an attribute does not match the provided type!"
+                if default is not None:
+                    assert isinstance(default, type), "Default value of an attribute does not match the provided type!"
                 self.default = default
 
     class AttributeValue:
