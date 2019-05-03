@@ -1,5 +1,5 @@
 from string import Template
-from url import get
+from .url import get
 
 # Predefined API endpoints
 _organisms_endpoint = "http://rest.kegg.jp/list/organism"
@@ -8,6 +8,7 @@ _organisms_endpoint = "http://rest.kegg.jp/list/organism"
 _pathway_template = Template("http://rest.kegg.jp/list/pathway/${organism_id}")
 _get_template = Template("http://rest.kegg.jp/get/${entries}${kgml}")
 _map_id_template = Template("https://string-db.org/api/${format}/get_string_ids?identifiers=${identifiers}&species=${species}&caller_identity=cgdb")
+_map_id_template_no_species = Template("https://string-db.org/api/${format}/get_string_ids?identifiers=${identifiers}&species=${species}&caller_identity=cgdb")
 
 def organisms():
     organisms_file = get(_organisms_endpoint)
@@ -29,12 +30,16 @@ def pathway(pathway_id, kgml = False):
     assert pathway_file is not None
     return pathway_file
 
-def map_identifiers_to_STRING(identifiers, species, split = 10):
+def map_identifiers_to_STRING(identifiers, species=None, split=10):
+    template = _map_id_template
+    if species is None:
+        template = _map_id_template_no_species
+
     if len(identifiers) > split:
         i = 0
         while True:
             identifiers_chunk = identifiers[i : i + split]
-            endpoint = _map_id_template.substitute(
+            endpoint = template.substitute(
                 format = "tsv",
                 identifiers = "%0d".join(identifiers_chunk),
                 species = species
@@ -47,7 +52,7 @@ def map_identifiers_to_STRING(identifiers, species, split = 10):
             else:
                 i += split
     else:
-        endpoint = _map_id_template.substitute(
+        endpoint = template.substitute(
             format = "tsv",
             identifiers = "%0d".join(identifiers),
             species = species
