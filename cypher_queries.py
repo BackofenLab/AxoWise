@@ -397,7 +397,7 @@ def get_protein_subgraph(graph, protein_id, threshold=0):
     )
     return graph.run(query, param_dict)
 
-def get_proteins_subgraph(graph, protein_ids, threshold=0):
+def get_proteins_subgraph(graph, protein_ids, threshold=0, external=False):
     """
     For the given list of proteins, return the Neo4j
     subgraph of the proteins, all associations between
@@ -407,7 +407,9 @@ def get_proteins_subgraph(graph, protein_ids, threshold=0):
     # Neo4j query
     query = """
         MATCH (protein:Protein)
-        WHERE protein.id IN {protein_ids}
+    """ + \
+    ("WHERE protein.external_id IN {protein_ids}" if external else "WHERE protein.id IN {protein_ids}") + \
+    """
         WITH COLLECT(protein) AS proteins
         WITH proteins, SIZE(proteins) AS num_proteins
         UNWIND RANGE(0, num_proteins - 1) AS i
