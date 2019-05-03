@@ -15,7 +15,7 @@ def connect_neo4j(credentials_path=_DEFAULT_CREDENTIALS_PATH):
     """
 
     with open(credentials_path, "rt", encoding="utf-8") as credentials_file:
-        credentials = yaml.load(credentials_file)
+        credentials = yaml.load(credentials_file, Loader=yaml.FullLoader)
 
     neo4j = credentials["neo4j"]
 
