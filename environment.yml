@@ -12,3 +12,4 @@ dependencies:
   - networkx>=2.2
   - numpy
   - pandas
+  - neomodel
