@@ -3,52 +3,37 @@ Collection of Cypher queries for writing and reading the resulting
 Neo4j graph database.
 """
 
+from neomodel import db
+from schema import Compound, Disease, Drug
+
 # ========================= Creating queries =========================
 
-def add_compound(graph, params):
+def add_compound(batch: list):
     """
     Create a compound with the specified id and
     name.
     """
+    with db.transaction:
+        Compound.create(*batch)
 
-    query = """
-        UNWIND {batch} as entry
-        MERGE (compound:Compound {
-            id: entry.id,
-            name: entry.name
-        })
-    """
-    graph.run(query, params)
 
-def add_disease(graph, params):
+def add_disease(batch: list):
     """
     Create a disease with the specified id and
     name.
     """
 
-    query = """
-        UNWIND {batch} as entry
-        MERGE (disease:Disease {
-            id: entry.id,
-            name: entry.name
-        })
-    """
-    graph.run(query, params)
+    with db.transaction:
+        Disease.create(*batch)
 
-def add_drug(graph, params):
+def add_drug(*batch):
     """
     Create a drug with the specified id and
     name.
     """
 
-    query = """
-        UNWIND {batch} as entry
-        MERGE (drug:Drug {
-            id: entry.id,
-            name: entry.name
-        })
-    """
-    graph.run(query, params)
+    with db.transaction:
+        Drug.create(*batch)
 
 def add_class_parent_and_child(graph, params):
     """

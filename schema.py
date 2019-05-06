@@ -2,7 +2,7 @@
 import neomodel
 from neomodel import (IntegerProperty, Relationship, RelationshipFrom,
                       RelationshipTo, StringProperty, StructuredNode,
-                      UniqueIdProperty, db)
+                      UniqueIdProperty)
 
 class Protein(StructuredNode):
     iid = IntegerProperty(index=True, required=True)

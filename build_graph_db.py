@@ -6,6 +6,9 @@ from STRING and KEGG PATHWAY.
 import argparse
 import os.path
 import sys
+import math
+
+from tqdm import tqdm
 
 import cypher_queries as Cypher
 import database
@@ -160,20 +163,15 @@ def read_kegg_compounds(args, kegg_id):
             }
     return compounds
 
-def write_kegg_compounds(neo4j_graph, compounds):
+def write_kegg_compounds(compounds):
     """
     Writes KEGG compounds to the Neo4j database.
     """
 
     print("Creating compounds...")
-    num_compounds = 0
-    for batch in batches(compounds.values(), batch_size=1024):
-        num_compounds += len(batch)
-        print("{}".format(num_compounds), end="\r")
-        Cypher.add_compound(neo4j_graph, {
-            "batch": batch
-        })
-    print()
+    batch_size = 1024
+    for batch in tqdm(batches(compounds.values(), batch_size, len(compounds))):
+        Cypher.add_compound(batch)
 
 # Diseases
 def read_kegg_diseases(args, kegg_id):
@@ -197,20 +195,15 @@ def read_kegg_diseases(args, kegg_id):
 
     return diseases
 
-def write_kegg_diseases(neo4j_graph, diseases):
+def write_kegg_diseases(diseases):
     """
     Writes KEGG diseases to the Neo4j database.
     """
 
     print("Creating diseases...")
-    num_diseases = 0
-    for batch in batches(diseases.values(), batch_size=1024):
-        num_diseases += len(batch)
-        print("{}".format(num_diseases), end="\r")
-        Cypher.add_disease(neo4j_graph, {
-            "batch": batch
-        })
-    print()
+    batch_size = 1024
+    for batch in tqdm(batches(diseases.values(), batch_size, len(diseases))):
+        Cypher.add_disease(batch)
 
 # Drugs
 def read_kegg_drugs(args, kegg_id):
@@ -233,20 +226,15 @@ def read_kegg_drugs(args, kegg_id):
             }
     return drugs
 
-def write_kegg_drugs(neo4j_graph, drugs):
+def write_kegg_drugs(drugs):
     """
     Writes KEGG drugs to the Neo4j database.
     """
 
     print("Creating drugs...")
-    num_drugs = 0
-    for batch in batches(drugs.values(), batch_size=1024):
-        num_drugs += len(batch)
-        print("{}".format(num_drugs), end="\r")
-        Cypher.add_drug(neo4j_graph, {
-            "batch": batch
-        })
-    print()
+    batch_size = 1024
+    for batch in tqdm(batches(drugs.values(), batch_size, len(drugs))):
+        Cypher.add_drug(batch)
 
 # Pathways
 def read_kegg_pathways(kegg_id):

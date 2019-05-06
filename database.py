@@ -5,6 +5,7 @@ Connection interface towards the PostgreSQL and Neo4j databases.
 import yaml
 import psycopg2
 import py2neo
+from neomodel import db
 
 _DEFAULT_CREDENTIALS_PATH = "credentials.yml"
 
@@ -20,23 +21,17 @@ def connect_neo4j(credentials_path=_DEFAULT_CREDENTIALS_PATH):
     neo4j = credentials["neo4j"]
 
     # Connect to the Neo4j database
-    neo4j_graph = py2neo.Graph(
-        host=neo4j["host"],
-        https_port=neo4j["port"],
-        password=neo4j["pw"]
-    )
+    db.set_connection(f"bolt://neo4j:{neo4j['pw']}@{neo4j['host']}:{neo4j['port']}")
 
     connected = False
     while not connected:
         try:
-            neo4j_graph.run("RETURN 0")
+            db.cypher_query("RETURN 0")
             connected = True
         except Exception as e:
             import time
             print(f"{e}. Retrying...")
             time.sleep(10)
-
-    return neo4j_graph
 
 def connect_postgres(credentials_path=_DEFAULT_CREDENTIALS_PATH):
     """

@@ -2,6 +2,8 @@
 Collection of useful functions.
 """
 
+import math
+
 def rstrip_line_generator(iterable, skip_empty=False):
     """
     Generator which iterates over lines provided by the
@@ -64,18 +66,34 @@ def pair_generator(elements):
         for j in range(i + 1, n):
             yield elements[i], elements[j]
 
-def batches(generator, batch_size):
+class batches:
     """
     Generate batches of data from the given generator.
     """
 
-    batch = []
-    for item in generator:
-        batch.append(item)
-        if len(batch) == batch_size:
-            yield batch
-            batch = []
-    yield batch
+    def __init__(self, iterable, batch_size, size=None):
+        self.iterable = iterable
+        self.batch_size = batch_size
+
+        self.size = size
+        if self.size is None and type(iterable) in {list, tuple, dict}:
+            self.size = math.ceil(len(iterable) / batch_size)
+
+    @property
+    def _generator(self):
+        batch = []
+        for item in self.iterable:
+            batch.append(item)
+            if len(batch) == self.batch_size:
+                yield batch
+                batch = []
+        yield batch
+
+    def __iter__(self):
+        return iter(self._generator)
+
+    def __len__(self):
+        return self.size
 
 def concat(list_of_lists):
     """
