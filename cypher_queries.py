@@ -4,7 +4,7 @@ Neo4j graph database.
 """
 
 from neomodel import db
-from schema import Compound, Disease, Drug
+from schema import Compound, Disease, Drug, Pathway
 
 # ========================= Creating queries =========================
 
@@ -53,27 +53,17 @@ def add_class_parent_and_child(graph, params):
     """
     graph.run(query, params)
 
-def add_pathway(graph, params):
+def add_pathway(batch: list):
     """
     Create a pathway with the specified id, name,
     description and species to which it belongs.
     After that, connect it to the corresponding class.
     """
 
-    query = """
-        UNWIND {batch} as entry
-        MATCH (class:Class {
-            name: entry.class
-        })
-        CREATE (pathway:Pathway {
-            id: entry.id,
-            name: entry.name,
-            description: entry.description,
-            species_id: entry.species_id
-        })-[:IN]->(class)
-    """
+    with db.transaction:
+        Pathway.create(*batch)
 
-    graph.run(query, params)
+    # TODO Match the pathway class
 
 def add_protein(graph, params):
     """

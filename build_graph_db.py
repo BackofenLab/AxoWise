@@ -296,7 +296,7 @@ def read_kegg_pathways(kegg_id):
         gene2pathways
     )
 
-def write_kegg_pathways(neo4j_graph, pathways, species_id):
+def write_kegg_pathways(pathways, species_id):
     """
     Writes KEGG pathways to the Neo4j database.
     """
@@ -304,14 +304,9 @@ def write_kegg_pathways(neo4j_graph, pathways, species_id):
     pathways = map(lambda pw: {**pw, "species_id": species_id}, pathways)
 
     print("Creating pathways and connecting them to classes...")
-    num_pathways = 0
-    for batch in batches(pathways, batch_size=1024):
-        num_pathways += len(batch)
-        print("{}".format(num_pathways), end="\r")
-        Cypher.add_pathway(neo4j_graph, {
-            "batch": batch
-        })
-    print()
+    batch_size = 1024
+    for batch in batches(pathways, batch_size, len(pathways)):
+        Cypher.add_pathway(batch)
 
 # Classes
 def write_classes(neo4j_graph, pathway2classes):
@@ -605,15 +600,15 @@ def main():
     # ======================================== KEGG ========================================
     # Compounds
     compounds = read_kegg_compounds(args, kegg_id)
-    write_kegg_compounds(neo4j_graph, compounds)
+    write_kegg_compounds(compounds)
 
     # Diseases
     diseases = read_kegg_diseases(args, kegg_id)
-    write_kegg_diseases(neo4j_graph, diseases)
+    write_kegg_diseases(diseases)
 
     # Drugs
     drugs = read_kegg_drugs(args, kegg_id)
-    write_kegg_drugs(neo4j_graph, drugs)
+    write_kegg_drugs(drugs)
 
     # Create KEGG data index
     Cypher.create_kegg_index(neo4j_graph)
@@ -626,7 +621,7 @@ def main():
     write_classes(neo4j_graph, pathway2classes)
 
     # Create pathways
-    write_kegg_pathways(neo4j_graph, pathways, species_id)
+    write_kegg_pathways(pathways, species_id)
 
     # Compound <-> Pathway
     connect_compounds_and_pathways(args, neo4j_graph, pathway2compounds)
