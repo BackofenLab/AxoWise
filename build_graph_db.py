@@ -554,8 +554,7 @@ def main():
         print("Cleaning the old data from Neo4j database...")
         neo4j_graph.delete_all()
 
-    # Create Neo4j database constraints
-    Cypher.create_constraints(neo4j_graph)
+    Cypher.drop_indexes_and_constraints()
 
     # ======================================== KEGG ========================================
     # Compounds
@@ -569,9 +568,6 @@ def main():
     # Drugs
     drugs = read_kegg_drugs(args, kegg_id)
     write_kegg_drugs(drugs)
-
-    # Create KEGG data index
-    Cypher.create_kegg_index(neo4j_graph)
 
     # Read pathways
     pathways, *pathway2others, gene2pathways = read_kegg_pathways(kegg_id)
@@ -602,7 +598,6 @@ def main():
     )
     proteins = list(proteins)
     write_string_proteins(proteins, species_id)
-    Cypher.create_protein_index(neo4j_graph)
 
     # Associations
     associations = read_string_associations(args, postgres_connection, species_id, protein_ids_set)
@@ -613,6 +608,8 @@ def main():
     write_string_actions(actions)
 
     # ================================== Merge STRING and KEGG ==================================
+    Cypher.create_indexes_and_constraints()
+
     connect_proteins_and_pathways(args, gene2pathways, protein_ensembl_ids_set)
 
     # Close the PostgreSQL connection

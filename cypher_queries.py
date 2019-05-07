@@ -3,38 +3,38 @@ Collection of Cypher queries for writing and reading the resulting
 Neo4j graph database.
 """
 
-from neomodel import db
+from neomodel import db, install_all_labels, remove_all_labels
 from schema import Protein, Pathway, Compound, Disease, Drug, Class
 
 # ========================= Creating queries =========================
 
+@db.transaction
 def add_compound(batch: list):
     """
     Create a compound with the specified id and
     name.
     """
-    with db.transaction:
-        Compound.create(*batch)
+    Compound.create(*batch)
 
-
+@db.transaction
 def add_disease(batch: list):
     """
     Create a disease with the specified id and
     name.
     """
 
-    with db.transaction:
-        Disease.create(*batch)
+    Disease.create(*batch)
 
+@db.transaction
 def add_drug(*batch):
     """
     Create a drug with the specified id and
     name.
     """
 
-    with db.transaction:
-        Drug.create(*batch)
+    Drug.create(*batch)
 
+@db.transaction
 def add_class_parent_and_child(batch):
     """
     Create parent - child relationship between
@@ -44,12 +44,12 @@ def add_class_parent_and_child(batch):
     parent_batch = map(lambda obj: {"name_parent": obj["name_parent"]}, batch)
     child_batch = map(lambda obj: {"name_child": obj["name_child"]}, batch)
 
-    with db.transaction:
-        parents = Class.get_or_create(*parent_batch) # MERGE
-        children = Class.get_or_create(*child_batch) # MERGE
-        for parent, child in zip(parents, children):
-            parent.children.connect(child)
+    parents = Class.get_or_create(*parent_batch) # MERGE
+    children = Class.get_or_create(*child_batch) # MERGE
+    for parent, child in zip(parents, children):
+        parent.children.connect(child)
 
+@db.transaction
 def add_pathway(batch: list):
     """
     Create a pathway with the specified id, name,
@@ -59,147 +59,109 @@ def add_pathway(batch: list):
 
     class_batch = map(lambda obj: {"class": obj["class"] }, batch)
 
-    with db.transaction:
-        classes = Class.get_or_create(*class_batch)
-        pathways = Pathway.create(*batch)
-        for pathway, cls in zip(pathways, classes):
-            pathway.cls.connect(cls)
+    classes = Class.get_or_create(*class_batch)
+    pathways = Pathway.create(*batch)
+    for pathway, cls in zip(pathways, classes):
+        pathway.cls.connect(cls)
 
+@db.transaction
 def add_protein(batch):
     """
     Create a protein with the specified id, external id,
     name, description and species to which it belongs.
     """
 
-    with db.transaction:
-        Protein.create(*batch)
+    Protein.create(*batch)
 
+@db.transaction
 def add_action(batch):
     """
     For an existing protein - protein pair, create / update (merge) the given
     action associated with the given pathway.
     """
 
-    with db.transaction:
-        for entry in batch:
-            protein1 = Protein.nodes.get(iid=entry["id1"])
-            protein2 = Protein.nodes.get(iid=entry["id2"])
-            del entry["id1"], entry["id2"] # Entry now contains only 'mode' and 'score'
-            protein1.actions.connect(protein2, entry)
+    for entry in batch:
+        protein1 = Protein.nodes.get(iid=entry["id1"])
+        protein2 = Protein.nodes.get(iid=entry["id2"])
+        del entry["id1"], entry["id2"] # Entry now contains only 'mode' and 'score'
+        protein1.actions.connect(protein2, entry)
 
+@db.transaction
 def add_association(batch):
     """
     For an existing protein - protein pair, create the association
     between them.
     """
 
-    with db.transaction:
-        for entry in batch:
-            protein1 = Protein.nodes.get(iid=entry["id1"])
-            protein2 = Protein.nodes.get(iid=entry["id2"])
-            del entry["id1"], entry["id2"] # Entry now contains only channels scores and the combined score
-            protein1.associations.connect(protein2, entry)
+    for entry in batch:
+        protein1 = Protein.nodes.get(iid=entry["id1"])
+        protein2 = Protein.nodes.get(iid=entry["id2"])
+        del entry["id1"], entry["id2"] # Entry now contains only channels scores and the combined score
+        protein1.associations.connect(protein2, entry)
 
 # ========================= Connecting queries =========================
 
+@db.transaction
 def connect_protein_and_pathway(batch):
     """
     Creates IN association for the given protein and
     pathway.
     """
 
-    with db.transaction:
-        for entry in batch:
-            protein = Protein.nodes.get(external_id=entry["protein_external_id"])
-            pathway = Pathway.nodes.get(iid=entry["pathway_id"])
-            protein.pathways.connect(pathway)
+    for entry in batch:
+        protein = Protein.nodes.get(external_id=entry["protein_external_id"])
+        pathway = Pathway.nodes.get(iid=entry["pathway_id"])
+        protein.pathways.connect(pathway)
 
+@db.transaction
 def connect_compound_and_pathway(batch):
     """
     Creates IN association for the given compound and
     pathway.
     """
 
-    with db.transaction:
-        for entry in batch:
-            compound = Compound.nodes.get(iid=entry["compound_id"])
-            pathway = Pathway.nodes.get(iid=entry["pathway_id"])
-            compound.pathways.connect(pathway)
+    for entry in batch:
+        compound = Compound.nodes.get(iid=entry["compound_id"])
+        pathway = Pathway.nodes.get(iid=entry["pathway_id"])
+        compound.pathways.connect(pathway)
 
+@db.transaction
 def connect_disease_and_pathway(batch):
     """
     Creates IN association for the given disease and
     pathway.
     """
 
-    with db.transaction:
-        for entry in batch:
-            disease = Disease.nodes.get(iid=entry["disease_id"])
-            pathway = Pathway.nodes.get(iid=entry["pathway_id"])
-            disease.pathways.connect(pathway)
+    for entry in batch:
+        disease = Disease.nodes.get(iid=entry["disease_id"])
+        pathway = Pathway.nodes.get(iid=entry["pathway_id"])
+        disease.pathways.connect(pathway)
 
+@db.transaction
 def connect_drug_and_pathway(batch):
     """
     Creates IN association for the given drug and
     pathway.
     """
 
-    with db.transaction:
-        for entry in batch:
-            drug = Disease.nodes.get(iid=entry["drug_id"])
-            pathway = Pathway.nodes.get(iid=entry["pathway_id"])
-            drug.pathways.connect(pathway)
+    for entry in batch:
+        drug = Disease.nodes.get(iid=entry["drug_id"])
+        pathway = Pathway.nodes.get(iid=entry["pathway_id"])
+        drug.pathways.connect(pathway)
 
 # ========================= Schema queries =========================
 
-def create_constraints(graph):
+def create_indexes_and_constraints():
     """
-    Creates node constraints for the Neo4j graph database.
+    Creates node indexes and constraints for the Neo4j graph database.
     """
+    install_all_labels(stdout=True)
 
-    queries = [
-        # Protein
-        "CREATE CONSTRAINT ON (protein:Protein) ASSERT protein.id IS UNIQUE",
-        "CREATE CONSTRAINT ON (protein:Protein) ASSERT protein.external_id IS UNIQUE",
-        # Pathway
-        "CREATE CONSTRAINT ON (pathway:Pathway) ASSERT pathway.id IS UNIQUE",
-        # Compound
-        "CREATE CONSTRAINT ON (compound:Compound) ASSERT compound.id IS UNIQUE",
-        # Drug
-        "CREATE CONSTRAINT ON (drug:Drug) ASSERT drug.id IS UNIQUE",
-        # Disease
-        "CREATE CONSTRAINT ON (disease:Disease) ASSERT disease.id IS UNIQUE"
-    ]
-
-    for query in queries:
-        graph.run(query)
-
-def create_protein_index(graph):
+def drop_indexes_and_constraints():
     """
-    Creates 'Protein' node index on the attribute 'name'.
+    Drops node indexes and constraints for the Neo4j graph database.
     """
-
-    queries = [
-        "CREATE INDEX ON :Protein(name)"
-    ]
-
-    for query in queries:
-        graph.run(query)
-
-def create_kegg_index(graph):
-    """
-    Creates KEGG data node indexes:
-    - for 'Protein' on 'name'
-    - for 'Class' on 'name'
-    """
-
-    queries = [
-        "CREATE INDEX ON :Pathway(name)",
-        "CREATE INDEX ON :Class(name)"
-    ]
-
-    for query in queries:
-        graph.run(query)
+    remove_all_labels(stdout=True)
 
 # ========================= Server warm-up =========================
 
@@ -210,7 +172,7 @@ def warm_up(graph):
         RETURN count(n.id) + count(r.combined);
     """
     print("Warming up Neo4j...")
-    graph.run(query)
+    db(query)
     print("Done.")
 
 # ========================= List queries =========================

@@ -5,9 +5,9 @@ from neomodel import (IntegerProperty, Relationship, RelationshipFrom,
                       UniqueIdProperty, One, OneOrMore)
 
 class Protein(StructuredNode):
-    iid = IntegerProperty(index=True, required=True)
-    external_id = StringProperty(required=True)
-    name = StringProperty(required=True)
+    iid = IntegerProperty(unique_index=True, required=True)
+    external_id = StringProperty(unique=True, required=True)
+    name = StringProperty(index=True, required=True)
     description = StringProperty(required=True)
     species_id = IntegerProperty(required=True)
 
@@ -16,8 +16,8 @@ class Protein(StructuredNode):
     pathways = RelationshipTo("Pathway", "IN")
 
 class Pathway(StructuredNode):
-    iid = IntegerProperty(index=True, required=True)
-    name = StringProperty(required=True)
+    iid = IntegerProperty(unique_index=True, required=True)
+    name = StringProperty(index=True, required=True)
     description = StringProperty(required=True)
     species_id = IntegerProperty(required=True)
 
@@ -28,25 +28,25 @@ class Pathway(StructuredNode):
     cls = RelationshipTo("Class", "IN", cardinality=One)
 
 class Disease(StructuredNode):
-    iid = IntegerProperty(index=True, required=True)
+    iid = IntegerProperty(unique_index=True, required=True)
     name = StringProperty(required=True)
 
     pathways = RelationshipTo("Pathway", "IN")
 
 class Drug(StructuredNode):
-    iid = IntegerProperty(index=True, required=True)
+    iid = IntegerProperty(unique_index=True, required=True)
     name = StringProperty(required=True)
 
     pathways = RelationshipTo("Pathway", "IN")
 
 class Compound(StructuredNode):
-    iid = IntegerProperty(index=True, required=True)
+    iid = IntegerProperty(unique_index=True, required=True)
     name = StringProperty(required=True)
 
     pathways = RelationshipTo("Pathway", "IN")
 
 class Class(StructuredNode):
-    name = StringProperty(index=True, required=True)
+    name = StringProperty(unique_index=True, required=True)
 
     pathways = RelationshipFrom("Pathway", "IN")
     parent = RelationshipTo("Class", "IN", cardinality=One)
