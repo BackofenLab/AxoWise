@@ -2,7 +2,7 @@
 import neomodel
 from neomodel import (IntegerProperty, Relationship, RelationshipFrom,
                       RelationshipTo, StringProperty, StructuredNode,
-                      UniqueIdProperty, One)
+                      UniqueIdProperty, One, OneOrMore)
 
 class Protein(StructuredNode):
     iid = IntegerProperty(index=True, required=True)
@@ -12,6 +12,7 @@ class Protein(StructuredNode):
     species_id = IntegerProperty(required=True)
 
     associations = Relationship("Protein", "ASSOCIATION")
+    actions = Relationship("Protein", "ACTION")
     pathways = RelationshipTo("Pathway", "IN")
 
 class Pathway(StructuredNode):
@@ -49,4 +50,4 @@ class Class(StructuredNode):
 
     pathways = RelationshipFrom("Pathway", "IN")
     parent = RelationshipTo("Class", "IN", cardinality=One)
-    children = RelationshipFrom("Class", "IN", cardinality=One)
+    children = RelationshipFrom("Class", "IN", cardinality=OneOrMore)

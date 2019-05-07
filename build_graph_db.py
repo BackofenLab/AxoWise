@@ -305,17 +305,16 @@ def write_kegg_pathways(pathways, species_id):
 
     print("Creating pathways and connecting them to classes...")
     batch_size = 1024
-    for batch in batches(pathways, batch_size, len(pathways)):
+    for batch in tqdm(batches(pathways, batch_size, len(pathways))):
         Cypher.add_pathway(batch)
 
 # Classes
-def write_classes(neo4j_graph, pathway2classes):
+def write_classes(pathway2classes):
     """
     Writes pathway classes to the Neo4j database.
     """
 
     print("Creating classes and class hierarchy...")
-    num_classes = 0
     class_chains = list(pathway2classes.values())
     class_pairs = set()
     for chain in class_chains:
@@ -331,13 +330,10 @@ def write_classes(neo4j_graph, pathway2classes):
         },
         class_pairs
     )
-    for batch in batches(class_pairs, batch_size=32):
-        num_classes += len(batch)
-        print("{}".format(num_classes), end="\r")
-        Cypher.add_class_parent_and_child(neo4j_graph, {
-            "batch": batch
-        })
-    print()
+
+    batch_size = 32
+    for batch in tqdm(batches(class_pairs, batch_size, len(class_pairs))):
+        Cypher.add_class_parent_and_child(batch)
 
 # Associations
 def connect_compounds_and_pathways(args, neo4j_graph, pathway2compounds):
@@ -436,7 +432,7 @@ def read_string_proteins(args, postgres_connection, species_id, protein_ensembl_
 
     return proteins, protein_ids_set
 
-def write_string_proteins(neo4j_graph, proteins, species_id):
+def write_string_proteins(proteins, species_id):
     """
     Writes STRING proteins to the Neo4j database.
     """
@@ -444,14 +440,9 @@ def write_string_proteins(neo4j_graph, proteins, species_id):
     proteins = map(lambda p: {**p, "species_id": species_id}, proteins)
 
     print("Creating proteins...")
-    num_proteins = 0
-    for batch in batches(proteins, batch_size=1024):
-        num_proteins += len(batch)
-        print("{}".format(num_proteins), end="\r")
-        Cypher.add_protein(neo4j_graph, {
-            "batch": batch
-        })
-    print()
+    batch_size = 1024
+    for batch in tqdm(batches(proteins, batch_size, len(proteins))):
+        Cypher.add_protein(batch)
 
 # Associations
 def read_string_associations(args, postgres_connection, species_id, protein_ids_set):
@@ -479,29 +470,22 @@ def read_string_associations(args, postgres_connection, species_id, protein_ids_
 
     return associations
 
-def write_string_associations(neo4j_graph, associations):
+def write_string_associations(associations):
     """
     Writes STRING protein - protein associations to the
     Neo4j database.
     """
 
+    def map_batch_item(item):
+        item = {**item, **decode_evidence_scores(item["evidence_scores"])}
+        del item["evidence_scores"]
+        return item
+
     print("Creating protein - protein associations...")
-    num_associations = 0
-    for batch in batches(associations, batch_size=16384):
-        num_associations += len(batch)
-        print("{}".format(num_associations), end="\r")
-
-        def map_batch_item(item):
-            item = {**item, **decode_evidence_scores(item["evidence_scores"])}
-            del item["evidence_scores"]
-            return item
-
+    batch_size = 16384
+    for batch in tqdm(batches(associations, batch_size, len(associations))):
         batch = list(map(map_batch_item, batch))
-
-        Cypher.add_association(neo4j_graph, {
-            "batch": batch
-        })
-    print()
+        Cypher.add_association(batch)
 
 def read_string_actions(args, postgres_connection, species_id):
     """
@@ -518,21 +502,16 @@ def read_string_actions(args, postgres_connection, species_id):
 
     return actions
 
-def write_string_actions(neo4j_graph, actions):
+def write_string_actions(actions):
     """
     Writes STRING protein - protein actions to the
     Neo4j database.
     """
 
     print("Creating protein - protein actions...")
-    num_actions = 0
-    for batch in batches(actions, batch_size=16384):
-        num_actions += len(batch)
-        print("{}".format(num_actions), end="\r")
-        Cypher.add_action(neo4j_graph, {
-            "batch": batch
-        })
-    print()
+    batch_size = 16384
+    for batch in tqdm(batches(actions, batch_size, len(actions))):
+        Cypher.add_action(batch)
 
 def connect_proteins_and_pathways(args, neo4j_graph, gene2pathways, protein_ensembl_ids_set):
     """
@@ -618,7 +597,7 @@ def main():
     pathway2classes, pathway2diseases, pathway2drugs, pathway2compounds = pathway2others
 
     # Classes
-    write_classes(neo4j_graph, pathway2classes)
+    write_classes(pathway2classes)
 
     # Create pathways
     write_kegg_pathways(pathways, species_id)
@@ -641,16 +620,16 @@ def main():
         protein_ensembl_ids_set
     )
     proteins = list(proteins)
-    write_string_proteins(neo4j_graph, proteins, species_id)
+    write_string_proteins(proteins, species_id)
     Cypher.create_protein_index(neo4j_graph)
 
     # Associations
     associations = read_string_associations(args, postgres_connection, species_id, protein_ids_set)
-    write_string_associations(neo4j_graph, associations)
+    write_string_associations(associations)
 
     # Actions
     actions = read_string_actions(args, postgres_connection, species_id)
-    write_string_actions(neo4j_graph, actions)
+    write_string_actions(actions)
 
     # ================================== Merge STRING and KEGG ==================================
     connect_proteins_and_pathways(args, neo4j_graph, gene2pathways, protein_ensembl_ids_set)

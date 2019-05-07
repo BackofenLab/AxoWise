@@ -4,7 +4,7 @@ Neo4j graph database.
 """
 
 from neomodel import db
-from schema import Compound, Disease, Drug, Pathway
+from schema import Protein, Pathway, Compound, Disease, Drug, Class
 
 # ========================= Creating queries =========================
 
@@ -35,23 +35,20 @@ def add_drug(*batch):
     with db.transaction:
         Drug.create(*batch)
 
-def add_class_parent_and_child(graph, params):
+def add_class_parent_and_child(batch):
     """
     Create parent - child relationship between
     two pathway classes.
     """
 
-    query = """
-        UNWIND {batch} as entry
-        MERGE (parent:Class {
-            name: entry.name_parent
-        })
-        MERGE (child:Class {
-            name: entry.name_child
-        })
-        MERGE (child)-[:IN]->(parent)
-    """
-    graph.run(query, params)
+    parent_batch = map(lambda obj: {"name_parent": obj["name_parent"]}, batch)
+    child_batch = map(lambda obj: {"name_child": obj["name_child"]}, batch)
+
+    with db.transaction:
+        parents = Class.get_or_create(*parent_batch) # MERGE
+        children = Class.get_or_create(*child_batch) # MERGE
+        for parent, child in zip(parents, children):
+            parent.children.connect(child)
 
 def add_pathway(batch: list):
     """
@@ -60,89 +57,48 @@ def add_pathway(batch: list):
     After that, connect it to the corresponding class.
     """
 
+    class_batch = map(lambda obj: {"class": obj["class"] }, batch)
+
     with db.transaction:
-        Pathway.create(*batch)
+        classes = Class.get_or_create(*class_batch)
+        pathways = Pathway.create(*batch)
+        for pathway, cls in zip(pathways, classes):
+            pathway.cls.connect(cls)
 
-    # TODO Match the pathway class
-
-def add_protein(graph, params):
+def add_protein(batch):
     """
     Create a protein with the specified id, external id,
     name, description and species to which it belongs.
     """
 
-    query = """
-        UNWIND {batch} as entry
-        CREATE (protein:Protein {
-            id: entry.id,
-            external_id: entry.external_id,
-            name: toUpper(entry.preferred_name),
-            description: entry.annotation,
-            species_id: entry.species_id
-        })
-    """
-    graph.run(query, params)
+    with db.transaction:
+        Protein.create(*batch)
 
-def add_action(graph, params):
+def add_action(batch):
     """
     For an existing protein - protein pair, create / update (merge) the given
     action associated with the given pathway.
-
-    If the action's "mode" is the same, the action is updated only if the current
-    provided score is higher than the previous.
     """
 
-    query = """
-        UNWIND {batch} as entry
-        MATCH (protein1:Protein {
-            id: entry.id1
-        })
+    with db.transaction:
+        for entry in batch:
+            protein1 = Protein.nodes.get(iid=entry["id1"])
+            protein2 = Protein.nodes.get(iid=entry["id2"])
+            del entry["id1"], entry["id2"] # Entry now contains only 'mode' and 'score'
+            protein1.actions.connect(protein2, entry)
 
-        MATCH (protein2:Protein {
-            id: entry.id2
-        })
-
-        MERGE (protein1)-[action:ACTION {
-            mode: entry.mode
-        }]->(protein2)
-            ON CREATE SET action.score = entry.score
-            ON MATCH SET action.score = CASE action.score
-                                       WHEN entry.score > action.score
-                                       THEN action.score = entry.score
-                                       ELSE action.score
-                                       END
-    """
-    graph.run(query, params)
-
-def add_association(graph, params):
+def add_association(batch):
     """
     For an existing protein - protein pair, create the association
     between them.
     """
 
-    query = """
-        UNWIND {batch} as entry
-
-        MATCH (protein1:Protein {
-            id: entry.id1
-        })
-
-        MATCH (protein2:Protein {
-            id: entry.id2
-        })
-
-        CREATE (protein1)-[a:ASSOCIATION {
-            experiments: entry.experiments,
-            database: entry.database,
-            textmining: entry.textmining,
-            coexpression: entry.coexpression,
-            neighborhood: entry.neighborhood,
-            fusion: entry.fusion,
-            cooccurence: entry.cooccurence,
-            combined: entry.combined_score
-        }]->(protein2)
-    """
-    graph.run(query, params)
+    with db.transaction:
+        for entry in batch:
+            protein1 = Protein.nodes.get(iid=entry["id1"])
+            protein2 = Protein.nodes.get(iid=entry["id2"])
+            del entry["id1"], entry["id2"] # Entry now contains only channels scores and the combined score
+            protein1.associations.connect(protein2, entry)
 
 # ========================= Connecting queries =========================
 
