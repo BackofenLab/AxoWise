@@ -11,8 +11,8 @@ class Protein(StructuredNode):
     description = StringProperty(required=True)
     species_id = IntegerProperty(required=True)
 
-    association = Relationship("Protein", "ASSOCIATION")
-    pw_in = RelationshipTo("Pathway", "IN")
+    associations = Relationship("Protein", "ASSOCIATION")
+    pathways = RelationshipTo("Pathway", "IN")
 
 class Pathway(StructuredNode):
     iid = IntegerProperty(index=True, required=True)
@@ -20,28 +20,29 @@ class Pathway(StructuredNode):
     description = StringProperty(required=True)
     species_id = IntegerProperty(required=True)
 
-    p_in = RelationshipFrom("Protein", "IN")
+    proteins = RelationshipFrom("Protein", "IN")
 
-class Disease:
+class Disease(StructuredNode):
     iid = IntegerProperty(index=True, required=True)
     name = StringProperty(required=True)
 
-    pw_in = RelationshipTo("Pathway", "IN")
+    pathways = RelationshipTo("Pathway", "IN")
 
-class Drug:
+class Drug(StructuredNode):
     iid = IntegerProperty(index=True, required=True)
     name = StringProperty(required=True)
 
-    pw_in = RelationshipTo("Pathway", "IN")
+    pathways = RelationshipTo("Pathway", "IN")
 
-class Compound:
+class Compound(StructuredNode):
     iid = IntegerProperty(index=True, required=True)
     name = StringProperty(required=True)
 
-    pw_in = RelationshipTo("Pathway", "IN")
+    pathways = RelationshipTo("Pathway", "IN")
 
-class Class:
+class Class(StructuredNode):
     name = StringProperty(index=True, required=True)
 
-    pw_in = RelationshipFrom("Pathway", "IN")
-    c_in = RelationshipFrom("Class", "IN")
+    pathways = RelationshipFrom("Pathway", "IN")
+    parent = RelationshipTo("Class", "IN")
+    children = RelationshipFrom("Class", "IN")
