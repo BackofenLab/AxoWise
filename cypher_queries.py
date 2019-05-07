@@ -102,89 +102,53 @@ def add_association(batch):
 
 # ========================= Connecting queries =========================
 
-def connect_protein_and_pathway(graph, params):
+def connect_protein_and_pathway(batch):
     """
     Creates IN association for the given protein and
     pathway.
     """
 
-    query = """
-        UNWIND {batch} as entry
+    with db.transaction:
+        for entry in batch:
+            protein = Protein.nodes.get(external_id=entry["protein_external_id"])
+            pathway = Pathway.nodes.get(iid=entry["pathway_id"])
+            protein.pathways.connect(pathway)
 
-        MATCH (protein:Protein {
-            external_id: entry.protein_external_id
-        })
-
-        MATCH(pathway:Pathway {
-            id: entry.pathway_id
-        })
-
-        CREATE (protein)-[:IN]->(pathway)
-    """
-    graph.run(query, params)
-
-def connect_compound_and_pathway(graph, params):
+def connect_compound_and_pathway(batch):
     """
     Creates IN association for the given compound and
     pathway.
     """
 
-    query = """
-        UNWIND {batch} as entry
+    with db.transaction:
+        for entry in batch:
+            compound = Compound.nodes.get(iid=entry["compound_id"])
+            pathway = Pathway.nodes.get(iid=entry["pathway_id"])
+            compound.pathways.connect(pathway)
 
-        MATCH (compound:Compound {
-            id: entry.compound_id
-        })
-
-        MATCH (pathway:Pathway {
-            id: entry.pathway_id
-        })
-
-        CREATE (compound)-[:IN]->(pathway)
-    """
-    graph.run(query, params)
-
-def connect_disease_and_pathway(graph, params):
+def connect_disease_and_pathway(batch):
     """
     Creates IN association for the given disease and
     pathway.
     """
 
-    query = """
-        UNWIND {batch} as entry
+    with db.transaction:
+        for entry in batch:
+            disease = Disease.nodes.get(iid=entry["disease_id"])
+            pathway = Pathway.nodes.get(iid=entry["pathway_id"])
+            disease.pathways.connect(pathway)
 
-        MATCH (disease:Disease {
-            id: entry.disease_id
-        })
-
-        MATCH (pathway:Pathway {
-            id: entry.pathway_id
-        })
-
-        CREATE (disease)-[:IN]->(pathway)
-    """
-    graph.run(query, params)
-
-def connect_drug_and_pathway(graph, params):
+def connect_drug_and_pathway(batch):
     """
     Creates IN association for the given drug and
     pathway.
     """
 
-    query = """
-        UNWIND {batch} as entry
-
-        MATCH (drug:Drug {
-            id: entry.drug_id
-        })
-
-        MATCH (pathway:Pathway {
-            id: entry.pathway_id
-        })
-
-        CREATE (drug)-[:IN]->(pathway)
-    """
-    graph.run(query, params)
+    with db.transaction:
+        for entry in batch:
+            drug = Disease.nodes.get(iid=entry["drug_id"])
+            pathway = Pathway.nodes.get(iid=entry["pathway_id"])
+            drug.pathways.connect(pathway)
 
 # ========================= Schema queries =========================
 

@@ -336,7 +336,7 @@ def write_classes(pathway2classes):
         Cypher.add_class_parent_and_child(batch)
 
 # Associations
-def connect_compounds_and_pathways(args, neo4j_graph, pathway2compounds):
+def connect_compounds_and_pathways(args, pathway2compounds):
     """
     Writes compound - pathway relationships to the Neo4j database.
     """
@@ -352,22 +352,17 @@ def connect_compounds_and_pathways(args, neo4j_graph, pathway2compounds):
                 },
                 pathway2compounds[pathway_id]
             )
-            for batch in batches(pathway_compound_list, batch_size=1024):
-                num_compound_pathway_connections += len(batch)
-                print("{}".format(num_compound_pathway_connections), end="\r")
-                Cypher.connect_compound_and_pathway(neo4j_graph, {
-                    "batch": batch
-                })
-        print()
+            batch_size = 1024
+            for batch in tqdm(batches(pathway_compound_list, batch_size, len(pathway_compound_list))):
+                Cypher.connect_compound_and_pathway(batch)
 
-def connect_diseases_and_pathways(args, neo4j_graph, pathway2diseases):
+def connect_diseases_and_pathways(args, pathway2diseases):
     """
     Writes disease - pathway relationships to the Neo4j database.
     """
 
     if not args.skip_diseases:
         print("Connecting diseases and pathways...")
-        num_disease_pathway_connections = 0
         for pathway_id in pathway2diseases:
             pathway_disease_list = map(
                 lambda disease_id: {
@@ -376,22 +371,17 @@ def connect_diseases_and_pathways(args, neo4j_graph, pathway2diseases):
                 },
                 pathway2diseases[pathway_id]
             )
-            for batch in batches(pathway_disease_list, batch_size=1024):
-                num_disease_pathway_connections += len(batch)
-                print("{}".format(num_disease_pathway_connections), end="\r")
-                Cypher.connect_disease_and_pathway(neo4j_graph, {
-                    "batch": batch
-                })
-        print()
+            batch_size = 1024
+            for batch in tqdm(batches(pathway_disease_list, batch_size, len(pathway_disease_list))):
+                Cypher.connect_disease_and_pathway(batch)
 
-def connect_drugs_and_pathways(args, neo4j_graph, pathway2drugs):
+def connect_drugs_and_pathways(args, pathway2drugs):
     """
     Writes drug - pathway relationships to the Neo4j database.
     """
 
     if not args.skip_drugs:
         print("Connecting drugs and pathways...")
-        num_drug_pathway_connections = 0
         for pathway_id in pathway2drugs:
             pathway_drug_list = map(
                 lambda drug_id: {
@@ -400,13 +390,9 @@ def connect_drugs_and_pathways(args, neo4j_graph, pathway2drugs):
                 },
                 pathway2drugs[pathway_id]
             )
-            for batch in batches(pathway_drug_list, batch_size=1024):
-                num_drug_pathway_connections += len(batch)
-                print("{}".format(num_drug_pathway_connections), end="\r")
-                Cypher.connect_drug_and_pathway(neo4j_graph, {
-                    "batch": batch
-                })
-        print()
+            batch_size = 1024
+            for batch in tqdm(batches(pathway_drug_list, batch_size, len(pathway_drug_list))):
+                Cypher.connect_drug_and_pathway(batch)
 
 # ======================================== STRING ========================================
 # Proteins
@@ -513,13 +499,12 @@ def write_string_actions(actions):
     for batch in tqdm(batches(actions, batch_size, len(actions))):
         Cypher.add_action(batch)
 
-def connect_proteins_and_pathways(args, neo4j_graph, gene2pathways, protein_ensembl_ids_set):
+def connect_proteins_and_pathways(args, gene2pathways, protein_ensembl_ids_set):
     """
     Writes protein - pathway relationships to the Neo4j database.
     """
 
     print("Connecting proteins and pathways...")
-    num_protein_pathway_connections = 0
     def map_gene_to_pathways(gene_external_id):
         if gene_external_id not in gene2pathways:
             return []
@@ -536,13 +521,9 @@ def connect_proteins_and_pathways(args, neo4j_graph, gene2pathways, protein_ense
     gene_pathway_lists = map(map_gene_to_pathways, external_id_source)
     gene_pathway_list = concat(gene_pathway_lists)
 
-    for batch in batches(gene_pathway_list, batch_size=4096):
-        num_protein_pathway_connections += len(batch)
-        print("{}".format(num_protein_pathway_connections), end="\r")
-        Cypher.connect_protein_and_pathway(neo4j_graph, {
-            "batch": batch
-        })
-    print()
+    batch_size = 4096
+    for batch in tqdm(batches(gene_pathway_list, batch_size, len(gene_pathway_list))):
+        Cypher.connect_protein_and_pathway(batch)
 
 def main():
     """
@@ -603,13 +584,13 @@ def main():
     write_kegg_pathways(pathways, species_id)
 
     # Compound <-> Pathway
-    connect_compounds_and_pathways(args, neo4j_graph, pathway2compounds)
+    connect_compounds_and_pathways(args, pathway2compounds)
 
     # Disease <-> Pathway
-    connect_diseases_and_pathways(args, neo4j_graph, pathway2diseases)
+    connect_diseases_and_pathways(args, pathway2diseases)
 
     # Drug <-> Pathway
-    connect_drugs_and_pathways(args, neo4j_graph, pathway2drugs)
+    connect_drugs_and_pathways(args, pathway2drugs)
 
     # ======================================== STRING ========================================
     # Proteins
@@ -632,7 +613,7 @@ def main():
     write_string_actions(actions)
 
     # ================================== Merge STRING and KEGG ==================================
-    connect_proteins_and_pathways(args, neo4j_graph, gene2pathways, protein_ensembl_ids_set)
+    connect_proteins_and_pathways(args, gene2pathways, protein_ensembl_ids_set)
 
     # Close the PostgreSQL connection
     postgres_connection.close()
