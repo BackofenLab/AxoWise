@@ -75,9 +75,11 @@ class batches:
         self.iterable = iterable
         self.batch_size = batch_size
 
-        self.size = size
-        if self.size is None and type(iterable) in {list, tuple, dict}:
+        self.size = None
+        if type(iterable) in {list, tuple, dict}:
             self.size = math.ceil(len(iterable) / batch_size)
+        elif size is not None:
+            self.size = math.ceil(size / batch_size)
 
     @property
     def _generator(self):

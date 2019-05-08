@@ -55,18 +55,15 @@ def search_q_gram_index(query, index, condition=None, top=5):
 
 #  ========================= Protein =========================
 
-Protein = namedtuple("Protein", ["id", "name", "species_id"])
-
 def create_protein_q_gram_index():
     """
     Create a q-gram index for protein names.
     """
 
-    neo4j_graph = database.connect_neo4j()
+    database.connect_neo4j()
 
     index = defaultdict(set)
-    for row in Cypher.get_protein_list(neo4j_graph):
-        protein = Protein(**row)
+    for protein in Cypher.get_protein_list():
         for q_gram in make_q_grams(protein.name.lower()):
             index[q_gram].add(protein)
 
@@ -74,18 +71,15 @@ def create_protein_q_gram_index():
 
 # ========================= Pathway =========================
 
-Pathway = namedtuple("Pathway", ["id", "name", "species_id"])
-
 def create_pathway_q_gram_index():
     """
     Create a q-gram index for pathway names.
     """
 
-    neo4j_graph = database.connect_neo4j()
+    database.connect_neo4j()
 
     index = defaultdict(set)
-    for row in Cypher.get_pathway_list(neo4j_graph):
-        pathway = Pathway(**row)
+    for pathway in Cypher.get_pathway_list():
         for q_gram in make_q_grams(pathway.name.lower()):
             index[q_gram].add(pathway)
 
@@ -121,18 +115,15 @@ def create_species_q_gram_index():
 
 # ========================= Class =========================
 
-Class = namedtuple("Class", ["name"])
-
 def create_class_q_gram_index():
     """
     Create a q-gram index for pathway class names.
     """
 
-    neo4j_graph = database.connect_neo4j()
+    database.connect_neo4j()
 
     index = defaultdict(set)
-    for row in Cypher.get_class_list(neo4j_graph):
-        klass = Class(**row)
+    for klass in Cypher.get_class_list():
         for q_gram in make_q_grams(klass.name.lower()):
             index[q_gram].add(klass)
 

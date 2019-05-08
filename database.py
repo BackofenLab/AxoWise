@@ -40,7 +40,7 @@ def connect_postgres(credentials_path=_DEFAULT_CREDENTIALS_PATH):
     """
 
     with open(credentials_path, "rt", encoding="utf-8") as credentials_file:
-        credentials = yaml.load(credentials_file)
+        credentials = yaml.load(credentials_file, Loader=yaml.FullLoader)
 
     postgres = credentials["postgres"]
 
@@ -65,5 +65,5 @@ def connect(credentials_path=_DEFAULT_CREDENTIALS_PATH):
     """
 
     postgres_connection = connect_postgres(credentials_path)
-    neo4j_graph = connect_neo4j(credentials_path)
-    return postgres_connection, neo4j_graph
+    connect_neo4j(credentials_path)
+    return postgres_connection

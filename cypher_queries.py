@@ -6,6 +6,21 @@ Neo4j graph database.
 from neomodel import db, install_all_labels, remove_all_labels
 from schema import Protein, Pathway, Compound, Disease, Drug, Class
 
+def _translate_id_property(node_dict):
+    new_node_dict = {**node_dict, "id_": node_dict["id"]}
+    del new_node_dict["id"]
+    return new_node_dict
+
+def _translate_to_protein(protein_dict):
+    new_protein_dict = {
+        **protein_dict,
+        "id_": protein_dict["id"],
+        "name": protein_dict["preferred_name"],
+        "description": protein_dict["annotation"]
+    }
+    del new_protein_dict["id"], new_protein_dict["preferred_name"], new_protein_dict["annotation"]
+    return new_protein_dict
+
 # ========================= Creating queries =========================
 
 @db.transaction
@@ -14,6 +29,7 @@ def add_compound(batch: list):
     Create a compound with the specified id and
     name.
     """
+    batch = map(_translate_id_property, batch)
     Compound.create(*batch)
 
 @db.transaction
@@ -23,26 +39,28 @@ def add_disease(batch: list):
     name.
     """
 
+    batch = map(_translate_id_property, batch)
     Disease.create(*batch)
 
 @db.transaction
-def add_drug(*batch):
+def add_drug(batch: list):
     """
     Create a drug with the specified id and
     name.
     """
 
+    batch = map(_translate_id_property, batch)
     Drug.create(*batch)
 
 @db.transaction
-def add_class_parent_and_child(batch):
+def add_class_parent_and_child(batch: list):
     """
     Create parent - child relationship between
     two pathway classes.
     """
 
-    parent_batch = map(lambda obj: {"name_parent": obj["name_parent"]}, batch)
-    child_batch = map(lambda obj: {"name_child": obj["name_child"]}, batch)
+    parent_batch = map(lambda obj: {"name": obj["name_parent"]}, batch)
+    child_batch = map(lambda obj: {"name": obj["name_child"]}, batch)
 
     parents = Class.get_or_create(*parent_batch) # MERGE
     children = Class.get_or_create(*child_batch) # MERGE
@@ -57,52 +75,61 @@ def add_pathway(batch: list):
     After that, connect it to the corresponding class.
     """
 
-    class_batch = map(lambda obj: {"class": obj["class"] }, batch)
+    batch = list(map(_translate_id_property, batch))
 
-    classes = Class.get_or_create(*class_batch)
+    class_batch = map(
+        lambda obj: {"name": obj["class"] },
+        filter(
+            lambda obj: obj["class"] is not None,
+            batch
+        )
+    )
+
+    # classes = Class.get_or_create(*class_batch)
     pathways = Pathway.create(*batch)
-    for pathway, cls in zip(pathways, classes):
-        pathway.cls.connect(cls)
+    # for pathway zip(pathways, classes):
+    #     pathway.cls.connect(cls)
 
 @db.transaction
-def add_protein(batch):
+def add_protein(batch: list):
     """
     Create a protein with the specified id, external id,
     name, description and species to which it belongs.
     """
 
+    batch = map(_translate_to_protein, batch)
     Protein.create(*batch)
 
 @db.transaction
-def add_action(batch):
+def add_action(batch: list):
     """
     For an existing protein - protein pair, create / update (merge) the given
     action associated with the given pathway.
     """
 
     for entry in batch:
-        protein1 = Protein.nodes.get(iid=entry["id1"])
-        protein2 = Protein.nodes.get(iid=entry["id2"])
+        protein1 = Protein.nodes.get(id_=entry["id1"])
+        protein2 = Protein.nodes.get(id_=entry["id2"])
         del entry["id1"], entry["id2"] # Entry now contains only 'mode' and 'score'
         protein1.actions.connect(protein2, entry)
 
 @db.transaction
-def add_association(batch):
+def add_association(batch: list):
     """
     For an existing protein - protein pair, create the association
     between them.
     """
 
     for entry in batch:
-        protein1 = Protein.nodes.get(iid=entry["id1"])
-        protein2 = Protein.nodes.get(iid=entry["id2"])
+        protein1 = Protein.nodes.get(id_=entry["id1"])
+        protein2 = Protein.nodes.get(id_=entry["id2"])
         del entry["id1"], entry["id2"] # Entry now contains only channels scores and the combined score
         protein1.associations.connect(protein2, entry)
 
 # ========================= Connecting queries =========================
 
 @db.transaction
-def connect_protein_and_pathway(batch):
+def connect_protein_and_pathway(batch: list):
     """
     Creates IN association for the given protein and
     pathway.
@@ -110,43 +137,43 @@ def connect_protein_and_pathway(batch):
 
     for entry in batch:
         protein = Protein.nodes.get(external_id=entry["protein_external_id"])
-        pathway = Pathway.nodes.get(iid=entry["pathway_id"])
+        pathway = Pathway.nodes.get(id_=entry["pathway_id"])
         protein.pathways.connect(pathway)
 
 @db.transaction
-def connect_compound_and_pathway(batch):
+def connect_compound_and_pathway(batch: list):
     """
     Creates IN association for the given compound and
     pathway.
     """
 
     for entry in batch:
-        compound = Compound.nodes.get(iid=entry["compound_id"])
-        pathway = Pathway.nodes.get(iid=entry["pathway_id"])
+        compound = Compound.nodes.get(id_=entry["compound_id"])
+        pathway = Pathway.nodes.get(id_=entry["pathway_id"])
         compound.pathways.connect(pathway)
 
 @db.transaction
-def connect_disease_and_pathway(batch):
+def connect_disease_and_pathway(batch: list):
     """
     Creates IN association for the given disease and
     pathway.
     """
 
     for entry in batch:
-        disease = Disease.nodes.get(iid=entry["disease_id"])
-        pathway = Pathway.nodes.get(iid=entry["pathway_id"])
+        disease = Disease.nodes.get(id_=entry["disease_id"])
+        pathway = Pathway.nodes.get(id_=entry["pathway_id"])
         disease.pathways.connect(pathway)
 
 @db.transaction
-def connect_drug_and_pathway(batch):
+def connect_drug_and_pathway(batch: list):
     """
     Creates IN association for the given drug and
     pathway.
     """
 
     for entry in batch:
-        drug = Disease.nodes.get(iid=entry["drug_id"])
-        pathway = Pathway.nodes.get(iid=entry["pathway_id"])
+        drug = Drug.nodes.get(id_=entry["drug_id"])
+        pathway = Pathway.nodes.get(id_=entry["pathway_id"])
         drug.pathways.connect(pathway)
 
 # ========================= Schema queries =========================
@@ -155,13 +182,13 @@ def create_indexes_and_constraints():
     """
     Creates node indexes and constraints for the Neo4j graph database.
     """
-    install_all_labels(stdout=True)
+    install_all_labels()
 
 def drop_indexes_and_constraints():
     """
     Drops node indexes and constraints for the Neo4j graph database.
     """
-    remove_all_labels(stdout=True)
+    remove_all_labels()
 
 # ========================= Server warm-up =========================
 
@@ -176,48 +203,33 @@ def warm_up(graph):
     print("Done.")
 
 # ========================= List queries =========================
-def get_protein_list(graph):
+
+@db.transaction
+def get_protein_list():
     """
     Retrieve a list of proteins including the protein ID
     and the protein name.
     """
 
-    query = """
-        MATCH (protein:Protein)
-        RETURN protein.id AS id,
-               protein.name AS name,
-               protein.species_id AS species_id
-    """
+    # TODO Retrieve only some properties
+    return Protein.nodes.all()
 
-    return graph.run(query)
-
-def get_pathway_list(graph):
+def get_pathway_list():
     """
     Retrieve a list of pathways including the pathway ID
     and the pathway name.
     """
 
-    query = """
-        MATCH (pathway:Pathway)
-        RETURN pathway.id AS id,
-               pathway.name AS name,
-               pathway.species_id AS species_id
-    """
+    # TODO Retrieve only some properties
+    return Pathway.nodes.all()
 
-    return graph.run(query)
-
-def get_class_list(graph):
+def get_class_list():
     """
     Retrieve a list of all available pathway
     class names.
     """
 
-    query = """
-        MATCH (class:Class)
-        RETURN class.name AS name
-    """
-
-    return graph.run(query)
+    return Class.nodes.all()
 
 # ========================= Subgraph queries =========================
 
