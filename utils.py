@@ -3,6 +3,9 @@ Collection of useful functions.
 """
 
 import math
+import time
+from functools import wraps
+
 
 def rstrip_line_generator(iterable, skip_empty=False):
     """
@@ -106,3 +109,19 @@ def concat(list_of_lists):
     for list in list_of_lists:
         for item in list:
             yield item
+
+def timeit(f):
+    """
+    Decorator that print the time passed during
+    a function call.
+    """
+
+    @wraps(f)
+    def _f(*args, **kwargs):
+        start = time.time()
+        retval = f(*args, **kwargs)
+        end = time.time()
+        print(f"{f.__qualname__} took {end - start:.4f} s.")
+        return retval
+
+    return _f
