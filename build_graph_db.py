@@ -461,14 +461,13 @@ def write_string_associations(associations):
     Neo4j database.
     """
 
-    def map_batch_item(item):
+    def map_item(item):
         item = {**item, **decode_evidence_scores(item["evidence_scores"])}
         del item["evidence_scores"]
         return item
 
     print("Creating protein - protein associations...")
-    for batch in tqdm(batches(associations, _BATCH_SIZE)):
-        batch = list(map(map_batch_item, batch))
+    for batch in tqdm(batches(map(map_item, associations), _BATCH_SIZE)):
         Cypher.add_association(batch)
 
 def read_string_actions(args, postgres_connection, species_id):
