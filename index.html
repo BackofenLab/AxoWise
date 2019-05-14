@@ -57,6 +57,18 @@
           <li><a href="https://stringdb-static.org/download/evidence_schema.v10.5.sql.gz">evidence_schema.v10.5.sql.gz</a> (6.9 GB) - part III: interaction evidence (but: excluding license-restricted data, such as <strong>KEGG pathways</strong>)</li>
         </ul>
       </li>
+    </ul>
+  </li>
+  <li>Load the dumps into a main PostgreSQL database (Stefan)</li>
+  <li><a href="documentation#downloading-kegg-data-for-a-certain-species">Download KEGG data for a certain species</a></li>
+</ul>
+
+<p style="color:brown; font-size: small;">partially automated</p>
+
+<h1 id="2-load-a-subset-of-string-data-locally">2. Load a subset of STRING data locally</h1>
+<ul>
+  <li>Dump the data for species we are interested in (e.g. for <em>Homo sapiens</em> or <em>Mus musculus</em>) from the main database (using <a href="https://github.com/dankeder/pg_dump_sample">pg_dump_sample</a> and e.g. <a href="https://github.com/BackofenLab/protein-graph-database/blob/master/sql/dump_manifest.human.yml">dump_manifest.human.yml</a>)
+    <ul>
       <li>Database subsets
         <ul>
           <li><em>Mus musculus</em> (mouse): <a href="https://drive.google.com/file/d/1-AL0M7KPqCGXETL9BTsFGFbj6FqoQPMB/view?usp=sharing">STRING_mouse.zip</a> (131 MB)</li>
@@ -65,18 +77,19 @@
       </li>
     </ul>
   </li>
-  <li>Load the dumps into a PostgreSQL database</li>
-  <li><a href="documentation#downloading-kegg-data-for-a-certain-species">Download KEGG data for a certain species</a></li>
+  <li>Load the dumps for each species separately into a local PostgreSQL database</li>
 </ul>
 
-<p style="color:brown; font-size: small;">partially automated</p>
+<p style="color:red; font-size: small;">not automated</p>
 
-<h1 id="2-extract-the-information-from-the-data">2. Extract the information from the data</h1>
+<p><u>The following steps are executed per species:</u></p>
+
+<h1 id="3-extract-the-information-from-the-data">3. Extract the information from the data</h1>
 
 <ul>
-  <li>Derive the information we are interested in (e.g. for <em>Homo sapiens</em> or <em>Mus musculus</em>)
+  <li>Derive the information we are interested in
     <ul>
-      <li>Query the PostgreSQL database from STRING</li>
+      <li>Query the local PostgreSQL database from STRING</li>
       <li>Parse the downloaded KEGG PATHWAY data</li>
     </ul>
   </li>
@@ -84,9 +97,11 @@
 
 <p style="color:green; font-size: small;">automated (testing)</p>
 
-<h1 id="3-merge-kegg-pathway-and-string">3. <a href="KEGG">Merge KEGG PATHWAY and STRING</a></h1>
+<h1 id="4-merge-kegg-pathway-and-string">4. <a href="KEGG">Merge KEGG PATHWAY and STRING</a></h1>
 
-<h1 id="4-build-a-graph-database">4. <a href="documentation#building-a-neo4j-graph-database">Build a graph database</a></h1>
+<p style="color:green; font-size: small;">automated (testing)</p>
+
+<h1 id="5-build-a-graph-database">5. <a href="documentation#building-a-neo4j-graph-database">Build a graph database</a></h1>
 
 <ul>
   <li>Turn the extracted information into <a href="https://neo4j.com/">Neo4j</a> graph database (using our defined <a href="graph-db-scheme">database scheme</a>)
@@ -94,7 +109,7 @@
       <li>Example: Neo4j database dump for <em>Homo sapiens</em> (human): <a href="https://drive.google.com/file/d/1LpKRevT_hUy5_-0Q6EnWcU-unsXuJ_I-/view?usp=sharing">neo4j_human.dump</a> (1.2 GB)</li>
     </ul>
   </li>
-  <li>Build a separate graph for each of the species in the same database (add species label to the nodes)</li>
+  <li>Build the graph for multiple species in the same database (add species attribute to each node)</li>
   <li>Visualize the graph database</li>
 </ul>
 
@@ -105,7 +120,7 @@
 
 <p><br /></p>
 
-<h1 id="5-use-machine-learning">5. Use machine learning</h1>
+<h1 id="6-use-machine-learning">6. Use machine learning</h1>
 
 <ul>
   <li>Do a classfication / functional prediction of various proteins</li>
