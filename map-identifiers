@@ -23,7 +23,9 @@ def get(url, timeout=10, wait=1):
         return None
 
 def parse_cli_args():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description="Reads identifiers from the standard input and uses STRING API to map them."
+    )
     parser.add_argument(
         "--species_id",
         type=int,
@@ -35,40 +37,43 @@ def parse_cli_args():
         default=1,
         help="Number of matches to return per query identifier."
     )
+    parser.add_argument(
+        "--chunk_size",
+        type=int,
+        default=350,
+        help="Number of identifiers passed in one API query."
+    )
     args = parser.parse_args()
     return args
 
-def map_identifiers_to_STRING(identifiers, format="tsv", limit=1, species=None, split=10):
+def map_identifiers_to_STRING(identifiers, format="tsv", limit=1, species=None, split=350):
     template = _TEMPLATE
     if species is None:
         template = _TEMPLATE_NO_SPECIES
+
+    def map_chunk(chunk):
+        endpoint = template.substitute(
+            format=format,
+            identifiers="%0d".join(chunk),
+            species=species,
+            limit=limit
+        )
+        identifiers_file = get(endpoint)
+        assert identifiers_file is not None, "GET request did not return anything. Try using a smaller chunk size."
+        return identifiers_file
 
     if len(identifiers) > split:
         i = 0
         while True:
             identifiers_chunk = identifiers[i : i + split]
-            endpoint = template.substitute(
-                format=format,
-                identifiers="%0d".join(identifiers_chunk),
-                species=species,
-                limit=limit
-            )
-            identifiers_file = get(endpoint)
-            assert identifiers_file is not None
+            identifiers_file = map_chunk(identifiers_chunk)
             yield identifiers_file
             if i + split >= len(identifiers):
                 break
             else:
                 i += split
     else:
-        endpoint = template.substitute(
-            format=format,
-            identifiers="%0d".join(identifiers),
-            species=species,
-            limit=limit
-        )
-        identifiers_file = get(endpoint)
-        assert identifiers_file is not None
+        identifiers_file = map_chunk(identifiers)
         yield identifiers_file
 
 def read_lines_until_EOF():
@@ -95,7 +100,7 @@ def map_tsv_row(identifiers, row):
 def main():
     args = parse_cli_args()
     identifiers = read_lines_until_EOF()
-    for identifiers_file in map_identifiers_to_STRING(identifiers, species=args.species_id, limit=args.limit):
+    for identifiers_file in map_identifiers_to_STRING(identifiers, species=args.species_id, limit=args.limit, split=args.chunk_size):
         header, *rows = identifiers_file.splitlines()
         rows = list(map(lambda row: map_tsv_row(identifiers, row), rows))
         lines = "\n".join(rows)
