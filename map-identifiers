@@ -1,0 +1,100 @@
+#!/usr/bin/env python
+
+"""
+Script that reads identifiers from the standard input
+and uses STRING API to map them.
+"""
+
+import argparse
+import time
+import urllib.error
+from string import Template
+from urllib.request import urlopen
+
+_IDENTITY = "pgdb"
+_TEMPLATE = Template(f"https://string-db.org/api/${{format}}/get_string_ids?identifiers=${{identifiers}}&species=${{species}}&caller_identity={_IDENTITY}&limit=${{limit}}")
+_TEMPLATE_NO_SPECIES = Template(f"https://string-db.org/api/${{format}}/get_string_ids?identifiers=${{identifiers}}&species=${{species}}&caller_identity={_IDENTITY}&limit=${{limit}}")
+
+def get(url, timeout = 10, wait = 1):
+    if type(wait) is int and wait > 0:
+        time.sleep(wait)
+    try:
+        return urlopen(url, timeout = timeout).read().decode(encoding = "utf-8", errors = "ignore")
+    except:
+        return None
+
+def parse_cli_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--species_id",
+        type=int,
+        help="NCBI taxon identifier (e.g. Human is 9606)."
+    )
+    args = parser.parse_args()
+    return args
+
+def map_identifiers_to_STRING(identifiers, format="tsv", species=None, split=10):
+    template = _TEMPLATE
+    if species is None:
+        template = _TEMPLATE_NO_SPECIES
+
+    if len(identifiers) > split:
+        i = 0
+        while True:
+            identifiers_chunk = identifiers[i : i + split]
+            endpoint = template.substitute(
+                format = format,
+                identifiers = "%0d".join(identifiers_chunk),
+                species = species,
+                limit = 1
+            )
+            identifiers_file = get(endpoint)
+            assert identifiers_file is not None
+            yield identifiers_file
+            if i + split >= len(identifiers):
+                break
+            else:
+                i += split
+    else:
+        endpoint = template.substitute(
+            format = format,
+            identifiers = "%0d".join(identifiers),
+            species = species,
+            limit = 1
+        )
+        identifiers_file = get(endpoint)
+        assert identifiers_file is not None
+        yield identifiers_file
+
+def read_lines_until_EOF():
+    lines = list()
+    while True:
+        try:
+            line = input()
+        except EOFError:
+            break
+        if line.strip() == "":
+            continue
+        lines.append(line)
+    return lines
+
+def map_tsv_row(identifiers, row):
+    columns = row.split("\t")
+    query_idx = int(columns[0])
+    string_id = columns[1]
+    preferred_name = columns[4]
+
+    query = identifiers[query_idx]
+    return f"{query}\t{string_id}\t{preferred_name}"
+
+def main():
+    args = parse_cli_args()
+    identifiers = read_lines_until_EOF()
+    for identifiers_file in map_identifiers_to_STRING(identifiers, species=args.species_id):
+        header, *rows = identifiers_file.splitlines()
+        rows = list(map(lambda row: map_tsv_row(identifiers, row), rows))
+        lines = "\n".join(rows)
+        print(lines)
+
+if __name__ == "__main__":
+    main()
