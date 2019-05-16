@@ -42,7 +42,9 @@
 <a href="#running-unit-tests">Running unit tests</a><br />
 <a href="#downloading-kegg-data-for-a-certain-species">Downloading KEGG data for a certain species</a><br />
 <a href="#building-a-neo4j-graph-database">Building a Neo4j graph database</a><br />
-<a href="#running-the-server">Running the server</a></p>
+<a href="#running-the-server">Running the server</a><br />
+<a href="#starting-the-latest-deployed-docker-containers">Starting the latest deployed Docker container(s)</a><br />
+<a href="#querying-the-neo4j-database">Querying the Neo4j database</a></p>
 
 <p><br /></p>
 <hr />
@@ -259,6 +261,114 @@ Done!
 <p>The server can then be accessed locally @ <a href="http://127.0.0.1:5000/">http://127.0.0.1:5000/</a></p>
 
 <p style="color: red;">This is a development server, and it is not by any means ready to be used in production.</p>
+
+<h2 id="starting-the-latest-deployed-docker-containers">Starting the latest deployed Docker container(s)</h2>
+
+<p>Definition of image names and how they are connected can be found in <a href="https://github.com/BackofenLab/protein-graph-database/blob/master/docker-compose.yml">docker-compose.yml</a>.</p>
+
+<p>After you are sure that you have <code class="highlighter-rouge">docker-compose</code> installed, database and server can be started running the following command in the root directory of our repository:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker-compose up
+</code></pre></div></div>
+
+<p>After exiting, it is also recommended to clean up:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker-compose down
+</code></pre></div></div>
+
+<h2 id="querying-the-neo4j-database">Querying the Neo4j database</h2>
+
+<p>Make sure you are already familiar and comfortable with <a href="https://neo4j.com/developer/cypher-query-language/">Cypher and its syntax</a>.</p>
+
+<p>Neo4j’s interactive browser can be accessed locally @ <a href="http://127.0.0.1:7474/">http://127.0.0.1:7474/</a> and it allows users to manually run Cypher queries.</p>
+
+<h1 id="cypher-query-examples">Cypher query examples</h1>
+
+<p>The following queries use <code class="highlighter-rouge">name</code> property for matching since it is more convenient for a user. In order to match the nodes unambiguously, one should use <code class="highlighter-rouge">id</code> property instead.</p>
+
+<p>Usually there are multiple nodes matching a given name. That is the reason we use fuzzy search and give a user the final decision.</p>
+
+<p>Keeping <a href="graph-db-scheme">our database graph scheme</a> in mind, queries are more or less straightforward and intuitive. The following examples cover various scenarios and should be enough to start writing basic to intermediate queries.</p>
+
+<ul>
+  <li>
+    <p>Best scoring 100 proteins associated with CCL5</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  WITH "CCL5" as protein_name
+  MATCH (p1:Protein {name: protein_name})-[a:ASSOCIATION]-(p2:Protein)
+  RETURN p1, a, p2
+  ORDER BY a.combined DESC
+  LIMIT 100
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Proteins in Chemokine signaling pathway (for mouse)</p>
+
+    <p>To filter by species, <code class="highlighter-rouge">species_id</code> property is used. It is a NCBI taxon identifier (e.g. 9606 for human / 10090 for mouse).</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  WITH "Chemokine signaling pathway" as pathway_name,
+       10090 as species_id
+  MATCH (pathway:Pathway {
+          name: pathway_name,
+          species_id: species_id
+      }
+  )&lt;-[:IN]-(protein:Protein)
+  RETURN protein
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Pathways associated with a protein list (for human)</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  WITH ["SFPI1", "FOSB"] as protein_names
+  MATCH (protein:Protein {species_id: 9606})-[:IN]-&gt;(pathway:Pathway)
+  WHERE protein.name IN protein_names
+  RETURN pathway
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Diseases associated with a protein list</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  WITH ["SFPI1", "FOSB"] as protein_names
+  MATCH (protein:Protein)-[:IN]-&gt;(pathway:Pathway)&lt;-[:IN]-(disease:Disease)
+  WHERE protein.name IN protein_names
+  RETURN disease
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Centrality for a protein list (with a score threshold of 0.7)</p>
+
+    <p>Each <code class="highlighter-rouge">ASSOCIATION</code> relationship (edge) contains scores for different channels. <code class="highlighter-rouge">combined</code> score is always present and we use it to filter out insignificant interactions.</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  WITH ["SFPI1", "FOSB", "MLXIPL"] as protein_names,
+       9606 as species_id,
+       700 as threshold
+  MATCH (p1:Protein {species_id: species_id})-[a:ASSOCIATION]-(p2:Protein)
+  WHERE p1.name IN protein_names AND
+        p2.name IN protein_names AND
+        p1.id &lt;&gt; p2.id AND
+        a.combined &gt;= threshold
+  RETURN p1.name AS name, SUM(SIZE((p1)-[a]-(p2))) AS degree
+  ORDER BY degree DESC
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Class hierarchy for a given pathway</p>
+
+    <p>In this query, <code class="highlighter-rouge">chain</code> variable binds the whole pathway-class path in the graph.</p>
+
+    <p><code class="highlighter-rouge">*</code> in <code class="highlighter-rouge">-[:IN*]-&gt;</code> specifies a variable number of <code class="highlighter-rouge">IN</code> relationships between protein and class nodes. <code class="highlighter-rouge">RELATIONSHIPS()</code> function is used to collect those edges.</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  WITH "Chemokine signaling pathway" AS pathway_name,
+        9606 AS species_id
+  MATCH chain = (pathway:Pathway {
+          name: pathway_name,
+          species_id: species_id
+      }
+  )-[:IN*]-&gt;(class:Class)
+  RETURN pathway, class, RELATIONSHIPS(chain)
+</code></pre></div>    </div>
+  </li>
+</ul>
 
   </div>
 
