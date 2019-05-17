@@ -55,6 +55,17 @@ def handle_proteins(cursor):
         "nodes": nodes
     }
 
+def handle_pathways(cursor):
+    nodes = pd.DataFrame(columns=["id", "name", "description", "species_id"])
+
+    for row in cursor:
+        pathway = row["pathway"]
+        nodes.loc[pathway["id"]] = pathway
+
+    return {
+        "nodes": nodes
+    }
+
 def save():
     while True:
         option = input("Save (y/n)? ").lower().strip()
@@ -82,11 +93,15 @@ def main():
             handle = handle_protein_interactions
         elif "protein" in columns:
             handle = handle_proteins
+        elif "pathway" in columns:
+            handle = handle_pathways
 
         dataframes = handle(cursor)
         for name, df in dataframes.items():
             print(f"[{name}]")
-            print(df.head())
+            print(df.head(n=5))
+            if len(df) > 5:
+                print("...")
             if save():
                 path = input("\tPath: ")
                 df.to_csv(path, index=False)
