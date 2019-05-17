@@ -77,6 +77,8 @@ def save():
 def main():
     neo4j_graph = database.connect_neo4j()
 
+    print("=== Protein Graph Database CLI ===")
+
     while True:
         query = read_until_EOF()
         if not query:
