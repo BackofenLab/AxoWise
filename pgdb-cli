@@ -1,10 +1,14 @@
 #!/usr/bin/env python
 
+"""
+CLI script for the Neo4j graph database.
+"""
+
 import pandas as pd
+import py2neo
 
 import database
 
-neo4j_graph = database.connect_neo4j()
 
 def read_until_EOF():
     lines = list()
@@ -14,21 +18,78 @@ def read_until_EOF():
         except EOFError:
             print("\r ")
             break
-        if line.strip() == "":
+        if not line.strip():
             continue
         lines.append(line)
     return "\n".join(lines)
 
-def main():
+def handle_protein_interactions(cursor):
     nodes = pd.DataFrame(columns=["id", "external_id", "name", "description", "species_id"])
     edges = pd.DataFrame(columns=["source", "target", "score"])
+
+    for row in cursor:
+        source = row["source"]
+        target = row["target"]
+        score = row["score"]
+        nodes.loc[source["id"]] = source
+        nodes.loc[target["id"]] = target
+        edges.loc[f"{source['id']}{target['id']}"] = {
+            "source": source["id"],
+            "target": target["id"],
+            "score": score
+        }
+
+    return {
+        "nodes": nodes,
+        "edges": edges
+    }
+
+def handle_proteins(cursor):
+    nodes = pd.DataFrame(columns=["id", "external_id", "name", "description", "species_id"])
+
+    for row in cursor:
+        protein = row["protein"]
+        nodes.loc[protein["id"]] = protein
+
+    return {
+        "nodes": nodes
+    }
+
+def save():
+    while True:
+        option = input("Save (y/n)? ").lower().strip()
+        if option == "y":
+            return True
+        elif option == "n":
+            return False
+
+def main():
+    neo4j_graph = database.connect_neo4j()
+
     while True:
         query = read_until_EOF()
-        cursor = neo4j_graph.run(query)
-        for row in cursor:
-            source = row["source"]
-            nodes.loc[source["id"]] = source
-        print(nodes)
+        if not query:
+            continue
+
+        try:
+            cursor = neo4j_graph.run(query)
+        except py2neo.database.ClientError as e:
+            print(e)
+            continue
+
+        columns = cursor.keys()
+        if "source" in columns and "target" in columns and "score" in columns:
+            handle = handle_protein_interactions
+        elif "protein" in columns:
+            handle = handle_proteins
+
+        dataframes = handle(cursor)
+        for name, df in dataframes.items():
+            print(f"[{name}]")
+            print(df.head())
+            if save():
+                path = input("\tPath: ")
+                df.to_csv(path, index=False)
 
 if __name__ == "__main__":
     try:
