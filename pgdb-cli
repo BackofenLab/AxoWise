@@ -1,0 +1,32 @@
+#!/usr/bin/env python
+
+import database
+
+neo4j_graph = database.connect_neo4j()
+
+def read_until_EOF():
+    lines = list()
+    while True:
+        try:
+            line = input(". " if lines else "> ")
+        except EOFError:
+            print("\r ")
+            break
+        if line.strip() == "":
+            continue
+        lines.append(line)
+    return "\n".join(lines)
+
+def main():
+    while True:
+        query = read_until_EOF()
+        cursor = neo4j_graph.run(query)
+        for row in cursor:
+            print(row)
+
+if __name__ == "__main__":
+    try:
+        main()
+        print("\r ")
+    except KeyboardInterrupt:
+        pass
