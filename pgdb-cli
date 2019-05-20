@@ -4,22 +4,27 @@
 CLI script for the Neo4j graph database.
 """
 
+from pathlib import Path
+
 import pandas as pd
 import py2neo
 
 import database
+from utils import exit_on
 
 
 def read_until_EOF():
     lines = list()
+
+    @exit_on(EOFError)
+    def read_line():
+        line = input(". " if lines else "> ").strip()
+        return line
+
     while True:
-        try:
-            line = input(". " if lines else "> ")
-        except EOFError:
-            print("\r ")
-            break
-        if not line.strip():
-            continue
+        line = read_line()
+        if line is None:
+            print(); break
         lines.append(line)
     return "\n".join(lines)
 
@@ -66,6 +71,22 @@ def handle_pathways(cursor):
         "nodes": nodes
     }
 
+def handle_rest(cursor, columns):
+    dataframe = pd.DataFrame(columns=columns)
+
+    for idx, row in enumerate(cursor):
+        dataframe.loc[idx] = row
+
+    return {
+        "table": dataframe
+    }
+
+@exit_on(py2neo.database.ClientError, print_msg=True)
+def run_query(neo4j_graph, query):
+    cursor = neo4j_graph.run(query)
+    return cursor
+
+@exit_on(KeyboardInterrupt)
 def save():
     while True:
         option = input("Save (y/n)? ").lower().strip()
@@ -74,6 +95,23 @@ def save():
         elif option == "n":
             return False
 
+@exit_on(Exception, print_msg=True)
+@exit_on(KeyboardInterrupt)
+def get_path():
+    path_raw = input("Path: ")
+    Path(path_raw).parent.mkdir(parents=True, exist_ok=True)
+    return path_raw
+
+_HANDLERS = [
+    (lambda columns: "source" in columns and "target" in columns and "score" in columns, handle_protein_interactions),
+    (lambda columns: "protein" in columns, handle_proteins),
+    (lambda columns: "pathway" in columns, handle_pathways),
+    (lambda columns: True, handle_rest)
+]
+
+_HEAD_N = 5
+
+@exit_on(KeyboardInterrupt)
 def main():
     neo4j_graph = database.connect_neo4j()
 
@@ -84,33 +122,31 @@ def main():
         if not query:
             continue
 
-        try:
-            cursor = neo4j_graph.run(query)
-        except py2neo.database.ClientError as e:
-            print(e)
+        cursor = run_query(neo4j_graph, query)
+        if not cursor:
             continue
 
         columns = cursor.keys()
-        if "source" in columns and "target" in columns and "score" in columns:
-            handle = handle_protein_interactions
-        elif "protein" in columns:
-            handle = handle_proteins
-        elif "pathway" in columns:
-            handle = handle_pathways
 
-        dataframes = handle(cursor)
+        for predicate, handle in _HANDLERS:
+            if predicate(columns):
+                args = (cursor,)
+                if handle is handle_rest:
+                    args += (columns,)
+                break
+
+        dataframes = handle(*args)
         for name, df in dataframes.items():
             print(f"[{name}]")
-            print(df.head(n=5))
-            if len(df) > 5:
+            print(df.head(n=_HEAD_N))
+            if len(df) > _HEAD_N:
                 print("...")
+
             if save():
-                path = input("\tPath: ")
+                path = get_path()
+                if path is None:
+                    print(); continue
                 df.to_csv(path, index=False)
 
 if __name__ == "__main__":
-    try:
-        main()
-        print("\r ")
-    except KeyboardInterrupt:
-        pass
+    main()

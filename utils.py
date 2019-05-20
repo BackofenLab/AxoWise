@@ -2,6 +2,9 @@
 Collection of useful functions.
 """
 
+import functools
+
+
 def rstrip_line_generator(iterable, skip_empty=False):
     """
     Generator which iterates over lines provided by the
@@ -86,3 +89,25 @@ def concat(list_of_lists):
     for list in list_of_lists:
         for item in list:
             yield item
+
+
+def exit_on(*exceptions, print_msg=False):
+    """
+    Decorator that catches the specified exceptions.
+    """
+
+    def decorate(f):
+
+        @functools.wraps(f)
+        def _f(*args, **kwargs):
+            try:
+                return f(*args, **kwargs)
+            except exceptions as e:
+                if print_msg:
+                    print(e)
+                elif KeyboardInterrupt in exceptions:
+                    print()
+
+        return _f
+
+    return decorate
