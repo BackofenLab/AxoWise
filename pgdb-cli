@@ -72,6 +72,32 @@ def handle_pathways(cursor):
         "nodes": nodes
     }
 
+def handle_drugs_compounds_diseases(cursor, columns):
+    drugs = pd.DataFrame(columns=["id", "name"])
+    compounds = pd.DataFrame(columns=["id", "name"])
+    diseases = pd.DataFrame(columns=["id", "name"])
+
+    for row in cursor:
+        if "drug" in columns:
+            drug = row["drug"]
+            drugs.loc[drug["id"]] = drug
+        if "compound" in columns:
+            compound = row["compound"]
+            compounds.loc[compound["id"]] = compound
+        if "disease" in columns:
+            disease = row["disease"]
+            diseases.loc[disease["id"]] = disease
+
+    dataframes = dict()
+    if len(drugs) > 0:
+        dataframes["drugs"] = drugs
+    if len(compounds) > 0:
+        dataframes["compounds"] = compounds
+    if len(diseases) > 0:
+        dataframes["diseases"] = diseases
+
+    return dataframes
+
 def handle_rest(cursor, columns):
     dataframe = pd.DataFrame(columns=columns)
 
@@ -107,6 +133,7 @@ _HANDLERS = [
     (lambda columns: "source" in columns and "target" in columns and "score" in columns, handle_protein_interactions),
     (lambda columns: "protein" in columns, handle_proteins),
     (lambda columns: "pathway" in columns, handle_pathways),
+    (lambda columns: "drug" in columns or "compound" in columns or "disease" in columns, handle_drugs_compounds_diseases),
     (lambda columns: True, handle_rest)
 ]
 
@@ -132,7 +159,7 @@ def main():
         for predicate, handle in _HANDLERS:
             if predicate(columns):
                 args = (cursor,)
-                if handle is handle_rest:
+                if handle is handle_rest or handle is handle_drugs_compounds_diseases:
                     args += (columns,)
                 break
 
