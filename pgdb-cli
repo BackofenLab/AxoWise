@@ -4,6 +4,7 @@
 CLI script for the Neo4j graph database.
 """
 
+import readline
 from pathlib import Path
 
 import pandas as pd
