@@ -64,10 +64,11 @@
     <p>Clone the GitHub repository</p>
 
     <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code> git clone https://github.com/BackofenLab/protein-graph-database.git
+ <span class="nb">cd </span>protein-graph-database/
 </code></pre></div>    </div>
   </li>
   <li>
-    <p>Create a conda environment (from <strong>conda_env.yml</strong>)</p>
+    <p>Create a conda environment (<a href="https://github.com/BackofenLab/protein-graph-database/blob/master/environment.yml">environment.yml</a>)</p>
 
     <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code> make env
 </code></pre></div>    </div>
@@ -84,12 +85,14 @@
 
 <p>Unit tests assume the following local configuration:</p>
 <ul>
-  <li>Authentication mode for PostgreSQL user <em>postgres</em> is set to <em>trust</em>
-(in <strong>pg_hba.conf</strong>; read more <a href="https://www.postgresql.org/docs/9.6/static/auth-pg-hba-conf.html">here</a>)</li>
-</ul>
+  <li>
+    <p>Authentication mode for PostgreSQL user <em>postgres</em> is set to <em>trust</em>
+(in <strong>pg_hba.conf</strong>; read more <a href="https://www.postgresql.org/docs/9.6/static/auth-pg-hba-conf.html">here</a>)</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make test
-</code></pre></div></div>
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  make test
+</code></pre></div>    </div>
+  </li>
+</ul>
 
 <h2 id="downloading-kegg-data-for-a-certain-species">Downloading KEGG data for a certain species</h2>
 
@@ -128,14 +131,14 @@
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Downloading KEGG data for Pan troglodytes (chimpanzee).
 Downloading pathways for: ptr
 [1 / 326] Glycolysis / Gluconeogenesis
-	Genes: 69
-	10 gene(s) could not be mapped to STRING external ID!
+    Genes: 69
+    10 gene(s) could not be mapped to STRING external ID!
 [2 / 326] Citrate cycle (TCA cycle)
-	Genes: 30
-	4 gene(s) could not be mapped to STRING external ID!
+    Genes: 30
+    4 gene(s) could not be mapped to STRING external ID!
 [3 / 326] Pentose phosphate pathway
-	Genes: 30
-	9 gene(s) could not be mapped to STRING external ID!
+    Genes: 30
+    9 gene(s) could not be mapped to STRING external ID!
 ...
 </code></pre></div></div>
 
@@ -266,10 +269,17 @@ Done!
 
 <p>Definition of image names and how they are connected can be found in <a href="https://github.com/BackofenLab/protein-graph-database/blob/master/docker-compose.yml">docker-compose.yml</a>.</p>
 
-<p>After you are sure that you have <code class="highlighter-rouge">docker-compose</code> installed, database and server can be started running the following command in the root directory of our repository:</p>
+<p>Make sure that you have <code class="highlighter-rouge">docker</code> and <code class="highlighter-rouge">docker-compose</code> installed. For Debian-based distributions, they are available via APT:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt install docker.io docker-compose
+</code></pre></div></div>
+
+<p>Database and server can be started running the following command in the root directory of our repository:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker-compose up
 </code></pre></div></div>
+
+<p>The web application is accessible @ <a href="http://localhost:5000/1">http://localhost:5000/</a></p>
 
 <p>After exiting, it is also recommended to clean up:</p>
 
@@ -280,43 +290,269 @@ Done!
 
 <p>Make sure you are already familiar and comfortable with <a href="https://neo4j.com/developer/cypher-query-language/">Cypher and its syntax</a>.</p>
 
-<p>Neo4j’s interactive browser can be accessed locally @ <a href="http://127.0.0.1:7474/">http://127.0.0.1:7474/</a> and it allows users to manually run Cypher queries.</p>
+<h1 id="command-line-interface-cli">Command line interface (CLI)</h1>
 
-<h1 id="cypher-query-examples">Cypher query examples</h1>
+<p>Our Neo4j command line interface (CLI) is available in the form of a Python script and can be started (assuming the file is executable) with:</p>
 
-<p>The following queries use <code class="highlighter-rouge">name</code> property for matching since it is more convenient for a user. In order to match the nodes unambiguously, one should use <code class="highlighter-rouge">id</code> property instead.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./pgdb-cli
+</code></pre></div></div>
+
+<p>Prompt (waiting for a query from the standard input):</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">===</span> Protein Graph Database CLI <span class="o">===</span>
+<span class="o">&gt;</span>
+</code></pre></div></div>
+
+<p>After a query is typed in, one should press <code class="highlighter-rouge">Ctrl+D</code> (EOF) to send the query to the Neo4j database.</p>
+
+<h1 id="cypher-queries">Cypher queries</h1>
+
+<p>Queries in this section use <code class="highlighter-rouge">name</code> property for matching since it is more convenient for a user. In order to match the nodes unambiguously, one should use <code class="highlighter-rouge">id</code> property instead.</p>
 
 <p>Usually there are multiple nodes matching a given name. That is the reason we use fuzzy search and give a user the final decision.</p>
 
 <p>Keeping <a href="graph-db-scheme">our database graph scheme</a> in mind, queries are more or less straightforward and intuitive. The following examples cover various scenarios and should be enough to start writing basic to intermediate queries.</p>
 
+<h1 id="postprocessing">Postprocessing</h1>
+
+<p>The Neo4j CLI contains a handful of postprocessing functions. These functions automatically split the returned data into separate tables (i.e. pandas DataFrames) suitable for writing to a CSV file. Other data formats are put into a single table as they are.</p>
+
+<p>For each output table, the user is prompted whether she/he wants to save the table.</p>
+
+<p>Currently, the following postprocessing is supported:</p>
+
+<p><strong>Protein interactions</strong></p>
 <ul>
   <li>
+    <p>Expected RETURN format</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Column name</th>
+          <th>Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>source</td>
+          <td>Protein</td>
+        </tr>
+        <tr>
+          <td>target</td>
+          <td>Protein</td>
+        </tr>
+        <tr>
+          <td>score</td>
+          <td>number (representing the strength of the interaction)</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <p>Output tables:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>nodes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>id</td>
+        </tr>
+        <tr>
+          <td>external_id</td>
+        </tr>
+        <tr>
+          <td>name</td>
+        </tr>
+        <tr>
+          <td>description</td>
+        </tr>
+        <tr>
+          <td>species_id</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table>
+      <thead>
+        <tr>
+          <th>edges</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>source</td>
+        </tr>
+        <tr>
+          <td>target</td>
+        </tr>
+        <tr>
+          <td>score</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <p>Example:</p>
+
     <p>Best scoring 100 proteins associated with CCL5</p>
 
     <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  WITH "CCL5" as protein_name
-  MATCH (p1:Protein {name: protein_name})-[a:ASSOCIATION]-(p2:Protein)
-  RETURN p1, a, p2
-  ORDER BY a.combined DESC
+  MATCH (source:Protein {name: protein_name})-[a:ASSOCIATION]-(target:Protein)
+  RETURN source, a.combined AS score, target
+  ORDER BY score DESC
   LIMIT 100
 </code></pre></div>    </div>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  [nodes]
+       id               external_id    name                                        description species_id
+  1847396      9606.ENSP00000293272    CCL5  Chemokine (C-C motif) ligand 5; Chemoattractan...       9606
+  1847342      9606.ENSP00000292303    CCR5  Chemokine (C-C motif) receptor 5 (gene/pseudog...       9606
+  2100220  10090.ENSMUSP00000039600    CCL5  Chemokine (C-C motif) ligand 5; Chemoattractan...      10090
+  2101692  10090.ENSMUSP00000047646  CXCL10  Chemokine (C-X-C motif) ligand 10; In addition...      10090
+  1848754      9606.ENSP00000305651  CXCL10  Chemokine (C-X-C motif) ligand 10; Chemotactic...       9606
+  ...
+
+  [edges]
+   source   target score
+  1847396  1847342   997
+  2100220  2101692   995
+  1847396  1848754   994
+  1847396  1848852   994
+  1847396  1862185   994
+  ...
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p><strong>Proteins</strong></p>
+
+<ul>
+  <li>
+    <p>Expected RETURN format</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Column name</th>
+          <th>Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>protein</td>
+          <td>Protein</td>
+        </tr>
+      </tbody>
+    </table>
   </li>
   <li>
+    <p>Output tables:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>nodes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>id</td>
+        </tr>
+        <tr>
+          <td>external_id</td>
+        </tr>
+        <tr>
+          <td>name</td>
+        </tr>
+        <tr>
+          <td>description</td>
+        </tr>
+        <tr>
+          <td>species_id</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <p>Example:</p>
+
     <p>Proteins in Chemokine signaling pathway (for mouse)</p>
 
-    <p>To filter by species, <code class="highlighter-rouge">species_id</code> property is used. It is a NCBI taxon identifier (e.g. 9606 for human / 10090 for mouse).</p>
-
     <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  WITH "Chemokine signaling pathway" as pathway_name,
-       10090 as species_id
-  MATCH (pathway:Pathway {
-          name: pathway_name,
-          species_id: species_id
-      }
+  10090 as species_id
+  MATCH (:Pathway {
+      name: pathway_name,
+      species_id: species_id
+  }
   )&lt;-[:IN]-(protein:Protein)
   RETURN protein
 </code></pre></div>    </div>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  [nodes]
+       id               external_id    name                                        description species_id
+  2111516  10090.ENSMUSP00000106906    NCF1  Neutrophil cytosolic factor 1; NCF2, NCF1, and...      10090
+  2098897  10090.ENSMUSP00000033827    GRK1  G protein-coupled receptor kinase 1; Retina-sp...      10090
+  2096411  10090.ENSMUSP00000025791  ADRBK1  Adrenergic receptor kinase, beta 1; Specifical...      10090
+  2105346  10090.ENSMUSP00000070445  ADRBK2  Adrenergic receptor kinase, beta 2; Specifical...      10090
+  2093189  10090.ENSMUSP00000001112    GRK4  G protein-coupled receptor kinase 4; Specifica...      10090
+  ...
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p><strong>Pathways</strong></p>
+
+<ul>
+  <li>
+    <p>Expected RETURN format</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Column name</th>
+          <th>Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>pathway</td>
+          <td>Pathway</td>
+        </tr>
+      </tbody>
+    </table>
   </li>
   <li>
+    <p>Output tables:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>nodes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>id</td>
+        </tr>
+        <tr>
+          <td>name</td>
+        </tr>
+        <tr>
+          <td>description</td>
+        </tr>
+        <tr>
+          <td>species_id</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <p>Example:</p>
+
     <p>Pathways associated with a protein list (for human)</p>
 
     <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  WITH ["SFPI1", "FOSB"] as protein_names
@@ -324,16 +560,123 @@ Done!
   WHERE protein.name IN protein_names
   RETURN pathway
 </code></pre></div>    </div>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  [nodes]
+             id                        name                                        description species_id
+  path:hsa05034                  Alcoholism  Alcoholism, also called dependence on alcohol ...       9606
+  path:hsa05031       Amphetamine addiction  Amphetamine is a psychostimulant drug that exe...       9606
+  path:hsa05030           Cocaine addiction  Drug addiction is a chronic, relapsing disorde...       9606
+  path:hsa04657     IL-17 signaling pathway  The interleukin 17 (IL-17) family, a subset of...       9606
+  path:hsa04380  Osteoclast differentiation  The osteoclasts, multinucleared cells originat...       9606
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p><strong>Drugs, compounds &amp; diseases</strong></p>
+
+<ul>
+  <li>
+    <p>Expected RETURN format</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Column name</th>
+          <th>Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>drug</td>
+          <td>Drug</td>
+        </tr>
+        <tr>
+          <td>compound</td>
+          <td>Compound</td>
+        </tr>
+        <tr>
+          <td>disease</td>
+          <td>Disease</td>
+        </tr>
+      </tbody>
+    </table>
   </li>
   <li>
+    <p>Output tables:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>drugs</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>id</td>
+        </tr>
+        <tr>
+          <td>name</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table>
+      <thead>
+        <tr>
+          <th>compounds</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>id</td>
+        </tr>
+        <tr>
+          <td>name</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table>
+      <thead>
+        <tr>
+          <th>diseases</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>id</td>
+        </tr>
+        <tr>
+          <td>name</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <p>Example:</p>
+
     <p>Diseases associated with a protein list</p>
 
     <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  WITH ["SFPI1", "FOSB"] as protein_names
-  MATCH (protein:Protein)-[:IN]-&gt;(pathway:Pathway)&lt;-[:IN]-(disease:Disease)
+  MATCH (protein:Protein)-[:IN]-&gt;(:Pathway)&lt;-[:IN]-(disease:Disease)
   WHERE protein.name IN protein_names
   RETURN disease
 </code></pre></div>    </div>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  [diseases]
+      id                           name
+  H01611             Alcohol dependence
+  H02042  Familial expansile osteolysis
+  H01593                   Osteoporosis
+  H00436                  Osteopetrosis
+  H00437          Paget disease of bone
+</code></pre></div>    </div>
   </li>
+</ul>
+
+<h1 id="more-advanced-cypher-queries">More advanced Cypher queries</h1>
+
+<ul>
   <li>
     <p>Centrality for a protein list (with a score threshold of 0.7)</p>
 
