@@ -2,11 +2,13 @@
 Connection interface towards the PostgreSQL and Neo4j databases.
 """
 
-import yaml
+from pathlib import Path
+
 import psycopg2
 import py2neo
+import yaml
 
-_DEFAULT_CREDENTIALS_PATH = "credentials.yml"
+_DEFAULT_CREDENTIALS_PATH = Path(__file__).parent / Path("credentials.yml")
 
 def connect_neo4j(credentials_path=_DEFAULT_CREDENTIALS_PATH):
     """
