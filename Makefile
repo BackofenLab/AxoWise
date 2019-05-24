@@ -4,7 +4,7 @@ env:
 
 test:
 	# Check the syntax
-	pylint -E $(find . -name "*.py")
+	find . -name "*.py" | xargs pylint -E
 
 	# Load the toy database
 	psql -U postgres -h localhost -p 5432 -c "DROP DATABASE string;"

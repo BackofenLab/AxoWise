@@ -8,7 +8,7 @@ jobs:
         environment:
           POSTGRES_USER: postgres
           POSTGRES_DB: string
-      - image: neo4j:latest
+      - image: neo4j:3.4.8
         environment:
           NEO4J_AUTH: none
     branches:
