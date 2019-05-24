@@ -3,8 +3,11 @@ env:
 	conda env create -f environment.yml
 
 test:
+	# Check the syntax
+	pylint -E $(find . -name "*.py")
+
 	# Load the toy database
-	-psql -U postgres -h localhost -p 5432 -c "DROP DATABASE string;"
+	psql -U postgres -h localhost -p 5432 -c "DROP DATABASE string;"
 	psql -U postgres -h localhost -p 5432 -c "CREATE DATABASE string;"
 	psql -U postgres -h localhost -p 5432 string < sql/dump.schema.psql
 	psql -U postgres -h localhost -p 5432 string < sql/dump.test.psql
