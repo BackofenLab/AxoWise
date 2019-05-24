@@ -108,7 +108,7 @@ def handle_rest(cursor, columns):
         "table": dataframe
     }
 
-@exit_on(py2neo.database.ClientError, print_msg=True)
+@exit_on(py2neo.status.ClientError, print_msg=True)
 def run_query(neo4j_graph, query):
     cursor = neo4j_graph.run(query)
     return cursor
