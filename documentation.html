@@ -292,17 +292,36 @@ Done!
 
 <h1 id="command-line-interface-cli">Command line interface (CLI)</h1>
 
-<p>Our Neo4j command line interface (CLI) is available in the form of a Python script and can be started (assuming the file is executable) with:</p>
+<p>Our Neo4j command line interface (CLI) is available in the form of a Python script.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./pgdb-cli
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>usage: ./pgdb-cli <span class="o">[</span><span class="nt">-h</span><span class="o">]</span> <span class="o">[</span><span class="nt">-i</span><span class="o">]</span>
+
+optional arguments:
+  <span class="nt">-h</span>, <span class="nt">--help</span>  show this <span class="nb">help </span>message and <span class="nb">exit</span>
+  <span class="nt">-i</span>          Run the CLI <span class="k">in </span>the interactive mode
+</code></pre></div></div>
+
+<p>If <code class="highlighter-rouge">-i</code> flag is provided, the CLI starts in the interactive mode. Otherwise, it expects a batch of queries from the standard input, separated by a newline (<code class="highlighter-rouge">\n</code>).</p>
+
+<p><strong>Interactive mode</strong></p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./pgdb-cli <span class="nt">-i</span>
 </code></pre></div></div>
 
 <p>Prompt (waiting for a query from the standard input):</p>
+
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">===</span> Protein Graph Database CLI <span class="o">===</span>
 <span class="o">&gt;</span>
 </code></pre></div></div>
 
 <p>After a query is typed in, one should press <code class="highlighter-rouge">Ctrl+D</code> (EOF) to send the query to the Neo4j database.</p>
+
+<p><strong>Batch mode</strong></p>
+
+<p>Example:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat </span>queries.txt | ./pgbd-cli
+</code></pre></div></div>
 
 <h1 id="cypher-queries">Cypher queries</h1>
 
