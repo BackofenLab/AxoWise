@@ -26,6 +26,12 @@ def parse_cli_args():
         help="Run the CLI in the interactive mode"
     )
 
+    parser.add_argument(
+        "--name",
+        type=str,
+        help="Name under which the batch results will be saved"
+    )
+
     return parser.parse_args()
 
 def get_batch_id():
@@ -177,7 +183,7 @@ _HANDLERS = [
 _HEAD_N = 5
 
 @exit_on(KeyboardInterrupt)
-def interactive_loop(neo4j_graph):
+def interactive_loop(neo4j_graph, args):
     while True:
         query = read_until_EOF()
         if not query:
@@ -209,11 +215,12 @@ def interactive_loop(neo4j_graph):
                     print(); continue
                 df.to_csv(path, index=False)
 
-@exit_on(KeyboardInterrupt, EOFError)
-def batch_loop(neo4j_graph):
+@exit_on(KeyboardInterrupt)
+def batch_loop(neo4j_graph, args):
     idx = 1
     should_exit = False
-    batch_id = get_batch_id()
+    batch_id = get_batch_id() if args.name is None else args.name
+    directory = Path(".", batch_id)
     while not should_exit:
         query, should_exit = read_until_empty_line()
         if not query:
@@ -235,13 +242,14 @@ def batch_loop(neo4j_graph):
                 break
 
         dataframes = handle(*args)
-        directory = Path(".", batch_id)
         directory.mkdir(parents=True, exist_ok=True)
         for name, df in dataframes.items():
             path = directory / Path(f"{idx:04d}.{name}.csv")
             df.to_csv(str(path), index=False)
 
         idx += 1
+
+    print(f"Data written to {directory.resolve()}")
 
 def main():
     args = parse_cli_args()
@@ -251,9 +259,9 @@ def main():
     print("=== Protein Graph Database CLI ===")
 
     if args.interactive:
-        interactive_loop(neo4j_graph)
+        interactive_loop(neo4j_graph, args)
     else:
-        batch_loop(neo4j_graph)
+        batch_loop(neo4j_graph, args)
 
 if __name__ == "__main__":
     main()
