@@ -8,6 +8,7 @@ import readline
 from pathlib import Path
 import argparse
 import datetime
+import time
 
 import pandas as pd
 import py2neo
@@ -221,6 +222,9 @@ def batch_loop(neo4j_graph, args):
     should_exit = False
     batch_id = get_batch_id() if args.name is None else args.name
     directory = Path(".", batch_id)
+
+    start_time = time.time()
+    failed = 0
     while not should_exit:
         query, should_exit = read_until_empty_line()
         if not query:
@@ -230,6 +234,7 @@ def batch_loop(neo4j_graph, args):
 
         cursor = run_query(neo4j_graph, query)
         if not cursor:
+            failed += 1
             continue
 
         columns = cursor.keys()
@@ -249,7 +254,14 @@ def batch_loop(neo4j_graph, args):
 
         idx += 1
 
+    end_time = time.time()
+    total = idx - 1
+    successful = total - failed
+
+    print()
     print(f"Data written to {directory.resolve()}")
+    print(f"Time elapsed: {end_time - start_time:.2f} s")
+    print(f"{total} queries: {successful} successful, {failed} failed")
 
 def main():
     args = parse_cli_args()
