@@ -91,7 +91,7 @@ def concat(list_of_lists):
             yield item
 
 
-def exit_on(*exceptions, print_msg=False):
+def exit_on(*exceptions, print_msg=False, default=None):
     """
     Decorator that catches the specified exceptions.
     """
@@ -107,6 +107,7 @@ def exit_on(*exceptions, print_msg=False):
                     print(e)
                 elif KeyboardInterrupt in exceptions:
                     print()
+                return default
 
         return _f
 

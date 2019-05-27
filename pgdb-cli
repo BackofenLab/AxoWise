@@ -6,6 +6,8 @@ CLI script for the Neo4j graph database.
 
 import readline
 from pathlib import Path
+import argparse
+import datetime
 
 import pandas as pd
 import py2neo
@@ -14,12 +16,28 @@ import database
 from utils import exit_on
 
 
-def read_until_EOF():
+def parse_cli_args():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        "-i",
+        action="store_true",
+        dest="interactive",
+        help="Run the CLI in the interactive mode"
+    )
+
+    return parser.parse_args()
+
+def get_batch_id():
+    time = datetime.datetime.now()
+    return f"{time.year}-{time.month}-{time.day}-{time.hour}-{time.minute}-{time.second}"
+
+def read_until_EOF(interactive=True):
     lines = list()
 
     @exit_on(EOFError)
     def read_line():
-        line = input(". " if lines else "> ").strip()
+        line = input((". " if lines else "> ") if interactive else "").strip()
         return line
 
     while True:
@@ -27,7 +45,26 @@ def read_until_EOF():
         if line is None:
             print(); break
         lines.append(line)
+
     return "\n".join(lines)
+
+def read_until_empty_line():
+    lines = list()
+
+    @exit_on(EOFError)
+    def read_line():
+        line = input().strip()
+        return line
+
+    while True:
+        line = read_line()
+        if not line:
+            break
+        lines.append(line)
+
+    should_exit = line is None
+    return "\n".join(lines), should_exit
+
 
 def handle_protein_interactions(cursor):
     nodes = pd.DataFrame(columns=["id", "external_id", "name", "description", "species_id"])
@@ -140,11 +177,7 @@ _HANDLERS = [
 _HEAD_N = 5
 
 @exit_on(KeyboardInterrupt)
-def main():
-    neo4j_graph = database.connect_neo4j()
-
-    print("=== Protein Graph Database CLI ===")
-
+def interactive_loop(neo4j_graph):
     while True:
         query = read_until_EOF()
         if not query:
@@ -175,6 +208,52 @@ def main():
                 if path is None:
                     print(); continue
                 df.to_csv(path, index=False)
+
+@exit_on(KeyboardInterrupt, EOFError)
+def batch_loop(neo4j_graph):
+    idx = 1
+    should_exit = False
+    batch_id = get_batch_id()
+    while not should_exit:
+        query, should_exit = read_until_empty_line()
+        if not query:
+            continue
+
+        print(f"Query {idx}")
+
+        cursor = run_query(neo4j_graph, query)
+        if not cursor:
+            continue
+
+        columns = cursor.keys()
+
+        for predicate, handle in _HANDLERS:
+            if predicate(columns):
+                args = (cursor,)
+                if handle is handle_rest or handle is handle_drugs_compounds_diseases:
+                    args += (columns,)
+                break
+
+        dataframes = handle(*args)
+        directory = Path(".", batch_id)
+        directory.mkdir(parents=True, exist_ok=True)
+        for name, df in dataframes.items():
+            path = directory / Path(f"{idx:04d}.{name}.csv")
+            df.to_csv(str(path), index=False)
+
+        idx += 1
+
+def main():
+    args = parse_cli_args()
+
+    neo4j_graph = database.connect_neo4j()
+
+    print("=== Protein Graph Database CLI ===")
+
+    if args.interactive:
+        interactive_loop(neo4j_graph)
+    else:
+        batch_loop(neo4j_graph)
 
 if __name__ == "__main__":
     main()
