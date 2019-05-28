@@ -288,20 +288,21 @@ Done!
 
 <h2 id="querying-the-neo4j-database">Querying the Neo4j database</h2>
 
-<p>Make sure you are already familiar and comfortable with <a href="https://neo4j.com/developer/cypher-query-language/">Cypher and its syntax</a>.</p>
-
 <h1 id="command-line-interface-cli">Command line interface (CLI)</h1>
 
 <p>Our Neo4j command line interface (CLI) is available in the form of a Python script.</p>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>usage: ./pgdb-cli <span class="o">[</span><span class="nt">-h</span><span class="o">]</span> <span class="o">[</span><span class="nt">-i</span><span class="o">]</span>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>usage: ./pgdb-cli <span class="o">[</span><span class="nt">-h</span><span class="o">]</span> <span class="o">[</span><span class="nt">-i</span><span class="o">]</span> <span class="o">[</span><span class="nt">--name</span> NAME]
 
 optional arguments:
-  <span class="nt">-h</span>, <span class="nt">--help</span>  show this <span class="nb">help </span>message and <span class="nb">exit</span>
-  <span class="nt">-i</span>          Run the CLI <span class="k">in </span>the interactive mode
+  <span class="nt">-h</span>, <span class="nt">--help</span>   show this <span class="nb">help </span>message and <span class="nb">exit</span>
+  <span class="nt">-i</span>           Run the CLI <span class="k">in </span>the interactive mode
+  <span class="nt">--name</span> NAME  Name under which the batch results will be saved
 </code></pre></div></div>
 
-<p>If <code class="highlighter-rouge">-i</code> flag is provided, the CLI starts in the interactive mode. Otherwise, it expects a batch of queries from the standard input, separated by a newline (<code class="highlighter-rouge">\n</code>).</p>
+<p><code class="highlighter-rouge">-i</code> flag starts CLI in the interactive mode. Otherwise, it expects a batch of queries from the standard input, separated by a newline (<code class="highlighter-rouge">\n</code>).</p>
+
+<p><code class="highlighter-rouge">--name</code> represents a directory name that will be created for storing the results. If not provided, the script generates its own name in a form of a timestamp.</p>
 
 <p><strong>Interactive mode</strong></p>
 
@@ -320,10 +321,28 @@ optional arguments:
 
 <p>Example:</p>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat </span>queries.txt | ./pgbd-cli
-</code></pre></div></div>
+<ul>
+  <li>
+    <p>queries.txt</p>
+
+    <pre><code class="language-txt">  MATCH (source:Protein {species_id: 9606})-[a:ASSOCIATION]-&gt;(target:Protein)
+  RETURN source, target, a.combined AS score
+
+  MATCH (:Pathway {name: "Chemokine signaling pathway"})&lt;-[:IN]-(drug:Drug)
+  RETURN drug
+</code></pre>
+  </li>
+  <li>
+    <p>Command line usage</p>
+
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">cat </span>queries.txt | ./pgbd-cli <span class="nt">--name</span> <span class="s2">"best_queries_ever"</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
 
 <h1 id="cypher-queries">Cypher queries</h1>
+
+<p>Make sure you are already familiar and comfortable with <a href="https://neo4j.com/developer/cypher-query-language/">Cypher and its syntax</a>.</p>
 
 <p>Queries in this section use <code class="highlighter-rouge">name</code> property for matching since it is more convenient for a user. In order to match the nodes unambiguously, one should use <code class="highlighter-rouge">id</code> property instead.</p>
 
