@@ -95,6 +95,24 @@ def read_until_empty_line():
 # ===================================== Handlers =====================================
 _HANDLERS = []
 
+def resolve_handler(cursor):
+    """
+    Accepts a Neo4j cursor and returns a tuple consisting of:
+    - `handle` (function)
+    - `args` (tuple of arguments for `handle`)
+    """
+
+    columns = cursor.keys()
+
+    for predicate, handle in _HANDLERS:
+        if predicate(columns):
+            args = (cursor,)
+            if handle is handle_rest or handle is handle_drugs_compounds_diseases:
+                args += (columns,)
+            break
+
+    return handle, args
+
 # Protein-protein interaction
 
 def handle_protein_interactions(cursor):
@@ -312,14 +330,7 @@ def interactive_loop(neo4j_graph, args):
         if not cursor:
             continue
 
-        columns = cursor.keys()
-
-        for predicate, handle in _HANDLERS:
-            if predicate(columns):
-                args = (cursor,)
-                if handle is handle_rest or handle is handle_drugs_compounds_diseases:
-                    args += (columns,)
-                break
+        handle, args = resolve_handler(cursor)
 
         dataframes = handle(*args)
         for name, df in dataframes.items():
@@ -357,17 +368,11 @@ def batch_loop(neo4j_graph, args):
 
         cursor = run_query(neo4j_graph, query)
         if not cursor:
+            idx += 1
             failed += 1
             continue
 
-        columns = cursor.keys()
-
-        for predicate, handle in _HANDLERS:
-            if predicate(columns):
-                args = (cursor,)
-                if handle is handle_rest or handle is handle_drugs_compounds_diseases:
-                    args += (columns,)
-                break
+        handle, args = resolve_handler(cursor)
 
         dataframes = handle(*args)
         directory.mkdir(parents=True, exist_ok=True)
