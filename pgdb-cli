@@ -16,8 +16,13 @@ import py2neo
 import database
 from utils import exit_on
 
+# ===================================== CLI arguments =====================================
 
 def parse_cli_args():
+    """
+    Parses the command line arguments.
+    """
+
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
@@ -35,11 +40,16 @@ def parse_cli_args():
 
     return parser.parse_args()
 
-def get_batch_id():
-    time = datetime.datetime.now()
-    return f"{time.year}-{time.month}-{time.day}-{time.hour}-{time.minute}-{time.second}"
+# ===================================== Input =====================================
 
-def read_until_EOF(interactive=True):
+def read_until_eof(interactive=True):
+    """
+    Reads lines from the standard input until the end-of-file (EOF).
+
+    Returns:
+    - lines that were read (list)
+    """
+
     lines = list()
 
     @exit_on(EOFError)
@@ -50,12 +60,21 @@ def read_until_EOF(interactive=True):
     while True:
         line = read_line()
         if line is None:
-            print(); break
+            print()
+            break
         lines.append(line)
 
     return "\n".join(lines)
 
 def read_until_empty_line():
+    """
+    Reads lines from the standard input until the newline (\n) or the end-of-file (EOF).
+    Returns a tuple consisting of:
+
+    - lines that were read (list)
+    - flag indicating whether EOF was encountered (bool)
+    """
+
     lines = list()
 
     @exit_on(EOFError)
@@ -73,7 +92,20 @@ def read_until_empty_line():
     return "\n".join(lines), should_exit
 
 
+# ===================================== Handlers =====================================
+_HANDLERS = []
+
+# Protein-protein interaction
+
 def handle_protein_interactions(cursor):
+    """
+    Handler for protein - protein interaction data.
+
+    Returns a dict with two pandas.DataFrames:
+    - nodes
+    - edges
+    """
+
     nodes = pd.DataFrame(columns=["id", "external_id", "name", "description", "species_id"])
     edges = pd.DataFrame(columns=["source", "target", "score"])
 
@@ -94,7 +126,21 @@ def handle_protein_interactions(cursor):
         "edges": edges
     }
 
+_HANDLERS.append((
+    lambda columns: "source" in columns and "target" in columns and "score" in columns,
+    handle_protein_interactions
+))
+
+# Protein list
+
 def handle_proteins(cursor):
+    """
+    Handler for a list of proteins.
+
+    Returns a dict with one pandas.DataFrame:
+    - nodes
+    """
+
     nodes = pd.DataFrame(columns=["id", "external_id", "name", "description", "species_id"])
 
     for row in cursor:
@@ -105,7 +151,21 @@ def handle_proteins(cursor):
         "nodes": nodes
     }
 
+_HANDLERS.append((
+    lambda columns: "protein" in columns,
+    handle_proteins
+))
+
+# Pathway list
+
 def handle_pathways(cursor):
+    """
+    Handler for a list of pathways.
+
+    Returns a dict with one pandas.DataFrame:
+    - nodes
+    """
+
     nodes = pd.DataFrame(columns=["id", "name", "description", "species_id"])
 
     for row in cursor:
@@ -116,7 +176,23 @@ def handle_pathways(cursor):
         "nodes": nodes
     }
 
+_HANDLERS.append((
+    lambda columns: "pathway" in columns,
+    handle_pathways
+))
+
+# Drugs, compound and disease lists
+
 def handle_drugs_compounds_diseases(cursor, columns):
+    """
+    Handler for a list of drugs, compounds and diseases.
+
+    Returns a dict with at least one of the following pandas.DataFrames:
+    - drugs
+    - compounds
+    - diseases
+    """
+
     drugs = pd.DataFrame(columns=["id", "name"])
     compounds = pd.DataFrame(columns=["id", "name"])
     diseases = pd.DataFrame(columns=["id", "name"])
@@ -133,16 +209,30 @@ def handle_drugs_compounds_diseases(cursor, columns):
             diseases.loc[disease["id"]] = disease
 
     dataframes = dict()
-    if len(drugs) > 0:
+    if drugs.index.tolist():
         dataframes["drugs"] = drugs
-    if len(compounds) > 0:
+    if compounds.index.tolist():
         dataframes["compounds"] = compounds
-    if len(diseases) > 0:
+    if diseases.index.tolist():
         dataframes["diseases"] = diseases
 
     return dataframes
 
+_HANDLERS.append((
+    lambda columns: "drug" in columns or "compound" in columns or "disease" in columns,
+    handle_drugs_compounds_diseases
+))
+
+# Rest of the data
+
 def handle_rest(cursor, columns):
+    """
+    Handler for the rest of the data.
+
+    Returns a dict with all the data put into a single pandas.DataFrame:
+    - nodes
+    """
+
     dataframe = pd.DataFrame(columns=columns)
 
     for idx, row in enumerate(cursor):
@@ -152,41 +242,69 @@ def handle_rest(cursor, columns):
         "table": dataframe
     }
 
+_HANDLERS.append((
+    lambda columns: True,
+    handle_rest
+))
+
+# ===================================== Helpers =====================================
+
 @exit_on(py2neo.status.ClientError, print_msg=True)
 def run_query(neo4j_graph, query):
+    """
+    Runs a Cypher query to a Neo4j database and returns
+    a cursor.
+    """
+
     cursor = neo4j_graph.run(query)
     return cursor
 
 @exit_on(KeyboardInterrupt)
 def save():
+    """
+    Prompts the user whether he / she wants to save.
+    Answering `y` returns True and `n` returns false.
+    """
+
     while True:
         option = input("Save (y/n)? ").lower().strip()
         if option == "y":
             return True
-        elif option == "n":
+        if option == "n":
             return False
 
 @exit_on(Exception, print_msg=True)
 @exit_on(KeyboardInterrupt)
 def get_path():
+    """
+    Prompts the user to type in a path to a file.
+    All non-existing directories are created.
+    """
+
     path_raw = input("Path: ")
     Path(path_raw).parent.mkdir(parents=True, exist_ok=True)
     return path_raw
 
-_HANDLERS = [
-    (lambda columns: "source" in columns and "target" in columns and "score" in columns, handle_protein_interactions),
-    (lambda columns: "protein" in columns, handle_proteins),
-    (lambda columns: "pathway" in columns, handle_pathways),
-    (lambda columns: "drug" in columns or "compound" in columns or "disease" in columns, handle_drugs_compounds_diseases),
-    (lambda columns: True, handle_rest)
-]
+def get_batch_id():
+    """
+    Generates an ID for the batch mode.
+    """
+
+    now = datetime.datetime.now()
+    return f"{now.year}-{now.month}-{now.day}-{now.hour}-{now.minute}-{now.second}"
+
+# ===================================== Loops =====================================
 
 _HEAD_N = 5
 
 @exit_on(KeyboardInterrupt)
 def interactive_loop(neo4j_graph, args):
+    """
+    Main loop for the interactive mode.
+    """
+
     while True:
-        query = read_until_EOF()
+        query = read_until_eof()
         if not query:
             continue
 
@@ -213,11 +331,16 @@ def interactive_loop(neo4j_graph, args):
             if save():
                 path = get_path()
                 if path is None:
-                    print(); continue
+                    print()
+                    continue
                 df.to_csv(path, index=False)
 
 @exit_on(KeyboardInterrupt)
 def batch_loop(neo4j_graph, args):
+    """
+    Main loop for the batch mode.
+    """
+
     idx = 1
     should_exit = False
     batch_id = get_batch_id() if args.name is None else args.name
@@ -263,7 +386,13 @@ def batch_loop(neo4j_graph, args):
     print(f"Time elapsed: {end_time - start_time:.2f} s")
     print(f"{total} queries: {successful} successful, {failed} failed")
 
+# ===================================== Main =====================================
+
 def main():
+    """
+    Main procedure.
+    """
+
     args = parse_cli_args()
 
     neo4j_graph = database.connect_neo4j()
