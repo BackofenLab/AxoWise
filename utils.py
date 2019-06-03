@@ -3,6 +3,7 @@ Collection of useful functions.
 """
 
 import functools
+import time
 
 
 def rstrip_line_generator(iterable, skip_empty=False):
@@ -108,6 +109,33 @@ def exit_on(*exceptions, print_msg=False, default=None):
                 elif KeyboardInterrupt in exceptions:
                     print()
                 return default
+
+        return _f
+
+    return decorate
+
+def throttle(wait=1):
+    """
+    Decorator that ensures `wait` second(s) pass between each
+    call of the decorated function.
+    """
+
+    # Time of the last call
+    last_call = 0
+
+    def decorate(f):
+
+        @functools.wraps(f)
+        def _f(*args, **kwargs):
+            nonlocal last_call
+
+            elapsed = time.time() - last_call
+            if elapsed < wait:
+                time.sleep(wait - elapsed)
+
+            retval = f(*args, **kwargs)
+            last_call = time.time()
+            return retval
 
         return _f
 
