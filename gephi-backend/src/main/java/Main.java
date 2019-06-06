@@ -35,9 +35,13 @@ public class Main {
         CSVReaderHeaderAware csvReader;
         Map<String, String> nextRecord;
 
+        // NODES
+        Table nodeTable = graphModel.getNodeTable();
+        nodeTable.addColumn("external_id", String.class);
+        nodeTable.addColumn("description", String.class);
+
         try  {
             csvReader = new CSVReaderHeaderAware(stdinReader);
-            // Nodes
             while ((nextRecord = csvReader.readMap()) != null) {
                 String id = nextRecord.get("id");
                 String external_id = nextRecord.get("external_id");
@@ -53,11 +57,13 @@ public class Main {
 
                 System.out.println(nextRecord);
             }
-
-            System.err.println("Nodes:" + undirectedGraph.getNodeCount());
         }
         catch (IOException ex) {}
+        System.err.println("Nodes:" + undirectedGraph.getNodeCount());
 
+        // EDGES
+        Table edgeTable = graphModel.getEdgeTable();
+        edgeTable.addColumn("score", Integer.class);
 
         try {
             csvReader = new CSVReaderHeaderAware(stdinReader);
@@ -69,17 +75,16 @@ public class Main {
 
                 Node n1 = undirectedGraph.getNode(source);
                 Node n2 = undirectedGraph.getNode(target);
-                Edge e = graphFactory.newEdge(n1, n2);
-                e.setAttribute("score", score);
+                Edge e = graphFactory.newEdge(n1, n2, false);
+                e.setAttribute("score", Integer.getInteger(score));
 
                 undirectedGraph.addEdge(e);
 
                 System.out.println(nextRecord);
             }
-
-            System.err.println("Edges:" + undirectedGraph.getEdgeCount());
         }
         catch (IOException ex) {}
+        System.err.println("Edges:" + undirectedGraph.getEdgeCount());
 
 //        // Append container to graph structure
 //        ImportController importController = Lookup.getDefault().lookup(ImportController.class);
