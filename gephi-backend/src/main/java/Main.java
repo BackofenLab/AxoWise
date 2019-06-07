@@ -80,7 +80,6 @@ public class Main {
                 }
 
                 nextRecord = csvReader.readMap();
-                System.out.println(nextRecord);
 
                 String id = nextRecord.get("id");
                 String external_id = nextRecord.get("external_id");
@@ -92,6 +91,7 @@ public class Main {
                 n.setAttribute("external_id", external_id);
                 n.setAttribute("description", description);
                 n.setColor(proteinColor);
+                n.setSize(5);
 
                 undirectedGraph.addNode(n);
             }
@@ -116,7 +116,6 @@ public class Main {
                 }
 
                 nextRecord = csvReader.readMap();
-                System.out.println(nextRecord);
 
                 String source = nextRecord.get("source");
                 String target = nextRecord.get("target");
@@ -144,9 +143,10 @@ public class Main {
         PreviewProperties previewProperties = previewModel.getProperties();
         previewProperties.putValue(PreviewProperty.EDGE_CURVED, Boolean.FALSE);
         previewProperties.putValue(PreviewProperty.EDGE_OPACITY, 50);
+        previewProperties.putValue(PreviewProperty.NODE_BORDER_WIDTH, 0);
 
         // Layout
-        AutoLayout autoLayout = new AutoLayout(10, TimeUnit.SECONDS);
+        AutoLayout autoLayout = new AutoLayout(60, TimeUnit.SECONDS);
         autoLayout.setGraphModel(graphModel);
 
         // Force Atlas layout
