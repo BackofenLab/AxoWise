@@ -1,5 +1,10 @@
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderHeaderAware;
+import org.gephi.appearance.api.AppearanceController;
+import org.gephi.appearance.api.AppearanceModel;
+import org.gephi.appearance.api.Function;
+import org.gephi.appearance.plugin.RankingElementColorTransformer;
+import org.gephi.appearance.plugin.RankingNodeSizeTransformer;
 import org.gephi.graph.api.*;
 import org.gephi.io.exporter.api.ExportController;
 import org.gephi.io.exporter.plugin.ExporterCSV;
@@ -17,6 +22,7 @@ import org.gephi.preview.types.DependantColor;
 import org.gephi.preview.types.DependantOriginalColor;
 import org.gephi.project.api.ProjectController;
 import org.gephi.project.api.Workspace;
+import org.gephi.statistics.plugin.GraphDistance;
 import org.openide.util.Lookup;
 
 import java.awt.*;
@@ -124,7 +130,7 @@ public class Main {
                 Node n1 = undirectedGraph.getNode(source);
                 Node n2 = undirectedGraph.getNode(target);
                 Edge e = graphFactory.newEdge(n1, n2, false);
-                e.setAttribute("score", Integer.getInteger(score));
+                e.setAttribute("score",  Integer.parseInt(score));
 
                 undirectedGraph.addEdge(e);
             }
@@ -145,15 +151,47 @@ public class Main {
         previewProperties.putValue(PreviewProperty.EDGE_OPACITY, 50);
         previewProperties.putValue(PreviewProperty.NODE_BORDER_WIDTH, 0);
 
+        //
+        AppearanceController appearanceController = Lookup.getDefault().lookup(AppearanceController.class);
+        AppearanceModel appearanceModel = appearanceController.getModel();
+
+        //Rank color by Degree
+        Function degreeRanking = appearanceModel.getNodeFunction(undirectedGraph, AppearanceModel.GraphFunction.NODE_DEGREE, RankingElementColorTransformer.class);
+        RankingElementColorTransformer degreeTransformer = (RankingElementColorTransformer) degreeRanking.getTransformer();
+        degreeTransformer.setColors(new Color[]{new Color(0x424fff), new Color(0x42fffa), new Color(0x42ff46), new Color(0xf4ff42), new Color(0xff4242)});
+        degreeTransformer.setColorPositions(new float[]{0f, 1f});
+        appearanceController.transform(degreeRanking);
+
+        //Get Centrality
+        GraphDistance distance = new GraphDistance();
+        distance.setNormalized(true);
+        distance.execute(graphModel);
+
+        //Rank size by centrality
+        Column centralityColumn = graphModel.getNodeTable().getColumn(GraphDistance.BETWEENNESS);
+        Function centralityRanking = appearanceModel.getNodeFunction(undirectedGraph, centralityColumn, RankingNodeSizeTransformer.class);
+        RankingNodeSizeTransformer centralityTransformer = (RankingNodeSizeTransformer) centralityRanking.getTransformer();
+        centralityTransformer.setMinSize(5);
+        centralityTransformer.setMaxSize(20);
+        appearanceController.transform(centralityRanking);
+
+        // TODO Color edges by score
+        Column scoreColumn = edgeTable.getColumn("score");
+        Function scoreRanking = appearanceModel.getEdgeFunction(undirectedGraph, scoreColumn, RankingElementColorTransformer.class);
+
+        RankingElementColorTransformer edgeColorTransformer = scoreRanking.getTransformer();
+        edgeColorTransformer.setColors(new Color[]{new Color(0x424fff), new Color(0x42fffa), new Color(0x42ff46), new Color(0xf4ff42), new Color(0xff4242)});
+        edgeColorTransformer.setColorPositions(new float[]{0f, 1f});
+        appearanceController.transform(scoreRanking);
+
         // Layout
         AutoLayout autoLayout = new AutoLayout(60, TimeUnit.SECONDS);
         autoLayout.setGraphModel(graphModel);
 
         // Force Atlas layout
         ForceAtlasLayout secondLayout = new ForceAtlasLayout(null);
-        AutoLayout.DynamicProperty adjustBySizeProperty = AutoLayout.createDynamicProperty("forceAtlas.adjustSizes.name", Boolean.TRUE, 0.1f);//True after 10% of layout time
         AutoLayout.DynamicProperty repulsionProperty = AutoLayout.createDynamicProperty("forceAtlas.repulsionStrength.name", 500., 0f);//500 for the complete period
-        autoLayout.addLayout(secondLayout, 1.f, new AutoLayout.DynamicProperty[]{adjustBySizeProperty, repulsionProperty});
+        autoLayout.addLayout(secondLayout, 1.f, new AutoLayout.DynamicProperty[]{repulsionProperty});
         autoLayout.execute();
 
         ExportController ec = Lookup.getDefault().lookup(ExportController.class);
