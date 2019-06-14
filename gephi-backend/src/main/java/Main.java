@@ -1,33 +1,27 @@
-import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderHeaderAware;
-import org.gephi.appearance.api.AppearanceController;
-import org.gephi.appearance.api.AppearanceModel;
-import org.gephi.appearance.api.Function;
-import org.gephi.appearance.plugin.RankingElementColorTransformer;
+import jsonexporter.JSONExporter;
+import org.gephi.appearance.api.*;
+import org.gephi.appearance.plugin.PartitionElementColorTransformer;
 import org.gephi.appearance.plugin.RankingNodeSizeTransformer;
+import org.gephi.appearance.plugin.palette.Palette;
+import org.gephi.appearance.plugin.palette.PaletteManager;
 import org.gephi.graph.api.*;
-import org.gephi.io.exporter.api.ExportController;
-import org.gephi.io.exporter.plugin.ExporterCSV;
-import org.gephi.io.generator.plugin.RandomGraph;
-import org.gephi.io.importer.api.Container;
-import org.gephi.io.importer.api.ImportController;
-import org.gephi.io.processor.plugin.DefaultProcessor;
 import org.gephi.layout.plugin.AutoLayout;
-import org.gephi.layout.plugin.forceAtlas.ForceAtlasLayout;
+import org.gephi.layout.plugin.forceAtlas2.ForceAtlas2;
 import org.gephi.preview.api.PreviewController;
 import org.gephi.preview.api.PreviewModel;
 import org.gephi.preview.api.PreviewProperties;
 import org.gephi.preview.api.PreviewProperty;
-import org.gephi.preview.types.DependantColor;
-import org.gephi.preview.types.DependantOriginalColor;
 import org.gephi.project.api.ProjectController;
 import org.gephi.project.api.Workspace;
 import org.gephi.statistics.plugin.GraphDistance;
+import org.gephi.statistics.plugin.Modularity;
+import org.javatuples.Pair;
 import org.openide.util.Lookup;
 
-import java.awt.*;
 import java.io.*;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -36,17 +30,55 @@ import java.util.concurrent.TimeUnit;
 public class Main {
 
     public static void main(String[] args) {
-        //Init a project - and therefore a workspace
+
+        // Init a project - and therefore a workspace
         ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);
         pc.newProject();
         Workspace workspace = pc.getCurrentWorkspace();
-
-        // Read graph from the standard input into a container
-        Container container = Lookup.getDefault().lookup(Container.Factory.class).newContainer();
         GraphModel graphModel = Lookup.getDefault().lookup(GraphController.class).getGraphModel();
-        GraphFactory graphFactory = graphModel.factory();
         UndirectedGraph undirectedGraph = graphModel.getUndirectedGraph();
 
+        // Read nodes and edges tables from the standard input
+        Pair<String, String> tablesStringPair = readInput();
+        String nodesString = tablesStringPair.getValue0();
+        String edgesString = tablesStringPair.getValue1();
+
+        // Edges
+        List<Node> nodes = parseNodes(nodesString, graphModel);
+        for (Node n : nodes)
+            undirectedGraph.addNode(n);
+        System.err.println("Nodes:" + undirectedGraph.getNodeCount());
+
+        // Edges
+        List<Edge> edges = parseEdges(edgesString, graphModel);
+        for (Edge e : edges)
+            undirectedGraph.addEdge(e);
+        System.err.println("Edges:" + undirectedGraph.getEdgeCount());
+
+
+        // Appearance controller
+        AppearanceController appearanceController = Lookup.getDefault().lookup(AppearanceController.class);
+
+        // Style
+        setPreviewProperties();
+
+        // Rank node size by centrality
+        rankNodeSizeByCentrality(graphModel, appearanceController);
+
+        // Partition node color by modularity
+        partitionNodeColorByModularity(graphModel, appearanceController);
+
+        // Layout
+        runLayout(graphModel);
+
+        // Write to standard output
+        outputJson(workspace);
+
+        // Stupid hack, otherwise the program doesn't terminate (probably some Gephi thread/process in the background)
+        System.exit(0);
+    }
+
+    private static Pair<String, String> readInput() {
         // Read all the input
         StringBuilder nodesStringBuilder = new StringBuilder();
         StringBuilder edgesStringBuilder = new StringBuilder();
@@ -65,16 +97,20 @@ public class Main {
 
         String nodesString = nodesStringBuilder.toString();
         String edgesString = edgesStringBuilder.toString();
+        return new Pair<String, String>(nodesString, edgesString);
+    }
 
-        CSVReaderHeaderAware csvReader;
-        Map<String, String> nextRecord;
+    private static List<Node> parseNodes(String nodesString, GraphModel graphModel) {
+        ArrayList<Node> nodes = new ArrayList<Node>();
 
-        // NODES
         Table nodeTable = graphModel.getNodeTable();
         nodeTable.addColumn("external_id", String.class);
         nodeTable.addColumn("description", String.class);
 
-        Color proteinColor = new Color(70, 170, 220);
+        GraphFactory graphFactory = graphModel.factory();
+
+        CSVReaderHeaderAware csvReader;
+        Map<String, String> nextRecord;
 
         try  {
             StringReader stringReader = new StringReader(nodesString);
@@ -96,20 +132,29 @@ public class Main {
                 n.setLabel(name);
                 n.setAttribute("external_id", external_id);
                 n.setAttribute("description", description);
-                n.setColor(proteinColor);
-                n.setSize(5);
-
-                undirectedGraph.addNode(n);
+                nodes.add(n);
             }
+            csvReader.close();
+            stringReader.close();
         }
         catch (IOException ex) {
             ex.printStackTrace();
         }
-        System.err.println("Nodes:" + undirectedGraph.getNodeCount());
 
-        // EDGES
+        return nodes;
+    }
+
+    private static List<Edge> parseEdges(String edgesString, GraphModel graphModel) {
+        ArrayList<Edge> edges = new ArrayList<Edge>();
+
         Table edgeTable = graphModel.getEdgeTable();
         edgeTable.addColumn("score", Integer.class);
+
+        GraphFactory graphFactory = graphModel.factory();
+        UndirectedGraph undirectedGraph = graphModel.getUndirectedGraph();
+
+        CSVReaderHeaderAware csvReader;
+        Map<String, String> nextRecord;
 
         try {
             StringReader stringReader = new StringReader(edgesString);
@@ -129,89 +174,95 @@ public class Main {
 
                 Node n1 = undirectedGraph.getNode(source);
                 Node n2 = undirectedGraph.getNode(target);
+                if (n1 == null || n2 == null)
+                    continue;
+
                 Edge e = graphFactory.newEdge(n1, n2, false);
                 e.setAttribute("score",  Integer.parseInt(score));
 
-                undirectedGraph.addEdge(e);
+                edges.add(e);
             }
+
+            csvReader.close();
+            stringReader.close();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        System.err.println("Edges:" + undirectedGraph.getEdgeCount());
 
-        // Append container to graph structure
-        ImportController importController = Lookup.getDefault().lookup(ImportController.class);
-        importController.process(container, new DefaultProcessor(), workspace);
+        return edges;
+    }
 
-        // Style
+    private static void setPreviewProperties() {
         PreviewController previewController = Lookup.getDefault().lookup(PreviewController.class);
         PreviewModel previewModel = previewController.getModel();
         PreviewProperties previewProperties = previewModel.getProperties();
         previewProperties.putValue(PreviewProperty.EDGE_CURVED, Boolean.FALSE);
         previewProperties.putValue(PreviewProperty.EDGE_OPACITY, 50);
         previewProperties.putValue(PreviewProperty.NODE_BORDER_WIDTH, 0);
+    }
 
-        //
-        AppearanceController appearanceController = Lookup.getDefault().lookup(AppearanceController.class);
+    private static void rankNodeSizeByCentrality(GraphModel graphModel, AppearanceController appearanceController) {
         AppearanceModel appearanceModel = appearanceController.getModel();
+        UndirectedGraph undirectedGraph = graphModel.getUndirectedGraph();
 
-        //Rank color by Degree
-        Function degreeRanking = appearanceModel.getNodeFunction(undirectedGraph, AppearanceModel.GraphFunction.NODE_DEGREE, RankingElementColorTransformer.class);
-        RankingElementColorTransformer degreeTransformer = (RankingElementColorTransformer) degreeRanking.getTransformer();
-        degreeTransformer.setColors(new Color[]{new Color(0x424fff), new Color(0x42fffa), new Color(0x42ff46), new Color(0xf4ff42), new Color(0xff4242)});
-        degreeTransformer.setColorPositions(new float[]{0f, 1f});
-        appearanceController.transform(degreeRanking);
-
-        //Get Centrality
+        // Graph distance
         GraphDistance distance = new GraphDistance();
         distance.setNormalized(true);
         distance.execute(graphModel);
 
-        //Rank size by centrality
+        // Ranking
         Column centralityColumn = graphModel.getNodeTable().getColumn(GraphDistance.BETWEENNESS);
         Function centralityRanking = appearanceModel.getNodeFunction(undirectedGraph, centralityColumn, RankingNodeSizeTransformer.class);
-        RankingNodeSizeTransformer centralityTransformer = (RankingNodeSizeTransformer) centralityRanking.getTransformer();
+        RankingNodeSizeTransformer centralityTransformer = centralityRanking.getTransformer();
         centralityTransformer.setMinSize(5);
         centralityTransformer.setMaxSize(20);
         appearanceController.transform(centralityRanking);
+    }
 
-        // TODO Color edges by score
-        Column scoreColumn = edgeTable.getColumn("score");
-        Function scoreRanking = appearanceModel.getEdgeFunction(undirectedGraph, scoreColumn, RankingElementColorTransformer.class);
+    private static void partitionNodeColorByModularity(GraphModel graphModel, AppearanceController appearanceController) {
+        AppearanceModel appearanceModel = appearanceController.getModel();
+        UndirectedGraph undirectedGraph = graphModel.getUndirectedGraph();
 
-        RankingElementColorTransformer edgeColorTransformer = scoreRanking.getTransformer();
-        edgeColorTransformer.setColors(new Color[]{new Color(0x424fff), new Color(0x42fffa), new Color(0x42ff46), new Color(0xf4ff42), new Color(0xff4242)});
-        edgeColorTransformer.setColorPositions(new float[]{0f, 1f});
-        appearanceController.transform(scoreRanking);
+        Modularity modularity = new Modularity();
+        modularity.setUseWeight(true);
+        modularity.setRandom(true);
+        modularity.execute(graphModel);
 
-        // Layout
-        AutoLayout autoLayout = new AutoLayout(60, TimeUnit.SECONDS);
+        Column modularityColumn = graphModel.getNodeTable().getColumn(Modularity.MODULARITY_CLASS);
+        Function modularityPartitioning = appearanceModel.getNodeFunction(undirectedGraph, modularityColumn, PartitionElementColorTransformer.class);
+        Partition partition = ((PartitionFunction) modularityPartitioning).getPartition();
+
+        PaletteManager paletteManager = PaletteManager.getInstance();
+        Palette randomPalette = paletteManager.generatePalette(partition.size());
+        partition.setColors(randomPalette.getColors());
+
+        appearanceController.transform(modularityPartitioning);
+    }
+
+    private static void runLayout(GraphModel graphModel) {
+        AutoLayout autoLayout = new AutoLayout(1, TimeUnit.SECONDS);
         autoLayout.setGraphModel(graphModel);
 
-        // Force Atlas layout
-        ForceAtlasLayout secondLayout = new ForceAtlasLayout(null);
-        AutoLayout.DynamicProperty repulsionProperty = AutoLayout.createDynamicProperty("forceAtlas.repulsionStrength.name", 500., 0f);//500 for the complete period
-        autoLayout.addLayout(secondLayout, 1.f, new AutoLayout.DynamicProperty[]{repulsionProperty});
+        // ForceAtlas2 layout
+        ForceAtlas2 forceAtlas2 = new ForceAtlas2(null);
+        forceAtlas2.setScalingRatio(500.); // Repulsion
+        autoLayout.addLayout(forceAtlas2, 1.f);
         autoLayout.execute();
-
-        ExportController ec = Lookup.getDefault().lookup(ExportController.class);
-        try {
-            ec.exportFile(new File("out.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-//        // Print to the standard output as CSV
-//
-//        ExporterCSV exporterCSV = (ExporterCSV) ec.getExporter("csv");
-//        exporterCSV.setExportVisible(true);
-//        exporterCSV.setWorkspace(workspace);
-//
-//        StringWriter writer = new StringWriter();
-//
-//        ec.exportWriter(writer, exporterCSV);
-//        System.out.print(writer.toString());
     }
+
+
+    private static void outputJson(Workspace workspace) {
+        OutputStreamWriter writer = new OutputStreamWriter(System.out);
+
+        JSONExporter jsonExporter = new JSONExporter();
+        jsonExporter.setExportVisible(true);
+        jsonExporter.setWorkspace(workspace);
+        jsonExporter.setWriter(writer);
+        jsonExporter.execute(); // Hacked implementation that writes to standard output
+    }
+
+
+
 
 
 }

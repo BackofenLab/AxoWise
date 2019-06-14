@@ -7,7 +7,6 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="gephi-backend" />
-        <module name="gephi.backend" />
       </profile>
     </annotationProcessing>
   </component>
