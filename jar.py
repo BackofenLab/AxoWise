@@ -1,5 +1,8 @@
 """
 Interface towards Java's executable JAR files.
+Assumes Java is already installed and set up,
+i.e. `java` is in PATH variable and available
+to be called.
 """
 
 import subprocess
