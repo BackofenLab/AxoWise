@@ -23,5 +23,6 @@ def pipe_call(jar_path: str, stdin: str, encoding="utf-8"):
     )
     process.stdin.write(bytes(stdin, encoding))
     process.stdin.close() # EOF
+    stdout = str(process.stdout.read(), encoding)
     process.wait()
-    return str(process.stdout.read(), encoding)
+    return stdout
