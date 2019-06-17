@@ -5,11 +5,17 @@ import cypher_queries as Cypher
 import database
 import pandas as pd
 
+import time
+start = time.time()
+
 with open("../genes.clean.txt", "r") as f:
     genes = list(map(lambda line: line.rstrip("\n"), f))
 
 proteins = fuzzy_search.search_protein_list(genes, species_id=9606)
-protein_ids = sorted(list(map(lambda p: p.id, proteins)))
+end = time.time()
+print(end - start, "s for fuzzy search")
+
+protein_ids = list(map(lambda p: p.id, proteins))
 print(len(protein_ids))
 
 query = """
@@ -23,12 +29,13 @@ param_dict = dict(
     threshold=400
 )
 
-import time
+
 start = time.time()
 data =  database.neo4j_graph.data(query, param_dict)
 end = time.time()
-print(end - start, "s")
+print(end - start, "s for Cypher query")
 
+start = time.time()
 proteins = set()
 source, target, score = list(), list(), list()
 for row in data:
@@ -46,14 +53,23 @@ edges = pd.DataFrame({
     "target": target,
     "score": score
 })
+end = time.time()
+print(end - start, "s for creating pandas DataFrames")
 
+start = time.time()
 import io
 nodes_csv = io.StringIO()
 edges_csv = io.StringIO()
 nodes.to_csv(nodes_csv, index=False)
 edges.to_csv(edges_csv, index=False)
+nodes.to_csv("nodes.csv", index=False)
+edges.to_csv("edges.csv", index=False)
+end = time.time()
+print(end - start, "s for writing CSV to string")
 
 stdin = f"{nodes_csv.getvalue()}\n{edges_csv.getvalue()}"
 
+start = time.time()
 stdout = jar.pipe_call("gephi-backend/out/artifacts/gephi_backend_jar/gephi.backend.jar", stdin)
-print(stdout)
+end = time.time()
+print(end - start, "s for calling the JAR")
