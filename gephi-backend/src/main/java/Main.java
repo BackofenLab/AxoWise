@@ -104,8 +104,8 @@ public class Main {
         ArrayList<Node> nodes = new ArrayList<Node>();
 
         Table nodeTable = graphModel.getNodeTable();
-        nodeTable.addColumn("external_id", String.class);
-        nodeTable.addColumn("description", String.class);
+        // nodeTable.addColumn("external_id", String.class);
+        // nodeTable.addColumn("description", String.class);
 
         GraphFactory graphFactory = graphModel.factory();
 
@@ -124,14 +124,14 @@ public class Main {
                 nextRecord = csvReader.readMap();
 
                 String id = nextRecord.get("id");
-                String external_id = nextRecord.get("external_id");
-                String name = nextRecord.get("name");
-                String description = nextRecord.get("description");
+                // String external_id = nextRecord.get("external_id");
+                // String name = nextRecord.get("name");
+                // String description = nextRecord.get("description");
 
                 Node n = graphFactory.newNode(id);
-                n.setLabel(name);
-                n.setAttribute("external_id", external_id);
-                n.setAttribute("description", description);
+                // n.setLabel(name);
+                // n.setAttribute("external_id", external_id);
+                // n.setAttribute("description", description);
                 nodes.add(n);
             }
             csvReader.close();
