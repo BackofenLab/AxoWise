@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 import java.awt.Color;
 import java.io.FileNotFoundException;
 import java.io.Writer;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -172,7 +173,9 @@ public class JSONExporter implements GraphExporter, LongTask, CharacterExporter 
 
                     String color;
                     if (e.alpha()!=0) {
-                        color = "rgb(" + (int) (r* 255) + "," + (int) (g* 255) + "," + (int) (b* 255) + ")";
+                        DecimalFormat df = new DecimalFormat("0.0");
+                        float a = Float.parseFloat(df.format((double) e.alpha()));
+                        color = "rgba(" + (int) (r* 255) + "," + (int) (g* 255) + "," + (int) (b* 255) + "," + a + ")";
                     } else {
                         //no colour has been set. Colour will be mix of connected nodes
                         Node n = e.getSource();

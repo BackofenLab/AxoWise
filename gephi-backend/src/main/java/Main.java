@@ -6,12 +6,11 @@ import org.gephi.appearance.plugin.RankingNodeSizeTransformer;
 import org.gephi.appearance.plugin.palette.Palette;
 import org.gephi.appearance.plugin.palette.PaletteManager;
 import org.gephi.graph.api.*;
+import org.gephi.io.exporter.api.ExportController;
 import org.gephi.layout.plugin.AutoLayout;
 import org.gephi.layout.plugin.forceAtlas2.ForceAtlas2;
-import org.gephi.preview.api.PreviewController;
-import org.gephi.preview.api.PreviewModel;
-import org.gephi.preview.api.PreviewProperties;
-import org.gephi.preview.api.PreviewProperty;
+import org.gephi.preview.api.*;
+import org.gephi.preview.types.EdgeColor;
 import org.gephi.project.api.ProjectController;
 import org.gephi.project.api.Workspace;
 import org.gephi.statistics.plugin.GraphDistance;
@@ -19,6 +18,7 @@ import org.gephi.statistics.plugin.Modularity;
 import org.javatuples.Pair;
 import org.openide.util.Lookup;
 
+import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,11 +71,28 @@ public class Main {
         // Layout
         runLayout(graphModel);
 
+        // Set edge colors (mixture between source and target color)
+        setEdgeColors(undirectedGraph);
+
         // Write to standard output
         outputJson(workspace);
 
         // Stupid hack, otherwise the program doesn't terminate (probably some Gephi thread/process in the background)
         System.exit(0);
+    }
+
+    private static void setEdgeColors(Graph graph) {
+        int alpha = 50;
+        for (Edge e : graph.getEdges()) {
+            Color sourceColor = e.getSource().getColor();
+            Color targetColor = e.getTarget().getColor();
+
+            int r = (sourceColor.getRed() + targetColor.getRed()) / 2;
+            int g = (sourceColor.getGreen() + targetColor.getGreen()) / 2;
+            int b = (sourceColor.getBlue() + targetColor.getBlue()) / 2;
+
+            e.setColor(new Color(r, g, b, alpha));
+        }
     }
 
     private static Pair<String, String> readInput() {
@@ -199,6 +216,7 @@ public class Main {
         previewProperties.putValue(PreviewProperty.EDGE_CURVED, Boolean.FALSE);
         previewProperties.putValue(PreviewProperty.EDGE_OPACITY, 50);
         previewProperties.putValue(PreviewProperty.NODE_BORDER_WIDTH, 0);
+        previewProperties.putValue(PreviewProperty.EDGE_COLOR, EdgeColor.Mode.MIXED);
     }
 
     private static void rankNodeSizeByCentrality(GraphModel graphModel, AppearanceController appearanceController) {
