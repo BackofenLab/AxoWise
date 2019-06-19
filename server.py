@@ -1,9 +1,12 @@
 import json
 import os.path
+import io
 
 import networkx as nx
 from flask import Flask, Response, request, send_from_directory
 from networkx.readwrite import json_graph
+import pandas as pd
+import jar
 
 import cypher_queries as Cypher
 import database
@@ -28,312 +31,82 @@ def index():
 def files(path):
     return send_from_directory(os.path.join(_SCRIPT_DIR, _SERVE_DIR), path)
 
-# ====================== Fuzzy search API ======================
-
-# Species
-
-def species_to_dict(species):
-    return list(map(lambda s: {
-        "species_name": s.name,
-        "kegg_id": s.kegg_id,
-        "ncbi_id": s.ncbi_id
-    }, species))
-
-@app.route("/api/search/species", methods=["GET"])
-def search_species_api():
-    query = request.args.get("query")
-    results = fuzzy_search.search_species(query)
-    return_object = species_to_dict(results)
-    return Response(json.dumps(return_object), mimetype="application/json")
-
-# Protein
-
-def proteins_to_dicts(proteins):
-    return list(map(lambda p: {
-        "protein_name": p.name,
-        "protein_id": p.id,
-        "species_id": p.species_id
-    }, proteins))
-
-@app.route("/api/search/protein", methods=["GET"])
-def search_protein_api():
-    query = request.args.get("query")
-    species_id = int(request.args.get("species_id"))
-    results = fuzzy_search.search_protein(query, species_id)
-    return_object = proteins_to_dicts(results)
-    return Response(json.dumps(return_object), mimetype="application/json")
-
-# Protein list
-
-@app.route("/api/search/protein_list", methods=["GET"])
-def search_protein_list_api():
-    query = request.args.get("query")
-    protein_list = list(filter(None, query.split(";")))
-    species_id = int(request.args.get("species_id"))
-    results = fuzzy_search.search_protein_list(protein_list, species_id)
-    return_object = proteins_to_dicts(results)
-    return Response(json.dumps(return_object), mimetype="application/json")
-
-# Pathway
-
-def pathways_to_dicts(pathways):
-    return list(map(lambda p: {
-        "pathway_name": p.name,
-        "pathway_id": p.id,
-        "species_id": p.species_id
-    }, pathways))
-
-@app.route("/api/search/pathway", methods=["GET"])
-def search_pathway_api():
-    query = request.args.get("query")
-    species_id = int(request.args.get("species_id"))
-    results = fuzzy_search.search_pathway(query, species_id)
-    return_object = pathways_to_dicts(results)
-    return Response(json.dumps(return_object), mimetype="application/json")
-
-# Class
-
-def classes_to_dicts(classes):
-    return list(map(lambda c: {
-        "class_name": c.name
-    }, classes))    
-
-@app.route("/api/search/class", methods=["GET"])
-def search_class_api():
-    query = request.args.get("query")
-    results = fuzzy_search.search_class(query)
-    return_object = classes_to_dicts(results)
-    return Response(json.dumps(return_object), mimetype="application/json")
-
 # ====================== Subgraph API ======================
-neo4j_graph = database.connect_neo4j()
-Cypher.warm_up(neo4j_graph)
 
-def protein_subgraph_to_nx_json(subgraph):
-    G = nx.DiGraph()
-    if subgraph is None:
-        data = json_graph.node_link_data(G)
-        return json.dumps(data)
+# TODO Refactor this
+@app.route("/api/subgraph/proteins", methods=["POST"])
+def proteins_subgraph_api():
+    # Queried proteins
+    query_proteins = request.form.get("proteins").split(";")
+    query_proteins = list(filter(None, query_proteins))
 
-    proteins = []
-    pathways = []
+    # TODO Get threshold from the user
+    # threshold = int(float(request.form.get("threshold")) * 1000)
+    threshold = 600
 
-    protein = subgraph["protein"]
-    G.add_node(
-        protein["id"],
-        label=protein["name"],
-        description=protein["description"],
-        type=0 # Protein
+    # TODO Get the species ID from the user
+    proteins = fuzzy_search.search_protein_list(query_proteins, species_id=9606)
+    protein_ids = list(map(lambda p: p.id, proteins))
+
+    # Query the database
+    query = """
+        MATCH (source:Protein)-[association:ASSOCIATION]->(target:Protein)
+        WHERE source.id IN {protein_ids} AND target.id IN {protein_ids} AND association.combined >= {threshold}
+        RETURN source, target, association.combined AS score
+    """
+
+    param_dict = dict(
+        protein_ids=protein_ids,
+        threshold=threshold
     )
 
-    proteins.append(protein["id"])
+    data = database.neo4j_graph.data(query, param_dict)
 
-    for pathway in subgraph["pathways"]:
-        G.add_node(
-            pathway["id"],
-            label=pathway["name"],
-            description=pathway["description"],
-            type=1 # Pathway
-        )
-        G.add_edge(
-            protein["id"],
-            pathway["id"],
-            weight=0
-        )
-        pathways.append(pathway["id"])
+    # pandas DataFrames for nodes and edges
+    proteins = set()
+    source, target, score = list(), list(), list()
+    for row in data:
+        source.append(row["source"]["id"])
+        target.append(row["target"]["id"])
+        score.append(row["score"])
+        proteins.add(row["source"])
+        proteins.add(row["target"])
 
-    for association in subgraph["associations"]:
-        other = association["other"]
-        combined_score = association["combined_score"]
+    proteins = list(map(dict, proteins))
 
-        G.add_node(
-            other["id"],
-            label=other["name"],
-            description=other["description"],
-            type=0 # Protein
-        )
+    nodes = pd.DataFrame(proteins)
+    nodes = nodes.drop_duplicates(subset="id") # TODO `nodes` can be empty
 
-        if combined_score is not None:
-            G.add_edge(
-                protein["id"],
-                other["id"],
-                weight=combined_score
-            )
+    edges = pd.DataFrame({
+        "source": source,
+        "target": target,
+        "score": score
+    })
+    edges = edges.drop_duplicates(subset=["source", "target"]) # # TODO edges` can be empty
 
-        proteins.append(other["id"])
+    # Build a standard input string for Gephi's backend
+    nodes_csv = io.StringIO()
+    edges_csv = io.StringIO()
 
-    layout = shell_layout(
-        G,
-        nlist=[
-            proteins,
-            pathways
-        ]
-    )
-    
-    for node,(x,y) in layout.items():
-        G.node[node]["x"] = float(x)
-        G.node[node]["y"] = float(y)
+    # JAR accepts only id
+    nodes["id"].to_csv(nodes_csv, index=False, header=True)
+    # JAR accepts source, target, score
+    edges.to_csv(edges_csv, index=False, header=True)
 
-    data = json_graph.node_link_data(G)
-    return json.dumps(data)
+    stdin = f"{nodes_csv.getvalue()}\n{edges_csv.getvalue()}"
+    stdout = jar.pipe_call("gephi-backend/out/artifacts/gephi_backend_jar/gephi.backend.jar", stdin)
 
-@app.route("/api/subgraph/protein", methods=["POST"])
-def protein_subgraph_api():
-    protein_id = int(request.form.get("protein_id"))
-    threshold = int(float(request.form.get("threshold")) * 1000)
-    cursor = Cypher.get_protein_subgraph(neo4j_graph, protein_id, threshold)
-    data = cursor.data()
-    if not data:
-        data = None
-    else:
-        data = data[0]
-    data_json = protein_subgraph_to_nx_json(data)
-    return Response(data_json, mimetype="application/json")
+    sigmajs_data = json.loads(stdout)
+    for node in sigmajs_data["nodes"]:
+        df_node = nodes[nodes["id"] == int(node["id"])].iloc[0]
+        node["attributes"]["Description"] = df_node["description"]
+        node["attributes"]["Ensembl ID"] = df_node["external_id"]
+        node["attributes"]["Name"] = df_node["name"]
+        node["label"] = df_node["name"]
 
-def protein_list_subgraph_to_nx_json(subgraph):
-    G = nx.DiGraph()
-    if subgraph is None:
-        data = json_graph.node_link_data(G)
-        return json.dumps(data)
+    json_str = json.dumps(sigmajs_data)
 
-    proteins = []
-    pathways = []
-
-    for protein in subgraph["proteins"]:
-        G.add_node(
-            protein["id"],
-            label=protein["name"],
-            description=protein["description"],
-            type=0 # Protein
-        )
-        proteins.append(protein["id"])
-
-    for pathway in subgraph["pathways"]:
-        G.add_node(
-            pathway["id"],
-            label=pathway["name"],
-            description=pathway["description"],
-            type=1 # Pathway
-        )
-        pathways.append(pathway["id"])
-
-    for association in subgraph["associations"]:
-        combined_score = association["combined_score"]
-        protein1_id = association["protein1_id"]
-        protein2_id = association["protein2_id"]
-        pathway_id = association["pathway_id"]
-        if combined_score is not None:
-            G.add_edge(
-                protein1_id,
-                protein2_id,
-                weight=combined_score
-            )
-        if pathway_id is not None:
-            G.add_edge(
-                protein1_id,
-                pathway_id,
-                weight=0
-            )
-            G.add_edge(
-                protein2_id,
-                pathway_id,
-                weight=0
-            )
-
-    layout = shell_layout(
-        G,
-        nlist=[
-            proteins,
-            pathways
-        ]
-    )
-
-    for node,(x,y) in layout.items():
-        G.node[node]["x"] = float(x)
-        G.node[node]["y"] = float(y)
-
-    data = json_graph.node_link_data(G)
-    return json.dumps(data)
-
-@app.route("/api/subgraph/protein_list", methods=["POST"])
-def protein_list_subgraph_api():
-    protein_ids = list(map(int, request.form.get("protein_ids").split(";")))
-    threshold = int(float(request.form.get("threshold")) * 1000)
-    cursor = Cypher.get_proteins_subgraph(neo4j_graph, protein_ids, threshold)
-    data = cursor.data()
-    if not data:
-        data = None
-    else:
-        data = data[0]
-    data_json = protein_list_subgraph_to_nx_json(data)
-    return Response(data_json, mimetype="application/json")
-
-def pathway_subgraph_to_nx_json(subgraph):
-    G = nx.DiGraph()
-    if subgraph is None:
-        data = json_graph.node_link_data(G)
-        return json.dumps(data)
-
-    proteins = []
-    classes = []
-
-    for klass in subgraph["classes"]:
-        G.add_node(
-            klass["name"],
-            label=klass["name"],
-            type=2 # Class
-        )
-        classes.append(klass["name"])
-
-    for protein in subgraph["proteins"]:
-        G.add_node(
-            protein["id"],
-            label=protein["name"],
-            description=protein["description"],
-            type=0 # Protein
-        )
-        proteins.append(protein["id"])
-
-    for association in subgraph["associations"]:
-        protein1_id = association["protein1_id"]
-        protein2_id = association["protein2_id"]
-        combined_score = association["combined_score"]
-        if combined_score is None:
-            continue
-
-        G.add_edge(
-            protein1_id,
-            protein2_id,
-            weight=combined_score
-        )
-
-    layout = shell_layout(
-        G,
-        nlist=[
-            proteins,
-            classes
-        ]
-    )
-
-    for node,(x,y) in layout.items():
-        G.node[node]["x"] = float(x)
-        G.node[node]["y"] = float(y)
-
-    data = json_graph.node_link_data(G)
-    return json.dumps(data)
-
-@app.route("/api/subgraph/pathway", methods=["POST"])
-def pathway_subgraph_api():
-    pathway_id = request.form.get("pathway_id")
-    threshold = int(float(request.form.get("threshold")) * 1000)
-    cursor = Cypher.get_pathway_subgraph(neo4j_graph, pathway_id, threshold)
-    data = cursor.data()
-    if not data:
-        data = None
-    else:
-        data = data[0]
-    data_json = pathway_subgraph_to_nx_json(data)
-    return Response(data_json, mimetype="application/json")
+    return Response(json_str, mimetype="application/json")
 
 if __name__ == "__main__":
     app.run(
