@@ -75,7 +75,7 @@ public class Main {
         setEdgeColors(undirectedGraph);
 
         // Write to standard output
-        outputJson(workspace);
+        outputJson(graphModel, workspace);
 
         // Stupid hack, otherwise the program doesn't terminate (probably some Gephi thread/process in the background)
         System.exit(0);
@@ -269,7 +269,11 @@ public class Main {
     }
 
 
-    private static void outputJson(Workspace workspace) {
+    private static void outputJson(GraphModel graphModel, Workspace workspace) {
+        for (Edge e: graphModel.getUndirectedGraph().getEdges()) {
+            e.setWeight(0.05);
+        }
+
         OutputStreamWriter writer = new OutputStreamWriter(System.out);
 
         JSONExporter jsonExporter = new JSONExporter();
