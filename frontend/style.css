@@ -276,7 +276,7 @@ background-position: -11px -13px;
 #search .results {
 	display: none;
 	margin: 6px;
-	height: 150px;
+	max-height: 150px;
 	overflow-y: scroll;
 	overflow-x: hidden;
 }
