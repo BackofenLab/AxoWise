@@ -20,6 +20,7 @@ app = Flask(__name__)
 _SCRIPT_DIR = os.path.dirname(__file__)
 _SERVE_DIR = "frontend"
 _INDEX_FILE = "index.html"
+_BACKEND_JAR_PATH = "gephi-backend/out/artifacts/gephi_backend_jar/gephi.backend.jar"
 
 @app.route("/")
 def index():
@@ -100,7 +101,7 @@ def proteins_subgraph_api():
         edges.to_csv(edges_csv, index=False, header=True)
 
         stdin = f"{nodes_csv.getvalue()}\n{edges_csv.getvalue()}"
-        stdout = jar.pipe_call("gephi-backend/out/artifacts/gephi_backend_jar/gephi.backend.jar", stdin)
+        stdout = jar.pipe_call(_BACKEND_JAR_PATH, stdin)
 
         sigmajs_data = json.loads(stdout)
 
