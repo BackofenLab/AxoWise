@@ -18,6 +18,7 @@
       <script src="js/components/visualization.js"></script>
       <script src="js/components/attribute-pane.js"></script>
       <script src="js/components/zoom.js"></script>
+      <script src="js/components/search.js"></script>
     </head>
 
     <body>
@@ -30,15 +31,8 @@
             </div>
             <div class="b1">
               <protein-list v-model="gephi_json"></protein-list>
-              <form>
-                <div id="search" class="cf">
-                  <h2>Search:</h2>
-                  <input type="text" name="search" value="Search by name" class="empty"/>
-                  <div class="state"></div>
-                  <div class="results"></div>
-                </div>
-              </div>
-            </form>
+              <search v-on:active-node-changed="active_node = $event"></search>
+            </div>
           </div>
         </div>
         <zoom></zoom>
