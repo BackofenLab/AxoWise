@@ -10,11 +10,15 @@ import yaml
 
 _DEFAULT_CREDENTIALS_PATH = Path(__file__).parent / Path("credentials.yml")
 
+neo4j_graph = None
+postgres_connection = None
+
 def connect_neo4j(credentials_path=_DEFAULT_CREDENTIALS_PATH):
     """
     Connects to the Neo4j database described in credentials
     file ('credentials_path') and returns a 'Graph' object.
     """
+    global neo4j_graph
 
     with open(credentials_path, "rt", encoding="utf-8") as credentials_file:
         credentials = yaml.load(credentials_file, Loader=yaml.FullLoader)
@@ -45,6 +49,7 @@ def connect_postgres(credentials_path=_DEFAULT_CREDENTIALS_PATH):
     Connects to the PostgreSQL database described in credentials
     file ('credentials_path') and returns a 'connection' object.
     """
+    global postgres_connection
 
     with open(credentials_path, "rt", encoding="utf-8") as credentials_file:
         credentials = yaml.load(credentials_file)
@@ -70,6 +75,7 @@ def connect(credentials_path=_DEFAULT_CREDENTIALS_PATH):
     - 'connection' object for PostgreSQL database
     - 'Graph' object for Neo4j database
     """
+    global neo4j_graph, postgres_connection
 
     postgres_connection = connect_postgres(credentials_path)
     neo4j_graph = connect_neo4j(credentials_path)

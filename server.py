@@ -84,19 +84,26 @@ def proteins_subgraph_api():
     })
     edges = edges.drop_duplicates(subset=["source", "target"]) # # TODO edges` can be empty
 
-    # Build a standard input string for Gephi's backend
-    nodes_csv = io.StringIO()
-    edges_csv = io.StringIO()
+    if len(nodes.index) == 0:
+        sigmajs_data = {
+            "nodes": [],
+            "edges": []
+        }
+    else:
+        # Build a standard input string for Gephi's backend
+        nodes_csv = io.StringIO()
+        edges_csv = io.StringIO()
 
-    # JAR accepts only id
-    nodes["id"].to_csv(nodes_csv, index=False, header=True)
-    # JAR accepts source, target, score
-    edges.to_csv(edges_csv, index=False, header=True)
+        # JAR accepts only id
+        nodes["id"].to_csv(nodes_csv, index=False, header=True)
+        # JAR accepts source, target, score
+        edges.to_csv(edges_csv, index=False, header=True)
 
-    stdin = f"{nodes_csv.getvalue()}\n{edges_csv.getvalue()}"
-    stdout = jar.pipe_call("gephi-backend/out/artifacts/gephi_backend_jar/gephi.backend.jar", stdin)
+        stdin = f"{nodes_csv.getvalue()}\n{edges_csv.getvalue()}"
+        stdout = jar.pipe_call("gephi-backend/out/artifacts/gephi_backend_jar/gephi.backend.jar", stdin)
 
-    sigmajs_data = json.loads(stdout)
+        sigmajs_data = json.loads(stdout)
+
     for node in sigmajs_data["nodes"]:
         df_node = nodes[nodes["id"] == int(node["id"])].iloc[0]
         node["attributes"]["Description"] = df_node["description"]
