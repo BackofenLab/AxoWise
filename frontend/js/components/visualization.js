@@ -21,12 +21,16 @@ Vue.component("visualization", {
     },
     watch: {
         "gephi_json": function(json) {
-            sigma_instance.graph.clear();
-            sigma_instance.graph.read(json);
-            sigma_instance.refresh();
+            var com = this;
+            com.reload();
         },
         "active_term": function(term) {
-            if (term == null) return;
+            var com = this;
+
+            if (term == null) {
+                com.reload();
+                return;
+            }
 
             var proteins = term.proteins;
 
@@ -181,14 +185,15 @@ Vue.component("visualization", {
         normal_node: function() {
             var com = this;
 
-            sigma_instance.graph.edges().forEach(function (a) {
-                a.hidden = false;
-            });
+            com.reload();
 
-            sigma_instance.graph.nodes().forEach(function (a) {
-                a.hidden = false;
-            });
+            sigma_instance.refresh();
+        },
 
+        reload: function() {
+            var com = this;
+            sigma_instance.graph.clear();
+            sigma_instance.graph.read(com.gephi_json);
             sigma_instance.refresh();
         }
     },
