@@ -23,7 +23,7 @@ Vue.component("search", {
             com.results.hide();
             com.searching = !1;
             com.input.val("");
-            com.select_node(null)
+            com.select_node(null);
         },
         clean: function () {
             var com = this;
@@ -87,8 +87,8 @@ Vue.component("search", {
     template: `
         <form>
             <div id="search" class="cf">
-                <h2>Search:</h2>
-                <input type="text" name="search" value="Search by name" class="empty"/>
+                <h2>Node search:</h2>
+                <input type="text" name="search" value="Search nodes by name" class="empty"/>
                 <div class="state"></div>
                 <div class="results">
                     <i v-if="message.length > 0">{{message}}</i>

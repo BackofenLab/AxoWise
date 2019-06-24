@@ -19,19 +19,21 @@
       <script src="js/components/attribute-pane.js"></script>
       <script src="js/components/zoom.js"></script>
       <script src="js/components/search.js"></script>
+      <script src="js/components/functional-enrichment.js"></script>
     </head>
 
     <body>
       <div id="pgdb-app">
-        <visualization v-bind:gephi_json="gephi_json" v-bind:active_node="active_node" v-on:active-node-changed="active_node = $event"></visualization>
+        <visualization v-bind:gephi_json="gephi_json" v-bind:active_node="active_node" v-bind:active_term="active_term" v-on:active-node-changed="active_node = $event"></visualization>
         <div id="mainpanel">
           <div class="col">
             <div id="title">
               <h2>Protein Graph Database</h2>
             </div>
             <div class="b1">
-              <protein-list v-model="gephi_json"></protein-list>
-              <search v-on:active-node-changed="active_node = $event"></search>
+              <protein-list v-model="gephi_json"></protein-list><br/>
+              <search v-on:active-node-changed="active_node = $event"></search><br/>
+              <functional-enrichment v-bind:gephi_json="gephi_json" v-on:active-term-changed="active_term = $event"></functional-enrichment>
             </div>
           </div>
         </div>

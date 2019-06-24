@@ -93,14 +93,14 @@ def proteins_subgraph_api():
     external_ids = nodes["external_id"].tolist()
     df_enrichment = stringdb.functional_enrichment(external_ids, SPECIES_ID)
 
-    dict_enrichment = dict()
+    list_enrichment = list()
     for _, row in df_enrichment.iterrows():
-        term = row["term"]
-        dict_enrichment[term] = dict(
+        list_enrichment.append(dict(
+            id=row["term"],
             proteins=row["inputGenes"].split(","),
             name=row["description"],
             p_value=row["p_value"]
-        )
+        ))
 
     if len(nodes.index) == 0:
         sigmajs_data = {
@@ -129,7 +129,7 @@ def proteins_subgraph_api():
         node["attributes"]["Name"] = df_node["name"]
         node["label"] = df_node["name"]
 
-    sigmajs_data["enrichment"] = dict_enrichment
+    sigmajs_data["enrichment"] = list_enrichment
 
     json_str = json.dumps(sigmajs_data)
 

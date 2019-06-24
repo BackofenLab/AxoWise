@@ -33,7 +33,7 @@ Vue.component("protein-list", {
     },
     template: `
         <div class="cf"><h2>Protein list:</h2>
-            <textarea id="protein-list" v-model="raw_text" rows="20" cols="30"/></textarea><br/>
+            <textarea id="protein-list" v-model="raw_text" rows="10" cols="30"/></textarea><br/>
             <button id="submit-btn">Submit</button>
         </div>
     `

@@ -281,6 +281,31 @@ background-position: -11px -13px;
 	overflow-x: hidden;
 }
 
+#enrichment .results {
+	margin: 6px;
+	min-height: 0;
+	max-height: 150px;
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+
+#enrichment .results b {
+	padding-left: 2px;
+	}
+
+#enrichment .results a {
+	padding: 1px 2px;
+	display: block;
+	cursor: pointer;
+	text-decoration: none;
+	color: #000;
+}
+
+#enrichment .results a:hover {
+	background-color: #999;
+	color: #fff;
+}
+
 #search .results b {
 padding-left: 2px;
 }

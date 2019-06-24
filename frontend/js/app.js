@@ -6,6 +6,7 @@ $(document).ready(function () {
         data: {
             gephi_json: null,
             active_node: null,
+            active_term: null
         },
         methods: {}
     });
