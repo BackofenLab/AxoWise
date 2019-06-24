@@ -1,12 +1,14 @@
 import json
 import os.path
 import io
+from collections import defaultdict
 
 import networkx as nx
 from flask import Flask, Response, request, send_from_directory
 from networkx.readwrite import json_graph
 import pandas as pd
 import jar
+import stringdb
 
 import cypher_queries as Cypher
 import database
@@ -37,16 +39,18 @@ def files(path):
 # TODO Refactor this
 @app.route("/api/subgraph/proteins", methods=["POST"])
 def proteins_subgraph_api():
+    SPECIES_ID = 9606
+    THRESHOLD = 600
+
     # Queried proteins
     query_proteins = request.form.get("proteins").split(";")
     query_proteins = list(filter(None, query_proteins))
 
     # TODO Get threshold from the user
     # threshold = int(float(request.form.get("threshold")) * 1000)
-    threshold = 600
 
     # TODO Get the species ID from the user
-    proteins = fuzzy_search.search_protein_list(query_proteins, species_id=9606)
+    proteins = fuzzy_search.search_protein_list(query_proteins, species_id=SPECIES_ID)
     protein_ids = list(map(lambda p: p.id, proteins))
 
     # Query the database
@@ -58,7 +62,7 @@ def proteins_subgraph_api():
 
     param_dict = dict(
         protein_ids=protein_ids,
-        threshold=threshold
+        threshold=THRESHOLD
     )
 
     data = database.neo4j_graph.data(query, param_dict)
@@ -83,7 +87,20 @@ def proteins_subgraph_api():
         "target": target,
         "score": score
     })
-    edges = edges.drop_duplicates(subset=["source", "target"]) # # TODO edges` can be empty
+    edges = edges.drop_duplicates(subset=["source", "target"]) # TODO edges` can be empty
+
+    # Functional enrichment
+    external_ids = nodes["external_id"].tolist()
+    df_enrichment = stringdb.functional_enrichment(external_ids, SPECIES_ID)
+
+    dict_enrichment = dict()
+    for _, row in df_enrichment.iterrows():
+        term = row["term"]
+        dict_enrichment[term] = dict(
+            proteins=row["inputGenes"].split(","),
+            name=row["description"],
+            p_value=row["p_value"]
+        )
 
     if len(nodes.index) == 0:
         sigmajs_data = {
@@ -111,6 +128,8 @@ def proteins_subgraph_api():
         node["attributes"]["Ensembl ID"] = df_node["external_id"]
         node["attributes"]["Name"] = df_node["name"]
         node["label"] = df_node["name"]
+
+    sigmajs_data["enrichment"] = dict_enrichment
 
     json_str = json.dumps(sigmajs_data)
 

@@ -7,7 +7,7 @@ from string import Template
 
 import pandas as pd
 
-from url import get
+from url import get, post
 
 _CALLER_IDENTITY = "pgdb"
 _SEPARATOR = "%0d"
@@ -63,7 +63,8 @@ def map_identifiers(identifiers, species_id, limit=1, split=350):
 # =================================== Functional enrichment ===================================
 # https://string-db.org/cgi/help.pl?subpage=api%23getting-functional-enrichment
 
-_ENRICHMENT_TEMPLATE = Template("https://string-db.org/api/${format}/enrichment?identifiers=${identifiers}&species=${species}&caller_identity=${identity}")
+_ENRICHMENT_URL_TEMPLATE = Template("https://string-db.org/api/${format}/enrichment")
+_ENRICHMENT_ARGS_TEMPLATE = Template("identifiers=${identifiers}&species=${species}&caller_identity=${identity}")
 
 def functional_enrichment(identifiers, species_id):
     """
@@ -76,14 +77,17 @@ def functional_enrichment(identifiers, species_id):
     Returns a single pandas.DataFrame.
     """
 
-    endpoint = _ENRICHMENT_TEMPLATE.substitute(
-        format = "tsv",
+    endpoint = _ENRICHMENT_URL_TEMPLATE.substitute(
+        format="tsv"
+    )
+
+    data = _ENRICHMENT_ARGS_TEMPLATE.substitute(
         identifiers = _SEPARATOR.join(identifiers),
         species = species_id,
         identity = _CALLER_IDENTITY
-    )
+    ).encode("utf-8")
 
-    enrichment_file = get(endpoint)
+    enrichment_file = post(endpoint, data)
     if enrichment_file is None:
         return None
 
