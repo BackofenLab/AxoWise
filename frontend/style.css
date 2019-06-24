@@ -49,7 +49,7 @@ html,body, #pgdb-app {
 	user-select: none;
 }
 
-#attributepane {
+.pane {
    	display: block;	
 	display: none;
     position:absolute;
@@ -68,11 +68,11 @@ html,body, #pgdb-app {
 }
 
 
-#attributepane .text {
+.pane .text {
 	height:100%;
 }
 
-#attributepane .headertext {
+.pane .headertext {
 	color: #000;
 	margin-bottom: 5px;
 	height: 14px;
@@ -83,7 +83,7 @@ html,body, #pgdb-app {
 }
 
 
-#attributepane .returntext em {
+.pane .returntext em {
 	background-image: url('./images/sprite.png');
 	background-repeat: no-repeat;
 	display: block;
@@ -93,22 +93,22 @@ html,body, #pgdb-app {
 	float: left;
 }
 
-#attributepane .returntext span {
+.pane .returntext span {
 	padding-left: 5px;
 	display: block;
 }
 
-#attributepane .close {
+.pane .close {
 	padding-left: 14px;
 	margin-top: 10px;
 }
 
-#attributepane .close .c {
+.pane .close .c {
 	border-top: 2px solid #999;
 	padding: 10px 0 14px 0;
 }
 
-#attributepane .close em {
+.pane .close em {
 background-image: url('./images/sprite.png');
 background-repeat: no-repeat;
 background-position: -11px -13px;
@@ -118,13 +118,13 @@ height: 16px;
 float: left;
 }
 
-#attributepane .close span {
+.pane .close span {
 display: block;
 width: 151px;
 float: left;
 }
 
-#attributepane .nodeattributes {
+.pane .nodeattributes {
 	display:block;
 	height:85%;
 	overflow-y: scroll;
@@ -132,7 +132,7 @@ float: left;
 	border-bottom:1px solid #999;
 }
 
-#attributepane .name {
+.pane .name {
 font-size: 14px;
 cursor: default;
 padding-bottom: 10px;
@@ -141,7 +141,7 @@ font-weight:bold;
 }
 
 
-#attributepane .data .plus {
+.pane .data .plus {
 background-repeat: no-repeat;
 background-image: url('./images/sprite.png');
 background-position: -171px -122px;
@@ -151,16 +151,16 @@ float: left;
 display: block;
 }
 
-#attributepane .link {
+.pane .link {
 padding: 0 0 0 4px;
 }
 
-#attributepane .link li {
+.pane .link li {
 padding-top: 2px;
 cursor:pointer;
 }
 
-#attributepane .p {
+.pane .p {
 padding-top: 10px;
 font-weight: bold;
 font-size:14px;
@@ -284,7 +284,7 @@ background-position: -11px -13px;
 #enrichment .results {
 	margin: 6px;
 	min-height: 0;
-	max-height: 150px;
+	max-height: 200px;
 	overflow-y: scroll;
 	overflow-x: hidden;
 }

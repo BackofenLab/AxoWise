@@ -58,7 +58,7 @@ Vue.component("attribute-pane", {
         $("#attributepane").find(".close").click(() => com.select_node(null));
     },
     template: `
-        <div id="attributepane">
+        <div id="attributepane" class="pane">
             <div class="text">
                 <div title="Close" class="left-close returntext">
                     <div class="c cf">

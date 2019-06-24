@@ -4,6 +4,16 @@ sigma.classes.graph.addMethod('getNodeFromIndex', function(id) {
     return this.nodesIndex[id];
 });
 
+sigma.classes.graph.addMethod('ensemblIdToNode', function(ensembl_id) {
+    var nodes = this.nodes();
+    for (var idx in nodes) {
+        var node = nodes[idx];
+        if (node.attributes["Ensembl ID"] === ensembl_id)
+            return node;
+    }
+    return null;
+});
+
 Vue.component("visualization", {
     props: ["gephi_json", "active_node", "active_term"],
     data: function() {
@@ -16,6 +26,8 @@ Vue.component("visualization", {
             sigma_instance.refresh();
         },
         "active_term": function(term) {
+            if (term == null) return;
+
             var proteins = term.proteins;
 
             sigma_instance.graph.nodes().forEach(function (n) {

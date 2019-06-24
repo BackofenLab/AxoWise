@@ -20,6 +20,7 @@
       <script src="js/components/zoom.js"></script>
       <script src="js/components/search.js"></script>
       <script src="js/components/functional-enrichment.js"></script>
+      <script src="js/components/term-pane.js"></script>
     </head>
 
     <body>
@@ -39,6 +40,7 @@
         </div>
         <zoom></zoom>
         <attribute-pane v-bind:active_node="active_node" v-on:active-node-changed="active_node = $event"></attribute-pane>
+        <term-pane v-bind:active_term="active_term" v-on:active-node-changed="active_node = $event" v-on:active-term-changed="active_term = $event"></term-pane>
         <div id="developercontainer">
           <a href="http://www.bioinf.uni-freiburg.de/" title="BackofenLab">
             <div id="backofenlab">
