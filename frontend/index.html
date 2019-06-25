@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1,user-scalable=no" />
 
     <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="shortcut icon" type="image/jpeg" href="images/bioinf-fr-logo-blau.jpg"/>
 
       <script src="https://cdnjs.cloudflare.com/ajax/libs/sigma.js/1.2.1/sigma.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -25,7 +26,13 @@
 
     <body>
       <div id="pgdb-app">
-        <visualization v-bind:gephi_json="gephi_json" v-bind:active_node="active_node" v-bind:active_term="active_term" v-on:active-node-changed="active_node = $event"></visualization>
+        <visualization v-bind:gephi_json="gephi_json"
+                       v-bind:active_node="active_node"
+                       v-bind:active_term="active_term"
+                       v-bind:node_color_index="node_color_index"
+                       v-bind:edge_color_index="edge_color_index"
+                       v-on:active-node-changed="active_node = $event"
+        ></visualization>
         <div id="mainpanel">
           <div class="col">
             <div id="title">
@@ -34,13 +41,20 @@
             <div class="b1">
               <protein-list v-model="gephi_json"></protein-list><br/>
               <search v-on:active-node-changed="active_node = $event"></search><br/>
-              <functional-enrichment v-bind:gephi_json="gephi_json" v-on:active-term-changed="active_term = $event"></functional-enrichment>
+              <functional-enrichment v-bind:gephi_json="gephi_json"
+                                     v-on:active-term-changed="active_term = $event"
+              ></functional-enrichment>
             </div>
           </div>
         </div>
         <zoom></zoom>
-        <attribute-pane v-bind:active_node="active_node" v-on:active-node-changed="active_node = $event"></attribute-pane>
-        <term-pane v-bind:active_term="active_term" v-on:active-node-changed="active_node = $event" v-on:active-term-changed="active_term = $event"></term-pane>
+        <attribute-pane v-bind:active_node="active_node"
+                        v-on:active-node-changed="active_node = $event"
+        ></attribute-pane>
+        <term-pane v-bind:active_term="active_term"
+                   v-on:active-node-changed="active_node = $event"
+                   v-on:active-term-changed="active_term = $event"
+        ></term-pane>
         <div id="developercontainer">
           <a href="http://www.bioinf.uni-freiburg.de/" title="BackofenLab">
             <div id="backofenlab">

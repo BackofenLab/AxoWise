@@ -20,20 +20,22 @@ sigma.classes.graph.addMethod('ensemblIdToNode', function(ensembl_id) {
 
 // Component
 Vue.component("visualization", {
-    props: ["gephi_json", "active_node", "active_term"],
+    props: ["gephi_json", "active_node", "active_term", "node_color_index", "edge_color_index"],
     data: function() {
         return {}
     },
     watch: {
         "gephi_json": function(json) {
             var com = this;
-            com.reload();
+            sigma_instance.graph.clear();
+            sigma_instance.graph.read(com.gephi_json);
+            sigma_instance.refresh();
         },
         "active_term": function(term) {
             var com = this;
 
             if (term == null) {
-                com.reload();
+                com.reset();
                 return;
             }
 
@@ -72,7 +74,7 @@ Vue.component("visualization", {
             var com = this;
 
             if (id == null) {
-                com.normal_node();
+                com.reset();
                 return;
             }
 
@@ -109,19 +111,16 @@ Vue.component("visualization", {
         }
     },
     methods: {
-        normal_node: function() {
+        reset: function() {
             var com = this;
 
-            com.reload();
-
-            sigma_instance.refresh();
-        },
-
-        reload: function() {
-            // TODO This is expensive to call every time the colors need to be reset
-            var com = this;
-            sigma_instance.graph.clear();
-            sigma_instance.graph.read(com.gephi_json);
+            sigma_instance.graph.edges().forEach(function(e) {
+                var s = sigma_instance.graph.getNodeFromIndex(e.source);
+                var t = sigma_instance.graph.getNodeFromIndex(e.target);
+                s.color = com.node_color_index[e.source]; s.hidden = false;
+                t.color = com.node_color_index[e.target]; t.hidden = false;
+                e.color = com.edge_color_index[e.id]; e.hidden = false;
+            });
             sigma_instance.refresh();
         }
     },
