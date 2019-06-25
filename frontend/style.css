@@ -3,6 +3,10 @@ padding: 0px;
 margin: 0px;
 }
 
+a {
+	color: blue;
+}
+
 .cf:before, .cf:after {
 	content: "";
 	display: table;
@@ -599,6 +603,8 @@ display: none;
                 50% 50% 
 				no-repeat;
 	color: #fff;
+	font-size: 12pt;
+	padding-top: 20px;
 }
 
 /* When the body has the loading class, we turn

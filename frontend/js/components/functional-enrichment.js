@@ -30,7 +30,7 @@ Vue.component("functional-enrichment", {
         },
     },
     template: `
-        <div id="enrichment" class="cf">
+        <div v-show="gephi_json != null" id="enrichment" class="cf">
             <h2>Functional enrichment:</h2>
             <div class="results">
                 <i v-if="message.length > 0">{{message}}</i>

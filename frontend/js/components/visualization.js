@@ -140,7 +140,8 @@ Vue.component("visualization", {
                 maxEdgeSize: 0.3,
                 minEdgeSize: 0.3,
                 minNodeSize: 1,
-                maxNodeSize: 10
+                maxNodeSize: 20,
+                labelThreshold: 5
             }
         });
 

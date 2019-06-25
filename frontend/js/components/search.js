@@ -1,4 +1,5 @@
 Vue.component("search", {
+    props: ["gephi_json"],
     data: function() {
         return {
             input: null,
@@ -86,7 +87,7 @@ Vue.component("search", {
     },
     template: `
         <form>
-            <div id="search" class="cf">
+            <div v-show="gephi_json != null" id="search" class="cf">
                 <h2>Node search:</h2>
                 <input type="text" name="search" value="Search nodes by name" class="empty"/>
                 <div class="state"></div>

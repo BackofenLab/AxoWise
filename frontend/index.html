@@ -39,8 +39,10 @@
               <h2>Protein Graph Database</h2>
             </div>
             <div class="b1">
-              <protein-list v-model="gephi_json"></protein-list><br/>
-              <search v-on:active-node-changed="active_node = $event"></search><br/>
+              <protein-list v-model="gephi_json"></protein-list>
+              <search v-on:active-node-changed="active_node = $event"
+                      v-bind:gephi_json="gephi_json"
+              ></search><br/>
               <functional-enrichment v-bind:gephi_json="gephi_json"
                                      v-on:active-term-changed="active_term = $event"
               ></functional-enrichment>
@@ -67,7 +69,7 @@
             </div>
           </a>
         </div>
-        <div class="modal"></div>
+        <div class="modal"><center>This may take a while. Please be patient...</center></div>
       </div>
     </div>
   </body>
