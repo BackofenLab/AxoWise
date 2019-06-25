@@ -37,33 +37,33 @@ Vue.component("visualization", {
                 return;
             }
 
-            var proteins = term.proteins;
-
-            sigma_instance.graph.nodes().forEach(function (n) {
-                var ensembl_id = n.attributes["Ensembl ID"];
-                if (proteins.indexOf(ensembl_id) >= 0) {
-                    n.color = "rgb(255, 0, 0)"; // red
-                }
-                else {
-                    n.color = "rgb(255, 255, 255)"; // white
-                }
-            });
+            var proteins = new Set(term.proteins);
 
             sigma_instance.graph.edges().forEach(function (e) {
-                var source_ensembl_id = sigma_instance.graph.getNodeFromIndex(e.source).attributes["Ensembl ID"];
-                var target_ensembl_id = sigma_instance.graph.getNodeFromIndex(e.target).attributes["Ensembl ID"];
+                // Nodes
+                var source = sigma_instance.graph.getNodeFromIndex(e.source);
+                var target = sigma_instance.graph.getNodeFromIndex(e.target);
 
-                var source_present = proteins.indexOf(source_ensembl_id) >= 0;
-                var target_present = proteins.indexOf(target_ensembl_id) >= 0;
-                if (source_present && !target_present || !source_present && target_present) {
-                    e.color = "rgba(255, 125, 125, 0.2)"; // pink
-                }
-                else if(source_present && target_present) {
-                    e.color = "rgba(255, 0, 0, 0.2)"; // red
-                }
-                else {
-                    e.color = "rgba(255, 255, 255, 0.2)"; // white
-                }
+                // Ensembl IDs
+                var source_ensembl_id = source.attributes["Ensembl ID"];
+                var target_ensembl_id = target.attributes["Ensembl ID"];
+
+                // Are they present in the functional term?
+                var source_present = proteins.has(source_ensembl_id);
+                var target_present = proteins.has(target_ensembl_id);
+
+                // Source
+                if (source_present) source.color = "rgb(255, 0, 0)"; // red
+                else source.color = "rgb(255, 255, 255)"; // white
+
+                // Target
+                if (target_present) target.color = "rgb(255, 0, 0)"; // red
+                else target.color = "rgb(255, 255, 255)"; // white
+
+                // Edge
+                if (source_present && !target_present || !source_present && target_present) e.color = "rgba(255, 125, 125, 0.2)"; // pink
+                else if(source_present && target_present) e.color = "rgba(255, 0, 0, 0.2)"; // red
+                else e.color = "rgba(255, 255, 255, 0.2)"; // white
             });
 
             sigma_instance.refresh();
@@ -118,6 +118,7 @@ Vue.component("visualization", {
         },
 
         reload: function() {
+            // TODO This is expensive to call every time the colors need to be reset
             var com = this;
             sigma_instance.graph.clear();
             sigma_instance.graph.read(com.gephi_json);
