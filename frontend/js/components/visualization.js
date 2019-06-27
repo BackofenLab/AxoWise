@@ -226,7 +226,7 @@ Vue.component("visualization", {
                     selected_nodes.push(node);
                 }
             }
-            com.$emit("active-subset-changed", selected_nodes);
+            if (selected_nodes.length > 0) com.$emit("active-subset-changed", selected_nodes);
         },
         get_select_range: function(start, length) {
             return length > 0 ? {start: start, end: start + length} : {start: start + length, end: start};
