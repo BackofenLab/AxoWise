@@ -39,18 +39,21 @@ def files(path):
 # TODO Refactor this
 @app.route("/api/subgraph/proteins", methods=["POST"])
 def proteins_subgraph_api():
-    SPECIES_ID = 9606
-    THRESHOLD = 600
-
     # Queried proteins
     query_proteins = request.form.get("proteins").split(";")
     query_proteins = list(filter(None, query_proteins))
+
+    # Species
+    species_id = int(request.form.get("species_id"))
+
+    # Threshold
+    threshold = int(float(request.form.get("threshold")) * 1000)
 
     # TODO Get threshold from the user
     # threshold = int(float(request.form.get("threshold")) * 1000)
 
     # TODO Get the species ID from the user
-    proteins = fuzzy_search.search_protein_list(query_proteins, species_id=SPECIES_ID)
+    proteins = fuzzy_search.search_protein_list(query_proteins, species_id=species_id)
     protein_ids = list(map(lambda p: p.id, proteins))
 
     # Query the database
@@ -62,7 +65,7 @@ def proteins_subgraph_api():
 
     param_dict = dict(
         protein_ids=protein_ids,
-        threshold=THRESHOLD
+        threshold=threshold
     )
 
     data = database.neo4j_graph.data(query, param_dict)
@@ -91,7 +94,7 @@ def proteins_subgraph_api():
 
     # Functional enrichment
     external_ids = nodes["external_id"].tolist()
-    df_enrichment = stringdb.functional_enrichment(external_ids, SPECIES_ID)
+    df_enrichment = stringdb.functional_enrichment(external_ids, species_id)
 
     list_enrichment = list()
     for _, row in df_enrichment.iterrows():

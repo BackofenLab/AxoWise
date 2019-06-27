@@ -5,21 +5,37 @@ Vue.component("protein-list", {
     },
     data: function() {
         return {
+            species: {
+                9606: "Homo sapiens (human)",
+                10090: "Mus musculus (mouse)"
+            },
             api: {
                 subgraph: "api/subgraph/proteins"
             },
-            raw_text: null
+            threshold: {
+                value: 0.7,
+                min: 0.7,
+                max: 1.0,
+                step: 0.001
+            },
+            raw_text: null,
+            selected_species: null
         }
     },
     methods: {
         submit: function() {
             var com = this;
+            if (com.raw_text == null) {
+                alert("Please provide a list of proteins!");
+                return;
+            }
 
             $("body").addClass("loading");
 
             $.post(com.api.subgraph, {
                 proteins: com.raw_text.split('\n').join(';'),
-                // TODO threshold: threshold
+                threshold: com.threshold.value,
+                species_id: com.selected_species,
             })
                 .done(function (json) {
                     $("body").removeClass("loading");
@@ -33,8 +49,35 @@ Vue.component("protein-list", {
         $("#submit-btn").click(com.submit);
     },
     template: `
-        <div class="cf"><h2>Protein list:</h2>
+        <div class="cf">
+            <h4>Species:</h4>
+            <select v-model="selected_species">
+                <option disabled value="">Please select species</option>
+                <option v-for="(value, key, index) in species" v-bind:value="key">{{value}}</option>
+            </select>
+            <br/><br/>
+
+            <h4>Protein list:</h4>
             <textarea id="protein-list" v-model="raw_text" rows="10" cols="30"/></textarea><br/>
+            <br/>
+
+            <h4>Protein - protein score threshold:</h4>
+            <input id="threshold-slider"
+                type="range"
+                v-bind:min="threshold.min"
+                v-bind:max="threshold.max"
+                v-bind:step="threshold.step"
+                v-model="threshold.value"
+            />
+            <input id="threshold-input"
+                type="number"
+                v-bind:min="threshold.min"
+                v-bind:max="threshold.max"
+                v-bind:step="threshold.step"
+                v-model="threshold.value"
+            />
+            <br/><br/>
+
             <button id="submit-btn">Submit</button>
         </div>
     `
