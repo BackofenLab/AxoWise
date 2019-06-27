@@ -208,7 +208,6 @@ Vue.component("visualization", {
                     selected_nodes.push(node);
                 }
             }
-            console.log(selected_nodes);
             com.$emit("active-subset-changed", selected_nodes);
         },
         get_select_range: function(start, length) {
