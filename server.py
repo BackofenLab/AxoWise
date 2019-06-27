@@ -49,10 +49,7 @@ def proteins_subgraph_api():
     # Threshold
     threshold = int(float(request.form.get("threshold")) * 1000)
 
-    # TODO Get threshold from the user
-    # threshold = int(float(request.form.get("threshold")) * 1000)
-
-    # TODO Get the species ID from the user
+    # Fuzzy search mapping
     proteins = fuzzy_search.search_protein_list(query_proteins, species_id=species_id)
     protein_ids = list(map(lambda p: p.id, proteins))
 
