@@ -215,6 +215,8 @@ Vue.component("visualization", {
             var nodes = sigma_instance.graph.nodes();
             for (var i in nodes) {
                 var node = nodes[i];
+                if (node.hidden) continue;
+
                 var node_XY = {
                     x: node["renderer1:x"],
                     y: node["renderer1:y"]
