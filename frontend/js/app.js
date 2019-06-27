@@ -2,7 +2,7 @@ var APP = null;
 
 $(document).ready(function () {
     APP = new Vue({
-        el: '#pgdb-app',
+        el: '#pgdb-app', // Link to index.html (div in body)
         data: {
             gephi_json: null,
             node_color_index: null,
@@ -11,18 +11,6 @@ $(document).ready(function () {
             active_term: null
         },
         watch: {
-            active_node: function(node) {
-                var com = this;
-                if (node == null) return;
-
-                com.active_term = null;
-            },
-            active_term: function(term) {
-                var com = this;
-                if (term == null) return;
-
-                com.active_node = null;
-            },
             gephi_json: function(json) {
                 var com = this;
                 com.node_color_index = {};

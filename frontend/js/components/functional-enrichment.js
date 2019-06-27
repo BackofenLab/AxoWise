@@ -3,7 +3,8 @@ Vue.component("functional-enrichment", {
     data: function() {
         return  {
             message: "",
-            terms: []
+            terms: [],
+            search_raw: ""
         }
     },
     methods: {
@@ -29,12 +30,28 @@ Vue.component("functional-enrichment", {
             });
         },
     },
+    computed: {
+        regex: function() {
+            var com = this;
+            return RegExp(com.search_raw.toLowerCase());
+        },
+        filtered_terms: function() {
+            var com = this;
+
+            if (com.search_raw == "") return com.terms;
+
+            var regex = com.regex;
+            var filtered = com.terms.filter(term => regex.test(term.name.toLowerCase()));
+            return filtered;
+        }
+    },
     template: `
         <div v-show="gephi_json != null" id="enrichment" class="cf">
             <h2>Functional enrichment:</h2>
+            <input type="text" value="Search functional terms by name" v-model="search_raw" class="empty"/>
             <div class="results">
                 <i v-if="message.length > 0">{{message}}</i>
-                <div v-for="entry in terms">
+                <div v-for="entry in filtered_terms">
                     <a href="#" v-on:click="select_term(entry)">{{entry.name}}</a>
                 </div>
                 <div v-if="terms.length == 0">

@@ -29,6 +29,7 @@ Vue.component("protein-list", {
     },
     mounted: function() {
         var com = this;
+        $("#submit-btn").button();
         $("#submit-btn").click(com.submit);
     },
     template: `

@@ -39,6 +39,8 @@ Vue.component("visualization", {
                 return;
             }
 
+            if (com.active_node != null) com.$emit("active-node-changed", null);
+
             var proteins = new Set(term.proteins);
 
             sigma_instance.graph.edges().forEach(function (e) {
@@ -77,6 +79,8 @@ Vue.component("visualization", {
                 com.reset();
                 return;
             }
+
+            if (com.active_term != null) com.$emit("active-term-changed", null);
 
             var neighbors = {};
             var node = sigma_instance.graph.getNodeFromIndex(id);

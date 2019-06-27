@@ -66,7 +66,7 @@ Vue.component("search", {
         var com = this;
 
         var a = $("#search");
-        com.input = a.find("input[name=search]");
+        com.input = a.find("input");
         com.state = a.find(".state");
         com.results = a.find(".results");
 
@@ -86,10 +86,10 @@ Vue.component("search", {
         });
     },
     template: `
-        <form>
-            <div v-show="gephi_json != null" id="search" class="cf">
+        <form v-show="gephi_json != null">
+            <div id="search" class="cf">
                 <h2>Node search:</h2>
-                <input type="text" name="search" value="Search nodes by name" class="empty"/>
+                <input type="text" value="Search nodes by name" class="search empty"/>
                 <div class="state"></div>
                 <div class="results">
                     <i v-if="message.length > 0">{{message}}</i>
@@ -101,6 +101,7 @@ Vue.component("search", {
                     </div>
                 </div>
             </div>
+            <br/>
         </form>
     `
 });
