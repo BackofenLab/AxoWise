@@ -14,7 +14,7 @@ Vue.component("subset-dialog", {
             height: "auto",
             width: 400,
             maxHeight: 500,
-            modal: true,
+            modal: false,
             buttons: {
                 "Close": function() {
                     $( this ).dialog( "close" );
@@ -66,12 +66,12 @@ Vue.component("subset-dialog", {
         <div id="dialog" title="Protein subset">
             <b>Proteins:</b>
             <p v-for="node in active_subset">
-                <a href="#" v-click="select_node(node.id)">{{node.label}}</a>
+                <a href="#" v-on:click="select_node(node.id)">{{node.label}}</a>
             </p>
             <br/><hr/><br/>
             <b>Functional terms:</b>
             <p v-for="term in terms">
-                <a href="#" v-click="select_term(term)">{{term.name}}</a>
+                <a href="#" v-on:click="select_term(term)">{{term.name}}</a>
             </p>
         </div>
     `
