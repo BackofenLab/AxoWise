@@ -8,7 +8,8 @@ $(document).ready(function () {
             node_color_index: null,
             edge_color_index: null,
             active_node: null,
-            active_term: null
+            active_term: null,
+            active_subset: null
         },
         watch: {
             gephi_json: function(json) {

@@ -205,10 +205,11 @@ Vue.component("visualization", {
                 };
 
                 if (x_range.start <= node_XY.x && node_XY.x <= x_range.end && y_range.start <= node_XY.y && node_XY.y <= y_range.end) {
-                    selected_nodes.push(node.id);
+                    selected_nodes.push(node);
                 }
             }
             console.log(selected_nodes);
+            com.$emit("active-subset-changed", selected_nodes);
         },
         get_select_range: function(start, length) {
             return length > 0 ? {start: start, end: start + length} : {start: start + length, end: start};
