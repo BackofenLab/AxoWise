@@ -2,12 +2,19 @@ Vue.component("subset-dialog", {
     props: ["gephi_json", "active_subset"],
     watch: {
         "active_subset": function(subset) {
-            if (subset.length < 1) return;
+            if (subset == null || subset.length < 1) return;
 
             $("#dialog").dialog("open");
         }
     },
     mounted: function() {
+        var com = this;
+
+        var close = function() {
+            $("#dialog").dialog("close");
+            com.$emit("active-subset-changed", null);
+        };
+
         $("#dialog").dialog({
             autoOpen: false,
             resizable: false,
@@ -16,10 +23,9 @@ Vue.component("subset-dialog", {
             maxHeight: 500,
             modal: false,
             buttons: {
-                "Close": function() {
-                    $( this ).dialog( "close" );
-                }
-            }
+                "Close": close,
+            },
+            close: close
         });
     },
     methods: {

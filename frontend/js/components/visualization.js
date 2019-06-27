@@ -20,7 +20,7 @@ sigma.classes.graph.addMethod('ensemblIdToNode', function(ensembl_id) {
 
 // Component
 Vue.component("visualization", {
-    props: ["gephi_json", "active_node", "active_term", "node_color_index", "edge_color_index"],
+    props: ["gephi_json", "active_node", "active_term", "active_subset", "node_color_index", "edge_color_index"],
     data: function() {
         return {
             rectangular_select: {
@@ -38,6 +38,22 @@ Vue.component("visualization", {
             var com = this;
             sigma_instance.graph.clear();
             sigma_instance.graph.read(com.gephi_json);
+            sigma_instance.refresh();
+        },
+        "active_subset": function(subset) {
+            var com = this;
+
+            if (subset == null) {
+                com.reset();
+                return;
+            }
+
+            var proteins = new Set(subset.map(node => node.attributes["Ensembl ID"]));
+
+            sigma_instance.graph.nodes().forEach(function (n) {
+                if (!proteins.has(n.attributes["Ensembl ID"])) n.hidden = true;
+            });
+
             sigma_instance.refresh();
         },
         "active_term": function(term) {

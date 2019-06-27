@@ -36,10 +36,12 @@
                        v-bind:gephi_json="gephi_json"
                        v-on:active-node-changed="active_node = $event"
                        v-on:active-term-changed="active_term = $event"
+                       v-on:active-subset-changed="active_subset = $event"
         ></subset-dialog>
         <visualization v-bind:gephi_json="gephi_json"
                        v-bind:active_node="active_node"
                        v-bind:active_term="active_term"
+                       v-bind:active_subset="active_subset"
                        v-bind:node_color_index="node_color_index"
                        v-bind:edge_color_index="edge_color_index"
                        v-on:active-node-changed="active_node = $event"
