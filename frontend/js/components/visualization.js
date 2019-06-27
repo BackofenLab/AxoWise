@@ -60,7 +60,7 @@ Vue.component("visualization", {
             var com = this;
 
             if (term == null) {
-                com.reset();
+                if (com.active_node == null) com.reset();
                 return;
             }
 
@@ -101,7 +101,7 @@ Vue.component("visualization", {
             var com = this;
 
             if (id == null) {
-                com.reset();
+                if (com.active_term == null) com.reset();
                 return;
             }
 
