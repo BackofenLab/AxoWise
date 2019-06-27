@@ -25,7 +25,13 @@ Vue.component("protein-list", {
     methods: {
         submit: function() {
             var com = this;
-            if (com.raw_text == null) {
+
+            if (com.selected_species == null) {
+                alert("Please select a species!");
+                return;
+            }
+
+            if (com.raw_text == null || com.raw_text == "") {
                 alert("Please provide a list of proteins!");
                 return;
             }
