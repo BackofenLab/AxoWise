@@ -22,7 +22,16 @@ sigma.classes.graph.addMethod('ensemblIdToNode', function(ensembl_id) {
 Vue.component("visualization", {
     props: ["gephi_json", "active_node", "active_term", "node_color_index", "edge_color_index"],
     data: function() {
-        return {}
+        return {
+            rectangular_select: {
+                canvas: null,
+                context: null,
+                rectangle: {},
+                active: false,
+                surface_backup: null
+            },
+            container: null
+        }
     },
     watch: {
         "gephi_json": function(json) {
@@ -126,6 +135,83 @@ Vue.component("visualization", {
                 e.color = com.edge_color_index[e.id]; e.hidden = false;
             });
             sigma_instance.refresh();
+        },
+        // Rectangular select
+        mousedown: function(e) {
+            var com = this;
+            if (e.button == 2) {
+                // var selectedNodes = e.ctrlKey ? NETWORK.getSelectedNodes() : null;
+                com.backup_surface();
+                var that = this;
+                var rectangle = com.rectangular_select.rectangle;
+                rectangle.startX = e.pageX - com.container.offsetLeft;
+                rectangle.startY = e.pageY - com.container.offsetTop;
+                com.rectangular_select.active = true;
+                com.container.style.cursor = "crosshair";
+            }
+        },
+        mousemove: function(e) {
+            var com = this;
+            if (com.rectangular_select.active) {
+                var context = com.rectangular_select.context;
+                var rectangle = com.rectangular_select.rectangle;
+                com.restore_surface();
+                rectangle.w = (e.pageX - com.container.offsetLeft) - rectangle.startX;
+                rectangle.h = (e.pageY - com.container.offsetTop) - rectangle.startY ;
+                context.setLineDash([5]);
+                context.strokeStyle = "rgb(82,182,229)";
+                context.strokeRect(rectangle.startX, rectangle.startY, rectangle.w, rectangle.h);
+                context.setLineDash([]);
+                context.fillStyle = "rgba(82,182,229,0.2)";
+                context.fillRect(rectangle.startX, rectangle.startY, rectangle.w, rectangle.h);
+            }
+        },
+        mouseup: function(e) {
+            var com = this;
+            if (e.button == 2) {
+                com.restore_surface();
+                com.rectangular_select.active = false;
+
+                com.container.style.cursor = "default";
+                com.select_nodes_rectangular();
+            }
+        },
+        backup_surface: function() {
+            var com = this;
+            var canvas = com.rectangular_select.canvas;
+            var context = com.rectangular_select.context;
+            com.rectangular_select.surface_backup = context.getImageData(0, 0, canvas.width, canvas.height);
+        },
+        restore_surface: function() {
+            var com = this;
+            var context = com.rectangular_select.context;
+            var surface = com.rectangular_select.surface_backup;
+            context.putImageData(surface, 0, 0);
+        },
+        select_nodes_rectangular: function() {
+            var com = this;
+            var rectangle = com.rectangular_select.rectangle;
+
+            var selected_nodes = [];
+            var x_range = com.get_select_range(rectangle.startX, rectangle.w);
+            var y_range = com.get_select_range(rectangle.startY, rectangle.h);
+
+            var nodes = sigma_instance.graph.nodes();
+            for (var i in nodes) {
+                var node = nodes[i];
+                var node_XY = {
+                    x: node["renderer1:x"],
+                    y: node["renderer1:y"]
+                };
+
+                if (x_range.start <= node_XY.x && node_XY.x <= x_range.end && y_range.start <= node_XY.y && node_XY.y <= y_range.end) {
+                    selected_nodes.push(node.id);
+                }
+            }
+            console.log(selected_nodes);
+        },
+        get_select_range: function(start, length) {
+            return length > 0 ? {start: start, end: start + length} : {start: start + length, end: start};
         }
     },
     mounted: function() {
@@ -156,6 +242,15 @@ Vue.component("visualization", {
         sigma_instance.bind("clickNode", function (node) {
             com.$emit("active-node-changed", node.data.node.id);
         });
+
+        // Rectangular select
+        com.rectangular_select.canvas = $(".sigma-mouse")[0];
+        com.container = $(".sigma-parent")[0];
+        com.rectangular_select.canvas.oncontextmenu = function() { return false; };
+        com.rectangular_select.canvas.onmousedown = com.mousedown;
+        com.rectangular_select.canvas.onmousemove = com.mousemove;
+        com.rectangular_select.canvas.onmouseup = com.mouseup;
+        com.rectangular_select.context = com.rectangular_select.canvas.getContext("2d");
     },
     template: `
     <div class="sigma-parent">
