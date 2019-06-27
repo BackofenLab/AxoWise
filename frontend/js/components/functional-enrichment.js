@@ -47,7 +47,7 @@ Vue.component("functional-enrichment", {
     },
     template: `
         <div v-show="gephi_json != null" id="enrichment" class="cf">
-            <h2>Functional enrichment:</h2>
+            <h4>Functional enrichment:</h4>
             <input type="text" value="Search functional terms by name" v-model="search_raw" class="empty"/>
             <div class="results">
                 <i v-if="message.length > 0">{{message}}</i>

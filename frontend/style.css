@@ -306,7 +306,7 @@ background-position: -11px -13px;
 #enrichment .results {
 	margin: 6px;
 	min-height: 0;
-	max-height: 200px;
+	max-height: 150px;
 	overflow-y: scroll;
 	overflow-x: hidden;
 }

@@ -88,7 +88,7 @@ Vue.component("search", {
     template: `
         <form v-show="gephi_json != null">
             <div id="search" class="cf">
-                <h2>Node search:</h2>
+                <h4>Node search:</h4>
                 <input type="text" value="Search nodes by name" class="search empty"/>
                 <div class="state"></div>
                 <div class="results">
