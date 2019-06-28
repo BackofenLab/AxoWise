@@ -14,7 +14,7 @@ Vue.component("protein-list", {
             },
             threshold: {
                 value: 0.7,
-                min: 0.7,
+                min: 0.4,
                 max: 1.0,
                 step: 0.001
             },
