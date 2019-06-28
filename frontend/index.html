@@ -35,6 +35,7 @@
       <div id="pgdb-app"> <!-- Linked to app.js -->
         <subset-dialog v-bind:active_subset="active_subset"
                        v-bind:gephi_json="gephi_json"
+                       v-bind:node2term_index="node2term_index"
                        v-on:active-node-changed="active_node = $event"
                        v-on:active-term-changed="active_term = $event"
                        v-on:active-subset-changed="active_subset = $event"

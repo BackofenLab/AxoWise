@@ -1,5 +1,5 @@
 Vue.component("subset-dialog", {
-    props: ["gephi_json", "active_subset"],
+    props: ["gephi_json", "active_subset", "node2term_index"],
     watch: {
         "active_subset": function(subset) {
             if (subset == null || subset.length < 1) return;
@@ -43,7 +43,7 @@ Vue.component("subset-dialog", {
     computed: {
         terms: function() {
             var com = this;
-            if (com.gephi_json == null) return;
+            if (com.gephi_json == null || com.active_subset == null) return;
 
             var all_terms = com.gephi_json.enrichment;
             all_terms.sort(function(t1, t2) {
@@ -52,17 +52,21 @@ Vue.component("subset-dialog", {
                 return p_t1 - p_t2;
             });
 
-            // TODO The following code is slow. This data could be indexed.
-            var contained_terms = all_terms.filter((term) => {
-                term_proteins = new Set(term.proteins);
-                for (var j in com.active_subset) {
-                    var protein = com.active_subset[j];
-                    if (term_proteins.has(protein.attributes["Ensembl ID"])) {
-                        return true;
-                    }
+            function union(setA, setB) {
+                if (!setA && !setB) return new Set();
+                if (!setA) return setB;
+                if (!setB) return setA;
+
+                var _union = new Set(setA);
+                for (var elem of setB) {
+                    _union.add(elem);
                 }
-                return false;
-            });
+                return _union;
+            }
+
+            var ensembl_ids = com.active_subset.map(protein => protein.attributes["Ensembl ID"]);
+            var term_sets = ensembl_ids.map(id => com.node2term_index[id]);
+            var contained_terms = term_sets.reduce(union, new Set());
 
             return contained_terms;
         }

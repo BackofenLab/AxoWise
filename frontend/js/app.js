@@ -7,6 +7,7 @@ $(document).ready(function () {
             gephi_json: null,
             node_color_index: null,
             edge_color_index: null,
+            node2term_index: null,
             active_node: null,
             active_term: null,
             active_subset: null
@@ -24,6 +25,16 @@ $(document).ready(function () {
                 for (var idx in json.edges) {
                     var edge = json.edges[idx];
                     com.edge_color_index[edge.id] = edge.color;
+                }
+
+                com.node2term_index = {};
+                for (var i in json.enrichment) {
+                    var term = json.enrichment[i];
+                    for (var j in term.proteins) {
+                        var ensembl_id = term.proteins[j];
+                        if (!(ensembl_id in com.node2term_index)) com.node2term_index[ensembl_id] = new Set();
+                        com.node2term_index[ensembl_id].add(term);
+                    }
                 }
             }
         }
