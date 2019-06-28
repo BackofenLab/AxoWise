@@ -52,19 +52,18 @@ Vue.component("subset-dialog", {
                 return p_t1 - p_t2;
             });
 
-            var contained_terms = [];
-
-            for (var i in all_terms) {
-                var term = all_terms[i];
-                var term_proteins = new Set(term.proteins);
+            // TODO The following code is slow. This data could be indexed.
+            var contained_terms = all_terms.filter((term) => {
+                term_proteins = new Set(term.proteins);
                 for (var j in com.active_subset) {
                     var protein = com.active_subset[j];
                     if (term_proteins.has(protein.attributes["Ensembl ID"])) {
-                        contained_terms.push(term);
-                        break
+                        return true;
                     }
                 }
-            }
+                return false;
+            });
+
             return contained_terms;
         }
     },
