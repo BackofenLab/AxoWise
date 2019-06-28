@@ -263,7 +263,7 @@ public class Main {
 
         // ForceAtlas2 layout
         ForceAtlas2 forceAtlas2 = new ForceAtlas2(null);
-        forceAtlas2.setScalingRatio(500.); // Repulsion
+        forceAtlas2.setScalingRatio(1200.); // Repulsion
         autoLayout.addLayout(forceAtlas2, 1.f);
         autoLayout.execute();
     }
