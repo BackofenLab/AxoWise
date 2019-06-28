@@ -94,13 +94,14 @@ def proteins_subgraph_api():
     df_enrichment = stringdb.functional_enrichment(external_ids, species_id)
 
     list_enrichment = list()
-    for _, row in df_enrichment.iterrows():
-        list_enrichment.append(dict(
-            id=row["term"],
-            proteins=row["inputGenes"].split(","),
-            name=row["description"],
-            p_value=row["p_value"]
-        ))
+    if df_enrichment is not None:
+        for _, row in df_enrichment.iterrows():
+            list_enrichment.append(dict(
+                id=row["term"],
+                proteins=row["inputGenes"].split(","),
+                name=row["description"],
+                p_value=row["p_value"]
+            ))
 
     if len(nodes.index) == 0:
         sigmajs_data = {
