@@ -7,6 +7,22 @@ a {
 	color: blue;
 }
 
+#modules-parent {
+	position: relative;
+}
+
+#modules {
+	position: absolute;
+	display: inline-block;
+	left: 300px;
+	color: white;
+}
+
+#modules .rectangle{
+    width:20px;
+    height:20px;
+}
+
 .cf:before, .cf:after {
 	content: "";
 	display: table;

@@ -28,6 +28,7 @@
       <script src="js/components/functional-enrichment.js"></script>
       <script src="js/components/term-pane.js"></script>
       <script src="js/components/subset-dialog.js"></script>
+      <script src="js/components/modules.js"></script>
     </head>
 
     <body>
@@ -49,6 +50,9 @@
                        v-on:active-subset-changed="active_subset = $event"
         ></visualization>
         <div id="mainpanel">
+          <modules v-bind:gephi_json="gephi_json"
+                   v-on:active-subset-changed="active_subset = $event"
+          ></modules>
           <div class="col">
             <div id="title">
               <h2>Protein Graph Database</h2>
