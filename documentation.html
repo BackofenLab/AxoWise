@@ -265,6 +265,24 @@ Done!
 
 <p style="color: red;">This is a development server, and it is not by any means ready to be used in production.</p>
 
+<h2 id="building-the-docker-containers">Building the Docker container(s)</h2>
+
+<ul>
+  <li>
+    <p>Neo4j server</p>
+
+    <p>Requires <a href="https://github.com/BackofenLab/protein-graph-database/releases/download/0.2/neo4j.human.mouse.400.dump">neo4j.human.mouse.400.dump</a> and <a href="https://github.com/BackofenLab/protein-graph-database/releases/download/0.2/graph-algorithms-algo-3.5.3.3.jar">graph-algorithms-algo-3.5.3.3.jar</a> in the root directory of the Git repository.</p>
+
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  docker build <span class="nt">-f</span> docker/web/Dockerfile <span class="nt">-t</span> &lt;repository&gt;/pgdb-database:&lt;version&gt; <span class="nb">.</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Web application</p>
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  docker build <span class="nt">-f</span> docker/database/Dockerfile <span class="nt">-t</span> &lt;repository&gt;/pgdb-web:&lt;version&gt; <span class="nb">.</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
 <h2 id="starting-the-latest-deployed-docker-containers">Starting the latest deployed Docker container(s)</h2>
 
 <p>Definition of image names and how they are connected can be found in <a href="https://github.com/BackofenLab/protein-graph-database/blob/master/docker-compose.yml">docker-compose.yml</a>.</p>
