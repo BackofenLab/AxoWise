@@ -40,13 +40,15 @@ Vue.component("visualization", {
             sigma_instance.graph.read(com.gephi_json);
             sigma_instance.refresh();
         },
-        "active_subset": function(subset) {
+        "active_subset": function(subset, old_subset) {
             var com = this;
 
             if (subset == null) {
                 com.reset();
                 return;
             }
+
+            if (old_subset != null) com.reset();
 
             var proteins = new Set(subset.map(node => node.attributes["Ensembl ID"]));
 
