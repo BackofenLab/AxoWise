@@ -14,7 +14,7 @@ _IDENTITY = "pgdb"
 _TEMPLATE = Template(f"https://string-db.org/api/${{format}}/get_string_ids?identifiers=${{identifiers}}&species=${{species}}&caller_identity={_IDENTITY}&limit=${{limit}}")
 _TEMPLATE_NO_SPECIES = Template(f"https://string-db.org/api/${{format}}/get_string_ids?identifiers=${{identifiers}}&species=${{species}}&caller_identity={_IDENTITY}&limit=${{limit}}")
 
-def get(url, timeout=10, wait=1):
+def get(url, timeout=10, wait=0.05):
     if isinstance(wait, int) and wait > 0:
         time.sleep(wait)
     try:
@@ -51,30 +51,25 @@ def map_identifiers_to_STRING(identifiers, format="tsv", limit=1, species=None, 
     if species is None:
         template = _TEMPLATE_NO_SPECIES
 
-    def map_chunk(chunk):
+    def map_chunk(Id):
         endpoint = template.substitute(
             format=format,
-            identifiers="%0d".join(chunk),
+            identifiers=Id,
             species=species,
             limit=limit
         )
         identifiers_file = get(endpoint)
-        assert identifiers_file is not None, "GET request did not return anything. Try using a smaller chunk size."
-        return identifiers_file
+        out = ([line.split('\t')[4:6] for line in identifiers_file.split('\n')[1:-1]])
+        if not out:
+            symbol = 'NA'
+            anot = 'NA'
+        else:
+            [symbol, anot] = out[0]
 
-    if len(identifiers) > split:
-        i = 0
-        while True:
-            identifiers_chunk = identifiers[i : i + split]
-            identifiers_file = map_chunk(identifiers_chunk)
-            yield identifiers_file
-            if i + split >= len(identifiers):
-                break
-            else:
-                i += split
-    else:
-        identifiers_file = map_chunk(identifiers)
-        yield identifiers_file
+        print('{}\t{}\t{}'.format(Id,symbol,anot))
+
+    for Id in identifiers:
+        map_chunk(Id)
 
 def read_lines_until_EOF():
     lines = list()
@@ -100,11 +95,8 @@ def map_tsv_row(identifiers, row):
 def main():
     args = parse_cli_args()
     identifiers = read_lines_until_EOF()
-    for identifiers_file in map_identifiers_to_STRING(identifiers, species=args.species_id, limit=args.limit, split=args.chunk_size):
-        header, *rows = identifiers_file.splitlines()
-        rows = list(map(lambda row: map_tsv_row(identifiers, row), rows))
-        lines = "\n".join(rows)
-        print(lines)
+    map_identifiers_to_STRING(identifiers, species=args.species_id, limit=args.limit, split=args.chunk_size)
+
 
 if __name__ == "__main__":
     main()
