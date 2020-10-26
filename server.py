@@ -65,7 +65,7 @@ def proteins_subgraph_api():
         threshold=threshold
     )
 
-    data = database.neo4j_graph.data(query, param_dict)
+    data = database.neo4j_graph.run(query, param_dict).data()
 
     # pandas DataFrames for nodes and edges
     proteins = set()

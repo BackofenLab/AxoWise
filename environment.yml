@@ -4,7 +4,7 @@ channels:
   - defaults
 dependencies:
   - python>=3.6
-  - py2neo=4.0
+  - py2neo=4.0 # current py2neo library is 2020.0.0
   - psycopg2
   - pyyaml
   - pylint
@@ -13,3 +13,4 @@ dependencies:
   - numpy
   - pandas
   - neomodel
+  - neo4j-driver==1.6.2 #exact version needed to remain compatible with py2neo v4.0
