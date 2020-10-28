@@ -66,6 +66,10 @@ def proteins_subgraph_api():
     )
 
     data = database.neo4j_graph.run(query, param_dict).data()
+    #no data from database, return from here
+    # TO-DO Front end response to be handled
+    if not data:
+        return Response(json.dumps([]), mimetype="application/json")
 
     # pandas DataFrames for nodes and edges
     proteins = set()
