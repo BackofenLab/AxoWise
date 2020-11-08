@@ -20,7 +20,7 @@ sigma.classes.graph.addMethod('ensemblIdToNode', function(ensembl_id) {
 
 // Component
 Vue.component("visualization", {
-    props: ["gephi_json", "active_node", "active_term", "active_subset", "node_color_index", "edge_color_index"],
+    props: ["gephi_json", "active_node", "active_term", "active_subset", "node_color_index", "edge_color_index", "dark_theme_root"],
     data: function() {
         return {
             rectangular_select: {
@@ -30,7 +30,8 @@ Vue.component("visualization", {
                 active: false,
                 surface_backup: null
             },
-            container: null
+            container: null,
+            darkThemeOn: false
         }
     },
     watch: {
@@ -38,6 +39,15 @@ Vue.component("visualization", {
             var com = this;
             sigma_instance.graph.clear();
             sigma_instance.graph.read(com.gephi_json);
+            sigma_instance.graph.edges().forEach(function (e) {
+                //TO-DO Change color here,
+                // Change Node hover color from sigmajs settings
+                //change node color to other?
+                if (com.dark_theme_root) {
+                    //regex to increase opacity
+                    e.color = e.color.replace(/[\d\.]+\)$/g, '1)')
+                }
+            });
             sigma_instance.refresh();
         },
         "active_subset": function(subset, old_subset) {
@@ -232,6 +242,9 @@ Vue.component("visualization", {
         },
         get_select_range: function(start, length) {
             return length > 0 ? {start: start, end: start + length} : {start: start + length, end: start};
+        },
+        change_theme:function() {
+            console.log("HERE")
         }
     },
     mounted: function() {
@@ -274,7 +287,7 @@ Vue.component("visualization", {
     },
     template: `
     <div class="sigma-parent">
-        <div class="sigma-expand" id="sigma-canvas"></div>
+        <div class="sigma-expand"  v-bind:class="[dark_theme_root ? 'black-theme' : 'white-theme']" id="sigma-canvas"></div>
     </div>
     `
 });

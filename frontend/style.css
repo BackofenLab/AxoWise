@@ -58,7 +58,6 @@ html,body, #pgdb-app {
 	height: 100%;
 	top: 0;
 	left: 0;
-	background-color: #000;
 	background-position: center center;
 	background-repeat: no-repeat;
 	-webkit-touch-callout: none;
@@ -638,4 +637,18 @@ body.loading {
    modal element will be visible */
 body.loading .modal {
     display: block;
+}
+
+#theme {
+	position: absolute;
+    top: 90%;
+    right: 25%;
+}
+
+.white-theme {
+	background-color: #efeff5;
+}
+
+.black-theme {
+	background-color: #000000;
 }

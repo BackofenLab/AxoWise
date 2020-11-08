@@ -29,16 +29,19 @@
       <script src="js/components/term-pane.js"></script>
       <script src="js/components/subset-dialog.js"></script>
       <script src="js/components/modules.js"></script>
+      <script src="js/components/theme-toggle.js"></script>
     </head>
 
     <body>
       <div id="pgdb-app"> <!-- Linked to app.js -->
-        <subset-dialog v-bind:active_subset="active_subset"
+        <subset-dialog :active_subset="active_subset"
                        v-bind:gephi_json="gephi_json"
                        v-bind:node2term_index="node2term_index"
                        v-on:active-node-changed="active_node = $event"
                        v-on:active-term-changed="active_term = $event"
                        v-on:active-subset-changed="active_subset = $event"
+                        v-on:toggle-theme="active_node = $event"
+        ></subset-dialog>
         ></subset-dialog>
         <visualization v-bind:gephi_json="gephi_json"
                        v-bind:active_node="active_node"
@@ -46,6 +49,7 @@
                        v-bind:active_subset="active_subset"
                        v-bind:node_color_index="node_color_index"
                        v-bind:edge_color_index="edge_color_index"
+                       v-bind:dark_theme_root="dark_theme_root"
                        v-on:active-node-changed="active_node = $event"
                        v-on:active-term-changed="active_term = $event"
                        v-on:active-subset-changed="active_subset = $event"
@@ -70,6 +74,7 @@
           </div>
         </div>
         <zoom></zoom>
+        <theme-toggle></theme-toggle>
         <attribute-pane v-bind:active_node="active_node"
                         v-on:active-node-changed="active_node = $event"
         ></attribute-pane>

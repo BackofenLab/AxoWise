@@ -88,5 +88,6 @@ Vue.component("attribute-pane", {
                 </div>
             </div>
         </div>
+        </div>
     `
 });

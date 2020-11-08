@@ -10,7 +10,8 @@ $(document).ready(function () {
             node2term_index: null,
             active_node: null,
             active_term: null,
-            active_subset: null
+            active_subset: null,
+            dark_theme_root: true
         },
         watch: {
             gephi_json: function(json) {
