@@ -3,9 +3,9 @@ import os.path
 import io
 from collections import defaultdict
 
-import networkx as nx
+#import networkx as nx
 from flask import Flask, Response, request, send_from_directory
-from networkx.readwrite import json_graph
+#from networkx.readwrite import json_graph
 import pandas as pd
 import jar
 import stringdb
@@ -14,6 +14,8 @@ import cypher_queries as Cypher
 import database
 import fuzzy_search
 from layout import shell_layout
+
+import graph_utilities
 
 app = Flask(__name__)
 
@@ -126,9 +128,13 @@ def proteins_subgraph_api():
         stdout = jar.pipe_call(_BACKEND_JAR_PATH, stdin)
 
         sigmajs_data = json.loads(stdout)
+        newCoordinates = graph_utilities.adjust_graph(sigmajs_data)
 
     for node in sigmajs_data["nodes"]:
         df_node = nodes[nodes["id"] == int(node["id"])].iloc[0]
+        coordinate = newCoordinates[newCoordinates['id'] == int(node["id"])].iloc[0]
+        node['x'] = coordinate['x']
+        node['y'] = coordinate['y']
         node["attributes"]["Description"] = df_node["description"]
         node["attributes"]["Ensembl ID"] = df_node["external_id"]
         node["attributes"]["Name"] = df_node["name"]
