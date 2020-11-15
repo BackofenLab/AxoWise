@@ -29,7 +29,8 @@ Vue.component("modules", {
     template: `
         <div id="modules-parent">
             <div id="modules">
-                <div v-for="(value, key, index) in modules">
+                <div v-for="(value, key, index) in modules" style="float:left; padding: 5px;">
+                    <label>Group {{index + 1}}</label>
                     <a href="#"><div class="rectangle" v-bind:style="{background: key}" v-on:click="select_module(value)"></div></a>
                 </div>
             </div>

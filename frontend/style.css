@@ -12,11 +12,14 @@ a {
 }
 
 #modules {
+	z-index: 999;
 	position: absolute;
 	display: inline-block;
-	left: 300px;
 	color: white;
-}
+	border-style: solid;
+	border-width: 1px;
+	left: 300px;
+	margin: 5px;}
 
 #modules .rectangle{
     width:20px;
@@ -500,9 +503,9 @@ display: none;
 
 #zoom {
 	z-index:999;
-	position: fixed;
+	position: relative;
 	left: 45%;
-	bottom: 25px;
+	bottom: 10%;
 	margin:0 auto;
 	padding: 0;
 	-webkit-touch-callout: none;
@@ -651,4 +654,12 @@ body.loading .modal {
 
 .black-theme {
 	background-color: #000000;
+}
+
+#chart-area {
+	position: relative;
+    top: 0;
+	height: 100%;
+	width: 100%;
+	float: right;
 }

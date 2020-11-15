@@ -34,7 +34,8 @@
 
     <body>
       <div id="pgdb-app"> <!-- Linked to app.js -->
-        <subset-dialog :active_subset="active_subset"
+          <div id="control-panel"></div>
+          <subset-dialog :active_subset="active_subset"
                        v-bind:gephi_json="gephi_json"
                        v-bind:node2term_index="node2term_index"
                        v-on:active-node-changed="active_node = $event"
@@ -42,8 +43,11 @@
                        v-on:active-subset-changed="active_subset = $event"
                         v-on:toggle-theme="active_node = $event"
         ></subset-dialog>
-        ></subset-dialog>
-        <visualization v-bind:gephi_json="gephi_json"
+          <div id= "chart-area">
+              <modules v-bind:gephi_json="gephi_json"
+                   v-on:active-subset-changed="active_subset = $event"
+          ></modules>
+              <visualization v-bind:gephi_json="gephi_json"
                        v-bind:active_node="active_node"
                        v-bind:active_term="active_term"
                        v-bind:active_subset="active_subset"
@@ -54,10 +58,14 @@
                        v-on:active-term-changed="active_term = $event"
                        v-on:active-subset-changed="active_subset = $event"
         ></visualization>
+              <zoom></zoom>
+              <theme-toggle></theme-toggle>
+              <attribute-pane v-bind:active_node="active_node"
+                        v-on:active-node-changed="active_node = $event"
+        ></attribute-pane>
+          </div>
+           <div id="bottom-tools-area"></div>
         <div id="mainpanel">
-          <modules v-bind:gephi_json="gephi_json"
-                   v-on:active-subset-changed="active_subset = $event"
-          ></modules>
           <div class="col">
             <div id="title">
               <h2>Protein Graph Database</h2>
@@ -73,11 +81,6 @@
             </div>
           </div>
         </div>
-        <zoom></zoom>
-        <theme-toggle></theme-toggle>
-        <attribute-pane v-bind:active_node="active_node"
-                        v-on:active-node-changed="active_node = $event"
-        ></attribute-pane>
         <term-pane v-bind:active_term="active_term"
                    v-on:active-node-changed="active_node = $event"
                    v-on:active-term-changed="active_term = $event"

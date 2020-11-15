@@ -2,6 +2,9 @@ import numpy as np
 import pandas as pd
 import networkx as nx
 
+# import json
+# import matplotlib.pyplot as plt
+
 
 def adjust_graph(data):
     nodedf = pd.DataFrame(data['nodes'], columns=['x', 'y', 'id'])
@@ -34,10 +37,21 @@ def data_frame_op(graphdata):
 
     graphdata['centreX'] = graphdata['subCentreX'].unique().sum() / graphdata['subCentreX'].nunique()
     graphdata['centreY'] = graphdata['subCentreY'].unique().sum() / graphdata['subCentreY'].nunique()
-    graphdata['newCX'] = (graphdata['centreX'] + graphdata['subCentreX']) / 2
-    graphdata['newCY'] = (graphdata['centreY'] + graphdata['subCentreY']) / 2
+    graphdata['newCX'] = (3*graphdata['centreX'] + graphdata['subCentreX']) / 4
+    graphdata['newCY'] = (3*graphdata['centreY'] + graphdata['subCentreY']) / 4
 
     graphdata['x'] = graphdata['x'] + (graphdata['newCX'] - graphdata['subCentreX'])
     graphdata['y'] = graphdata['y'] + (graphdata['newCY'] - graphdata['subCentreY'])
 
     return graphdata[['x', 'y', 'id']]
+
+
+# def plot_graph(graphdata):
+#     plt.plot(graphdata['x'], graphdata['y'], 'ro')
+#     plt.show()
+
+# with open('sample.json') as f:
+#     data = json.load(f)
+#
+# newCoordinates = adjust_graph(data)
+# plotGraph(newCoordinates)
