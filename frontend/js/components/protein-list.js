@@ -64,7 +64,7 @@ Vue.component("protein-list", {
             <br/><br/>
 
             <h4>Protein list:</h4>
-            <textarea id="protein-list" v-model="raw_text" rows="10" cols="30"/></textarea><br/>
+            <textarea ref="protein_list_input" id="protein-list" v-model="raw_text" rows="10" cols="30" autofocus/></textarea><br/>
             <br/>
 
             <h4>Protein - protein score threshold:</h4>
