@@ -6,13 +6,14 @@ import networkx as nx
 # import matplotlib.pyplot as plt
 
 
-def adjust_graph(data):
+def create_graphdf(data):
     nodedf = pd.DataFrame(data['nodes'], columns=['x', 'y', 'id'])
     edgedf = pd.DataFrame(data['edges'], columns=['source', 'target', 'id'])
-    return draw_network(edgedf, nodedf)
+    return (edgedf,nodedf)
 
 
-def draw_network(edges, nodedata):
+
+def generate_clusters(edges, nodedata):
     protein_g = nx.from_pandas_edgelist(edges, 'source', 'target', True, nx.Graph())
     nx.set_node_attributes(protein_g, nodedata.set_index('id').to_dict('index'))
 
@@ -30,10 +31,11 @@ def draw_network(edges, nodedata):
         coord['subCentreY'] = coord['y'].sum()/len(coord)
         subgraphs.append(coord)
 
-    return data_frame_op(pd.concat(subgraphs))
+    return pd.concat(subgraphs)
 
 
-def data_frame_op(graphdata):
+
+def adjust_points(graphdata):
 
     graphdata['centreX'] = graphdata['subCentreX'].unique().sum() / graphdata['subCentreX'].nunique()
     graphdata['centreY'] = graphdata['subCentreY'].unique().sum() / graphdata['subCentreY'].nunique()
@@ -46,12 +48,14 @@ def data_frame_op(graphdata):
     return graphdata[['x', 'y', 'id']]
 
 
-# def plot_graph(graphdata):
+# def plot_this_graph(graphdata):
 #     plt.plot(graphdata['x'], graphdata['y'], 'ro')
 #     plt.show()
-
+#
 # with open('sample.json') as f:
 #     data = json.load(f)
 #
-# newCoordinates = adjust_graph(data)
-# plotGraph(newCoordinates)
+# edges,nodes = create_graphdf(data)
+# clusters = generate_clusters(edges,nodes)
+# newCoordinates = adjust_points(clusters)
+# plot_this_graph(newCoordinates)
