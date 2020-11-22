@@ -5,7 +5,7 @@ from collections import defaultdict
 
 # import networkx as nx
 from flask import Flask, Response, request, send_from_directory
-#from networkx.readwrite import json_graph
+# from networkx.readwrite import json_graph
 import pandas as pd
 import jar
 import stringdb
@@ -128,7 +128,9 @@ def proteins_subgraph_api():
         stdout = jar.pipe_call(_BACKEND_JAR_PATH, stdin)
 
         sigmajs_data = json.loads(stdout)
-        newCoordinates = graph_utilities.adjust_graph(sigmajs_data)
+        edgedf, nodedf = graph_utilities.create_graphdf(sigmajs_data)
+        clusterdf = graph_utilities.generate_clusters(edgedf, nodedf)
+        newCoordinates = graph_utilities.adjust_points(clusterdf)
 
     for node in sigmajs_data["nodes"]:
         df_node = nodes[nodes["id"] == int(node["id"])].iloc[0]
