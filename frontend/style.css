@@ -649,11 +649,11 @@ body.loading .modal {
 }
 
 .white-theme {
-	background-color: #efeff5;
+	background-color: white;
 }
 
 .black-theme {
-	background-color: #000000;
+	background-color: black;
 }
 
 #chart-area {

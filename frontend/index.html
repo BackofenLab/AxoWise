@@ -34,7 +34,27 @@
 
     <body>
       <div id="pgdb-app"> <!-- Linked to app.js -->
-          <div id="control-panel"></div>
+          <div id="left-control-panel" class="black-theme">
+              <div id="mainpanel" class="main-panel-limit">
+          <div class="col">
+            <div id="title">
+              <h2>Protein Graph Database</h2>
+            </div>
+            <div class="b1">
+              <protein-list v-model="gephi_json"></protein-list>
+              <search v-on:active-node-changed="active_node = $event"
+                      v-bind:gephi_json="gephi_json"
+              ></search>
+              <functional-enrichment v-bind:gephi_json="gephi_json"
+                                     v-on:active-term-changed="active_term = $event"
+              ></functional-enrichment>
+            </div>
+          </div>
+        </div>
+              <modules v-bind:gephi_json="gephi_json"
+                   v-on:active-subset-changed="active_subset = $event"
+          ></modules>
+          </div>
           <subset-dialog :active_subset="active_subset"
                        v-bind:gephi_json="gephi_json"
                        v-bind:node2term_index="node2term_index"
@@ -44,9 +64,6 @@
                         v-on:toggle-theme="active_node = $event"
         ></subset-dialog>
           <div id= "chart-area">
-              <modules v-bind:gephi_json="gephi_json"
-                   v-on:active-subset-changed="active_subset = $event"
-          ></modules>
               <visualization v-bind:gephi_json="gephi_json"
                        v-bind:active_node="active_node"
                        v-bind:active_term="active_term"
@@ -65,22 +82,6 @@
         ></attribute-pane>
           </div>
            <div id="bottom-tools-area"></div>
-        <div id="mainpanel">
-          <div class="col">
-            <div id="title">
-              <h2>Protein Graph Database</h2>
-            </div>
-            <div class="b1">
-              <protein-list v-model="gephi_json"></protein-list>
-              <search v-on:active-node-changed="active_node = $event"
-                      v-bind:gephi_json="gephi_json"
-              ></search>
-              <functional-enrichment v-bind:gephi_json="gephi_json"
-                                     v-on:active-term-changed="active_term = $event"
-              ></functional-enrichment>
-            </div>
-          </div>
-        </div>
         <term-pane v-bind:active_term="active_term"
                    v-on:active-node-changed="active_node = $event"
                    v-on:active-term-changed="active_term = $event"

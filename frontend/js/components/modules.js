@@ -27,7 +27,7 @@ Vue.component("modules", {
         }
     },
     template: `
-        <div id="modules-parent">
+        <div id="modules-parent" class="modules-position">
             <div id="modules">
                 <div v-for="(value, key, index) in modules" style="float:left; padding: 5px;">
                     <label>Group {{index + 1}}</label>

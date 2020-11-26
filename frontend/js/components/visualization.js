@@ -39,15 +39,6 @@ Vue.component("visualization", {
             var com = this;
             sigma_instance.graph.clear();
             sigma_instance.graph.read(com.gephi_json);
-            sigma_instance.graph.edges().forEach(function (e) {
-                //TO-DO Change color here,
-                // Change Node hover color from sigmajs settings
-                //change node color to other?
-                if (com.dark_theme_root) {
-                    //regex to increase opacity
-                    e.color = e.color.replace(/[\d\.]+\)$/g, '1)')
-                }
-            });
             sigma_instance.refresh();
         },
         "active_subset": function(subset, old_subset) {
@@ -149,6 +140,13 @@ Vue.component("visualization", {
             }
 
             sigma_instance.refresh();
+        },
+        "dark_theme_root": function (){
+            if (this.dark_theme_root) {
+                this.change_renderer('#FFF');}
+            else{
+                this.change_renderer('#000')
+            }
         }
     },
     methods: {
@@ -243,9 +241,28 @@ Vue.component("visualization", {
         get_select_range: function(start, length) {
             return length > 0 ? {start: start, end: start + length} : {start: start + length, end: start};
         },
-        change_theme:function() {
-            console.log("HERE")
+        change_renderer:function(textcolor){
+            for (i in sigma_instance.renderers){
+                sigma_instance.renderers[i].clear();
+                sigma_instance.killRenderer(i);
+            }
+            sigma_instance.addRenderer({
+            container: "sigma-canvas",
+            type: "canvas",
+            camera: sigma_instance.addCamera(),
+            settings: {
+                defaultLabelColor: textcolor,
+                hideEdgesOnMove: true,
+                maxEdgeSize: 0.3,
+                minEdgeSize: 0.3,
+                minNodeSize: 1,
+                maxNodeSize: 20,
+                labelThreshold: 5
+            }
+        });
+            sigma_instance.refresh();
         }
+
     },
     mounted: function() {
         var com = this;
