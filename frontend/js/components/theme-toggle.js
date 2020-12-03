@@ -11,9 +11,15 @@ Vue.component("theme-toggle",{
          com.$parent.dark_theme_root = !com.isActive;
          com.isActive = !com.isActive;
          if (com.isActive){
+             document.getElementById('pgdb-app').classList.remove('white-theme')
+             document.getElementById('pgdb-app').classList.add('black-theme')
+
              document.getElementById('left-control-panel').classList.remove('white-theme')
              document.getElementById('left-control-panel').classList.add('black-theme')
          }else {
+             document.getElementById('pgdb-app').classList.remove('black-theme')
+             document.getElementById('pgdb-app').classList.add('white-theme')
+
              document.getElementById('left-control-panel').classList.remove('black-theme')
              document.getElementById('left-control-panel').classList.add('white-theme')
          }

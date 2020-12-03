@@ -4,24 +4,28 @@ margin: 0px;
 }
 
 a {
-	color: blue;
 }
 
 #modules-parent {
-	position: relative;
+	/*position: relative;*/
+	width: 300px;
+	height: auto;
+	overflow: auto;
 }
 
 #modules {
 	z-index: 999;
-	position: absolute;
-	display: inline-block;
-	color: white;
+	/*color: white;*/
 	border-style: solid;
 	border-width: 1px;
 	left: 300px;
-	margin: 5px;}
+	margin: 2px;
+	overflow-y:scroll;
+	max-height: 50px;
+}
 
 #modules .rectangle{
+	/*position: absolute;*/
     width:20px;
     height:20px;
 }
@@ -243,14 +247,17 @@ margin-bottom:20px;
 }
 
 #mainpanel {
-margin-top: 25px;
-margin-left: 25px;
+float:left;
+/*margin-top: 25px;
+margin-left: 25px;*/
 background:#fff;
-background-color:rgba(255,255,255,0.8);
+/*background-color:rgba(255,255,255,0.8);*/
+background-color: lightgray;
+color: black;
 border:1px solid #ccc;
 z-index:20;
-position:fixed;
-top:0;
+/*position:fixed;
+top:0;*/
 }
 
 #mainpanel .b1 {
@@ -650,16 +657,26 @@ body.loading .modal {
 
 .white-theme {
 	background-color: white;
+	color: black;
 }
 
 .black-theme {
 	background-color: black;
+	color: white;
 }
 
+#left-control-panel{
+	display: grid;
+	float: left;
+}
 #chart-area {
 	position: relative;
     top: 0;
-	height: 100%;
-	width: 100%;
+	height: inherit;
+	width: 78%;
 	float: right;
+}
+
+#protein-list{
+	color: black;
 }
