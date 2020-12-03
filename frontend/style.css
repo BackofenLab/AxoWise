@@ -248,6 +248,7 @@ margin-bottom:20px;
 
 #mainpanel {
 float:left;
+display: grid;
 /*margin-top: 25px;
 margin-left: 25px;*/
 background:#fff;
@@ -256,8 +257,6 @@ background-color: lightgray;
 color: black;
 border:1px solid #ccc;
 z-index:20;
-/*position:fixed;
-top:0;*/
 }
 
 #mainpanel .b1 {

@@ -37,8 +37,12 @@ Vue.component("visualization", {
     watch: {
         "gephi_json": function(json) {
             var com = this;
+            var edge_width = json.edge_thick
             sigma_instance.graph.clear();
             sigma_instance.graph.read(com.gephi_json);
+            sigma_instance.graph.edges().forEach(function (e) {
+                e.color = e.color.replace(/[\d\.]+\)$/g, edge_width+')')
+            });
             sigma_instance.refresh();
         },
         "active_subset": function(subset, old_subset) {

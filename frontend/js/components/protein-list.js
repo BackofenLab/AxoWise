@@ -18,6 +18,12 @@ Vue.component("protein-list", {
                 max: 1.0,
                 step: 0.001
             },
+            edge_thick: {
+                value: 0.2,
+                min: 0,
+                max: 1.0,
+                step: 0.1
+            },
             raw_text: null,
             selected_species: null
         }
@@ -44,6 +50,7 @@ Vue.component("protein-list", {
                 species_id: com.selected_species,
             })
                 .done(function (json) {
+                    json.edge_thick = com.edge_thick.value;
                     $("body").removeClass("loading");
                     com.$emit("gephi-json-changed", json);
             });
@@ -83,6 +90,24 @@ Vue.component("protein-list", {
                 v-model="threshold.value"
             />
             <br/><br/>
+            
+            <h4>Edge Color thickness</h4>
+              <input id="threshold-slider"
+                type="range"
+                v-bind:min="edge_thick.min"
+                v-bind:max="edge_thick.max"
+                v-bind:step="edge_thick.step"
+                v-model="edge_thick.value"
+            />
+            <input id="threshold-input"
+                type="number"
+                v-bind:min="edge_thick.min"
+                v-bind:max="edge_thick.max"
+                v-bind:step="edge_thick.step"
+                v-model="edge_thick.value"
+            />
+            <br/><br/>
+
 
             <button id="submit-btn">Submit</button>
         </div>
