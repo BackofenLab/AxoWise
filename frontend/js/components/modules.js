@@ -5,6 +5,14 @@ Vue.component("modules", {
             modules: {}
         }
     },
+    updated: function() {
+        var element=$('#modules');
+        if($(element).html()==''){
+        $(element).parent().hide();
+        }else{
+             $(element).parent().show();
+        }
+    },
     methods: {
         select_module(subset) {
             var com = this;

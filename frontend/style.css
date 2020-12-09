@@ -7,21 +7,25 @@ a {
 }
 
 #modules-parent {
-	/*position: relative;*/
-	width: 300px;
-	height: auto;
-	overflow: auto;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	z-index: 999;
+	width: max-content;
+	max-height: 100vh;
+	border-style: solid;
+	border-width: 1px;
+	padding: 2px;
+	display: none;
 }
 
 #modules {
 	z-index: 999;
 	/*color: white;*/
-	border-style: solid;
-	border-width: 1px;
-	left: 300px;
+	/*left: 300px;*/
 	margin: 2px;
 	overflow-y:scroll;
-	max-height: 50px;
+	/*max-height: 50px;*/
 }
 
 #modules .rectangle{
@@ -91,6 +95,7 @@ html,body, #pgdb-app {
 	border-left: 1px solid #ccc;
 	padding: 0px 18px 0px 18px;	
 	z-index: 1;
+	color: black;
 }
 
 
