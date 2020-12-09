@@ -36,10 +36,10 @@ Vue.component("modules", {
     },
     template: `
         <div id="modules-parent" class="modules-position">
+            <div><h4> Groups </h4></div>
             <div id="modules">
-                <div v-for="(value, key, index) in modules" style=" display: grid; grid-template-columns: 0.1fr 0.9fr">
+                <div v-for="(value, key, index) in modules" >
                     <a href="#"><div class="rectangle" v-bind:style="{background: key}" v-on:click="select_module(value)"></div></a>
-                    <label>Group {{index + 1}}</label>
                 </div>
             </div>
         </div>
