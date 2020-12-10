@@ -20,7 +20,7 @@ sigma.classes.graph.addMethod('ensemblIdToNode', function(ensembl_id) {
 
 // Component
 Vue.component("visualization", {
-    props: ["gephi_json", "active_node", "active_term", "active_subset", "node_color_index", "edge_color_index", "dark_theme_root"],
+    props: ["gephi_json", "active_node", "active_term", "active_subset", "node_color_index", "edge_color_index", "dark_theme_root","edge_thick"],
     data: function() {
         return {
             rectangular_select: {
@@ -31,18 +31,17 @@ Vue.component("visualization", {
                 surface_backup: null
             },
             container: null,
-            darkThemeOn: false
+            darkThemeOn: false,
+            edge_opacity: 0.2
         }
     },
     watch: {
         "gephi_json": function(json) {
             var com = this;
-            var edge_width = json.edge_thick
+            this.edge_opacity = json.edge_thick;
             sigma_instance.graph.clear();
             sigma_instance.graph.read(com.gephi_json);
-            sigma_instance.graph.edges().forEach(function (e) {
-                e.color = e.color.replace(/[\d\.]+\)$/g, edge_width+')')
-            });
+            com.edit_opacity();
             sigma_instance.refresh();
         },
         "active_subset": function(subset, old_subset) {
@@ -97,9 +96,9 @@ Vue.component("visualization", {
                 else target.color = "rgb(255, 255, 255)"; // white
 
                 // Edge
-                if (source_present && !target_present || !source_present && target_present) e.color = "rgba(255, 125, 125, 0.2)"; // pink
-                else if(source_present && target_present) e.color = "rgba(255, 0, 0, 0.2)"; // red
-                else e.color = "rgba(255, 255, 255, 0.2)"; // white
+                if (source_present && !target_present || !source_present && target_present) e.color = "rgba(255, 125, 125, "+ this.edge_opacity +")"; // pink
+                else if(source_present && target_present) e.color = "rgba(255, 0, 0, "+ this.edge_opacity +")"; // red
+                else e.color = "rgba(255, 255, 255, "+ this.edge_opacity +")"; // white
             });
 
             sigma_instance.refresh();
@@ -164,6 +163,7 @@ Vue.component("visualization", {
                 t.color = com.node_color_index[e.target]; t.hidden = false;
                 e.color = com.edge_color_index[e.id]; e.hidden = false;
             });
+            com.edit_opacity();
             sigma_instance.refresh();
         },
         // Rectangular select
@@ -192,7 +192,7 @@ Vue.component("visualization", {
                 context.strokeStyle = "rgb(82,182,229)";
                 context.strokeRect(rectangle.startX, rectangle.startY, rectangle.w, rectangle.h);
                 context.setLineDash([]);
-                context.fillStyle = "rgba(82,182,229,0.2)";
+                context.fillStyle = "rgba(82,182,229,"+ this.edge_opacity +")";
                 context.fillRect(rectangle.startX, rectangle.startY, rectangle.w, rectangle.h);
             }
         },
@@ -265,8 +265,14 @@ Vue.component("visualization", {
             }
         });
             sigma_instance.refresh();
+        },
+        edit_opacity: function() {
+            var com = this;
+             sigma_instance.graph.edges().forEach(function (e) {
+                e.color = e.color.replace(/[\d\.]+\)$/g, com.edge_opacity+')');
+            });
+            sigma_instance.refresh();
         }
-
     },
     mounted: function() {
         var com = this;
@@ -305,6 +311,11 @@ Vue.component("visualization", {
         com.rectangular_select.canvas.onmousemove = com.mousemove;
         com.rectangular_select.canvas.onmouseup = com.mouseup;
         com.rectangular_select.context = com.rectangular_select.canvas.getContext("2d");
+
+        this.eventHub.$on('edge-update', data => {
+             this.edge_opacity = data;
+             this.edit_opacity();
+        });
     },
     template: `
     <div class="sigma-parent">

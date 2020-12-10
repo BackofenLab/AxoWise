@@ -54,12 +54,18 @@ Vue.component("protein-list", {
                     $("body").removeClass("loading");
                     com.$emit("gephi-json-changed", json);
             });
+        },
+        updateSlider: function (){
+            this.eventHub.$emit('edge-update', this.edge_thick.value);
         }
     },
     mounted: function() {
         var com = this;
         $("#submit-btn").button();
         $("#submit-btn").click(com.submit);
+        $("#edge-slider").slider();
+        $("#edge-slider").change(com.updateSlider);
+
     },
     template: `
         <div class="cf">
@@ -71,7 +77,7 @@ Vue.component("protein-list", {
             <br/><br/>
 
             <h4>Protein list:</h4>
-            <textarea ref="protein_list_input" id="protein-list" v-model="raw_text" rows="10" cols="30" autofocus/></textarea><br/>
+            <textarea ref="protein_list_input" id="protein-list" v-model="raw_text" rows="10" cols="30" autofocus></textarea><br/>
             <br/>
 
             <h4>Protein - protein score threshold:</h4>
@@ -90,16 +96,17 @@ Vue.component("protein-list", {
                 v-model="threshold.value"
             />
             <br/><br/>
-            
+            <button id="submit-btn">Submit</button>
+            <br/><br/>
             <h4>Edge Color thickness</h4>
-              <input id="threshold-slider"
+              <input id="edge-slider"
                 type="range"
                 v-bind:min="edge_thick.min"
                 v-bind:max="edge_thick.max"
                 v-bind:step="edge_thick.step"
                 v-model="edge_thick.value"
             />
-            <input id="threshold-input"
+            <input id="edge-input"
                 type="number"
                 v-bind:min="edge_thick.min"
                 v-bind:max="edge_thick.max"
@@ -107,9 +114,6 @@ Vue.component("protein-list", {
                 v-model="edge_thick.value"
             />
             <br/><br/>
-
-
-            <button id="submit-btn">Submit</button>
         </div>
-    `
+`
 });
