@@ -25,6 +25,7 @@ $(document).ready(function () {
         },
         watch: {
             gephi_json: function(json) {
+                if (!json) return ; //handling null json from backend
                 var com = this;
                 com.node_color_index = {};
                 for (var idx in json.nodes) {
