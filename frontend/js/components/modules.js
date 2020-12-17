@@ -23,8 +23,8 @@ Vue.component("modules", {
     watch: {
         "gephi_json": function() {
             var com = this;
-
             com.modules = {};
+            if(!com.gephi_json) return; //handling null json from backend
 
             var nodes = com.gephi_json.nodes;
             for (var idx in nodes) {

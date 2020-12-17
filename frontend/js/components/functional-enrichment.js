@@ -16,6 +16,7 @@ Vue.component("functional-enrichment", {
     watch: {
         "gephi_json": function(json) {
             var com = this;
+            if (!json) return ; //handling null json from backend
             if (!json.enrichment) return;
 
             com.terms = [];

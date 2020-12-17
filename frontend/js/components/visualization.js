@@ -37,11 +37,16 @@ Vue.component("visualization", {
     },
     watch: {
         "gephi_json": function(json) {
-            var com = this;
-            this.edge_opacity = json.edge_thick;
+            if (!json) { //null json
+
             sigma_instance.graph.clear();
-            sigma_instance.graph.read(com.gephi_json);
-            com.edit_opacity();
+            } else {
+                var com = this;
+                this.edge_opacity = json.edge_thick;
+                sigma_instance.graph.clear();
+                sigma_instance.graph.read(com.gephi_json);
+                com.edit_opacity();
+            }
             sigma_instance.refresh();
         },
         "active_subset": function(subset, old_subset) {

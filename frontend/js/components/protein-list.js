@@ -50,9 +50,13 @@ Vue.component("protein-list", {
                 species_id: com.selected_species,
             })
                 .done(function (json) {
-                    json.edge_thick = com.edge_thick.value;
                     $("body").removeClass("loading");
-                    com.$emit("gephi-json-changed", json);
+                    if(Object.keys(json).length == 0){
+                         com.$emit("gephi-json-changed", null);
+                    }else{
+                        json.edge_thick = com.edge_thick.value;
+                        com.$emit("gephi-json-changed", json);
+                    }
             });
         },
         updateSlider: function (){
@@ -65,7 +69,7 @@ Vue.component("protein-list", {
         $("#submit-btn").click(com.submit);
         $("#edge-slider").slider();
         $("#edge-slider").change(com.updateSlider);
-
+        $("#edge-input").change(com.updateSlider); //update from input control
     },
     template: `
         <div class="cf">
