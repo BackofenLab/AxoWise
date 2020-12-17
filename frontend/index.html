@@ -15,7 +15,7 @@
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
 
       <!-- Our web application -->
@@ -51,6 +51,18 @@
             </div>
           </div>
         </div>
+              <div id="developercontainer">
+          <a href="http://www.bioinf.uni-freiburg.de/" title="BackofenLab">
+            <div id="backofenlab">
+              <span>BackofenLab</span>
+            </div>
+          </a>
+          <a title="NeuroMac">
+            <div id="neuromac">
+              <span>NeuroMac</span>
+            </div>
+          </a>
+        </div>
           </div>
           <subset-dialog :active_subset="active_subset"
                        v-bind:gephi_json="gephi_json"
@@ -81,23 +93,11 @@
                         v-on:active-node-changed="active_node = $event"
         ></attribute-pane>
           </div>
-           <div id="bottom-tools-area"></div>
+         <!-- <div id="bottom-tools-area"></div>-->
         <term-pane v-bind:active_term="active_term"
                    v-on:active-node-changed="active_node = $event"
                    v-on:active-term-changed="active_term = $event"
         ></term-pane>
-        <div id="developercontainer">
-          <a href="http://www.bioinf.uni-freiburg.de/" title="BackofenLab">
-            <div id="backofenlab">
-              <span>BackofenLab</span>
-            </div>
-          </a>
-          <a title="NeuroMac">
-            <div id="neuromac">
-              <span>NeuroMac</span>
-            </div>
-          </a>
-        </div>
         <div class="modal"><center>This may take a while. Please be patient...</center></div>
       </div>
     </div>
