@@ -59,8 +59,11 @@ Vue.component("protein-list", {
                     }
             });
         },
-        updateSlider: function (){
+        updateSlider: function(){
             this.eventHub.$emit('edge-update', this.edge_thick.value);
+        },
+        exportGraph: function(){
+            this.eventHub.$emit('export-graph', null);
         }
     },
     mounted: function() {
@@ -70,6 +73,8 @@ Vue.component("protein-list", {
         $("#edge-slider").slider();
         $("#edge-slider").change(com.updateSlider);
         $("#edge-input").change(com.updateSlider); //update from input control
+        $("#export-btn").button();
+        $("#export-btn").click(com.exportGraph);
     },
     template: `
         <div class="cf">
@@ -117,6 +122,8 @@ Vue.component("protein-list", {
                 v-bind:step="edge_thick.step"
                 v-model="edge_thick.value"
             />
+             <br/><br/>
+             <button id="export-btn" type="export">Export Graph</button>
             <br/><br/>
         </div>
 `

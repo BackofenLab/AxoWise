@@ -323,6 +323,11 @@ Vue.component("visualization", {
              this.edge_opacity = data;
              this.edit_opacity();
         });
+
+        this.eventHub.$on('export-graph', data => {
+            var output = sigma_instance.toSVG({download: true, filename: 'graph.svg', size: 1000});
+        });
+
     },
     template: `
     <div class="sigma-parent">
