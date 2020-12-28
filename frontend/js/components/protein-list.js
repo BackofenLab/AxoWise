@@ -24,6 +24,7 @@ Vue.component("protein-list", {
                 max: 1.0,
                 step: 0.1
             },
+            export_file: "graph",
             raw_text: null,
             selected_species: null
         }
@@ -63,7 +64,7 @@ Vue.component("protein-list", {
             this.eventHub.$emit('edge-update', this.edge_thick.value);
         },
         exportGraph: function(){
-            this.eventHub.$emit('export-graph', null);
+            this.eventHub.$emit('export-graph', (0 === this.export_file.length) ? 'graph.svg' : this.export_file + '.svg');
         }
     },
     mounted: function() {
@@ -123,7 +124,13 @@ Vue.component("protein-list", {
                 v-model="edge_thick.value"
             />
              <br/><br/>
-             <button id="export-btn" type="export">Export Graph</button>
+             <div style="display: flex">
+               <button id="export-btn" type="export">Export Graph</button>
+               <input id="file_name"
+                type="text"
+                v-model="export_file"
+               />
+             </div>
             <br/><br/>
         </div>
 `

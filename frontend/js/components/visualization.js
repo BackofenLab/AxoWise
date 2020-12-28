@@ -325,7 +325,7 @@ Vue.component("visualization", {
         });
 
         this.eventHub.$on('export-graph', data => {
-            var output = sigma_instance.toSVG({download: true, filename: 'graph.svg', size: 1000});
+            var output = sigma_instance.toSVG({download: true, filename: data, size: 1000});
         });
 
     },
