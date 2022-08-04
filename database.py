@@ -25,11 +25,12 @@ def connect_neo4j(credentials_path=_DEFAULT_CREDENTIALS_PATH):
 
     neo4j = credentials["neo4j"]
 
-    # Connect to the Neo4j database
+    #Connect to the Neo4j database
     neo4j_graph = py2neo.Graph(
         host=neo4j["host"],
-        https_port=neo4j["port"],
-        password=neo4j["pw"]
+        port=neo4j["port"],
+        password=neo4j["pw"],
+        scheme="http"
     )
 
     connected = False
