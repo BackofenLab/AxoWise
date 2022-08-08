@@ -5,7 +5,10 @@ i.e. `java` is in PATH variable and available
 to be called.
 """
 
+from asyncio.subprocess import STDOUT
+from os import system
 import subprocess
+from sys import stderr, stdout
 
 def pipe_call(jar_path: str, stdin: str, encoding="utf-8"):
     """
@@ -15,14 +18,16 @@ def pipe_call(jar_path: str, stdin: str, encoding="utf-8"):
     of the terminated JAR subprocess.
     """
 
-    process = subprocess.Popen(
+    #Runs the executable JAR file given the standard input 'stdin' to recieve an CompletedProcess Object
+    output = subprocess.run(
         ["java", "-jar", jar_path],
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.DEVNULL
+        input=bytes(stdin, encoding),
+        capture_output=True
     )
-    process.stdin.write(bytes(stdin, encoding))
-    process.stdin.close() # EOF
-    stdout = str(process.stdout.read(), encoding)
-    process.wait()
-    return stdout
+
+    #Check standard output 'stdout' whether it's empty to control errors
+    if not output.stdout:
+        raise Exception(output.stderr.decode())
+    else:
+        return output.stdout.decode()    
+  
