@@ -80,7 +80,25 @@ def proteins_subgraph_api():
                 """
         return query
         
-    query = create_query_assoc()
+    # Create a query to find all neighbours of a single protein_id and create a file with all properties
+    def create_query_single():
+        
+        query = """
+                WITH "MATCH (source:Protein)-[association:ASSOCIATION]-(target:Protein)
+                WHERE source.id IN
+                """ + repr(protein_ids) + ' AND association.combined >= ' + repr(threshold) + """
+                RETURN source, target, association.combined AS score" AS query
+                CALL apoc.export.csv.query(query, "/tmp/neo4j_output.csv", {})
+                YIELD file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data
+                RETURN file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data;
+                """
+        return query
+
+    #Decide which query to select (Option 1: associations of a set of genes) (Option 2: neighbours of a single gene)
+    if(len(protein_ids)>1):
+        query = create_query_assoc()
+    else:
+        query = create_query_single()
 
     #Timer to evaluate runtime to setup
     t_setup = time.time()
