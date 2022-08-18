@@ -150,6 +150,10 @@ def proteins_subgraph_api():
         encoding="utf-8"
     )
 
+    #Check standard output 'stdout' whether it's empty to control errors
+    if not data.stdout:
+        raise Exception(data.stderr) 
+
     #Timer for Neo4j query
     t_neo4j = time.time()
     print("Time Spent (Neo4j):", t_neo4j-t_setup)
