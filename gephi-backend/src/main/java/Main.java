@@ -8,13 +8,18 @@ import org.gephi.appearance.plugin.palette.PaletteManager;
 import org.gephi.graph.api.*;
 import org.gephi.io.exporter.api.ExportController;
 import org.gephi.layout.plugin.AutoLayout;
+import org.gephi.plugin.CirclePack.*;
+import org.gephi.layout.plugin.forceAtlas.ForceAtlasLayout;
 import org.gephi.layout.plugin.forceAtlas2.ForceAtlas2;
+import org.gephi.layout.plugin.noverlap.NoverlapLayout;
 import org.gephi.preview.api.*;
 import org.gephi.preview.types.EdgeColor;
 import org.gephi.project.api.ProjectController;
 import org.gephi.project.api.Workspace;
+import org.gephi.statistics.plugin.Degree;
 import org.gephi.statistics.plugin.GraphDistance;
 import org.gephi.statistics.plugin.Modularity;
+import org.gephi.statistics.plugin.builder.DegreeBuilder;
 import org.javatuples.Pair;
 import org.openide.util.Lookup;
 
@@ -25,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
-
 
 public class Main {
 
@@ -55,18 +59,17 @@ public class Main {
             undirectedGraph.addEdge(e);
         System.err.println("Edges:" + undirectedGraph.getEdgeCount());
 
-
         // Appearance controller
         AppearanceController appearanceController = Lookup.getDefault().lookup(AppearanceController.class);
 
         // Style
         setPreviewProperties();
 
-        // Rank node size by centrality
-        rankNodeSizeByCentrality(graphModel, appearanceController);
-
         // Partition node color by modularity
         partitionNodeColorByModularity(graphModel, appearanceController);
+
+        // Rank node size by degree
+        rankNodeSizeByDegree(graphModel, appearanceController);
 
         // Layout
         runLayout(graphModel);
@@ -77,7 +80,8 @@ public class Main {
         // Write to standard output
         outputJson(graphModel, workspace);
 
-        // Stupid hack, otherwise the program doesn't terminate (probably some Gephi thread/process in the background)
+        // Stupid hack, otherwise the program doesn't terminate (probably some Gephi
+        // thread/process in the background)
         System.exit(0);
     }
 
@@ -129,7 +133,7 @@ public class Main {
         CSVReaderHeaderAware csvReader;
         Map<String, String> nextRecord;
 
-        try  {
+        try {
             StringReader stringReader = new StringReader(nodesString);
             csvReader = new CSVReaderHeaderAware(stringReader);
             while (true) {
@@ -153,8 +157,7 @@ public class Main {
             }
             csvReader.close();
             stringReader.close();
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
 
@@ -195,7 +198,7 @@ public class Main {
                     continue;
 
                 Edge e = graphFactory.newEdge(n1, n2, false);
-                e.setAttribute("score",  Integer.parseInt(score));
+                e.setAttribute("score", Integer.parseInt(score));
 
                 edges.add(e);
             }
@@ -213,31 +216,33 @@ public class Main {
         PreviewController previewController = Lookup.getDefault().lookup(PreviewController.class);
         PreviewModel previewModel = previewController.getModel();
         PreviewProperties previewProperties = previewModel.getProperties();
-        previewProperties.putValue(PreviewProperty.EDGE_CURVED, Boolean.FALSE);
-        previewProperties.putValue(PreviewProperty.EDGE_OPACITY, 50);
+        previewProperties.putValue(PreviewProperty.EDGE_CURVED, Boolean.TRUE);
+        previewProperties.putValue(PreviewProperty.EDGE_OPACITY, 30);
         previewProperties.putValue(PreviewProperty.NODE_BORDER_WIDTH, 0);
         previewProperties.putValue(PreviewProperty.EDGE_COLOR, EdgeColor.Mode.MIXED);
     }
 
-    private static void rankNodeSizeByCentrality(GraphModel graphModel, AppearanceController appearanceController) {
+    private static void rankNodeSizeByDegree(GraphModel graphModel, AppearanceController appearanceController) {
         AppearanceModel appearanceModel = appearanceController.getModel();
         UndirectedGraph undirectedGraph = graphModel.getUndirectedGraph();
 
-        // Graph distance
-        GraphDistance distance = new GraphDistance();
-        distance.setNormalized(true);
-        distance.execute(graphModel);
+        // Graph Degree
+        Degree degree = new Degree();
+        degree.execute(graphModel);
 
         // Ranking
-        Column centralityColumn = graphModel.getNodeTable().getColumn(GraphDistance.BETWEENNESS);
-        Function centralityRanking = appearanceModel.getNodeFunction(undirectedGraph, centralityColumn, RankingNodeSizeTransformer.class);
-        RankingNodeSizeTransformer centralityTransformer = centralityRanking.getTransformer();
-        centralityTransformer.setMinSize(5);
-        centralityTransformer.setMaxSize(20);
-        appearanceController.transform(centralityRanking);
+        Column degreeColumn = graphModel.getNodeTable().getColumn(Degree.DEGREE);
+        Function degreeRanking = appearanceModel.getNodeFunction(degreeColumn,
+                RankingNodeSizeTransformer.class);
+        RankingNodeSizeTransformer degreeTransformer = degreeRanking.getTransformer();
+        degreeTransformer.setMinSize(5);
+        degreeTransformer.setMaxSize(80);
+        appearanceController.transform(degreeRanking);
+
     }
 
-    private static void partitionNodeColorByModularity(GraphModel graphModel, AppearanceController appearanceController) {
+    private static void partitionNodeColorByModularity(GraphModel graphModel,
+            AppearanceController appearanceController) {
         AppearanceModel appearanceModel = appearanceController.getModel();
         UndirectedGraph undirectedGraph = graphModel.getUndirectedGraph();
 
@@ -247,30 +252,31 @@ public class Main {
         modularity.execute(graphModel);
 
         Column modularityColumn = graphModel.getNodeTable().getColumn(Modularity.MODULARITY_CLASS);
-        Function modularityPartitioning = appearanceModel.getNodeFunction(undirectedGraph, modularityColumn, PartitionElementColorTransformer.class);
+        Function modularityPartitioning = appearanceModel.getNodeFunction(modularityColumn,
+                PartitionElementColorTransformer.class);
         Partition partition = ((PartitionFunction) modularityPartitioning).getPartition();
 
         PaletteManager paletteManager = PaletteManager.getInstance();
-        Palette randomPalette = paletteManager.generatePalette(partition.size());
-        partition.setColors(randomPalette.getColors());
+        Palette randomPalette = paletteManager.generatePalette(partition.size(undirectedGraph));
+        partition.setColors(undirectedGraph, randomPalette.getColors());
 
         appearanceController.transform(modularityPartitioning);
     }
 
     private static void runLayout(GraphModel graphModel) {
-        AutoLayout autoLayout = new AutoLayout(1, TimeUnit.SECONDS);
+        AutoLayout autoLayout = new AutoLayout(3, TimeUnit.SECONDS);
         autoLayout.setGraphModel(graphModel);
 
-        // ForceAtlas2 layout
-        ForceAtlas2 forceAtlas2 = new ForceAtlas2(null);
-        forceAtlas2.setScalingRatio(1200.); // Repulsion
-        autoLayout.addLayout(forceAtlas2, 1.f);
+        // ForceAtlas layout
+        CirclePackLayout circlepack = new CirclePackLayout(null);
+        circlepack.setHierarchy1(Modularity.MODULARITY_CLASS);
+        circlepack.setHierarchy2(Degree.DEGREE);
+        autoLayout.addLayout(circlepack, 1.f);
         autoLayout.execute();
     }
 
-
     private static void outputJson(GraphModel graphModel, Workspace workspace) {
-        for (Edge e: graphModel.getUndirectedGraph().getEdges()) {
+        for (Edge e : graphModel.getUndirectedGraph().getEdges()) {
             e.setWeight(0.05);
         }
 
@@ -282,9 +288,5 @@ public class Main {
         jsonExporter.setWriter(writer);
         jsonExporter.execute(); // Hacked implementation that writes to standard output
     }
-
-
-
-
 
 }
