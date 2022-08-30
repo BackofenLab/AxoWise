@@ -186,6 +186,10 @@ def proteins_subgraph_api():
     # TO-DO Front end response to be handled
     if edges.empty:
         return Response(json.dumps([]), mimetype="application/json")
+    
+    #Creating only the main Graph and exclude not connected subgraphs
+    nodes = graph_utilities.create_nodes_subgraph(edges, nodes)
+    edges = graph_utilities.create_edges_subgraph(edges)
 
     #Timer to evaluate runtime between cypher-shell and extracting data
     t_parsing = time.time()
@@ -230,9 +234,9 @@ def proteins_subgraph_api():
         stdout = jar.pipe_call(_BACKEND_JAR_PATH, stdin)
 
         sigmajs_data = json.loads(stdout)
-        edgedf, nodedf = graph_utilities.create_graphdf(sigmajs_data)
-        clusterdf = graph_utilities.generate_clusters(edgedf, nodedf)
-        newCoordinates = graph_utilities.adjust_points(clusterdf)
+        # edgedf, nodedf = graph_utilities.create_graphdf(sigmajs_data)
+        # clusterdf = graph_utilities.generate_clusters(edgedf, nodedf)
+        # newCoordinates = graph_utilities.adjust_points(clusterdf)
     
     #Timer to evaluate runtime of calling gephi
     t_gephi = time.time()
@@ -240,9 +244,9 @@ def proteins_subgraph_api():
 
     for node in sigmajs_data["nodes"]:
         df_node = nodes[nodes["id"] == int(node["id"])].iloc[0]
-        coordinate = newCoordinates[newCoordinates['id'] == int(node["id"])].iloc[0]
-        node['x'] = coordinate['x']
-        node['y'] = coordinate['y']
+        # coordinate = newCoordinates[newCoordinates['id'] == int(node["id"])].iloc[0]
+        # node['x'] = coordinate['x']
+        # node['y'] = coordinate['y']
         node["attributes"]["Description"] = df_node["description"]
         node["attributes"]["Ensembl ID"] = df_node["external_id"]
         node["attributes"]["Name"] = df_node["name"]

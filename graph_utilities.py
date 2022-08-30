@@ -13,6 +13,30 @@ def create_graphdf(data):
 
 
 
+def create_nodes_subgraph(dataframe, subnodes):
+    graphtype = nx.Graph()
+    nodes_list = []
+    graph = nx.from_pandas_edgelist(dataframe,'source','target', create_using=graphtype)
+    main_component = max(nx.connected_components(graph), key=len)
+    for i in main_component:
+        loc_sub = subnodes.loc[subnodes['id']==i]
+        dict_sub = loc_sub.to_dict('records')
+        nodes_list.append(dict_sub[0])
+    new_df = pd.DataFrame(nodes_list)
+    return new_df
+  
+  
+  
+def create_edges_subgraph(dataframe):
+    graphtype = nx.Graph()
+    graph = nx.from_pandas_edgelist(dataframe,'source','target', create_using=graphtype)
+    main_component = max(nx.connected_components(graph), key=len)
+    main_component = list(main_component)
+    loc_sub = dataframe.loc[dataframe['source'].isin(main_component) | dataframe['target'].isin(main_component)]
+    return loc_sub
+    
+
+
 def generate_clusters(edges, nodedata):
     protein_g = nx.from_pandas_edgelist(edges, 'source', 'target', True, nx.Graph())
     nx.set_node_attributes(protein_g, nodedata.set_index('id').to_dict('index'))
