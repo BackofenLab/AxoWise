@@ -64,7 +64,7 @@ Vue.component("protein-list", {
             this.eventHub.$emit('edge-update', this.edge_thick.value);
         },
         exportGraph: function(){
-            this.eventHub.$emit('export-graph', (0 === this.export_file.length) ? 'graph.svg' : this.export_file + '.svg');
+            this.eventHub.$emit('export-graph', (0 === this.export_file.length) ? 'graph.png' : this.export_file + '.png');
         }
     },
     mounted: function() {

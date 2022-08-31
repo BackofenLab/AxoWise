@@ -93,17 +93,18 @@ Vue.component("visualization", {
                 var target_present = proteins.has(target_ensembl_id);
 
                 // Source
-                if (source_present) source.color = "rgb(255, 0, 0)"; // red
-                else source.color = "rgb(255, 255, 255)"; // white
+                if (source_present) source.color = "rgb(255, 255, 255)"; // white
+                else source.color = "rgb(0, 100, 0)"; // green
 
                 // Target
-                if (target_present) target.color = "rgb(255, 0, 0)"; // red
-                else target.color = "rgb(255, 255, 255)"; // white
+                if (target_present) target.color = "rgb(255, 255, 255)"; // white
+                else target.color = "rgb(0, 100, 0)"; // green
 
                 // Edge
-                if (source_present && !target_present || !source_present && target_present) e.color = "rgba(255, 125, 125, "+ this.edge_opacity +")"; // pink
-                else if(source_present && target_present) e.color = "rgba(255, 0, 0, "+ this.edge_opacity +")"; // red
-                else e.color = "rgba(255, 255, 255, "+ this.edge_opacity +")"; // white
+                if (source_present && !target_present || !source_present && target_present) e.color = "rgba(220, 255, 220, 0.2)"; // pink
+                else if(source_present && target_present) e.color = "rgba(255, 255, 255, 0.2)"; // white
+                else e.color = "rgba(0, 100, 0, 0.2)"; // green
+
             });
 
             sigma_instance.refresh();
@@ -325,7 +326,7 @@ Vue.component("visualization", {
         });
 
         this.eventHub.$on('export-graph', data => {
-            var output = sigma_instance.toSVG({download: true, filename: data, size: 1000});
+            var dataURL = sigma_instance.renderers[0].snapshot({download:true});
         });
 
     },
