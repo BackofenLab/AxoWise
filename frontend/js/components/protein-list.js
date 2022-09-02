@@ -26,30 +26,47 @@ Vue.component("protein-list", {
             },
             export_file: "graph",
             raw_text: null,
-            selected_species: null
+            protein_file: null,
+            selected_species: null,
+            d_value: false
         }
     },
     methods: {
         submit: function() {
             var com = this;
+            protein_file = document.getElementById("protein-file");
 
             if (com.selected_species == null) {
                 alert("Please select a species!");
                 return;
             }
 
-            if (com.raw_text == null || com.raw_text == "") {
+            if (com.raw_text == null && protein_file.files.length == 0 || com.raw_text == "" && protein_file.files.length == 0) {
                 alert("Please provide a list of proteins!");
                 return;
             }
+            
+            // Creating FormData to send files & parameters with an ajax call
+            protein_list = protein_file.files[0];
+            formData = new FormData();
+            if(protein_file.files.length == 0){
+                formData.append('proteins', com.raw_text.split('\n').join(';'));
+            }else{
+                formData.append('file', protein_list);
+            }
+            formData.append('threshold', com.threshold.value);
+            formData.append('species_id', com.selected_species);
+            
+            $("body").addClass("loading");         
 
-            $("body").addClass("loading");
-
-            $.post(com.api.subgraph, {
-                proteins: com.raw_text.split('\n').join(';'),
-                threshold: com.threshold.value,
-                species_id: com.selected_species,
-            })
+            $.ajax({
+                type: 'POST',
+                url: com.api.subgraph,
+                data: formData,
+                contentType: false,
+                cache: false,
+                processData: false,
+              })
                 .done(function (json) {
                     $("body").removeClass("loading");
                     if(Object.keys(json).length == 0){
@@ -89,6 +106,14 @@ Vue.component("protein-list", {
             <h4>Protein list:</h4>
             <textarea ref="protein_list_input" id="protein-list" v-model="raw_text" rows="10" cols="30" autofocus></textarea><br/>
             <br/>
+
+            <h4>Protein file:</h4>
+            <input type="file" id="protein-file" accept=".csv">
+            <br/><br/>
+
+            <h4>Apply D_Value:</h4>
+            <input type="checkbox" id="d_value" v-model="d_value" checked>
+            <br/><br/>
 
             <h4>Protein - protein score threshold:</h4>
             <input id="threshold-slider"
