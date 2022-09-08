@@ -1,5 +1,5 @@
-Vue.component("term-pane", {
-    props: ["active_term"],
+Vue.component("dvalue-pane", {
+    props: ["d_value"],
     data: function() {
         return {
             selected_term: null,
@@ -13,51 +13,35 @@ Vue.component("term-pane", {
         }
     },
     watch: {
-        "active_term": function(term) {
-            var com = this;
-            if (term == null) {
-                $("#termpane").animate({width: 'hide'}, 350);
-                return;
-            }
-
-            com.selected_term = term;
-
-            com.links = [];
-            for (var idx in term.proteins) {
-                var node = sigma_instance.graph.ensemblIdToNode(term.proteins[idx]);
-                com.links.push(node);
-            }
-
-            // TODO
-            $("#termpane").animate({width:'show'}, 350);
-        },
         "d_value": function(term) {
             var com = this;
             if (term == null) {
-                $("#termpane").animate({width: 'hide'}, 350);
+                $("#dvaluepane").animate({width: 'hide'}, 350);
                 return;
             }
 
-            com.selected_term = term;
-
+            var proteins = term[0][0];
+            com.selected_term = proteins; 
             com.links = [];
-            for (var idx in term.proteins) {
-                var node = sigma_instance.graph.ensemblIdToNode(term.proteins[idx]);
-                com.links.push(node);
-            }
+            sigma_instance.graph.nodes().forEach(e => {
+                if(proteins[e.attributes['Name']] > 0){
+                    var node = sigma_instance.graph.ensemblIdToNode(e.attributes['Ensembl ID']);
+                    com.links.push(node);  
+                }
+            });
 
             // TODO
-            $("#termpane").animate({width:'show'}, 350);
+            $("#dvaluepane").animate({width:'show'}, 350);
         }
     },
     mounted: function() {
         var com = this;
 
-        $("#termpane").find(".returntext").click(() => com.$emit("active-term-changed", null));
-        $("#termpane").find(".close").click(() => com.$emit("active-term-changed", null));
+        $("#dvaluepane").find(".returntext").click(() => com.$emit("d_value-changed", null));
+        $("#dvaluepane").find(".close").click(() => com.$emit("d_value-changed", null));
     },
     template: `
-        <div id="termpane" class="pane">
+        <div id="dvaluepane" class="pane">
             <div class="text">
                 <div title="Close" class="left-close returntext">
                     <div class="c cf">
@@ -69,11 +53,7 @@ Vue.component("term-pane", {
                 </div>
                 <div v-if="selected_term !== null" class="nodeattributes">
                     <div class="name">
-                        <span>{{selected_term.name}}</span>
-                    </div>
-                    <div class="data">
-                        <span><strong>ID: </strong>{{selected_term.id}}</span><br/><br/>
-                        <span><strong>p-value: </strong>{{selected_term.p_value}}</span>
+                        <span>Positive D-Value</span>
                     </div>
                     <div class="p">Proteins:</div>
                     <div class="link">

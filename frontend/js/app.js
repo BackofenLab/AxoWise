@@ -21,7 +21,8 @@ $(document).ready(function () {
             active_node: null,
             active_term: null,
             active_subset: null,
-            dark_theme_root: true
+            dark_theme_root: true,
+            d_value: null,
         },
         watch: {
             gephi_json: function(json) {

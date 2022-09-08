@@ -111,10 +111,6 @@ Vue.component("protein-list", {
             <input type="file" id="protein-file" accept=".csv">
             <br/><br/>
 
-            <h4>Apply D_Value:</h4>
-            <input type="checkbox" id="d_value" v-model="d_value" checked>
-            <br/><br/>
-
             <h4>Protein - protein score threshold:</h4>
             <input id="threshold-slider"
                 type="range"

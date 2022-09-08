@@ -28,8 +28,10 @@
       <script src="js/components/search.js"></script>
       <script src="js/components/functional-enrichment.js"></script>
       <script src="js/components/term-pane.js"></script>
+      <script src="js/components/dvalue-pane.js"></script>
       <script src="js/components/subset-dialog.js"></script>
       <script src="js/components/modules.js"></script>
+      <script src="js/components/d-value.js"></script>
       <!-- <script src="js/components/theme-toggle.js"></script> -->
     </head>
 
@@ -43,12 +45,16 @@
             </div>
             <div class="b1">
               <protein-list v-model="gephi_json"></protein-list>
+              <d-value v-bind:gephi_json="gephi_json"
+                       v-on:d_value-changed="d_value = $event"
+              ></d-value>
               <search v-on:active-node-changed="active_node = $event"
                       v-bind:gephi_json="gephi_json"
               ></search>
               <functional-enrichment v-bind:gephi_json="gephi_json"
                                      v-on:active-term-changed="active_term = $event"
               ></functional-enrichment>
+
             </div>
           </div>
         </div>
@@ -70,6 +76,7 @@
                        v-bind:node2term_index="node2term_index"
                        v-on:active-node-changed="active_node = $event"
                        v-on:active-term-changed="active_term = $event"
+                       v-on:d_value-changed="d_value = $event"
                        v-on:active-subset-changed="active_subset = $event"
                         v-on:toggle-theme="active_node = $event"
         ></subset-dialog>
@@ -80,12 +87,14 @@
               <visualization v-bind:gephi_json="gephi_json"
                        v-bind:active_node="active_node"
                        v-bind:active_term="active_term"
+                       v-bind:d_value="d_value"
                        v-bind:active_subset="active_subset"
                        v-bind:node_color_index="node_color_index"
                        v-bind:edge_color_index="edge_color_index"
                        v-bind:dark_theme_root="dark_theme_root"
                        v-on:active-node-changed="active_node = $event"
                        v-on:active-term-changed="active_term = $event"
+                       v-on:d_value-changed="d_value = $event"
                        v-on:active-subset-changed="active_subset = $event"
         ></visualization>
               <zoom></zoom>
@@ -96,9 +105,15 @@
           </div>
          <!-- <div id="bottom-tools-area"></div>-->
         <term-pane v-bind:active_term="active_term"
+                   v-bind:d_value="d_value"
                    v-on:active-node-changed="active_node = $event"
                    v-on:active-term-changed="active_term = $event"
+                   v-on:d_value-changed="d_value = $event"
         ></term-pane>
+        <dvalue-pane v-bind:d_value="d_value"
+                     v-on:active-node-changed="active_node = $event"
+                     v-on:d_value-changed="d_value = $event"
+        ></dvalue-pane>
         <div class="modal"><center>This may take a while. Please be patient...</center></div>
       </div>
     </div>

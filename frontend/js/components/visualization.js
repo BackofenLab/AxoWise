@@ -20,7 +20,7 @@ sigma.classes.graph.addMethod('ensemblIdToNode', function(ensembl_id) {
 
 // Component
 Vue.component("visualization", {
-    props: ["gephi_json", "active_node", "active_term", "active_subset", "node_color_index", "edge_color_index", "dark_theme_root","edge_thick"],
+    props: ["gephi_json", "active_node", "active_term", "active_subset", "node_color_index", "edge_color_index", "d_value", "dark_theme_root","edge_thick"],
     data: function() {
         return {
             rectangular_select: {
@@ -114,10 +114,12 @@ Vue.component("visualization", {
 
             if (id == null) {
                 if (com.active_term == null) com.reset();
+                if (com.d_value == null) com.reset();
                 return;
             }
 
             if (com.active_term != null) com.$emit("active-term-changed", null);
+            if (com.d_value != null) com.$emit("d_value-changed", null);
 
             var neighbors = {};
             var node = sigma_instance.graph.getNodeFromIndex(id);
@@ -156,7 +158,44 @@ Vue.component("visualization", {
             else{
                 this.change_renderer('#000')
             }
-        }
+        },
+        "d_value": function(term) {
+            var com = this;
+
+            if (term == null) {
+                if (com.active_node == null) com.reset();
+                return;
+            }
+
+            if (com.active_node != null) com.$emit("active-node-changed", null);
+
+            var proteins = term[0][0];
+
+            sigma_instance.graph.edges().forEach(function (e) {
+                // Nodes
+                var source = sigma_instance.graph.getNodeFromIndex(e.source);
+                var target = sigma_instance.graph.getNodeFromIndex(e.target);
+
+                // Ensembl IDs
+                var source_name = source.attributes["Name"];
+                var target_name = target.attributes["Name"];
+
+
+                // Source
+                source.color = proteins[source_name]; // red
+                target.color = proteins[target_name]; // red
+                e.color = proteins[source_name] + "25";
+
+                // // Edge
+                // if (proteins[source_name] > 0 && proteins[target_name] < 0 || 
+                // proteins[source_name] < 0 && proteins[target_name] > 0) e.color = "rgba(255, 100, 255, 0.2)"; // purple
+                // else if(proteins[source_name] > 0 && proteins[target_name] > 0) e.color = "rgba(255, 0, 0, 0.2)"; // white
+                // else e.color = "rgba(0, 0, 255, 0.2)"; // green
+
+            });
+
+            sigma_instance.refresh();
+        },
     },
     methods: {
         reset: function() {
