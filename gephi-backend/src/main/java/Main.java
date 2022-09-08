@@ -144,7 +144,7 @@ public class Main {
 
                 nextRecord = csvReader.readMap();
 
-                String id = nextRecord.get("id");
+                String id = nextRecord.get("external_id");
                 // String external_id = nextRecord.get("external_id");
                 // String name = nextRecord.get("name");
                 // String description = nextRecord.get("description");
@@ -264,13 +264,13 @@ public class Main {
     }
 
     private static void runLayout(GraphModel graphModel) {
-        AutoLayout autoLayout = new AutoLayout(3, TimeUnit.SECONDS);
+        AutoLayout autoLayout = new AutoLayout(30, TimeUnit.MILLISECONDS);
         autoLayout.setGraphModel(graphModel);
 
         // ForceAtlas layout
         CirclePackLayout circlepack = new CirclePackLayout(null);
         circlepack.setHierarchy1(Modularity.MODULARITY_CLASS);
-        circlepack.setHierarchy2(Degree.DEGREE);
+        // circlepack.setHierarchy2(Degree.DEGREE);
         autoLayout.addLayout(circlepack, 1.f);
         autoLayout.execute();
     }
