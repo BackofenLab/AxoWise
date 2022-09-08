@@ -1,0 +1,35 @@
+
+--
+-- PostgreSQL database dump
+--
+
+BEGIN;
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+SET search_path = public, pg_catalog;
+
+
+--
+-- Data for Name: items.proteins; Type: TABLE DATA
+--
+
+COPY items.proteins(protein_external_id, preferred_name, protein_size, annotation, species_id)
+FROM 'filepath/10090.protein.info.v11.5.csv'
+DELIMITER ','
+CSV HEADER;
+
+
+--
+-- Data for Name: network.node_node_links; Type: TABLE DATA
+--
+
+COPY network.node_node_links(node_id_a, node_id_b, combined_score, node_type_b)
+FROM 'filepath/10090.protein.links.v11.5.csv'
+DELIMITER ','
+CSV HEADER;
