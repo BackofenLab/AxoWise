@@ -5,6 +5,9 @@ Neo4j graph database.
 
 # ========================= Creating queries =========================
 
+from utils import batches
+
+
 def add_compound(graph, params):
     """
     Create a compound with the specified id and
@@ -99,7 +102,6 @@ def add_protein(graph, params):
     query = """
         UNWIND $batch as entry
         CREATE (protein:Protein {
-            id: entry.id,
             external_id: entry.external_id,
             name: toUpper(entry.preferred_name),
             description: entry.annotation,
@@ -149,11 +151,11 @@ def add_association(graph, params):
         UNWIND $batch as entry
 
         MATCH (protein1:Protein {
-            id: entry.id1
+            external_id: entry.id1
         })
 
         MATCH (protein2:Protein {
-            id: entry.id2
+            external_id: entry.id2
         })
 
         CREATE (protein1)-[a:ASSOCIATION {
@@ -320,7 +322,7 @@ def get_protein_list(graph):
 
     query = """
         MATCH (protein:Protein)
-        RETURN protein.id AS id,
+        RETURN protein.external_id AS id,
                protein.name AS name,
                protein.species_id AS species_id
     """

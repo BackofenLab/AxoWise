@@ -8,6 +8,8 @@ from collections import defaultdict
 import csv
 from sys import stderr
 from threading import Timer
+import matplotlib.cm as cm
+import matplotlib.colors as colors
 
 # import networkx as nx
 from flask import Flask, Response, request, send_from_directory
@@ -18,6 +20,7 @@ import stringdb
 
 import cypher_queries as Cypher
 import database
+import direct_search
 import fuzzy_search
 from layout import shell_layout
 
@@ -31,7 +34,7 @@ app = Flask(__name__)
 _SCRIPT_DIR = os.path.dirname(__file__)
 _SERVE_DIR = "frontend"
 _INDEX_FILE = "index.html"
-_BACKEND_JAR_PATH = "gephi-backend/out/artifacts/gephi_backend_jar/gephi.backend.jar"
+_BACKEND_JAR_PATH = "gephi-backend/target/gephi.backend-1.0-SNAPSHOT.jar"
 
 @app.route("/")
 def index():
@@ -51,11 +54,16 @@ def proteins_subgraph_api():
 
     #Begin a timer to time
     t_begin = time.time()
-
+    
     # Queried proteins
-    query_proteins = request.form.get("proteins").split(";")
-    query_proteins = list(filter(None, query_proteins))
+    if (not request.files.get("file")):
+        query_proteins = request.form.get("proteins").split(";")
+        query_proteins = list(filter(None, query_proteins))
+    else:
+        panda_file = pd.read_csv(request.files.get("file"))
+        query_proteins = panda_file['SYMBOL'].to_list()
 
+    
     # Species
     species_id = int(request.form.get("species_id"))
 
@@ -63,7 +71,7 @@ def proteins_subgraph_api():
     threshold = int(float(request.form.get("threshold")) * 1000)
 
     # Fuzzy search mapping
-    proteins = fuzzy_search.search_protein_list(query_proteins, species_id=species_id)
+    proteins = direct_search.search_protein_list(query_proteins, species_id=species_id)
     protein_ids = list(map(lambda p: p.id, proteins))
 
     # Create a query to find all associations between protein_ids and create a file with all properties
@@ -71,8 +79,8 @@ def proteins_subgraph_api():
         
         query = """
                 WITH "MATCH (source:Protein)-[association:ASSOCIATION]->(target:Protein)
-                WHERE source.id IN
-                """ + repr(protein_ids) + ' AND target.id IN ' + repr(protein_ids) + ' AND association.combined >= ' + repr(threshold) + """
+                WHERE source.external_id IN
+                """ + repr(protein_ids) + ' AND target.external_id IN ' + repr(protein_ids) + ' AND association.combined >= ' + repr(threshold) + """
                 RETURN source, target, association.combined AS score" AS query
                 CALL apoc.export.csv.query(query, "/tmp/neo4j_output.csv", {})
                 YIELD file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data
@@ -166,14 +174,14 @@ def proteins_subgraph_api():
         for row in reader:
             source_row, target_row = ast.literal_eval(row['source']), ast.literal_eval(row['target'])
             source_row_prop, target_row_prop = source_row.get('properties'), target_row.get('properties')
-            source.append(source_row_prop.get('id'))
-            target.append(target_row_prop.get('id'))
+            source.append(source_row_prop.get('external_id'))
+            target.append(target_row_prop.get('external_id'))
             score.append(int(row['score']))
             proteins.append(source_row_prop)
             proteins.append(target_row_prop)
 
     nodes = pd.DataFrame(proteins)
-    nodes = nodes.drop_duplicates(subset="id") # TODO `nodes` can be empty
+    nodes = nodes.drop_duplicates(subset="external_id") # TODO `nodes` can be empty
 
     edges = pd.DataFrame({
         "source": source,
@@ -181,6 +189,8 @@ def proteins_subgraph_api():
         "score": score
     })
     edges = edges.drop_duplicates(subset=["source", "target"]) # TODO edges` can be empty
+ 
+    
 
     #no data from database, return from here
     # TO-DO Front end response to be handled
@@ -194,7 +204,25 @@ def proteins_subgraph_api():
     #Timer to evaluate runtime between cypher-shell and extracting data
     t_parsing = time.time()
     print("Time Spent (Parsing):", t_parsing-t_neo4j)
-
+    
+    # D-Value listing
+    if not (request.files.get("file") is None):
+        dvalue_dict = {}
+        listdvalue = []
+        panda_file.rename(columns={'SYMBOL': 'name', 'wt6h_wt0h': 'dvalue'}, inplace=True)
+        # max_dValue = float(panda_file['dvalue'].max())
+        # min_dValue = float(panda_file['dvalue'].min())
+        norm = colors.Normalize(vmin=-2.0, vmax=2.0, clip=False)
+        f2rgb = cm.ScalarMappable(norm=norm, cmap=cm.get_cmap('seismic'))
+        
+        for _,row in panda_file.iterrows():
+            rgb = f2rgb.to_rgba(row['dvalue'])[:3]
+            hex = '#%02x%02x%02x' % tuple([int(255*fc) for fc in rgb])
+            dvalue_dict[row['name'].upper()] = hex
+        listdvalue.append(dvalue_dict)
+        
+        
+        
 
     # Functional enrichment
     external_ids = nodes["external_id"].tolist()
@@ -226,7 +254,8 @@ def proteins_subgraph_api():
         edges_csv = io.StringIO()
 
         # JAR accepts only id
-        nodes["id"].to_csv(nodes_csv, index=False, header=True)
+        nodes["external_id"].to_csv(nodes_csv, index=False, header=True)
+        
         # JAR accepts source, target, score
         edges.to_csv(edges_csv, index=False, header=True)
 
@@ -243,7 +272,7 @@ def proteins_subgraph_api():
     print("Time Spent (Gephi):", t_gephi-t_enrich)
 
     for node in sigmajs_data["nodes"]:
-        df_node = nodes[nodes["id"] == int(node["id"])].iloc[0]
+        df_node = nodes[nodes["external_id"] == node["id"]].iloc[0]
         # coordinate = newCoordinates[newCoordinates['id'] == int(node["id"])].iloc[0]
         # node['x'] = coordinate['x']
         # node['y'] = coordinate['y']
@@ -253,6 +282,8 @@ def proteins_subgraph_api():
         node["label"] = df_node["name"]
 
     sigmajs_data["enrichment"] = list_enrichment
+    if not (request.files.get("file") is None):
+        sigmajs_data["dvalue"] = listdvalue
 
     #Timer for final steps
     t_end = time.time()
