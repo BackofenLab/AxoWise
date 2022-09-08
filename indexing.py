@@ -72,6 +72,23 @@ def create_protein_q_gram_index():
 
     return index
 
+def get_protein_connection():
+    """
+    Direct neo4j search of the given proteins.
+    
+    Returns:
+        int: Id of the given string
+    """
+    neo4j_graph = database.connect_neo4j()
+    
+    protein_list = defaultdict(set)
+    for row in Cypher.get_protein_list(neo4j_graph):
+        protein = Protein(**row)
+        protein_list[row['name']].add(protein)
+    
+    return protein_list
+    
+    
 # ========================= Pathway =========================
 
 Pathway = namedtuple("Pathway", ["id", "name", "species_id"])
