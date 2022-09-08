@@ -11,8 +11,7 @@ def _build_proteins_query(species_id):
     """
 
     query = """
-        SELECT protein_id,
-                protein_external_id,
+        SELECT  protein_external_id,
                 preferred_name,
                 annotation
         FROM items.proteins
@@ -31,10 +30,9 @@ def _build_associations_query(species_id):
 
     query = """
         SELECT node_node_links.node_id_a, node_node_links.node_id_b,
-                node_node_links.combined_score,
-                node_node_links.evidence_scores
+                node_node_links.combined_score
         FROM network.node_node_links AS node_node_links
-        JOIN items.proteins AS proteins ON proteins.protein_id = node_node_links.node_id_a
+        JOIN items.proteins AS proteins ON proteins.protein_external_id = node_node_links.node_id_a
         WHERE proteins.species_id = %s AND
                 node_id_a < node_id_b;
     """
@@ -104,10 +102,9 @@ def get_proteins(postgres_connection, species_id):
 
         for row in rows:
             yield {
-                "id": row[0],
-                "external_id": row[1],
-                "preferred_name": row[2],
-                "annotation": row[3].strip()
+                "external_id": row[0],
+                "preferred_name": row[1],
+                "annotation": row[2].strip()
             }
 
     cursor.close()
@@ -134,8 +131,7 @@ def get_associations(postgres_connection, species_id):
             yield {
                 "id1": row[0],
                 "id2": row[1],
-                "combined_score": row[2],
-                "evidence_scores": row[3]
+                "combined_score": row[2]
             }
 
     cursor.close()
