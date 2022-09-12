@@ -209,7 +209,7 @@ def proteins_subgraph_api():
     if not (request.files.get("file") is None):
         dvalue_dict = {}
         listdvalue = []
-        panda_file.rename(columns={'SYMBOL': 'name', 'wt6h_wt0h': 'dvalue'}, inplace=True)
+        panda_file.rename(columns={'SYMBOL': 'name', 'nippo_vs_StSt': 'dvalue'}, inplace=True)
         # max_dValue = float(panda_file['dvalue'].max())
         # min_dValue = float(panda_file['dvalue'].min())
         norm = colors.Normalize(vmin=-2.0, vmax=2.0, clip=False)
