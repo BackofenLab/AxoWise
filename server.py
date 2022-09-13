@@ -93,8 +93,8 @@ def proteins_subgraph_api():
         
         query = """
                 WITH "MATCH (source:Protein)-[association:ASSOCIATION]-(target:Protein)
-                WHERE source.id IN
-                """ + repr(protein_ids) + ' AND association.combined >= ' + repr(threshold) + """
+                WHERE source.external_id IN
+                """ + repr(protein_ids) + 'OR target.external_id IN' + repr(protein_ids) + ' AND association.combined >= ' + repr(threshold) + """
                 RETURN source, target, association.combined AS score" AS query
                 CALL apoc.export.csv.query(query, "/tmp/neo4j_output.csv", {})
                 YIELD file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data
@@ -157,7 +157,6 @@ def proteins_subgraph_api():
         capture_output=True,
         encoding="utf-8"
     )
-
     #Check standard output 'stdout' whether it's empty to control errors
     if not data.stdout:
         raise Exception(data.stderr) 
@@ -209,18 +208,24 @@ def proteins_subgraph_api():
     if not (request.files.get("file") is None):
         dvalue_dict = {}
         listdvalue = []
-        panda_file.rename(columns={'SYMBOL': 'name', 'nippo_vs_StSt': 'dvalue'}, inplace=True)
+        panda_file.rename(columns={'SYMBOL': 'name', 'nippo_vs_StSt': 'dvalue1', 'dss_vs_StSt': 'dvalue2', 'nippo_vs_StSt_padj': 'dvalue3', 'dss_vs_StSt_padj': 'dvalue4'}, inplace=True)
         # max_dValue = float(panda_file['dvalue'].max())
         # min_dValue = float(panda_file['dvalue'].min())
-        norm = colors.Normalize(vmin=-2.0, vmax=2.0, clip=False)
+        norm = colors.Normalize(vmin=-4.0, vmax=4.0, clip=False)
         f2rgb = cm.ScalarMappable(norm=norm, cmap=cm.get_cmap('seismic'))
         
         for _,row in panda_file.iterrows():
-            rgb = f2rgb.to_rgba(row['dvalue'])[:3]
-            hex = '#%02x%02x%02x' % tuple([int(255*fc) for fc in rgb])
-            dvalue_dict[row['name'].upper()] = hex
+            print(row['dvalue3'])
+            rgb1 = f2rgb.to_rgba(row['dvalue1'])[:3]
+            hex1 = '#%02x%02x%02x' % tuple([int(255*fc) for fc in rgb1])
+            rgb2 = f2rgb.to_rgba(row['dvalue2'])[:3]
+            hex2 = '#%02x%02x%02x' % tuple([int(255*fc) for fc in rgb2])
+            rgb3 = f2rgb.to_rgba(row['dvalue3'])[:3]
+            hex3 = '#%02x%02x%02x' % tuple([int(255*fc) for fc in rgb3])
+            rgb4 = f2rgb.to_rgba(row['dvalue4'])[:3]
+            hex4 = '#%02x%02x%02x' % tuple([int(255*fc) for fc in rgb4])
+            dvalue_dict[row['name'].upper()] = [hex1,hex2,hex3,hex4]
         listdvalue.append(dvalue_dict)
-        
         
         
 

@@ -20,15 +20,15 @@ Vue.component("dvalue-pane", {
                 return;
             }
 
-            var proteins = term[0][0];
-            com.selected_term = proteins; 
-            com.links = [];
-            sigma_instance.graph.nodes().forEach(e => {
-                if(proteins[e.attributes['Name']] > 0){
-                    var node = sigma_instance.graph.ensemblIdToNode(e.attributes['Ensembl ID']);
-                    com.links.push(node);  
-                }
-            });
+            // var proteins = term[0][0];
+            // com.selected_term = proteins; 
+            // com.links = [];
+            // sigma_instance.graph.nodes().forEach(e => {
+            //     if(proteins[e.attributes['Name']] > 0){
+            //         var node = sigma_instance.graph.ensemblIdToNode(e.attributes['Ensembl ID']);
+            //         com.links.push(node);  
+            //     }
+            //});
 
             // TODO
             $("#dvaluepane").animate({width:'show'}, 350);

@@ -182,9 +182,9 @@ Vue.component("visualization", {
 
 
                 // Source
-                source.color = proteins[source_name]; // red
-                target.color = proteins[target_name]; // red
-                e.color = proteins[source_name] + "25";
+                source.color = proteins[source_name][term[1]]; // red
+                target.color = proteins[target_name][term[1]]; // red
+                e.color = proteins[source_name][term[1]] + "25";
 
                 // // Edge
                 // if (proteins[source_name] > 0 && proteins[target_name] < 0 || 
