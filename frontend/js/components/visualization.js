@@ -180,18 +180,11 @@ Vue.component("visualization", {
                 var source_name = source.attributes["Name"];
                 var target_name = target.attributes["Name"];
 
-
-                // Source
-                source.color = proteins[source_name][term[1]]; // red
-                target.color = proteins[target_name][term[1]]; // red
-                e.color = proteins[source_name][term[1]] + "25";
-
-                // // Edge
-                // if (proteins[source_name] > 0 && proteins[target_name] < 0 || 
-                // proteins[source_name] < 0 && proteins[target_name] > 0) e.color = "rgba(255, 100, 255, 0.2)"; // purple
-                // else if(proteins[source_name] > 0 && proteins[target_name] > 0) e.color = "rgba(255, 0, 0, 0.2)"; // white
-                // else e.color = "rgba(0, 0, 255, 0.2)"; // green
-
+                
+                source.color = com.get_normalize(proteins[source_name], -1, 1);
+                target.color = com.get_normalize(proteins[target_name], -1, 1);
+                e.color = com.get_normalize(proteins[source_name], -1, 1).replace(')', ', 0.2)').replace('rgb', 'rgba');
+                    
             });
 
             sigma_instance.refresh();
@@ -319,6 +312,36 @@ Vue.component("visualization", {
                 e.color = e.color.replace(/[\d\.]+\)$/g, com.edge_opacity+')');
             });
             sigma_instance.refresh();
+        },
+        get_normalize: function(data, nmin, nmax) {
+
+            var rgb_value = d3.scaleLinear()
+                            .domain([nmin, 0, nmax])
+                            .range(["blue", "white", "red"])(data);
+
+            return rgb_value;
+        },
+        update_boundary: function(data) {
+            var com = this;
+
+            var minBound = -data;
+            var maxBound = data;
+
+            console.log(minBound);
+
+            sigma_instance.graph.edges().forEach(function (e) {
+                // Nodes
+                var source = sigma_instance.graph.getNodeFromIndex(e.source);
+                var target = sigma_instance.graph.getNodeFromIndex(e.target);
+
+                source.color = com.get_normalize(source.attributes["D Value"], minBound, maxBound);
+                target.color = com.get_normalize(source.attributes["D Value"], minBound, maxBound);
+                e.color = com.get_normalize(source.attributes["D Value"], minBound, maxBound).replace(')', ', 0.2)').replace('rgb', 'rgba');
+
+                    
+            });
+
+            sigma_instance.refresh();
         }
     },
     mounted: function() {
@@ -363,6 +386,11 @@ Vue.component("visualization", {
              this.edge_opacity = data;
              this.edit_opacity();
         });
+
+        this.eventHub.$on('dboundary-update', data => {
+            console.log(data);
+            this.update_boundary(data);
+       });
 
         this.eventHub.$on('export-graph', data => {
             var dataURL = sigma_instance.renderers[0].snapshot({download:true});

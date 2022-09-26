@@ -8,8 +8,7 @@ from collections import defaultdict
 import csv
 from sys import stderr
 from threading import Timer
-import matplotlib.cm as cm
-import matplotlib.colors as colors
+import plotly.express as px
 
 # import networkx as nx
 from flask import Flask, Response, request, send_from_directory
@@ -203,31 +202,26 @@ def proteins_subgraph_api():
     #Timer to evaluate runtime between cypher-shell and extracting data
     t_parsing = time.time()
     print("Time Spent (Parsing):", t_parsing-t_neo4j)
-    
-    # D-Value listing
+         
+    #D-Value categorize via percentage
     if not (request.files.get("file") is None):
         dvalue_dict = {}
         listdvalue = []
-        panda_file.rename(columns={'SYMBOL': 'name', 'nippo_vs_StSt': 'dvalue1', 'dss_vs_StSt': 'dvalue2', 'nippo_vs_StSt_padj': 'dvalue3', 'dss_vs_StSt_padj': 'dvalue4'}, inplace=True)
-        # max_dValue = float(panda_file['dvalue'].max())
-        # min_dValue = float(panda_file['dvalue'].min())
-        norm = colors.Normalize(vmin=-4.0, vmax=4.0, clip=False)
-        f2rgb = cm.ScalarMappable(norm=norm, cmap=cm.get_cmap('seismic'))
+        panda_file.rename(columns={'SYMBOL': 'name', 'nippo_vs_StSt': 'dvalue'}, inplace=True)
+        panda_file['name'] = panda_file['name'].str.upper()
+        
+        # #implement in javascript
+        # df = panda_file
+        # fig = px.density_heatmap(df, x="dvalue", y="dvalue")
+        # fig.show()
         
         for _,row in panda_file.iterrows():
-            print(row['dvalue3'])
-            rgb1 = f2rgb.to_rgba(row['dvalue1'])[:3]
-            hex1 = '#%02x%02x%02x' % tuple([int(255*fc) for fc in rgb1])
-            rgb2 = f2rgb.to_rgba(row['dvalue2'])[:3]
-            hex2 = '#%02x%02x%02x' % tuple([int(255*fc) for fc in rgb2])
-            rgb3 = f2rgb.to_rgba(row['dvalue3'])[:3]
-            hex3 = '#%02x%02x%02x' % tuple([int(255*fc) for fc in rgb3])
-            rgb4 = f2rgb.to_rgba(row['dvalue4'])[:3]
-            hex4 = '#%02x%02x%02x' % tuple([int(255*fc) for fc in rgb4])
-            dvalue_dict[row['name'].upper()] = [hex1,hex2,hex3,hex4]
+            dvalue_dict[row['name'].upper()] = row['dvalue']
         listdvalue.append(dvalue_dict)
-        
-        
+    
+        #Timer to evaluate enrichments runtime
+    t_dvalue = time.time()
+    print("Time Spent (DValue):", t_dvalue-t_parsing)
 
     # Functional enrichment
     external_ids = nodes["external_id"].tolist()
@@ -245,7 +239,7 @@ def proteins_subgraph_api():
 
     #Timer to evaluate enrichments runtime
     t_enrich = time.time()
-    print("Time Spent (Enrichment):", t_enrich-t_parsing)
+    print("Time Spent (Enrichment):", t_enrich-t_dvalue)
 
 
     if len(nodes.index) == 0:
@@ -268,9 +262,6 @@ def proteins_subgraph_api():
         stdout = jar.pipe_call(_BACKEND_JAR_PATH, stdin)
 
         sigmajs_data = json.loads(stdout)
-        # edgedf, nodedf = graph_utilities.create_graphdf(sigmajs_data)
-        # clusterdf = graph_utilities.generate_clusters(edgedf, nodedf)
-        # newCoordinates = graph_utilities.adjust_points(clusterdf)
     
     #Timer to evaluate runtime of calling gephi
     t_gephi = time.time()
@@ -278,12 +269,10 @@ def proteins_subgraph_api():
 
     for node in sigmajs_data["nodes"]:
         df_node = nodes[nodes["external_id"] == node["id"]].iloc[0]
-        # coordinate = newCoordinates[newCoordinates['id'] == int(node["id"])].iloc[0]
-        # node['x'] = coordinate['x']
-        # node['y'] = coordinate['y']
         node["attributes"]["Description"] = df_node["description"]
         node["attributes"]["Ensembl ID"] = df_node["external_id"]
         node["attributes"]["Name"] = df_node["name"]
+        node["attributes"]["D Value"] = panda_file.loc[panda_file["name"] == df_node["name"], 'dvalue'].item()
         node["label"] = df_node["name"]
 
     sigmajs_data["enrichment"] = list_enrichment
