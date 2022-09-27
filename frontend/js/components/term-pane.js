@@ -10,13 +10,22 @@ Vue.component("term-pane", {
         select_node: function(id) {
             var com = this;
             com.$emit("active-node-changed", id);
+        },
+        hide_panel: function(check) {
+            var com = this;
+            if (check == true){
+                $("#termpane").animate({width: 'show'}, 350);
+            }
+            if (check == false){
+                $("#termpane").animate({width: 'hide'}, 350);
+            }
         }
     },
     watch: {
         "active_term": function(term) {
             var com = this;
             if (term == null) {
-                $("#termpane").animate({width: 'hide'}, 350);
+                $("#termminimize").animate({width: 'hide'}, 350);
                 return;
             }
 
@@ -29,41 +38,23 @@ Vue.component("term-pane", {
             }
 
             // TODO
-            $("#termpane").animate({width:'show'}, 350);
-        },
-        "d_value": function(term) {
-            var com = this;
-            if (term == null) {
-                $("#termpane").animate({width: 'hide'}, 350);
-                return;
-            }
-
-            com.selected_term = term;
-
-            com.links = [];
-            for (var idx in term.proteins) {
-                var node = sigma_instance.graph.ensemblIdToNode(term.proteins[idx]);
-                com.links.push(node);
-            }
-
-            // TODO
-            $("#termpane").animate({width:'show'}, 350);
+            $("#termminimize").animate({width:'show'}, 350);
         }
     },
     mounted: function() {
         var com = this;
 
-        $("#termpane").find(".returntext").click(() => com.$emit("active-term-changed", null));
-        $("#termpane").find(".close").click(() => com.$emit("active-term-changed", null));
+        $("#termminimize").find("#dropdown-btn-max").click(() => com.hide_panel(true));
+        $("#termminimize").find("#dropdown-btn-min").click(() => com.hide_panel(false));
+        $("#termminimize").find("#dropdown-btn-close").click(() => com.$emit("active-term-changed", null));
     },
     template: `
+    <div id="termminimize" class="minimize">
+        <button id="dropdown-btn-max">Maximize</button>
+        <button id="dropdown-btn-min">Minimize</button>
+        <button id="dropdown-btn-close">Close</button>
         <div id="termpane" class="pane">
             <div class="text">
-                <div title="Close" class="left-close returntext">
-                    <div class="c cf">
-                        <span>Return to the full network</span>
-                    </div>
-                </div>
                 <div class="headertext">
                     <span>Information Pane</span>
                 </div>
@@ -86,5 +77,7 @@ Vue.component("term-pane", {
                 </div>
             </div>
         </div>
+    </div>
+</div>
     `
 });

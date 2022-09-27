@@ -17,32 +17,23 @@ Vue.component("dvalue-pane", {
             var com = this;
             com.$emit("active-node-changed", id);
         },
-        check_boundary: function() {
+        draw_legend: function() {
             var com = this;
-
-            $('#demo1').hide().show(0);
-            this.eventHub.$emit('dboundary-update', this.dboundary.value);
-        }
-    },
-    watch: {
-        "d_value": function(term) {
-            var com = this;
-            if (term == null) {
-                $("#dvaluepane").animate({width: 'hide'}, 350);
-                return;
-            }
 
             var minB = - com.dboundary.value;
             var maxB = com.dboundary.value;
             var listB = [minB, minB/2, minB/4, 0, maxB/4, maxB/2, maxB]
+
+            $("#demo1").html("");
             var svg = d3.select("#demo1");
-    
+
             var xScale = d3.scaleLinear()
                             .domain(listB)
                             .range([10, 40, 70, 100, 130, 160, 190]);
             
             var xAxis = d3.axisBottom(xScale)
                         .tickValues(listB);
+            
     
             svg.append("g")
                 .attr("transform", "translate(0,80)")
@@ -63,11 +54,35 @@ Vue.component("dvalue-pane", {
                 .attr("stroke", "black")
                 .attr("stroke-width", 1)
                 .attr("fill", (d) => colorScale(d));
-        
-            
+
+
+        },
+        check_boundary: function() {
+            var com = this;
+            this.draw_legend();
+            this.eventHub.$emit('dboundary-update', this.dboundary.value);
+        },
+        hide_panel: function(check) {
+            var com = this;
+            if (check == true){
+                $("#dvaluepane").animate({width: 'show'}, 350);
+            }
+            if (check == false){
+                $("#dvaluepane").animate({width: 'hide'}, 350);
+            }
+        }
+    },
+    watch: {
+        "d_value": function(term) {
+            var com = this;
+            if(term == null){
+                $("#minimizer").animate({width:'hide'}, 350);
+                return;
+            }
+            com.draw_legend();
 
             // TODO
-            $("#dvaluepane").animate({width:'show'}, 350);
+            $("#minimizer").animate({width:'show'}, 350);
         }
     },
     mounted: function() {
@@ -77,17 +92,17 @@ Vue.component("dvalue-pane", {
         $("#dboundary-slider").change(com.check_boundary);
         $("#dboundary-input").change(com.check_boundary);
 
-        $("#dvaluepane").find(".returntext").click(() => com.$emit("d_value-changed", null));
-        $("#dvaluepane").find(".close").click(() => com.$emit("d_value-changed", null));
+        $("#minimizer").find("#dropdown-btn-max").click(() => com.hide_panel(true));
+        $("#minimizer").find("#dropdown-btn-min").click(() => com.hide_panel(false));
+        $("#minimizer").find("#dropdown-btn-close").click(() => com.$emit("d_value-changed", null));
     },
     template: `
+    <div id="minimizer" class="minimize">
+        <button id="dropdown-btn-max">Maximize</button>
+        <button id="dropdown-btn-min">Minimize</button>
+        <button id="dropdown-btn-close">Close</button>
         <div id="dvaluepane" class="pane">
             <div class="text">
-                <div title="Close" class="left-close returntext">
-                    <div class="c cf">
-                        <span>Return to the full network</span>
-                    </div>
-                </div>
                 <div class="headertext">
                     <span>Information Pane</span>
                     <svg id="demo1" width="250" height="120"></svg>
@@ -122,5 +137,6 @@ Vue.component("dvalue-pane", {
                 </div>
             </div>
         </div>
+    </div>
     `
 });

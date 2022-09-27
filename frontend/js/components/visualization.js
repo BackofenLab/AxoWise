@@ -327,15 +327,13 @@ Vue.component("visualization", {
             var minBound = -data;
             var maxBound = data;
 
-            console.log(minBound);
-
             sigma_instance.graph.edges().forEach(function (e) {
                 // Nodes
                 var source = sigma_instance.graph.getNodeFromIndex(e.source);
                 var target = sigma_instance.graph.getNodeFromIndex(e.target);
 
                 source.color = com.get_normalize(source.attributes["D Value"], minBound, maxBound);
-                target.color = com.get_normalize(source.attributes["D Value"], minBound, maxBound);
+                target.color = com.get_normalize(target.attributes["D Value"], minBound, maxBound);
                 e.color = com.get_normalize(source.attributes["D Value"], minBound, maxBound).replace(')', ', 0.2)').replace('rgb', 'rgba');
 
                     
@@ -388,7 +386,6 @@ Vue.component("visualization", {
         });
 
         this.eventHub.$on('dboundary-update', data => {
-            console.log(data);
             this.update_boundary(data);
        });
 

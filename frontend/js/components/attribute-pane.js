@@ -14,7 +14,16 @@ Vue.component("attribute-pane", {
         normal_node: function() {
             var com = this;
 
-            $("#attributepane").animate({width: 'hide'}, 350);
+            $("#attrminimize").animate({width: 'hide'}, 350);
+        },
+        hide_panel: function(check) {
+            var com = this;
+            if (check == true){
+                $("#attributepane").animate({width: 'show'}, 350);
+            }
+            if (check == false){
+                $("#attributepane").animate({width: 'hide'}, 350);
+            }
         }
     },
     watch: {
@@ -48,23 +57,23 @@ Vue.component("attribute-pane", {
                     label: neighbor.label
                 })
             }
-            $("#attributepane").animate({width:'show'}, 350);
+            $("#attrminimize").animate({width:'show'}, 350);
         }
     },
     mounted: function() {
         var com = this;
 
-        $("#attributepane").find(".returntext").click(() => com.select_node(null));
-        $("#attributepane").find(".close").click(() => com.select_node(null));
+        $("#attrminimize").find("#dropdown-btn-max").click(() => com.hide_panel(true));
+        $("#attrminimize").find("#dropdown-btn-min").click(() => com.hide_panel(false));
+        $("#attrminimize").find("#dropdown-btn-close").click(() => com.select_node(null));
     },
     template: `
+    <div id="attrminimize" class="minimize">
+        <button id="dropdown-btn-max">Maximize</button>
+        <button id="dropdown-btn-min">Minimize</button>
+        <button id="dropdown-btn-close">Close</button>
         <div id="attributepane" class="pane">
             <div class="text">
-                <div title="Close" class="left-close returntext">
-                    <div class="c cf">
-                        <span>Return to the full network</span>
-                    </div>
-                </div>
                 <div class="headertext">
                     <span>Information Pane</span>
                 </div>
@@ -88,6 +97,7 @@ Vue.component("attribute-pane", {
                 </div>
             </div>
         </div>
-        </div>
+    </div>
+    </div>     
     `
 });

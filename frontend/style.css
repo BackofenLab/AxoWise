@@ -86,18 +86,33 @@ html,body{
 	-ms-user-select: none;
 	user-select: none;
 }
+.minimize {
+ display: block;	
+ display: none;
+ position:absolute;
+ height: auto;
+ bottom:0;
+ top: 10px;
+ right:0;
+ width: 240px;
+ margin: 0;
+ word-wrap: break-word;
+ padding: 0px 18px 0px 18px;	
+ z-index: 3;
+ color: black;
+}
 
 .pane {
-   	display: block;	
+   	display:block;	
 	display: none;
-    position:absolute;
+	position: absolute;
     height:auto;
     bottom:0;
     top:0;
     right:0;
 	width: 240px;
-	background-color: #fff;
 	margin: 0;
+	margin-top: 50px;
 	word-wrap: break-word;
 	background-color:rgba(255,255,255,0.8);
 	border-left: 1px solid #ccc;
@@ -115,6 +130,7 @@ html,body{
 	color: #000;
 	margin-bottom: 5px;
 	height: 14px;
+	margin-top: 10px;
 	border-bottom: 1px solid #999;
 	padding: 0px 0 10px 0;
 	font-size:16px;
