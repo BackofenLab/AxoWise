@@ -20,7 +20,7 @@ sigma.classes.graph.addMethod('ensemblIdToNode', function(ensembl_id) {
 
 // Component
 Vue.component("visualization", {
-    props: ["gephi_json", "active_node", "active_term", "active_subset", "node_color_index", "edge_color_index", "d_value", "dark_theme_root","edge_thick"],
+    props: ["gephi_json","func_json", "active_node", "active_term", "active_subset", "active_layer", "node_color_index", "edge_color_index", "d_value", "dark_theme_root","edge_thick"],
     data: function() {
         return {
             rectangular_select: {
@@ -67,11 +67,38 @@ Vue.component("visualization", {
 
             sigma_instance.refresh();
         },
+        "active_layer": function(subset) {
+            var com = this;
+
+            if (subset == null) {
+                sigma_instance.graph.nodes().forEach(function (n) {
+                    n.hidden = false;
+                });
+                sigma_instance.refresh();
+                com.$emit("func-json-changed", null);
+                return;
+            }
+
+            var proteins = new Set(subset.map(node => node.attributes["Ensembl ID"]));
+
+            sigma_instance.graph.nodes().forEach(function (n) {
+                if (!proteins.has(n.attributes["Ensembl ID"])){
+                    n.hidden = true;
+                }else{
+                    n.hidden = false;
+                }
+            });
+            
+            sigma_instance.refresh();
+        },
         "active_term": function(term) {
             var com = this;
 
             if (term == null) {
-                if (com.active_node == null) com.reset();
+                if (com.active_node == null) {
+                com.$emit("active-layer-changed", null);
+                com.reset();
+                }
                 return;
             }
 
@@ -101,8 +128,8 @@ Vue.component("visualization", {
                 else target.color = "rgb(0, 100, 0)"; // green
 
                 // Edge
-                if (source_present && !target_present || !source_present && target_present) e.color = "rgba(220, 255, 220, 0.2)"; // pink
-                else if(source_present && target_present) e.color = "rgba(255, 255, 255, 0.2)"; // white
+                if (source_present && !target_present || !source_present && target_present) e.color = "rgba(220, 255, 220, 0.25)"; // pink
+                else if(source_present && target_present) e.color = "rgba(255, 255, 255, 0.3)"; // white
                 else e.color = "rgba(0, 100, 0, 0.2)"; // green
 
             });

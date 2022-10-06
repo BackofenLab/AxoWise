@@ -21,8 +21,12 @@ $(document).ready(function () {
             active_node: null,
             active_term: null,
             active_subset: null,
+            active_layer: null,
             dark_theme_root: true,
             d_value: null,
+            func_json: null,
+            func_enrichment: null,
+            revert_term: null,
         },
         watch: {
             gephi_json: function(json) {
@@ -39,10 +43,13 @@ $(document).ready(function () {
                     var edge = json.edges[idx];
                     com.edge_color_index[edge.id] = edge.color;
                 }
-
-                com.node2term_index = {};
-                for (var i in json.enrichment) {
-                    var term = json.enrichment[i];
+            },
+            func_enrichment: function(enrichment) {
+                if (!enrichment) return ; //handling null json from backend
+                var com = this;
+                com.node2term_index = {};               
+                for (var i in enrichment) {
+                    var term = enrichment[i];
                     for (var j in term.proteins) {
                         var ensembl_id = term.proteins[j];
                         if (!(ensembl_id in com.node2term_index)) com.node2term_index[ensembl_id] = new Set();

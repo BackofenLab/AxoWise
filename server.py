@@ -8,6 +8,7 @@ from collections import defaultdict
 import csv
 from sys import stderr
 from threading import Timer
+from unicodedata import category
 import plotly.express as px
 
 # import networkx as nx
@@ -45,6 +46,30 @@ def index():
 def files(path):
     return send_from_directory(os.path.join(_SCRIPT_DIR, _SERVE_DIR), path)
 
+# ====================== Functional Enrichment ======================
+
+# TODO Refactor this
+@app.route("/api/subgraph/enrichment", methods=["POST"])
+def proteins_enrichment():
+    proteins = request.form.get("proteins").split(",")
+    species_id = request.form.get("species_id")
+    
+    df_enrichment = stringdb.functional_enrichment(proteins, species_id)
+    
+    list_enrichment = list()
+    if df_enrichment is not None:
+        for _, row in df_enrichment.iterrows():
+            list_enrichment.append(dict(
+                id=row["term"],
+                proteins=row["inputGenes"].split(","),
+                name=row["description"],
+                p_value=row["p_value"],
+                fdr_rate=row["fdr"],
+                category=row["category"]
+            ))
+    json_str=json.dumps(list_enrichment)  
+    return Response(json_str, mimetype="application/json")
+
 # ====================== Subgraph API ======================
 
 # TODO Refactor this
@@ -62,7 +87,6 @@ def proteins_subgraph_api():
         panda_file = pd.read_csv(request.files.get("file"))
         query_proteins = panda_file['SYMBOL'].to_list()
 
-    
     # Species
     species_id = int(request.form.get("species_id"))
 
@@ -194,7 +218,7 @@ def proteins_subgraph_api():
     # TO-DO Front end response to be handled
     if edges.empty:
         return Response(json.dumps([]), mimetype="application/json")
-    
+     
     #Creating only the main Graph and exclude not connected subgraphs
     nodes = graph_utilities.create_nodes_subgraph(edges, nodes)
     edges = graph_utilities.create_edges_subgraph(edges)
@@ -223,21 +247,21 @@ def proteins_subgraph_api():
     t_dvalue = time.time()
     print("Time Spent (DValue):", t_dvalue-t_parsing)
 
-    # Functional enrichment
-    external_ids = nodes["external_id"].tolist()
-    df_enrichment = stringdb.functional_enrichment(external_ids, species_id)
+    # # Functional enrichment
+    # external_ids = nodes["external_id"].tolist()
+    # df_enrichment = stringdb.functional_enrichment(external_ids, species_id)
 
-    list_enrichment = list()
-    if df_enrichment is not None:
-        for _, row in df_enrichment.iterrows():
-            list_enrichment.append(dict(
-                id=row["term"],
-                proteins=row["inputGenes"].split(","),
-                name=row["description"],
-                p_value=row["p_value"]
-            ))
+    # list_enrichment = list()
+    # if df_enrichment is not None:
+    #     for _, row in df_enrichment.iterrows():
+    #         list_enrichment.append(dict(
+    #             id=row["term"],
+    #             proteins=row["inputGenes"].split(","),
+    #             name=row["description"],
+    #             p_value=row["p_value"]
+    #         ))
 
-    #Timer to evaluate enrichments runtime
+    # #Timer to evaluate enrichments runtime
     t_enrich = time.time()
     print("Time Spent (Enrichment):", t_enrich-t_dvalue)
 
@@ -272,12 +296,14 @@ def proteins_subgraph_api():
         node["attributes"]["Description"] = df_node["description"]
         node["attributes"]["Ensembl ID"] = df_node["external_id"]
         node["attributes"]["Name"] = df_node["name"]
-        node["attributes"]["D Value"] = panda_file.loc[panda_file["name"] == df_node["name"], 'dvalue'].item()
+        if not (request.files.get("file") is None):
+            node["attributes"]["D Value"] = panda_file.loc[panda_file["name"] == df_node["name"], 'dvalue'].item()
         node["label"] = df_node["name"]
+        node["species"] = str(df_node["species_id"])
 
-    sigmajs_data["enrichment"] = list_enrichment
     if not (request.files.get("file") is None):
         sigmajs_data["dvalue"] = listdvalue
+    
 
     #Timer for final steps
     t_end = time.time()

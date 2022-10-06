@@ -54,17 +54,23 @@
                       v-bind:gephi_json="gephi_json"
               ></search>
               <functional-enrichment v-bind:gephi_json="gephi_json"
+                                     v-bind:func_json="func_json"
+                                     v-bind:func_enrichment="func_enrichment"
+                                     v-bind:revert_term="revert_term"
                                      v-on:active-term-changed="active_term = $event"
+                                     v-on:func-json-changed="func_json = $event"
+                                     v-on:func-enrichment-changed="func_enrichment = $event"
               ></functional-enrichment>
-
             </div>
           </div>
         </div>
           </div>
           <subset-dialog :active_subset="active_subset"
                        v-bind:gephi_json="gephi_json"
+                       v-bind:func_enrichment="func_enrichment"
                        v-bind:node2term_index="node2term_index"
                        v-on:active-node-changed="active_node = $event"
+                       v-on:func-json-changed="func_json = $event"
                        v-on:active-term-changed="active_term = $event"
                        v-on:d_value-changed="d_value = $event"
                        v-on:active-subset-changed="active_subset = $event"
@@ -78,7 +84,9 @@
                        v-bind:active_node="active_node"
                        v-bind:active_term="active_term"
                        v-bind:d_value="d_value"
+                       v-bind:func_json="func_json"
                        v-bind:active_subset="active_subset"
+                       v-bind:active_layer="active_layer"
                        v-bind:node_color_index="node_color_index"
                        v-bind:edge_color_index="edge_color_index"
                        v-bind:dark_theme_root="dark_theme_root"
@@ -86,6 +94,8 @@
                        v-on:active-term-changed="active_term = $event"
                        v-on:d_value-changed="d_value = $event"
                        v-on:active-subset-changed="active_subset = $event"
+                       v-on:active-layer-changed="active_layer = $event"
+                       v-on:func-json-changed="func_json = $event"
         ></visualization>
               <zoom></zoom>
               <theme-toggle></theme-toggle>
@@ -96,8 +106,13 @@
          <!-- <div id="bottom-tools-area"></div>-->
         <term-pane v-bind:active_term="active_term"
                    v-bind:d_value="d_value"
+                   v-bind:func_json="func_json"
+                   v-bind:revert_term="revert_term"
+                   v-on:active-layer-changed="active_layer = $event"
                    v-on:active-node-changed="active_node = $event"
                    v-on:active-term-changed="active_term = $event"
+                   v-on:func-json-changed="func_json = $event"
+                   v-on:revert-term-changed="revert_term = $event"
                    v-on:d_value-changed="d_value = $event"
         ></term-pane>
         <dvalue-pane v-bind:d_value="d_value"

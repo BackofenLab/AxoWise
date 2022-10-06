@@ -664,6 +664,18 @@ display: none;
 	padding-top: 20px;
 }
 
+#enrichment .modalpane {
+    display:    none;
+    position: relative;
+    z-index:    1000;
+    background:	url('./images/fancybox_loading.gif')
+                50% 50% 
+				no-repeat;
+	color: #fff;
+	font-size: 12pt;
+	padding-top: 30px;
+}
+
 /* When the body has the loading class, we turn
    the scrollbar off with overflow:hidden */
 body.loading {
@@ -673,6 +685,19 @@ body.loading {
 /* Anytime the body has the loading class, our
    modal element will be visible */
 body.loading .modal {
+    display: block;
+}
+
+/* When the enrichment has the loading class, we turn
+   the scrollbar off with overflow:hidden */
+#enrichment.loading {
+    overflow: hidden;
+
+}
+
+/* Anytime the enrichment has the loading class, our
+   modal element will be visible */
+#enrichment.loading .modalpane {
     display: block;
 }
 

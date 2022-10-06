@@ -1,10 +1,43 @@
 Vue.component("subset-dialog", {
-    props: ["gephi_json", "active_subset", "node2term_index"],
+    props: ["gephi_json", "active_subset", "node2term_index", "func_enrichment"],
+    data: function() {
+        return {
+            contained_terms: null,
+        }
+    },
     watch: {
         "active_subset": function(subset) {
+            var com = this;
             if (subset == null || subset.length < 1) return;
 
             $("#dialog").dialog("open");
+
+            var com = this;
+            if (com.func_enrichment == null || com.active_subset == null) return;
+
+            var all_terms = com.func_enrichment;
+            all_terms.sort(function(t1, t2) {
+                var p_t1 = parseFloat(t1.fdr_rate);
+                var p_t2 = parseFloat(t2.fdr_rate);
+                return p_t1 - p_t2;
+            });
+
+            function union(setA, setB) {
+                if (!setA && !setB) return new Set();
+                if (!setA) return setB;
+                if (!setB) return setA;
+
+                var _union = new Set(setA);
+                for (var elem of setB) {
+                    _union.add(elem);
+                }
+                return _union;
+            }
+
+            var ensembl_ids = com.active_subset.map(protein => protein.attributes["Ensembl ID"]);
+            var term_sets = ensembl_ids.map(id => com.node2term_index[id]);
+            com.contained_terms = term_sets.reduce(union, new Set());
+
         }
     },
     mounted: function() {
@@ -40,37 +73,6 @@ Vue.component("subset-dialog", {
             com.$emit("active-term-changed", term);
         }
     },
-    computed: {
-        terms: function() {
-            var com = this;
-            if (com.gephi_json == null || com.active_subset == null) return;
-
-            var all_terms = com.gephi_json.enrichment;
-            all_terms.sort(function(t1, t2) {
-                var p_t1 = parseFloat(t1.p_value);
-                var p_t2 = parseFloat(t2.p_value);
-                return p_t1 - p_t2;
-            });
-
-            function union(setA, setB) {
-                if (!setA && !setB) return new Set();
-                if (!setA) return setB;
-                if (!setB) return setA;
-
-                var _union = new Set(setA);
-                for (var elem of setB) {
-                    _union.add(elem);
-                }
-                return _union;
-            }
-
-            var ensembl_ids = com.active_subset.map(protein => protein.attributes["Ensembl ID"]);
-            var term_sets = ensembl_ids.map(id => com.node2term_index[id]);
-            var contained_terms = term_sets.reduce(union, new Set());
-
-            return contained_terms;
-        }
-    },
     template: `
         <div id="dialog" title="Protein subset">
             <b>Proteins:</b>
@@ -79,7 +81,7 @@ Vue.component("subset-dialog", {
             </p>
             <br/><hr/><br/>
             <b>Functional terms:</b>
-            <p v-for="term in terms">
+            <p v-for="term in contained_terms">
                 <a href="#" v-on:click="select_term(term)">{{term.name}}</a>
             </p>
         </div>

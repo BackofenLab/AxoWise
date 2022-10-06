@@ -1,9 +1,11 @@
 Vue.component("term-pane", {
-    props: ["active_term"],
+    props: ["active_term", "func_json", "active_layer", "revert_term"],
     data: function() {
         return {
             selected_term: null,
-            links: []
+            links: [],
+            saved_links: [null],
+            counter: null
         }
     },
     methods: {
@@ -19,6 +21,20 @@ Vue.component("term-pane", {
             if (check == false){
                 $("#termpane").animate({width: 'hide'}, 350);
             }
+        },
+        change_level(subset) {
+            var com = this;
+            com.saved_links.push(subset);
+            com.$emit("func-json-changed", subset);
+            com.$emit("active-layer-changed", subset);
+        },
+        change_level_up(subsets) {
+            var com = this;
+            if(!subsets) return;
+            subsets.pop();
+            var subset = subsets[subsets.length - 1];
+            com.$emit("revert-term-changed", subset);
+            com.$emit("active-layer-changed", subset);
         }
     },
     watch: {
@@ -26,6 +42,7 @@ Vue.component("term-pane", {
             var com = this;
             if (term == null) {
                 $("#termminimize").animate({width: 'hide'}, 350);
+                com.$emit("func-json-changed", null);
                 return;
             }
 
@@ -64,7 +81,13 @@ Vue.component("term-pane", {
                     </div>
                     <div class="data">
                         <span><strong>ID: </strong>{{selected_term.id}}</span><br/><br/>
-                        <span><strong>p-value: </strong>{{selected_term.p_value}}</span>
+                        <span><strong>p-value: </strong>{{selected_term.p_value}}</span><br/><br/>
+                        <span><strong>false-discovery-rate: </strong>{{selected_term.fdr_rate}}</span>
+                    </div>
+                    </br></br>
+                    <div>
+                    <button id="down_level" v-on:click="change_level(links)">Apply Level</button>
+                    <button id="up_level" v-on:click="change_level_up(saved_links)">Revert Level</button>
                     </div>
                     <div class="p">Proteins:</div>
                     <div class="link">
