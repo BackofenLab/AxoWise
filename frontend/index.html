@@ -34,6 +34,7 @@
       <script src="js/components/subset-dialog.js"></script>
       <script src="js/components/modules.js"></script>
       <script src="js/components/d-value.js"></script>
+      <script src="js/components/export-layout.js"></script>
       <!-- <script src="js/components/theme-toggle.js"></script> -->
     </head>
 
@@ -47,6 +48,9 @@
             </div>
             <div class="b1">
               <protein-list v-model="gephi_json"></protein-list>
+              <export-layout v-bind:gephi_json="gephi_json"
+                             v-on:gephi-json-changed="gephi_json = $event"
+              ></export-layout>
               <d-value v-bind:gephi_json="gephi_json"
                        v-on:d_value-changed="d_value = $event"
               ></d-value>
