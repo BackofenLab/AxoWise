@@ -75,7 +75,7 @@ Vue.component("dvalue-pane", {
     watch: {
         "d_value": function(term) {
             var com = this;
-            if(term == null){
+            if(term == null || term == "no selection"){
                 $("#minimizer").animate({width:'hide'}, 350);
                 return;
             }

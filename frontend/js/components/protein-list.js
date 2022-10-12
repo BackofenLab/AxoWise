@@ -28,7 +28,9 @@ Vue.component("protein-list", {
             raw_text: null,
             protein_file: null,
             selected_species: null,
-            d_value: false
+            d_value: false,
+            dcoloumns: null,
+            selected_d: [],
         }
     },
     methods: {
@@ -38,6 +40,11 @@ Vue.component("protein-list", {
 
             if (com.selected_species == null) {
                 alert("Please select a species!");
+                return;
+            }
+
+            if (com.selected_d.length == 0 && com.dcoloumns != null) {
+                alert("Please select dvalues!");
                 return;
             }
 
@@ -56,6 +63,7 @@ Vue.component("protein-list", {
             }
             formData.append('threshold', com.threshold.value);
             formData.append('species_id', com.selected_species);
+            formData.append('selected_d', com.selected_d);
             
             $("body").addClass("loading");         
 
@@ -69,6 +77,7 @@ Vue.component("protein-list", {
               })
                 .done(function (json) {
                     $("body").removeClass("loading");
+                    com.dcoloumns = null;
                     if(Object.keys(json).length == 0){
                          com.$emit("gephi-json-changed", null);
                     }else{
@@ -82,6 +91,26 @@ Vue.component("protein-list", {
         },
         exportGraph: function(){
             this.eventHub.$emit('export-graph', (0 === this.export_file.length) ? 'graph.png' : this.export_file + '.png');
+        },
+        load_file: function(e) {
+            var com = this;
+            com.dcoloumns = [];
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                var allTextLines = e.target.result.split(/\n|\n/);
+                var save_dcoloumns = allTextLines[0].split(",");
+                var type_coloumns = allTextLines[1].split(",");
+                for (var i=0; i<save_dcoloumns.length; i++){
+                    if(com.onlyNumbers(type_coloumns[i])){
+                        com.dcoloumns.push(save_dcoloumns[i].replace(/^"(.*)"$/, '$1'));
+                    }
+                }
+              }
+            reader.readAsText(file);
+        },
+        onlyNumbers: function(str) {
+            return /^[0-9.,-]+$/.test(str);
         }
     },
     mounted: function() {
@@ -108,9 +137,18 @@ Vue.component("protein-list", {
             <br/>
 
             <h4>Protein file:</h4>
-            <input type="file" id="protein-file" accept=".csv">
+            <input type="file" id="protein-file" accept=".csv" v-on:change="load_file">
             <br/><br/>
 
+            <div v-show="dcoloumns != null">
+            <h4>D Coloumns:</h4>
+            <select v-model="selected_d" multiple>
+                <option disabled value="">Please select D coloumn</option>
+                <option v-for="value in dcoloumns">{{value}}</option>
+            </select>
+            </div>
+
+            <br/><br/>
             <h4>Protein - protein score threshold:</h4>
             <input id="threshold-slider"
                 type="range"

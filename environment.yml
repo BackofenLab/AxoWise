@@ -12,6 +12,7 @@ dependencies:
   - networkx>=2.2
   - numpy
   - pandas
+  - packaging
   - neomodel
   - monotonic
   - neo4j-python-driver # - neo4j-driver==1.6.2 #exact version needed to remain compatible with py2neo v4.0

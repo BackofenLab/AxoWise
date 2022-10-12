@@ -3,7 +3,9 @@ Vue.component("d-value", {
     data: function() {
         return  {
             message: "",
-            terms: []
+            terms: null,
+            selected_d: null,
+            dcoloumns: ["no selection"]
         }
     },
     methods: {
@@ -16,10 +18,8 @@ Vue.component("d-value", {
         "gephi_json": function(json) {
             var com = this;
             if (!json) return ; //handling null json from backend
-            if (!json.dvalue) return;
-
-            com.terms = [];
-            com.terms.push(json.dvalue);
+            if (!json.dvalues) return ; //handling null json from backend
+            com.dcoloumns = com.dcoloumns.concat(json.dvalues);
 
         },
     },
@@ -29,7 +29,12 @@ Vue.component("d-value", {
     },
     template: `
         <div v-show="gephi_json != null" class="">
-            <button v-on:click="select_term(terms)" id="d-value">Show D-Value</button>
+            </br></br>
+            <h4>D-Values:</h4>
+            <select v-model="selected_d" v-on:change="select_term(selected_d)">
+                <option disabled value="">Please select D Section</option>
+                <option v-for="value in dcoloumns">{{value}}</option>
+            </select>
         </div>
     `
 });

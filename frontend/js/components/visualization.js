@@ -32,7 +32,8 @@ Vue.component("visualization", {
             },
             container: null,
             darkThemeOn: false,
-            edge_opacity: 0.2
+            edge_opacity: 0.2,
+            dvalueterm: null
         }
     },
     watch: {
@@ -102,11 +103,13 @@ Vue.component("visualization", {
                 return;
             }
 
+            if (com.d_value != null) com.$emit("d_value-changed", null);
             if (com.active_node != null) com.$emit("active-node-changed", null);
 
             var proteins = new Set(term.proteins);
 
             sigma_instance.graph.edges().forEach(function (e) {
+
                 // Nodes
                 var source = sigma_instance.graph.getNodeFromIndex(e.source);
                 var target = sigma_instance.graph.getNodeFromIndex(e.target);
@@ -140,8 +143,7 @@ Vue.component("visualization", {
             var com = this;
 
             if (id == null) {
-                if (com.active_term == null) com.reset();
-                if (com.d_value == null) com.reset();
+                if (com.active_term == null && (com.d_value == "no selection" || com.d_value == null)) com.reset();
                 return;
             }
 
@@ -189,14 +191,19 @@ Vue.component("visualization", {
         "d_value": function(term) {
             var com = this;
 
-            if (term == null) {
-                if (com.active_node == null) com.reset();
+            if (term == null || term == "no selection") {
+                if(term != "no selection"){
+                    if (com.active_node == null && com.active_term == null) com.reset();
+                }else{
+                    if (com.active_term == null) com.reset_d();
+                }
                 return;
             }
 
             if (com.active_node != null) com.$emit("active-node-changed", null);
 
-            var proteins = term[0][0];
+
+            com.dvalueterm=term;
 
             sigma_instance.graph.edges().forEach(function (e) {
                 // Nodes
@@ -204,13 +211,13 @@ Vue.component("visualization", {
                 var target = sigma_instance.graph.getNodeFromIndex(e.target);
 
                 // Ensembl IDs
-                var source_name = source.attributes["Name"];
-                var target_name = target.attributes["Name"];
+                var source_value = source.attributes[term];
+                var target_value = target.attributes[term];
 
                 
-                source.color = com.get_normalize(proteins[source_name], -1, 1);
-                target.color = com.get_normalize(proteins[target_name], -1, 1);
-                e.color = com.get_normalize(proteins[source_name], -1, 1).replace(')', ', 0.2)').replace('rgb', 'rgba');
+                source.color = com.get_normalize(source_value, -1, 1);
+                target.color = com.get_normalize(target_value, -1, 1);
+                e.color = com.get_normalize(source_value, -1, 1).replace(')', ', 0.2)').replace('rgb', 'rgba');
                     
             });
 
@@ -231,7 +238,20 @@ Vue.component("visualization", {
             com.edit_opacity();
             sigma_instance.refresh();
         },
-        // Rectangular select
+        reset_d: function() {
+            var com = this;
+
+            sigma_instance.graph.edges().forEach(function(e) {
+                var s = sigma_instance.graph.getNodeFromIndex(e.source);
+                var t = sigma_instance.graph.getNodeFromIndex(e.target);
+                s.color = com.node_color_index[e.source];
+                t.color = com.node_color_index[e.target];
+                e.color = com.edge_color_index[e.id];
+            });
+            com.edit_opacity();
+            sigma_instance.refresh();
+        },
+         // Rectangular select
         mousedown: function(e) {
             var com = this;
             if (e.button == 2) {
@@ -359,9 +379,9 @@ Vue.component("visualization", {
                 var source = sigma_instance.graph.getNodeFromIndex(e.source);
                 var target = sigma_instance.graph.getNodeFromIndex(e.target);
 
-                source.color = com.get_normalize(source.attributes["D Value"], minBound, maxBound);
-                target.color = com.get_normalize(target.attributes["D Value"], minBound, maxBound);
-                e.color = com.get_normalize(source.attributes["D Value"], minBound, maxBound).replace(')', ', 0.2)').replace('rgb', 'rgba');
+                source.color = com.get_normalize(source.attributes[com.dvalueterm], minBound, maxBound);
+                target.color = com.get_normalize(target.attributes[com.dvalueterm], minBound, maxBound);
+                e.color = com.get_normalize(source.attributes[com.dvalueterm], minBound, maxBound).replace(')', ', 0.2)').replace('rgb', 'rgba');
 
                     
             });

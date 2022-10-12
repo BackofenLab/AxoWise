@@ -9,7 +9,6 @@ import csv
 from sys import stderr
 from threading import Timer
 from unicodedata import category
-import plotly.express as px
 
 # import networkx as nx
 from flask import Flask, Response, request, send_from_directory
@@ -90,12 +89,16 @@ def proteins_subgraph_api():
     # Species
     species_id = int(request.form.get("species_id"))
 
+    # DColoumns
+    selected_d = request.form.get("selected_d").split(",")
+
     # Threshold
     threshold = int(float(request.form.get("threshold")) * 1000)
 
     # Fuzzy search mapping
     proteins = direct_search.search_protein_list(query_proteins, species_id=species_id)
     protein_ids = list(map(lambda p: p.id, proteins))
+    
 
     # Create a query to find all associations between protein_ids and create a file with all properties
     def create_query_assoc():
@@ -229,19 +232,8 @@ def proteins_subgraph_api():
          
     #D-Value categorize via percentage
     if not (request.files.get("file") is None):
-        dvalue_dict = {}
-        listdvalue = []
-        panda_file.rename(columns={'SYMBOL': 'name', 'nippo_vs_StSt': 'dvalue'}, inplace=True)
+        panda_file.rename(columns={'SYMBOL': 'name'}, inplace=True)
         panda_file['name'] = panda_file['name'].str.upper()
-        
-        # #implement in javascript
-        # df = panda_file
-        # fig = px.density_heatmap(df, x="dvalue", y="dvalue")
-        # fig.show()
-        
-        for _,row in panda_file.iterrows():
-            dvalue_dict[row['name'].upper()] = row['dvalue']
-        listdvalue.append(dvalue_dict)
     
         #Timer to evaluate enrichments runtime
     t_dvalue = time.time()
@@ -297,13 +289,12 @@ def proteins_subgraph_api():
         node["attributes"]["Ensembl ID"] = df_node["external_id"]
         node["attributes"]["Name"] = df_node["name"]
         if not (request.files.get("file") is None):
-            node["attributes"]["D Value"] = panda_file.loc[panda_file["name"] == df_node["name"], 'dvalue'].item()
+            for coloumn in selected_d:
+                node["attributes"][coloumn] = panda_file.loc[panda_file["name"] == df_node["name"], coloumn].item()
         node["label"] = df_node["name"]
         node["species"] = str(df_node["species_id"])
-
-    if not (request.files.get("file") is None):
-        sigmajs_data["dvalue"] = listdvalue
     
+    sigmajs_data["dvalues"] = selected_d
 
     #Timer for final steps
     t_end = time.time()
