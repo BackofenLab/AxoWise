@@ -16,14 +16,17 @@ from flask import Flask, Response, request, send_from_directory
 import pandas as pd
 import jar
 import stringdb
+import os
 
 import cypher_queries as Cypher
 import database
 import direct_search
 import fuzzy_search
 from layout import shell_layout
+import uuid
 
 import graph_utilities
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 import time
 app = Flask(__name__)
@@ -94,6 +97,9 @@ def proteins_subgraph_api():
 
     # Threshold
     threshold = int(float(request.form.get("threshold")) * 1000)
+    
+    # Filename generator
+    filename = uuid.uuid4()
 
     # Fuzzy search mapping
     proteins = direct_search.search_protein_list(query_proteins, species_id=species_id)
@@ -108,7 +114,7 @@ def proteins_subgraph_api():
                 WHERE source.external_id IN
                 """ + repr(protein_ids) + ' AND target.external_id IN ' + repr(protein_ids) + ' AND association.combined >= ' + repr(threshold) + """
                 RETURN source, target, association.combined AS score" AS query
-                CALL apoc.export.csv.query(query, "/tmp/neo4j_output.csv", {})
+                CALL apoc.export.csv.query(query, "/tmp/""" + repr(filename) + """.csv", {})
                 YIELD file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data
                 RETURN file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data;
                 """
@@ -122,7 +128,7 @@ def proteins_subgraph_api():
                 WHERE source.external_id IN
                 """ + repr(protein_ids) + 'OR target.external_id IN' + repr(protein_ids) + ' AND association.combined >= ' + repr(threshold) + """
                 RETURN source, target, association.combined AS score" AS query
-                CALL apoc.export.csv.query(query, "/tmp/neo4j_output.csv", {})
+                CALL apoc.export.csv.query(query, "/tmp/""" + repr(filename) + """.csv", {})
                 YIELD file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data
                 RETURN file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data;
                 """
@@ -133,7 +139,7 @@ def proteins_subgraph_api():
         query = create_query_assoc()
     else:
         query = create_query_single()
-
+    
     #Timer to evaluate runtime to setup
     t_setup = time.time()
     print("Time Spent (Setup):", t_setup-t_begin)
@@ -194,7 +200,7 @@ def proteins_subgraph_api():
     #pandas DataFrames for nodes and edges
     proteins = list()
     source, target, score = list(), list(), list()
-    with open('/tmp/neo4j_output.csv', newline='') as f:
+    with open('/tmp/'+repr(filename)+'.csv', newline='') as f:
         reader = csv.DictReader(f)
         for row in reader:
             source_row, target_row = ast.literal_eval(row['source']), ast.literal_eval(row['target'])
@@ -204,9 +210,12 @@ def proteins_subgraph_api():
             score.append(int(row['score']))
             proteins.append(source_row_prop)
             proteins.append(target_row_prop)
+    os.remove('/tmp/'+repr(filename)+'.csv')
 
     nodes = pd.DataFrame(proteins)
     nodes = nodes.drop_duplicates(subset="external_id") # TODO `nodes` can be empty
+    
+    
 
     edges = pd.DataFrame({
         "source": source,
@@ -306,9 +315,6 @@ def proteins_subgraph_api():
 
 
 if __name__ == "__main__":
-    app.run(
-        host="0.0.0.0",
-        port=5000,
-        debug=True,
-        use_reloader=False
-    )
+    
+    # app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+    app.run()

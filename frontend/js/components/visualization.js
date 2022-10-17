@@ -437,7 +437,7 @@ Vue.component("visualization", {
        });
 
         this.eventHub.$on('export-graph', data => {
-            var dataURL = sigma_instance.renderers[0].snapshot({download:true});
+            var dataURL = sigma_instance.renderers[0].snapshot({download:true,background:"black"});
         });
 
     },

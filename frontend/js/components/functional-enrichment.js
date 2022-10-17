@@ -85,7 +85,8 @@ Vue.component("functional-enrichment", {
             formData.append('proteins', com.proteins);
             formData.append('species_id', nodes[0].species);
 
-            $("#enrichment").addClass("loading");  
+            $("#enrichment").addClass("loading");
+            
 
             $.ajax({
                 type: 'POST',

@@ -1,65 +1,37 @@
 Vue.component("subset-dialog", {
-    props: ["gephi_json", "active_subset", "node2term_index", "func_enrichment"],
+    props: ["gephi_json", "active_subset", "node2term_index", "func_enrichment", "func_json","revert_term"],
     data: function() {
         return {
             contained_terms: null,
+            used_subset: [],
         }
     },
     watch: {
         "active_subset": function(subset) {
             var com = this;
-            if (subset == null || subset.length < 1) return;
-
-            $("#dialog").dialog("open");
+            if (subset == null || subset.length < 1){
+                old_sub = com.used_subset.pop();
+                com.$emit("revert-term-changed", old_sub);
+                $("#subsminimize").animate({width:'hide'}, 350);
+                return;
+            }
 
             var com = this;
             if (com.func_enrichment == null || com.active_subset == null) return;
 
-            var all_terms = com.func_enrichment;
-            all_terms.sort(function(t1, t2) {
-                var p_t1 = parseFloat(t1.fdr_rate);
-                var p_t2 = parseFloat(t2.fdr_rate);
-                return p_t1 - p_t2;
-            });
+            com.used_subset.push(subset);
+            com.$emit("func-json-changed", subset);
 
-            function union(setA, setB) {
-                if (!setA && !setB) return new Set();
-                if (!setA) return setB;
-                if (!setB) return setA;
-
-                var _union = new Set(setA);
-                for (var elem of setB) {
-                    _union.add(elem);
-                }
-                return _union;
-            }
-
-            var ensembl_ids = com.active_subset.map(protein => protein.attributes["Ensembl ID"]);
-            var term_sets = ensembl_ids.map(id => com.node2term_index[id]);
-            com.contained_terms = term_sets.reduce(union, new Set());
+            $("#subsminimize").animate({width:'show'}, 350);
 
         }
     },
     mounted: function() {
         var com = this;
 
-        var close = function() {
-            $("#dialog").dialog("close");
-            com.$emit("active-subset-changed", null);
-        };
-
-        $("#dialog").dialog({
-            autoOpen: false,
-            resizable: false,
-            height: "auto",
-            width: 400,
-            maxHeight: 500,
-            modal: false,
-            buttons: {
-                "Close": close,
-            },
-            close: close
-        });
+        $("#subsminimize").find("#dropdown-btn-max").click(() => com.hide_panel(true));
+        $("#subsminimize").find("#dropdown-btn-min").click(() => com.hide_panel(false));
+        $("#subsminimize").find("#dropdown-btn-close").click(() => com.$emit("active-subset-changed", null));
     },
     methods: {
         select_node: function(id) {
@@ -71,19 +43,35 @@ Vue.component("subset-dialog", {
             var com = this;
             // $("#dialog").dialog("close");
             com.$emit("active-term-changed", term);
+        },
+        hide_panel: function(check) {
+            if (check == true){
+                $("#subspane").animate({width: 'show'}, 350);
+            }
+            if (check == false){
+                $("#subspane").animate({width: 'hide'}, 350);
+            }
         }
     },
     template: `
-        <div id="dialog" title="Protein subset">
-            <b>Proteins:</b>
-            <p v-for="node in active_subset">
-                <a href="#" v-on:click="select_node(node.id)">{{node.label}}</a>
-            </p>
-            <br/><hr/><br/>
-            <b>Functional terms:</b>
-            <p v-for="term in contained_terms">
-                <a href="#" v-on:click="select_term(term)">{{term.name}}</a>
-            </p>
+    <div id="subsminimize" class="minimize">
+        <button id="dropdown-btn-max">Maximize</button>
+        <button id="dropdown-btn-min">Minimize</button>
+        <button id="dropdown-btn-close">Close</button>
+        <div id="subspane" class="pane">
+            <div class="text">
+                <div class="headertext">
+                    <span>Information Pane</span>
+                </div>
+                <div v-if="active_subset !== null" class="nodeattributes">
+                <b>Proteins:</b>
+                <p v-for="node in active_subset">
+                    <a href="#" v-on:click="select_node(node.id)">{{node.label}}</a>
+                </p>
+                <br/><hr/><br/>
+                </div>
+            </div>
         </div>
+    </div>
     `
 });

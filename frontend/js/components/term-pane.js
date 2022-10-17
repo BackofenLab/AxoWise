@@ -1,5 +1,5 @@
 Vue.component("term-pane", {
-    props: ["active_term", "func_json", "active_layer", "revert_term"],
+    props: ["active_term", "func_json", "active_layer", "revert_term", "active_subset"],
     data: function() {
         return {
             selected_term: null,
@@ -40,6 +40,7 @@ Vue.component("term-pane", {
     watch: {
         "active_term": function(term) {
             var com = this;
+            if(com.active_subset !=0) return;  
             if (term == null) {
                 $("#termminimize").animate({width: 'hide'}, 350);
                 com.$emit("func-json-changed", null);
@@ -55,7 +56,7 @@ Vue.component("term-pane", {
             }
 
             // TODO
-            $("#termminimize").animate({width:'show'}, 350);
+             $("#termminimize").animate({width:'show'}, 350);
         }
     },
     mounted: function() {
