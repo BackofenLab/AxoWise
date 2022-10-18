@@ -1,5 +1,5 @@
 Vue.component("subset-dialog", {
-    props: ["gephi_json", "active_subset", "node2term_index", "func_enrichment", "func_json","revert_term"],
+    props: ["gephi_json", "active_subset", "node2term_index", "func_enrichment", "func_json","reset_term"],
     data: function() {
         return {
             contained_terms: null,
@@ -11,14 +11,12 @@ Vue.component("subset-dialog", {
             var com = this;
             if (subset == null || subset.length < 1){
                 old_sub = com.used_subset.pop();
-                com.$emit("revert-term-changed", old_sub);
+                com.$emit("reset-term-changed", old_sub);
                 $("#subsminimize").animate({width:'hide'}, 350);
                 return;
             }
-
             var com = this;
             if (com.func_enrichment == null || com.active_subset == null) return;
-
             com.used_subset.push(subset);
             com.$emit("func-json-changed", subset);
 

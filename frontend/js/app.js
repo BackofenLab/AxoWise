@@ -27,6 +27,7 @@ $(document).ready(function () {
             func_json: null,
             func_enrichment: null,
             revert_term: null,
+            reset_term: null,
         },
         watch: {
             gephi_json: function(json) {

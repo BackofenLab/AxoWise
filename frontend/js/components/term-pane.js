@@ -40,7 +40,7 @@ Vue.component("term-pane", {
     watch: {
         "active_term": function(term) {
             var com = this;
-            if(com.active_subset !=0) return;  
+            if(com.active_subset != null) return;  
             if (term == null) {
                 $("#termminimize").animate({width: 'hide'}, 350);
                 com.$emit("func-json-changed", null);

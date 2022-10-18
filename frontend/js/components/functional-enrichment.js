@@ -1,5 +1,5 @@
 Vue.component("functional-enrichment", {
-    props: ["gephi_json", "func_json","revert_term","func_enrichment"],
+    props: ["gephi_json", "func_json","revert_term","func_enrichment", "reset_term"],
     data: function() {
         return  {
             filter_terms: {
@@ -119,6 +119,12 @@ Vue.component("functional-enrichment", {
             com.await_check = false;
             com.saved_terms.pop()
             com.terms = com.saved_terms[com.saved_terms.length-1];
+        },
+        "reset_term": function(subset) {
+            var com = this;
+            if (!subset) return ;
+            com.await_check = false;
+            com.terms = com.saved_terms[0];
         },
     },
     computed: {
