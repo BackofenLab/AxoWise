@@ -1,0 +1,103 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 11.5
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+
+--
+-- Name: items; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA items;
+
+
+--
+-- Name: network; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA network;
+
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+
+--
+-- Name: proteins; Type: TABLE; Schema: items; Owner: -
+--
+
+CREATE TABLE items.proteins (
+    protein_external_id character varying(50) NOT NULL,
+    species_id integer NOT NULL,
+    protein_size integer NOT NULL,
+    annotation character varying(600) NOT NULL,
+    preferred_name character varying(50) NOT NULL
+);
+
+
+--
+-- Name: node_node_links; Type: TABLE; Schema: network; Owner: -
+--
+
+CREATE TABLE network.node_node_links (               
+    node_id_a character varying(50) NOT NULL,
+    node_type_b integer,
+    node_id_b character varying(50) NOT NULL,
+    combined_score smallint
+);
+
+
+--
+-- Name: pi_proteins_proteinid; Type: INDEX; Schema: items; Owner: -
+--
+
+CREATE INDEX pi_proteins_proteinid ON items.proteins USING btree (protein_external_id);
+
+ALTER TABLE items.proteins CLUSTER ON pi_proteins_proteinid;
+
+
+--
+-- Name: si_proteins_combined; Type: INDEX; Schema: items; Owner: -
+--
+
+CREATE INDEX si_proteins_combined ON items.proteins USING btree (protein_external_id);
+
+
+--
+-- Name: si_proteins_speciesid; Type: INDEX; Schema: items; Owner: -
+--
+
+CREATE INDEX si_proteins_speciesid ON items.proteins USING btree (species_id);
+
+
+--
+-- Name: pi_node_links_node_id_a; Type: INDEX; Schema: network; Owner: -
+--
+
+CREATE INDEX pi_node_links_node_id_a ON network.node_node_links USING btree (node_id_a) WITH (fillfactor='100');
+
+ALTER TABLE network.node_node_links CLUSTER ON pi_node_links_node_id_a;
+
+
+--
+-- Name: si_node_links_node_id_a_node_type_b_combined_score; Type: INDEX; Schema: network; Owner: -
+--
+
+CREATE INDEX si_node_links_node_id_a_node_type_b_combined_score ON network.node_node_links USING btree (node_id_a, node_type_b, combined_score) WITH (fillfactor='100');
+
+
+--
+-- PostgreSQL database dump complete
+--
+

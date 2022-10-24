@@ -25,11 +25,12 @@ def connect_neo4j(credentials_path=_DEFAULT_CREDENTIALS_PATH):
 
     neo4j = credentials["neo4j"]
 
-    # Connect to the Neo4j database
+    #Connect to the Neo4j database
     neo4j_graph = py2neo.Graph(
         host=neo4j["host"],
-        https_port=neo4j["port"],
-        password=neo4j["pw"]
+        port=neo4j["port"],
+        password=neo4j["pw"],
+        scheme="bolt"
     )
 
     connected = False
@@ -52,7 +53,7 @@ def connect_postgres(credentials_path=_DEFAULT_CREDENTIALS_PATH):
     global postgres_connection
 
     with open(credentials_path, "rt", encoding="utf-8") as credentials_file:
-        credentials = yaml.load(credentials_file)
+        credentials = yaml.load(credentials_file, Loader=yaml.FullLoader)
 
     postgres = credentials["postgres"]
 

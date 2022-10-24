@@ -34,7 +34,7 @@ def parse_cli_args():
         "--species_name",
         type=str,
         help="Species name",
-        default="Homo sapiens"
+        default="Mus musculus"
     )
 
     args_parser.add_argument(
@@ -46,7 +46,7 @@ def parse_cli_args():
     args_parser.add_argument(
         "--combined_score_threshold",
         type=int,
-        default=400,
+        default=700,
         help="Threshold above which the associations between proteins will be considered"
     )
 
@@ -446,7 +446,7 @@ def read_string_proteins(args, postgres_connection, species_id, protein_ensembl_
         def filter_proteins(protein):
             valid = protein["external_id"] in protein_ensembl_ids_set
             if valid:
-                protein_ids_set.add(protein["id"])
+                protein_ids_set.add(protein["external_id"])
             return valid
 
         proteins = filter(filter_proteins, proteins)
@@ -507,13 +507,6 @@ def write_string_associations(neo4j_graph, associations):
     for batch in batches(associations, batch_size=16384):
         num_associations += len(batch)
         print("{}".format(num_associations), end="\r")
-
-        def map_batch_item(item):
-            item = {**item, **decode_evidence_scores(item["evidence_scores"])}
-            del item["evidence_scores"]
-            return item
-
-        batch = list(map(map_batch_item, batch))
 
         Cypher.add_association(neo4j_graph, {
             "batch": batch
@@ -616,38 +609,38 @@ def main():
 
     # ======================================== KEGG ========================================
     # Compounds
-    compounds = read_kegg_compounds(args, kegg_id)
-    write_kegg_compounds(neo4j_graph, compounds)
+    # compounds = read_kegg_compounds(args, kegg_id)
+    # write_kegg_compounds(neo4j_graph, compounds)
 
     # Diseases
-    diseases = read_kegg_diseases(args, kegg_id)
-    write_kegg_diseases(neo4j_graph, diseases)
+    # diseases = read_kegg_diseases(args, kegg_id)
+    # write_kegg_diseases(neo4j_graph, diseases)
 
     # Drugs
-    drugs = read_kegg_drugs(args, kegg_id)
-    write_kegg_drugs(neo4j_graph, drugs)
+    # drugs = read_kegg_drugs(args, kegg_id)
+    # write_kegg_drugs(neo4j_graph, drugs)
 
     # Create KEGG data index
-    Cypher.create_kegg_index(neo4j_graph)
+    # Cypher.create_kegg_index(neo4j_graph)
 
     # Read pathways
-    pathways, *pathway2others, gene2pathways = read_kegg_pathways(kegg_id)
-    pathway2classes, pathway2diseases, pathway2drugs, pathway2compounds = pathway2others
+    # pathways, *pathway2others, gene2pathways = read_kegg_pathways(kegg_id)
+    # pathway2classes, pathway2diseases, pathway2drugs, pathway2compounds = pathway2others
 
     # Classes
-    write_classes(neo4j_graph, pathway2classes)
+    # write_classes(neo4j_graph, pathway2classes)
 
     # Create pathways
-    write_kegg_pathways(neo4j_graph, pathways, species_id)
+    # write_kegg_pathways(neo4j_graph, pathways, species_id)
 
     # Compound <-> Pathway
-    connect_compounds_and_pathways(args, neo4j_graph, pathway2compounds)
+    # connect_compounds_and_pathways(args, neo4j_graph, pathway2compounds)
 
     # Disease <-> Pathway
-    connect_diseases_and_pathways(args, neo4j_graph, pathway2diseases)
+    # connect_diseases_and_pathways(args, neo4j_graph, pathway2diseases)
 
     # Drug <-> Pathway
-    connect_drugs_and_pathways(args, neo4j_graph, pathway2drugs)
+    # connect_drugs_and_pathways(args, neo4j_graph, pathway2drugs)
 
     # ======================================== STRING ========================================
     # Proteins
@@ -661,16 +654,16 @@ def main():
     write_string_proteins(neo4j_graph, proteins, species_id)
     Cypher.create_protein_index(neo4j_graph)
 
-    # Associations
+    # # Associations
     associations = read_string_associations(args, postgres_connection, species_id, protein_ids_set)
     write_string_associations(neo4j_graph, associations)
 
     # Actions
-    actions = read_string_actions(args, postgres_connection, species_id)
-    write_string_actions(neo4j_graph, actions)
+    # actions = read_string_actions(args, postgres_connection, species_id)
+    # write_string_actions(neo4j_graph, actions)
 
     # ================================== Merge STRING and KEGG ==================================
-    connect_proteins_and_pathways(args, neo4j_graph, gene2pathways, protein_ensembl_ids_set)
+    # connect_proteins_and_pathways(args, neo4j_graph, gene2pathways, protein_ensembl_ids_set)
 
     # Close the PostgreSQL connection
     postgres_connection.close()

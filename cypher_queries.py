@@ -5,6 +5,9 @@ Neo4j graph database.
 
 # ========================= Creating queries =========================
 
+from utils import batches
+
+
 def add_compound(graph, params):
     """
     Create a compound with the specified id and
@@ -12,7 +15,7 @@ def add_compound(graph, params):
     """
 
     query = """
-        UNWIND {batch} as entry
+        UNWIND $batch as entry
         MERGE (compound:Compound {
             id: entry.id,
             name: entry.name
@@ -27,7 +30,7 @@ def add_disease(graph, params):
     """
 
     query = """
-        UNWIND {batch} as entry
+        UNWIND $batch as entry
         MERGE (disease:Disease {
             id: entry.id,
             name: entry.name
@@ -42,7 +45,7 @@ def add_drug(graph, params):
     """
 
     query = """
-        UNWIND {batch} as entry
+        UNWIND $batch as entry
         MERGE (drug:Drug {
             id: entry.id,
             name: entry.name
@@ -57,7 +60,7 @@ def add_class_parent_and_child(graph, params):
     """
 
     query = """
-        UNWIND {batch} as entry
+        UNWIND $batch as entry
         MERGE (parent:Class {
             name: entry.name_parent
         })
@@ -76,7 +79,7 @@ def add_pathway(graph, params):
     """
 
     query = """
-        UNWIND {batch} as entry
+        UNWIND $batch as entry
         MATCH (class:Class {
             name: entry.class
         })
@@ -97,9 +100,8 @@ def add_protein(graph, params):
     """
 
     query = """
-        UNWIND {batch} as entry
+        UNWIND $batch as entry
         CREATE (protein:Protein {
-            id: entry.id,
             external_id: entry.external_id,
             name: toUpper(entry.preferred_name),
             description: entry.annotation,
@@ -118,7 +120,7 @@ def add_action(graph, params):
     """
 
     query = """
-        UNWIND {batch} as entry
+        UNWIND $batch as entry
         MATCH (protein1:Protein {
             id: entry.id1
         })
@@ -146,24 +148,17 @@ def add_association(graph, params):
     """
 
     query = """
-        UNWIND {batch} as entry
+        UNWIND $batch as entry
 
         MATCH (protein1:Protein {
-            id: entry.id1
+            external_id: entry.id1
         })
 
         MATCH (protein2:Protein {
-            id: entry.id2
+            external_id: entry.id2
         })
 
         CREATE (protein1)-[a:ASSOCIATION {
-            experiments: entry.experiments,
-            database: entry.database,
-            textmining: entry.textmining,
-            coexpression: entry.coexpression,
-            neighborhood: entry.neighborhood,
-            fusion: entry.fusion,
-            cooccurence: entry.cooccurence,
             combined: entry.combined_score
         }]->(protein2)
     """
@@ -178,7 +173,7 @@ def connect_protein_and_pathway(graph, params):
     """
 
     query = """
-        UNWIND {batch} as entry
+        UNWIND $batch as entry
 
         MATCH (protein:Protein {
             external_id: entry.protein_external_id
@@ -199,7 +194,7 @@ def connect_compound_and_pathway(graph, params):
     """
 
     query = """
-        UNWIND {batch} as entry
+        UNWIND $batch as entry
 
         MATCH (compound:Compound {
             id: entry.compound_id
@@ -220,7 +215,7 @@ def connect_disease_and_pathway(graph, params):
     """
 
     query = """
-        UNWIND {batch} as entry
+        UNWIND $batch as entry
 
         MATCH (disease:Disease {
             id: entry.disease_id
@@ -241,7 +236,7 @@ def connect_drug_and_pathway(graph, params):
     """
 
     query = """
-        UNWIND {batch} as entry
+        UNWIND $batch as entry
 
         MATCH (drug:Drug {
             id: entry.drug_id
@@ -267,13 +262,13 @@ def create_constraints(graph):
         "CREATE CONSTRAINT ON (protein:Protein) ASSERT protein.id IS UNIQUE",
         "CREATE CONSTRAINT ON (protein:Protein) ASSERT protein.external_id IS UNIQUE",
         # Pathway
-        "CREATE CONSTRAINT ON (pathway:Pathway) ASSERT pathway.id IS UNIQUE",
+        #"CREATE CONSTRAINT ON (pathway:Pathway) ASSERT pathway.id IS UNIQUE",
         # Compound
-        "CREATE CONSTRAINT ON (compound:Compound) ASSERT compound.id IS UNIQUE",
+        #"CREATE CONSTRAINT ON (compound:Compound) ASSERT compound.id IS UNIQUE",
         # Drug
-        "CREATE CONSTRAINT ON (drug:Drug) ASSERT drug.id IS UNIQUE",
+        #"CREATE CONSTRAINT ON (drug:Drug) ASSERT drug.id IS UNIQUE",
         # Disease
-        "CREATE CONSTRAINT ON (disease:Disease) ASSERT disease.id IS UNIQUE"
+        #"CREATE CONSTRAINT ON (disease:Disease) ASSERT disease.id IS UNIQUE"
     ]
 
     for query in queries:
@@ -327,7 +322,7 @@ def get_protein_list(graph):
 
     query = """
         MATCH (protein:Protein)
-        RETURN protein.id AS id,
+        RETURN protein.external_id AS id,
                protein.name AS name,
                protein.species_id AS species_id
     """
@@ -374,14 +369,14 @@ def get_protein_subgraph(graph, protein_id, threshold=0):
     # Neo4j query
     query = """
         MATCH (protein:Protein {
-            id: {protein_id}
+            id: $protein_id
         })
         USING INDEX protein:Protein(id)
         WITH protein
         MATCH (protein)-[:IN]->(pathway:Pathway)
         WITH protein, COLLECT(DISTINCT pathway) AS pathways
         MATCH (protein)-[association:ASSOCIATION]-(other:Protein)
-        WHERE association.combined >= {threshold}
+        WHERE association.combined >= $threshold
         RETURN protein, pathways, COLLECT({
             combined_score: association.combined,
             other: other
@@ -408,7 +403,7 @@ def get_proteins_subgraph(graph, protein_ids, threshold=0, external=False):
     query = """
         MATCH (protein:Protein)
     """ + \
-    ("WHERE protein.external_id IN {protein_ids}" if external else "WHERE protein.id IN {protein_ids}") + \
+    ("WHERE protein.external_id IN $protein_ids$" if external else "WHERE protein.id IN $protein_ids") + \
     """
         WITH COLLECT(protein) AS proteins
         WITH proteins, SIZE(proteins) AS num_proteins
@@ -446,7 +441,7 @@ def get_pathway_subgraph(graph, pathway_id, threshold=0):
     # Neo4j query
     query = """
         MATCH (pathway:Pathway {
-            id: {pathway_id}
+            id: $pathway_id
         })
         USING INDEX pathway:Pathway(id)
         WITH pathway
@@ -459,7 +454,7 @@ def get_pathway_subgraph(graph, pathway_id, threshold=0):
         UNWIND RANGE(i + 1, num_proteins - 1) AS j
         WITH classes, proteins, proteins[i] AS protein1, proteins[j] AS protein2
         MATCH (protein1)-[association:ASSOCIATION]-(protein2)
-        // WHERE association.combined >= {threshold}
+        // WHERE association.combined >= $threshold
         RETURN classes, proteins, COLLECT({
             protein1_id: protein1.id,
             combined_score: association.combined,
