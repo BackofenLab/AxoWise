@@ -5,7 +5,6 @@ import org.gephi.appearance.plugin.PartitionElementColorTransformer;
 import org.gephi.appearance.plugin.RankingNodeSizeTransformer;
 import org.gephi.appearance.plugin.palette.Palette;
 import org.gephi.appearance.plugin.palette.PaletteManager;
-import org.gephi.appearance.plugin.palette.Preset;
 import org.gephi.graph.api.*;
 import org.gephi.io.exporter.api.ExportController;
 import org.gephi.layout.plugin.AutoLayout;
@@ -18,7 +17,6 @@ import org.gephi.preview.types.EdgeColor;
 import org.gephi.project.api.ProjectController;
 import org.gephi.project.api.Workspace;
 import org.gephi.statistics.plugin.Degree;
-import org.gephi.statistics.plugin.ClusteringCoefficient;
 import org.gephi.statistics.plugin.GraphDistance;
 import org.gephi.statistics.plugin.Modularity;
 import org.gephi.statistics.plugin.builder.DegreeBuilder;
@@ -28,7 +26,6 @@ import org.openide.util.Lookup;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -37,8 +34,6 @@ import java.util.concurrent.TimeUnit;
 public class Main {
 
     public static void main(String[] args) {
-
-        // TODO: Load cluster coefficient into file
 
         // Init a project - and therefore a workspace
         ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);
@@ -72,9 +67,6 @@ public class Main {
 
         // Partition node color by modularity
         partitionNodeColorByModularity(graphModel, appearanceController);
-
-        // Determine cluster coefficient
-        clusterCoefficient(graphModel);
 
         // Rank node size by degree
         rankNodeSizeByDegree(graphModel, appearanceController);
@@ -230,14 +222,6 @@ public class Main {
         previewProperties.putValue(PreviewProperty.EDGE_COLOR, EdgeColor.Mode.MIXED);
     }
 
-    private static void clusterCoefficient(GraphModel graphModel) {
-        // AppearanceModel appearanceModel = appearanceController.getModel();
-        // UndirectedGraph undirectedGraph = graphModel.getUndirectedGraph();
-
-        ClusteringCoefficient cc = new ClusteringCoefficient();
-        cc.execute(graphModel);
-    }
-
     private static void rankNodeSizeByDegree(GraphModel graphModel, AppearanceController appearanceController) {
         AppearanceModel appearanceModel = appearanceController.getModel();
         UndirectedGraph undirectedGraph = graphModel.getUndirectedGraph();
@@ -273,9 +257,7 @@ public class Main {
         Partition partition = ((PartitionFunction) modularityPartitioning).getPartition();
 
         PaletteManager paletteManager = PaletteManager.getInstance();
-        Collection<Preset> presets = paletteManager.getPresets();
-        Preset preset = presets.stream().skip(8).findFirst().orElse(null);
-        Palette randomPalette = paletteManager.generatePalette(partition.size(undirectedGraph), preset);
+        Palette randomPalette = paletteManager.generatePalette(partition.size(undirectedGraph));
         partition.setColors(undirectedGraph, randomPalette.getColors());
 
         appearanceController.transform(modularityPartitioning);
@@ -285,15 +267,17 @@ public class Main {
         AutoLayout autoLayout = new AutoLayout(30, TimeUnit.MILLISECONDS);
         autoLayout.setGraphModel(graphModel);
 
+        // ForceAtlas layout
         CirclePackLayout circlepack = new CirclePackLayout(null);
         circlepack.setHierarchy1(Modularity.MODULARITY_CLASS);
+        // circlepack.setHierarchy2(Degree.DEGREE);
         autoLayout.addLayout(circlepack, 1.f);
         autoLayout.execute();
     }
 
     private static void outputJson(GraphModel graphModel, Workspace workspace) {
         for (Edge e : graphModel.getUndirectedGraph().getEdges()) {
-            e.setWeight(0.02);
+            e.setWeight(0.05);
         }
 
         OutputStreamWriter writer = new OutputStreamWriter(System.out);

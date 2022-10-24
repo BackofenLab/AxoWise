@@ -6,7 +6,7 @@ import os.path
 import io
 from collections import defaultdict
 import csv
-import sys
+from sys import stderr
 from threading import Timer
 from unicodedata import category
 
@@ -16,10 +16,9 @@ from flask import Flask, Response, request, send_from_directory
 import pandas as pd
 import jar
 import stringdb
-import gprofil
 import os
 
-# import cypher_queries as Cypher
+import cypher_queries as Cypher
 import database
 import direct_search
 import fuzzy_search
@@ -50,9 +49,8 @@ def files(path):
     return send_from_directory(os.path.join(_SCRIPT_DIR, _SERVE_DIR), path)
 
 # ====================== Functional Enrichment ======================
-# ______functional_enrichment_STRING_________________________________
+
 # TODO Refactor this
-# Request comes from functional_enrichment.js
 @app.route("/api/subgraph/enrichment", methods=["POST"])
 def proteins_enrichment():
     proteins = request.form.get("proteins").split(",")
@@ -67,32 +65,15 @@ def proteins_enrichment():
                 id=row["term"],
                 proteins=row["inputGenes"].split(","),
                 name=row["description"],
-                category=row["category"],
                 p_value=row["p_value"],
-                fdr_rate=row["fdr"]
+                fdr_rate=row["fdr"],
+                category=row["category"]
             ))
-    else:
-        # TODO species_id for gprofil is different and needs to be converted
-        # Right now mus musculus set to default
-        df_enrichment = gprofil.functional_enrichment(proteins) # , species_id)
-        if df_enrichment is not None:
-            for _, row in df_enrichment.iterrows():
-                list_enrichment.append(dict(
-                    id=row["name"],
-                    proteins=row["intersections"],
-                    name=row["description"],
-                    p_value=row["p_value"],
-                    # fdr_rate=row["fdr"],
-                    category=row["source"]
-                ))
-
     json_str=json.dumps(list_enrichment)  
     return Response(json_str, mimetype="application/json")
 
-
-
 # ====================== Subgraph API ======================
-# request comes from home.js
+
 # TODO Refactor this
 @app.route("/api/subgraph/proteins", methods=["POST"])
 def proteins_subgraph_api():
@@ -159,23 +140,18 @@ def proteins_subgraph_api():
     else:
         query = create_query_single()
     
-    
-    with open("/tmp/query"+repr(filename)+".txt", "w") as query_text:
-        query_text.write("%s" % query)
-    
     #Timer to evaluate runtime to setup
     t_setup = time.time()
     print("Time Spent (Setup):", t_setup-t_begin)
 
-
     #---------Start py2neo
 
     # # Query the database
-    # query = """"""
+    # query = """
     #     MATCH (source:Protein)-[association:ASSOCIATION]->(target:Protein)
     #     WHERE source.id IN {protein_ids} AND target.id IN {protein_ids} AND association.combined >= {threshold}
     #     RETURN source, target, association.combined AS score
-    # """"""
+    # """
 
     # param_dict = dict(
     #     protein_ids=protein_ids,
@@ -209,11 +185,10 @@ def proteins_subgraph_api():
          "-a", "bolt://localhost:7687",
          "-u", "neo4j",
          "-p", "pgdb",
-         "-f", "/tmp/query"+repr(filename)+".txt"],
+         query],
         capture_output=True,
         encoding="utf-8"
     )
-    os.remove('/tmp/query'+repr(filename)+'.txt')
     #Check standard output 'stdout' whether it's empty to control errors
     if not data.stdout:
         raise Exception(data.stderr) 
@@ -224,7 +199,7 @@ def proteins_subgraph_api():
 
     #pandas DataFrames for nodes and edges
     proteins = list()
-    source, target, score, assoc_names = list(), list(), list(), list()
+    source, target, score = list(), list(), list()
     with open('/tmp/'+repr(filename)+'.csv', newline='') as f:
         reader = csv.DictReader(f)
         for row in reader:
@@ -235,7 +210,7 @@ def proteins_subgraph_api():
             score.append(int(row['score']))
             proteins.append(source_row_prop)
             proteins.append(target_row_prop)
-    # os.remove('/tmp/'+repr(filename)+'.csv')
+    os.remove('/tmp/'+repr(filename)+'.csv')
 
     nodes = pd.DataFrame(proteins)
     nodes = nodes.drop_duplicates(subset="external_id") # TODO `nodes` can be empty
@@ -246,9 +221,10 @@ def proteins_subgraph_api():
         "source": source,
         "target": target,
         "score": score
-        
     })
     edges = edges.drop_duplicates(subset=["source", "target"]) # TODO edges` can be empty
+ 
+    
 
     #no data from database, return from here
     # TO-DO Front end response to be handled
@@ -256,8 +232,8 @@ def proteins_subgraph_api():
         return Response(json.dumps([]), mimetype="application/json")
      
     #Creating only the main Graph and exclude not connected subgraphs
-    nodes_sub = graph_utilities.create_nodes_subgraph(edges, nodes)
-    #edges = graph_utilities.create_edges_subgraph(edges)
+    nodes = graph_utilities.create_nodes_subgraph(edges, nodes)
+    edges = graph_utilities.create_edges_subgraph(edges)
 
     #Timer to evaluate runtime between cypher-shell and extracting data
     t_parsing = time.time()
@@ -325,220 +301,9 @@ def proteins_subgraph_api():
             for coloumn in selected_d:
                 node["attributes"][coloumn] = panda_file.loc[panda_file["name"] == df_node["name"], coloumn].item()
         node["label"] = df_node["name"]
-        node["species"] = str(df_node["species_id"]) 
-        
-        sub_proteins = []
-    for node in sigmajs_data["nodes"]:
-        if node["attributes"]["Ensembl ID"] not in  nodes_sub.values:            
-            node["color"] = 'rgb(255,255,153)'
-            node["hidden"] = True
-            sub_proteins.append(node["attributes"]["Ensembl ID"])
-            
+        node["species"] = str(df_node["species_id"])
+    
     sigmajs_data["dvalues"] = selected_d
-    sigmajs_data["subgraph"] = sub_proteins
-    
-
-    #Timer for final steps
-    t_end = time.time()
-    print("Time Spent (End):", t_end-t_gephi)
-
-    json_str = json.dumps(sigmajs_data)
-
-    return Response(json_str, mimetype="application/json")
-
-
-# =============== Functional Term Graph ======================
-
-# TODO Refactor this
-@app.route("/api/subgraph/terms", methods=["POST"])
-def terms_subgraph_api():
-
-    #Begin a timer to time
-    t_begin = time.time()
-
-    # Proteins
-    protein_ids = request.form.get("proteins").split(";")
-
-    # Species
-    species_id = request.form.get("species_id")
-
-    # Filename generator
-    filename = uuid.uuid4()
-
-    # Functional terms
-    df_enrichment = stringdb.functional_enrichment(protein_ids, species_id)
-    # Only append categories KEGG, Reactome, WP, GO
-    df_enrichment = df_enrichment.loc[(df_enrichment['category'] == 'RCTM') |
-        (df_enrichment['category'] == 'Process') |
-        (df_enrichment['category'] == 'Function') |
-        (df_enrichment['category'] == 'Component') |
-        (df_enrichment['category'] == 'WikiPathways') |
-        (df_enrichment['category'] == 'KEGG')]
-    df_enrichment = df_enrichment.sort_values(by="p_value", ascending=True)
-
-    # df_enrichment.to_csv("BeforeNeo4j", index=False, header=True)
-
-    list_term = list()
-    if df_enrichment is not None:
-        list_term = df_enrichment["term"].tolist()
-
-    # TODO: Give p_value/fdr to the functional terms
-    
-    
-
-    # Create a query to find all associations between protein_ids and create a file with all properties
-    def create_query_assoc():
-
-        # Query for terms based on protein input
-        
-        query = """
-                WITH "MATCH (source:Terms)-[association:KAPPA]->(target:Terms)
-                WHERE source.external_id IN
-                """ + repr(list_term) + ' AND target.external_id IN ' + repr(list_term) + """
-                RETURN source, target, association.score AS score" AS query
-                CALL apoc.export.csv.query(query, "/tmp/""" + repr(filename) + """.csv", {})
-                YIELD file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data
-                RETURN file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data;
-                """
-
-        # Query for all functional terms
-
-        #query = """"""
-        #        WITH "MATCH (source:Terms)-[association:KAPPA]->(target:Terms)
-        #        RETURN source, target, association.score AS score" AS query
-        #        CALL apoc.export.csv.query(query, "/tmp/"""""" + repr(filename) + """""".csv", {})
-        #        YIELD file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data
-        #        RETURN file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data;
-        #        """"""
-        return query
-        # WHERE source.category = 'KEGG' AND target.category = 'KEGG'
-        
-
-    query = create_query_assoc()
-    
-    
-    with open("/tmp/query"+repr(filename)+".txt", "w") as query_text:
-        query_text.write("%s" % query)
-    
-    #Timer to evaluate runtime to setup
-    t_setup = time.time()
-    print("Time Spent (Setup):", t_setup-t_begin)
-
-    #Run the cypher query in cypher shell via terminal
-    data = subprocess.run(
-        ["cypher-shell",
-         "-a", "bolt://localhost:7687",
-         "-u", "neo4j",
-         "-p", "pgdb",
-         "-f", "/tmp/query"+repr(filename)+".txt"],
-        capture_output=True,
-        encoding="utf-8"
-    )
-    #Check standard output 'stdout' whether it's empty to control errors
-    if not data.stdout:
-        raise Exception(data.stderr) 
-
-    #Timer for Neo4j query
-    t_neo4j = time.time()
-    print("Time Spent (Neo4j):", t_neo4j-t_setup)
-
-    #pandas DataFrames for nodes and edges
-    csv.field_size_limit(sys.maxsize)
-    terms = list()
-    source, target, score, assoc_names = list(), list(), list(), list()
-    with open('/tmp/'+repr(filename)+'.csv', newline='') as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            source_row, target_row = ast.literal_eval(row['source']), ast.literal_eval(row['target'])
-            source_row_prop, target_row_prop = source_row.get('properties'), target_row.get('properties')
-            source.append(source_row_prop.get('external_id'))
-            target.append(target_row_prop.get('external_id'))
-            score.append(float(row['score']))   # changed to float
-            terms.append(source_row_prop)
-            terms.append(target_row_prop)
-    # os.remove('/tmp/'+repr(filename)+'.csv')
-
-    nodes = pd.DataFrame(terms)
-    # nodes.to_csv("check", index=False, header=True)
-    nodes = nodes.drop_duplicates(subset="external_id")
-    
-    
-
-    edges = pd.DataFrame({
-        "source": source,
-        "target": target,
-        "score": score
-        
-    })
-    edges = edges.drop_duplicates(subset=["source", "target"]) # TODO edges` can be empty
-
-    # convert kappa scores to Integer
-
-    edges['score'] = edges['score'].apply(lambda x: round(x, 2))
-    edges['score'] = edges['score'].apply(lambda x: int(x * 100))
-
-    # ____________________________________________________________
-
-    #no data from database, return from here
-    # TO-DO Front end response to be handled
-    if edges.empty:
-        return Response(json.dumps([]), mimetype="application/json")
-     
-    #Creating only the main Graph and exclude not connected subgraphs
-    nodes_sub = graph_utilities.create_nodes_subgraph(edges, nodes)
-    #edges = graph_utilities.create_edges_subgraph(edges)
-
-    #Timer to evaluate runtime between cypher-shell and extracting data
-    t_parsing = time.time()
-    print("Time Spent (Parsing):", t_parsing-t_neo4j)
-
-    # #Timer to evaluate enrichments runtime
-    t_enrich = time.time()
-    print("Time Spent (Enrichment):", t_enrich-t_parsing)
-
-
-    if len(nodes.index) == 0:
-        sigmajs_data = {
-            "nodes": [],
-            "edges": []
-        }
-    else:
-        # Build a standard input string for Gephi's backend
-        nodes_csv = io.StringIO()
-        edges_csv = io.StringIO()
-
-        # JAR accepts only id
-        nodes["external_id"].to_csv(nodes_csv, index=False, header=True)
-        
-        # JAR accepts source, target, score
-        edges.to_csv(edges_csv, index=False, header=True)
-
-        stdin = f"{nodes_csv.getvalue()}\n{edges_csv.getvalue()}"
-        stdout = jar.pipe_call(_BACKEND_JAR_PATH, stdin)
-
-        sigmajs_data = json.loads(stdout)
-    
-    #Timer to evaluate runtime of calling gephi
-    t_gephi = time.time()
-    print("Time Spent (Gephi):", t_gephi-t_enrich)
-
-    for node in sigmajs_data["nodes"]:
-        df_node = nodes[nodes["external_id"] == node["id"]].iloc[0]
-        # node["attributes"]["Description"] = df_node["description"]
-        node["attributes"]["Ensembl ID"] = df_node["external_id"]
-        node["attributes"]["Name"] = df_node["name"]
-        node["label"] = df_node["name"]
-        # node["species"] = str(df_node["species_id"]) 
-        
-        sub_proteins = []
-    for node in sigmajs_data["nodes"]:
-        if node["attributes"]["Ensembl ID"] not in  nodes_sub.values:            
-            node["color"] = 'rgb(255,255,153)'
-            node["hidden"] = True
-            sub_proteins.append(node["attributes"]["Ensembl ID"])
-            
-    sigmajs_data["subgraph"] = sub_proteins
-    
 
     #Timer for final steps
     t_end = time.time()
@@ -551,5 +316,5 @@ def terms_subgraph_api():
 
 if __name__ == "__main__":
     
-    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+    # app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
     app.run()
