@@ -17,6 +17,10 @@ Vue.component("subset-dialog", {
     watch: {
         "active_subset": function(subset) {
             var com = this;
+            com.contained_edges = [];
+            com.export_edges = [];
+            com.subset_ids = [];
+
             if (subset == null || subset.length < 1){
                 old_sub = com.used_subset.pop();
                 com.$emit("reset-term-changed", old_sub);
@@ -28,13 +32,11 @@ Vue.component("subset-dialog", {
             com.used_subset.push(subset);
             com.$emit("func-json-changed", subset);
 
-
             var id_dict = {};
             for (getID in subset){
                 id_dict[subset[getID].id] = subset[getID].label;
                 com.subset_ids.push(subset[getID].id);
             }
-
             var subset_proteins = new Set(com.subset_ids);
             for (var idx in com.gephi_json.edges) {
                 var edge = com.gephi_json.edges[idx];
