@@ -6,7 +6,6 @@ Vue.component("protein-list", {
     data: function() {
         return {
             species: {
-                9606: "Homo sapiens (human)",
                 10090: "Mus musculus (mouse)"
             },
             api: {
@@ -111,7 +110,7 @@ Vue.component("protein-list", {
         },
         onlyNumbers: function(str) {
             return /^[0-9.,-]+$/.test(str);
-        }
+        },
     },
     mounted: function() {
         var com = this;
@@ -122,23 +121,26 @@ Vue.component("protein-list", {
         $("#edge-input").change(com.updateSlider); //update from input control
         $("#export-btn").button();
         $("#export-btn").click(com.exportGraph);
+
+        $("form").on("change", "#protein-file", function(){ 
+            $(this).parent(".file-upload-wrapper").attr("data-text",$(this).val().replace(/.*(\/|\\)/, '') );
+        });
     },
     template: `
-        <div class="cf">
+        <div class="input-form-data">
             <h4>Species:</h4>
             <select v-model="selected_species">
-                <option disabled value="">Please select species</option>
+                <option value="" disabled selected>Select your Species</option>
                 <option v-for="(value, key, index) in species" v-bind:value="key">{{value}}</option>
             </select>
-            <br/><br/>
 
             <h4>Protein list:</h4>
-            <textarea ref="protein_list_input" id="protein-list" v-model="raw_text" rows="10" cols="30" autofocus></textarea><br/>
-            <br/>
+            <textarea ref="protein_list_input" id="protein-list" v-model="raw_text" rows="10" cols="30" autofocus></textarea>
 
             <h4>Protein file:</h4>
+            <div class="file-upload-wrapper" data-text="Select your file">
             <input type="file" id="protein-file" accept=".csv" v-on:change="load_file">
-            <br/><br/>
+            </div>
 
             <div v-show="dcoloumns != null">
             <h4>D Coloumns:</h4>
@@ -147,9 +149,7 @@ Vue.component("protein-list", {
                 <option v-for="value in dcoloumns">{{value}}</option>
             </select>
             </div>
-
-            <br/><br/>
-            <h4>Protein - protein score threshold:</h4>
+            <h4>Score threshold:</h4>
             <input id="threshold-slider"
                 type="range"
                 v-bind:min="threshold.min"
@@ -157,17 +157,8 @@ Vue.component("protein-list", {
                 v-bind:step="threshold.step"
                 v-model="threshold.value"
             />
-            <input id="threshold-input"
-                type="number"
-                v-bind:min="threshold.min"
-                v-bind:max="threshold.max"
-                v-bind:step="threshold.step"
-                v-model="threshold.value"
-            />
-            <br/><br/>
             <button id="submit-btn">Submit</button>
-            <br/><br/>
-            <h4>Edge Color thickness</h4>
+            <!--<h4>Edge Color thickness</h4>
               <input id="edge-slider"
                 type="range"
                 v-bind:min="edge_thick.min"
@@ -182,15 +173,13 @@ Vue.component("protein-list", {
                 v-bind:step="edge_thick.step"
                 v-model="edge_thick.value"
             />
-             <br/><br/>
              <div style="display: flex">
                <button id="export-btn" type="export">Export Graph</button>
                <input id="file_name"
                 type="text"
                 v-model="export_file"
                />
-             </div>
-            <br/><br/>
+             </div>-->
         </div>
 `
 });

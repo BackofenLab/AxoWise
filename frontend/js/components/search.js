@@ -9,7 +9,8 @@ Vue.component("search", {
             lastSearch: "",
             searching: false,
             matches: [],
-            message: ""
+            message: "",
+            search_check: false,
         }
     },
     methods: {
@@ -86,9 +87,13 @@ Vue.component("search", {
         });
     },
     template: `
-        <form v-show="gephi_json != null">
-            <div id="search" class="cf">
-                <h4>Node search:</h4>
+
+    <div class="toolbar-button">
+        <div v-show="gephi_json != null">
+        <button v-on:click="search_check=!search_check" id="search_button">Search</button>
+        </div>
+        <form v-show="gephi_json != null && search_check === true" class="white-theme">
+            <div id="search" class="toolbar-search">
                 <input type="text" value="Search nodes by name" class="search empty"/>
                 <div class="state"></div>
                 <div class="results">
@@ -103,5 +108,6 @@ Vue.component("search", {
             </div>
             <br/>
         </form>
+     </div>
     `
 });

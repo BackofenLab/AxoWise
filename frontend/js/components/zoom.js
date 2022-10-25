@@ -15,7 +15,7 @@ Vue.component("zoom",  {
                     sigma_instance.camera.goTo({
                         x: sigma_instance.camera.x,
                         y: sigma_instance.camera.y,
-                        ratio: sigma_instance.camera.ratio * ("in" == rel ? 0.5 : 1.5),
+                        ratio: sigma_instance.camera.ratio * ("in" == rel ? 0.8 : 1.2),
                         angle: sigma_instance.camera.angle
                     });
                 }

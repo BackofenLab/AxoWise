@@ -27,7 +27,8 @@ Vue.component("functional-enrichment", {
             proteins: [],
             search_raw: "",
             filter: "",
-            await_check: true
+            await_check: true,
+            enrich_check: false
 
         }
     },
@@ -143,7 +144,11 @@ Vue.component("functional-enrichment", {
         }
     },
     template: `
-        <div v-show="gephi_json != null" id="enrichment" class="cf">
+    <div class="toolbar-button">
+        <div v-show="gephi_json != null">
+        <button v-on:click="enrich_check=!enrich_check" id="enrich_button">Σ</button>
+         </div>
+        <div v-show="gephi_json != null && enrich_check === true" id="enrichment" class="white-theme">
             <h4>Functional enrichment:</h4>
             <br/>
             <h5>Filter:</h5>
@@ -164,5 +169,6 @@ Vue.component("functional-enrichment", {
                 </div>
             </div>
         </div>
+    </div>
     `
 });

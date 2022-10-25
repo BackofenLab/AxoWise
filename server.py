@@ -199,7 +199,7 @@ def proteins_subgraph_api():
 
     #pandas DataFrames for nodes and edges
     proteins = list()
-    source, target, score = list(), list(), list()
+    source, target, score, assoc_names = list(), list(), list(), list()
     with open('/tmp/'+repr(filename)+'.csv', newline='') as f:
         reader = csv.DictReader(f)
         for row in reader:
@@ -221,6 +221,7 @@ def proteins_subgraph_api():
         "source": source,
         "target": target,
         "score": score
+        
     })
     edges = edges.drop_duplicates(subset=["source", "target"]) # TODO edges` can be empty
  

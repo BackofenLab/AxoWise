@@ -13,15 +13,6 @@ Vue.component("term-pane", {
             var com = this;
             com.$emit("active-node-changed", id);
         },
-        hide_panel: function(check) {
-            var com = this;
-            if (check == true){
-                $("#termpane").animate({width: 'show'}, 350);
-            }
-            if (check == false){
-                $("#termpane").animate({width: 'hide'}, 350);
-            }
-        },
         change_level(subset) {
             var com = this;
             com.saved_links.push(subset);
@@ -35,14 +26,42 @@ Vue.component("term-pane", {
             var subset = subsets[subsets.length - 1];
             com.$emit("revert-term-changed", subset);
             com.$emit("active-layer-changed", subset);
-        }
+        },
+        hide_panel: function() {
+            var com = this;
+            if(com.pane_check == false){
+                $("#attrminimize").find("#dropdown-btn-min").css({'transform': 'rotate(90deg)'});
+                $("#attributepane").hide();
+            }else{
+                $("#attrminimize").find("#dropdown-btn-min").css({'transform': 'rotate(0deg)'});
+                $("#attributepane").show();
+            }
+            com.pane_check = !com.pane_check;
+        },
+        expand_proteins: function() {
+            var com = this;
+            com.proteins_expand = !com.proteins_expand;
+            if(com.proteins_expand == false){
+                $("#link").hide();
+            }else{
+                $("#link").show();
+            }
+            
+        },
+        copyclipboard: function(){
+            com = this;
+
+            textToCopy = [];
+            for(link of com.links) textToCopy.push(link.label);
+            navigator.clipboard.writeText(textToCopy.join("\n"));
+            }
     },
     watch: {
         "active_term": function(term) {
             var com = this;
             if(com.active_subset != null) return;  
             if (term == null) {
-                $("#termminimize").animate({width: 'hide'}, 350);
+                $("#termminimize").hide();
                 com.$emit("func-json-changed", null);
                 return;
             }
@@ -56,21 +75,19 @@ Vue.component("term-pane", {
             }
 
             // TODO
-             $("#termminimize").animate({width:'show'}, 350);
+             $("#termminimize").show();
         }
     },
     mounted: function() {
         var com = this;
 
-        $("#termminimize").find("#dropdown-btn-max").click(() => com.hide_panel(true));
-        $("#termminimize").find("#dropdown-btn-min").click(() => com.hide_panel(false));
+        $("#termminimize").find("#dropdown-btn-min").click(() => com.hide_panel());
         $("#termminimize").find("#dropdown-btn-close").click(() => com.$emit("active-term-changed", null));
     },
     template: `
     <div id="termminimize" class="minimize">
-        <button id="dropdown-btn-max">Maximize</button>
-        <button id="dropdown-btn-min">Minimize</button>
-        <button id="dropdown-btn-close">Close</button>
+        <button id="dropdown-btn-min"></button>
+        <button id="dropdown-btn-close"></button>
         <div id="termpane" class="pane">
             <div class="text">
                 <div class="headertext">

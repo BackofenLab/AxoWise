@@ -106,6 +106,7 @@ Vue.component("visualization", {
             if (com.d_value != null) com.$emit("d_value-changed", null);
             if (com.active_node != null) com.$emit("active-node-changed", null);
 
+
             var proteins = new Set(term.proteins);
 
             sigma_instance.graph.edges().forEach(function (e) {

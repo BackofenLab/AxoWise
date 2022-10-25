@@ -3,7 +3,9 @@ Vue.component("attribute-pane", {
     data: function() {
         return {
             selected_node: null,
-            links: []
+            links: [],
+            pane_check: false,
+            proteins_expand: false
         }
     },
     methods: {
@@ -14,17 +16,36 @@ Vue.component("attribute-pane", {
         normal_node: function() {
             var com = this;
 
-            $("#attrminimize").animate({width: 'hide'}, 350);
+            $("#attrminimize").hide();
         },
-        hide_panel: function(check) {
+        hide_panel: function() {
             var com = this;
-            if (check == true){
-                $("#attributepane").animate({width: 'show'}, 350);
+            if(com.pane_check == false){
+                $("#attrminimize").find("#dropdown-btn-min").css({'transform': 'rotate(90deg)'});
+                $("#attributepane").hide();
+            }else{
+                $("#attrminimize").find("#dropdown-btn-min").css({'transform': 'rotate(0deg)'});
+                $("#attributepane").show();
             }
-            if (check == false){
-                $("#attributepane").animate({width: 'hide'}, 350);
+            com.pane_check = !com.pane_check;
+        },
+        expand_proteins: function() {
+            var com = this;
+            com.proteins_expand = !com.proteins_expand;
+            if(com.proteins_expand == false){
+                $("#link").hide();
+            }else{
+                $("#link").show();
             }
-        }
+            
+        },
+        copyclipboard: function(){
+            com = this;
+
+            textToCopy = [];
+            for(link of com.links) textToCopy.push(link.label);
+            navigator.clipboard.writeText(textToCopy.join("\n"));
+            }
     },
     watch: {
         "active_node": function(id) {
@@ -49,7 +70,6 @@ Vue.component("attribute-pane", {
             });
 
             com.links = [];
-            var lis = [];
             for (var id in neighbors) {
                 var neighbor = sigma_instance.graph.getNodeFromIndex(id);
                 com.links.push({
@@ -57,21 +77,21 @@ Vue.component("attribute-pane", {
                     label: neighbor.label
                 })
             }
-            $("#attrminimize").animate({width:'show'}, 350);
+            $("#attrminimize").show();
         }
     },
     mounted: function() {
         var com = this;
 
-        $("#attrminimize").find("#dropdown-btn-max").click(() => com.hide_panel(true));
-        $("#attrminimize").find("#dropdown-btn-min").click(() => com.hide_panel(false));
+        $("#attrminimize").find("#dropdown-btn-min").click(() => com.hide_panel());
         $("#attrminimize").find("#dropdown-btn-close").click(() => com.select_node(null));
     },
     template: `
     <div id="attrminimize" class="minimize">
-        <button id="dropdown-btn-max">Maximize</button>
-        <button id="dropdown-btn-min">Minimize</button>
-        <button id="dropdown-btn-close">Close</button>
+        <div class="min-button">
+        <button id="dropdown-btn-min"></button>
+        <button id="dropdown-btn-close"></button>
+        </div>
         <div id="attributepane" class="pane">
             <div class="text">
                 <div class="headertext">
@@ -86,8 +106,12 @@ Vue.component("attribute-pane", {
                             <span><strong>{{key}}: </strong>{{value}}</span><br/><br/>
                         <div/>
                     </div>
-                    <div class="p">Connections:</div>
-                    <div class="link">
+                    <div class="p">
+                    <span>Connections:</span>
+                    <button v-on:click="copyclipboard()" id="copy-btn">Copy</button>
+                    <button v-on:click="expand_proteins()" id="expand-btn">Expand</button>
+                    </div>
+                    <div class="link" id="link">
                         <ul>
                         <li class="membership" v-for="link in links">
                             <a href="#" v-on:click="select_node(link.id)">{{link.label}}</a>

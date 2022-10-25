@@ -5,7 +5,8 @@ Vue.component("d-value", {
             message: "",
             terms: null,
             selected_d: null,
-            dcoloumns: ["no selection"]
+            dcoloumns: ["no selection"],
+            dcheck: false,
         }
     },
     methods: {
@@ -28,10 +29,9 @@ Vue.component("d-value", {
         
     },
     template: `
-        <div v-show="gephi_json != null" class="">
-            </br></br>
-            <h4>D-Values:</h4>
-            <select v-model="selected_d" v-on:change="select_term(selected_d)">
+        <div v-show="gephi_json != null && dcoloumns.length > 1" class="toolbar-button">
+            <button v-on:click="dcheck=!dcheck" id="d_value">D Value</button>
+            <select v-show="dcheck===true" v-model="selected_d" v-on:change="select_term(selected_d)">
                 <option disabled value="">Please select D Section</option>
                 <option v-for="value in dcoloumns">{{value}}</option>
             </select>

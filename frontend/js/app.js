@@ -12,7 +12,7 @@ const eventHub = new Vue(); // Single event hub
 
 $(document).ready(function () {
     APP = new Vue({
-        el: '#pgdb-app', // Link to index.html (div in body)
+        el: '#webapp', // Link to index.html (div in body)
         data: {
             gephi_json: null,
             node_color_index: null,
