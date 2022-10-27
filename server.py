@@ -140,9 +140,14 @@ def proteins_subgraph_api():
     else:
         query = create_query_single()
     
+    
+    with open("/tmp/query"+repr(filename)+".txt", "w") as query_text:
+        query_text.write("%s" % query)
+    
     #Timer to evaluate runtime to setup
     t_setup = time.time()
     print("Time Spent (Setup):", t_setup-t_begin)
+
 
     #---------Start py2neo
 
@@ -185,10 +190,11 @@ def proteins_subgraph_api():
          "-a", "bolt://localhost:7687",
          "-u", "neo4j",
          "-p", "pgdb",
-         query],
+         "-f", "/tmp/query"+repr(filename)+".txt"],
         capture_output=True,
         encoding="utf-8"
     )
+    os.remove('/tmp/query'+repr(filename)+'.txt')
     #Check standard output 'stdout' whether it's empty to control errors
     if not data.stdout:
         raise Exception(data.stderr) 
@@ -317,5 +323,5 @@ def proteins_subgraph_api():
 
 if __name__ == "__main__":
     
-    # app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
     app.run()
