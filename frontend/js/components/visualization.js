@@ -20,7 +20,7 @@ sigma.classes.graph.addMethod('ensemblIdToNode', function(ensembl_id) {
 
 // Component
 Vue.component("visualization", {
-    props: ["gephi_json","func_json", "active_node", "active_term", "active_subset", "active_layer", "node_color_index", "edge_color_index", "d_value", "dark_theme_root","edge_thick"],
+    props: ["gephi_json","func_json","func_enrichment", "active_node", "active_term", "active_subset", "active_layer", "node_color_index", "edge_color_index", "d_value", "dark_theme_root","edge_thick"],
     data: function() {
         return {
             rectangular_select: {
@@ -33,7 +33,8 @@ Vue.component("visualization", {
             container: null,
             darkThemeOn: false,
             edge_opacity: 0.2,
-            dvalueterm: null
+            dvalueterm: null,
+            saved_sigma_instance: null,
         }
     },
     watch: {
@@ -52,6 +53,7 @@ Vue.component("visualization", {
         },
         "active_subset": function(subset, old_subset) {
             var com = this;
+            if(com.active_node != null || com.func_enrichment == null) return;
 
             if (subset == null) {
                 com.reset();
@@ -96,10 +98,8 @@ Vue.component("visualization", {
             var com = this;
 
             if (term == null) {
-                if (com.active_node == null) {
                 com.$emit("active-layer-changed", null);
                 com.reset();
-                }
                 return;
             }
 

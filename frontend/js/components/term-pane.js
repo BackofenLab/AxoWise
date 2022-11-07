@@ -5,7 +5,10 @@ Vue.component("term-pane", {
             selected_term: null,
             links: [],
             saved_links: [null],
-            counter: null
+            counter: null,
+            pane_check: false,
+            proteins_expand: false,
+
         }
     },
     methods: {
@@ -30,11 +33,11 @@ Vue.component("term-pane", {
         hide_panel: function() {
             var com = this;
             if(com.pane_check == false){
-                $("#attrminimize").find("#dropdown-btn-min").css({'transform': 'rotate(90deg)'});
-                $("#attributepane").hide();
+                $("#termminimize").find("#dropdown-btn-min").css({'transform': 'rotate(90deg)'});
+                $("#termpane").hide();
             }else{
-                $("#attrminimize").find("#dropdown-btn-min").css({'transform': 'rotate(0deg)'});
-                $("#attributepane").show();
+                $("#termminimize").find("#dropdown-btn-min").css({'transform': 'rotate(0deg)'});
+                $("#termpane").show();
             }
             com.pane_check = !com.pane_check;
         },
@@ -42,9 +45,9 @@ Vue.component("term-pane", {
             var com = this;
             com.proteins_expand = !com.proteins_expand;
             if(com.proteins_expand == false){
-                $("#link").hide();
+                $("#linkterm").hide();
             }else{
-                $("#link").show();
+                $("#linkterm").show();
             }
             
         },
@@ -58,8 +61,7 @@ Vue.component("term-pane", {
     },
     watch: {
         "active_term": function(term) {
-            var com = this;
-            if(com.active_subset != null) return;  
+            var com = this; 
             if (term == null) {
                 $("#termminimize").hide();
                 com.$emit("func-json-changed", null);
@@ -86,29 +88,34 @@ Vue.component("term-pane", {
     },
     template: `
     <div id="termminimize" class="minimize">
+        <div class="min-button">
         <button id="dropdown-btn-min"></button>
         <button id="dropdown-btn-close"></button>
+        </div>
         <div id="termpane" class="pane">
             <div class="text">
                 <div class="headertext">
                     <span>Information Pane</span>
                 </div>
                 <div v-if="selected_term !== null" class="nodeattributes">
-                    <div class="name">
-                        <span>{{selected_term.name}}</span>
+                    <div class="name_term">
+                    <span>{{selected_term.name}}</span>
+                    </div>
+                    <div class="change-level-menu">
+                    <button id="down_level" v-on:click="change_level(links)">Apply</button>
+                    <button id="up_level" v-on:click="change_level_up(saved_links)">Revert</button>
                     </div>
                     <div class="data">
                         <span><strong>ID: </strong>{{selected_term.id}}</span><br/><br/>
                         <span><strong>p-value: </strong>{{selected_term.p_value}}</span><br/><br/>
                         <span><strong>false-discovery-rate: </strong>{{selected_term.fdr_rate}}</span>
                     </div>
-                    </br></br>
-                    <div>
-                    <button id="down_level" v-on:click="change_level(links)">Apply Level</button>
-                    <button id="up_level" v-on:click="change_level_up(saved_links)">Revert Level</button>
+                    <div class="p">
+                    <span>Proteins:</span>
+                    <button v-on:click="copyclipboard()" id="copy-btn">Copy</button>
+                    <button v-on:click="expand_proteins()" id="expand-btn">Expand</button>
                     </div>
-                    <div class="p">Proteins:</div>
-                    <div class="link">
+                    <div class="link" id="linkterm">
                         <ul>
                         <li class="membership" v-for="link in links">
                             <a href="#" v-on:click="select_node(link.id)">{{link.label}}</a>

@@ -46,7 +46,7 @@ Vue.component("search", {
             var regex = RegExp(com.exactMatch ? ("^" + query + "$").toLowerCase() : query.toLowerCase());
 
             if (query.length < 3) {
-                com.message = "You must search for a name with a minimum of 3 letters.";
+                com.message = "Minimum 3 letters required.";
                 return;
             }
 
@@ -81,21 +81,12 @@ Vue.component("search", {
             if (13 == a.which) return com.state.addClass("searching"), com.search(com.input.val()), !1
         });
 
-        com.state.click(function () {
-            var a = com.input.val();
-            com.searching && a == com.lastSearch ? com.close() : (com.state.addClass("searching"), com.search(a))
-        });
     },
     template: `
-
-    <div class="toolbar-button">
-        <div v-show="gephi_json != null">
-        <button v-on:click="search_check=!search_check" id="search_button">Search</button>
-        </div>
-        <form v-show="gephi_json != null && search_check === true" class="white-theme">
-            <div id="search" class="toolbar-search">
-                <input type="text" value="Search nodes by name" class="search empty"/>
-                <div class="state"></div>
+            <div v-show="gephi_json != null" id="search" class="toolbar-search">
+                <div class="search-field">
+                <input type="text" value="Search nodes by name" class="search_empty"/>
+                </div>
                 <div class="results">
                     <i v-if="message.length > 0">{{message}}</i>
                     <div v-for="entry in matches">
@@ -106,8 +97,5 @@ Vue.component("search", {
                     </div>
                 </div>
             </div>
-            <br/>
-        </form>
-     </div>
     `
 });

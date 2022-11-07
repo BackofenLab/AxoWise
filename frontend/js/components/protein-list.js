@@ -159,14 +159,14 @@ Vue.component("protein-list", {
             />
             <button id="submit-btn">Submit</button>
             <!--<h4>Edge Color thickness</h4>
-              <input id="edge-slider"
+              <input id="edge-slidersdd"
                 type="range"
                 v-bind:min="edge_thick.min"
                 v-bind:max="edge_thick.max"
                 v-bind:step="edge_thick.step"
                 v-model="edge_thick.value"
             />
-            <input id="edge-input"
+            <input id="edge-inputsd"
                 type="number"
                 v-bind:min="edge_thick.min"
                 v-bind:max="edge_thick.max"

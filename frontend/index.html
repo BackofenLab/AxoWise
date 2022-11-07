@@ -37,6 +37,9 @@
       <script src="js/components/d-value.js"></script>
       <script src="js/components/export-layout.js"></script>
       <script src="js/components/home.js"></script>
+      <script src="js/components/home_button.js"></script>
+      <script src="js/components/snapshot.js"></script>
+      <script src="js/components/tool-visualization.js"></script>
       <!-- <script src="js/components/theme-toggle.js"></script> -->
     </head>
 
@@ -47,10 +50,12 @@
         </div>
       <div v-show="gephi_json != null" id="pgdb-app" class="black-theme"> <!-- Linked to app.js -->
           <div id="left-control-panel" class="black-theme">
+            <home_button v-model="gephi_json"
+                         v-on:gephi-json-changed="gephi_json = $event"
+            ></home_button>
               <div id="mainpanel" class="main-panel-limit">
           <div class="col">
             <div class="toolbar">
-              <img src="images/logo-white.png" alt="logo">
               <!-- <protein-list v-model="gephi_json"></protein-list> -->
               <export-layout v-bind:gephi_json="gephi_json"
                              v-on:gephi-json-changed="gephi_json = $event"
@@ -58,24 +63,17 @@
               <d-value v-bind:gephi_json="gephi_json"
                        v-on:d_value-changed="d_value = $event"
               ></d-value>
-              <search v-on:active-node-changed="active_node = $event"
-                      v-bind:gephi_json="gephi_json"
-              ></search>
-              <functional-enrichment v-bind:gephi_json="gephi_json"
-                                     v-bind:func_json="func_json"
-                                     v-bind:reset_term="reset_term"
-                                     v-bind:func_enrichment="func_enrichment"
-                                     v-bind:revert_term="revert_term"
-                                     v-on:active-term-changed="active_term = $event"
-                                     v-on:func-json-changed="func_json = $event"
-                                     v-on:func-enrichment-changed="func_enrichment = $event"
-              ></functional-enrichment>
+              <snapshot v-bind:gephi_json="gephi_json"
+              ></snapshot>
+              <tool-visualization v-bind:gephi_json="gephi_json"
+              ></tool-visualization>
             </div>
           </div>
         </div>
           </div>
           <subset-dialog :active_subset="active_subset"
                        v-bind:gephi_json="gephi_json"
+                       v-bind:active_node="active_node"
                        v-bind:func_enrichment="func_enrichment"
                        v-bind:func_json="func_json"
                        v-bind:reset_term="reset_term"
@@ -96,6 +94,7 @@
                        v-bind:active_node="active_node"
                        v-bind:active_term="active_term"
                        v-bind:d_value="d_value"
+                       v-bind:func_enrichment="func_enrichment"
                        v-bind:func_json="func_json"
                        v-bind:active_subset="active_subset"
                        v-bind:active_layer="active_layer"
@@ -110,6 +109,9 @@
                        v-on:func-json-changed="func_json = $event"
         ></visualization>
               <zoom></zoom>
+              <search v-on:active-node-changed="active_node = $event"
+              v-bind:gephi_json="gephi_json"
+              ></search>
               <attribute-pane v-bind:active_node="active_node"
               v-on:active-node-changed="active_node = $event"
             ></attribute-pane>
@@ -129,6 +131,16 @@
                          v-on:active-node-changed="active_node = $event"
                          v-on:d_value-changed="d_value = $event"
             ></dvalue-pane>
+            <functional-enrichment v-bind:gephi_json="gephi_json"
+            v-bind:func_json="func_json"
+            v-bind:reset_term="reset_term"
+            v-bind:func_enrichment="func_enrichment"
+            v-bind:revert_term="revert_term"
+            v-on:active-layer-changed="active_layer = $event"
+            v-on:active-term-changed="active_term = $event"
+            v-on:func-json-changed="func_json = $event"
+            v-on:func-enrichment-changed="func_enrichment = $event"
+            ></functional-enrichment>
           </div>
       </div>
     </div>

@@ -9,7 +9,8 @@ Vue.component("dvalue-pane", {
                 min: 1,
                 max: 10,
                 step: 1
-            }
+            },
+            pane_check: false,
         }
     },
     methods: {
@@ -37,7 +38,7 @@ Vue.component("dvalue-pane", {
     
             svg.append("g")
                 .attr("transform", "translate(0,80)")
-                .attr("color","black")
+                .attr("color","white")
                 .call(xAxis);
             
             var colorScale = d3.scaleLinear()
@@ -62,27 +63,29 @@ Vue.component("dvalue-pane", {
             this.draw_legend();
             this.eventHub.$emit('dboundary-update', this.dboundary.value);
         },
-        hide_panel: function(check) {
+        hide_panel: function() {
             var com = this;
-            if (check == true){
-                $("#dvaluepane").animate({width: 'show'}, 350);
+            if(com.pane_check == false){
+                $("#minimizer").find("#dropdown-btn-min").css({'transform': 'rotate(90deg)'});
+                $("#dvaluepane").hide();
+            }else{
+                $("#minimizer").find("#dropdown-btn-min").css({'transform': 'rotate(0deg)'});
+                $("#dvaluepane").show();
             }
-            if (check == false){
-                $("#dvaluepane").animate({width: 'hide'}, 350);
-            }
+            com.pane_check = !com.pane_check;
         }
     },
     watch: {
         "d_value": function(term) {
             var com = this;
             if(term == null || term == "no selection"){
-                $("#minimizer").animate({width:'hide'}, 350);
+                $("#minimizer").hide();
                 return;
             }
             com.draw_legend();
 
             // TODO
-            $("#minimizer").animate({width:'show'}, 350);
+            $("#minimizer").show();
         }
     },
     mounted: function() {
@@ -92,21 +95,26 @@ Vue.component("dvalue-pane", {
         $("#dboundary-slider").change(com.check_boundary);
         $("#dboundary-input").change(com.check_boundary);
 
-        $("#minimizer").find("#dropdown-btn-max").click(() => com.hide_panel(true));
-        $("#minimizer").find("#dropdown-btn-min").click(() => com.hide_panel(false));
+        $("#minimizer").find("#dropdown-btn-min").click(() => com.hide_panel());
         $("#minimizer").find("#dropdown-btn-close").click(() => com.$emit("d_value-changed", null));
     },
     template: `
     <div id="minimizer" class="minimize">
-        <button id="dropdown-btn-max">Maximize</button>
-        <button id="dropdown-btn-min">Minimize</button>
-        <button id="dropdown-btn-close">Close</button>
+        <div class="min-button">
+        <button id="dropdown-btn-min"></button>
+        <button id="dropdown-btn-close"></button>
+        </div>
         <div id="dvaluepane" class="pane">
             <div class="text">
                 <div class="headertext">
                     <span>Information Pane</span>
+                </div>
+                <div class="nodeattributes">
+                    <div class="p">
+                    <b>Legend:</b>
+                    </div>
                     <svg id="demo1" width="250" height="120"></svg>
-                    <h4>D-Value Boundary:</h4>
+                    <div class="boundary">
                     <input id="dboundary-slider"
                         type="range"
                         v-bind:min="dboundary.min"
@@ -121,18 +129,6 @@ Vue.component("dvalue-pane", {
                         v-bind:step="dboundary.step"
                         v-model="dboundary.value"
                     />
-                </div>
-                <div v-show="selected_term !== null" class="nodeattributes">
-                    <div class="name">
-                        <span>Positive D-Value</span>
-                    </div>
-                    <div class="p">Proteins:</div>
-                    <div class="link">
-                        <ul>
-                        <li class="membership" v-for="link in links">
-                            <a href="#" v-on:click="select_node(link.id)">{{link.label}}</a>
-                        </li>
-                        </ul>
                     </div>
                 </div>
             </div>

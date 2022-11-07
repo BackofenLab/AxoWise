@@ -28,6 +28,8 @@ $(document).ready(function () {
             func_enrichment: null,
             revert_term: null,
             reset_term: null,
+            home_button: null,
+            snapshot: null,
         },
         watch: {
             gephi_json: function(json) {

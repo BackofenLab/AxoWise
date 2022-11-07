@@ -28,7 +28,6 @@ Vue.component("home", {
       single_text: null,
       protein_file: null,
       selected_species: null,
-      d_value: false,
       dcoloumns: null,
       selected_d: [],
       selected_system: "Single",

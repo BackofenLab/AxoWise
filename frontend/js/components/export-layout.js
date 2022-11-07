@@ -26,10 +26,11 @@ Vue.component("export-layout", {
 
     },
     template: `
-    <div class="toolbar-button">
-        <div v-show="gephi_json != null">
-            <button v-on:click="export_graph()" id="export_json">Export</button>
+        <div v-show="gephi_json != null" class="toolbar-button">
+            <div class="toolbar-theme">
+                <button v-on:click="export_graph()" id="export_json">Export Data</button>
+                <span class="toolbar-icon">&#8681;</span>
+            </div>
         </div>
-    </div>
     `
 });

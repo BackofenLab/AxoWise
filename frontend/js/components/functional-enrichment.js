@@ -28,7 +28,7 @@ Vue.component("functional-enrichment", {
             search_raw: "",
             filter: "",
             await_check: true,
-            enrich_check: false
+            await_load: false,
 
         }
     },
@@ -53,7 +53,26 @@ Vue.component("functional-enrichment", {
         get_functionterms: function(term) {
             var com = this;
             com.$emit("func-json-changed", term);
-        }
+        },
+        export_enrichment: function(){
+            com = this;
+
+            //export terms as csv
+            csvTermsData = com.terms;
+            terms_csv = 'category,fdr_rate,name,proteins\n';
+
+            csvTermsData.forEach(function(row) {
+                terms_csv += row['category'] + ',' + row['fdr_rate'] + ','  + row['name'] + ',"' +row['proteins']+'"';
+                terms_csv += '\n';   
+            });
+
+
+            var hiddenElement = document.createElement('a');
+            hiddenElement.target = '_blank';
+            hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(terms_csv);
+            hiddenElement.download = 'Terms.csv';  
+            hiddenElement.click();
+        },
     },
     watch: {
         "gephi_json": function(json) {
@@ -85,9 +104,7 @@ Vue.component("functional-enrichment", {
             formData = new FormData();
             formData.append('proteins', com.proteins);
             formData.append('species_id', nodes[0].species);
-
-            $("#enrichment").addClass("loading");
-            
+            com.await_load = true;
 
             $.ajax({
                 type: 'POST',
@@ -98,7 +115,7 @@ Vue.component("functional-enrichment", {
                 processData: false,
               })
               .done(function (json) {         
-                $("#enrichment").removeClass("loading");                     
+                com.await_load = false;                  
                   if(com.await_check){
                       com.$emit("func-enrichment-changed", json);
                       com.terms = [];
@@ -144,22 +161,20 @@ Vue.component("functional-enrichment", {
         }
     },
     template: `
-    <div class="toolbar-button">
-        <div v-show="gephi_json != null">
-        <button v-on:click="enrich_check=!enrich_check" id="enrich_button">Σ</button>
-         </div>
-        <div v-show="gephi_json != null && enrich_check === true" id="enrichment" class="white-theme">
+        <div v-show="gephi_json != null" id="enrichment" class="tool-pane">
+            <div class="headertext">
             <h4>Functional enrichment:</h4>
-            <br/>
-            <h5>Filter:</h5>
-            <select v-model="filter" v-on:change="select_cat(filter)">
-                <option disabled value="">Please select term</option>
-                <option v-for="(value, key, index) in filter_terms" v-bind:value="key">{{value}}</option>
-            </select>
-            <br/><br/>
-            <input type="text" value="Search functional terms by name" v-model="search_raw" class="empty"/>
-            <div class="modalpane"> </div>
-            <div class="results">
+            </div>
+            <div class="main-section">
+                <div class="enrichment-filtering">
+                    <input type="text" value="Search functional terms by name" v-model="search_raw" class="empty"/>
+                    <select v-model="filter" v-on:change="select_cat(filter)">
+                        <option disabled value="">No Filter</option>
+                        <option v-for="(value, key, index) in filter_terms" v-bind:value="key">{{value}}</option>
+                    </select>
+                </div>
+            <div v-if="await_load == true" class="loading_pane"></div>
+            <div v-if="await_load == false" class="results">
                 <i v-if="message.length > 0">{{message}}</i>
                 <div v-for="entry in filtered_terms">
                     <a href="#" v-on:click="select_term(entry)">{{entry.name}}</a>
@@ -168,6 +183,7 @@ Vue.component("functional-enrichment", {
                     <i>No terms available.</i>
                 </div>
             </div>
+            <button v-if="await_load == false" id="export-enrich-btn" v-on:click="export_enrichment()">Export</button>
         </div>
     </div>
     `

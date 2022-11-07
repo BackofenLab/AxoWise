@@ -1,5 +1,5 @@
 Vue.component("subset-dialog", {
-    props: ["gephi_json", "active_subset", "func_enrichment", "func_json","reset_term"],
+    props: ["gephi_json", "active_subset", "func_enrichment", "func_json","reset_term", "active_node"],
     data: function() {
         return {
             contained_terms: null,
@@ -10,13 +10,16 @@ Vue.component("subset-dialog", {
             proteins_expand: false,
             edges_expand: false,
             export_edges: [],
-            export_option: ['Nodes', 'Edges', 'Terms'],
+            export_option: ['Nodes', 'Edges'],
             selected_export: null,
         }
     },
     watch: {
         "active_subset": function(subset) {
             var com = this;
+
+            if(com.active_node || com.func_enrichment == null)return;
+
             com.contained_edges = [];
             com.export_edges = [];
             com.subset_ids = [];
@@ -27,7 +30,7 @@ Vue.component("subset-dialog", {
                 $("#subsminimize").hide();
                 return;
             }
-            var com = this;
+
             if (com.active_subset == null) return;
             com.used_subset.push(subset);
             com.$emit("func-json-changed", subset);
@@ -109,19 +112,9 @@ Vue.component("subset-dialog", {
             edges_csv = 'Source,Target\n';
 
             csvEdgesData.forEach(function(row) {
-                edges_csv += row.source + ", " + row.target;
+                edges_csv += row.source + " , " + row.target;
                 edges_csv += "\n";  
             });
-
-            //export terms as csv
-            csvTermsData = com.func_enrichment
-            terms_csv = 'category,fdr_rate,name,proteins\n';
-
-            csvTermsData.forEach(function(row) {
-                terms_csv += row['category'] + ',' + row['fdr_rate'] + ','  + row['name'] + ',"'+row['proteins']+'"';
-                terms_csv += '\n';   
-            });
-
 
             var hiddenElement = document.createElement('a');
             hiddenElement.target = '_blank';
@@ -129,8 +122,6 @@ Vue.component("subset-dialog", {
                 hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(nodes_csv);
             }else if (exports == 'Edges'){
                 hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(edges_csv);
-            }else if (exports == 'Terms'){
-                hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(terms_csv);
             }
             hiddenElement.download = exports+'.csv';  
             hiddenElement.click();
