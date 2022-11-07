@@ -55,6 +55,9 @@ Vue.component("visualization", {
             var com = this;
             if(com.active_node != null || com.func_enrichment == null) return;
 
+    
+            if (subset == null && com.active_term != null) return;
+
             if (subset == null) {
                 com.reset();
                 return;
@@ -103,6 +106,7 @@ Vue.component("visualization", {
                 return;
             }
 
+            if (com.active_subset != null) com.$emit("active-subset-changed", null);
             if (com.d_value != null) com.$emit("d_value-changed", null);
             if (com.active_node != null) com.$emit("active-node-changed", null);
 

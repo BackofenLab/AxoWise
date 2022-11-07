@@ -74,6 +74,7 @@
           <subset-dialog :active_subset="active_subset"
                        v-bind:gephi_json="gephi_json"
                        v-bind:active_node="active_node"
+                       v-bind:active_term="active_term"
                        v-bind:func_enrichment="func_enrichment"
                        v-bind:func_json="func_json"
                        v-bind:reset_term="reset_term"
@@ -117,6 +118,7 @@
             ></attribute-pane>
             <term-pane v-bind:active_term="active_term"
                        v-bind:d_value="d_value"
+                       v-bind:gephi_json="gephi_json"
                        v-bind:func_json="func_json"
                        v-bind:revert_term="revert_term"
                        v-bind:active_subset="active_subset"

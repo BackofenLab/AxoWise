@@ -19,6 +19,7 @@ margin: 0px;
 	display:inline-flex;
 	background-color: rgba(255, 255, 255, 0.15);
 	border-radius: 20px;
+	width: 330px;
 	padding: 5px;
 	z-index: 999;
 	left: 50%;
@@ -27,6 +28,14 @@ margin: 0px;
 	margin-top:15px;
 	overflow-x: scroll;
 }
+.modules::-webkit-scrollbar {
+	display: none;
+  }
+
+.modules {
+	-ms-overflow-style: none;  /* IE and Edge */
+	scrollbar-width: none;  /* Firefox */
+  }
 
 #modules:hover {
 	background-color: rgba(255, 255, 255, 0.5);
@@ -623,6 +632,8 @@ html,body{
 	transition: 0.5s;
 }
 
+
+
 #export-all-btn{
 	background-color: rgba(0, 0, 0, 0.5) ;
 	margin-top: 5px;
@@ -644,7 +655,7 @@ html,body{
 
 #export-enrich-btn{
 	background-color: rgba(0, 0, 0, 0.5) ;
-	margin-top: 20px;
+	margin-top: 10px;
 	width:70%;
 	color: white;
 	padding: 5px;
@@ -847,7 +858,7 @@ color: #000;
 }
 
 .tool-pane .results {
-	margin-top: 15px;
+	margin-top: 5px;
 	max-height: 100vh;
 	height: 52%;
 	overflow-y: scroll;
@@ -865,6 +876,17 @@ color: #000;
 #enrichment .results a:hover {
 	background-color: #999;
 	border-radius: 20px;
+}
+.term_number {
+	position: relative;
+	display: block;
+	margin-left: 67%;
+}
+
+.term_number span {
+	font-style: italic;
+	font-weight:100;
+	font-size: 10px;
 }
 
 .tool-pane {

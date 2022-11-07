@@ -29,6 +29,7 @@ Vue.component("functional-enrichment", {
             filter: "",
             await_check: true,
             await_load: false,
+            term_numbers: "hello",
 
         }
     },
@@ -49,6 +50,7 @@ Vue.component("functional-enrichment", {
             if(category != "RESET"){
                 com.terms = filtered_terms;
             }else{com.terms = com.saved_terms[com.saved_terms.length -1]}
+            com.term_number();
         },
         get_functionterms: function(term) {
             var com = this;
@@ -73,6 +75,12 @@ Vue.component("functional-enrichment", {
             hiddenElement.download = 'Terms.csv';  
             hiddenElement.click();
         },
+        term_number: function(){
+            var com = this;
+
+            com.term_numbers = com.terms.length.toString();
+
+        }
     },
     watch: {
         "gephi_json": function(json) {
@@ -92,6 +100,7 @@ Vue.component("functional-enrichment", {
                 com.await_check = false;
                 com.terms = com.saved_terms[0];
                 com.saved_terms = [com.terms];
+                com.term_number();
                 return;
             }
 
@@ -128,6 +137,7 @@ Vue.component("functional-enrichment", {
                             var p_t2 = parseFloat(t2.fdr_rate);
                             return p_t1 - p_t2;
                         });
+                        com.term_number();
                     }
             });
         },
@@ -137,12 +147,14 @@ Vue.component("functional-enrichment", {
             com.await_check = false;
             com.saved_terms.pop()
             com.terms = com.saved_terms[com.saved_terms.length-1];
+            com.term_number();
         },
         "reset_term": function(subset) {
             var com = this;
             if (!subset) return ;
             com.await_check = false;
             com.terms = com.saved_terms[0];
+            com.term_number();
         },
     },
     computed: {
@@ -172,6 +184,9 @@ Vue.component("functional-enrichment", {
                         <option disabled value="">No Filter</option>
                         <option v-for="(value, key, index) in filter_terms" v-bind:value="key">{{value}}</option>
                     </select>
+                </div>
+                <div v-if="await_load==false" class="term_number">
+                    <span>Terms: {{term_numbers}}</span>
                 </div>
             <div v-if="await_load == true" class="loading_pane"></div>
             <div v-if="await_load == false" class="results">
