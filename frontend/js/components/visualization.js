@@ -35,6 +35,7 @@ Vue.component("visualization", {
             edge_opacity: 0.2,
             dvalueterm: null,
             saved_sigma_instance: null,
+            saved_node: null,
         }
     },
     watch: {
@@ -53,6 +54,7 @@ Vue.component("visualization", {
         },
         "active_subset": function(subset, old_subset) {
             var com = this;
+
             if(com.active_node != null || com.func_enrichment == null) return;
 
     
@@ -67,8 +69,37 @@ Vue.component("visualization", {
 
             var proteins = new Set(subset.map(node => node.attributes["Ensembl ID"]));
 
-            sigma_instance.graph.nodes().forEach(function (n) {
-                if (!proteins.has(n.attributes["Ensembl ID"])) n.hidden = true;
+            // sigma_instance.graph.nodes().forEach(function (n) {
+            //     if (!proteins.has(n.attributes["Ensembl ID"])) n.hidden = true;
+            // });
+
+            sigma_instance.graph.edges().forEach(function (e) {
+
+                // Nodes
+                var source = sigma_instance.graph.getNodeFromIndex(e.source);
+                var target = sigma_instance.graph.getNodeFromIndex(e.target);
+
+                // Ensembl IDs
+                var source_ensembl_id = source.attributes["Ensembl ID"];
+                var target_ensembl_id = target.attributes["Ensembl ID"];
+
+                // Are they present in the functional term?
+                var source_present = proteins.has(source_ensembl_id);
+                var target_present = proteins.has(target_ensembl_id);
+
+                // Source
+                if (source_present) source.color = "rgb(255, 255, 255)"; // white
+                else source.color = "rgb(0, 100, 100)"; // green
+
+                // Target
+                if (target_present) target.color = "rgb(255, 255, 255)"; // white
+                else target.color = "rgb(0, 100, 100)"; // green
+
+                // Edge
+                if (source_present && !target_present || !source_present && target_present) e.color = "rgba(200, 255, 255, 0.25)"; // pink
+                else if(source_present && target_present) e.color = "rgba(255, 255, 255, 0.3)"; // white
+                else e.color = "rgba(0, 100, 100, 0.2)"; // green
+
             });
 
             sigma_instance.refresh();
@@ -147,6 +178,13 @@ Vue.component("visualization", {
         "active_node": function(id) {
             var com = this;
 
+            if(com.saved_node != null){
+                var save_node = sigma_instance.graph.getNodeFromIndex(com.saved_node["id"]);
+                save_node.size = com.saved_node["size"];
+                com.reset();
+                
+            }
+
             if (id == null) {
                 if (com.active_term == null && (com.d_value == "no selection" || com.d_value == null)) com.reset();
                 return;
@@ -157,6 +195,7 @@ Vue.component("visualization", {
 
             var neighbors = {};
             var node = sigma_instance.graph.getNodeFromIndex(id);
+            com.saved_node = {"id": node.id, "size": node.size};
 
             sigma_instance.graph.edges().forEach(function (e) {
                 n = {
@@ -166,6 +205,8 @@ Vue.component("visualization", {
 
                 if (id == e.source || id == e.target)
                     neighbors[id == e.target ? e.source : e.target] = n;
+
+                if(id == e.source || id == e.target) e.color="rgba(255,255,255,0.4)";
 
                 e.hidden = false;
             });
@@ -183,6 +224,9 @@ Vue.component("visualization", {
                 var neighbor = sigma_instance.graph.getNodeFromIndex(id);
                 neighbor.hidden = false;
             }
+
+            node.size = "100";
+            node.color = "rgb(255, 255, 255)";// white
 
             sigma_instance.refresh();
         },

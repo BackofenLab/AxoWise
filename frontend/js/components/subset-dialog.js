@@ -2,6 +2,7 @@ Vue.component("subset-dialog", {
     props: ["gephi_json", "active_subset", "func_enrichment", "func_json","reset_term", "active_node", "active_term"],
     data: function() {
         return {
+            actual_subset: null,
             contained_terms: null,
             used_subset: [],
             pane_check: false,
@@ -12,11 +13,14 @@ Vue.component("subset-dialog", {
             export_edges: [],
             export_option: ['Nodes', 'Edges'],
             selected_export: null,
+            hide_check: false,
         }
     },
     watch: {
         "active_subset": function(subset) {
             var com = this;
+
+            com.actual_subset = subset;
 
             if(com.active_node || com.func_enrichment == null)return;
 
@@ -150,6 +154,26 @@ Vue.component("subset-dialog", {
             }
             
         },
+        hide_graph: function(hide_check) {
+            var com = this;
+            com.hide_check = hide_check
+
+            var proteins = new Set(com.actual_subset.map(node => node.attributes["Ensembl ID"]));
+
+            if(hide_check){
+                sigma_instance.graph.nodes().forEach(function (n) {
+                    if (!proteins.has(n.attributes["Ensembl ID"])) n.hidden = true;
+                });
+            }else{
+                sigma_instance.graph.nodes().forEach(function (n) {
+                    if (!proteins.has(n.attributes["Ensembl ID"])) n.hidden = false;
+                });
+            }
+            
+
+            sigma_instance.refresh();
+
+        },
         
     },
     template: `
@@ -196,6 +220,7 @@ Vue.component("subset-dialog", {
                     <option v-for="exports in export_option">{{exports}}</option>
                     </select>
                     <button id="export-all-btn" v-on:click="export_all(selected_export)">Export</button>
+                    <button id="hide-btn" v-on:click="hide_graph(!hide_check)">Hide</button>
                 </div>
             </div>
         </div>

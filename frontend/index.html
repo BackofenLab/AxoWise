@@ -40,6 +40,7 @@
       <script src="js/components/home_button.js"></script>
       <script src="js/components/snapshot.js"></script>
       <script src="js/components/tool-visualization.js"></script>
+      <script src="js/components/highlight_button.js"></script>
       <!-- <script src="js/components/theme-toggle.js"></script> -->
     </head>
 
@@ -56,7 +57,6 @@
               <div id="mainpanel" class="main-panel-limit">
           <div class="col">
             <div class="toolbar">
-              <!-- <protein-list v-model="gephi_json"></protein-list> -->
               <export-layout v-bind:gephi_json="gephi_json"
                              v-on:gephi-json-changed="gephi_json = $event"
               ></export-layout>
@@ -67,6 +67,10 @@
               ></snapshot>
               <tool-visualization v-bind:gephi_json="gephi_json"
               ></tool-visualization>
+              <highlight_button v-bind:gephi_json="gephi_json"
+                                v-bind:protein_list="protein_list"
+                                v-on:protein-list-changed="protein_list = $event"
+              ></highlight_button>
             </div>
           </div>
         </div>
@@ -83,9 +87,10 @@
                        v-on:reset-term-changed="reset_term = $event"
                        v-on:func-json-changed="func_json = $event"
                        v-on:active-term-changed="active_term = $event"
+                       v-on:active-layer-changed="active_layer = $event"
                        v-on:d_value-changed="d_value = $event"
                        v-on:active-subset-changed="active_subset = $event"
-                        v-on:toggle-theme="active_node = $event"
+                      v-on:toggle-theme="active_node = $event"
         ></subset-dialog>
           <div id= "chart-area">
               <modules v-bind:gephi_json="gephi_json"
@@ -113,6 +118,10 @@
               <search v-on:active-node-changed="active_node = $event"
               v-bind:gephi_json="gephi_json"
               ></search>
+              <protein_list v-bind:protein_list="protein_list"
+                            v-on:protein-list-changed="protein_list = $event"
+                            v-on:active-subset-changed="active_subset = $event"
+              ></protein_list>
               <attribute-pane v-bind:active_node="active_node"
               v-on:active-node-changed="active_node = $event"
             ></attribute-pane>

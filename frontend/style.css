@@ -1,5 +1,5 @@
 @import url('reset.css');
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
 
 * {
 padding: 0px;
@@ -68,7 +68,7 @@ html,body{
 }
 
 #pgdb-app {
-	font-family: 'Poppins', sans-serif;
+	font-family: 'Roboto Mono', monospace;
 	display: flex;
 	overflow: hidden;
 	width: 100%;
@@ -80,7 +80,7 @@ html,body{
 }
 
 #pgdb-app2 {
-	font-family: 'Poppins', sans-serif;
+	font-family: 'Roboto Mono', monospace;
 	display: flex;
 	min-height: 100vh;
 	align-items: center;
@@ -140,9 +140,10 @@ html,body{
 }
 
 .input-card-header h2 {
+	font-family: 'Roboto Mono', monospace;
 	font-weight: bold;
 	color: black;
-	font-size: 26px;
+	font-size: 22px;
   }
 
 .input-form-data button{
@@ -197,7 +198,7 @@ html,body{
   }
 
 .input-form-data textarea {
-	font-family: 'Poppins', sans-serif;
+	font-family: 'Roboto Mono', monospace;
 	border-radius: 20px;
 	font-size: 14px;
 	color: black;
@@ -222,7 +223,7 @@ html,body{
 }
 
 .input-form-data select{
-	font-family: 'Poppins', sans-serif;
+	font-family: 'Roboto Mono', monospace;
 	text-align: center;
 	width: 100%;
 	border: none;
@@ -320,9 +321,9 @@ html,body{
 	position: relative;
 }
 .input-card-navigation a{
-	padding: 8px;
+	padding: 5px;
 	text-decoration: none;
-	font-size: 16px;
+	font-size: 14px;
 	color: white;
 	transition: 0.3s;
 }
@@ -343,7 +344,7 @@ html,body{
 	background: rgba(255, 255, 255, 0.7);
 }
 .input-form-data input[type="text"]{
-	font-family: 'Poppins', sans-serif;
+	font-family: 'Roboto Mono', monospace;
 	font-size: 14px;
 	border-radius: 20px;
 	color: black;
@@ -616,7 +617,7 @@ html,body{
 }
 
 .pane select {
-	font-family: 'Poppins', sans-serif;
+	font-family: 'Roboto Mono', monospace;
 	text-align: center;
 	width: 50%;
 	color: white;
@@ -683,8 +684,111 @@ background-repeat: no-repeat;
 margin-bottom:25px;
 font-weight: bold;
 font-size:14px;
+}
+
+.highlight_list {
+
+	position: absolute;
+	display: block;
+	top:50%;
+	left: 50%;
+	height: 300px;
+	width: 300px;
+	border-radius: 20px;
+	background-color:rgba(255,255,255,0.15);
+	transform: translate(-150px,-150px);
+	z-index: 1;
+	color: white;
 
 }
+
+.highlight_list:hover {
+
+	background-color:rgba(255,255,255,0.5);
+}
+#protein_highlight_header {
+	cursor: move;
+	z-index: 999;
+
+}
+
+#protein_highlight_header .headertext {
+
+	color: white;
+	background-color: rgba(0, 0, 0, 0.9);
+	border-radius: 20px;
+	border-style: outset;
+	border-width: 1px;
+	padding: 5px 5px 5px 20%;
+	font-size: 14px;
+	margin: 5px;
+	text-align: center;
+	font-weight: bold;
+	display: flex;
+	align-items: center;
+}
+
+.highlight_list .highlight_main {
+
+	position: relative;
+	margin: 5px 5px 5px 5px;
+	border-radius: 20px;
+	height: 255px;
+	background-color: rgba(0,0,0,0.9);
+	text-align: center;
+
+}
+
+.highlight_main textarea {
+
+	font-family: 'Roboto Mono', monospace;
+	border-radius: 10px;
+	font-size: 12px;
+	color: white;
+	background-color: rgba(255,255,255,0.15);
+	text-align: center;
+	border: none;
+	margin-top: 30px;
+	padding-top: 10px;
+	resize: none;
+	outline: none;
+	height: 150px;
+}
+
+#highlight_protein {
+	position: absolute;
+	display: block;
+	background-color: rgba(0, 0, 0, 0.5);
+	cursor: pointer;
+	color: white;
+	border-radius: 20px;
+	padding: 3px;
+	width: 70%;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	margin-left: 50%;
+	margin-top: 20px;
+	transform: translate(-50%,0);
+}
+
+.highlight_list button{
+
+	background-color:rgba(0,0,0,0.5);
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	cursor: pointer;
+	border:1px solid #ccc;
+	margin: 0 0px 0 30px;
+}
+
+#highlight-btn-min::after {
+	font-size: 12px;
+	content:"X" ;
+	color: white;
+	z-index: 100;
+}
+
 
 #developercontainer {
 	margin-left:25px;
@@ -721,7 +825,6 @@ font-size:14px;
 
 #mainpanel {
 display: grid;
-z-index:20;
 }
 
 #mainpanel .b1 {
@@ -803,7 +906,6 @@ padding: 0px;
 }
 
 .toolbar-button select{
-	font-family: 'Poppins', sans-serif;
 	text-align: center;
 	font-size: 12px;
 	padding-left: 5px;
@@ -936,7 +1038,7 @@ color: #000;
 
 .enrichment-filtering{
 
-	font-family: 'Poppins', sans-serif;
+	font-family: 'Roboto Mono', monospace;
 	position: relative;
 	display: flex;
 	margin: 5px;
@@ -953,7 +1055,7 @@ color: #000;
 }
 
 .enrichment-filtering select{
-	font-family: 'Poppins', sans-serif;
+	font-family: 'Roboto Mono', monospace;
 	text-align: center;
 	margin-left: 5px;
 	padding: 5px;
@@ -1196,6 +1298,7 @@ display: none;
 }
 
 #zoom .z {
+	font-family: Arial;
 	background:#fff;
 	background-color:rgba(0,0,0,0.9);
 	width: 20px;

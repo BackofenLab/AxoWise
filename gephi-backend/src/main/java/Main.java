@@ -236,7 +236,7 @@ public class Main {
                 RankingNodeSizeTransformer.class);
         RankingNodeSizeTransformer degreeTransformer = degreeRanking.getTransformer();
         degreeTransformer.setMinSize(5);
-        degreeTransformer.setMaxSize(80);
+        degreeTransformer.setMaxSize(20000);
         appearanceController.transform(degreeRanking);
 
     }

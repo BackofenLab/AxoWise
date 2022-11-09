@@ -30,6 +30,7 @@ $(document).ready(function () {
             reset_term: null,
             home_button: null,
             snapshot: null,
+            protein_list: null,
         },
         watch: {
             gephi_json: function(json) {

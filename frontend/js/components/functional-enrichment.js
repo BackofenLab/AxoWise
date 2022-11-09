@@ -64,7 +64,7 @@ Vue.component("functional-enrichment", {
             terms_csv = 'category,fdr_rate,name,proteins\n';
 
             csvTermsData.forEach(function(row) {
-                terms_csv += row['category'] + ',' + row['fdr_rate'] + ','  + row['name'] + ',"' +row['proteins']+'"';
+                terms_csv += row['category'] + ',' + row['fdr_rate'] + ',"'  + row['name'] + '","' +row['proteins']+'"';
                 terms_csv += '\n';   
             });
 
