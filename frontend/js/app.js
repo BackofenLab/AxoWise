@@ -31,6 +31,7 @@ $(document).ready(function () {
             home_button: null,
             snapshot: null,
             protein_list: null,
+            hubs: null,
         },
         watch: {
             gephi_json: function(json) {

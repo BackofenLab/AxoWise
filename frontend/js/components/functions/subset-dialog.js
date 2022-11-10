@@ -188,6 +188,12 @@ Vue.component("subset-dialog", {
                     <span>Information Pane</span>
                 </div>
                 <div v-if="active_subset !== null" class="nodeattributes">
+                <div class="name_term">
+                <span>Cluster</span>
+                </div>
+                <div class="change-level-menu">
+                <button id="hide-btn" v-on:click="hide_graph(!hide_check)">Hide</button>
+                </div>
                 <div class="p">
                 <b>Proteins:</b>
                 <button v-on:click="copyclipboard()" id="copy-btn">Copy</button>
@@ -201,7 +207,7 @@ Vue.component("subset-dialog", {
                         </ul>
                     </div>
                 <div class="p2">
-                <b>Associations:</b>
+                <b>Links:</b>
                 <button v-on:click="copyclipboard()" id="copy-btn">Copy</button>
                 <button v-on:click="expand_assoc()" id="expand-btn">Expand</button>
                 </div>
@@ -220,7 +226,6 @@ Vue.component("subset-dialog", {
                     <option v-for="exports in export_option">{{exports}}</option>
                     </select>
                     <button id="export-all-btn" v-on:click="export_all(selected_export)">Export</button>
-                    <button id="hide-btn" v-on:click="hide_graph(!hide_check)">Hide</button>
                 </div>
             </div>
         </div>
