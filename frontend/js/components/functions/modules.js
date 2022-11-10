@@ -1,8 +1,10 @@
 Vue.component("modules", {
-    props: ["gephi_json"],
+    props: ["gephi_json","active_subset"],
     data: function() {
         return {
-            modules: {}
+            modules: {},
+            multiple_check: false,
+            saved_dict:{}
         }
     },
     updated: function() {
@@ -14,13 +16,37 @@ Vue.component("modules", {
         }
     },
     methods: {
-        select_module(subset) {
+        select_module(subset, key) {
             var com = this;
 
-            com.$emit("active-subset-changed", subset);
+
+            if(key in com.saved_dict){
+                delete com.saved_dict[key]; 
+            }
+            else{
+                com.saved_dict[key]=com.modules[key]
+            }
+
+            var multiple_clusters = [];
+
+            for (const [key,value] of Object.entries(com.saved_dict)) {
+                
+                multiple_clusters = multiple_clusters.concat(value);
+
+            }
+
+            com.$emit("active-subset-changed", multiple_clusters);
+
+            
         }
     },
     watch: {
+        "active_subset": function(subset) {
+            var com = this;
+
+            if(!subset) com.saved_dict={};
+
+        },
         "gephi_json": function() {
             var com = this;
             com.modules = {};
@@ -38,7 +64,7 @@ Vue.component("modules", {
         <div id="modules-parent" class="modules-position">
             <div id="modules">
                 <div v-for="(value, key, index) in modules" >
-                    <a href="#"><div class="rectangle" v-bind:style="{background: key}" v-on:click="select_module(value)"></div></a>
+                    <a href="#"><div class="rectangle" v-bind:style="{background: key}" v-on:click="select_module(value, key)"></div></a>
                 </div>
             </div>
         </div>

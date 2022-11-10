@@ -98,6 +98,7 @@
         ></subset-dialog>
           <div id= "chart-area">
               <modules v-bind:gephi_json="gephi_json"
+                      v-bind:active_subset="active_subset"
                    v-on:active-subset-changed="active_subset = $event"
           ></modules>
               <visualization v-bind:gephi_json="gephi_json"

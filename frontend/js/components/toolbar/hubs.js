@@ -48,16 +48,8 @@ Vue.component("hubs", {
                 }
                 i--;
             }
-            /*var arr = ["shift", "splice", "filter", "pop"];
-            i = arr.length
-            while (i >= 0) {
-                arr.splice(i, 1);
-                i--;
-            }
-            console.log(arr)*/
 
-
-            console.log(nodes)
+            // console.log(nodes)
 
             com.$emit("active-subset-changed", nodes);
             /* array.filter(item => item.condition < 10)
