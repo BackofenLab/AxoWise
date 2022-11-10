@@ -14,6 +14,8 @@ Vue.component("subset-dialog", {
             export_option: ['Nodes', 'Edges'],
             selected_export: null,
             hide_check: false,
+            number_prot: "",
+            number_asc: "",
         }
     },
     watch: {
@@ -61,6 +63,8 @@ Vue.component("subset-dialog", {
                     }
                 }
             }
+            com.number_asc = com.export_edges.length.toString()
+            com.number_prot = com.subset_ids.length.toString()
 
             $("#subsminimize").show();
 
@@ -193,6 +197,10 @@ Vue.component("subset-dialog", {
                 </div>
                 <div class="change-level-menu">
                 <button id="hide-btn" v-on:click="hide_graph(!hide_check)">Hide</button>
+                </div>
+                <div class="data">
+                <span><strong>Number of Proteins: </strong>{{number_prot}}</span><br/><br/>
+                <span><strong>Number of Links: </strong>{{number_asc}}</span><br/><br/>
                 </div>
                 <div class="p">
                 <b>Proteins:</b>

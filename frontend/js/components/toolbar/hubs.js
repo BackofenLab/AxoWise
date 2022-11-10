@@ -9,7 +9,6 @@ Vue.component("hubs", {
         get_hubs: function() {
             var com = this;
 
-            console.log("start")
         },
     },
     template: `
