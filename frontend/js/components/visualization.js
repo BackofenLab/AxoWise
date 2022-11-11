@@ -179,8 +179,6 @@ Vue.component("visualization", {
             var com = this;
 
             if(com.saved_node != null){
-                var save_node = sigma_instance.graph.getNodeFromIndex(com.saved_node["id"]);
-                save_node.size = com.saved_node["size"];
                 com.reset();
                 
             }
@@ -225,7 +223,6 @@ Vue.component("visualization", {
                 neighbor.hidden = false;
             }
 
-            node.size = "100";
             node.color = "rgb(255, 255, 255)";// white
 
             sigma_instance.refresh();

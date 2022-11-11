@@ -56,6 +56,7 @@ Vue.component("home", {
         return;
       }
 
+      
       $("#submit-btn").addClass("loading");
       
 
@@ -101,6 +102,8 @@ Vue.component("home", {
     },
     load_file: function (e) {
       var com = this;
+
+      //Read csv file to get coloumn information
       com.dcoloumns = [];
       const file = e.target.files[0];
       const reader = new FileReader();
@@ -108,6 +111,8 @@ Vue.component("home", {
         var allTextLines = e.target.result.split(/\n|\n/);
         var save_dcoloumns = allTextLines[0].split(",");
         var type_coloumns = allTextLines[1].split(",");
+
+        //Return only coloumns that contends for d-value
         for (var i = 0; i < save_dcoloumns.length; i++) {
           if (com.onlyNumbers(type_coloumns[i])) {
             com.dcoloumns.push(save_dcoloumns[i].replace(/^"(.*)"$/, "$1"));
@@ -121,6 +126,8 @@ Vue.component("home", {
     },
     load_json: function(e) {
         var com = this;
+
+        //Load json file and overwrite to gephi_json
         const file = e.target.files[0];
         const reader = new FileReader();
         reader.onload = function(e) {
@@ -132,14 +139,17 @@ Vue.component("home", {
   },
   mounted: function () {
     var com = this;
+
+    //Interaction capture of html elements
     $("#submit-btn").button();
     $("#submit-btn").click(com.submit);
     $("#edge-slider").slider();
     $("#edge-slider").change(com.updateSlider);
-    $("#edge-input").change(com.updateSlider); //update from input control
+    $("#edge-input").change(com.updateSlider);
     $("#export-btn").button();
     $("#export-btn").click(com.exportGraph);
 
+    //Change text on input fields according to selected file
     $("form").on("change", "#protein-file", function () {
       $(this)
         .parent(".file-upload-wrapper")

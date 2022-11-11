@@ -2,8 +2,6 @@ Vue.component("d-value", {
     props: ["gephi_json"],
     data: function() {
         return  {
-            message: "",
-            terms: null,
             selected_d: null,
             dcoloumns: ["no selection"],
             dcheck: false,
@@ -18,8 +16,11 @@ Vue.component("d-value", {
     watch: {
         "gephi_json": function(json) {
             var com = this;
+
             if (!json)return ;//handling null json from backend
             if (!json.dvalues) return ; //handling null json from backend
+
+
             com.dcoloumns = com.dcoloumns.concat(json.dvalues);
 
         },

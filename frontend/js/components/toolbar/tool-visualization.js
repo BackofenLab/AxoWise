@@ -20,7 +20,7 @@ Vue.component("tool-visualization", {
 
         $("#edge-slider").slider();
         $("#edge-slider").change(com.edge_update);
-        $("#edge-input").change(com.edge_update); //update from input control
+        $("#edge-input").change(com.edge_update);
 
     },
     template: `

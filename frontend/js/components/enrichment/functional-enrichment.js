@@ -29,7 +29,7 @@ Vue.component("functional-enrichment", {
             filter: "",
             await_check: true,
             await_load: false,
-            term_numbers: "hello",
+            term_numbers: "",
 
         }
     },
@@ -40,16 +40,23 @@ Vue.component("functional-enrichment", {
         },
         select_cat: function(category) {
             var com = this;
+
+
             var filtered_terms = [];
             var check_terms = com.saved_terms[com.saved_terms.length -1];
+
+            //Filter the terms according to user selection
             for (var idx in check_terms) {
                 if(check_terms[idx].category == category && category != "RESET"){
                     filtered_terms.push(check_terms[idx]);
                 }
             }
+            //Reset function for Terms
             if(category != "RESET"){
                 com.terms = filtered_terms;
             }else{com.terms = com.saved_terms[com.saved_terms.length -1]}
+
+            //Count term number
             com.term_number();
         },
         get_functionterms: function(term) {
@@ -69,6 +76,7 @@ Vue.component("functional-enrichment", {
             });
 
 
+            //Create html element to hidden download csv file
             var hiddenElement = document.createElement('a');
             hiddenElement.target = '_blank';
             hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(terms_csv);
@@ -93,28 +101,27 @@ Vue.component("functional-enrichment", {
         },
         "func_json": function(nodes) {
             var com = this;
-            // if (!json) return ; //handling null json from backend
-            // // if (!json.enrichment) return;
 
+            //Reverting functional terms
             if(nodes==null) {
-                com.await_check = false;
-                com.terms = com.saved_terms[0];
-                com.saved_terms = [com.terms];
+                com.await_check = false, com.terms = com.saved_terms[0], com.saved_terms = [com.terms];
                 com.term_number();
                 return;
             }
 
+            //Set up parameter for functional enrichment
             com.proteins = [];
             for (var idx in nodes) {
                 com.proteins.push(nodes[idx].id);
             }
-
-            com.await_check = true;
+            
+            com.await_check = true, com.await_load = true;
             formData = new FormData();
             formData.append('proteins', com.proteins);
             formData.append('species_id', nodes[0].species);
-            com.await_load = true;
-
+            
+            
+            //POST request for functional enrichment
             $.ajax({
                 type: 'POST',
                 url: "/api/subgraph/enrichment",
@@ -127,33 +134,48 @@ Vue.component("functional-enrichment", {
                 com.await_load = false;                  
                   if(com.await_check){
                       com.$emit("func-enrichment-changed", json);
+                      //Save terms
                       com.terms = [];
                       for (var idx in json) {
                           com.terms.push(json[idx]);
                         }
                         com.saved_terms.push(com.terms);
+
+                        //Sort terms according to the fdr rate
                         com.terms.sort(function(t1, t2) {
                             var p_t1 = parseFloat(t1.fdr_rate);
                             var p_t2 = parseFloat(t2.fdr_rate);
                             return p_t1 - p_t2;
                         });
+
+                        //Count term number
                         com.term_number();
                     }
             });
         },
         "revert_term": function(subset) {
             var com = this;
+
             if (!subset) return ;
+
+            //Load previous subset terms from saved_terms
             com.await_check = false;
             com.saved_terms.pop()
             com.terms = com.saved_terms[com.saved_terms.length-1];
+
+            //Count term number
             com.term_number();
         },
         "reset_term": function(subset) {
             var com = this;
+
             if (!subset) return ;
+
+            //Load main graph terms from saved_terms
             com.await_check = false;
             com.terms = com.saved_terms[0];
+
+            //Count term number
             com.term_number();
         },
     },

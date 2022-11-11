@@ -20,7 +20,7 @@ Vue.component("modules", {
             var com = this;
 
 
-            if(key in com.saved_dict){
+            if(key in com.saved_dict && Object.keys(com.saved_dict).length >1){
                 delete com.saved_dict[key]; 
             }
             else{
