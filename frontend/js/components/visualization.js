@@ -237,12 +237,9 @@ Vue.component("visualization", {
         "d_value": function(term) {
             var com = this;
 
-            if (term == null || term == "no selection") {
-                if(term != "no selection"){
-                    if (com.active_node == null && com.active_term == null) com.reset();
-                }else{
-                    if (com.active_term == null) com.reset_d();
-                }
+            if (term == null) {
+                if (com.active_node == null && com.active_term == null) com.reset();
+                if (com.active_term == null) com.reset_d();
                 return;
             }
 

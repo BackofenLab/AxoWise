@@ -1,5 +1,5 @@
 Vue.component("hubs", {
-    props: ["gephi_json"],
+    props: ["gephi_json", "active_subset"],
     data: function() {
         return  {
             message: "",
@@ -54,12 +54,21 @@ Vue.component("hubs", {
             }
         },
     },
+    watch: {
+        "active_subset": function(subset){
+
+            // Select default value in hubs.
+            if(!subset){
+                document.getElementById("select_hubs").selectedIndex = 0;
+            }
+        }
+    },
     template: `
         <div v-show="gephi_json != null" class="toolbar-button">
             <div class="toolbar-theme">
-                <select v-model="selected_func" v-on:change="get_hubs(selected_func)">
-                    <option disabled value="">Please select function</option>
-                    <option v-for="value in select_function">{{value}}</option>
+                <select id="select_hubs" v-model="selected_func" v-on:change="get_hubs(selected_func)">
+                    <option hidden disabled value="">Select option</option>
+                    <option v-for="key in select_function" v-bind:value="key">{{key}}</option>
                 </select>
                 <span class="toolbar-icon">H</span>
             </div>

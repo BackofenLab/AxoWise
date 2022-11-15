@@ -6,27 +6,25 @@ padding: 0px;
 margin: 0px;
 }
 
-#modules-parent {
-	position: absolute;
-	z-index: 999;
-	width: max-content;
-	max-height: 100vh;
-	padding: 10px;
+.chart-header {
+position: absolute;
+top: 10px;
+display: flex;
+left: 50%;
+width: 100%;
+transform: translate(-28%,0);
 }
 
 #modules {
-	position: fixed;
+	position: relative;
 	display:inline-flex;
 	background-color: rgba(255, 255, 255, 0.15);
 	border-radius: 20px;
 	width: 330px;
 	padding: 5px;
 	z-index: 999;
-	left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
-	margin-top:15px;
 	overflow-x: scroll;
+	justify-content: center;
 }
 .modules::-webkit-scrollbar {
 	display: none;
@@ -388,14 +386,19 @@ html,body{
 }
 
 .toolbar-search{
-	position: fixed;
-	top: 10px;
+	position: relative;
 	border-radius: 20px;
-	left: 23%;
+	margin-right: 50px;
 
 
 }
+
+.toolbar-search:hover{
+	background-color: rgba(255, 255, 255, 0.5);
+}
+
 .toolbar-search input[type=text]{
+	font-family: 'Roboto Mono', monospace;
 	background-color: rgba(0, 0, 0, 0.9);
 	border: none;
 	border-radius: 20px;
@@ -797,32 +800,6 @@ font-size:14px;
 	bottom:0;
 }
 
-#backofenlab {
-	width: 65px;
-	height: 65px;
-	background-image: url('./images/bioinf-fr-logo-blau.jpg');
-	background-size: 100%;
-	background-repeat: no-repeat;
-	display:inline-block;
-}
-
-#backofenlab span{
-	display: none;
-}
-
-#neuromac {
-	width: 120px;
-	height: 65px;
-	background-image: url('./images/neuromac.png');
-	background-size: 100%;
-	background-repeat: no-repeat;
-	display:inline-block;
-}
-
-#neuromac span{
-	display: none;
-}
-
 #mainpanel {
 display: grid;
 }
@@ -872,10 +849,12 @@ padding: 0px;
 }
 
 .toolbar-button:hover {
+	background-color: rgba(255, 255, 255, 0.5);
 	transform: translate(213px, 0);
 }
 
 .toolbar-icon{
+	font-family: Arial Black;
 	border-radius: 100%;
 	background-color: rgba(0, 0, 0, 0.7);
 	height: 25px;
@@ -1008,6 +987,7 @@ color: #000;
 }
 
 .tool-pane:hover {
+	background-color: rgba(255, 255, 255, 0.5);
 	transform: translate(0, -232px);
 }
 
@@ -1276,14 +1256,10 @@ display: none;
 
 #zoom {
 	z-index:999;
-	position: fixed;
-	top: 0;
+	position: relative;
 	background-color:rgba(255, 255, 255, 0.15);
 	border-radius: 20px;
-	left: 65%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
-	margin-top:25px;
+	margin-left: 30px;
 	padding: 5px;
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;

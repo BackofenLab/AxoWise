@@ -62,6 +62,7 @@
                              v-on:gephi-json-changed="gephi_json = $event"
               ></export-layout>
               <d-value v-bind:gephi_json="gephi_json"
+                       v-bind:d_value="d_value"
                        v-on:d_value-changed="d_value = $event"
               ></d-value>
               <snapshot v-bind:gephi_json="gephi_json"
@@ -73,6 +74,7 @@
                                 v-on:protein-list-changed="protein_list = $event"
               ></highlight_button>
               <hubs v-bind:gephi_json="gephi_json"
+              v-bind:active_subset="active_subset"
               v-on:active-subset-changed="active_subset = $event"
               ></hubs>
             </div>
@@ -97,10 +99,6 @@
                       v-on:toggle-theme="active_node = $event"
         ></subset-dialog>
           <div id= "chart-area">
-              <modules v-bind:gephi_json="gephi_json"
-                      v-bind:active_subset="active_subset"
-                   v-on:active-subset-changed="active_subset = $event"
-          ></modules>
               <visualization v-bind:gephi_json="gephi_json"
                        v-bind:active_node="active_node"
                        v-bind:active_term="active_term"
@@ -119,10 +117,16 @@
                        v-on:active-layer-changed="active_layer = $event"
                        v-on:func-json-changed="func_json = $event"
         ></visualization>
-              <zoom></zoom>
+            <div class="chart-header">
               <search v-on:active-node-changed="active_node = $event"
               v-bind:gephi_json="gephi_json"
               ></search>
+              <modules v-bind:gephi_json="gephi_json"
+                      v-bind:active_subset="active_subset"
+                    v-on:active-subset-changed="active_subset = $event"
+              ></modules>
+              <zoom></zoom>
+            </div>
               <protein_list v-bind:protein_list="protein_list"
                             v-on:protein-list-changed="protein_list = $event"
                             v-on:active-subset-changed="active_subset = $event"

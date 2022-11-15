@@ -1,9 +1,9 @@
 Vue.component("d-value", {
-    props: ["gephi_json"],
+    props: ["gephi_json","d_value"],
     data: function() {
         return  {
             selected_d: null,
-            dcoloumns: ["no selection"],
+            dcoloumns: [],
             dcheck: false,
         }
     },
@@ -24,15 +24,22 @@ Vue.component("d-value", {
             com.dcoloumns = com.dcoloumns.concat(json.dvalues);
 
         },
+        "d_value": function(subset){
+
+            // Select default value in d.
+            if(!subset){
+                document.getElementById("select_d").selectedIndex = 0;
+            }
+        }
     },
     mounted: function() {
         var com = this;
         
     },
     template: `
-        <div v-show="gephi_json != null && dcoloumns.length > 1" class="toolbar-button">
+        <div v-show="gephi_json != null && dcoloumns.length >= 1" class="toolbar-button">
         <div class="toolbar-theme">
-            <select v-model="selected_d" v-on:change="select_term(selected_d)">
+            <select id="select_d" v-model="selected_d" v-on:change="select_term(selected_d)">
                 <option disabled value="">Please select D Section</option>
                 <option v-for="value in dcoloumns">{{value}}</option>
             </select>
