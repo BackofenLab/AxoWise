@@ -1,5 +1,6 @@
 import ast
 from asyncio import subprocess
+import random
 import subprocess
 import json
 import os.path
@@ -9,6 +10,7 @@ import csv
 from sys import stderr
 from threading import Timer
 from unicodedata import category
+import math
 
 # import networkx as nx
 from flask import Flask, Response, request, send_from_directory
@@ -239,8 +241,8 @@ def proteins_subgraph_api():
         return Response(json.dumps([]), mimetype="application/json")
      
     #Creating only the main Graph and exclude not connected subgraphs
-    nodes = graph_utilities.create_nodes_subgraph(edges, nodes)
-    edges = graph_utilities.create_edges_subgraph(edges)
+    nodes_sub = graph_utilities.create_nodes_subgraph(edges, nodes)
+    # edges = graph_utilities.create_edges_subgraph(edges)
 
     #Timer to evaluate runtime between cypher-shell and extracting data
     t_parsing = time.time()
@@ -303,14 +305,25 @@ def proteins_subgraph_api():
         df_node = nodes[nodes["external_id"] == node["id"]].iloc[0]
         node["attributes"]["Description"] = df_node["description"]
         node["attributes"]["Ensembl ID"] = df_node["external_id"]
-        node["attributes"]["Name"] = df_node["name"]
+        node["attributes"]["Name"] = df_node["name"]         
         if not (request.files.get("file") is None):
             for coloumn in selected_d:
-                node["attributes"][coloumn] = panda_file.loc[panda_file["name"] == df_node["name"], coloumn].item()
+                node["attributes"][coloumn] = panda_file.loc[panda_file["name"] == df_node["name"], coloumn].item()     
         node["label"] = df_node["name"]
         node["species"] = str(df_node["species_id"])
     
+    sub_proteins = []
+    for node in sigmajs_data["nodes"]:
+        if node["attributes"]["Ensembl ID"] not in  nodes_sub.values:            
+            node["color"] = 'rgb(255,255,153)'
+            node["hidden"] = True
+            sub_proteins.append(node["attributes"]["Ensembl ID"])
+            
     sigmajs_data["dvalues"] = selected_d
+    sigmajs_data["subgraph"] = sub_proteins
+    
+            
+            
 
     #Timer for final steps
     t_end = time.time()

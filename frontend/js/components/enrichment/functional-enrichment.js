@@ -88,6 +88,17 @@ Vue.component("functional-enrichment", {
 
             com.term_numbers = com.terms.length.toString();
 
+        },
+        open_pane: function(){
+
+            const div = document.querySelector('#enrichment');
+            if(!div.classList.contains('tool-pane-show')){
+                $('.tool-pane').addClass('tool-pane-show');
+            }
+            else{
+                $('.tool-pane').removeClass('tool-pane-show');
+            }
+
         }
     },
     watch: {
@@ -197,7 +208,7 @@ Vue.component("functional-enrichment", {
     template: `
         <div v-show="gephi_json != null" id="enrichment" class="tool-pane">
             <div class="headertext">
-            <h4>Functional enrichment:</h4>
+            <button v-on:click="open_pane()">Functional Enrichment:</button>
             </div>
             <div class="main-section">
                 <div class="enrichment-filtering">
@@ -222,6 +233,7 @@ Vue.component("functional-enrichment", {
             </div>
             <button v-if="await_load == false" id="export-enrich-btn" v-on:click="export_enrichment()">Export</button>
         </div>
+        </input>
     </div>
     `
 });

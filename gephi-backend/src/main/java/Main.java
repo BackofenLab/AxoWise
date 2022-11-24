@@ -5,6 +5,7 @@ import org.gephi.appearance.plugin.PartitionElementColorTransformer;
 import org.gephi.appearance.plugin.RankingNodeSizeTransformer;
 import org.gephi.appearance.plugin.palette.Palette;
 import org.gephi.appearance.plugin.palette.PaletteManager;
+import org.gephi.appearance.plugin.palette.Preset;
 import org.gephi.graph.api.*;
 import org.gephi.io.exporter.api.ExportController;
 import org.gephi.layout.plugin.AutoLayout;
@@ -26,6 +27,7 @@ import org.openide.util.Lookup;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -236,7 +238,7 @@ public class Main {
                 RankingNodeSizeTransformer.class);
         RankingNodeSizeTransformer degreeTransformer = degreeRanking.getTransformer();
         degreeTransformer.setMinSize(5);
-        degreeTransformer.setMaxSize(20000);
+        degreeTransformer.setMaxSize(80);
         appearanceController.transform(degreeRanking);
 
     }
@@ -257,7 +259,9 @@ public class Main {
         Partition partition = ((PartitionFunction) modularityPartitioning).getPartition();
 
         PaletteManager paletteManager = PaletteManager.getInstance();
-        Palette randomPalette = paletteManager.generatePalette(partition.size(undirectedGraph));
+        Collection<Preset> presets = paletteManager.getPresets();
+        Preset preset = presets.stream().skip(8).findFirst().orElse(null);
+        Palette randomPalette = paletteManager.generatePalette(partition.size(undirectedGraph), preset);
         partition.setColors(undirectedGraph, randomPalette.getColors());
 
         appearanceController.transform(modularityPartitioning);
@@ -267,17 +271,15 @@ public class Main {
         AutoLayout autoLayout = new AutoLayout(30, TimeUnit.MILLISECONDS);
         autoLayout.setGraphModel(graphModel);
 
-        // ForceAtlas layout
         CirclePackLayout circlepack = new CirclePackLayout(null);
         circlepack.setHierarchy1(Modularity.MODULARITY_CLASS);
-        // circlepack.setHierarchy2(Degree.DEGREE);
         autoLayout.addLayout(circlepack, 1.f);
         autoLayout.execute();
     }
 
     private static void outputJson(GraphModel graphModel, Workspace workspace) {
         for (Edge e : graphModel.getUndirectedGraph().getEdges()) {
-            e.setWeight(0.05);
+            e.setWeight(0.02);
         }
 
         OutputStreamWriter writer = new OutputStreamWriter(System.out);

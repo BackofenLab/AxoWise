@@ -23,10 +23,12 @@ Vue.component("zoom",  {
         });
     },
     template: `
+    <div id="zoom-parent">
         <div id="zoom">
             <div class="z" rel="in"></div>
             <div class="z" rel="out"></div>
             <div class="z" rel="center"></div>
         </div>
+    </div>
     `
 });

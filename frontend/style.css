@@ -319,7 +319,8 @@ html,body{
 	position: relative;
 }
 .input-card-navigation a{
-	padding: 5px;
+	margin: 5px;
+	padding: 15px;
 	text-decoration: none;
 	font-size: 14px;
 	color: white;
@@ -986,21 +987,26 @@ color: #000;
 	transition: transform ease 500ms;
 }
 
-.tool-pane:hover {
-	background-color: rgba(255, 255, 255, 0.5);
-	transform: translate(0, -232px);
+.tool-pane-show{
+	transform: translate(0,-232px);
+}
+.tool-pane .headertext{
+
+	border-radius: 20px;
+	margin: 5px;
+
 }
 
-.tool-pane .headertext{
+.tool-pane .headertext button{
 
 	color: white;
 	background-color: rgba(0, 0, 0, 0.9);
 	border-radius: 20px;
 	border-style: outset;
 	border-width: 1px;
-	padding: 5px;
+	padding: 3px;
 	font-size:14px;
-	margin: 5px;
+	width: 100%;
 	text-align: center;
 	font-weight:bold;
 }
@@ -1254,9 +1260,14 @@ color: #000;
 display: none;
 }
 
+#zoom-parent {
+	margin: 0;
+	padding: 0;
+}
+
 #zoom {
 	z-index:999;
-	position: relative;
+	position: absolute;
 	background-color:rgba(255, 255, 255, 0.15);
 	border-radius: 20px;
 	margin-left: 30px;

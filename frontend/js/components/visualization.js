@@ -20,7 +20,7 @@ sigma.classes.graph.addMethod('ensemblIdToNode', function(ensembl_id) {
 
 // Component
 Vue.component("visualization", {
-    props: ["gephi_json","func_json","func_enrichment", "active_node", "active_term", "active_subset", "active_layer", "node_color_index", "edge_color_index", "d_value", "dark_theme_root","edge_thick"],
+    props: ["gephi_json","func_json","func_enrichment", "active_node", "active_term", "active_subset", "active_layer", "node_color_index", "edge_color_index", "d_value", "dark_theme_root","edge_thick", "unconnected_graph"],
     data: function() {
         return {
             rectangular_select: {
@@ -36,6 +36,7 @@ Vue.component("visualization", {
             dvalueterm: null,
             saved_sigma_instance: null,
             saved_node: null,
+            connected_check: false,
         }
     },
     watch: {
@@ -266,16 +267,51 @@ Vue.component("visualization", {
 
             sigma_instance.refresh();
         },
+        "unconnected_graph": function (unconnected_proteins){
+            var com = this;
+
+            //Proteins which are not connected to main graph
+            var proteins = new Set(unconnected_proteins[0]);
+
+            com.connected_check = unconnected_proteins[1];
+
+            //Hide or unhide proteins
+            if(com.connected_check=="Whole Graph"){
+                sigma_instance.graph.nodes().forEach(function (n) {
+                    if(proteins.has(n.attributes['Ensembl ID'])) n.hidden = false;
+                });
+            }else{
+                sigma_instance.graph.nodes().forEach(function (n) {
+                    if(proteins.has(n.attributes['Ensembl ID'])) n.hidden = true;
+                });
+            }
+
+            sigma_instance.refresh();
+        },
+
     },
     methods: {
         reset: function() {
             var com = this;
 
+            sub_proteins = new Set(com.gephi_json.subgraph);
+            console.log(sub_proteins);
             sigma_instance.graph.edges().forEach(function(e) {
                 var s = sigma_instance.graph.getNodeFromIndex(e.source);
                 var t = sigma_instance.graph.getNodeFromIndex(e.target);
-                s.color = com.node_color_index[e.source]; s.hidden = false;
-                t.color = com.node_color_index[e.target]; t.hidden = false;
+                if(!sub_proteins.has(s.attributes["Ensembl ID"]) || com.connected_check == 'Whole Graph'){
+                    s.color = com.node_color_index[e.source]; s.hidden = false;
+                }
+                else{
+                    s.color = com.node_color_index[e.source]; s.hidden = true;
+                }
+                if(!sub_proteins.has(t.attributes["Ensembl ID"]) || com.connected_check == 'Whole Graph'){
+                    t.color = com.node_color_index[e.target]; t.hidden = false;
+                }
+                else{
+                    t.color = com.node_color_index[e.target]; t.hidden = true;
+                    
+                }
                 e.color = com.edge_color_index[e.id]; e.hidden = false;
             });
             com.edit_opacity();
@@ -480,7 +516,7 @@ Vue.component("visualization", {
        });
 
         this.eventHub.$on('export-graph', data => {
-            var dataURL = sigma_instance.renderers[0].snapshot({download:true,background:"black"});
+            var dataURL = sigma_instance.renderers[0].snapshot({download:true});
         });
 
     },

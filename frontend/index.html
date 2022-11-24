@@ -74,8 +74,7 @@
                                 v-on:protein-list-changed="protein_list = $event"
               ></highlight_button>
               <hubs v-bind:gephi_json="gephi_json"
-              v-bind:active_subset="active_subset"
-              v-on:active-subset-changed="active_subset = $event"
+              v-on:unconnected-graph-changed="unconnected_graph = $event"
               ></hubs>
             </div>
           </div>
@@ -103,6 +102,7 @@
                        v-bind:active_node="active_node"
                        v-bind:active_term="active_term"
                        v-bind:d_value="d_value"
+                       v-bind:unconnected_graph="unconnected_graph"
                        v-bind:func_enrichment="func_enrichment"
                        v-bind:func_json="func_json"
                        v-bind:active_subset="active_subset"

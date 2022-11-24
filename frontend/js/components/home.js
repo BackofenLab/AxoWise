@@ -30,7 +30,7 @@ Vue.component("home", {
       selected_species: null,
       dcoloumns: null,
       selected_d: [],
-      selected_system: "Single",
+      selected_system: "Multiple",
     };
   },
   methods: {
@@ -40,11 +40,6 @@ Vue.component("home", {
 
       if (com.selected_species == null) {
         alert("Please select a species!");
-        return;
-      }
-
-      if (com.selected_d.length == 0 && com.dcoloumns != null) {
-        alert("Please select dvalues!");
         return;
       }
 
@@ -172,8 +167,7 @@ Vue.component("home", {
             </div>
 
             <div class="input-card-navigation">
-                <a href="#" @click.prevent="selected_system ='Single'" >Single</a>
-                <a href="#" @click.prevent="selected_system ='Multiple'" >Multiple</a>
+                <a href="#" @click.prevent="selected_system ='Multiple'" >Inputs</a>
                 <a href="#" @click.prevent="selected_system ='File'" >File</a>
                 <a href="#" @click.prevent="selected_system ='Import'" >Import</a>
             </div>
@@ -184,7 +178,7 @@ Vue.component("home", {
 
                     <div class="input-form-data">
 
-                        <div v-if="selected_system==='File' || selected_system==='Single' || selected_system==='Multiple'">
+                        <div v-if="selected_system==='File' || selected_system==='Multiple'">
                             <h4>Species:</h4>
                             <select v-model="selected_species">
                                 <option value="" disabled selected>Select your Species</option>
@@ -197,11 +191,6 @@ Vue.component("home", {
                             <div class="file-upload-wrapper" data-text="Select Json">
                             <input type="file" id="graph-file" accept=".json" v-on:change="load_json">
                             </div>
-                        </div>
-
-                        <div v-if="selected_system==='Single'">
-                        <h4>Protein:</h4>
-                        <input type="text" id="protein_input" v-model="single_text"></input>
                         </div>
 
                         <div v-if="selected_system==='Multiple'">
