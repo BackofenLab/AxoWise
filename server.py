@@ -1,6 +1,5 @@
 import ast
 from asyncio import subprocess
-import random
 import subprocess
 import json
 import os.path
@@ -10,7 +9,6 @@ import csv
 from sys import stderr
 from threading import Timer
 from unicodedata import category
-import math
 
 # import networkx as nx
 from flask import Flask, Response, request, send_from_directory
@@ -18,6 +16,7 @@ from flask import Flask, Response, request, send_from_directory
 import pandas as pd
 import jar
 import stringdb
+import gprofil
 import os
 
 import cypher_queries as Cypher
@@ -28,6 +27,7 @@ from layout import shell_layout
 import uuid
 
 import graph_utilities
+import kappa_score
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 import time
@@ -51,7 +51,7 @@ def files(path):
     return send_from_directory(os.path.join(_SCRIPT_DIR, _SERVE_DIR), path)
 
 # ====================== Functional Enrichment ======================
-
+# ______functional_enrichment_STRING_________________________________
 # TODO Refactor this
 @app.route("/api/subgraph/enrichment", methods=["POST"])
 def proteins_enrichment():
@@ -71,8 +71,26 @@ def proteins_enrichment():
                 fdr_rate=row["fdr"],
                 category=row["category"]
             ))
+        df = kappa_score.getKappaScore(list_enrichment, proteins)
+    else:
+        # TODO species_id for gprofil is different and needs to be converted
+        # Right now mus musculus set to default
+        df_enrichment = gprofil.functional_enrichment(proteins) # , species_id)
+        if df_enrichment is not None:
+            for _, row in df_enrichment.iterrows():
+                list_enrichment.append(dict(
+                    id=row["name"],
+                    proteins=row["intersections"],
+                    name=row["description"],
+                    p_value=row["p_value"],
+                    # fdr_rate=row["fdr"],
+                    category=row["source"]
+                ))
+
     json_str=json.dumps(list_enrichment)  
     return Response(json_str, mimetype="application/json")
+
+
 
 # ====================== Subgraph API ======================
 
@@ -218,7 +236,7 @@ def proteins_subgraph_api():
             score.append(int(row['score']))
             proteins.append(source_row_prop)
             proteins.append(target_row_prop)
-    os.remove('/tmp/'+repr(filename)+'.csv')
+    # os.remove('/tmp/'+repr(filename)+'.csv')
 
     nodes = pd.DataFrame(proteins)
     nodes = nodes.drop_duplicates(subset="external_id") # TODO `nodes` can be empty
@@ -241,8 +259,10 @@ def proteins_subgraph_api():
         return Response(json.dumps([]), mimetype="application/json")
      
     #Creating only the main Graph and exclude not connected subgraphs
-    nodes_sub = graph_utilities.create_nodes_subgraph(edges, nodes)
-    # edges = graph_utilities.create_edges_subgraph(edges)
+    nodes = graph_utilities.create_nodes_subgraph(edges, nodes)
+    # nodes = pd.read_csv("KappaTerms.csv")
+    edges = graph_utilities.create_edges_subgraph(edges)
+    # edges = pd.read_csv("Kappa_Score.csv")
 
     #Timer to evaluate runtime between cypher-shell and extracting data
     t_parsing = time.time()
@@ -305,25 +325,14 @@ def proteins_subgraph_api():
         df_node = nodes[nodes["external_id"] == node["id"]].iloc[0]
         node["attributes"]["Description"] = df_node["description"]
         node["attributes"]["Ensembl ID"] = df_node["external_id"]
-        node["attributes"]["Name"] = df_node["name"]         
+        node["attributes"]["Name"] = df_node["name"]
         if not (request.files.get("file") is None):
             for coloumn in selected_d:
-                node["attributes"][coloumn] = panda_file.loc[panda_file["name"] == df_node["name"], coloumn].item()     
+                node["attributes"][coloumn] = panda_file.loc[panda_file["name"] == df_node["name"], coloumn].item()
         node["label"] = df_node["name"]
         node["species"] = str(df_node["species_id"])
     
-    sub_proteins = []
-    for node in sigmajs_data["nodes"]:
-        if node["attributes"]["Ensembl ID"] not in  nodes_sub.values:            
-            node["color"] = 'rgb(255,255,153)'
-            node["hidden"] = True
-            sub_proteins.append(node["attributes"]["Ensembl ID"])
-            
     sigmajs_data["dvalues"] = selected_d
-    sigmajs_data["subgraph"] = sub_proteins
-    
-            
-            
 
     #Timer for final steps
     t_end = time.time()
