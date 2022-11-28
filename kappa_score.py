@@ -8,13 +8,12 @@ def getKappaScore(enrichedList: list, proteins: list):
     Arguments:
         enrichedList(lst): List with the functional enriched terms and their associated proteins
     Returns:
-        dataframe with source, target, Kappa-score"""
+        dataframe with Source, Target, Kappa-score"""
     # timer
     t_start = time.time()
 
     # create pandas dataframe
     df = pd.DataFrame()
-
     
     terms = []
     # TODO Filter for terms, for 100 terms we already calculate (100*99)/2 edges
@@ -61,10 +60,11 @@ def getKappaScore(enrichedList: list, proteins: list):
             # drop_duplicates?
             df_new = pd.DataFrame([[j["name"],k["name"], kappa_score]], columns=["Source", "Target", "Kappa-Score"])
             df = pd.concat([df, df_new])
-            
-    # sort depending on kappa-score
-    df = df.sort_values(by='Kappa-Score', ascending=False)
+
+    if (len(terms) != 0):
+        # sort depending on kappa-score
+        df = df.sort_values(by='Kappa-Score', ascending=False)
     df.to_csv("Kappa_Score.csv", index = False, sep=',')
     t_end = time.time()
     print("Time Spent (Kappa-Score):", t_end-t_start)
-    return terms
+    return df

@@ -56,7 +56,7 @@ def files(path):
 @app.route("/api/subgraph/enrichment", methods=["POST"])
 def proteins_enrichment():
     proteins = request.form.get("proteins").split(",")
-    species_id = request.form.get("species_id")
+    species_id = request.form.get("species_id") 
     
     df_enrichment = stringdb.functional_enrichment(proteins, species_id)
     
@@ -260,6 +260,7 @@ def proteins_subgraph_api():
      
     #Creating only the main Graph and exclude not connected subgraphs
     nodes = graph_utilities.create_nodes_subgraph(edges, nodes)
+    # print(nodes)
     # nodes = pd.read_csv("KappaTerms.csv")
     edges = graph_utilities.create_edges_subgraph(edges)
     # edges = pd.read_csv("Kappa_Score.csv")
@@ -312,6 +313,7 @@ def proteins_subgraph_api():
         # JAR accepts source, target, score
         edges.to_csv(edges_csv, index=False, header=True)
 
+        # stdin = f"{nodes_csv.getvalue()}\n{edges_csv.getvalue()}"
         stdin = f"{nodes_csv.getvalue()}\n{edges_csv.getvalue()}"
         stdout = jar.pipe_call(_BACKEND_JAR_PATH, stdin)
 
