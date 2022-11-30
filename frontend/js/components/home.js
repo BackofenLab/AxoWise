@@ -27,7 +27,7 @@ Vue.component("home", {
       raw_text: null,
       single_text: null,
       protein_file: null,
-      selected_species: null,
+      selected_species: "",
       dcoloumns: [],
       selected_d: [],
       check_file: false,
@@ -39,7 +39,7 @@ Vue.component("home", {
       var com = this;
       protein_file = document.getElementById("protein-file");
 
-      if (com.selected_species == null) {
+      if (com.selected_species == "") {
         alert("Please select a species!");
         return;
       }
@@ -78,7 +78,7 @@ Vue.component("home", {
         processData: false,
       }).done(function (json) {
         $("#submit-btn").removeClass("loading");
-        com.dcoloumns = null;
+        com.dcoloumns = [];
         if (Object.keys(json).length == 0) {
           alert("No associations found");
           com.$emit("gephi-json-changed", null);

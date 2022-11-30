@@ -1,0 +1,149 @@
+Source,Target,Kappa-Score
+Dilated cardiomyopathy,Hypertrophic cardiomyopathy,0.9128711796319402
+Hypertrophic cardiomyopathy,Arrhythmogenic right ventricular cardiomyopathy,0.8647794768103112
+Chemical carcinogenesis,Steroid hormone biosynthesis,0.8096649866587623
+Dilated cardiomyopathy,Arrhythmogenic right ventricular cardiomyopathy,0.7846339640002304
+Cushing syndrome,Melanogenesis,0.761027359017309
+Arachidonic acid metabolism,Linoleic acid metabolism,0.7177078936260035
+Phospholipase D signaling pathway,Choline metabolism in cancer,0.7176035893375572
+Phosphatidylinositol signaling system,Inositol phosphate metabolism,0.7167385220482563
+Longevity regulating pathway,Longevity regulating pathway - multiple species,0.7167385220482563
+Retinol metabolism,Steroid hormone biosynthesis,0.701200781904495
+Long-term potentiation,Amphetamine addiction,0.692351926394482
+Linoleic acid metabolism,Steroid hormone biosynthesis,0.6853969291081362
+Retinol metabolism,Chemical carcinogenesis,0.6609811480171064
+Prion disease,Parkinson disease,0.6570952441994609
+Arachidonic acid metabolism,Serotonergic synapse,0.6440136627778028
+Linoleic acid metabolism,Chemical carcinogenesis,0.6399951061356842
+Dopaminergic synapse,Amphetamine addiction,0.6383424592712755
+Alzheimer disease,Prion disease,0.6372711757417068
+Regulation of lipolysis in adipocytes,Longevity regulating pathway - multiple species,0.6358066712048995
+2-Oxocarboxylic acid metabolism,Biosynthesis of amino acids,0.6328701320981328
+Hepatocellular carcinoma,Breast cancer,0.627108405743231
+Vascular smooth muscle contraction,Oxytocin signaling pathway,0.6238498456271203
+Linoleic acid metabolism,Serotonergic synapse,0.6226466279637554
+Focal adhesion,Regulation of actin cytoskeleton,0.5907700152983179
+Arachidonic acid metabolism,Steroid hormone biosynthesis,0.5877215515026963
+AMPK signaling pathway,Adipocytokine signaling pathway,0.5819612658369123
+Arachidonic acid metabolism,Retinol metabolism,0.5773109634242697
+Oxytocin signaling pathway,GnRH signaling pathway,0.5746034270265961
+Fc gamma R-mediated phagocytosis,VEGF signaling pathway,0.5660109511255298
+Regulation of lipolysis in adipocytes,Longevity regulating pathway,0.5657467532467517
+Arachidonic acid metabolism,Chemical carcinogenesis,0.55614660094676
+Amyotrophic lateral sclerosis,Prion disease,0.5559049176204255
+Adrenergic signaling in cardiomyocytes,cAMP signaling pathway,0.5494357419572194
+Focal adhesion,Proteoglycans in cancer,0.5476249689132047
+cGMP-PKG signaling pathway,cAMP signaling pathway,0.5399555226093402
+Oxytocin signaling pathway,Platelet activation,0.5392971880899543
+Linoleic acid metabolism,Retinol metabolism,0.5385013514290647
+Adrenergic signaling in cardiomyocytes,Dopaminergic synapse,0.5364152333087833
+cGMP-PKG signaling pathway,Adrenergic signaling in cardiomyocytes,0.5351435221101623
+Choline metabolism in cancer,VEGF signaling pathway,0.5329210622044389
+Amyotrophic lateral sclerosis,Parkinson disease,0.5328747188781584
+Insulin signaling pathway,Insulin resistance,0.5272459499263615
+AGE-RAGE signaling pathway in diabetic complications,Relaxin signaling pathway,0.5267281688360933
+Citrate cycle (TCA cycle),2-Oxocarboxylic acid metabolism,0.522179220005961
+Oocyte meiosis,Progesterone-mediated oocyte maturation,0.522054718034618
+"Growth hormone synthesis, secretion and action",Longevity regulating pathway,0.522054718034618
+Alzheimer disease,Parkinson disease,0.5152680167495165
+Adrenergic signaling in cardiomyocytes,Dilated cardiomyopathy,0.5115574552848877
+Oxytocin signaling pathway,cAMP signaling pathway,0.5106450086737109
+"Growth hormone synthesis, secretion and action",Longevity regulating pathway - multiple species,0.5096241979835003
+Adipocytokine signaling pathway,FoxO signaling pathway,0.5092043300103982
+Carbon metabolism,Biosynthesis of amino acids,0.5045088959298062
+Oxytocin signaling pathway,Adrenergic signaling in cardiomyocytes,0.5038585102507195
+Adrenergic signaling in cardiomyocytes,Oocyte meiosis,0.499898394635235
+Insulin signaling pathway,AMPK signaling pathway,0.49821797036203486
+Inflammatory mediator regulation of TRP channels,Serotonergic synapse,0.49821797036203486
+Glycolysis / Gluconeogenesis,Pyruvate metabolism,0.4954734062617849
+Insulin secretion,Gastric acid secretion,0.49436874852327123
+Phospholipase D signaling pathway,VEGF signaling pathway,0.49316122920244393
+Carbon metabolism,Citrate cycle (TCA cycle),0.49275744008427946
+Melanogenesis,Breast cancer,0.4925302347640496
+Fc gamma R-mediated phagocytosis,Choline metabolism in cancer,0.4924399644233636
+Adrenergic signaling in cardiomyocytes,Insulin secretion,0.49166231174877484
+Inflammatory mediator regulation of TRP channels,Linoleic acid metabolism,0.4909169550173026
+Inflammatory mediator regulation of TRP channels,Arachidonic acid metabolism,0.48784977908689364
+PI3K-Akt signaling pathway,Human papillomavirus infection,0.4828141783029017
+cAMP signaling pathway,Amphetamine addiction,0.4799814857671811
+Oocyte meiosis,Dopaminergic synapse,0.4775122076587007
+Cushing syndrome,Insulin secretion,0.4771486059212424
+Long-term potentiation,Dopaminergic synapse,0.47586702370844824
+Citrate cycle (TCA cycle),Biosynthesis of amino acids,0.4739429695181861
+VEGF signaling pathway,AGE-RAGE signaling pathway in diabetic complications,0.4739429695181861
+Breast cancer,Human papillomavirus infection,0.46855658286849483
+Proteoglycans in cancer,Regulation of actin cytoskeleton,0.4681073727172839
+cAMP signaling pathway,Long-term potentiation,0.46766169154228887
+Hippo signaling pathway,Hepatocellular carcinoma,0.4667995515136406
+Pathways in cancer,Breast cancer,0.46635463822604106
+Fc gamma R-mediated phagocytosis,Phospholipase D signaling pathway,0.4642767736444182
+Phospholipase D signaling pathway,Glutamatergic synapse,0.4642767736444182
+Cushing syndrome,Breast cancer,0.46419629444166277
+Hepatitis B,ErbB signaling pathway,0.46252162750460407
+Regulation of lipolysis in adipocytes,"Growth hormone synthesis, secretion and action",0.4623115577889444
+GnRH signaling pathway,Glutamatergic synapse,0.46204122674711173
+Vascular smooth muscle contraction,cGMP-PKG signaling pathway,0.46076313894888593
+Vascular smooth muscle contraction,Platelet activation,0.45978958340119147
+GnRH signaling pathway,Insulin secretion,0.45922041821972287
+Progesterone-mediated oocyte maturation,Relaxin signaling pathway,0.4591179072412529
+Pathways in cancer,Hepatocellular carcinoma,0.45841066306731826
+Insulin resistance,AMPK signaling pathway,0.45415428292596133
+Platelet activation,Rap1 signaling pathway,0.44990917503513067
+Insulin resistance,Adipocytokine signaling pathway,0.44872281577091866
+AMPK signaling pathway,Longevity regulating pathway,0.44848353317779815
+Rap1 signaling pathway,Yersinia infection,0.4464562855664771
+Proteoglycans in cancer,Hepatocellular carcinoma,0.44412959289694853
+Central carbon metabolism in cancer,HIF-1 signaling pathway,0.44362880039151364
+Proteoglycans in cancer,Yersinia infection,0.4429516676183127
+PPAR signaling pathway,Fatty acid degradation,0.4378283712784626
+VEGF signaling pathway,Relaxin signaling pathway,0.43759198261966714
+ErbB signaling pathway,AGE-RAGE signaling pathway in diabetic complications,0.4373553950781749
+Adipocytokine signaling pathway,Longevity regulating pathway,0.4373553950781749
+Thermogenesis,Prion disease,0.43526855013970833
+Serotonergic synapse,Steroid hormone biosynthesis,0.4352071786751144
+"Growth hormone synthesis, secretion and action",Relaxin signaling pathway,0.4350580781414991
+Yersinia infection,Fluid shear stress and atherosclerosis,0.4349685800285118
+Rap1 signaling pathway,Relaxin signaling pathway,0.43352674600821883
+Alzheimer disease,Amyotrophic lateral sclerosis,0.4329970447365731
+Thermogenesis,Parkinson disease,0.4329248095395834
+Oocyte meiosis,Long-term potentiation,0.4295023696682453
+Yersinia infection,ErbB signaling pathway,0.4292656907485322
+Adipocytokine signaling pathway,Type II diabetes mellitus,0.4287474332648856
+Pathways in cancer,PI3K-Akt signaling pathway,0.4284994457321366
+Pathways in cancer,Human papillomavirus infection,0.4275075888274992
+Oxytocin signaling pathway,Dilated cardiomyopathy,0.42739191926914055
+Focal adhesion,Yersinia infection,0.4268787534491145
+Human T-cell leukemia virus 1 infection,Progesterone-mediated oocyte maturation,0.4243026239549703
+Hepatocellular carcinoma,Melanogenesis,0.42304729625635723
+Regulation of actin cytoskeleton,Yersinia infection,0.4229497929786701
+Platelet activation,Yersinia infection,0.4227497198821417
+"Growth hormone synthesis, secretion and action",GnRH signaling pathway,0.4225134926754054
+GnRH signaling pathway,Cushing syndrome,0.4225134926754054
+Hepatocellular carcinoma,Human papillomavirus infection,0.4219038655930828
+FoxO signaling pathway,Type II diabetes mellitus,0.4216216216216183
+GnRH signaling pathway,VEGF signaling pathway,0.4213479348340426
+Regulation of lipolysis in adipocytes,Progesterone-mediated oocyte maturation,0.4209956709956718
+beta-Alanine metabolism,Fatty acid degradation,0.41588089330024564
+Yersinia infection,AGE-RAGE signaling pathway in diabetic complications,0.41543504514348006
+GnRH signaling pathway,Relaxin signaling pathway,0.41523327388827885
+Inflammatory mediator regulation of TRP channels,GnRH signaling pathway,0.41363913131723296
+Proteoglycans in cancer,Platelet activation,0.41346410264007794
+Adrenergic signaling in cardiomyocytes,Amphetamine addiction,0.4124694254480069
+Platelet activation,VEGF signaling pathway,0.4124694254480069
+Serotonergic synapse,Chemical carcinogenesis,0.4107044510088594
+Longevity regulating pathway,Type II diabetes mellitus,0.4102362204724432
+Insulin secretion,Amphetamine addiction,0.41009687327714894
+VEGF signaling pathway,ErbB signaling pathway,0.41009687327714894
+cAMP signaling pathway,Insulin secretion,0.40857837718328605
+Platelet activation,Relaxin signaling pathway,0.40747796039516565
+Adrenergic signaling in cardiomyocytes,Hypertrophic cardiomyopathy,0.40747796039516565
+Hepatocellular carcinoma,Cushing syndrome,0.40674207141272906
+FoxO signaling pathway,Longevity regulating pathway - multiple species,0.4062153163152095
+cGMP-PKG signaling pathway,Oxytocin signaling pathway,0.4059897735573408
+Glutamatergic synapse,Long-term potentiation,0.40598262686957354
+Choline metabolism in cancer,Phosphatidylinositol signaling system,0.4057497549820356
+Inflammatory mediator regulation of TRP channels,Platelet activation,0.4052551793835277
+Insulin signaling pathway,FoxO signaling pathway,0.4041368337311053
+Focal adhesion,Oxytocin signaling pathway,0.4030480337460875
+"Growth hormone synthesis, secretion and action",Progesterone-mediated oocyte maturation,0.4025683975432708
+Adrenergic signaling in cardiomyocytes,Long-term potentiation,0.40095418918260767

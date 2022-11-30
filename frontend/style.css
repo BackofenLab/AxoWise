@@ -27,18 +27,12 @@ transform: translate(-28%,0);
 	overflow-x: scroll;
 	justify-content: center;
 }
-.modules::-webkit-scrollbar {
+#modules::-webkit-scrollbar {
 	display: none;
 	-ms-overflow-style: none;  /* IE and Edge */
 	scrollbar-width: none; 
 	width: 0 !important;
-  }
-
-
-.modules {
-	-ms-overflow-style: none;  /* IE and Edge */
-	scrollbar-width: none;  /* Firefox */
-  }
+}
 
 #modules:hover {
 	background-color: rgba(255, 255, 255, 0.5);
@@ -330,7 +324,7 @@ html,body{
 
 #vsel .vs__open-indicator,
 #clust_vsel .vs__open-indicator,
-#select_d .vs__open-indicator{
+.toolbar-button .vs__open-indicator{
 	fill: rgba(255, 255, 255, 0.7);
 }
 #vsel .vs__clear,
@@ -371,7 +365,7 @@ html,body{
 	background-color: rgba(255, 255, 255, 0.3);
 }
 
-#select_d .vs__dropdown-toggle{
+.toolbar-button .vs__dropdown-toggle{
 	background-color: rgba(0, 0, 0, 0.5);
 	border-style: outset;
 	border-width: 2px;
@@ -379,7 +373,8 @@ html,body{
 	width: 100%;
 }
 
-.toolbar-button #select_d {
+.toolbar-button #select_d,
+.toolbar-button #select_g {
 	text-align: center;
 	font-size: 12px;
 	height: 20px;
@@ -388,7 +383,7 @@ html,body{
 	
 }
 
-#select_d .vs__selected{
+.toolbar-button .vs__selected{
 	font-size: 12px;
 	color: white;
 	width: 130px;
@@ -399,12 +394,12 @@ html,body{
 	
 }
 
-#select_d .vs__actions{
+.toolbar-button .vs__actions{
 	padding: 0;
 	margin-right: 5px;
 }
 
-#select_d .vs__clear{
+.toolbar-button .vs__clear{
 	fill: rgba(255, 255, 255, 0.7);
 	background:none;
 	width: auto;
@@ -1131,6 +1126,7 @@ color: #000;
 	overflow-x: hidden;
 }
 
+
 .tool-pane .results {
 	margin-top: 5px;
 	max-height: 100vh;
@@ -1145,6 +1141,13 @@ color: #000;
 	cursor: pointer;
 	text-decoration: none;
 	color: white;
+}
+
+.results::-webkit-scrollbar {
+	display: none;
+	-ms-overflow-style: none;  /* IE and Edge */
+	scrollbar-width: none; 
+	width: 0 !important;
 }
 
 #enrichment .results a:hover {
@@ -1372,6 +1375,13 @@ padding-top: 1em;
 	border-radius: 5px;
 	background-repeat: no-repeat;
   }
+
+  .nodeattributes::-webkit-scrollbar {
+	display: none;
+	-ms-overflow-style: none;  /* IE and Edge */
+	scrollbar-width: none; 
+	width: 0 !important;
+}
 
   .nodeattributes .boundary{
 	position: relative;

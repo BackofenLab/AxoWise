@@ -10,7 +10,6 @@ Vue.component("hubs", {
     methods: {
         get_hubs: function(state) {
             var com = this;
-
             
             com.$emit("unconnected-graph-changed", [com.gephi_json.subgraph, state]);
 
@@ -28,7 +27,7 @@ Vue.component("hubs", {
     template: `
         <div v-show="gephi_json != null" class="toolbar-button">
             <div class="toolbar-theme">
-                <v-select id="select_d" v-model="selected_func" :options="select_function" v-on:input="get_hubs(selected_func)"></v-select>
+                <v-select id="select_g" v-model="selected_func" :options="select_function" v-on:input="get_hubs(selected_func)"></v-select>
                 <span class="toolbar-icon">G</span>
             </div>
         </div>

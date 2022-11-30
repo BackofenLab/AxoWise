@@ -259,10 +259,10 @@ def proteins_subgraph_api():
         return Response(json.dumps([]), mimetype="application/json")
      
     #Creating only the main Graph and exclude not connected subgraphs
-    nodes = graph_utilities.create_nodes_subgraph(edges, nodes)
+    nodes_sub = graph_utilities.create_nodes_subgraph(edges, nodes)
     # print(nodes)
     # nodes = pd.read_csv("KappaTerms.csv")
-    edges = graph_utilities.create_edges_subgraph(edges)
+    #edges = graph_utilities.create_edges_subgraph(edges)
     # edges = pd.read_csv("Kappa_Score.csv")
 
     #Timer to evaluate runtime between cypher-shell and extracting data
@@ -333,8 +333,17 @@ def proteins_subgraph_api():
                 node["attributes"][coloumn] = panda_file.loc[panda_file["name"] == df_node["name"], coloumn].item()
         node["label"] = df_node["name"]
         node["species"] = str(df_node["species_id"])
-    
+        
+        sub_proteins = []
+    for node in sigmajs_data["nodes"]:
+        if node["attributes"]["Ensembl ID"] not in  nodes_sub.values:            
+            node["color"] = 'rgb(255,255,153)'
+            node["hidden"] = True
+            sub_proteins.append(node["attributes"]["Ensembl ID"])
+            
     sigmajs_data["dvalues"] = selected_d
+    sigmajs_data["subgraph"] = sub_proteins
+    
 
     #Timer for final steps
     t_end = time.time()
