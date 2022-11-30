@@ -4,6 +4,7 @@
 * {
 padding: 0px;
 margin: 0px;
+
 }
 
 .chart-header {
@@ -28,7 +29,11 @@ transform: translate(-28%,0);
 }
 .modules::-webkit-scrollbar {
 	display: none;
+	-ms-overflow-style: none;  /* IE and Edge */
+	scrollbar-width: none; 
+	width: 0 !important;
   }
+
 
 .modules {
 	-ms-overflow-style: none;  /* IE and Edge */
@@ -237,6 +242,14 @@ html,body{
 	margin-top: 10px;
 	font-family: 'Roboto Mono', monospace ;
 }
+
+.vs__dropdown-menu::-webkit-scrollbar {
+	display: none;
+	-ms-overflow-style: none;  /* IE and Edge */
+	scrollbar-width: none; 
+	width: 0 !important;
+  }
+
 
 .vs--open .vs__dropdown-toggle {
     border-bottom-color: transparent;
