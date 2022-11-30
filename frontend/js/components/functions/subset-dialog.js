@@ -229,10 +229,7 @@ Vue.component("subset-dialog", {
                             </li>
                         </ul>
                     </div>
-                    <select v-model="selected_export">
-                    <option disabled value="">Select Export</option>
-                    <option v-for="exports in export_option">{{exports}}</option>
-                    </select>
+                    <v-select id="clust_vsel" v-model="selected_export" :options="export_option"></v-select>
                     <button id="export-all-btn" v-on:click="export_all(selected_export)">Export</button>
                 </div>
             </div>

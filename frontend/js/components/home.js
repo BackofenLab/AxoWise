@@ -5,9 +5,9 @@ Vue.component("home", {
   },
   data: function () {
     return {
-      species: {
-        10090: "Mus musculus (mouse)",
-      },
+      species: [{
+        label: 'Mus musculus (mouse)', code: '10090'
+      }],
       api: {
         subgraph: "api/subgraph/proteins",
       },
@@ -28,8 +28,9 @@ Vue.component("home", {
       single_text: null,
       protein_file: null,
       selected_species: null,
-      dcoloumns: null,
+      dcoloumns: [],
       selected_d: [],
+      check_file: false,
       selected_system: "Multiple",
     };
   },
@@ -63,7 +64,7 @@ Vue.component("home", {
         formData.append("file", protein_file.files[0]);
       }
       formData.append("threshold", com.threshold.value);
-      formData.append("species_id", com.selected_species);
+      formData.append("species_id", com.selected_species.code);
       formData.append("selected_d", com.selected_d);
 
 
@@ -79,6 +80,7 @@ Vue.component("home", {
         $("#submit-btn").removeClass("loading");
         com.dcoloumns = null;
         if (Object.keys(json).length == 0) {
+          alert("No associations found");
           com.$emit("gephi-json-changed", null);
         } else {
           json.edge_thick = com.edge_thick.value;
@@ -115,6 +117,7 @@ Vue.component("home", {
         }
       };
       reader.readAsText(file);
+      com.check_file = true;
     },
     onlyNumbers: function (str) {
       return /^[0-9.,-]+$/.test(str);
@@ -178,12 +181,11 @@ Vue.component("home", {
 
                     <div class="input-form-data">
 
+
+
                         <div v-if="selected_system==='File' || selected_system==='Multiple'">
                             <h4>Species:</h4>
-                            <select v-model="selected_species">
-                                <option value="" disabled selected>Select your Species</option>
-                                <option v-for="(value, key, index) in species" v-bind:value="key">{{value}}</option>
-                            </select>
+                            <v-select v-model="selected_species" :options="species"></v-select>
                         </div>
 
                         <div v-if="selected_system==='Import'">
@@ -205,12 +207,9 @@ Vue.component("home", {
                             </div>
                         </div>
 
-                        <div v-show="dcoloumns != null">
+                        <div v-show="check_file != false">
                         <h4>D Coloumns:</h4>
-                        <select v-model="selected_d" multiple>
-                            <option disabled value="">Please select D coloumn</option>
-                            <option v-for="value in dcoloumns">{{value}}</option>
-                        </select>
+                        <v-select multiple v-model="selected_d" :options="dcoloumns"></v-select>
                         </div>
                         <!--<h4>Score threshold:</h4>
                         <input id="threshold-slider"

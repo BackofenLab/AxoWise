@@ -39,10 +39,7 @@ Vue.component("d-value", {
     template: `
         <div v-show="gephi_json != null && dcoloumns.length >= 1" class="toolbar-button">
         <div class="toolbar-theme">
-            <select id="select_d" v-model="selected_d" v-on:change="select_term(selected_d)">
-                <option disabled value="">Please select D Section</option>
-                <option v-for="value in dcoloumns">{{value}}</option>
-            </select>
+            <v-select id="select_d" v-model="selected_d" :searchable="false" :options="dcoloumns" v-on:input="select_term(selected_d)"></v-select>
             <span class="toolbar-icon">D</span>
             </div>
         </div>

@@ -28,10 +28,7 @@ Vue.component("hubs", {
     template: `
         <div v-show="gephi_json != null" class="toolbar-button">
             <div class="toolbar-theme">
-                <select id="select_hubs" v-model="selected_func" v-on:change="get_hubs(selected_func)">
-                    <option hidden disabled value="">Select option</option>
-                    <option v-for="key in select_function" v-bind:value="key">{{key}}</option>
-                </select>
+                <v-select id="select_d" v-model="selected_func" :options="select_function" v-on:input="get_hubs(selected_func)"></v-select>
                 <span class="toolbar-icon">G</span>
             </div>
         </div>

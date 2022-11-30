@@ -220,11 +220,190 @@ html,body{
 	display: none;
 }
 
-.input-form-data select{
+.vs__dropdown-toggle{
+	background-color: rgba(255, 255, 255, 0.7);
+	border: none ;
+	border-radius: 20px ;
+	font-family: 'Roboto Mono', monospace ;
+}
+
+.vs__dropdown-menu {
+	background-color: rgba(0, 0, 0, 0.85);
+	color: #ffffff;
+	text-align: center;
+	font-size: 14px;
+	border: none ;
+	border-radius: 20px ;
+	margin-top: 10px;
+	font-family: 'Roboto Mono', monospace ;
+}
+
+.vs--open .vs__dropdown-toggle {
+    border-bottom-color: transparent;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.vs__actions button {
+	background-color: rgba(0, 0, 0, 0.2);
+	margin-top: 0;
+	color: white;
+	padding: 0.2rem;
+	border-radius: 100px;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	transition: .5s;
+}
+
+.vs__selected-options button{
+	background-color: rgba(0, 0, 0, 0.2);
+	margin-top: 0;
+	color: white;
+	padding: 0.2rem;
+	border-radius: 100px;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	transition: .5s;
+}
+
+.vs__selected-options {
+	font-size: 14px;
+} 
+
+#vsel{
+	margin-left: 5px;
+}
+
+#vsel .vs__selected-options {
+
+	font-size: 14px;
+	display: contents;
+}
+
+#vsel .vs__dropdown-toggle {
+	background-color: rgba(255, 255, 255, 0.15);
+	border: none;
+	border-radius: 20px;
 	font-family: 'Roboto Mono', monospace;
+	width: 100px;
+	height: 25px;
+	display: -webkit-flex;
+	align-content: center;
+}
+
+#vsel .vs__dropdown-menu{
+	background-color: rgba(0, 0, 0, 0.95);
+	color: #ffffff;
+	text-align: center;
+	font-size: 12px;
+	border: outset ;
+	border-color: #fff;
+	border-radius: 20px ;
+	border-width: 1px;
+	margin-top: 10px;
+	font-family: 'Roboto Mono', monospace ;
+	min-width: 0;
+	max-height: 150px;
+}
+
+#vsel .vs__selected,
+#clust_vsel .vs__selected{
+	font-size: 12px;
+	color: white;
+	width: 55px;
+	position: absolute;
+	overflow-x: hidden;
+	}
+
+#vsel .vs__open-indicator,
+#clust_vsel .vs__open-indicator,
+#select_d .vs__open-indicator{
+	fill: rgba(255, 255, 255, 0.7);
+}
+#vsel .vs__clear,
+#clust_vsel .vs__clear{
+	fill: rgba(255, 255, 255, 0.7);
+	margin-right: 4px;
+}
+#vsel .vs__actions{
+	margin-top: 2px;
+}
+
+#clust_vsel .vs__actions{
+	margin-top: -2px;
+}
+
+#vsel .vs__actions button,
+#clust_vsel .vs__actions button{
+	background: none;
+	padding: 2px;
+}
+
+#vsel .vs__search{
+	font-size: 12px;
+	font-family: 'Roboto Mono', monospace ;
+	text-transform: uppercase;
+}
+
+#clust_vsel {
+	margin-top: 25px;
+	display: flex;
+	justify-content: center;
+}
+
+#clust_vsel .vs__dropdown-toggle{
+	width: 60%;
+	padding: 0px;
+	color: white;
+	background-color: rgba(255, 255, 255, 0.3);
+}
+
+#select_d .vs__dropdown-toggle{
+	background-color: rgba(0, 0, 0, 0.5);
+	border-style: outset;
+	border-width: 2px;
+	padding: 0;
+	width: 100%;
+}
+
+.toolbar-button #select_d {
+	text-align: center;
+	font-size: 12px;
+	height: 20px;
+	width: 80%;
+	display: flex;
+	
+}
+
+#select_d .vs__selected{
+	font-size: 12px;
+	color: white;
+	width: 130px;
+	position: absolute;
+	overflow-x: hidden;
+	border: none;
+	margin: 0;
+	
+}
+
+#select_d .vs__actions{
+	padding: 0;
+	margin-right: 5px;
+}
+
+#select_d .vs__clear{
+	fill: rgba(255, 255, 255, 0.7);
+	background:none;
+	width: auto;
+	margin-right: 4px;
+}
+
+
+/* .input-form-data select{
+	
 	text-align: center;
 	width: 100%;
-	border: none;
+
 	padding: .3rem;
 	cursor: pointer;
 	font-size: 14px;
@@ -237,7 +416,7 @@ html,body{
 
 .input-form-data select:focus {
 	background-color: white;
-}
+} */
 
 .input-form-data .file-upload-wrapper{
 	position: relative;
@@ -1036,6 +1215,7 @@ color: #000;
 	border-radius: 20px;
 	background-color: rgba(255, 255, 255, 0.15);
 	height: 25px;
+	font-size: 12px;
 	color: white;
 	border: None;
 }
@@ -1161,7 +1341,7 @@ font-size: 1em;
 padding-top: 1em;
 }
 
-.nodeattributes svg{
+.nodeattributes #demo1{
 
 	position: relative;
 	top: 50%;

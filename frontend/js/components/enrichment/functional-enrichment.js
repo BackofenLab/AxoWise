@@ -2,25 +2,23 @@ Vue.component("functional-enrichment", {
     props: ["gephi_json", "func_json","revert_term","func_enrichment", "reset_term"],
     data: function() {
         return  {
-            filter_terms: {
-                "RESET": "No Filter",
-                "TISSUES": "Tissue expression",
-                "KEGG": "KEGG Pathway",
-                "COMPARTMENTS": "Subcellular localization",
-                "Process": "Biological Process",
-                "Component": "Cellular Component(Gene Ontology)",
-                "Function": "Molecular Function",
-                "Keyword": "Annotated Keywords(UniProt)",
-                "SMART": "Protein Domains(SMART)",
-                "InterPro": "Protein Domains and Features(InterPro)",
-                "Pfam": "Protein Domains(Pfam)",
-                "PMID": "Reference Publications(PubMed)",
-                "RCTM": "Reactome Pathway",
-                "WikiPathways": "WikiPathays",
-                "MPO": "Mammalian Phenotype Ontology",
-                "NetworkNeighborAL": "Network",
-                
-            },
+            filter_terms: [
+                {value: "TISSUES", label: "Tissue expression"},
+                {value: "KEGG", label: "KEGG Pathway"},
+                {value: "COMPARTMENTS", label: "Subcellular localization"},
+                {value: "Process", label: "Biological Process"},
+                {value: "Component", label: "Cellular Component(Gene Ontology)"},
+                {value: "Function", label: "Molecular Function"},
+                {value: "Keyword", label: "Annotated Keywords(UniProt)"},
+                {value: "SMART", label: "Protein Domains(SMART)"},
+                {value: "InterPro", label: "Protein Domains and Features(InterPro)"},
+                {value: "Pfam", label: "Protein Domains(Pfam)"},
+                {value: "PMID", label: "Reference Publications(PubMed)"},
+                {value: "RCTM", label: "Reactome Pathway"},
+                {value: "WikiPathways", label: "WikiPathays"},
+                {value: "MPO", label: "Mammalian Phenotype Ontology"},
+                {value: "NetworkNeighborAL", label: "Network"}] 
+            ,
             message: "",
             terms: [],
             saved_terms: [],
@@ -41,18 +39,17 @@ Vue.component("functional-enrichment", {
         select_cat: function(category) {
             var com = this;
 
-
             var filtered_terms = [];
             var check_terms = com.saved_terms[com.saved_terms.length -1];
 
             //Filter the terms according to user selection
             for (var idx in check_terms) {
-                if(check_terms[idx].category == category && category != "RESET"){
+                if(check_terms[idx].category == category && category != null){
                     filtered_terms.push(check_terms[idx]);
                 }
             }
             //Reset function for Terms
-            if(category != "RESET"){
+            if(category != null){
                 com.terms = filtered_terms;
             }else{com.terms = com.saved_terms[com.saved_terms.length -1]}
 
@@ -130,6 +127,8 @@ Vue.component("functional-enrichment", {
             formData = new FormData();
             formData.append('proteins', com.proteins);
             formData.append('species_id', nodes[0].species);
+
+            com.filter="";
             
             
             //POST request for functional enrichment
@@ -213,10 +212,8 @@ Vue.component("functional-enrichment", {
             <div class="main-section">
                 <div class="enrichment-filtering">
                     <input type="text" value="Search functional terms by name" v-model="search_raw" class="empty"/>
-                    <select v-model="filter" v-on:change="select_cat(filter)">
-                        <option disabled value="">No Filter</option>
-                        <option v-for="(value, key, index) in filter_terms" v-bind:value="key">{{value}}</option>
-                    </select>
+                    <v-select id="vsel" placeholder="..." v-model="filter" :options="filter_terms" :reduce="label => label.value" label="value" v-on:input="select_cat(filter)"></v-select>
+
                 </div>
                 <div v-if="await_load==false" class="term_number">
                     <span>Terms: {{term_numbers}}</span>

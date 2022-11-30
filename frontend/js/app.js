@@ -1,3 +1,5 @@
+Vue.component('v-select', VueSelect.VueSelect)
+
 var APP = null;
 const eventHub = new Vue(); // Single event hub
 
