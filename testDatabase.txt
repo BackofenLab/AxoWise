@@ -1,0 +1,137 @@
+Test nodes in test without Data
+
+
++----------------------------------------------------------------------------+
+| (:TF {name: "Transcription Factor 1", Proteinname: "Protein 1",            -
+	Motif: "CATGG"})                                                        -
+                           |                                                 -
+| (:PROTEIN {name: "Protein 1", location: "?", isTf: 1})
+                           |
+| (:PROTEIN {name: "Protein 2", location: "?", isTf: 0})
+                           |
+| (:OpenRegion {name: "Open Region 1", location: "?", nearesDistance: "?", 
+	codes_for: "Protein 1", motif: "CATGG"})
+                           |
+| (:Study {Celltypes: ["cell a", "cell b"], name: "Study 1"})
+                           |
+| (:Cell {Studies: ["Study 1"], name: "cell a"})
+                           |
+| (:OpenRegionVsTranscriptionfactor {Study: "Study 1", 
+	TF: "Transcription Factor 1", name: "Bridge1", Openregion: "Open Region 1",
+	cell: "cell a", DAvsDE: 10}) 
+					   |
+| (:_Study {Celltypes: ["cell a", "cell b"], name: "Study 1"})
++-----------------------------------------------------------------------------
+
+Test relationships without Data
+
++-----------------------------------------------------------------------+
+| [:TFAndProtein]                                              		|
+| [:RelationOpenRegionAndTF]                                   		|
+| [:RelationOpenRegionAndProtein]                              		|
+| [:HasInformationAbout](Study -> cell)                          		|
+| [:HasInformationAbout](Study -> OpenRegionVsTranscriptionfactor)		|
+| [:HasInformationAbout](Cell -> OpenRegionVsTranscriptionfactor)       |
+| [:HasInformationAbout](OpenRegionVsTranscriptionfactor -> Openregion) |
+| [:HasInformationAbout](OpenRegionVsTranscriptionfactor -> TF)         |
+------------------------------------------------------------------------- 
+
+
+
+
+[--------------------------Queries to create the Test database---------------]
+
+CREATE 
+(:TF{name:"Transcription Factor 1", Motif:"CATGG"})
+
+
+//////////////////////////////////////////////////////////////////////////////
+
+CREATE 
+(:PROTEIN{name:"Protein 1",isTf: 1, location: "?"})
+
+//////////////////////////////////////////////////////////////////////////////
+
+CREATE 
+(:OpenRegion{name:"Open Region 1", codes_for: "Protein 1", motif: "CATGG", 
+location: "?", nearesDistance: "?"})
+
+//////////////////////////////////////////////////////////////////////////////
+
+MATCH
+  (a:OpenRegion),
+  (b:PROTEIN)
+  Where a.codes_for = b.name
+CREATE (a)-[r:RelationOpenRegionAndProtein]->(b)
+
+
+//////////////////////////////////////////////////////////////////////////////
+
+MATCH
+  (a:OpenRegion),
+  (b:TF)
+  Where a.motif = b.motif
+CREATE (a)-[r:RelationOpenRegionAndTF]->(b)
+
+//////////////////////////////////////////////////////////////////////////////
+
+CREATE 
+(:Cell{name:"cell a", Studies:["Study 1"]})
+
+//////////////////////////////////////////////////////////////////////////////
+
+CREATE 
+(:Study{name:"Study 1", Celltypes: ["cell a","cell b"]})
+
+//////////////////////////////////////////////////////////////////////////////
+
+
+MATCH
+  (a:Study),
+  (b:Cell)
+  Where any (x in a.Celltypes where x = b.name)
+CREATE (a)-[r:HasInformationAbout]->(b)
+
+
+//////////////////////////////////////////////////////////////////////////////
+
+CREATE (:OpenRegionVsTranscriptionfactor {name: "Bridge1", DAvsDE: 10, 
+TF: "Transcription Factor 1", Openregion: "Open Region 1", 
+Study: "Study 1", cell: "cell a"})
+
+//////////////////////////////////////////////////////////////////////////////
+
+
+MATCH
+  (a:Study),
+  (b:OpenRegionVsTranscriptionfactor)
+  Where a.name = b.Study
+CREATE (a)-[r:HasInformationAbout]->(b)
+
+
+//////////////////////////////////////////////////////////////////////////////
+
+MATCH
+  (a:Cell),
+  (b:OpenRegionVsTranscriptionfactor)
+  Where a.name = b.cell
+CREATE (a)-[r:HasInformationAbout]->(b)
+
+//////////////////////////////////////////////////////////////////////////////
+
+MATCH
+  (a:TF),
+  (b:OpenRegionVsTranscriptionfactor)
+  Where a.name = b.TF
+CREATE (b)-[r:HasInformationAbout]->(a)
+
+//////////////////////////////////////////////////////////////////////////////
+
+Match (n:OpenRegionVsTranscriptionfactor)-[:HasInformationAbout]-> (b:OpenRegion)
+Match (n)-[:HasInformationAbout]-> (c:TF)
+Where c.name = "Transcription Factor 1"
+Return n,c, b
+
+//////////////////////////////////////////////////////////////////////////////
+
+ 
