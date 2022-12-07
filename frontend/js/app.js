@@ -33,7 +33,7 @@ $(document).ready(function () {
             home_button: null,
             snapshot: null,
             protein_list: null,
-            hubs: null,
+            connection: null,
             unconnected_graph: null,
         },
         watch: {

@@ -1428,7 +1428,8 @@ padding-top: 1em;
 	align-items: center;
   }
 
-  #edge-slider{
+  #edge-slider,
+  #hubs-slider{
 	width: 80%;
 	
   }

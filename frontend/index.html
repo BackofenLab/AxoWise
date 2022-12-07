@@ -39,12 +39,13 @@
       <script src="js/components/functions/modules.js"></script>
       <script src="js/components/toolbar/d-value.js"></script>
       <script src="js/components/toolbar/export-layout.js"></script>
-      <script src="js/components/toolbar/hubs.js"></script>
+      <script src="js/components/toolbar/connection.js"></script>
       <script src="js/components/home.js"></script>
       <script src="js/components/toolbar/home_button.js"></script>
       <script src="js/components/toolbar/snapshot.js"></script>
       <script src="js/components/toolbar/tool-visualization.js"></script>
       <script src="js/components/toolbar/highlight_button.js"></script>
+      <script src="js/components/toolbar/hubs.js"></script>
       <!-- <script src="js/components/theme-toggle.js"></script> -->
     </head>
 
@@ -72,13 +73,15 @@
               ></snapshot>
               <tool-visualization v-bind:gephi_json="gephi_json"
               ></tool-visualization>
-              <hubs v-bind:gephi_json="gephi_json"
+              <connection v-bind:gephi_json="gephi_json"
               v-on:unconnected-graph-changed="unconnected_graph = $event"
-              ></hubs>
+              ></connection>
               <highlight_button v-bind:gephi_json="gephi_json"
                                 v-bind:protein_list="protein_list"
                                 v-on:protein-list-changed="protein_list = $event"
               ></highlight_button>
+              <hubs v-bind:gephi_json="gephi_json"
+              ></hubs>
             </div>
           </div>
         </div>
