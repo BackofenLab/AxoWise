@@ -31,6 +31,7 @@ def main():
     args = parse_cli_args()
 
     # Fuzzy search for species
+    # E.g. kegg_id: mmu; ncbi_id: 10090
     species_name, kegg_id, ncbi_id = fuzzy_search.search_species(args.species_name)[0]
     print("Downloading KEGG data for {}.".format(species_name))
     input("Press any key to continue...")
@@ -72,7 +73,12 @@ def main():
 
     # Get the pathway
     pathway_table = list(read_table(pathways, (str, str), "\t"))
+    # print(pathway_table)
+    i = 0
     for idx, (pathway_id, pathway_name) in enumerate(pathway_table):
+        #if (i < 81):
+        #    i += 1
+        #    continue
         pathway = api.pathway(pathway_id, kgml = False)
 
         # Parse the KEGG pathway flat file
@@ -102,7 +108,9 @@ def main():
 
             # Map KEGG gene identifiers to STRING external identifiers
             kegg2external = dict()
+            # print(ncbi_id)
             for mapped_identifiers, idx_offset in api.map_identifiers_to_STRING(gene_ids, ncbi_id):
+                # print(mapped_identifiers, idx_offset)
                 for idx, external_id, species_id, species_name, preferred_name, annotation in read_table(
                     mapped_identifiers,
                     (int, str, int, str, str, str),
