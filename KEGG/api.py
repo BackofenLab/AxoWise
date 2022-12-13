@@ -30,7 +30,7 @@ def pathway(pathway_id, kgml = False):
     assert pathway_file is not None
     return pathway_file
 
-def map_identifiers_to_STRING(identifiers, species=None, split=8):
+def map_identifiers_to_STRING(identifiers, species=None, split=10):
     template = _map_id_template
     if species is None:
         template = _map_id_template_no_species
@@ -44,14 +44,7 @@ def map_identifiers_to_STRING(identifiers, species=None, split=8):
                 identifiers = "%0d".join(identifiers_chunk),
                 species = species
             )
-            print(identifiers_chunk)
             identifiers_file = get(endpoint)
-            if (identifiers_file is None):
-                if i + split >= len(identifiers):
-                    break
-                else:
-                    i += split
-                    continue
             assert identifiers_file is not None
             yield identifiers_file, i
             if i + split >= len(identifiers):

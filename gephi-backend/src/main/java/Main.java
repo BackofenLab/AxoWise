@@ -18,7 +18,6 @@ import org.gephi.preview.types.EdgeColor;
 import org.gephi.project.api.ProjectController;
 import org.gephi.project.api.Workspace;
 import org.gephi.statistics.plugin.Degree;
-import org.gephi.statistics.plugin.ClusteringCoefficient;
 import org.gephi.statistics.plugin.GraphDistance;
 import org.gephi.statistics.plugin.Modularity;
 import org.gephi.statistics.plugin.builder.DegreeBuilder;
@@ -37,8 +36,6 @@ import java.util.concurrent.TimeUnit;
 public class Main {
 
     public static void main(String[] args) {
-
-        // TODO: Load cluster coefficient into file
 
         // Init a project - and therefore a workspace
         ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);
@@ -84,9 +81,6 @@ public class Main {
 
         // Write to standard output
         outputJson(graphModel, workspace);
-
-        // ClusteringCoefficient CC = new ClusteringCoefficient();
-        // CC.exectue(graphModel);
 
         // Stupid hack, otherwise the program doesn't terminate (probably some Gephi
         // thread/process in the background)
