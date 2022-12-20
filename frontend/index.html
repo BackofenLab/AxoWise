@@ -81,6 +81,7 @@
                                 v-on:protein-list-changed="protein_list = $event"
               ></highlight_button>
               <hubs v-bind:gephi_json="gephi_json"
+                    @active-subset-changed="active_subset = $event"
               ></hubs>
             </div>
           </div>

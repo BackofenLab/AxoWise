@@ -27,7 +27,6 @@ from layout import shell_layout
 import uuid
 
 import graph_utilities
-import kappa_score
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 import time
@@ -71,7 +70,6 @@ def proteins_enrichment():
                 fdr_rate=row["fdr"],
                 category=row["category"]
             ))
-        df = kappa_score.getKappaScore(list_enrichment, proteins)
     else:
         # TODO species_id for gprofil is different and needs to be converted
         # Right now mus musculus set to default
