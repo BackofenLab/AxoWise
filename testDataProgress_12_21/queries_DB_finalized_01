@@ -1,0 +1,412 @@
+this is what is did after setting up the data base again, because else i cant 
+create all the relation ships. Since else i dont have the computation 
+time for this.
+
+
+
+------------------------------------------------------------------------------
+Create base nodes new
+
+This is nice since u dont need to set properties names by hand. 
+They come from the csv
+------------------------------------------------------------------------------
+
+
+CALL apoc.load.csv('TranscriptionFactor.csv')
+             YIELD map
+             Create(t:TranscriptionFactor)
+             Set t = map;
+             
+CALL apoc.load.csv('OpenRegion.csv')
+	YIELD map
+	Create (o:OpenRegion)
+	Set o = map;
+
+CALL apoc.load.csv('Protein.csv')
+	YIELD map
+	Create (p:Protein)
+	Set p = map; 
+                      
+------------------------------------------------------------------------------
+Create Study and Cell
+------------------------------------------------------------------------------
+
+Create (s:Study{Nr: 1, Cell: Microglia});
+Create (c:Cell{Study: 1, Cell: Microglia});
+
+------------------------------------------------------------------------------
+Create nearest_distance relationship
+------------------------------------------------------------------------------
+
+Match (p:Protein), (o:OpenRegion)
+             where (p.SYMBOL = o.nearest_SYMBOL)
+             CALL apoc.create.relationship(o, "nearest_distance", {}, p)
+             YIELD rel
+             return count(rel);
+             
+
+------------------------------------------------------------------------------
+Create relationships and correlation nodes
+------------------------------------------------------------------------------
+
+
+
+Load csv With HEADERS from "file:///TF_target_cor__edit.csv"
+                 as map
+                 Create (t:Association)
+                 set t = map;
+
+Match(s:Study), (c:Cell),(t:Association)
+                 Create (s)-[:talksabout]->(t)<-[:talksabout]-(c);
+
+Load csv With HEADERS from "file:///peak_target_cor_edit.csv"
+                 as map
+                 Match(s:Study), (c:Cell)
+                 Create (t:Association)
+                 set t = map
+                 Create (s)-[:talksabout]->(t)<-[:talksabout]-(c);
+
+Match (a:Association), (t:TranscriptionFactor{SYMBOL: a.TF})
+                 Create (a)-[:hasinformationabout]->(t);
+
+Match (a:Association), (p:Protein{SYMBOL: a.SYMBOL})
+                 Create (a)-[:hasinformationabout]->(;
+                                 
+Match (a:Association), (t:OpenRegion{nearest_index: a.nearest_index})
+                 Create (a)-[:hasinformationabout]->(t);
+
+
+------------------------------------------------------------------------------
+This is for TF_motiv_cor_.csv
+------------------------------------------------------------------------------
+
+Load csv With HEADERS from "file:///test1_edit.csv"
+                 as map
+                 Create (t:Association)
+                 set t = map;
+                                
+                 
+match (a:Association),(s:Study)
+                 where not exists((s)-[:talksabout]->(a))
+                 create (s)-[r:talksabout]->(a)
+                 return count(r);
+                 
+match (a:Association),(s:Cell)
+                 where not exists((s)-[:talksabout]->(a))
+                 create (s)-[r:talksabout]->(a)
+                 return count(r);
+
+match (a:Association),(p:TranscriptionFactor{SYMBOL:a.TF})
+                 where not exists((a)-[:hasinformationabout]->(p))
+                 create (a)-[r:hasinformationabout]->(p)
+                 return count(r);
+
+match (a:Association),(p:OpenRegion{nearest_index:a.peaks})
+	where not exists((a)-[:hasinformationabout]->(p))
+	create (a)-[r:hasinformationabout]->(p)
+	return count(r);
+
+
+Load csv With HEADERS from "file:///test2_edit.csv"
+                 as map
+                 Create (t:Association)
+                 set t = map;
+                                
+                 
+match (a:Association),(s:Study)
+                 where not exists((s)-[:talksabout]->(a))
+                 create (s)-[r:talksabout]->(a)
+                 return count(r);
+                 
+match (a:Association),(s:Cell)
+                 where not exists((s)-[:talksabout]->(a))
+                 create (s)-[r:talksabout]->(a)
+                 return count(r);
+
+match (a:Association),(p:TranscriptionFactor{SYMBOL:a.TF})
+                 where not exists((a)-[:hasinformationabout]->(p))
+                 create (a)-[r:hasinformationabout]->(p)
+                 return count(r);
+
+match (a:Association),(p:OpenRegion{nearest_index:a.peaks})
+	where not exists((a)-[:hasinformationabout]->(p))
+	create (a)-[r:hasinformationabout]->(p)
+	return count(r);
+
+
+Load csv With HEADERS from "file:///test3_edit.csv"
+                 as map
+                 Create (t:Association)
+                 set t = map;
+                                
+                 
+match (a:Association),(s:Study)
+                 where not exists((s)-[:talksabout]->(a))
+                 create (s)-[r:talksabout]->(a)
+                 return count(r);
+                 
+match (a:Association),(s:Cell)
+                 where not exists((s)-[:talksabout]->(a))
+                 create (s)-[r:talksabout]->(a)
+                 return count(r);
+
+match (a:Association),(p:TranscriptionFactor{SYMBOL:a.TF})
+                 where not exists((a)-[:hasinformationabout]->(p))
+                 create (a)-[r:hasinformationabout]->(p)
+                 return count(r);
+
+match (a:Association),(p:OpenRegion{nearest_index:a.peaks})
+	where not exists((a)-[:hasinformationabout]->(p))
+	create (a)-[r:hasinformationabout]->(p)
+	return count(r);
+
+Load csv With HEADERS from "file:///test4_edit.csv"
+                 as map
+                 Create (t:Association)
+                 set t = map;
+                                
+                 
+match (a:Association),(s:Study)
+                 where not exists((s)-[:talksabout]->(a))
+                 create (s)-[r:talksabout]->(a)
+                 return count(r);
+                 
+match (a:Association),(s:Cell)
+                 where not exists((s)-[:talksabout]->(a))
+                 create (s)-[r:talksabout]->(a)
+                 return count(r);
+
+match (a:Association),(p:TranscriptionFactor{SYMBOL:a.TF})
+                 where not exists((a)-[:hasinformationabout]->(p))
+                 create (a)-[r:hasinformationabout]->(p)
+                 return count(r);
+
+match (a:Association),(p:OpenRegion{nearest_index:a.peaks})
+		 where not exists((a)-[:hasinformationabout]->(p))
+		 create (a)-[r:hasinformationabout]->(p)
+		return count(r);
+
+
+
+------------------------------------------------------------------------------
+Create nodes for rel_or DA_values
+------------------------------------------------------------------------------
+
+
+Load csv With HEADERS from "file:///rel_or_wt12h_wt0h.csv"
+             As map
+             Create (t:rel_or_wt12h_wt0h)
+             set t = map;
+
+Load csv With HEADERS from "file:///rel_or_wt12h_wt0h_padj.csv"
+             As map
+             Create (t:rel_or_wt12h_wt0h_padj)
+             set t = map;
+
+Load csv With HEADERS from "file:///rel_or_wt24h_wt0h.csv"
+             As map
+             Create (t:rel_or_wt24h_wt0h)
+             set t = map;
+
+Load csv With HEADERS from "file:///rel_or_wt24h_wt0h_padj.csv"
+             As map
+             Create (t:rel_or_wt24h_wt0h_padj)
+             set t = map;
+
+Load csv With HEADERS from "file:///rel_or_wt336h_wt0h.csv"
+             As map
+             Create (t:rel_or_wt336h_wt0h)
+             set t = map;
+
+load csv With HEADERS from "file:///rel_or_wtRC12h_wt0h.csv"
+             As map
+             Create (t:rel_or_wtRC12h_wt0h)
+             set t = map;
+             
+Load csv With HEADERS from "file:///rel_or_wtRC12h_wt0h_padj.csv"
+             As map
+             Create (t:rel_or_wtRC12h_wt0h_padj)
+             set t = map;
+
+Load csv With HEADERS from "file:///rel_or_wtRC12h_wt12h.csv"
+             As map
+             Create (t:rel_or_wtRC12h_wt12h)
+             set t = map;
+
+Load csv With HEADERS from "file:///rel_or_wtRC12h_wt12h_padj.csv"
+             As map
+             Create (t:rel_or_wtRC12h_wt12h_padj)
+             set t = map;
+
+Load csv With HEADERS from "file:///rel_or_wtRC336h_wt0h_padj.csv"
+             As map
+             Create (t:rel_or_wtRC336h_wt0h_padj)
+             set t = map;
+
+------------------------------------------------------------------------------
+Create nodes for rel_protein DE_values
+------------------------------------------------------------------------------
+
+Load csv With HEADERS from "file:///rel_protein_wt24h_wt0h.csv"
+             As map
+             Create (t:rel_protein_wt24h_wt0h)
+             set t = map;
+
+Load csv With HEADERS from "file:///rel_protein_wt24h_wt0h_padj.csv"
+             As map
+             Create (t:rel_protein_wt24h_wt0h_padj)
+             set t = map;
+
+Load csv With HEADERS from "file:///rel_protein_wt336h_wt0h.csv"
+             As map
+             Create (t:rel_protein_wt336h_wt0h)
+             set t = map;
+
+Load csv With HEADERS from "file:///rel_protein_wt6h_wt0h.csv"
+             As map
+             Create (t:rel_protein_wt6h_wt0h)
+             set t = map;
+             
+Load csv With HEADERS from "file:///rel_protein_wt6h_wt0h_padj.csv"
+             As map
+             Create (t:rel_protein_wt6h_wt0h_padj)
+             set t = map;
+             
+Load csv With HEADERS from "file:///rel_protein_wtRC12h_wt0h.csv"
+             As map
+             Create (t:rel_protein_wtRC12h_wt0h)
+             set t = map;
+
+Load csv With HEADERS from "file:///rel_protein_wtRC12h_wt0h_padj.csv"
+             As map
+             Create (t:rel_protein_wtRC12h_wt0h_padj)
+             set t = map;
+
+Load csv With HEADERS from "file:///rel_protein_wtRC12h_wt6h.csv"
+             As map
+             Create (t:rel_protein_wtRC12h_wt6h)
+             set t = map;
+
+Load csv With HEADERS from "file:///rel_protein_wtRC12h_wt6h_padj.csv"
+             As map
+             Create (t:rel_protein_wtRC12h_wt6h_padj)
+             set t = map;
+
+Load csv With HEADERS from "file:///rel_protein_wtRC336h_wt0h_padj.csv"
+             As map
+             Create (t:rel_protein_wtRC336h_wt0h_padj)
+             set t = map;
+
+------------------------------------------------------------------------------
+Create relationship cell -> DE_value -> Target
+------------------------------------------------------------------------------
+
+
+Match (c:Cell), (p:Protein), (r:rel_protein_wt24h_wt0h)
+             where (p.SYMBOL = r.SYMBOL)
+             Create (c)-[h:talksabout]->(r)-[j:isabout]->(p)
+             return count(h),count(j);
+
+Match (c:Cell), (p:Protein), (r:rel_protein_wt24h_wt0h_padj)
+             where (p.SYMBOL = r.SYMBOL)
+             Create (c)-[h:talksabout]->(r)-[j:isabout]->(p)
+             return count(h),count(j);
+             
+Match (c:Cell), (p:Protein), (r:rel_protein_wt336h_wt0h)
+             where (p.SYMBOL = r.SYMBOL)
+             Create (c)-[h:talksabout]->(r)-[j:isabout]->(p)
+             return count(h),count(j);
+             
+Match (c:Cell), (p:Protein), (r:rel_protein_wt6h_wt0h)
+             where (p.SYMBOL = r.SYMBOL)
+             Create (c)-[h:talksabout]->(r)-[j:isabout]->(p)
+             return count(h),count(j);
+             
+Match (c:Cell), (p:Protein), (r:rel_protein_wt6h_wt0h_padj)
+             where (p.SYMBOL = r.SYMBOL)
+             Create (c)-[h:talksabout]->(r)-[j:isabout]->(p)
+             return count(h),count(j);
+
+Match (c:Cell), (p:Protein), (r:rel_protein_wtRC12h_wt0h)
+             where (p.SYMBOL = r.SYMBOL)
+             Create (c)-[h:talksabout]->(r)-[j:isabout]->(p)
+             return count(h),count(j);
+
+Match (c:Cell), (p:Protein), (r:rel_protein_wtRC12h_wt0h_padj)
+             where (p.SYMBOL = r.SYMBOL)
+             Create (c)-[h:talksabout]->(r)-[j:isabout]->(p)
+             return count(h),count(j);
+
+Match (c:Cell), (p:Protein), (r:rel_protein_wtRC12h_wt6h)
+             where (p.SYMBOL = r.SYMBOL)
+             Create (c)-[h:talksabout]->(r)-[j:isabout]->(p)
+             return count(h),count(j);
+             
+Match (c:Cell), (p:Protein), (r:rel_protein_wtRC12h_wt6h_padj)
+             where (p.SYMBOL = r.SYMBOL)
+             Create (c)-[h:talksabout]->(r)-[j:isabout]->(p)
+             return count(h),count(j);
+
+Match (c:Cell), (p:Protein), (r:rel_protein_wtRC336h_wt0h_padj)
+             where (p.SYMBOL = r.SYMBOL)
+             Create (c)-[h:talksabout]->(r)-[j:isabout]->(p)
+             return count(h),count(j);
+
+
+------------------------------------------------------------------------------
+Create relationship cell -> DA_value -> OpenRegion
+------------------------------------------------------------------------------
+             
+Match (c:Cell), (p:OpenRegion), (r:rel_or_wt12h_wt0h)
+             where (p.nearest_index = r.nearest_index)
+             Create (c)-[h:talksabout]->(r)-[j:isabout]->(p)
+             return count(h),count(j);
+
+Match (c:Cell), (p:OpenRegion), (r:rel_or_wt12h_wt0h_padj)
+             where (p.nearest_index = r.nearest_index)
+             Create (c)-[h:talksabout]->(r)-[j:isabout]->(p)
+             return count(h),count(j);
+ 
+Match (c:Cell), (p:OpenRegion), (r:rel_or_wt24h_wt0h)
+             where (p.nearest_index = r.nearest_index)
+             Create (c)-[h:talksabout]->(r)-[j:isabout]->(p)
+             return count(h),count(j);
+             
+Match (c:Cell), (p:OpenRegion), (r:rel_or_wt24h_wt0h_padj)
+             where (p.nearest_index = r.nearest_index)
+             Create (c)-[h:talksabout]->(r)-[j:isabout]->(p)
+             return count(h),count(j);             
+             
+Match (c:Cell), (p:OpenRegion), (r:rel_or_wt336h_wt0h)
+             where (p.nearest_index = r.nearest_index)
+             Create (c)-[h:talksabout]->(r)-[j:isabout]->(p)
+             return count(h),count(j);
+             
+Match (c:Cell), (p:OpenRegion), (r:rel_or_wtRC12h_wt0h)
+             where (p.nearest_index = r.nearest_index)
+             Create (c)-[h:talksabout]->(r)-[j:isabout]->(p)
+             return count(h),count(j);
+             
+Match (c:Cell), (p:OpenRegion), (r:rel_or_wtRC12h_wt0h_padj)
+             where (p.nearest_index = r.nearest_index)
+             Create (c)-[h:talksabout]->(r)-[j:isabout]->(p)
+             return count(h),count(j);
+             
+Match (c:Cell), (p:OpenRegion), (r:rel_or_wtRC12h_wt12h)
+             where (p.nearest_index = r.nearest_index)
+             Create (c)-[h:talksabout]->(r)-[j:isabout]->(p)
+             return count(h),count(j);
+
+Match (c:Cell), (p:OpenRegion), (r:rel_or_wtRC12h_wt12h_padj)
+             where (p.nearest_index = r.nearest_index)
+             Create (c)-[h:talksabout]->(r)-[j:isabout]->(p)
+             return count(h),count(j);
+             
+Match (c:Cell), (p:OpenRegion), (r:rel_or_wtRC336h_wt0h_padj)
+             where (p.nearest_index = r.nearest_index)
+             Create (c)-[h:talksabout]->(r)-[j:isabout]->(p)
+             return count(h),count(j);
+             
+             
+             
+             
