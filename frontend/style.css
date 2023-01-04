@@ -1654,3 +1654,63 @@ display: none;
 	/*width: 78%;
 	float: right;*/
 }
+
+.term-button {
+	display: inline-block;
+	width: 200px;
+	background: rgba(255, 255, 255, 0.5);
+	padding: 1rem;
+	border-radius: 10px;
+	position: absolute;
+	right: 0px;
+	z-index: 1;
+}
+
+.graph-button-form{
+	color: rgba(0, 0, 0, 0.75);
+	display: flex;
+	flex-direction:column;
+	gap: 1rem;
+}
+
+.graph-button-form button{
+	background-color: #000;
+	margin-top: 1rem;
+	color: white;
+	padding: 1rem;
+	border-radius: 100px;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	transition: .5s;
+}
+
+.graph-button-form button:hover {
+	background-color: rgba(0, 0, 0, 0.85);
+	cursor: pointer;
+	color:white;
+}
+
+.graph-button-form #term-btn.loading::after {
+	content: "";
+	position: absolute;
+	width: 16px;
+	height: 16px;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
+	border: 4px solid transparent;
+	border-top-color: #000000;
+	border-radius: 50%;
+	animation: button-loading-spinner 1s ease infinite;
+  }
+
+.graph-button-form #term-btn.loading {
+	pointer-events: none;
+  }
+
+.graph-button-form #term-btn.loading .button__text {
+	visibility: hidden;
+	opacity: 0;
+  }

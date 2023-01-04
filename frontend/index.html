@@ -52,9 +52,14 @@
     <body>
       <div id="webapp">
         <div v-show="gephi_json == null" id="pgdb-app2" class="gradient-theme">
-          <home v-model="gephi_json"></home>
+          <home v-model="gephi_json"
+                v-bind:protein_graph_save="protein_graph_save"
+                v-bind:term_graph_save="term_graph_save"
+                v-on:protein-graph-save="protein_graph_save = $event"
+                v-on:term-graph-save="term_graph_save = $event"
+          ></home>
         </div>
-      <div v-show="gephi_json != null" id="pgdb-app" class="black-theme"> <!-- Linked to app.js -->
+      <div v-show="gephi_json != null" id="pgdb-app" class="black-theme">
           <div id="left-control-panel" class="black-theme">
             <home_button v-model="gephi_json"
                          v-on:gephi-json-changed="gephi_json = $event"
@@ -117,13 +122,18 @@
                        v-bind:node_color_index="node_color_index"
                        v-bind:edge_color_index="edge_color_index"
                        v-bind:dark_theme_root="dark_theme_root"
+                       v-bind:graph_flag="graph_flag"
+                       v-bind:protein_graph_save="protein_graph_save"
+                       v-bind:term_graph_save="term_graph_save"
                        v-on:active-node-changed="active_node = $event"
                        v-on:active-term-changed="active_term = $event"
                        v-on:d_value-changed="d_value = $event"
                        v-on:active-subset-changed="active_subset = $event"
                        v-on:active-layer-changed="active_layer = $event"
                        v-on:func-json-changed="func_json = $event"
-        ></visualization>
+                       v-on:gephi-json-changed="gephi_json = $event"
+                       v-on:graph-flag-changed="graph_flag = $event"
+              ></visualization>
             <div class="chart-header">
               <search v-on:active-node-changed="active_node = $event"
               v-bind:gephi_json="gephi_json"
@@ -147,6 +157,7 @@
                        v-bind:func_json="func_json"
                        v-bind:revert_term="revert_term"
                        v-bind:active_subset="active_subset"
+                       v-bind:graph_flag="graph_flag"
                        v-on:active-layer-changed="active_layer = $event"
                        v-on:active-node-changed="active_node = $event"
                        v-on:active-term-changed="active_term = $event"
@@ -163,14 +174,15 @@
             v-bind:reset_term="reset_term"
             v-bind:func_enrichment="func_enrichment"
             v-bind:revert_term="revert_term"
+            v-bind:graph_flag="graph_flag"
             v-on:active-layer-changed="active_layer = $event"
             v-on:active-term-changed="active_term = $event"
             v-on:func-json-changed="func_json = $event"
             v-on:func-enrichment-changed="func_enrichment = $event"
             ></functional-enrichment>
           </div>
+        </div>
       </div>
     </div>
-  </div>
   </body>
 </html>

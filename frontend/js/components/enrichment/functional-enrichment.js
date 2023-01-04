@@ -1,5 +1,6 @@
 Vue.component("functional-enrichment", {
-    props: ["gephi_json", "func_json","revert_term","func_enrichment", "reset_term"],
+    props: ["gephi_json", "func_json","revert_term","func_enrichment",
+            "reset_term", "graph_flag"],
     data: function() {
         return  {
             filter_terms: [
@@ -122,46 +123,48 @@ Vue.component("functional-enrichment", {
             for (var idx in nodes) {
                 com.proteins.push(nodes[idx].id);
             }
-            
-            com.await_check = true, com.await_load = true;
-            formData = new FormData();
-            formData.append('proteins', com.proteins);
-            formData.append('species_id', nodes[0].species);
 
-            com.filter="";
-            
-            
-            //POST request for functional enrichment
-            $.ajax({
-                type: 'POST',
-                url: "/api/subgraph/enrichment",
-                data: formData,
-                contentType: false,
-                cache: false,
-                processData: false,
-              })
-              .done(function (json) {         
-                com.await_load = false;                  
-                  if(com.await_check){
-                      com.$emit("func-enrichment-changed", json);
-                      //Save terms
-                      com.terms = [];
-                      for (var idx in json) {
-                          com.terms.push(json[idx]);
+            if (com.graph_flag) {
+                com.await_check = true, com.await_load = true;
+                formData = new FormData();
+                formData.append('proteins', com.proteins);
+                formData.append('species_id', nodes[0].species);
+
+                com.filter="";
+                
+                
+                //POST request for functional enrichment
+                $.ajax({
+                    type: 'POST',
+                    url: "/api/subgraph/enrichment",
+                    data: formData,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                })
+                .done(function (json) {         
+                    com.await_load = false;                  
+                    if(com.await_check){
+                        com.$emit("func-enrichment-changed", json);
+                        //Save terms
+                        com.terms = [];
+                        for (var idx in json) {
+                            com.terms.push(json[idx]);
+                            }
+                            com.saved_terms.push(com.terms);
+
+                            //Sort terms according to the fdr rate
+                            com.terms.sort(function(t1, t2) {
+                                var p_t1 = parseFloat(t1.fdr_rate);
+                                var p_t2 = parseFloat(t2.fdr_rate);
+                                return p_t1 - p_t2;
+                            });
+
+                            //Count term number
+                            com.term_number();
                         }
-                        com.saved_terms.push(com.terms);
-
-                        //Sort terms according to the fdr rate
-                        com.terms.sort(function(t1, t2) {
-                            var p_t1 = parseFloat(t1.fdr_rate);
-                            var p_t2 = parseFloat(t2.fdr_rate);
-                            return p_t1 - p_t2;
-                        });
-
-                        //Count term number
-                        com.term_number();
-                    }
-            });
+                });
+            }
         },
         "revert_term": function(subset) {
             var com = this;

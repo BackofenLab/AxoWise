@@ -1,5 +1,6 @@
 Vue.component("term-pane", {
-    props: ["active_term", "func_json", "active_layer", "revert_term", "active_subset", "gephi_json"],
+    props: ["active_term", "func_json", "active_layer", "revert_term",
+    "active_subset", "gephi_json", "graph_flag"],
     data: function() {
         return {
             selected_term: null,
@@ -81,7 +82,7 @@ Vue.component("term-pane", {
     },
     watch: {
         "active_term": function(term) {
-            var com = this; 
+            var com = this;
             if (term == null) {
                 $("#termminimize").hide();
                 com.$emit("func-json-changed", null);
@@ -90,13 +91,15 @@ Vue.component("term-pane", {
 
             com.selected_term = term;
 
-            com.links = [];
-            for (var idx in term.proteins) {
-                var node = sigma_instance.graph.ensemblIdToNode(term.proteins[idx]);
-                com.links.push(node);
-            }
+            if (com.graph_flag) {
+                com.links = [];
+                for (var idx in term.proteins) {
+                    var node = sigma_instance.graph.ensemblIdToNode(term.proteins[idx]);
+                    com.links.push(node);
+                }
 
-            com.updateNumbers();
+                com.updateNumbers();
+            }
             // TODO
              $("#termminimize").show();
         }

@@ -35,6 +35,9 @@ $(document).ready(function () {
             protein_list: null,
             connection: null,
             unconnected_graph: null,
+            protein_graph_save: null,
+            term_graph_save: null,
+            graph_flag: true,
         },
         watch: {
             gephi_json: function(json) {

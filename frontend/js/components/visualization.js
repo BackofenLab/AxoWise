@@ -20,7 +20,11 @@ sigma.classes.graph.addMethod('ensemblIdToNode', function(ensembl_id) {
 
 // Component
 Vue.component("visualization", {
-    props: ["gephi_json","func_json","func_enrichment", "active_node", "active_term", "active_subset", "active_layer", "node_color_index", "edge_color_index", "d_value", "dark_theme_root","edge_thick", "unconnected_graph"],
+    props: ["gephi_json","func_json","func_enrichment", "active_node",
+    "active_term", "active_subset", "active_layer", "node_color_index",
+    "edge_color_index", "d_value", "dark_theme_root","edge_thick",
+    "unconnected_graph", "graph_flag", "protein_graph_save",
+    "term_graph_save"],
     data: function() {
         return {
             rectangular_select: {
@@ -28,7 +32,7 @@ Vue.component("visualization", {
                 context: null,
                 rectangle: {},
                 active: false,
-                surface_backup: null
+                surface_backup: null,
             },
             container: null,
             darkThemeOn: false,
@@ -37,6 +41,8 @@ Vue.component("visualization", {
             saved_sigma_instance: null,
             saved_node: null,
             connected_check: false,
+            local_graph_flag: true,
+            graph_text: "Term Graph",
         }
     },
     watch: {
@@ -141,38 +147,63 @@ Vue.component("visualization", {
             if (com.active_subset != null) com.$emit("active-subset-changed", null);
             if (com.d_value != null) com.$emit("d_value-changed", null);
             if (com.active_node != null) com.$emit("active-node-changed", null);
+            
+            if (com.graph_flag) {
+                var proteins = new Set(term.proteins);
 
+                sigma_instance.graph.edges().forEach(function (e) {
 
-            var proteins = new Set(term.proteins);
+                    // Nodes
+                    var source = sigma_instance.graph.getNodeFromIndex(e.source);
+                    var target = sigma_instance.graph.getNodeFromIndex(e.target);
 
-            sigma_instance.graph.edges().forEach(function (e) {
+                    // Ensembl IDs
+                    var source_ensembl_id = source.attributes["Ensembl ID"];
+                    var target_ensembl_id = target.attributes["Ensembl ID"];
 
-                // Nodes
-                var source = sigma_instance.graph.getNodeFromIndex(e.source);
-                var target = sigma_instance.graph.getNodeFromIndex(e.target);
+                    // Are they present in the functional term?
+                    var source_present = proteins.has(source_ensembl_id);
+                    var target_present = proteins.has(target_ensembl_id);
 
-                // Ensembl IDs
-                var source_ensembl_id = source.attributes["Ensembl ID"];
-                var target_ensembl_id = target.attributes["Ensembl ID"];
+                    // Source
+                    if (source_present) source.color = "rgb(255, 255, 255)"; // white
+                    else source.color = "rgb(0, 100, 0)"; // green
 
-                // Are they present in the functional term?
-                var source_present = proteins.has(source_ensembl_id);
-                var target_present = proteins.has(target_ensembl_id);
+                    // Target
+                    if (target_present) target.color = "rgb(255, 255, 255)"; // white
+                    else target.color = "rgb(0, 100, 0)"; // green
 
-                // Source
-                if (source_present) source.color = "rgb(255, 255, 255)"; // white
-                else source.color = "rgb(0, 100, 0)"; // green
+                    // Edge
+                    if (source_present && !target_present || !source_present && target_present) e.color = "rgba(220, 255, 220, 0.25)"; // pink
+                    else if(source_present && target_present) e.color = "rgba(255, 255, 255, 0.3)"; // white
+                    else e.color = "rgba(0, 100, 0, 0.2)"; // green
 
-                // Target
-                if (target_present) target.color = "rgb(255, 255, 255)"; // white
-                else target.color = "rgb(0, 100, 0)"; // green
+                });
+            } else {
+                let name = term.id;
 
-                // Edge
-                if (source_present && !target_present || !source_present && target_present) e.color = "rgba(220, 255, 220, 0.25)"; // pink
-                else if(source_present && target_present) e.color = "rgba(255, 255, 255, 0.3)"; // white
-                else e.color = "rgba(0, 100, 0, 0.2)"; // green
-
-            });
+                sigma_instance.graph.edges().forEach(function (e) {
+                    if (name.localeCompare(e.source) === 0 || name.localeCompare(e.target) === 0) {
+                        if (name.localeCompare(e.source) === 0) {
+                            var node = sigma_instance.graph.getNodeFromIndex(e.source);
+                        } else {
+                            var node = sigma_instance.graph.getNodeFromIndex(e.target);
+                        }
+                        // color node
+                        node.color = "rgb(255, 255, 255)"; // white
+                        // color edges
+                        e.color = "rgba(255, 255, 255, 0.3)"; // white
+                    } else {
+                        // color nodes
+                        var source = sigma_instance.graph.getNodeFromIndex(e.source);
+                        var target = sigma_instance.graph.getNodeFromIndex(e.target);
+                        source.color = "rgb(0, 100, 0)"; // green
+                        target.color = "rgb(0, 100, 0)"; // green
+                        // color edges
+                        e.color = "rgb(0, 100, 0, 0.2)"; // green
+                    }
+                });
+            }
 
             sigma_instance.refresh();
         },
@@ -295,7 +326,6 @@ Vue.component("visualization", {
             var com = this;
 
             sub_proteins = new Set(com.gephi_json.subgraph);
-            console.log(sub_proteins);
             sigma_instance.graph.edges().forEach(function(e) {
                 var s = sigma_instance.graph.getNodeFromIndex(e.source);
                 var t = sigma_instance.graph.getNodeFromIndex(e.target);
@@ -466,6 +496,32 @@ Vue.component("visualization", {
             });
 
             sigma_instance.refresh();
+        },
+        submit: function () {
+            var com = this;
+            
+            console.log("submitting");
+            
+            $("#term-btn").addClass("loading");
+
+            if (!com.local_graph_flag) {
+                $("#term-btn").removeClass("loading");
+                // load term graph
+                let term_graph = com.term_graph_save;
+                com.$emit("gephi-json-changed", term_graph);
+            } else {
+
+                $("#term-btn").removeClass("loading");
+                // load protein graph
+                let protein_graph = com.protein_graph_save;
+                com.$emit("gephi-json-changed", protein_graph);
+            }
+        },
+        toggle_graph: function() {
+            var com = this;
+            com.local_graph_flag = !com.local_graph_flag;
+            com.$emit("graph-flag-changed", com.local_graph_flag);
+            com.graph_text = com.local_graph_flag ? 'Term Graph' : 'Protein Graph';
         }
     },
     mounted: function() {
@@ -497,6 +553,11 @@ Vue.component("visualization", {
             com.$emit("active-node-changed", node.data.node.id);
         });
 
+        //Interaction capture of html elements
+        $("#term-btn").button();
+        $("#term-btn").click(com.submit);
+
+        // --
         // Rectangular select
         com.rectangular_select.canvas = $(".sigma-mouse")[0];
         com.container = $(".sigma-parent")[0];
@@ -505,7 +566,7 @@ Vue.component("visualization", {
         com.rectangular_select.canvas.onmousemove = com.mousemove;
         com.rectangular_select.canvas.onmouseup = com.mouseup;
         com.rectangular_select.context = com.rectangular_select.canvas.getContext("2d");
-
+        
         this.eventHub.$on('edge-update', data => {
              this.edge_opacity = data;
              this.edit_opacity();
@@ -522,7 +583,13 @@ Vue.component("visualization", {
     },
     template: `
     <div class="sigma-parent">
-        <div class="sigma-expand"  v-bind:class="[dark_theme_root ? 'black-theme' : 'white-theme']" id="sigma-canvas"></div>
+        <div class="sigma-expand"  v-bind:class="[dark_theme_root ? 'black-theme' : 'white-theme']" id="sigma-canvas">
+            <div class="term-button">
+                <div class="graph-button-form">
+                    <button id="term-btn" class="button__text" v-on:click="toggle_graph"> {{ graph_text }} </button>
+                </div>
+            </div>
+        </div>
     </div>
     `
 });

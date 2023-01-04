@@ -1,6 +1,6 @@
 Vue.component("home", {
   model: {
-    prop: "gephi_json",
+    props: ["gephi_json", "protein_graph_save", "term_graph_save"],
     event: "gephi-json-changed",
   },
   data: function () {
@@ -66,9 +66,7 @@ Vue.component("home", {
       formData.append("threshold", com.threshold.value);
       formData.append("species_id", com.selected_species.code);
       formData.append("selected_d", com.selected_d);
-
-
-
+      
       $.ajax({
         type: "POST",
         url: com.api.subgraph,
@@ -83,9 +81,29 @@ Vue.component("home", {
           alert("No associations found");
           com.$emit("gephi-json-changed", null);
         } else {
+          // save protein graph
+          com.$emit("protein-graph-save", json);
           json.edge_thick = com.edge_thick.value;
           com.$emit("gephi-json-changed", json);
         }
+      });
+      $.ajax({
+        type: "POST",
+        url: "/api/subgraph/terms",
+        data: formData,
+        contentType: false,
+        cache: false,
+        processData: false,
+      }).done(function (json) {
+        $("#term-btn").removeClass("loading");
+        if (Object.keys(json).length != 0) {
+          // save term graph
+          com.$emit("term-graph-save", json);
+        }
+      }).fail(function ( jqXHR, textStatus, errorThrown ) {
+          console.log(jqXHR);
+          console.log(textStatus);
+          console.log(errorThrown);
       });
     },
     updateSlider: function () {
