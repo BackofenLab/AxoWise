@@ -20,7 +20,11 @@ sigma.classes.graph.addMethod('ensemblIdToNode', function(ensembl_id) {
 
 // Component
 Vue.component("visualization", {
-    props: ["gephi_json","func_json", "active_node", "active_term", "active_subset", "active_layer", "node_color_index", "edge_color_index", "d_value", "dark_theme_root","edge_thick"],
+    props: ["gephi_json","func_json","func_enrichment", "active_node",
+    "active_term", "active_subset", "active_layer", "node_color_index",
+    "edge_color_index", "d_value", "dark_theme_root","edge_thick",
+    "unconnected_graph", "graph_flag", "protein_graph_save",
+    "term_graph_save"],
     data: function() {
         return {
             rectangular_select: {
@@ -28,12 +32,17 @@ Vue.component("visualization", {
                 context: null,
                 rectangle: {},
                 active: false,
-                surface_backup: null
+                surface_backup: null,
             },
             container: null,
             darkThemeOn: false,
             edge_opacity: 0.2,
-            dvalueterm: null
+            dvalueterm: null,
+            saved_sigma_instance: null,
+            saved_node: null,
+            connected_check: false,
+            local_graph_flag: true,
+            graph_text: "Term Graph",
         }
     },
     watch: {
@@ -53,6 +62,11 @@ Vue.component("visualization", {
         "active_subset": function(subset, old_subset) {
             var com = this;
 
+            if(com.active_node != null || com.func_enrichment == null) return;
+
+    
+            if (subset == null && com.active_term != null) return;
+
             if (subset == null) {
                 com.reset();
                 return;
@@ -62,8 +76,37 @@ Vue.component("visualization", {
 
             var proteins = new Set(subset.map(node => node.attributes["Ensembl ID"]));
 
-            sigma_instance.graph.nodes().forEach(function (n) {
-                if (!proteins.has(n.attributes["Ensembl ID"])) n.hidden = true;
+            // sigma_instance.graph.nodes().forEach(function (n) {
+            //     if (!proteins.has(n.attributes["Ensembl ID"])) n.hidden = true;
+            // });
+
+            sigma_instance.graph.edges().forEach(function (e) {
+
+                // Nodes
+                var source = sigma_instance.graph.getNodeFromIndex(e.source);
+                var target = sigma_instance.graph.getNodeFromIndex(e.target);
+
+                // Ensembl IDs
+                var source_ensembl_id = source.attributes["Ensembl ID"];
+                var target_ensembl_id = target.attributes["Ensembl ID"];
+
+                // Are they present in the functional term?
+                var source_present = proteins.has(source_ensembl_id);
+                var target_present = proteins.has(target_ensembl_id);
+
+                // Source
+                if (source_present) source.color = "rgb(255, 255, 255)"; // white
+                else source.color = "rgb(0, 100, 100)"; // green
+
+                // Target
+                if (target_present) target.color = "rgb(255, 255, 255)"; // white
+                else target.color = "rgb(0, 100, 100)"; // green
+
+                // Edge
+                if (source_present && !target_present || !source_present && target_present) e.color = "rgba(200, 255, 255, 0.25)"; // pink
+                else if(source_present && target_present) e.color = "rgba(255, 255, 255, 0.3)"; // white
+                else e.color = "rgba(0, 100, 100, 0.2)"; // green
+
             });
 
             sigma_instance.refresh();
@@ -96,51 +139,81 @@ Vue.component("visualization", {
             var com = this;
 
             if (term == null) {
-                if (com.active_node == null) {
                 com.$emit("active-layer-changed", null);
                 com.reset();
-                }
                 return;
             }
 
+            if (com.active_subset != null) com.$emit("active-subset-changed", null);
             if (com.d_value != null) com.$emit("d_value-changed", null);
             if (com.active_node != null) com.$emit("active-node-changed", null);
+            
+            if (com.graph_flag) {
+                var proteins = new Set(term.proteins);
 
-            var proteins = new Set(term.proteins);
+                sigma_instance.graph.edges().forEach(function (e) {
 
-            sigma_instance.graph.edges().forEach(function (e) {
+                    // Nodes
+                    var source = sigma_instance.graph.getNodeFromIndex(e.source);
+                    var target = sigma_instance.graph.getNodeFromIndex(e.target);
 
-                // Nodes
-                var source = sigma_instance.graph.getNodeFromIndex(e.source);
-                var target = sigma_instance.graph.getNodeFromIndex(e.target);
+                    // Ensembl IDs
+                    var source_ensembl_id = source.attributes["Ensembl ID"];
+                    var target_ensembl_id = target.attributes["Ensembl ID"];
 
-                // Ensembl IDs
-                var source_ensembl_id = source.attributes["Ensembl ID"];
-                var target_ensembl_id = target.attributes["Ensembl ID"];
+                    // Are they present in the functional term?
+                    var source_present = proteins.has(source_ensembl_id);
+                    var target_present = proteins.has(target_ensembl_id);
 
-                // Are they present in the functional term?
-                var source_present = proteins.has(source_ensembl_id);
-                var target_present = proteins.has(target_ensembl_id);
+                    // Source
+                    if (source_present) source.color = "rgb(255, 255, 255)"; // white
+                    else source.color = "rgb(0, 100, 0)"; // green
 
-                // Source
-                if (source_present) source.color = "rgb(255, 255, 255)"; // white
-                else source.color = "rgb(0, 100, 0)"; // green
+                    // Target
+                    if (target_present) target.color = "rgb(255, 255, 255)"; // white
+                    else target.color = "rgb(0, 100, 0)"; // green
 
-                // Target
-                if (target_present) target.color = "rgb(255, 255, 255)"; // white
-                else target.color = "rgb(0, 100, 0)"; // green
+                    // Edge
+                    if (source_present && !target_present || !source_present && target_present) e.color = "rgba(220, 255, 220, 0.25)"; // pink
+                    else if(source_present && target_present) e.color = "rgba(255, 255, 255, 0.3)"; // white
+                    else e.color = "rgba(0, 100, 0, 0.2)"; // green
 
-                // Edge
-                if (source_present && !target_present || !source_present && target_present) e.color = "rgba(220, 255, 220, 0.25)"; // pink
-                else if(source_present && target_present) e.color = "rgba(255, 255, 255, 0.3)"; // white
-                else e.color = "rgba(0, 100, 0, 0.2)"; // green
+                });
+            } else {
+                let name = term.id;
 
-            });
+                sigma_instance.graph.edges().forEach(function (e) {
+                    if (name.localeCompare(e.source) === 0 || name.localeCompare(e.target) === 0) {
+                        if (name.localeCompare(e.source) === 0) {
+                            var node = sigma_instance.graph.getNodeFromIndex(e.source);
+                        } else {
+                            var node = sigma_instance.graph.getNodeFromIndex(e.target);
+                        }
+                        // color node
+                        node.color = "rgb(255, 255, 255)"; // white
+                        // color edges
+                        e.color = "rgba(255, 255, 255, 0.3)"; // white
+                    } else {
+                        // color nodes
+                        var source = sigma_instance.graph.getNodeFromIndex(e.source);
+                        var target = sigma_instance.graph.getNodeFromIndex(e.target);
+                        source.color = "rgb(0, 100, 0)"; // green
+                        target.color = "rgb(0, 100, 0)"; // green
+                        // color edges
+                        e.color = "rgb(0, 100, 0, 0.2)"; // green
+                    }
+                });
+            }
 
             sigma_instance.refresh();
         },
         "active_node": function(id) {
             var com = this;
+
+            if(com.saved_node != null){
+                com.reset();
+                
+            }
 
             if (id == null) {
                 if (com.active_term == null && (com.d_value == "no selection" || com.d_value == null)) com.reset();
@@ -152,6 +225,7 @@ Vue.component("visualization", {
 
             var neighbors = {};
             var node = sigma_instance.graph.getNodeFromIndex(id);
+            com.saved_node = {"id": node.id, "size": node.size};
 
             sigma_instance.graph.edges().forEach(function (e) {
                 n = {
@@ -161,6 +235,8 @@ Vue.component("visualization", {
 
                 if (id == e.source || id == e.target)
                     neighbors[id == e.target ? e.source : e.target] = n;
+
+                if(id == e.source || id == e.target) e.color="rgba(255,255,255,0.4)";
 
                 e.hidden = false;
             });
@@ -179,6 +255,8 @@ Vue.component("visualization", {
                 neighbor.hidden = false;
             }
 
+            node.color = "rgb(255, 255, 255)";// white
+
             sigma_instance.refresh();
         },
         "dark_theme_root": function (){
@@ -191,12 +269,9 @@ Vue.component("visualization", {
         "d_value": function(term) {
             var com = this;
 
-            if (term == null || term == "no selection") {
-                if(term != "no selection"){
-                    if (com.active_node == null && com.active_term == null) com.reset();
-                }else{
-                    if (com.active_term == null) com.reset_d();
-                }
+            if (term == null) {
+                if (com.active_node == null && com.active_term == null) com.reset();
+                if (com.active_term == null) com.reset_d();
                 return;
             }
 
@@ -223,16 +298,50 @@ Vue.component("visualization", {
 
             sigma_instance.refresh();
         },
+        "unconnected_graph": function (unconnected_proteins){
+            var com = this;
+
+            //Proteins which are not connected to main graph
+            var proteins = new Set(unconnected_proteins[0]);
+
+            com.connected_check = unconnected_proteins[1];
+
+            //Hide or unhide proteins
+            if(com.connected_check=="Whole Graph"){
+                sigma_instance.graph.nodes().forEach(function (n) {
+                    if(proteins.has(n.attributes['Ensembl ID'])) n.hidden = false;
+                });
+            }else{
+                sigma_instance.graph.nodes().forEach(function (n) {
+                    if(proteins.has(n.attributes['Ensembl ID'])) n.hidden = true;
+                });
+            }
+
+            sigma_instance.refresh();
+        },
+
     },
     methods: {
         reset: function() {
             var com = this;
 
+            sub_proteins = new Set(com.gephi_json.subgraph);
             sigma_instance.graph.edges().forEach(function(e) {
                 var s = sigma_instance.graph.getNodeFromIndex(e.source);
                 var t = sigma_instance.graph.getNodeFromIndex(e.target);
-                s.color = com.node_color_index[e.source]; s.hidden = false;
-                t.color = com.node_color_index[e.target]; t.hidden = false;
+                if(!sub_proteins.has(s.attributes["Ensembl ID"]) || com.connected_check == 'Whole Graph'){
+                    s.color = com.node_color_index[e.source]; s.hidden = false;
+                }
+                else{
+                    s.color = com.node_color_index[e.source]; s.hidden = true;
+                }
+                if(!sub_proteins.has(t.attributes["Ensembl ID"]) || com.connected_check == 'Whole Graph'){
+                    t.color = com.node_color_index[e.target]; t.hidden = false;
+                }
+                else{
+                    t.color = com.node_color_index[e.target]; t.hidden = true;
+                    
+                }
                 e.color = com.edge_color_index[e.id]; e.hidden = false;
             });
             com.edit_opacity();
@@ -387,6 +496,30 @@ Vue.component("visualization", {
             });
 
             sigma_instance.refresh();
+        },
+        submit: function () {
+            var com = this;
+            
+            $("#term-btn").addClass("loading");
+
+            if (!com.local_graph_flag) {
+                $("#term-btn").removeClass("loading");
+                // load term graph
+                let term_graph = com.term_graph_save;
+                com.$emit("gephi-json-changed", term_graph);
+            } else {
+
+                $("#term-btn").removeClass("loading");
+                // load protein graph
+                let protein_graph = com.protein_graph_save;
+                com.$emit("gephi-json-changed", protein_graph);
+            }
+        },
+        toggle_graph: function() {
+            var com = this;
+            com.local_graph_flag = !com.local_graph_flag;
+            com.$emit("graph-flag-changed", com.local_graph_flag);
+            com.graph_text = com.local_graph_flag ? 'Term Graph' : 'Protein Graph';
         }
     },
     mounted: function() {
@@ -418,6 +551,11 @@ Vue.component("visualization", {
             com.$emit("active-node-changed", node.data.node.id);
         });
 
+        //Interaction capture of html elements
+        $("#term-btn").button();
+        $("#term-btn").click(com.submit);
+
+        // --
         // Rectangular select
         com.rectangular_select.canvas = $(".sigma-mouse")[0];
         com.container = $(".sigma-parent")[0];
@@ -426,7 +564,7 @@ Vue.component("visualization", {
         com.rectangular_select.canvas.onmousemove = com.mousemove;
         com.rectangular_select.canvas.onmouseup = com.mouseup;
         com.rectangular_select.context = com.rectangular_select.canvas.getContext("2d");
-
+        
         this.eventHub.$on('edge-update', data => {
              this.edge_opacity = data;
              this.edit_opacity();
@@ -437,13 +575,19 @@ Vue.component("visualization", {
        });
 
         this.eventHub.$on('export-graph', data => {
-            var dataURL = sigma_instance.renderers[0].snapshot({download:true,background:"black"});
+            var dataURL = sigma_instance.renderers[0].snapshot({download:true});
         });
 
     },
     template: `
     <div class="sigma-parent">
-        <div class="sigma-expand"  v-bind:class="[dark_theme_root ? 'black-theme' : 'white-theme']" id="sigma-canvas"></div>
+        <div class="sigma-expand"  v-bind:class="[dark_theme_root ? 'black-theme' : 'white-theme']" id="sigma-canvas">
+            <div class="term-button">
+                <div class="graph-button-form">
+                    <button id="term-btn" class="button__text" v-on:click="toggle_graph"> {{ graph_text }} </button>
+                </div>
+            </div>
+        </div>
     </div>
     `
 });

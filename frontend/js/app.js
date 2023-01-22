@@ -1,3 +1,5 @@
+Vue.component('v-select', VueSelect.VueSelect)
+
 var APP = null;
 const eventHub = new Vue(); // Single event hub
 
@@ -12,7 +14,7 @@ const eventHub = new Vue(); // Single event hub
 
 $(document).ready(function () {
     APP = new Vue({
-        el: '#pgdb-app', // Link to index.html (div in body)
+        el: '#webapp', // Link to index.html (div in body)
         data: {
             gephi_json: null,
             node_color_index: null,
@@ -28,6 +30,14 @@ $(document).ready(function () {
             func_enrichment: null,
             revert_term: null,
             reset_term: null,
+            home_button: null,
+            snapshot: null,
+            protein_list: null,
+            connection: null,
+            unconnected_graph: null,
+            protein_graph_save: null,
+            term_graph_save: null,
+            graph_flag: true,
         },
         watch: {
             gephi_json: function(json) {

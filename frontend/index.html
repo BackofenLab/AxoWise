@@ -6,6 +6,7 @@
   <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1,user-scalable=no" />
 
+    <link rel="stylesheet" href="https://unpkg.com/vue-select@latest/dist/vue-select.css">
     <link rel="stylesheet" type="text/css" href="style.css">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="shortcut icon" type="image/jpeg" href="images/bioinf-fr-logo-blau.jpg"/>
@@ -17,61 +18,98 @@
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-router/2.8.1/vue-router.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.6.1/d3.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
-      
+      <script src="https://unpkg.com/vue-select@latest"></script>
+
+
       <!-- Our web application -->
       <script src="js/app.js"></script>
-      <script src="js/components/protein-list.js"></script>
+      <script src="js/components/functions/protein-list.js"></script>
       <script src="js/components/visualization.js"></script>
-      <script src="js/components/attribute-pane.js"></script>
-      <script src="js/components/zoom.js"></script>
-      <script src="js/components/search.js"></script>
-      <script src="js/components/functional-enrichment.js"></script>
-      <script src="js/components/term-pane.js"></script>
-      <script src="js/components/dvalue-pane.js"></script>
-      <script src="js/components/subset-dialog.js"></script>
-      <script src="js/components/modules.js"></script>
-      <script src="js/components/d-value.js"></script>
-      <script src="js/components/export-layout.js"></script>
+      <script src="js/components/panes/attribute-pane.js"></script>
+      <script src="js/components/functions/zoom.js"></script>
+      <script src="js/components/functions/search.js"></script>
+      <script src="js/components/enrichment/functional-enrichment.js"></script>
+      <script src="js/components/panes/term-pane.js"></script>
+      <script src="js/components/panes/dvalue-pane.js"></script>
+      <script src="js/components/functions/subset-dialog.js"></script>
+      <script src="js/components/functions/modules.js"></script>
+      <script src="js/components/toolbar/d-value.js"></script>
+      <script src="js/components/toolbar/export-layout.js"></script>
+      <script src="js/components/toolbar/connection.js"></script>
+      <script src="js/components/home.js"></script>
+      <script src="js/components/toolbar/home_button.js"></script>
+      <script src="js/components/toolbar/snapshot.js"></script>
+      <script src="js/components/toolbar/tool-visualization.js"></script>
+      <script src="js/components/toolbar/highlight_button.js"></script>
+      <script src="js/components/toolbar/hubs.js"></script>
+      <script src="js/components/toolbar/betweenness-centrality.js"></script>
+      <script src="js/components/toolbar/pagerank.js"></script>
+      <script src="js/components/toolbar/eigenvector-centrality.js"></script>
       <!-- <script src="js/components/theme-toggle.js"></script> -->
     </head>
 
     <body>
-      <div id="pgdb-app" class="black-theme"> <!-- Linked to app.js -->
+      <div id="webapp">
+        <div v-show="gephi_json == null" id="pgdb-app2" class="gradient-theme">
+          <home v-model="gephi_json"
+                v-bind:protein_graph_save="protein_graph_save"
+                v-bind:term_graph_save="term_graph_save"
+                v-on:protein-graph-save="protein_graph_save = $event"
+                v-on:term-graph-save="term_graph_save = $event"
+          ></home>
+        </div>
+      <div v-show="gephi_json != null" id="pgdb-app" class="black-theme">
           <div id="left-control-panel" class="black-theme">
+            <home_button v-model="gephi_json"
+                         v-on:gephi-json-changed="gephi_json = $event"
+            ></home_button>
               <div id="mainpanel" class="main-panel-limit">
           <div class="col">
-            <div id="title">
-              <h2>Protein Graph Database</h2>
-            </div>
-            <div class="b1">
-              <protein-list v-model="gephi_json"></protein-list>
+            <div class="toolbar">
               <export-layout v-bind:gephi_json="gephi_json"
-                             v-on:gephi-json-changed="gephi_json = $event"
+                            v-bind:term_graph_save="term_graph_save"
+                            v-bind:protein_graph_save="protein_graph_save"
+                            v-on:gephi-json-changed="gephi_json = $event" 
               ></export-layout>
               <d-value v-bind:gephi_json="gephi_json"
+                       v-bind:d_value="d_value"
                        v-on:d_value-changed="d_value = $event"
               ></d-value>
-              <search v-on:active-node-changed="active_node = $event"
-                      v-bind:gephi_json="gephi_json"
-              ></search>
-              <functional-enrichment v-bind:gephi_json="gephi_json"
-                                     v-bind:func_json="func_json"
-                                     v-bind:reset_term="reset_term"
-                                     v-bind:func_enrichment="func_enrichment"
-                                     v-bind:revert_term="revert_term"
-                                     v-on:active-term-changed="active_term = $event"
-                                     v-on:func-json-changed="func_json = $event"
-                                     v-on:func-enrichment-changed="func_enrichment = $event"
-              ></functional-enrichment>
+              <snapshot v-bind:gephi_json="gephi_json"
+              ></snapshot>
+              <tool-visualization v-bind:gephi_json="gephi_json"
+              ></tool-visualization>
+              <connection v-bind:gephi_json="gephi_json"
+              v-on:unconnected-graph-changed="unconnected_graph = $event"
+              ></connection>
+              <highlight_button v-bind:gephi_json="gephi_json"
+                                v-bind:protein_list="protein_list"
+                                v-on:protein-list-changed="protein_list = $event"
+              ></highlight_button>
+              <hubs :gephi_json="gephi_json"
+                    @active-subset-changed="active_subset = $event"
+              ></hubs>
+              <betweenness-centrality :gephi_json="gephi_json"
+                    @active-subset-changed="active_subset = $event"
+              ></betweenness-centrality>
+              <pagerank :gephi_json="gephi_json"
+                    @active-subset-changed="active_subset = $event"
+              ></pagerank>
+              <eigenvector-centrality :gephi_json="gephi_json"
+                    @active-subset-changed="active_subset = $event"
+              ></eigenvector-centrality>
             </div>
           </div>
         </div>
           </div>
           <subset-dialog :active_subset="active_subset"
                        v-bind:gephi_json="gephi_json"
+                       v-bind:active_node="active_node"
+                       v-bind:active_term="active_term"
                        v-bind:func_enrichment="func_enrichment"
                        v-bind:func_json="func_json"
                        v-bind:reset_term="reset_term"
@@ -80,55 +118,86 @@
                        v-on:reset-term-changed="reset_term = $event"
                        v-on:func-json-changed="func_json = $event"
                        v-on:active-term-changed="active_term = $event"
+                       v-on:active-layer-changed="active_layer = $event"
                        v-on:d_value-changed="d_value = $event"
                        v-on:active-subset-changed="active_subset = $event"
-                        v-on:toggle-theme="active_node = $event"
+                      v-on:toggle-theme="active_node = $event"
         ></subset-dialog>
           <div id= "chart-area">
-              <modules v-bind:gephi_json="gephi_json"
-                   v-on:active-subset-changed="active_subset = $event"
-          ></modules>
               <visualization v-bind:gephi_json="gephi_json"
                        v-bind:active_node="active_node"
                        v-bind:active_term="active_term"
                        v-bind:d_value="d_value"
+                       v-bind:unconnected_graph="unconnected_graph"
+                       v-bind:func_enrichment="func_enrichment"
                        v-bind:func_json="func_json"
                        v-bind:active_subset="active_subset"
                        v-bind:active_layer="active_layer"
                        v-bind:node_color_index="node_color_index"
                        v-bind:edge_color_index="edge_color_index"
                        v-bind:dark_theme_root="dark_theme_root"
+                       v-bind:graph_flag="graph_flag"
+                       v-bind:protein_graph_save="protein_graph_save"
+                       v-bind:term_graph_save="term_graph_save"
                        v-on:active-node-changed="active_node = $event"
                        v-on:active-term-changed="active_term = $event"
                        v-on:d_value-changed="d_value = $event"
                        v-on:active-subset-changed="active_subset = $event"
                        v-on:active-layer-changed="active_layer = $event"
                        v-on:func-json-changed="func_json = $event"
-        ></visualization>
+                       v-on:gephi-json-changed="gephi_json = $event"
+                       v-on:graph-flag-changed="graph_flag = $event"
+              ></visualization>
+            <div class="chart-header">
+              <search v-on:active-node-changed="active_node = $event"
+              v-bind:gephi_json="gephi_json"
+              ></search>
+              <modules v-bind:gephi_json="gephi_json"
+                      v-bind:active_subset="active_subset"
+                    v-on:active-subset-changed="active_subset = $event"
+              ></modules>
               <zoom></zoom>
-              <theme-toggle></theme-toggle>
+            </div>
+              <protein_list v-bind:protein_list="protein_list"
+                            v-on:protein-list-changed="protein_list = $event"
+                            v-on:active-subset-changed="active_subset = $event"
+              ></protein_list>
               <attribute-pane v-bind:active_node="active_node"
-                        v-on:active-node-changed="active_node = $event"
-        ></attribute-pane>
+              v-on:active-node-changed="active_node = $event"
+            ></attribute-pane>
+            <term-pane v-bind:active_term="active_term"
+                       v-bind:d_value="d_value"
+                       v-bind:gephi_json="gephi_json"
+                       v-bind:func_json="func_json"
+                       v-bind:revert_term="revert_term"
+                       v-bind:active_subset="active_subset"
+                       v-bind:graph_flag="graph_flag"
+                       v-on:active-layer-changed="active_layer = $event"
+                       v-on:active-node-changed="active_node = $event"
+                       v-on:active-term-changed="active_term = $event"
+                       v-on:func-json-changed="func_json = $event"
+                       v-on:revert-term-changed="revert_term = $event"
+                       v-on:d_value-changed="d_value = $event"
+            ></term-pane>
+            <dvalue-pane v-bind:d_value="d_value"
+                         v-on:active-node-changed="active_node = $event"
+                         v-on:d_value-changed="d_value = $event"
+            ></dvalue-pane>
+            <functional-enrichment v-bind:gephi_json="gephi_json"
+            v-bind:func_json="func_json"
+            v-bind:reset_term="reset_term"
+            v-bind:func_enrichment="func_enrichment"
+            v-bind:revert_term="revert_term"
+            v-bind:graph_flag="graph_flag"
+            v-on:active-layer-changed="active_layer = $event"
+            v-on:active-term-changed="active_term = $event"
+            v-on:func-json-changed="func_json = $event"
+            v-on:func-enrichment-changed="func_enrichment = $event"
+            v-bind:term_graph_save="term_graph_save"
+            v-on:term-graph-save="term_graph_save = $event"
+            ></functional-enrichment>
           </div>
-         <!-- <div id="bottom-tools-area"></div>-->
-        <term-pane v-bind:active_term="active_term"
-                   v-bind:d_value="d_value"
-                   v-bind:func_json="func_json"
-                   v-bind:revert_term="revert_term"
-                   v-bind:active_subset="active_subset"
-                   v-on:active-layer-changed="active_layer = $event"
-                   v-on:active-node-changed="active_node = $event"
-                   v-on:active-term-changed="active_term = $event"
-                   v-on:func-json-changed="func_json = $event"
-                   v-on:revert-term-changed="revert_term = $event"
-                   v-on:d_value-changed="d_value = $event"
-        ></term-pane>
-        <dvalue-pane v-bind:d_value="d_value"
-                     v-on:active-node-changed="active_node = $event"
-                     v-on:d_value-changed="d_value = $event"
-        ></dvalue-pane>
-        <div class="modal"><center>This may take a while. Please be patient...</center></div>
+        </div>
       </div>
     </div>
   </body>
