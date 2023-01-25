@@ -35,3 +35,37 @@ for (symbol in prefer_enseml){
 }
 string_proteins %>% str
 #---
+#--- convert symbols to ENSEMBL IDs
+# get the symbols with no correponding ENSEMBL IDs converted
+string_symbols <- subset(string_proteins, ENSEMBL == 'NA') %>%
+               .$preferred_name
+
+# I diecide to use ENSEMBL api to make convertion
+# The reason: accurate and updated
+# The drawback: slow
+# Since it is a one-time execution, the lacking of efficiency is not a major issue
+# Define the API endpoint and parameters
+headers <-  add_headers("Content-Type" = "application/json")
+# fectch ENSEMBL id of symbols with duplicated ENSEMBL via ensembldb
+# query them via ENSEMBL api
+string_symb_ens <- data.table(SYMBOL = c(), ENSEMBL = c())
+for (symbol in string_symbols){
+  url <- "http://rest.ensembl.org/xrefs/symbol/mouse/"
+  endpoint <- paste0(url, symbol)
+  response <- GET(endpoint, headers)
+  stop_for_status(response)
+  data <- content(response)
+
+  if (! length(data) == 0){
+    # for some cases, there are multiple hits
+    for (item in data){
+      new_row = data.table(SYMBOL = symbol,  ENSEMBL = item$id)
+      string_symb_ens <- rbind(string_symb_ens, new_row)
+    }
+  }
+}
+# there are 234 symbols not convered to ENSEMBL IDs
+setdiff(string_symbols, string_symb_ens$SYMBOL) %>% length
+
+write.table(string_symb_ens, "string_symb_ens.tsv", sep = "\t", row.names = FALSE, quote = FALSE)
+#---
