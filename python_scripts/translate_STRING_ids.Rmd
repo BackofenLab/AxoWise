@@ -124,3 +124,100 @@ for (i in 1:nrow(dubious_ens)){
   }
 }
 
+# there are still duplicated ENSEMBL gene IDs for 264 symmbols
+# 1) the case of a SYMBOL with multiple ENSEMBL gene IDs
+# 2) the case of a alias symbols with the same ENSEMBL IDs
+symbol_dupl_ensem <- string_symb_ens[duplicated(SYMBOL)]$SYMBOL # symbol_dupl_ensem %>% unique %>% length
+# for now, I will just include one of ENSEMBL IDs in the final table
+# later I need check if duplicated ENSEMBL gene ids in string_proteins
+# may need to manually correct them
+string_symb_ens <- string_symb_ens[!duplicated(SYMBOL)] # setdiff(symbol_dupl_ensem, string_symb_ens$SYMBOL)
+# string_symb_ens$SYMBOL %>% length
+
+# add ENSEMBL IDs to the string table
+for (symbol in string_symb_ens$SYMBOL){
+  string_proteins[preferred_name==symbol, ENSEMBL := string_symb_ens[SYMBOL==symbol]$ENSEMBL]
+}
+
+# I decide first remove 283 preferred_name with ENSEMBL IDs from the final table
+string_proteins_rm_prefer_ensem <- string_proteins[!preferred_name %in% prefer_enseml]
+
+# correct duplicated ENSEMBLs caused by presence of aliases
+dupl_ensem <- string_proteins_rm_prefer_ensem[duplicated(ENSEMBL) & ! ENSEMBL == 'NA']$ENSEMBL
+dupl_ensem_symbol <- string_proteins_rm_prefer_ensem[ENSEMBL %in% dupl_ensem]
+setorder(dupl_ensem_symbol, ENSEMBL)
+# first seperate the ones with single ENSEMBL vs multi
+single_ensem <- data.table(SYMBOL=c(), ENSEMBL=c())
+multi_ensem <- data.table(SYMBOL=c(), ENSEMBL=c())
+for (symbol in dupl_ensem_symbol$preferred_name){
+  url <- "http://rest.ensembl.org/xrefs/symbol/mouse/"
+  endpoint <- paste0(url, symbol)
+  response <- GET(endpoint, headers)
+  stop_for_status(response)
+  data <- content(response)
+
+  if (! length(data) == 0){
+    # for some cases, there are multiple hits
+    for (item in data){
+      new_row = data.table(SYMBOL = symbol,  ENSEMBL = item$id)
+      if (length(data) == 1){
+        single_ensem <- rbind(single_ensem, new_row)
+      }
+      else{
+        multi_ensem <- rbind(multi_ensem, new_row)
+      }
+    }
+  }
+}
+
+# remove the overlapping ENSEMBL IDs from multi_ensem
+multi_ensem_filter <- multi_ensem[! ENSEMBL %in% single_ensem$ENSEMBL]
+multi_ensem_dup <- multi_ensem_filter[duplicated(SYMBOL)]$SYMBOL %>% unique
+multi_ensem_fixed <- multi_ensem_filter[! SYMBOL %in% multi_ensem_dup]
+
+# use ENSEMBL api to verify the match between a ENSEMBL ID and symbol
+# only inlcude the fixed ENSEMBL -> symbol match
+multi_ensem_filter_dup <- multi_ensem_filter[SYMBOL %in% multi_ensem_dup]
+multi_ensem_fixed_1 <- data.table(SYMBOL=c(), ENSEMBL=c())
+for (i in 1:nrow(multi_ensem_filter_dup)){
+  symbol = multi_ensem_filter_dup[i]$SYMBOL
+  ensem = multi_ensem_filter_dup[i]$ENSEMBL
+
+  # Define the Ensembl REST API endpoint
+  endpoint <- paste0("https://rest.ensembl.org/lookup/id/", ensem, "?content-type=application/json")
+
+  # Make the request to the Ensembl REST API
+  response <- GET(endpoint)
+  stop_for_status(response)
+
+  # Extract the symbol from the response
+  symbol_lookup <- content(response)$display_name # 'Lhx5' %in% string_proteins$preferred_name
+
+  # sometimes lookup of ENSEMBL ID does not yield display_name
+  # in this situation, set NULL as a string so it will work when
+  # executing 'symbol == symbol_lookup' below
+  if (is.null(symbol_lookup)){
+    symbol_lookup = 'NULL'
+  }
+
+  # compare the correponding symbol of a ENSEMBL id with
+  # its paried symbol in the table
+  # they should match by either same name
+  if (symbol == symbol_lookup){
+    new_row <- data.table(SYMBOL = symbol,  ENSEMBL = ensem)
+    multi_ensem_fixed_1 <- rbind(multi_ensem_fixed_1, new_row)
+  }
+}
+
+multi_ensem_fixed <-  rbind(multi_ensem_fixed, multi_ensem_fixed_1)
+
+# manually fixed the remaining ones
+multi_ensem_filter[! SYMBOL %in% multi_ensem_fixed$SYMBOL]
+
+manual_fixed = data.table(
+  SYMBOL = c('Akap2', 'Palm2', 'Palm2Akap2', 'Gm3629'),
+  ENSEMBL = c('ENSMUSG00000089945', 'ENSMUSG00000038729', 'ENSMUSG00000090053', 'NA')
+)
+
+multi_ensem_fixed <- rbind(multi_ensem_fixed, manual_fixed)
+dupl_ensem_fixed <- rbind(single_ensem, multi_ensem_fixed)
