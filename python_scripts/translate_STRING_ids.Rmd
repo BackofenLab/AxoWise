@@ -18,3 +18,20 @@ library(data.table)
 library(biomaRt)
 library(httr)
 ```
+# read the table of protein info from string-db
+protein_url = "https://stringdb-static.org/download/protein.info.v11.5/10090.protein.info.v11.5.txt.gz"
+string_proteins <- data.table::fread(protein_url)
+
+#--- copy the available ENSEMBL gene ids in STRING table. no translation needed
+# in the column -- preferred_name -- gene symbols used for most cases
+# in a case of 1.28%, ENSEMBL gene IDS used instead of gene symbols
+# for this fraction, no need to make translation to ENSEMBL IDs
+# extract preferred_name using ENSEMBL ids
+prefer_enseml <- subset(string_proteins, grepl("ENSMUSG", string_proteins$preferred_name))$preferred_name
+# copy the available ENSEMBL IDs to the new column
+string_proteins$ENSEMBL = 'NA'
+for (symbol in prefer_enseml){
+  string_proteins[preferred_name==symbol, ENSEMBL := symbol]
+}
+string_proteins %>% str
+#---
