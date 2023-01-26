@@ -10,36 +10,6 @@ import pandas as pd
 #import sys
 import os
 
-def filter_for_individual_rows(file1: str, file2: str, key1: str,key2: str)\
-    -> pd.DataFrame:
-    """
-    Input: 2 csv files and the key on which to filter on
-    Function: filter file2 for rows which are not present in file 1
-    Output: pd.Dataframe
-    """
-    # read in the two csv files
-    df1 = pd.read_csv(file1)
-    df2 = pd.read_csv(file2)
-
-    # specify the columns to use as the keys for filtering
-    key_column_1 = key1
-    key_column_2 = key2
-
-    # set the columns to lower letters, to make the match case insensitive
-    df1[key_column_1] = df1[key_column_1].str.lower()    
-    df2[key_column_2] = df2[key_column_2].str.lower()
-    
-    # create a set of the values in the key column for df1
-    df1_keys = set(df1[key_column_1])
-
-    # filter df2 for rows where the value in the key column 
-    # is not in the df1_keys set
-    df2_filtered = df2[~df2[key_column_2].isin(df1_keys)]
-
-    # return the filtered rows
-    return(df2_filtered)
-
-
 def filter_for_rows(file1: pd.DataFrame, file2: pd.DataFrame, key1: str,
                      key2: str, match: bool) -> pd.DataFrame:
     """
@@ -115,8 +85,8 @@ if __name__ == '__main__':
                                                'preferred_name',
                                                'SYMBOL',True)
     # write the results to a csv
-    #string_proteins_filtered_2.to_csv(target[0], index= False, na_rep='NA') 
-    #exp_de_proteins_filtered.to_csv(target[1], index= False, na_rep='NA')
+    string_proteins_filtered_2.to_csv(target[0], index= False, na_rep='NA') 
+    exp_de_proteins_filtered.to_csv(target[1], index= False, na_rep='NA')
     proteins_duplicates.to_csv(target[2], index= False, na_rep='NA')
 
 
