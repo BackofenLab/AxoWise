@@ -221,3 +221,69 @@ manual_fixed = data.table(
 
 multi_ensem_fixed <- rbind(multi_ensem_fixed, manual_fixed)
 dupl_ensem_fixed <- rbind(single_ensem, multi_ensem_fixed)
+# there are still duplicates of ENSEMBL IDs
+# because of the presence of aliases with identical ENSEMBL IDs
+alias_dup_ensem <- dupl_ensem_fixed[duplicated(ENSEMBL) & ENSEMBL != 'NA']$ENSEMBL
+alias_dup_ensem_ <- dupl_ensem_fixed[ENSEMBL %in% alias_dup_ensem]
+# with ENSEMBL api to map ENSEMBL ID to symbol
+# set NA to thoese without the match
+for (i in 1:nrow(alias_dup_ensem_)){
+  symbol = alias_dup_ensem_[i]$SYMBOL
+  ensem = alias_dup_ensem_[i]$ENSEMBL
+
+  if (ensem=='NA'){
+    next
+  }
+
+  # Define the Ensembl REST API endpoint
+  endpoint <- paste0("https://rest.ensembl.org/lookup/id/", ensem, "?content-type=application/json")
+
+  # Make the request to the Ensembl REST API
+  response <- GET(endpoint)
+  stop_for_status(response)
+
+  # Extract the symbol from the response
+  symbol_lookup <- content(response)$display_name # 'Lhx5' %in% string_proteins$preferred_name
+
+  # sometimes lookup of ENSEMBL ID does not yield display_name
+  # in this situation, set NULL as a string so it will work when
+  # executing 'symbol == symbol_lookup' below
+  if (is.null(symbol_lookup)){
+    symbol_lookup = 'NULL'
+  }
+
+  # compare the correponding symbol of a ENSEMBL id with
+  # its paried symbol in the table
+  # they should match by same name
+  if (! symbol == symbol_lookup){
+    alias_dup_ensem_[SYMBOL==symbol, ENSEMBL := 'NA']
+  }
+}
+
+# These lead to the loss of some ENSEMBL IDs
+# reason: the alias SYMBOLs in STRING differ from the SYMBOLs in ENSEMBL
+# so far I do not have a ideal solution (except manual curation) for this
+dupl_ensem_fixed_2 <- dupl_ensem_fixed[! SYMBOL %in% alias_dup_ensem_$SYMBOL]
+dupl_ensem_fixed_beta <- rbind(dupl_ensem_fixed_2, alias_dup_ensem_)
+
+# add the fixed ENSEMBL to aviod duplicates
+for (symbol in dupl_ensem_fixed_beta$SYMBOL){
+  string_proteins[preferred_name==symbol, ENSEMBL := dupl_ensem_fixed_beta[SYMBOL==symbol]$ENSEMBL]
+}
+
+# after all these correction
+# there are still ENSEMBL duplicates
+# it turns out the corrected ENSEMBL overlapping with previously unique ones
+dupl_ensem_final <- string_proteins[!grepl('ENS', preferred_name)][duplicated(ENSEMBL) & (!ENSEMBL=='NA')]$ENSEMBL
+# fix it manually
+manual_fixed_final = data.table(
+  SYMBOL = c('Pcdhb17', 'Pan2'),
+  ENSEMBL = c('ENSMUSG00000046387', 'ENSMUSG00000005682')
+)
+# set corrected ENSEMBL IDs in the final table
+for (symbol in manual_fixed_final$SYMBOL){
+  string_proteins[preferred_name==symbol, ENSEMBL := manual_fixed_final[SYMBOL==symbol]$ENSEMBL]
+}
+
+write.table(string_proteins, "../data/string_SYMBOL_ENSEMBL.tsv", sep = "\t", row.names = FALSE, quote = FALSE)
+#---
