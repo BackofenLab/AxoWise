@@ -18,6 +18,11 @@ library(data.table)
 library(biomaRt)
 library(httr)
 ```
+
+```{r translate_ids}
+#' In this chunk,
+#' IDs (protein ENSEMBL IDs or gene symbols) translated to ENSEMBL IDs
+
 # read the table of protein info from string-db
 protein_url = "https://stringdb-static.org/download/protein.info.v11.5/10090.protein.info.v11.5.txt.gz"
 string_proteins <- data.table::fread(protein_url)
@@ -35,6 +40,7 @@ for (symbol in prefer_enseml){
 }
 string_proteins %>% str
 #---
+
 #--- convert symbols to ENSEMBL IDs
 # get the symbols with no correponding ENSEMBL IDs converted
 string_symbols <- subset(string_proteins, ENSEMBL == 'NA') %>%
@@ -67,12 +73,13 @@ for (symbol in string_symbols){
 # there are 234 symbols not convered to ENSEMBL IDs
 setdiff(string_symbols, string_symb_ens$SYMBOL) %>% length
 
-write.table(string_symb_ens, "string_symb_ens.tsv", sep = "\t", row.names = FALSE, quote = FALSE)
+write.table(string_symb_ens, "../data/string_symb_ens.tsv", sep = "\t", row.names = FALSE, quote = FALSE)
 #---
+
 #--- remove the mistmached ENSEMBL IDs of a symbol
 # find dubious ENSEMBL IDs for some symbols
 # they are usually in the duplicated ENSEMBL
-string_symb_ens <- fread("string_symb_ens.tsv", sep = "\t", header = TRUE)
+string_symb_ens <- fread("../data/string_symb_ens.tsv", sep = "\t", header = TRUE)
 dubious_symbol <- string_symb_ens[duplicated(SYMBOL)]$SYMBOL
 # get all duplicated ENSEMBL IDS
 dubious_ens <- string_symb_ens[SYMBOL %in% dubious_symbol]
@@ -127,19 +134,16 @@ for (i in 1:nrow(dubious_ens)){
 # there are still duplicated ENSEMBL gene IDs for 264 symmbols
 # 1) the case of a SYMBOL with multiple ENSEMBL gene IDs
 # 2) the case of a alias symbols with the same ENSEMBL IDs
-symbol_dupl_ensem <- string_symb_ens[duplicated(SYMBOL)]$SYMBOL # symbol_dupl_ensem %>% unique %>% length
-# for now, I will just include one of ENSEMBL IDs in the final table
-# later I need check if duplicated ENSEMBL gene ids in string_proteins
-# may need to manually correct them
-string_symb_ens <- string_symb_ens[!duplicated(SYMBOL)] # setdiff(symbol_dupl_ensem, string_symb_ens$SYMBOL)
-# string_symb_ens$SYMBOL %>% length
-
+symbol_dupl_ensem <- string_symb_ens[duplicated(SYMBOL)]$SYMBOL
 # add ENSEMBL IDs to the string table
+string_symb_ens <- string_symb_ens[!duplicated(SYMBOL)]
 for (symbol in string_symb_ens$SYMBOL){
   string_proteins[preferred_name==symbol, ENSEMBL := string_symb_ens[SYMBOL==symbol]$ENSEMBL]
 }
 
-# I decide first remove 283 preferred_name with ENSEMBL IDs from the final table
+# remove 283 preferred_name with ENSEMBL IDs
+# even though these are to be included in the final table
+# for the downstream analysis, such IDs should be removed
 string_proteins_rm_prefer_ensem <- string_proteins[!preferred_name %in% prefer_enseml]
 
 # correct duplicated ENSEMBLs caused by presence of aliases
@@ -176,7 +180,7 @@ multi_ensem_dup <- multi_ensem_filter[duplicated(SYMBOL)]$SYMBOL %>% unique
 multi_ensem_fixed <- multi_ensem_filter[! SYMBOL %in% multi_ensem_dup]
 
 # use ENSEMBL api to verify the match between a ENSEMBL ID and symbol
-# only inlcude the fixed ENSEMBL -> symbol match
+# only inlcude the fixed match from ENSEMBL to symbol
 multi_ensem_filter_dup <- multi_ensem_filter[SYMBOL %in% multi_ensem_dup]
 multi_ensem_fixed_1 <- data.table(SYMBOL=c(), ENSEMBL=c())
 for (i in 1:nrow(multi_ensem_filter_dup)){
@@ -215,12 +219,13 @@ multi_ensem_fixed <-  rbind(multi_ensem_fixed, multi_ensem_fixed_1)
 multi_ensem_filter[! SYMBOL %in% multi_ensem_fixed$SYMBOL]
 
 manual_fixed = data.table(
-  SYMBOL = c('Akap2', 'Palm2', 'Palm2Akap2', 'Gm3629'),
-  ENSEMBL = c('ENSMUSG00000089945', 'ENSMUSG00000038729', 'ENSMUSG00000090053', 'NA')
+  SYMBOL = c('Akap2', 'Palm2', 'Palm2Akap2', 'Gm3629', "BC037034"),
+  ENSEMBL = c('ENSMUSG00000089945', 'ENSMUSG00000038729', 'ENSMUSG00000090053', 'NA', "NA")
 )
 
 multi_ensem_fixed <- rbind(multi_ensem_fixed, manual_fixed)
 dupl_ensem_fixed <- rbind(single_ensem, multi_ensem_fixed)
+
 # there are still duplicates of ENSEMBL IDs
 # because of the presence of aliases with identical ENSEMBL IDs
 alias_dup_ensem <- dupl_ensem_fixed[duplicated(ENSEMBL) & ENSEMBL != 'NA']$ENSEMBL
@@ -287,3 +292,4 @@ for (symbol in manual_fixed_final$SYMBOL){
 
 write.table(string_proteins, "../data/string_SYMBOL_ENSEMBL.tsv", sep = "\t", row.names = FALSE, quote = FALSE)
 #---
+```
