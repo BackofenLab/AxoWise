@@ -27,19 +27,15 @@ def download_gzip_files(url: str, data: str, seperator: str,target: str) -> None
 if __name__ == '__main__':
     tab = '\t' 
     space = ' '
-    """
     url = 'https://stringdb-static.org/download/protein.enrichment.terms.v11.5/10090.protein.enrichment.terms.v11.5.txt.gz'
     data = '10090.protein.enrichment.terms.v11.5.txt.gz'
     target = 'funtional_terms_to_proteins_edges.csv'
     download_gzip_files(url,data,tab,target)
-    """
     url2 = 'https://stringdb-static.org/download/protein.info.v11.5/10090.protein.info.v11.5.txt.gz'
     data2 = '10090.protein.info.v11.5.txt.gz'
     target2 = 'string_proteins.csv'
     download_gzip_files(url2,data2,tab,target2)
-    """
     url3 = 'https://stringdb-static.org/download/protein.links.v11.5/10090.protein.links.v11.5.txt.gz'
     data3 = '0090.protein.links.v11.5.txt.gz'
     target3 = 'string_proteins_edges.csv'
     download_gzip_files(url3,data3,space,target3)
-    """

@@ -78,15 +78,6 @@ def rel_functional_term_with_symbol_name(proteins: pd.DataFrame, func_terms_rel:
     # add prefered name for protein1
     result = pd.merge(func_terms_rel, proteins, left_on = key_col, 
                          right_on = key_col)
-    """
-    # select the columns that are wanted in the result
-    result = merged_df2.drop(['#string_protein_id_x',
-                              '#string_protein_id_y'], axis=1)
-    # rename columns
-    result = result.rename(columns=
-                           {"preferred_name_x":"protein1_prefered_name",
-                            "preferred_name_y":"protein2_prefered_name"})
-    """
     return result
 
 
@@ -101,7 +92,8 @@ if __name__ == '__main__':
     current_dir = os.getcwd()
     # define the file names
     # files = ['proteins_head.csv','relation_head.csv','funtional_term_head.csv']
-    files = ['string_proteins.csv','relation_head.csv','funtional_term_edges.csv']
+    files = ['string_proteins.csv','string_proteins_edges.csv',
+             'funtional_terms_to_proteins_edges.csv']
     # Construct the file paths
     path_to_proteins = os.path.join(current_dir, files[0])
     path_to_protein_rel = os.path.join(current_dir, files[1])
