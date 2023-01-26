@@ -293,3 +293,72 @@ for (symbol in manual_fixed_final$SYMBOL){
 write.table(string_proteins, "../data/string_SYMBOL_ENSEMBL.tsv", sep = "\t", row.names = FALSE, quote = FALSE)
 #---
 ```
+
+```{r verify_translation}
+# make control of the quality of convertion between SYMBOL and ENSEMBL IDs
+# call ENSEMBL api to match symbol of ENSEMBL query vs symbol in the table
+string_SYMBOL_ENSEMBL <- fread("../data/string_SYMBOL_ENSEMBL.tsv.gz", sep = "\t", header = TRUE)
+string_SYMBOL_ENSEMBL_ <- string_SYMBOL_ENSEMBL[!grepl('ENS', preferred_name)]
+string_SYMBOL_ENSEMBL_ <- string_SYMBOL_ENSEMBL_[!is.na(ENSEMBL)]
+unmatched <- data.table(SYMBOL=c(), ENSEMBL=c())
+for (i in 1:nrow(string_SYMBOL_ENSEMBL_)){
+  symbol = string_SYMBOL_ENSEMBL_[i]$preferred_name
+  ensem = string_SYMBOL_ENSEMBL_[i]$ENSEMBL
+
+  # Define the Ensembl REST API endpoint
+  endpoint <- paste0("https://rest.ensembl.org/lookup/id/", ensem, "?content-type=application/json")
+
+  # Make the request to the Ensembl REST API
+  response <- GET(endpoint)
+  stop_for_status(response)
+
+  # Extract the symbol from the response
+  symbol_lookup <- content(response)$display_name # 'Lhx5' %in% string_proteins$preferred_name
+
+  # sometimes lookup of ENSEMBL ID does not yield display_name
+  # in this situation, set NULL as a string so it will work when
+  # executing 'symbol == symbol_lookup' below
+  if (is.null(symbol_lookup)){
+    symbol_lookup = 'NULL'
+  }
+
+  # compare the correponding symbol of a ENSEMBL id with
+  # its paried symbol in the table
+  # they should match by either same name
+  if (! symbol == symbol_lookup){
+    new_row <- data.table(SYMBOL = symbol, symbol_lookup=symbol_lookup,  ENSEMBL = ensem)
+    unmatched <- rbind(unmatched, new_row)
+  }
+}
+
+# 1000s symbols without match from the previuos step
+# this is due to alias issue
+# in this case query symbol for ENSEMBL
+# match it against ENSEMBL in table
+# the results is satisfactory, in the final table
+# all paried SYMBOL and ENSEMBL IDs match
+# for those with valid SYMBOLs in preferred_name column
+# or valid ENSEMBL IDs in ENSEMBL column
+unmatched_ <- unmatched
+for (i in 1:nrow(unmatched_)){
+  symbol = unmatched_[i]$SYMBOL # i = 1
+  ensem = unmatched_[i]$ENSEMBL
+
+  url <- "http://rest.ensembl.org/xrefs/symbol/mouse/"
+  endpoint <- paste0(url, symbol)
+  response <- GET(endpoint, headers)
+  stop_for_status(response)
+  data <- content(response)
+
+  if (! length(data) == 0){
+    # for some cases, there are multiple hits
+    ENSEMBL_lookup = c()
+    for (item in data){
+      ENSEMBL_lookup <- c(ENSEMBL_lookup, item$id)
+    }
+    if (ensem %in% ENSEMBL_lookup){
+      unmatched <- unmatched[! SYMBOL==symbol]
+    }
+  }
+}
+```
