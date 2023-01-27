@@ -362,3 +362,43 @@ for (i in 1:nrow(unmatched_)){
   }
 }
 ```
+
+```{r make_aliases}
+# to create a table of aliases
+# the aliases needed to registered in the graph database
+
+string_SYMBOL_ENSEMBL <- fread("../data/string_SYMBOL_ENSEMBL.tsv.gz", sep = "\t", header = TRUE)
+string_SYMBOL_ENSEMBL_ <- string_SYMBOL_ENSEMBL[!grepl('ENS', preferred_name)]
+string_SYMBOL_ENSEMBL_ <- string_SYMBOL_ENSEMBL_[!is.na(ENSEMBL)]
+
+# get aliases via ENSEMBL api
+symbol_alias = data.table(SYMBOL=c(), aliases=c())
+for (i in 1:nrow(string_SYMBOL_ENSEMBL_)){
+  row = string_SYMBOL_ENSEMBL_[i] # i=1
+  symbol = row$preferred_name # symbol = 'mt-Nd6'
+  ensem = row$ENSEMBL # ensem = "ENSMUSG00000064368"
+  aliases = get_alias(symbol) #
+
+  # if no corresponding alias, set value to 'NA'
+  if (is.null(aliases)){
+    aliases = 'NA'
+  }
+
+  # sometimes, ENSEMBL ID appear in aliases
+  # remove ENSEMBL ID from aliases
+  if (ensem %in% aliases){
+    aliases <- aliases[!aliases %in% ensem]
+  }
+
+  # join vector of aliases into a string
+  aliases <- paste(aliases, collapse = ", ")
+
+  new_row = data.table(SYMBOL=symbol, aliases=aliases)
+  symbol_alias <- rbind(symbol_alias, new_row)
+}
+
+# add alias to the table of symbol ans ensemble gene ids
+symbol_ensembl_alias <- merge(string_SYMBOL_ENSEMBL, symbol_alias, by.x='preferred_name', by.y='SYMBOL', all.x=TRUE)
+
+fwrite(symbol_ensembl_alias, "../data/string_SYMBOL_ENSEMBL.tsv.gz", sep = "\t", row.names = FALSE, quote = FALSE, na = 'NA', compress = "gzip")
+```
