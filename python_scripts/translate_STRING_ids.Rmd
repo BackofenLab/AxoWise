@@ -19,6 +19,51 @@ library(biomaRt)
 library(httr)
 ```
 
+```{r buld_functions}
+#' here to build serveral functions to communicate ENSEMBL apis
+
+# convert symbol to ENSEMBL id
+symbol_2_ensem <- function(symbol){
+  url <- "http://rest.ensembl.org/xrefs/symbol/mouse/"
+  endpoint <- paste0(url, symbol)
+  response <- GET(endpoint, headers)
+  stop_for_status(response)
+  ensem <- content(response)
+
+  return(ensem)
+}
+
+# when matching ENSEMBL ID and correponding symbol
+# sometimes symbols used in STRING are the aliases of symbols in ENSEMBL
+# need a function to get aliases of symbols
+get_alias <- function(symbol){
+  # Connect to the Ensembl database for mouse
+  server <- "https://rest.ensembl.org"
+  ext <- paste0("/xrefs/name/mus_musculus/", symbol, "?")
+
+  response <- GET(paste(server, ext, sep = ""), content_type("application/json"))
+  stop_for_status(response)
+
+  aliases <- lapply(content(response), function(x) x$synonyms) %>% unlist
+  return(aliases)
+}
+
+# convert ENSEMBL id to symbol
+ensem_2_symbol <- function(ensem){
+  # Define the Ensembl REST API endpoint
+  endpoint <- paste0("https://rest.ensembl.org/lookup/id/", ensem, "?content-type=application/json")
+
+  # Make the request to the Ensembl REST API
+  response <- GET(endpoint)
+  stop_for_status(response)
+
+  # Extract the symbol from the response
+  symbol <- content(response)$display_name
+
+  return(symbol)
+}
+```
+
 ```{r translate_ids}
 #' In this chunk,
 #' IDs (protein ENSEMBL IDs or gene symbols) translated to ENSEMBL IDs
@@ -56,15 +101,10 @@ headers <-  add_headers("Content-Type" = "application/json")
 # query them via ENSEMBL api
 string_symb_ens <- data.table(SYMBOL = c(), ENSEMBL = c())
 for (symbol in string_symbols){
-  url <- "http://rest.ensembl.org/xrefs/symbol/mouse/"
-  endpoint <- paste0(url, symbol)
-  response <- GET(endpoint, headers)
-  stop_for_status(response)
-  data <- content(response)
-
-  if (! length(data) == 0){
+  ensem <- symbol_2_ensem(symbol) # symbol = 'Il10ra'
+  if (! length(ensem) == 0){
     # for some cases, there are multiple hits
-    for (item in data){
+    for (item in ensem){
       new_row = data.table(SYMBOL = symbol,  ENSEMBL = item$id)
       string_symb_ens <- rbind(string_symb_ens, new_row)
     }
@@ -73,48 +113,24 @@ for (symbol in string_symbols){
 # there are 234 symbols not convered to ENSEMBL IDs
 setdiff(string_symbols, string_symb_ens$SYMBOL) %>% length
 
-write.table(string_symb_ens, "../data/string_symb_ens.tsv", sep = "\t", row.names = FALSE, quote = FALSE)
+fwrite(string_symb_ens, "../data/string_symb_ens.tsv.gz", sep = "\t", row.names = FALSE, quote = FALSE, compress = "gzip")
 #---
 
 #--- remove the mistmached ENSEMBL IDs of a symbol
 # find dubious ENSEMBL IDs for some symbols
 # they are usually in the duplicated ENSEMBL
-string_symb_ens <- fread("../data/string_symb_ens.tsv", sep = "\t", header = TRUE)
+string_symb_ens <- fread("../data/string_symb_ens.tsv.gz", sep = "\t", header = TRUE)
 dubious_symbol <- string_symb_ens[duplicated(SYMBOL)]$SYMBOL
 # get all duplicated ENSEMBL IDS
 dubious_ens <- string_symb_ens[SYMBOL %in% dubious_symbol]
-
-# match ENSEMBL ID and correponding symbol
-# need to function to get aliases of symbols
-# sometimes symbols used in STRING are the aliases of symbols in ENSEMBL
-get_alias <- function(symbol){
-  # Connect to the Ensembl database for mouse
-  server <- "https://rest.ensembl.org"
-  ext <- paste0("/xrefs/name/mus_musculus/", symbol, "?")  # symbol = 'Slc23a1'
-
-  response <- GET(paste(server, ext, sep = ""), content_type("application/json"))
-  stop_for_status(response)
-
-  aliases <- lapply(content(response), function(x) x$synonyms) %>% unlist
-  return(aliases)
-}
 
 # use ENSEMBL api to verify the match between a ENSEMBL ID and symbol
 # remove the dubious ones
 for (i in 1:nrow(dubious_ens)){
   symbol = dubious_ens[i]$SYMBOL
-  ensem = dubious_ens[i]$ENSEMBL
+  ensem = dubious_ens[i]$ENSEMBL #test ensem='ENSMUSG00000032089'
 
-  # Define the Ensembl REST API endpoint
-  endpoint <- paste0("https://rest.ensembl.org/lookup/id/", ensem, "?content-type=application/json")
-
-  # Make the request to the Ensembl REST API
-  response <- GET(endpoint)
-  stop_for_status(response)
-
-  # Extract the symbol from the response
-  symbol_lookup <- content(response)$display_name # 'Lhx5' %in% string_proteins$preferred_name
-
+  symbol_lookup <- ensem_2_symbol(ensem)
   # sometimes lookup of ENSEMBL ID does not yield display_name
   # in this situation, set NULL as a string so it will work when
   # executing 'symbol == symbol_lookup' below
@@ -154,17 +170,13 @@ setorder(dupl_ensem_symbol, ENSEMBL)
 single_ensem <- data.table(SYMBOL=c(), ENSEMBL=c())
 multi_ensem <- data.table(SYMBOL=c(), ENSEMBL=c())
 for (symbol in dupl_ensem_symbol$preferred_name){
-  url <- "http://rest.ensembl.org/xrefs/symbol/mouse/"
-  endpoint <- paste0(url, symbol)
-  response <- GET(endpoint, headers)
-  stop_for_status(response)
-  data <- content(response)
+  ensem <- symbol_2_ensem(symbol)
 
-  if (! length(data) == 0){
+  if (! length(ensem) == 0){
     # for some cases, there are multiple hits
-    for (item in data){
+    for (item in ensem){
       new_row = data.table(SYMBOL = symbol,  ENSEMBL = item$id)
-      if (length(data) == 1){
+      if (length(ensem) == 1){
         single_ensem <- rbind(single_ensem, new_row)
       }
       else{
@@ -187,16 +199,7 @@ for (i in 1:nrow(multi_ensem_filter_dup)){
   symbol = multi_ensem_filter_dup[i]$SYMBOL
   ensem = multi_ensem_filter_dup[i]$ENSEMBL
 
-  # Define the Ensembl REST API endpoint
-  endpoint <- paste0("https://rest.ensembl.org/lookup/id/", ensem, "?content-type=application/json")
-
-  # Make the request to the Ensembl REST API
-  response <- GET(endpoint)
-  stop_for_status(response)
-
-  # Extract the symbol from the response
-  symbol_lookup <- content(response)$display_name # 'Lhx5' %in% string_proteins$preferred_name
-
+  symbol_lookup <- ensem_2_symbol(ensem)
   # sometimes lookup of ENSEMBL ID does not yield display_name
   # in this situation, set NULL as a string so it will work when
   # executing 'symbol == symbol_lookup' below
@@ -240,16 +243,7 @@ for (i in 1:nrow(alias_dup_ensem_)){
     next
   }
 
-  # Define the Ensembl REST API endpoint
-  endpoint <- paste0("https://rest.ensembl.org/lookup/id/", ensem, "?content-type=application/json")
-
-  # Make the request to the Ensembl REST API
-  response <- GET(endpoint)
-  stop_for_status(response)
-
-  # Extract the symbol from the response
-  symbol_lookup <- content(response)$display_name # 'Lhx5' %in% string_proteins$preferred_name
-
+  symbol_lookup <- ensem_2_symbol(ensem)
   # sometimes lookup of ENSEMBL ID does not yield display_name
   # in this situation, set NULL as a string so it will work when
   # executing 'symbol == symbol_lookup' below
@@ -290,7 +284,7 @@ for (symbol in manual_fixed_final$SYMBOL){
   string_proteins[preferred_name==symbol, ENSEMBL := manual_fixed_final[SYMBOL==symbol]$ENSEMBL]
 }
 
-write.table(string_proteins, "../data/string_SYMBOL_ENSEMBL.tsv", sep = "\t", row.names = FALSE, quote = FALSE)
+fwrite(string_proteins, "../data/string_SYMBOL_ENSEMBL.tsv,gz", sep = "\t", row.names = FALSE, quote = FALSE, na = 'NA', compress = "gzip")
 #---
 ```
 
@@ -305,16 +299,7 @@ for (i in 1:nrow(string_SYMBOL_ENSEMBL_)){
   symbol = string_SYMBOL_ENSEMBL_[i]$preferred_name
   ensem = string_SYMBOL_ENSEMBL_[i]$ENSEMBL
 
-  # Define the Ensembl REST API endpoint
-  endpoint <- paste0("https://rest.ensembl.org/lookup/id/", ensem, "?content-type=application/json")
-
-  # Make the request to the Ensembl REST API
-  response <- GET(endpoint)
-  stop_for_status(response)
-
-  # Extract the symbol from the response
-  symbol_lookup <- content(response)$display_name # 'Lhx5' %in% string_proteins$preferred_name
-
+  symbol_lookup <- ensem_2_symbol(ensem)
   # sometimes lookup of ENSEMBL ID does not yield display_name
   # in this situation, set NULL as a string so it will work when
   # executing 'symbol == symbol_lookup' below
@@ -344,16 +329,11 @@ for (i in 1:nrow(unmatched_)){
   symbol = unmatched_[i]$SYMBOL # i = 1
   ensem = unmatched_[i]$ENSEMBL
 
-  url <- "http://rest.ensembl.org/xrefs/symbol/mouse/"
-  endpoint <- paste0(url, symbol)
-  response <- GET(endpoint, headers)
-  stop_for_status(response)
-  data <- content(response)
-
-  if (! length(data) == 0){
+  ensem <- symbol_2_ensem(symbol)
+  if (! length(ensem) == 0){
     # for some cases, there are multiple hits
     ENSEMBL_lookup = c()
-    for (item in data){
+    for (item in ensem){
       ENSEMBL_lookup <- c(ENSEMBL_lookup, item$id)
     }
     if (ensem %in% ENSEMBL_lookup){
