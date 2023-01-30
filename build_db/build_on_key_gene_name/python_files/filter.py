@@ -7,7 +7,6 @@ The main writes them to new csvs
 """
 
 import pandas as pd
-#import sys
 import os
 
 def filter_for_rows(file1: pd.DataFrame, file2: pd.DataFrame, key1: str,
@@ -40,16 +39,21 @@ def filter_for_rows(file1: pd.DataFrame, file2: pd.DataFrame, key1: str,
     # return the filtered rows
     return(df2_filtered)
 
-def delete_rows_having_value(file1: str, key_column: str, value) \
-    -> pd.DataFrame:
-    # read the csv
-    df = pd.read_csv(file1)
-    # Use boolean indexing to filter the rows where 
-    # the value is not present in the key column 
-    return(df[~df[key_column].str.contains(value)])
+def delete_rows_having_value(file1: pd.DataFrame, key_column: str, value,
+                             exact_match: bool) -> pd.DataFrame:
+    """
+    This returns a file where the given value is not present in the key column
+    """
+    # filter for rows where the value is exactly unequal to the selected cell
+    if exact_match:
+        return(file1[file1[key_column]!= value])
+    # filter for rows where the value is not
+    # in the string of the selected cell
+    else:
+        return(file1[~file1[key_column].str.contains(value)])
 
 
-def filter_for_value_bigger(file: str, key: str, value: int):
+def filter_for_value_bigger(file: str, key: str, value: int) -> pd.DataFrame:
     """
     This filters the given file on the key column for rows which have 
     a bigger value then the given one.
@@ -70,22 +74,28 @@ if __name__ == '__main__':
     # Construct the file paths
     path_to_string_proteins = os.path.join(current_dir, files[0])
     path_to_exp_de_proteins = os.path.join(current_dir, files[1])
+    # read the csvs
+    string_proteins = pd.read_csv(path_to_string_proteins)
+    exp_de_proteins = pd.read_csv(path_to_exp_de_proteins)
     # filter for rows where prefered_name is not NA
-    string_proteins_filtered_1 = delete_rows_having_value\
-        (path_to_string_proteins, 'preferred_name', 'NA')
+    string_proteins_filtered = delete_rows_having_value\
+        (string_proteins, 'preferred_name', 'NA', True)
     # filter for rows where prefered_name does not start with ENSMUSG
-    string_proteins_filtered_2 = delete_rows_having_value\
-        (path_to_string_proteins, 'preferred_name', 'ENSMUSG')
+    string_proteins_filtered = delete_rows_having_value\
+        (string_proteins_filtered, 'preferred_name', 'ENSMUSG',False)
+    # filter for rows where prefered_name is not NA
+    exp_de_proteins_filtered = delete_rows_having_value\
+        (exp_de_proteins, 'SYMBOL', 'NA', True)
     # filter for rows where prefered_name does not start with ENSEMBL
     exp_de_proteins_filtered = delete_rows_having_value\
-        (path_to_exp_de_proteins, 'SYMBOL', 'ENSMUSG')
+        (exp_de_proteins_filtered, 'SYMBOL', 'ENSMUSG',False)
     # filter for proteins in exp_proteins which are present in string_proteins
-    proteins_duplicates = filter_for_rows(string_proteins_filtered_2,
+    proteins_duplicates = filter_for_rows(string_proteins_filtered,
                                                exp_de_proteins_filtered,
                                                'preferred_name',
                                                'SYMBOL',True)
     # write the results to a csv
-    string_proteins_filtered_2.to_csv(target[0], index= False, na_rep='NA') 
+    string_proteins_filtered.to_csv(target[0], index= False, na_rep='NA') 
     exp_de_proteins_filtered.to_csv(target[1], index= False, na_rep='NA')
     proteins_duplicates.to_csv(target[2], index= False, na_rep='NA')
 
