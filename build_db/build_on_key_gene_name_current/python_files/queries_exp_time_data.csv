@@ -1,0 +1,11 @@
+"# Upload the differential expression data for Protein and OR;"
+
+
+"Create (t:rel_or_wt12h_wt0h);"
+"Load csv With HEADERS from 'file:///rel_or_wt12h_wt0h.csv' As map Create (t:rel_or_wt12h_wt0h_temp) set t = map;"
+"Match (p:OpenRegion), (r:rel_or_wt12h_wt0h),(a:rel_or_wt12h_wt0h_temp) where (p.nearest_index = a.nearest_index) Create (r)-[j:isabout]->(p) set j=a;"
+"Create (t:rel_protein_wt24h_wt0h);"
+"Load csv With HEADERS from 'file:///rel_protein_wt24h_wt0h.csv' As map Create (t:rel_protein_wt24h_wt0h_temp) set t = map;"
+"Match (p:Protein), (r:rel_protein_wt24h_wt0h),(a:rel_protein_wt24h_wt0h_temp) where (p.SYMBOL = toLower(a.SYMBOL)) Create (r)-[j:isabout]->(p) set j=a;"
+"Match (t:rel_or_wt12h_wt0h_temp) delete t;"
+"Match (t:rel_protein_wt24h_wt0h_temp) delete t;"
