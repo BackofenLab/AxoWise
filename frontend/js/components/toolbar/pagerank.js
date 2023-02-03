@@ -4,10 +4,10 @@ Vue.component("pagerank", {
 		return  {
 			once: true,
 			pr_boundary: {
-				value: 0.01,
+				value: 0.0001,
 				min: 0,
-				max: 0.1,
-				step: 0.01
+				max: 0.02,
+				step: 0.0001
 			},
 		}
 	},

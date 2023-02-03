@@ -9,6 +9,7 @@ import pandas as pd
 import cypher_queries as Cypher
 from cypher_queries import *
 import time
+import math
 
 def functional_enrichment(in_proteins, species_id):
     """inhouse functional enrichment - performs gene set enrichment analysis
@@ -106,13 +107,17 @@ def functional_enrichment(in_proteins, species_id):
                 term_temp["fdr_rate"] = rank_lst[i+1]
                 rank_lst_fil += [term_temp]
 
-    # df = pd.DataFrame(rank_lst_fil)
-    # df.to_csv("inhouse_enrichment2.csv", header=True, index=False)
+    df = pd.DataFrame(rank_lst_fil)
+    df.to_csv("inhouse_enrichment.csv", header=True, index=False)
 
     t_cypher = time.time()
     print("Time Spent (fdr_enrichment): ", t_cypher - t_pvalue)
 
     return rank_lst_fil
+
+
+def convert_to_str():
+    pass
     
 
 def hypergeo_testing(intersec, total_proteins, term_proteins, in_proteins):
@@ -131,5 +136,5 @@ def hypergeo_testing(intersec, total_proteins, term_proteins, in_proteins):
         total_proteins-term_proteins, in_proteins-intersec, exact=True))
     term_three = decimal.Decimal(scipy.special.comb(total_proteins, in_proteins, exact=True))
     p_value = (term_one * term_two)/term_three
-    # p_value = float(p_value)
+    p_value = float(p_value)
     return p_value

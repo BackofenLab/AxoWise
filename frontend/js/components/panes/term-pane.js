@@ -77,7 +77,7 @@ Vue.component("term-pane", {
                         }
                     }
                 } else {
-                    var subset_terms = new Set(com.func_json.map(arrayItem => {
+                    var subset_terms = new Set(com.gephi_json.nodes.map(arrayItem => {
                         return arrayItem.id
                     }));
                     for (var idx in com.gephi_json.edges) {

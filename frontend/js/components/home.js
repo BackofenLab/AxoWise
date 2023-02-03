@@ -132,6 +132,8 @@ Vue.component("home", {
         const reader = new FileReader();
         reader.onload = function(e) {
             jsonObj = JSON.parse(e.target.result);
+            // save protein graph
+            com.$emit("protein-graph-save", jsonObj);
             com.$emit("gephi-json-changed", jsonObj);
           }
         /*reader.onload = function(e) {

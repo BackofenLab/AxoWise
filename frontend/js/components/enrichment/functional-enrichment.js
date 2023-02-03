@@ -7,15 +7,16 @@ Vue.component("functional-enrichment", {
                 {value: "TISSUES", label: "Tissue expression"},
                 {value: "KEGG", label: "KEGG Pathway"},
                 {value: "COMPARTMENTS", label: "Subcellular localization"},
-                {value: "Process", label: "Biological Process"},
-                {value: "Component", label: "Cellular Component(Gene Ontology)"},
-                {value: "Function", label: "Molecular Function"},
+                /* Process, Component, Function and reactome need to be changed for inhouse enrichment */
+                {value: "Biological Process (Gene Ontology)", label: "Biological Process"},
+                {value: "Cellular Component (Gene Ontology)", label: "Cellular Component(Gene Ontology)"},
+                {value: "Molecular Function (Gene Ontology)", label: "Molecular Function"},
                 {value: "Keyword", label: "Annotated Keywords(UniProt)"},
                 {value: "SMART", label: "Protein Domains(SMART)"},
                 {value: "InterPro", label: "Protein Domains and Features(InterPro)"},
                 {value: "Pfam", label: "Protein Domains(Pfam)"},
                 {value: "PMID", label: "Reference Publications(PubMed)"},
-                {value: "RCTM", label: "Reactome Pathway"},
+                {value: "Reactome Pathways", label: "Reactome Pathway"}, /* RCTM */
                 {value: "WikiPathways", label: "WikiPathays"},
                 {value: "MPO", label: "Mammalian Phenotype Ontology"},
                 {value: "NetworkNeighborAL", label: "Network"}] 
@@ -135,6 +136,7 @@ Vue.component("functional-enrichment", {
 
                 // TODO: Add loading, so that user can't spam between graphs?
                 // $("#term-btn").addClass("loading");
+                $("#term-btn").addClass("loading");
                 
                 
                 //POST request for functional enrichment
@@ -168,8 +170,6 @@ Vue.component("functional-enrichment", {
                             // draw functional term graph
 
                             formData.append('func-terms', JSON.stringify(com.terms))
-
-                            $("#term-btn").addClass("loading");
 
                             $.ajax({
                                 type: "POST",

@@ -107,6 +107,9 @@ Vue.component("visualization", {
                 else if(source_present && target_present) e.color = "rgba(255, 255, 255, 0.3)"; // white
                 else e.color = "rgba(0, 100, 100, 0.2)"; // green
 
+                // change here edge colors for active subset
+    
+
             });
 
             sigma_instance.refresh();
@@ -176,7 +179,7 @@ Vue.component("visualization", {
                     // Edge
                     if (source_present && !target_present || !source_present && target_present) e.color = "rgba(220, 255, 220, 0.25)"; // pink
                     else if(source_present && target_present) e.color = "rgba(255, 255, 255, 0.3)"; // white
-                    else e.color = "rgba(0, 100, 0, 0.2)"; // green
+                    else e.color = "rgba(0, 100, 0, 0.2)"; // e.hidden = true;} // green // for nice picture, check "reset" to keep colors after reset
 
                 });
             } else {
@@ -342,7 +345,7 @@ Vue.component("visualization", {
                     t.color = com.node_color_index[e.target]; t.hidden = true;
                     
                 }
-                e.color = com.edge_color_index[e.id]; e.hidden = false;
+                e.color = com.edge_color_index[e.id]; // e.hidden = false; decomment after picture taken!!
             });
             com.edit_opacity();
             sigma_instance.refresh();
@@ -508,7 +511,6 @@ Vue.component("visualization", {
                 let term_graph = com.term_graph_save;
                 com.$emit("gephi-json-changed", term_graph);
             } else {
-
                 $("#term-btn").removeClass("loading");
                 // load protein graph
                 let protein_graph = com.protein_graph_save;
@@ -575,7 +577,7 @@ Vue.component("visualization", {
        });
 
         this.eventHub.$on('export-graph', data => {
-            var dataURL = sigma_instance.renderers[0].snapshot({download:true});
+            var dataURL = sigma_instance.renderers[0].snapshot({download:true, background:"black", labels:false});
         });
 
     },

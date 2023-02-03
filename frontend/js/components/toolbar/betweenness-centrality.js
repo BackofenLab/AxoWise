@@ -12,7 +12,7 @@ Vue.component("betweenness-centrality", {
 		}
 	},
 	methods: {
-		draw_hubs: function() {
+		draw_bc_nodes: function() {
 			var com = this;
 			console.log("com: ", com)
 			// initialize values of slider
@@ -47,8 +47,8 @@ Vue.component("betweenness-centrality", {
 		var com = this;
 
 		$("#bc-slider").slider();
-		$("#bc-slider").change(com.draw_hubs);
-		$("#bc-input").change(com.draw_hubs);
+		$("#bc-slider").change(com.draw_bc_nodes);
+		$("#bc-input").change(com.draw_bc_nodes);
 
 	},
 	template: `
