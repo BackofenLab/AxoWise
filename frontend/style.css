@@ -1032,7 +1032,7 @@ padding: 0px;
 	align-content: center;
 	position: relative;
 	z-index: 999;
-	left: -214px;
+	left: -219px;
 	transition: transform ease 500ms;
 }
 
@@ -1445,7 +1445,7 @@ padding-top: 1em;
 	-webkit-appearance: none;
 	border-radius: 20px;
 	margin-left: 5px;
-	width: 46px;		
+	width: 55px;						/* width of the number input of sliders */
 	background-color: rgba(0, 0, 0, 0.6);
 	color: white;
 	text-align: center;

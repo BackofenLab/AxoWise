@@ -55,6 +55,9 @@ Vue.component("hubs", {
 				com.once = false;
 			}
 
+			// hide nodes: e.hidden
+			// keep the colors
+
 			// filter hubs
 			var finalNodes = [];
 			var nodes = [];
@@ -64,12 +67,14 @@ Vue.component("hubs", {
 					nodes.push(com.gephi_json.nodes[idx])
 				}
 			}
+			/*
 			// clustering coefficient filterin
 			for (var idy in nodes){
 				if(parseFloat(nodes[idy].attributes["Clustering Coefficient"]) <= this.cc_boundary.value){
 					finalNodes.push(nodes[idy])
 				}
-			}
+			}*/
+			finalNodes = nodes;
 			com.$emit("active-subset-changed", finalNodes);
 			console.log("nodes: ", finalNodes)
 		},

@@ -70,9 +70,6 @@ def proteins_enrichment():
     
     # STRING API functional enrichment
     """df_enrichment = stringdb.functional_enrichment(proteins, species_id)
-
-    # df_enrichment = df_enrichment.sort_values(by="fdr", ascending=False)
-    # df_enrichment.to_csv("string_enrichment.csv", index=False, header=True)
     
     list_enrichment = list()
     if df_enrichment is not None:
@@ -99,7 +96,7 @@ def proteins_enrichment():
                     # fdr_rate=row["fdr"],
                     category=row["source"]
                 ))"""
-
+    
     json_str=json.dumps(list_enrichment)  
     return Response(json_str, mimetype="application/json")
 
@@ -356,23 +353,6 @@ def terms_subgraph_api():
     #Begin a timer to time
     t_begin = time.time()
 
-    """ 
-    # Proteins
-    if (not request.files.get("file")):
-        query_proteins = request.form.get("proteins").split(";")
-        query_proteins = list(filter(None, query_proteins))
-    else:
-        panda_file = pd.read_csv(request.files.get("file"))
-        query_proteins = panda_file['SYMBOL'].to_list()
-
-    # Species
-    # species_id = int(request.form.get("species_id"))
-    
-    # Fuzzy search mapping
-    # proteins = direct_search.search_protein_list(query_proteins, species_id=species_id)
-    # protein_ids = list(map(lambda p: p.id, proteins))
-    """
-
     # Functional terms
 
     list_enrichment = ast.literal_eval(request.form.get("func-terms"))
@@ -542,7 +522,7 @@ def terms_subgraph_api():
         # node["attributes"]["Description"] = df_node["description"]
         node["attributes"]["Ensembl ID"] = df_node["external_id"]
         node["attributes"]["Name"] = df_node["name"]
-        node["label"] = df_node["name"]
+        node["label"] = df_node["name"]                 # Comment this out if you want no node labels displayed
         # node["species"] = str(df_node["species_id"]) 
         
         sub_proteins = []
