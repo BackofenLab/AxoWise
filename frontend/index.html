@@ -166,8 +166,10 @@
                        v-on:d_value-changed="d_value = $event"
             ></term-pane>
             <dvalue-pane v-bind:d_value="d_value"
+                         v-bind:gephi_json="gephi_json"
                          v-on:active-node-changed="active_node = $event"
                          v-on:d_value-changed="d_value = $event"
+                         v-on:active-layer-changed="active_layer = $event"
             ></dvalue-pane>
             <functional-enrichment v-bind:gephi_json="gephi_json"
             v-bind:func_json="func_json"

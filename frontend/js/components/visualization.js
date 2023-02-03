@@ -124,11 +124,12 @@ Vue.component("visualization", {
             }
 
             var proteins = new Set(subset.map(node => node.attributes["Ensembl ID"]));
+            var sub_proteins = new Set(com.gephi_json.subgraph);
 
             sigma_instance.graph.nodes().forEach(function (n) {
                 if (!proteins.has(n.attributes["Ensembl ID"])){
                     n.hidden = true;
-                }else{
+                }else if(!sub_proteins.has(n.attributes["Ensembl ID"])) {
                     n.hidden = false;
                 }
             });
