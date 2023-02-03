@@ -99,7 +99,7 @@ Vue.component("attribute-pane", {
                 </div>
                 <div v-if="selected_node !== null" class="nodeattributes">
                     <div class="name">
-                        <span>{{selected_node.label}}</span>
+                        <span>{{selected_node.attributes['Name']}}</span>
                     </div>
                     <div class="data">
                         <div v-for="(value, key, index) in selected_node.attributes">

@@ -19,12 +19,13 @@ import stringdb
 import gprofil
 import os
 
-# import cypher_queries as Cypher
+import cypher_queries as Cypher
 import database
 import direct_search
 import fuzzy_search
 from layout import shell_layout
 import uuid
+import enrichment
 
 import graph_utilities
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -41,6 +42,8 @@ _BACKEND_JAR_PATH = "gephi-backend/target/gephi.backend-1.0-SNAPSHOT.jar"
 
 @app.route("/")
 def index():
+    # create term_file csv
+    Cypher.create_term_df()
     return send_from_directory(os.path.join(_SCRIPT_DIR, _SERVE_DIR), _INDEX_FILE)
 
 # ====================== Other files ======================
@@ -48,6 +51,10 @@ def index():
 @app.route("/<path:path>")
 def files(path):
     return send_from_directory(os.path.join(_SCRIPT_DIR, _SERVE_DIR), path)
+
+
+# @app.rooute("/api/subgraph/init")
+
 
 # ====================== Functional Enrichment ======================
 # ______functional_enrichment_STRING_________________________________
@@ -58,7 +65,11 @@ def proteins_enrichment():
     proteins = request.form.get("proteins").split(",")
     species_id = request.form.get("species_id")
     
-    df_enrichment = stringdb.functional_enrichment(proteins, species_id)
+    # in-house functional enrichment
+    list_enrichment = enrichment.functional_enrichment(proteins, species_id)
+    
+    # STRING API functional enrichment
+    """df_enrichment = stringdb.functional_enrichment(proteins, species_id)
     
     list_enrichment = list()
     if df_enrichment is not None:
@@ -84,8 +95,8 @@ def proteins_enrichment():
                     p_value=row["p_value"],
                     # fdr_rate=row["fdr"],
                     category=row["source"]
-                ))
-
+                ))"""
+    
     json_str=json.dumps(list_enrichment)  
     return Response(json_str, mimetype="application/json")
 
@@ -272,20 +283,6 @@ def proteins_subgraph_api():
     t_dvalue = time.time()
     print("Time Spent (DValue):", t_dvalue-t_parsing)
 
-    # # Functional enrichment
-    # external_ids = nodes["external_id"].tolist()
-    # df_enrichment = stringdb.functional_enrichment(external_ids, species_id)
-
-    # list_enrichment = list()
-    # if df_enrichment is not None:
-    #     for _, row in df_enrichment.iterrows():
-    #         list_enrichment.append(dict(
-    #             id=row["term"],
-    #             proteins=row["inputGenes"].split(","),
-    #             name=row["description"],
-    #             p_value=row["p_value"]
-    #         ))
-
     # #Timer to evaluate enrichments runtime
     t_enrich = time.time()
     print("Time Spent (Enrichment):", t_enrich-t_dvalue)
@@ -356,35 +353,33 @@ def terms_subgraph_api():
     #Begin a timer to time
     t_begin = time.time()
 
-    # Proteins
-    protein_ids = request.form.get("proteins").split(";")
+    # Functional terms
 
-    # Species
-    species_id = request.form.get("species_id")
+    list_enrichment = ast.literal_eval(request.form.get("func-terms"))
+    #print(list_enrichment)
+    #print(type(list_enrichment))
 
     # Filename generator
     filename = uuid.uuid4()
 
     # Functional terms
-    df_enrichment = stringdb.functional_enrichment(protein_ids, species_id)
+    # list_enrichment = enrichment.functional_enrichment(protein_ids, species_id)
+    # df_enrichment = stringdb.functional_enrichment(protein_ids, species_id)
     # Only append categories KEGG, Reactome, WP, GO
-    df_enrichment = df_enrichment.loc[(df_enrichment['category'] == 'RCTM') |
+    """df_enrichment = df_enrichment.loc[(df_enrichment['category'] == 'RCTM') |
         (df_enrichment['category'] == 'Process') |
         (df_enrichment['category'] == 'Function') |
         (df_enrichment['category'] == 'Component') |
         (df_enrichment['category'] == 'WikiPathways') |
         (df_enrichment['category'] == 'KEGG')]
-    df_enrichment = df_enrichment.sort_values(by="p_value", ascending=True)
+    df_enrichment = df_enrichment.sort_values(by="p_value", ascending=True)"""
 
-    # df_enrichment.to_csv("BeforeNeo4j", index=False, header=True)
-
-    list_term = list()
-    if df_enrichment is not None:
-        list_term = df_enrichment["term"].tolist()
-
-    # TODO: Give p_value/fdr to the functional terms
+    list_term = []
+    if list_enrichment is not None:
+        list_term = [i['id'] for i in list_enrichment]
     
-    
+    #if df_enrichment is not None:
+    #    list_term = df_enrichment["term"].tolist()
 
     # Create a query to find all associations between protein_ids and create a file with all properties
     def create_query_assoc():
@@ -400,19 +395,19 @@ def terms_subgraph_api():
                 YIELD file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data
                 RETURN file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data;
                 """
-
+        
+        
         # Query for all functional terms
 
-        #query = """"""
+        #query = """
         #        WITH "MATCH (source:Terms)-[association:KAPPA]->(target:Terms)
         #        RETURN source, target, association.score AS score" AS query
-        #        CALL apoc.export.csv.query(query, "/tmp/"""""" + repr(filename) + """""".csv", {})
+        #        CALL apoc.export.csv.query(query, "/tmp/""" + repr(filename) + """.csv", {})
         #        YIELD file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data
         #        RETURN file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data;
-        #        """"""
+        #        """
+
         return query
-        # WHERE source.category = 'KEGG' AND target.category = 'KEGG'
-        
 
     query = create_query_assoc()
     
@@ -422,7 +417,7 @@ def terms_subgraph_api():
     
     #Timer to evaluate runtime to setup
     t_setup = time.time()
-    print("Time Spent (Setup):", t_setup-t_begin)
+    print("Time Spent (Setup_Terms):", t_setup-t_begin)
 
     #Run the cypher query in cypher shell via terminal
     data = subprocess.run(
@@ -527,7 +522,7 @@ def terms_subgraph_api():
         # node["attributes"]["Description"] = df_node["description"]
         node["attributes"]["Ensembl ID"] = df_node["external_id"]
         node["attributes"]["Name"] = df_node["name"]
-        node["label"] = df_node["name"]
+        node["label"] = df_node["name"]                 # Comment this out if you want no node labels displayed
         # node["species"] = str(df_node["species_id"]) 
         
         sub_proteins = []

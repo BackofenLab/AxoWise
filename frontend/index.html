@@ -46,6 +46,9 @@
       <script src="js/components/toolbar/tool-visualization.js"></script>
       <script src="js/components/toolbar/highlight_button.js"></script>
       <script src="js/components/toolbar/hubs.js"></script>
+      <script src="js/components/toolbar/betweenness-centrality.js"></script>
+      <script src="js/components/toolbar/pagerank.js"></script>
+      <script src="js/components/toolbar/eigenvector-centrality.js"></script>
       <!-- <script src="js/components/theme-toggle.js"></script> -->
     </head>
 
@@ -68,7 +71,9 @@
           <div class="col">
             <div class="toolbar">
               <export-layout v-bind:gephi_json="gephi_json"
-                             v-on:gephi-json-changed="gephi_json = $event"
+                            v-bind:term_graph_save="term_graph_save"
+                            v-bind:protein_graph_save="protein_graph_save"
+                            v-on:gephi-json-changed="gephi_json = $event" 
               ></export-layout>
               <d-value v-bind:gephi_json="gephi_json"
                        v-bind:d_value="d_value"
@@ -85,9 +90,18 @@
                                 v-bind:protein_list="protein_list"
                                 v-on:protein-list-changed="protein_list = $event"
               ></highlight_button>
-              <hubs v-bind:gephi_json="gephi_json"
+              <hubs :gephi_json="gephi_json"
                     @active-subset-changed="active_subset = $event"
               ></hubs>
+              <betweenness-centrality :gephi_json="gephi_json"
+                    @active-subset-changed="active_subset = $event"
+              ></betweenness-centrality>
+              <pagerank :gephi_json="gephi_json"
+                    @active-subset-changed="active_subset = $event"
+              ></pagerank>
+              <eigenvector-centrality :gephi_json="gephi_json"
+                    @active-subset-changed="active_subset = $event"
+              ></eigenvector-centrality>
             </div>
           </div>
         </div>
@@ -179,6 +193,8 @@
             v-on:active-term-changed="active_term = $event"
             v-on:func-json-changed="func_json = $event"
             v-on:func-enrichment-changed="func_enrichment = $event"
+            v-bind:term_graph_save="term_graph_save"
+            v-on:term-graph-save="term_graph_save = $event"
             ></functional-enrichment>
           </div>
         </div>

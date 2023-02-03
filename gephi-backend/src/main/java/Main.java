@@ -21,6 +21,8 @@ import org.gephi.statistics.plugin.Degree;
 import org.gephi.statistics.plugin.ClusteringCoefficient;
 import org.gephi.statistics.plugin.GraphDistance;
 import org.gephi.statistics.plugin.Modularity;
+import org.gephi.statistics.plugin.PageRank;
+import org.gephi.statistics.plugin.EigenvectorCentrality;
 import org.gephi.statistics.plugin.builder.DegreeBuilder;
 import org.javatuples.Pair;
 import org.openide.util.Lookup;
@@ -75,6 +77,15 @@ public class Main {
 
         // Determine cluster coefficient
         clusterCoefficient(graphModel);
+
+        // Betweeness Centrality
+        betweenessCentrality(graphModel);
+
+        // PageRank
+        pageRank(graphModel);
+
+        // Eigenvector centrality
+        eigenvectorCentrality(graphModel);
 
         // Rank node size by degree
         rankNodeSizeByDegree(graphModel, appearanceController);
@@ -236,6 +247,21 @@ public class Main {
 
         ClusteringCoefficient cc = new ClusteringCoefficient();
         cc.execute(graphModel);
+    }
+
+    private static void betweenessCentrality(GraphModel graphModel) {
+        GraphDistance bc = new GraphDistance();
+        bc.execute(graphModel);
+    }
+
+    private static void pageRank(GraphModel graphModel) {
+        PageRank pr = new PageRank();
+        pr.execute(graphModel);
+    }
+
+    private static void eigenvectorCentrality(GraphModel graphModel) {
+        EigenvectorCentrality ec = new EigenvectorCentrality();
+        ec.execute(graphModel);
     }
 
     private static void rankNodeSizeByDegree(GraphModel graphModel, AppearanceController appearanceController) {

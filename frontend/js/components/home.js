@@ -81,29 +81,11 @@ Vue.component("home", {
           alert("No associations found");
           com.$emit("gephi-json-changed", null);
         } else {
+          json.edge_thick = com.edge_thick.value;
           // save protein graph
           com.$emit("protein-graph-save", json);
-          json.edge_thick = com.edge_thick.value;
           com.$emit("gephi-json-changed", json);
         }
-      });
-      $.ajax({
-        type: "POST",
-        url: "/api/subgraph/terms",
-        data: formData,
-        contentType: false,
-        cache: false,
-        processData: false,
-      }).done(function (json) {
-        $("#term-btn").removeClass("loading");
-        if (Object.keys(json).length != 0) {
-          // save term graph
-          com.$emit("term-graph-save", json);
-        }
-      }).fail(function ( jqXHR, textStatus, errorThrown ) {
-          console.log(jqXHR);
-          console.log(textStatus);
-          console.log(errorThrown);
       });
     },
     updateSlider: function () {
@@ -143,13 +125,28 @@ Vue.component("home", {
     load_json: function(e) {
         var com = this;
 
+        $("#term-btn").addClass("loading");
+
         //Load json file and overwrite to gephi_json
         const file = e.target.files[0];
         const reader = new FileReader();
         reader.onload = function(e) {
             jsonObj = JSON.parse(e.target.result);
+            // save protein graph
+            com.$emit("protein-graph-save", jsonObj);
             com.$emit("gephi-json-changed", jsonObj);
           }
+        /*reader.onload = function(e) {
+            jsonStr = JSON.parse(e.target.result);
+            let ind = jsonStr.indexOf("|") 
+            let prot_graph = jsonStr.slice(0, ind)
+            let term_graph = jsonStr.slice(ind + 1)
+            jsonObjOne = JSON.parse(prot_graph);
+            jsonObjTwo = JSON.parse(term_graph);
+            com.$emit("protein-graph-save", jsonObjOne);
+            com.$emit("term-graph-save", jsonObjTwo);
+            com.$emit("gephi-json-changed", jsonObjOne);
+          }*/
         reader.readAsText(file);
     },
   },

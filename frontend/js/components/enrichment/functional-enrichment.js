@@ -1,21 +1,22 @@
 Vue.component("functional-enrichment", {
     props: ["gephi_json", "func_json","revert_term","func_enrichment",
-            "reset_term", "graph_flag"],
+            "reset_term", "term_graph_save", "graph_flag"],
     data: function() {
         return  {
             filter_terms: [
                 {value: "TISSUES", label: "Tissue expression"},
                 {value: "KEGG", label: "KEGG Pathway"},
                 {value: "COMPARTMENTS", label: "Subcellular localization"},
-                {value: "Process", label: "Biological Process"},
-                {value: "Component", label: "Cellular Component(Gene Ontology)"},
-                {value: "Function", label: "Molecular Function"},
+                /* Process, Component, Function and reactome need to be changed for inhouse enrichment */
+                {value: "Biological Process (Gene Ontology)", label: "Biological Process"},
+                {value: "Cellular Component (Gene Ontology)", label: "Cellular Component(Gene Ontology)"},
+                {value: "Molecular Function (Gene Ontology)", label: "Molecular Function"},
                 {value: "Keyword", label: "Annotated Keywords(UniProt)"},
                 {value: "SMART", label: "Protein Domains(SMART)"},
                 {value: "InterPro", label: "Protein Domains and Features(InterPro)"},
                 {value: "Pfam", label: "Protein Domains(Pfam)"},
                 {value: "PMID", label: "Reference Publications(PubMed)"},
-                {value: "RCTM", label: "Reactome Pathway"},
+                {value: "Reactome Pathways", label: "Reactome Pathway"}, /* RCTM */
                 {value: "WikiPathways", label: "WikiPathays"},
                 {value: "MPO", label: "Mammalian Phenotype Ontology"},
                 {value: "NetworkNeighborAL", label: "Network"}] 
@@ -127,10 +128,15 @@ Vue.component("functional-enrichment", {
             if (com.graph_flag) {
                 com.await_check = true, com.await_load = true;
                 formData = new FormData();
+
                 formData.append('proteins', com.proteins);
                 formData.append('species_id', nodes[0].species);
 
                 com.filter="";
+
+                // TODO: Add loading, so that user can't spam between graphs?
+                // $("#term-btn").addClass("loading");
+                $("#term-btn").addClass("loading");
                 
                 
                 //POST request for functional enrichment
@@ -142,7 +148,8 @@ Vue.component("functional-enrichment", {
                     cache: false,
                     processData: false,
                 })
-                .done(function (json) {         
+                .done(function (json) {
+                    // $("#term-btn").removeClass("loading");      
                     com.await_load = false;                  
                     if(com.await_check){
                         com.$emit("func-enrichment-changed", json);
@@ -159,6 +166,30 @@ Vue.component("functional-enrichment", {
                                 var p_t2 = parseFloat(t2.fdr_rate);
                                 return p_t1 - p_t2;
                             });
+
+                            // draw functional term graph
+
+                            formData.append('func-terms', JSON.stringify(com.terms))
+
+                            $.ajax({
+                                type: "POST",
+                                url: "/api/subgraph/terms",
+                                data: formData,
+                                contentType: false,
+                                cache: false,
+                                processData: false,
+                              }).done(function (json) {
+                                $("#term-btn").removeClass("loading");
+                                if (Object.keys(json).length != 0) {
+                                  // save term graph
+                                  json.edge_thick = com.gephi_json.edge_thick;
+                                  com.$emit("term-graph-save", json);
+                                }
+                              }).fail(function ( jqXHR, textStatus, errorThrown ) {
+                                  console.log(jqXHR);
+                                  console.log(textStatus);
+                                  console.log(errorThrown);
+                              });
 
                             //Count term number
                             com.term_number();

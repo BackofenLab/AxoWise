@@ -1,5 +1,5 @@
 Vue.component("export-layout", {
-    props: ["gephi_json"],
+    props: ["gephi_json", "protein_graph_save", "term_graph_save"],
     data: function() {
         return  {
             message: "",
@@ -10,7 +10,13 @@ Vue.component("export-layout", {
         export_graph: function() {
             var com = this;
 
-            let dataStr = JSON.stringify(com.gephi_json);
+            /*let dataStr = JSON.stringify(JSON.stringify(
+                com.protein_graph_save) + "|" + JSON.stringify(
+                    com.term_graph_save));
+            let dataUri = 'data:application/json;charset=utf-8,' +
+                encodeURIComponent(dataStr)*/
+
+            let dataStr = JSON.stringify(com.protein_graph_save);
             let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
         
             let exportFileDefaultName = 'data.json';

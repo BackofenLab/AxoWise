@@ -67,12 +67,24 @@ Vue.component("term-pane", {
                 com.associations = [];
 
                 com.number_prot = com.links.length.toString();
-                
-                var subset_proteins = new Set(com.selected_term.proteins);
-                for (var idx in com.gephi_json.edges) {
-                    var edge = com.gephi_json.edges[idx];
-                    if(subset_proteins.has(edge.source) && subset_proteins.has(edge.target)){
-                        com.associations.push(edge);
+
+                if (com.graph_flag) {
+                    var subset_proteins = new Set(com.selected_term.proteins);
+                    for (var idx in com.gephi_json.edges) {
+                        var edge = com.gephi_json.edges[idx];
+                        if(subset_proteins.has(edge.source) && subset_proteins.has(edge.target)){
+                            com.associations.push(edge);
+                        }
+                    }
+                } else {
+                    var subset_terms = new Set(com.gephi_json.nodes.map(arrayItem => {
+                        return arrayItem.id
+                    }));
+                    for (var idx in com.gephi_json.edges) {
+                        var edge = com.gephi_json.edges[idx];
+                        if(subset_terms.has(edge.source) && subset_terms.has(edge.target)){
+                            com.associations.push(edge);
+                        }
                     }
                 }
 
@@ -91,15 +103,22 @@ Vue.component("term-pane", {
 
             com.selected_term = term;
 
+            com.links = [];
             if (com.graph_flag) {
-                com.links = [];
                 for (var idx in term.proteins) {
                     var node = sigma_instance.graph.ensemblIdToNode(term.proteins[idx]);
                     com.links.push(node);
                 }
-
-                com.updateNumbers();
+            } else {
+                var subset_terms = com.gephi_json.nodes.map(arrayItem => {
+					return arrayItem.id
+				});
+                for (var idx in subset_terms) {
+                    var node = sigma_instance.graph.ensemblIdToNode(subset_terms[idx]);
+                    com.links.push(node);
+                }
             }
+            com.updateNumbers();
             // TODO
              $("#termminimize").show();
         }
@@ -125,7 +144,7 @@ Vue.component("term-pane", {
                     <div class="name_term">
                     <span>{{selected_term.name}}</span>
                     </div>
-                    <div class="change-level-menu">
+                    <div v-if="graph_flag" class="change-level-menu">
                     <button id="down_level" v-on:click="change_level(links)">Apply</button>
                     <button id="up_level" v-on:click="change_level_up(saved_links)">Revert</button>
                     </div>
