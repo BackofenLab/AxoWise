@@ -43,7 +43,13 @@ def cal_overlap_score_worker(args):
                               df.loc[j].proteins,
                               df.loc[i].sizes,
                               df.loc[j].sizes)
-    return f"{score[0]},{score[1]},{score[2]}\n"
+
+    # an abitratry threshold, assuming > 50% should indicate
+    # a strong relation
+    if score[2] < 0.5:
+        return None
+    else:
+        return f"{score[0]},{score[1]},{score[2]}\n"
 
 start_time = time.time()
 
@@ -51,7 +57,8 @@ target_file = '../data/MusMusculusDATA/TermsWithProteins.csv.gz'
 df = pd.read_csv(target_file, compression='gzip')
 df['proteins'] = df['proteins'].apply(eval).apply(set)
 df = df[['external_id', 'proteins']]
-#t df = pd.DataFrame({'proteins': [{1, 2 , 'c'}, {1, 2, 3, 'd'}, {1, 2, 3, 'a', 'b'}], 'external_id': ['a','b','c']})
+#t df = df.head(200)
+#t df = pd.DataFrame({'proteins': [{1, 2 , 'c'}, {1, 2, 3, 'd'}, {1, 2, 3, 'a', 'b'}, {'bla'}], 'external_id': ['a','b','c', 'd']})
 
 # calculate the sizes of each element
 # this will be used later when calcualted overlap score
@@ -61,8 +68,8 @@ score_file = "../data/MusMusculusDATA/functional_terms_overlap.csv.gz"
 start_time = time.time()
 with gzip.open(score_file, "wb") as f:
     pool = multiprocessing.Pool()
-    positions = list(itertools.combinations(range(len(df)), 2))
-    results = pool.map(cal_overlap_score_worker, positions)
+    results = pool.map(cal_overlap_score_worker, itertools.combinations(range(len(df)), 2))
+    results = [ele for ele in results if ele != None]
     f.write("".join(results).encode())
 print(f'completed overlap calculation and saved in {score_file}')
 
