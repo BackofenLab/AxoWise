@@ -16,17 +16,17 @@ import time
 
 def cal_overlap_score(id1, id2, set1, set2, size1, size2):
     """
-    calculate the overlap between two lists measured by
-    the fraction of smaller list that corresponds to
+    calculate the overlap between two sets measured by
+    the fraction of smaller set, which corresponds to
     the size of overlap
     """
 
     # calculate the size of intersection
     intersection_size = len(set1 & set2)
 
-    # the sizes are pre-calculated
-    # so when performing pairwise comparison of a long list
-    # len() won't be repeated over the same list
+    # the sizes of sets are pre-calculated
+    # so when performing pairwise comparison
+    # len() won't be repeated over the same set
     min_set = min(size1, size2)
 
     return id1, id2, intersection_size / min_set
@@ -69,7 +69,10 @@ start_time = time.time()
 with gzip.open(score_file, "wb") as f:
     pool = multiprocessing.Pool()
     results = pool.map(cal_overlap_score_worker, itertools.combinations(range(len(df)), 2))
-    results = [ele for ele in results if ele != None]
+    # remove None from the list
+    # None corresponds to overlap sta < 0.5
+    results = set(results)
+    results.remove(None)
     f.write("".join(results).encode())
 print(f'completed overlap calculation and saved in {score_file}')
 
