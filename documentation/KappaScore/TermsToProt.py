@@ -3,6 +3,7 @@ import argparse
 import sys
 import csv
 import kappa_score
+import subset
 from ast import literal_eval
 
 def initParser():
@@ -11,7 +12,7 @@ def initParser():
     # metavar: alternative name for input when using help
     # nargs: number of arguments
     parser.add_argument('prot_terms_file', type=str,
-        help='Converts protein-term file to term-proteins file')
+        help='STRING_organism-file, needed for conversion from protein-term file to term-proteins file')
     parser.add_argument('--proteins', type=str,
         dest='prot', help="File that contains all proteins of an organism")
     #parser.add_argument('--df', type=str,
@@ -93,10 +94,10 @@ if __name__ == '__main__':
         
         for index, j in df.iterrows():
             dic = {}
-            dic['term_id'] = j['Term']
-            dic['name'] = j['Description']
-            dic['category'] = j['Category']
-            dic['proteins'] = j['Proteins']
+            dic['term_id'] = j['external_id']
+            dic['name'] = j['name']
+            dic['category'] = j['category']
+            dic['proteins'] = j['proteins']
             lst += [dic]
         # print(lst)
         proteins = df_prot['#string_protein_id'].tolist()
@@ -105,7 +106,26 @@ if __name__ == '__main__':
         # print(len(proteins))
         
         # print("List: ", lst)
-        df = kappa_score.getKappaScore(lst, proteins)# , df_kapp)
+        df_kappa = kappa_score.getKappaScore(lst, proteins)# , df_kapp)
+        
+        df_overlap = subset.get_subsets(lst)
+        
+        lst_kappa = df_kappa["source"].tolist()
+        lst_kappa += df_kappa["target"].tolist()
+        set_kappa = set(lst_kappa)
+        
+        for i,j in df_overlap.iterrows():
+            if (j["source"] not in set_kappa):
+                print(j["source"])
+                df_overlap.drop(i, inplace=True)
+        for i,j in df_overlap.iterrows():
+            if (j["target"] not in set_kappa):
+                print(j["target"])
+                df_overlap.drop(i, inplace=True)
+            #if (j["target"] not in set_kappa):
+            #    df_overlap.drop(i, inplace=True)
+        
+        df_overlap.to_csv("Kappa_Edges_test_overlap.csv", index = False, sep=',')
 
         
         
