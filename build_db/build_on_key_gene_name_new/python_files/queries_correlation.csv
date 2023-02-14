@@ -1,0 +1,59 @@
+"# Upload the differential expression relationship for OR timeframe: wt12h to wt0h"
+"Create (t:rel_or_wt12h_wt0h);"
+"Load csv With HEADERS from 'file:///temp.csv' As map Create (t:rel_or_wt12h_wt0h_temp) set t = map;"
+"Match (p:OpenRegion), (r:rel_or_wt12h_wt0h),(a:rel_or_wt12h_wt0h_temp) where (p.nearest_index = a.nearest_index) Create (r)-[j:isabout]->(p) set j=a;"
+"MATCH (n) RETURN n LIMIT 0"
+"Match (t:rel_or_wt12h_wt0h_temp) delete t;"
+
+
+"# Upload the differential expression for proteins timeframe: wt24h to wt0h"
+"Create (t:rel_protein_wt6h_wt0h);"
+"Load csv With HEADERS from 'file:///temp.csv' As map Create (t:rel_protein_wt6h_wt0h_temp) set t = map;"
+"Match (p:Protein), (r:rel_protein_wt6h_wt0h),(a:rel_protein_wt6h_wt0h_temp) where (toLower(p.SYMBOL) = toLower(a.SYMBOL)) Create (r)-[j:isabout]->(p) set j=a;"
+"MATCH (n) RETURN n LIMIT 0"
+"Match (t:rel_protein_wt6h_wt0h_temp) delete t;"
+
+
+"# Upload the TF and Protein correlation"
+"create (s:Association_TF_tar{Study: 1, Cell: 'Microglia'});"
+"Load csv With HEADERS from 'file:///temp.csv' as map Create (t:Association_temp) set t = map;" 
+"Match (a:Association_temp), (t:TranscriptionFactor{SYMBOL: a.TF}),(s:Association_TF_tar) Create (s)-[h:TF_protein_correlation]->(t)set h=a;"
+"Match (a:Association_temp), (p:Protein),(s:Association_TF_tar) Where (toLower(p.SYMBOL) = toLower(a.SYMBOL)) Create (s)-[h:Protein_TF_correlation]->(p) set h=a;"
+"match(a:Association_temp) delete a;"
+
+
+"# Upload the OR and Protein correlation"
+"create (s:Association_peak_tar{Study: 1, Cell: 'Microglia'});"
+"Load csv With HEADERS from 'file:///temp.csv' as map Create (t:Association_temp) set t = map;"            
+"Match (a:Association_temp), (p:Protein),(s:Association_peak_tar) Where (toLower(p.SYMBOL) = toLower(a.SYMBOL)) Create (s)-[h:Protein_OR_correlation]->(p) set h=a;"
+"Match (a:Association_temp), (t:OpenRegion{nearest_index: a.nearest_index}),(s:Association_peak_tar) Create (s)-[h:OR_Protein_correlation]->(t) set h=a;"          
+"match(a:Association_temp) delete a;"
+
+
+"# Upload the TF and OR correlation"
+"MATCH (n) RETURN n LIMIT 0"
+"Load csv With HEADERS from 'file:///temp.csv' as map Create (t:Association_temp) set t = map;"
+"match (a:Association_temp),(p:TranscriptionFactor{SYMBOL:a.TF}),(s:OpenRegion{nearest_index:a.peaks}) create (s)-[r:TF_motiv_cor]->(p);"
+"MATCH (n) RETURN n LIMIT 0"
+"match(a:Association_temp) delete a;"
+
+"# Upload the relationship between the Functional Terms and Proteins"
+"MATCH (n) RETURN n LIMIT 0"
+"CALL apoc.load.csv('temp.csv') YIELD map Create (p:temp) Set p = map;"
+"match (a:temp), (b:Protein), (c:FunctionalTerm) where (toLower(b.SYMBOL) = toLower(a.SYMBOL)) and (c.name = a.description) create (c)-[:connects_to]->(b);"
+"MATCH (n) RETURN n LIMIT 0"
+"match (p:temp) delete (p);"
+
+"# Upload the realtionship between the Funtional Terms"
+"MATCH (n) RETURN n LIMIT 0"
+"CALL apoc.load.csv('temp.csv') YIELD map Create (p:temp) Set p = map;"
+"MATCH (row:temp),(t1:FunctionalTerm {external_id:row.source}), (t2:FunctionalTerm {external_id:row.target}) CREATE (t1)-[:KAPPA {score: row.score}]->(t2);"
+"MATCH (n) RETURN n LIMIT 0"
+"match (p:temp) delete (p);"
+
+"# Upload the Protein and Protein relationships from string"
+"MATCH (n) RETURN n LIMIT 0"
+"CALL apoc.load.csv('temp.csv') YIELD map Create (p:temp) Set p = map;"
+"match (p:temp),(a:Protein),(b:Protein) where (toLower(p.protein1_SYMBOL) = toLower(a.SYMBOL)) and (toLower(p.protein2_SYMBOL) = toLower(b.SYMBOL)) create (a)-[:strings_protein_link{combined_score:p.combined_score }]->(b);"
+"MATCH (n) RETURN n LIMIT 0"
+"match (p:temp) delete (p);"
