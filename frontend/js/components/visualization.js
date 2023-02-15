@@ -24,7 +24,7 @@ Vue.component("visualization", {
     "active_term", "active_subset", "active_layer", "node_color_index",
     "edge_color_index", "d_value", "dark_theme_root","edge_thick",
     "unconnected_graph", "graph_flag", "protein_graph_save",
-    "term_graph_save"],
+    "term_graph_save","fdrvalue"],
     data: function() {
         return {
             rectangular_select: {
@@ -301,6 +301,37 @@ Vue.component("visualization", {
 
             sigma_instance.refresh();
         },
+        "fdrvalue": function(term) {
+            var com = this;
+
+            if (com.active_node != null) com.$emit("active-node-changed", null);
+
+
+            sigma_instance.graph.edges().forEach(function (e) {
+                // Nodes
+                var source = sigma_instance.graph.getNodeFromIndex(e.source);
+                var target = sigma_instance.graph.getNodeFromIndex(e.target);
+
+                // Ensembl IDs
+                if(source.attributes['FDR'] == 0){
+                    var source_value = 0;
+                }else {
+                    var source_value = Math.abs(Math.floor(Math.log10(source.attributes['FDR'])))
+                }
+                if(target.attributes['FDR'] == 0){
+                    var target_value = 0;
+                }else {
+                    var target_value = Math.abs(Math.floor(Math.log10(target.attributes['FDR'])))
+                }
+                
+                source.color = com.get_normalize2(source_value, 0, 10);
+                target.color = com.get_normalize2(target_value, 0, 10);
+                e.color = com.get_normalize2(source_value, 0, 10).replace(')', ', 0.2)').replace('rgb', 'rgba');
+                    
+            });
+
+            sigma_instance.refresh();
+        },
         "unconnected_graph": function (unconnected_proteins){
             var com = this;
 
@@ -477,6 +508,14 @@ Vue.component("visualization", {
             var rgb_value = d3.scaleLinear()
                             .domain([nmin, 0, nmax])
                             .range(["blue", "white", "red"])(data);
+
+            return rgb_value;
+        },
+        get_normalize2: function(data, nmin, nmax) {
+
+            var rgb_value = d3.scaleLinear()
+                            .domain([nmin, nmax])
+                            .range(["white", "red"])(data);
 
             return rgb_value;
         },

@@ -24,6 +24,7 @@ $(document).ready(function () {
             active_term: null,
             active_subset: null,
             active_layer: null,
+            fdrvalue: null,
             dark_theme_root: true,
             d_value: null,
             func_json: null,

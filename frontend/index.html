@@ -6,7 +6,7 @@
   <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1,user-scalable=no" />
 
-    <link rel="stylesheet" href="https://unpkg.com/vue-select@latest/dist/vue-select.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vue-select/3.20.2/vue-select.css">
     <link rel="stylesheet" type="text/css" href="style.css">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="shortcut icon" type="image/jpeg" href="images/bioinf-fr-logo-blau.jpg"/>
@@ -18,7 +18,7 @@
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-router/2.8.1/vue-router.min.js"></script>
+      <script src="https://unpkg.com/vue-router@3/dist/vue-router.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.6.1/d3.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
@@ -38,6 +38,7 @@
       <script src="js/components/functions/subset-dialog.js"></script>
       <script src="js/components/functions/modules.js"></script>
       <script src="js/components/toolbar/d-value.js"></script>
+      <script src="js/components/toolbar/fdrvalue.js"></script>
       <script src="js/components/toolbar/export-layout.js"></script>
       <script src="js/components/toolbar/connection.js"></script>
       <script src="js/components/home.js"></script>
@@ -79,6 +80,10 @@
                        v-bind:d_value="d_value"
                        v-on:d_value-changed="d_value = $event"
               ></d-value>
+              <fdrvalue v-bind:gephi_json="gephi_json"
+              v-bind:fdrvalue="fdrvalue"
+              v-on:fdrvalue-changed="fdrvalue = $event"
+              ></fdrvalue>
               <snapshot v-bind:gephi_json="gephi_json"
               ></snapshot>
               <tool-visualization v-bind:gephi_json="gephi_json"
@@ -128,6 +133,7 @@
                        v-bind:active_node="active_node"
                        v-bind:active_term="active_term"
                        v-bind:d_value="d_value"
+                       v-bind:fdrvalue="fdrvalue"
                        v-bind:unconnected_graph="unconnected_graph"
                        v-bind:func_enrichment="func_enrichment"
                        v-bind:func_json="func_json"
@@ -142,6 +148,7 @@
                        v-on:active-node-changed="active_node = $event"
                        v-on:active-term-changed="active_term = $event"
                        v-on:d_value-changed="d_value = $event"
+                       v-on:fdrvalue-changed="fdrvalue = $event"
                        v-on:active-subset-changed="active_subset = $event"
                        v-on:active-layer-changed="active_layer = $event"
                        v-on:func-json-changed="func_json = $event"

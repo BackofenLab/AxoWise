@@ -356,8 +356,6 @@ def terms_subgraph_api():
     # Functional terms
 
     list_enrichment = ast.literal_eval(request.form.get("func-terms"))
-    #print(list_enrichment)
-    #print(type(list_enrichment))
 
     # Filename generator
     filename = uuid.uuid4()
@@ -377,6 +375,7 @@ def terms_subgraph_api():
     list_term = []
     if list_enrichment is not None:
         list_term = [i['id'] for i in list_enrichment]
+    
     
     #if df_enrichment is not None:
     #    list_term = df_enrichment["term"].tolist()
@@ -457,6 +456,16 @@ def terms_subgraph_api():
     # nodes.to_csv("check", index=False, header=True)
     nodes = nodes.drop_duplicates(subset="external_id")
     
+    nodesterm = pd.DataFrame(list_enrichment)
+    
+    df2 = nodesterm.rename({'id': 'external_id'}, axis=1)
+    merged = pd.merge(df2[["external_id", "fdr_rate", "p_value"]], nodes, on="external_id")
+
+    # Add the two columns to df2
+    nodes = merged
+    
+    nodes["fdr_rate"] = nodes["fdr_rate"].fillna(0)
+    nodes["p_value"] = nodes["p_value"].fillna(0)
     
 
     edges = pd.DataFrame({
@@ -521,6 +530,7 @@ def terms_subgraph_api():
         df_node = nodes[nodes["external_id"] == node["id"]].iloc[0]
         # node["attributes"]["Description"] = df_node["description"]
         node["attributes"]["Ensembl ID"] = df_node["external_id"]
+        node["attributes"]["FDR"] = df_node["fdr_rate"]
         node["attributes"]["Name"] = df_node["name"]
         node["label"] = df_node["name"]                 # Comment this out if you want no node labels displayed
         # node["species"] = str(df_node["species_id"]) 
