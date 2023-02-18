@@ -147,7 +147,7 @@ if __name__ == "__main__":
     exp_DA = original_data_dir + 'exp_DA.csv'
     exp_DE = edited_data_dir + 'exp_de_proteins_filtered.csv'
     # run the functions
-    protein(exp_DE, edited_data_dir)
+    # protein(exp_DE, edited_data_dir)
     transcription_factor(exp_DE, edited_data_dir)
     rel_de(exp_DE, edited_data_dir)
     rel_nearest_distance(exp_DA, edited_data_dir)

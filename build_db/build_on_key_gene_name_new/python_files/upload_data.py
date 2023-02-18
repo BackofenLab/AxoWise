@@ -19,6 +19,7 @@ def upload_relationships(data: str, comment: str, query: list,
     function: Upload relationships in batches of 1 million to a neo4j database
     input:
         - csv file with relationships between nodes
+        - corresponding comment in regards to the query
         - pandas dataframe with the wanted queries
         - path to the import folder of neo4j
     """
@@ -44,8 +45,13 @@ def upload_relationships(data: str, comment: str, query: list,
     # if there is no second relationship, it is just a place holder query
     create_rel_2 = query[3]
 
+    # this matches the correlation nodes with the study and cell
+    # and then creates the relationships between them
+    # if there is no second relationship, it is just a place holder query
+    create_rel_3 = query[4]
+
     # this deletes the temporary nodes again because we dont need them
-    delete_temp_nodes = query[4]
+    delete_temp_nodes = query[5]
 
     # iterate over the chunks and upload the data
     for chunk in chunks:
@@ -63,8 +69,9 @@ def upload_relationships(data: str, comment: str, query: list,
             graph.run(create_temp_nodes)
             graph.run(create_rel_1)
             graph.run(create_rel_2)
+            graph.run(create_rel_3)
             graph.run(delete_temp_nodes)
-            print("Upload of the batch was sucessful.")
+            print("Query terminated sucessfull.")
         except Exception as e:
             print("Upload of the batch failed.")
             raise SystemExit(e)
@@ -76,12 +83,13 @@ def upload_relationships(data: str, comment: str, query: list,
 
 def upload_nodes(data: str, comment: str, query: str, path: str) -> None:
     """
-    function: Upload relationships in batches of 1 million to a neo4j database
+    function: Upload nodes
     input:
         - csv file with relationships between nodes
+        - corresponding comment in regards to the query
         - pandas dataframe with the wanted queries
         - path to the import folder of neo4j
-    """
+
     # read the data csv
     nodes = pd.read_csv(data, header=0)
 
@@ -102,6 +110,54 @@ def upload_nodes(data: str, comment: str, query: str, path: str) -> None:
 
     # delete the temporary csv file
     os.remove(path + "/temp.csv")
+    return (None)
+    """
+    # read data csv file in chunks of 1 million rows
+    chunks = pd.read_csv(data, chunksize=10**6, header=0)
+
+    # console feedback
+    print(comment)
+
+    # iterate over the chunks and upload the data
+    for chunk in chunks:
+        # feedback for the user
+        size_of_chunk = chunk.shape[0]
+        print(f"Uploading {size_of_chunk} entity nodes")
+
+        # write the chunks to csv file to a temporary file
+        # in the neo4j import folder
+        chunk.to_csv((path + "/temp.csv"), index=None)
+
+        # run the actual queries
+        try:
+            graph.run(query)
+            print("Query terminated sucessfull.")
+        except Exception as e:
+            print("Upload failed.")
+            raise SystemExit(e)
+
+        # delete the temporary csv file
+        os.remove(path + "/temp.csv")
+    return (None)
+
+
+def create_single_nodes(comment: str, query: str) -> None:
+    """
+    function: Create single nodes in the database
+    input:
+        - the corresponding comment in regards to the query
+        - pandas dataframe with the wanted queries
+    """
+    # console feedback
+    print(comment)
+
+    # try to run the query
+    try:
+        graph.run(query)
+        print("Query terminated sucessfull.")
+    except Exception as e:
+        print("Upload failed.")
+        raise SystemExit(e)
     return (None)
 
 
@@ -132,6 +188,17 @@ if __name__ == '__main__':
         raise SystemExit(e)
     path_to_import_dir = "/var/lib/neo4j/import"
 
+    # the query for the cell and study
+    query_cell_study = pd.read_csv("query_study_cell.csv", header=None)
+
+    # upload the nodes
+    for index, row in query_cell_study.iloc[:].iterrows():
+        if (index % 2 == 0):
+            comment = row[0]
+        else:
+            query = row[0]
+            create_single_nodes(comment, query)
+
     # the biological entities
     entities = ["TranscriptionFactor.csv", "OpenRegion.csv",
                 "string_proteins_filtered.csv",
@@ -154,12 +221,30 @@ if __name__ == '__main__':
     # the relationships, it is important that they are in the order in
     # which they are in the query file
     relationships = ["rel_or_wt12h_wt0h.csv",
+                     "rel_or_wt336h_wt0h.csv",
+                     "rel_or_wtRC12h_wt12h_padj.csv",
+                     "rel_or_wt12h_wt0h_padj.csv",
+                     "rel_or_wtRC12h_wt0h.csv",
+                     "rel_or_wtRC336h_wt0h_padj.csv",
+                     "rel_or_wt24h_wt0h.csv",
+                     "rel_or_wtRC12h_wt0h_padj.csv",
+                     "rel_or_wt24h_wt0h_padj.csv",
+                     "rel_or_wtRC12h_wt12h.csv",
                      "rel_protein_wt6h_wt0h.csv",
+                     "rel_protein_wtRC12h_wt6h.csv",
+                     "rel_protein_wt24h_wt0h.csv",
+                     "rel_protein_wt6h_wt0h_padj.csv",
+                     "rel_protein_wtRC12h_wt6h_padj.csv",
+                     "rel_protein_wt336h_wt0h.csv",
+                     "rel_protein_wtRC12h_wt0h_padj.csv",
+                     "rel_protein_wt24h_wt0h_padj.csv",
+                     "rel_protein_wtRC12h_wt0h.csv",
+                     "rel_protein_wtRC336h_wt0h_padj.csv",
                      "TF_target_cor_.csv",
                      "peak_target_cor_.csv",
                      "TF_motif_peak.csv",
                      "rel_string_funtional_terms_to_proteins.csv",
-                     "KappaEdges.csv",
+                     "OverlapEdges.csv",
                      "rel_string_proteins_to_proteins.csv"]
 
     # the query for the relationships
@@ -170,16 +255,18 @@ if __name__ == '__main__':
 
     # upload the relationships
     for index, row in query_relationships.iloc[:].iterrows():
-        if (index % 6 == 0):
+        if (index % 7 == 0):
             comment = row[0]
-            file = relationships[int(index/6)]
-        elif (index % 6 == 1):
+            file = relationships[int(index/7)]
+        elif (index % 7 == 1):
             query.append(row[0])
-        elif (index % 6 == 2):
+        elif (index % 7 == 2):
             query.append(row[0])
-        elif (index % 6 == 3):
+        elif (index % 7 == 3):
             query.append(row[0])
-        elif (index % 6 == 4):
+        elif (index % 7 == 4):
+            query.append(row[0])
+        elif (index % 7 == 5):
             query.append(row[0])
         else:
             query.append(row[0])

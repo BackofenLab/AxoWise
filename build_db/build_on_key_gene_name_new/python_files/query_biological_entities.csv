@@ -16,4 +16,3 @@
 
 "# Upload the functional terms"
 "CALL apoc.load.csv('temp.csv') YIELD map Create (p:FunctionalTerm) Set p = map;" 
-
