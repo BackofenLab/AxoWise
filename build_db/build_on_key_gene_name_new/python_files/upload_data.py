@@ -22,6 +22,18 @@ def upload_relationships(data: str, comment: str, query: list,
         - corresponding comment in regards to the query
         - pandas dataframe with the wanted queries
         - path to the import folder of neo4j
+
+        This is for the future to give a console feedback on
+        how many nodes got created
+        if str(count_relation_ship_1) != '(No data)':
+            console_return = 'Suceeded uploading:'
+            console_return += str(count_relation_ship_1)[26:-1]
+            console_return += ' of the first relationship'
+            print(console_return)
+        if str(count_relation_ship_2) != '(No data)':
+            console_return = 'Suceeded uploading:'
+            console_return += str(count_relation_ship_2)[26:-1]
+            console_return += ' of the second relationship'
     """
     # read data csv file in chunks of 1 million rows
     chunks = pd.read_csv(data, chunksize=10**6, header=0)
@@ -32,6 +44,9 @@ def upload_relationships(data: str, comment: str, query: list,
     # this creates the source node
     # if there is no source needed, it is just a placeholder query
     create_source = query[0]
+
+    # the source node only gets created once so it runs here
+    graph.run(create_source)
 
     # this creates temporary nodes
     create_temp_nodes = query[1]
@@ -65,7 +80,6 @@ def upload_relationships(data: str, comment: str, query: list,
 
         # run the actual queries
         try:
-            graph.run(create_source)
             graph.run(create_temp_nodes)
             graph.run(create_rel_1)
             graph.run(create_rel_2)
@@ -89,28 +103,6 @@ def upload_nodes(data: str, comment: str, query: str, path: str) -> None:
         - corresponding comment in regards to the query
         - pandas dataframe with the wanted queries
         - path to the import folder of neo4j
-
-    # read the data csv
-    nodes = pd.read_csv(data, header=0)
-
-    # write the chunks to csv file to a temporary file
-    # in the neo4j import folder
-    nodes.to_csv((path + "/temp.csv"), index=None)
-
-    # console feedback
-    print(comment)
-
-    # try to run the query
-    try:
-        graph.run(query)
-        print("Query terminated sucessfull.")
-    except Exception as e:
-        print("Upload failed.")
-        raise SystemExit(e)
-
-    # delete the temporary csv file
-    os.remove(path + "/temp.csv")
-    return (None)
     """
     # read data csv file in chunks of 1 million rows
     chunks = pd.read_csv(data, chunksize=10**6, header=0)

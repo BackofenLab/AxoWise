@@ -2,7 +2,7 @@
 Author: Tillman Heisner
 Email: theisner@posteo.de
 
-This calls different python scripts, which download and edit csvs.
+This calls different python scripts
 """
 import subprocess
 import shutil

@@ -3,4 +3,3 @@
 
 "# Create the cell of the study"
 "Create (c:Cell{Study: 1, Cell: 'Microglia'});"
-
