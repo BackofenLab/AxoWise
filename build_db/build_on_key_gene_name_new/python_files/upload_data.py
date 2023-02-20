@@ -207,7 +207,7 @@ if __name__ == '__main__':
             file = entities[int(index/2)]
         else:
             query = row[0]
-            upload_nodes("../final_data/" + file, comment, query,
+            upload_nodes("../edited_data/" + file, comment, query,
                          neo4j_import_dir)
 
     # the relationships, it is important that they are in the order in
@@ -262,6 +262,6 @@ if __name__ == '__main__':
             query.append(row[0])
         else:
             query.append(row[0])
-            upload_relationships("../final_data/" + file, comment,
+            upload_relationships("../edited_data/" + file, comment,
                                  query, neo4j_import_dir)
             query = []
