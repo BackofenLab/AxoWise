@@ -1,0 +1,114 @@
+"# Upload the Transcriptionfactors;"
+"CALL apoc.load.csv('TranscriptionFactor.csv') YIELD map Create (t:TranscriptionFactor) Set t = map;"
+
+
+"# Upload the Open Regions;"     
+"CALL apoc.load.csv('OpenRegion.csv') YIELD map Create (o:OpenRegion) Set o = map;"
+
+
+"# Upload the Proteins;"
+"CALL apoc.load.csv('Proteins.csv') YIELD map Create (p:Protein) Set p = map;" 
+
+
+"# Upload the Study;"           
+"Create (s:Study{Nr: 1, Cell: 'Microglia'});"
+
+
+"# Upload the Cell;"
+"Create (c:Cell{Study: 1, Cell: 'Microglia'});"
+
+
+"# Create the nearest distance relationship between OR and Protein;"
+"Match (p:Protein), (o:OpenRegion) where (p.SYMBOL = toLower(o.nearest_SYMBOL)) Call apoc.create.relationship(o, 'nearest_distance', {}, p) YIELD rel return count(rel);"
+
+
+"# Upload the TF Protein correlation as temporary nodes, because it is faster than to create relationships from csv"
+"Load csv With HEADERS from 'file:///TF_target_cor.csv' as map Create (t:Association_temp) set t = map;" 
+
+
+"# Create the node which links TF and Protein (actuall correlation node);"
+"create (s:Association_TF_tar{Study: 1, Cell: 'Microglia'});"
+
+
+"# Match the correlation node to the corresponding TF and create an edge between them;"
+"Match (a:Association_temp), (t:TranscriptionFactor{SYMBOL: a.TF}),(s:Association_TF_tar) Create (s)-[h:hasinformationabout]->(t)set h=a;"
+
+
+"# Match the correlation node to the corresponding Protein and create an edge between them;"
+"Match (a:Association_temp), (p:Protein{SYMBOL: toLower(a.SYMBOL)}),(s:Association_TF_tar) Create (s)-[h:hasinformationabout]->(p) set h=a;"
+
+
+"# Delete the temporary association node, since we have the association as an edge from correlation node to TF and Protein;"
+"match(a:Association_temp) delete a;"
+
+
+"# Upload the OR Protein correlation as temporary nodes, because it is faster than to create relationships from csv;"
+"Load csv With HEADERS from 'file:///peak_target_cor.csv' as map Create (t:Association_temp) set t = map;"
+
+
+"# Create the node which links OR and Protein (actuall correlation node);"             
+"create (s:Association_peak_tar{Study: 1, Cell: 'Microglia'});"
+
+
+"# Match the correlation node to the corresponding Protein and create an edge between them;"
+"Match (a:Association_temp), (p:Protein{SYMBOL: toLower(a.SYMBOL)}),(s:Association_peak_tar) Create (s)-[h:hasinformationabout]->(p) set h=a;"
+
+
+"# Match the correlation node to the corresponding Open Region and create an edge between them;"
+"Match (a:Association_temp), (t:OpenRegion{nearest_index: a.nearest_index}),(s:Association_peak_tar) Create (s)-[h:hasinformationabout]->(t) set h=a;"
+
+
+"# Delete the temporary association nodes, since we have the association as an edge from correlation node to TF and Protein;"           
+"match(a:Association_temp) delete a;"
+
+
+"# Upload the TF OR correlation as temporary nodes, because it is faster than to create relationships from csv;"
+"Load csv With HEADERS from 'file:///TF_motif_peak.csv' as map Create (t:Association_temp) set t = map;"
+
+
+"# Create the correlation edge between them;"
+"match (a:Association_temp),(p:TranscriptionFactor{SYMBOL:a.TF}),(s:OpenRegion{nearest_index:a.peaks}) create (s)-[r:TF_motiv_cor]->(p) set r=a return count(r);"
+
+
+"# Delete the temporary association nodes, since we have the association as an edge, between TF an OR;"
+"match(a:Association_temp) delete a;"
+
+
+"# Upload the string relationships as temporary nodes, because it is faster than to create relationships from csv;"
+"CALL apoc.load.csv('rel_string_proteins_to_proteins.csv') YIELD map Create (p:temp) Set p = map;"
+
+
+"# Create the edges for the relationship between string proteins;"
+"match (p:temp),(a:Protein),(b:Protein) where (toLower(p.protein1_prefered_name) = a.SYMBOL) and (toLower(p.protein2_prefered_name) = b.SYMBOL) create (a)-[:strings_protein_link{combined_score:p.combined_score }]->(b);"
+
+
+"# Delete the temporary relation nodes, since we have the relationships as edges between the proteins;"
+"match (p:temp) delete (p);"
+
+
+"# Upload the Functional Terms;"
+"CALL apoc.load.csv('KappaTerms.csv') YIELD map Create (p:FunctionalTerm) Set p = map;"
+
+
+"# Upload the relationship between the functional terms and proteins as temporary nodes, because it is faster than creating a relationship from a csv;"
+"CALL apoc.load.csv('rel_string_funtional_terms_to_proteins.csv') YIELD map Create (p:temp) Set p = map;"
+
+
+"# Create the edges for the relationship between the functional terms and proteins;"
+"match (a:temp), (b:Protein), (c:FunctionalTerm) where (b.SYMBOL = toLower(a.preferred_name)) and (c.name = a.description) create (c)-[:connects_to]->(b);"
+
+
+"# Delete the temporary nodes;"
+"match (p:temp) delete (p);"
+                  
+
+"# Upload the realtionship between the Funtional Terms as temporary nodes ;"
+"CALL apoc.load.csv('KappaEdges.csv') YIELD map Create (p:temp) Set p = map;"
+
+
+"# create the edge for the relationship between Functional Terms;"
+"MATCH (row:temp),(t1:FunctionalTerm {external_id:row.source}), (t2:KappaTerm {external_id:row.target}) CREATE (t1)-[:KAPPA {score: row.score}]->(t2);"
+
+
+"# delete the temporary nodes"
+"match (p:temp) delete (p);"
