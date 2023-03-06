@@ -48,6 +48,14 @@ def upload_relationships(data: str, comment: str, query: list,
     # the source node only gets created once so it runs here
     graph.run(create_source)
 
+    # this matches the correlation nodes with the study and cell
+    # and then creates the relationships between them
+    # if there is no second relationship, it is just a place holder query
+    create_rel_study_cell_source = query[4]
+
+    #these relationships only get created once so it runs here
+    graph.run(create_rel_study_cell_source)
+
     # this creates temporary nodes
     create_temp_nodes = query[1]
 
@@ -59,11 +67,6 @@ def upload_relationships(data: str, comment: str, query: list,
     # and then creates the second relationship
     # if there is no second relationship, it is just a place holder query
     create_rel_2 = query[3]
-
-    # this matches the correlation nodes with the study and cell
-    # and then creates the relationships between them
-    # if there is no second relationship, it is just a place holder query
-    create_rel_3 = query[4]
 
     # this deletes the temporary nodes again because we dont need them
     delete_temp_nodes = query[5]
@@ -83,7 +86,6 @@ def upload_relationships(data: str, comment: str, query: list,
             graph.run(create_temp_nodes)
             graph.run(create_rel_1)
             graph.run(create_rel_2)
-            graph.run(create_rel_3)
             graph.run(delete_temp_nodes)
             print("Query terminated sucessfull.")
         except Exception as e:
@@ -235,6 +237,7 @@ if __name__ == '__main__':
                      "TF_target_cor_.csv",
                      "peak_target_cor_.csv",
                      "TF_motif_peak.csv",
+                     "rel_nearest_distance.csv",
                      "rel_string_funtional_terms_to_proteins.csv",
                      "OverlapEdges.csv",
                      "rel_string_proteins_to_proteins.csv"]
