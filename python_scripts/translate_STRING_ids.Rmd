@@ -17,6 +17,8 @@ library(dplyr)
 library(data.table)
 library(biomaRt)
 library(httr)
+library(AnnotationDbi)
+library(org.Mm.eg.db)
 ```
 
 ```{r buld_functions}
@@ -381,4 +383,23 @@ for (i in 1:nrow(string_SYMBOL_ENSEMBL_)){
 symbol_ensembl_alias <- merge(string_SYMBOL_ENSEMBL, symbol_alias, by.x='preferred_name', by.y='SYMBOL', all.x=TRUE)
 
 fwrite(symbol_ensembl_alias, "../data/string_SYMBOL_ENSEMBL.tsv.gz", sep = "\t", row.names = FALSE, quote = FALSE, na = 'NA', compress = "gzip")
+```
+
+
+```{r ensem_to_entrez}
+string_SYMBOL_ENSEMBL <- fread("../data/string_SYMBOL_ENSEMBL.tsv.gz", sep = "\t", header = TRUE)
+string_SYMBOL_ENSEMBL %>% head(1)
+
+# convert ENSEMBL IDs in exp_DE to ENTREZID
+ensembl_entrez <- mapIds(org.Mm.eg.db,
+       keys=string_SYMBOL_ENSEMBL$ENSEMBL, #Column containing Ensembl gene ids
+       column="ENTREZID",
+       keytype="ENSEMBL",
+       multiVals="first")
+
+string_SYMBOL_ENSEMBL$ENTREZID <-  ensembl_entrez[string_SYMBOL_ENSEMBL$ENSEMBL]
+# replace NULL values in the list column with "NA"
+string_SYMBOL_ENSEMBL$ENTREZID <- lapply(string_SYMBOL_ENSEMBL$ENTREZID, function(x) ifelse(is.null(x), "NA", x))
+
+fwrite(string_SYMBOL_ENSEMBL, "../data/string_SYMBOL_ENSEMBL.tsv.gz", sep = "\t", row.names = FALSE, quote = FALSE, na = 'NA', compress = "gzip")
 ```
