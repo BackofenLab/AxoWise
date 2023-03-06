@@ -1,18 +1,18 @@
 "# Upload the Transcriptionfactors"
-"CALL apoc.load.csv('temp.csv') YIELD map Create (t:TranscriptionFactor) Set t = map;"
+"Load csv With HEADERS from 'file:///temp.csv' as map Create (t:TranscriptionFactor) Set t = map;"
 
 
 "# Upload the Open Regions"
-"CALL apoc.load.csv('temp.csv') YIELD map Create (o:OpenRegion) Set o = map;"
+"Load csv With HEADERS from 'file:///temp.csv' as map Create (o:OpenRegion) Set o = map;"
 
 
 "# Upload the string proteins"
-"CALL apoc.load.csv('temp.csv') YIELD map Create (p:Protein) Set p = map;"
+"Load csv With HEADERS from 'file:///temp.csv' as map Create (p:Protein) Set p = map;"
 
 
 "# Upload the proteins unique to the exp data"
-"CALL apoc.load.csv('temp.csv') YIELD map Create (p:Protein) Set p = map;"
+"Load csv With HEADERS from 'file:///temp.csv' as map Create (p:Protein) Set p = map;"
 
 
 "# Upload the functional terms"
-"CALL apoc.load.csv('temp.csv') YIELD map Create (p:FunctionalTerm) Set p = map;"
+"Load csv With HEADERS from 'file:///temp.csv' as map Create (p:FunctionalTerm) Set p = map;"
