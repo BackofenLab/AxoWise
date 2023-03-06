@@ -17,11 +17,7 @@ if __name__ == '__main__':
     functional_terms_dir_path = "../original_data/functional_terms_data/"
     edited_data_dir = "../edited_data/"
     # Use shutil.copy to copy some files
-    exp_correlations = ["peak_target_cor_.csv", "TF_motif_peak.csv",
-                        "TF_target_cor_.csv"]
     functional_terms_data = ["KappaTerms.csv", "OverlapEdges.csv"]
-    for file in exp_correlations:
-        shutil.copy(exp_data_dir_path + file, edited_data_dir + file)
     for file in functional_terms_data:
         shutil.copy(functional_terms_dir_path + file, edited_data_dir + file)
     # run the files
