@@ -36,7 +36,8 @@ if __name__ == '__main__':
                      "TF_motif_peak.csv",
                      "rel_string_funtional_terms_to_proteins.csv",
                      "OverlapEdges.csv",
-                     "rel_string_proteins_to_proteins.csv"]
+                     "rel_string_proteins_to_proteins.csv",
+                     "rel_nearest_distance.csv"]
 
     OR = pd.DataFrame({'name': []})
 
@@ -48,16 +49,23 @@ if __name__ == '__main__':
     df.rename(columns={"nearest_index": "name"}, inplace=True)
     OR = pd.concat([OR, df[~df['name'].isin(OR['name'])]], ignore_index=True)
 
+    # rel_nearest_distance.csv
+    df = pd.read_csv(("../edited_data/" + relationships[26]),
+                     nrows=number_rows)
+    df.to_csv(("../final_data/" + relationships[26]), index=None)
+    df.rename(columns={'nearest_index': 'name'}, inplace=True)
+    OR = pd.concat([OR, df[~df['name'].isin(OR['name'])]], ignore_index=True)
+
     # peak_target_cor.csv
     df = pd.read_csv(("../edited_data/" + relationships[21]),
-                     nrows=number_rows, sep='\t')
+                     nrows=number_rows)
     df.to_csv(("../final_data/" + relationships[21]), index=None)
     df.rename(columns={'nearest_index': 'name'}, inplace=True)
     OR = pd.concat([OR, df[~df['name'].isin(OR['name'])]], ignore_index=True)
 
     # TF_motif_peak.csv
     df = pd.read_csv(("../edited_data/" + relationships[22]),
-                     nrows=number_rows, sep='\t')
+                     nrows=number_rows)
     df.to_csv(("../final_data/" + relationships[22]), index=None)
     df.rename(columns={'peaks': 'name'}, inplace=True)
     OR = pd.concat([OR, df[~df['name'].isin(OR['name'])]], ignore_index=True)
@@ -73,7 +81,7 @@ if __name__ == '__main__':
 
     # TF_target_cor.csv
     df = pd.read_csv(("../edited_data/" + relationships[20]),
-                     nrows=number_rows, sep='\t')
+                     nrows=number_rows)
     df.to_csv(("../final_data/" + relationships[20]), index=None)
 
     Proteins = pd.concat([Proteins, df[~df['SYMBOL'].isin(Proteins['SYMBOL'])]], ignore_index=True)
@@ -86,8 +94,15 @@ if __name__ == '__main__':
 
     # peak_target_cor.csv
     df = pd.read_csv(("../edited_data/" + relationships[21]),
-                     nrows=number_rows, sep='\t')
+                     nrows=number_rows)
     df.rename(columns={'SYMBOL': 'SYMBOL'}, inplace=True)
+    Proteins = pd.concat([Proteins, df[~df['SYMBOL'].isin(Proteins['SYMBOL'])]], ignore_index=True)
+
+    # rel_nearest_distance.csv
+    df = pd.read_csv(("../edited_data/" + relationships[26]),
+                     nrows=number_rows)
+    df.to_csv(("../final_data/" + relationships[26]), index=None)
+    df.rename(columns={'nearest_SYMBOL': 'SYMBOL'}, inplace=True)
     Proteins = pd.concat([Proteins, df[~df['SYMBOL'].isin(Proteins['SYMBOL'])]], ignore_index=True)
 
     # rel_string_proteins_to_proteins.csv
@@ -133,14 +148,14 @@ if __name__ == '__main__':
 
     # TF_target_cor.csv
     df = pd.read_csv(("../edited_data/" + relationships[20]),
-                     nrows=number_rows, sep='\t')
+                     nrows=number_rows)
     TranscriptionFactors = pd.concat([TranscriptionFactors, 
                                   df[~df['TF'].isin(TranscriptionFactors['TF'])]], 
                                  ignore_index=True)
 
     # TF_motif_peak.csv
     df = pd.read_csv(("../edited_data/" + relationships[22]),
-                     nrows=number_rows, sep='\t')
+                     nrows=number_rows)
     TranscriptionFactors = pd.concat([TranscriptionFactors, 
                                   df[~df['TF'].isin(TranscriptionFactors['TF'])]], 
                                  ignore_index=True)
