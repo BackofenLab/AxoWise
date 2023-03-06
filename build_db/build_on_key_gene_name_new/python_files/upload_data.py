@@ -200,7 +200,7 @@ if __name__ == '__main__':
                 "KappaTerms.csv"]
 
     # the query for the biological entities
-    query_entities = pd.read_csv("query_biological_entities.csv", header=None)
+    query_entities = pd.read_csv("queries_biological_entities.csv", header=None)
 
     # upload the biological entites
     for index, row in query_entities.iloc[:].iterrows():
