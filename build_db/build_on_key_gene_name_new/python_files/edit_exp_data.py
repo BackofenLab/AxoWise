@@ -45,6 +45,21 @@ def rel_nearest_distance(data: str, target_dir: str):
     df = df[['nearest_index', 'nearest_SYMBOL']]
     df.to_csv(target_dir + '/rel_nearest_distance.csv', index=False)
 
+def rel_TF_motif_peak(data: str, target_dir: str):
+    # read the data into panda frame
+    df = pd.read_csv(data, sep='\t')
+    df.to_csv(target_dir + '/TF_motif_peak.csv', index=False)
+
+def rel_peak_target_cor_(data: str, target_dir: str):
+    # read the data into panda frame
+    df = pd.read_csv(data, sep='\t')
+    df.to_csv(target_dir + '/peak_target_cor_.csv', index=False)
+
+def rel_TF_target_cor_(data: str, target_dir: str):
+    # read the data into panda frame
+    df = pd.read_csv(data, sep='\t')
+    df.to_csv(target_dir + '/TF_target_cor_.csv', index=False)
+
 
 def rel_de(data: str, target_dir: str):
     # read the data into panda frame
@@ -144,8 +159,12 @@ if __name__ == "__main__":
     original_data_dir = parent_dir + '/original_data/exp_data/'
     # define the path to the target diretory
     edited_data_dir = parent_dir + '/edited_data/'
+    # path to the files
     exp_DA = original_data_dir + 'exp_DA.csv'
     exp_DE = edited_data_dir + 'exp_de_proteins_filtered.csv'
+    TF_target_cor_ = original_data_dir + 'TF_target_cor_.csv'
+    peak_target_cor_ = original_data_dir + 'peak_target_cor_.csv'
+    TF_motif_peak = original_data_dir + 'TF_motif_peak.csv'
     # run the functions
     # protein(exp_DE, edited_data_dir)
     transcription_factor(exp_DE, edited_data_dir)
@@ -153,5 +172,8 @@ if __name__ == "__main__":
     rel_nearest_distance(exp_DA, edited_data_dir)
     open_region(exp_DA, edited_data_dir)
     rel_da(exp_DA, edited_data_dir)
+    rel_peak_target_cor_(peak_target_cor_, edited_data_dir)
+    rel_TF_motif_peak(TF_motif_peak, edited_data_dir)
+    rel_TF_target_cor_(TF_target_cor_, edited_data_dir)
     output = "Edited differential expression files written to: "
     print(output + edited_data_dir)
