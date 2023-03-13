@@ -233,3 +233,11 @@
 "MATCH (n) RETURN n LIMIT 0"
 "MATCH (n) RETURN n LIMIT 0"
 "match (p:temp) delete (p);"
+
+"# Upload the mean count rel for proteins"
+"Create (t:mean_count{Study: 1, Cell: 'Microglia'});"
+"Load csv With HEADERS from 'file:///temp.csv' As map Create (t:mean_count_temp) set t = map;"
+"Match (p:Protein), (r:mean_count),(a:mean_count_temp) where (toLower(p.SYMBOL) = toLower(a.SYMBOL)) Create (r)-[j:isabout]->(p) set j=a return count (j);"
+"MATCH (n) RETURN n LIMIT 0"
+"Match (n:mean_count_temp),(s:Study{Nr:n.Study,Cell:n.Cell}), (c:Cell{Study:n.Study,Cell:n.Cell}) Create (s)-[j:study_is_about]->(n)<-[a:cell_is_about]-(c);"
+"Match (t:mean_count_temp) delete t;"

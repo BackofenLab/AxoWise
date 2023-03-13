@@ -4,7 +4,7 @@ Email: theisner@posteo.de
 
 This connects to the local neo4j database. It expects that the files, which are
 used for building the example database, with gene name as the primary key, to
-be in this path "../edited_data/".
+be in this path "../final_data/".
 """
 
 from py2neo import Graph
@@ -209,7 +209,7 @@ if __name__ == '__main__':
             file = entities[int(index/2)]
         else:
             query = row[0]
-            upload_nodes("../edited_data/" + file, comment, query,
+            upload_nodes("../final_data/" + file, comment, query,
                          neo4j_import_dir)
 
     # the relationships, it is important that they are in the order in
@@ -240,7 +240,8 @@ if __name__ == '__main__':
                      "rel_nearest_distance.csv",
                      "rel_string_funtional_terms_to_proteins.csv",
                      "OverlapEdges.csv",
-                     "rel_string_proteins_to_proteins.csv"]
+                     "rel_string_proteins_to_proteins.csv",
+                     "rel_mean_count.csv"]
 
     # the query for the relationships
     query_relationships = pd.read_csv("queries_correlation.csv", header=None)
@@ -265,6 +266,6 @@ if __name__ == '__main__':
             query.append(row[0])
         else:
             query.append(row[0])
-            upload_relationships("../edited_data/" + file, comment,
+            upload_relationships("../final_data/" + file, comment,
                                  query, neo4j_import_dir)
             query = []
