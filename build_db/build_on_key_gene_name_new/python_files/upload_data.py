@@ -53,7 +53,7 @@ def upload_relationships(data: str, comment: str, query: list,
     # if there is no second relationship, it is just a place holder query
     create_rel_study_cell_source = query[4]
 
-    #these relationships only get created once so it runs here
+    # these relationships only get created once so it runs here
     graph.run(create_rel_study_cell_source)
 
     # this creates temporary nodes
@@ -200,7 +200,8 @@ if __name__ == '__main__':
                 "KappaTerms.csv"]
 
     # the query for the biological entities
-    query_entities = pd.read_csv("queries_biological_entities.csv", header=None)
+    query_entities = pd.read_csv("queries_biological_entities.csv",
+                                 header=None)
 
     # upload the biological entites
     for index, row in query_entities.iloc[:].iterrows():
