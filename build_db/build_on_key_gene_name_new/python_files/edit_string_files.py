@@ -21,6 +21,10 @@ def csvs_to_dataframe(proteins: str, rel_proteins: str,
     df_proteins = pd.read_csv(proteins)
     df_rel_proteins = pd.read_csv(rel_proteins)
     df_funtional_term_edges = pd.read_csv(funtional_term_edges)
+    # rename column
+    df_funtional_term_edges.rename(columns={"#string_protein_id":
+                                            "string_protein_id"},
+                                   inplace=True)
     return (df_proteins, df_rel_proteins, df_funtional_term_edges)
 
 
@@ -38,7 +42,7 @@ def filter_data_frames(proteins: pd.DataFrame,
         filtered to contain only certain values of the column categories
     """
     # filter data frame proteins
-    columns_to_select = ['#string_protein_id', 'SYMBOL']
+    columns_to_select = ['string_protein_id', 'SYMBOL']
     filtered_proteins = proteins[columns_to_select]
     # filter data frame funtional_term edges
     categories_to_select = ['Reactome Pathways',
@@ -63,15 +67,15 @@ def rel_string_proteins_with_symbol_name(proteins: pd.DataFrame, rel_proteins:
     # Set the key column for both DataFrames
     key_col1 = 'protein1'
     key_col2 = 'protein2'
-    key_col3 = '#string_protein_id'
+    key_col3 = 'string_protein_id'
     # add prefered name for protein1
     merged_df1 = pd.merge(rel_proteins, proteins, left_on=key_col1,
                           right_on=key_col3)
     merged_df2 = pd.merge(merged_df1, proteins, left_on=key_col2,
                           right_on=key_col3)
     # select the columns that are wanted in the result
-    result = merged_df2.drop(['#string_protein_id_x',
-                              '#string_protein_id_y'], axis=1)
+    result = merged_df2.drop(['string_protein_id_x',
+                              'string_protein_id_y'], axis=1)
     # rename columns
     result = result.rename(columns={"SYMBOL_x":
                                     "protein1_SYMBOL",
@@ -90,7 +94,7 @@ def rel_functional_term_with_symbol_name(proteins: pd.DataFrame,
     output: dataframe where the string-ids are matched with prefered gene name
     """
     # Set the key column for both DataFrames
-    key_col = '#string_protein_id'
+    key_col = 'string_protein_id'
     # add prefered name for protein1
     result = pd.merge(func_terms_rel, proteins, left_on=key_col,
                       right_on=key_col)

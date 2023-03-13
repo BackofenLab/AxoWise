@@ -67,6 +67,23 @@ def filter_for_value_bigger(file: str, key: str, value: int) -> pd.DataFrame:
     return (df[df[key] > int(value)])
 
 
+def edit_columns(df1: pd.DataFrame, df2: pd.DataFrame):
+    """
+    This edits the files such that the end files have the same columns.
+    It also renames columns, which are the same but named different.
+    """
+    # rename columns
+    df1.rename(columns={"#string_protein_id": "string_protein_id"},
+               inplace=True)
+    df1.rename(columns={"preferred_name": "SYMBOL"},
+               inplace=True)
+    df2.rename(columns={"annot": "annotation"}, inplace=True)
+    # add new columns
+    df1 = df1.assign(ENTREZID="NA")
+    df2 = df2.assign(string_protein_id="NA", protein_size="NA", aliases="NA")
+    return (df1, df2)
+
+
 if __name__ == '__main__':
     # Get current working directory
     current_dir = os.getcwd()
@@ -87,7 +104,6 @@ if __name__ == '__main__':
     # read the csvs
     string_proteins = pd.read_csv(path_to_string_proteins, sep='\t')
     exp_de_proteins = pd.read_csv(path_to_exp_de_proteins, sep='\t')
-    exp_de_proteins.head()
     # filter for rows where prefered_name is not NA
     string_proteins_filtered = delete_rows_with_val(string_proteins,
                                                     'preferred_name',
@@ -120,18 +136,20 @@ if __name__ == '__main__':
                                                     'ENSEMBL',
                                                     'NA',
                                                     True)
+    # edit the files such that they have the same columns
+    string_proteins_filtered, exp_de_proteins_filtered = edit_columns(
+        string_proteins_filtered, exp_de_proteins_filtered)
     # filter for proteins in exp_proteins which are present in string_proteins
     proteins_unique_to_exp_data = filter_for_rows(string_proteins_filtered,
                                                   exp_de_proteins_filtered,
-                                                  'preferred_name',
+                                                  'SYMBOL',
                                                   'SYMBOL',
                                                   False)
-    # rename preferred name to SYMBOL so the proteins have the same atribute
-    string_proteins_filtered.rename(columns={"preferred_name": "SYMBOL"},
-                                    inplace=True)
     # drop the unecesarry columns from proteins which are unique to exp data
     proteins_unique_to_exp_data = proteins_unique_to_exp_data.drop(
         proteins_unique_to_exp_data.columns[1:11], axis=1)
+    proteins_unique_to_exp_data = proteins_unique_to_exp_data.drop(
+        columns=["in_ATAC", "TF", "mean_count"])
     # write the results to a csv
     string_proteins_filtered.to_csv(edited_data_dir + target[0],
                                     index=False, na_rep='NA')

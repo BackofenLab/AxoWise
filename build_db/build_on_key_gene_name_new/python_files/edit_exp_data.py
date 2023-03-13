@@ -18,15 +18,6 @@ def open_region(data: str, target_dir: str):
     df.to_csv(target_dir + '/OpenRegion.csv', index=False)
 
 
-def protein(data: str, target_dir: str):
-    # read the data into panda frame
-    df = pd.read_csv(data)
-    # Remove all columns between column name  "wt6h_wt0h" to
-    # "wtRC12h_wt6h_padj"
-    df = df.drop(df.loc[:, "wt6h_wt0h":"wtRC12h_wt6h_padj"].columns, axis=1)
-    df.to_csv(target_dir + '/exp_de_proteins.csv', index=False, na_rep='NA')
-
-
 def transcription_factor(data: str, target_dir: str):
     # read the data into panda frame
     df = pd.read_csv(data)
@@ -45,15 +36,18 @@ def rel_nearest_distance(data: str, target_dir: str):
     df = df[['nearest_index', 'nearest_SYMBOL']]
     df.to_csv(target_dir + '/rel_nearest_distance.csv', index=False)
 
+
 def rel_TF_motif_peak(data: str, target_dir: str):
     # read the data into panda frame
     df = pd.read_csv(data, sep='\t')
     df.to_csv(target_dir + '/TF_motif_peak.csv', index=False)
 
+
 def rel_peak_target_cor_(data: str, target_dir: str):
     # read the data into panda frame
     df = pd.read_csv(data, sep='\t')
     df.to_csv(target_dir + '/peak_target_cor_.csv', index=False)
+
 
 def rel_TF_target_cor_(data: str, target_dir: str):
     # read the data into panda frame
@@ -151,6 +145,14 @@ def rel_da(data: str, target_dir: str):
     df10.to_csv(target_dir + '/rel_or_wtRC12h_wt12h_padj.csv', index=False)
 
 
+def rel_mean_count(data: str, target_dir: str):
+    # read the data into panda frame
+    df = pd.read_csv(data)
+    df = df[['SYMBOL', 'mean_count']]
+    df = df.assign(Study='1', Celltype='Microglia')
+    df.to_csv(target_dir + '/rel_mean_count.csv', index=False)
+
+
 if __name__ == "__main__":
     # Get the path to the parent of the current directory
     current_dir = os.getcwd()
@@ -166,9 +168,9 @@ if __name__ == "__main__":
     peak_target_cor_ = original_data_dir + 'peak_target_cor_.csv'
     TF_motif_peak = original_data_dir + 'TF_motif_peak.csv'
     # run the functions
-    # protein(exp_DE, edited_data_dir)
     transcription_factor(exp_DE, edited_data_dir)
     rel_de(exp_DE, edited_data_dir)
+    rel_mean_count(exp_DE, edited_data_dir)
     rel_nearest_distance(exp_DA, edited_data_dir)
     open_region(exp_DA, edited_data_dir)
     rel_da(exp_DA, edited_data_dir)

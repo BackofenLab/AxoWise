@@ -37,10 +37,10 @@ if __name__ == '__main__':
                      "rel_string_funtional_terms_to_proteins.csv",
                      "OverlapEdges.csv",
                      "rel_string_proteins_to_proteins.csv",
-                     "rel_nearest_distance.csv"]
+                     "rel_nearest_distance.csv",
+                     "rel_mean_count.csv"]
 
     OR = pd.DataFrame({'name': []})
-
     # time relationships OR
     for i in range(10):
         df = pd.read_csv(("../edited_data/" + relationships[i]),
@@ -103,6 +103,12 @@ if __name__ == '__main__':
                      nrows=number_rows)
     df.to_csv(("../final_data/" + relationships[26]), index=None)
     df.rename(columns={'nearest_SYMBOL': 'SYMBOL'}, inplace=True)
+    Proteins = pd.concat([Proteins, df[~df['SYMBOL'].isin(Proteins['SYMBOL'])]], ignore_index=True)
+    
+    # rrel_mean_count.csv
+    df = pd.read_csv(("../edited_data/" + relationships[27]),
+                     nrows=number_rows)
+    df.to_csv(("../final_data/" + relationships[27]), index=None)
     Proteins = pd.concat([Proteins, df[~df['SYMBOL'].isin(Proteins['SYMBOL'])]], ignore_index=True)
 
     # rel_string_proteins_to_proteins.csv
