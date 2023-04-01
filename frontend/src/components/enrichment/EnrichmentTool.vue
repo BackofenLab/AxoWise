@@ -1,0 +1,146 @@
+<template>
+    <div id="enrichment" class="tool-pane">
+            <div class="headertext">
+            <button v-on:click="open_pane()">Functional Enrichment:</button>
+            </div>
+            <div class="main-section">
+                <div class="enrichment-filtering">
+                    <input type="text" value="Search functional terms by name" v-model="search_raw" class="empty"/>
+                    <v-select id="vsel" placeholder="..." v-model="category" :options="filter_terms" :reduce="label => label.value" label="value" ></v-select>
+                </div>
+                <!-- <div v-if="await_load==false" class="term_number">
+                    <span>Terms: {{term_numbers}}</span>
+                </div> -->
+            <!-- <div v-if="await_load == true" class="loading_pane"></div> -->
+            <div class="results" v-if="terms !== null">
+                <div v-for="entry in filtered_terms" :key=entry>
+                    <a href="#" v-on:click="select_term(entry)">{{entry.name}}</a>
+                </div>
+                <div v-if="terms.length == 0">
+                    <i>No terms available.</i>
+                </div>
+            </div>
+            <button id="export-enrich-btn" v-on:click="export_enrichment()">Export</button>
+        </div>
+    </div>
+</template>
+
+<script>
+    export default{
+        name: 'EnrichmentTool',
+        props: ['gephi_data', 'active_layer'],
+        emits: ['active_term_changed'],
+        data() {
+            return {
+                api: {
+                    subgraph: "api/subgraph/enrichment",
+                },
+                terms: null,
+                search_raw: "",
+                filter_terms: this.$store.state.filter_terms,
+                category: ""
+            }
+        },
+        methods: {
+            open_pane(){
+                const div = document.querySelector('#enrichment');
+                if(!div.classList.contains('tool-pane-show')){
+                    div.classList.add("tool-pane-show");
+                }
+                else{
+                    div.classList.remove("tool-pane-show");
+                }
+            },
+            select_term(term) {
+                var com = this;
+
+                com.$emit("active_term_changed", term);
+            },
+            get_term_data() {
+                var com = this
+
+                var formData = new FormData()
+                formData.append('func-terms', JSON.stringify(com.terms))
+
+                this.axios
+                    .post("/api/subgraph/terms", formData)
+                    .then((response) => {
+                        this.$store.commit('assign_term_graph', response.data)
+                    })
+
+            }
+        },
+        watch: {
+            active_layer(subset){
+                var com = this
+
+                if(subset == null){
+                    com.terms = this.$store.state.enrichment_terms
+                    return
+                }
+
+                var formData = new FormData()
+
+                formData.append('proteins', subset)
+                formData.append('species_id', com.gephi_data.nodes[0].species)
+
+                this.axios
+                    .post(com.api.subgraph, formData)
+                    .then((response) => {
+                        com.terms = response.data.sort((t1, t2) => t1.fdr_rate - t2.fdr_rate)
+                    })
+
+            }
+
+        },
+        mounted() {
+            var com = this
+
+            var formData = new FormData()
+
+            formData.append('proteins', com.gephi_data.nodes.map(node => node.id))
+            formData.append('species_id', com.gephi_data.nodes[0].species)
+                
+            //POST request for functional enrichment
+            this.axios
+              .post(com.api.subgraph, formData)
+              .then((response) => {
+                this.$store.commit('assign_enrichment', response.data.sort((t1, t2) => t1.fdr_rate - t2.fdr_rate))
+                com.terms = this.$store.state.enrichment_terms
+                com.get_term_data(formData)
+                })
+        },
+        computed: {
+            regex() {
+                var com = this;
+                return RegExp(com.search_raw.toLowerCase());
+            },
+            filtered_terms() {
+                var com = this;
+                var filtered = com.terms;
+                
+                if (com.category) {
+                // If category is set, filter by category
+                filtered = filtered.filter(function(term) {
+                    return term.category === com.category;
+                });
+                }
+
+                if (com.search_raw !== "") {
+                // If search term is not empty, filter by search term
+                var regex = new RegExp(com.regex, 'i');
+                filtered = filtered.filter(function(term) {
+                    return regex.test(term.name);
+                });
+                }
+
+                return filtered;
+            },
+
+    },
+}
+</script>
+
+<style >
+
+</style>
