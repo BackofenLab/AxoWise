@@ -11,8 +11,15 @@ export default {
   components: {
     InputScreen
   },
-  data() {
-    return {
+  data(){
+    return{
+      navigation_path: null
+
+    }
+  },
+  mounted() {
+    if (this.$store.state.gephi_json != null) { 
+      window.location.reload();
     }
   }
 }

@@ -75,8 +75,6 @@ export default {
   },
   activated() {
 
-    this.gephi_data = this.$store.state.gephi_json.data
-
     const term = this.$store.state.enrichment
     const all_terms = this.$store.state.enrichment_terms
     if(term != null){

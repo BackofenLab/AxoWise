@@ -92,7 +92,9 @@ export default {
     },
     methods: {
         switch_terms() {
-            this.$router.push("terms")
+            if(this.$store.state.term_graph_data != null){
+                this.$router.push("terms")
+            }
         },
         switch_home() {
             this.$router.push("/")
