@@ -16,11 +16,6 @@ export default {
       navigation_path: null
 
     }
-  },
-  mounted() {
-    if (this.$store.state.gephi_json != null) { 
-      window.location.reload();
-    }
   }
 }
 </script>

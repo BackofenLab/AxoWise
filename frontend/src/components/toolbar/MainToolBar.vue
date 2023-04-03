@@ -97,7 +97,9 @@ export default {
             }
         },
         switch_home() {
-            this.$router.push("/")
+            this.$router.push('/').then(() => {
+                window.location.reload();
+            });
         },
         highlight(proteins) {
             var com = this
