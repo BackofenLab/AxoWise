@@ -6,8 +6,8 @@
 <script>
 import sigma from "sigma";
 import Graph from 'graphology'
-import domtoimage from 'dom-to-image';
 import {scaleLinear} from "d3-scale";
+import saveAsPNG from '../../rendering/saveAsPNG';
 
 var sigma_instance = null;
 
@@ -317,21 +317,9 @@ export default {
     },
     exportGraphAsImage() {
       // Get a reference to your Sigma.js container element
-      var container = sigma_instance.getContainer()
-
-      // Use dom-to-image to capture the container element as an image
-      domtoimage.toSvg(container, { bgcolor: 'black' })
-        .then(function(dataUrl) {
-          // Create a temporary link element to download the image
-          var link = document.createElement('a');
-          link.download = 'graph.svg';
-          link.href = dataUrl;
-          // Click the link to start the download
-          link.click();
-        })
-        .catch(function(error) {
-          console.error('Error exporting graph as image:', error);
-        });
+      const layers = ["edges", "nodes", "edgeLabels", "labels"]
+      saveAsPNG(sigma_instance, layers)
+      
     },
     show_unconnectedGraph(state){
       var com = this;
