@@ -5,7 +5,7 @@
 
 <script>
 import sigma from "sigma";
-import Graph from 'graphology'
+// import Graph from 'graphology'
 import {scaleLinear} from "d3-scale";
 import saveAsPNG from '../../rendering/saveAsPNG';
 
@@ -24,27 +24,17 @@ export default {
       endY: null,
       rectWidth: 0,
       rectHeight: 0,
-      state: null
+      state: null,
+      edge_opacity: 0.2,
     }
   },
   watch: {
     gephi_data(){
       const com = this
 
-      const graph = new Graph();
-      com.gephi_data.nodes.forEach(node => {
-        var { id, x, y, color, size, label, attributes, hidden } = node;
-        size = size*0.4
-        graph.addNode(id, { x, y, color, size, label, attributes, hidden});
-      });
-
-      com.gephi_data.edges.forEach(edge => {
-        var { id, source, target, attributes, color } = edge;
-        color = color.replace(/rgba/g, 'rgb').replace(/,[^,)]*\)/g, '').replace(/\(\d+,\d+,\d+/g, '$&)')
-        graph.addEdge(source, target, { id, source, target, attributes, color});
-      });
-
-      sigma_instance.setGraph(graph)
+      sigma_instance.clear()
+      sigma_instance.read(com.gephi_data)
+      com.edit_opacity()
       
       sigma_instance.refresh();
 
@@ -122,6 +112,13 @@ export default {
         }
       });
 
+      if(com.state == "Main Graph" || com.state == null ) {
+        com.unconnected_nodes.forEach(function (n) {
+          var node = sigma_instance.graph.getNodeAttributes(n.id);
+          node.hidden = true
+        });
+      }
+
       sigma_instance.refresh()
 
     },
@@ -160,9 +157,11 @@ export default {
         }
       }
       this.$store.commit('assign_graph_subset', sigma_instance.graph)
+
       sigma_instance.refresh();
     },
     active_layer(layer) {
+      var com = this;
 
       const graph = sigma_instance.graph;
 
@@ -171,6 +170,12 @@ export default {
           var node = graph.getNodeAttributes(n);
             node.hidden = false;
         });
+        if(com.state == "Main Graph" || com.state == null ) {
+          com.unconnected_nodes.forEach(function (n) {
+            var node = sigma_instance.graph.getNodeAttributes(n.id);
+            node.hidden = true
+          });
+        }
         sigma_instance.refresh()
         return
       }
@@ -185,6 +190,13 @@ export default {
           node.hidden = true;
         }
       });
+
+      if(com.state == "Main Graph" || com.state == null ) {
+        com.unconnected_nodes.forEach(function (n) {
+          var node = sigma_instance.graph.getNodeAttributes(n.id);
+          node.hidden = true
+        });
+      }
     
     sigma_instance.refresh();
 
@@ -350,55 +362,66 @@ export default {
 
       
   },
+  edit_opacity: function() {
+    var com = this;
+    sigma_instance.graph.edges().forEach(function (e) {
+      e.color = e.color.replace(/[\d.]+\)$/g, com.edge_opacity + ')');
+    });
+    sigma_instance.refresh();
+  },
 },
   mounted() {
     var com = this;
 
     //Initializing the sigma instance to draw graph network
-    const graph = new Graph();
-    com.gephi_data.nodes.forEach(node => {
-      var { id, x, y, color, size, label, attributes, hidden } = node;
-      size = size*0.4
-      graph.addNode(id, { x, y, color, size, label, attributes, hidden});
-    });
 
-    com.gephi_data.edges.forEach(edge => {
-      var { id, source, target, attributes, color } = edge;
-      color = color.replace(/rgba/g, 'rgb').replace(/,[^,)]*\)/g, '').replace(/\(\d+,\d+,\d+/g, '$&)')
-      graph.addEdge(source, target, { id, source, target, attributes, color});
-    });
+    sigma_instance= new sigma();
+    var camera = sigma_instance.addCamera();
 
-    const container = document.getElementById("sigma-webgl")
-    const settings = {
-        labelColor: {color: '#fff'},
+    sigma_instance.addRenderer({
+      container: "sigma-webgl",
+      type: "canvas",
+      camera: camera,
+      settings: {
+        defaultLabelColor: "#FFF",
+        hideEdgesOnMove: true,
+        maxEdgeSize: 0.3,
+        minEdgeSize: 0.3,
+        minNodeSize: 1,
+        maxNodeSize: 20,
+        labelThreshold: 5
       }
-
-    sigma_instance = new sigma(graph, container, settings);
-
-    sigma_instance.on('clickNode',(event) => {
-      this.activeNode(sigma_instance.graph.getNodeAttributes(event.node))
     });
 
-    sigma_instance.mouseCaptor.on('mousemove',(event) => {
-      com.handleMouseMove(event)
-    });
+    sigma_instance.graph.clear();
+    sigma_instance.graph.read(com.gephi_data);
 
-    this.emitter.on("exportGraph", nameGraph => {
-      this.exportGraphAsImage()
-      console.log(nameGraph)
-    });
+    com.edit_opacity()
 
-    this.emitter.on("unconnectedGraph", state => {
-      this.show_unconnectedGraph(state)
-    });
+    // sigma_instance.on('clickNode',(event) => {
+    //   this.activeNode(sigma_instance.graph.getNodeAttributes(event.node))
+    // });
 
-    this.emitter.on("searchNode", state => {
-      this.$emit('active_node_changed', state)
-    });
+    // sigma_instance.mouseCaptor.on('mousemove',(event) => {
+    //   com.handleMouseMove(event)
+    // });
 
-    this.emitter.on("centerGraph", () => {
-      sigma_instance.camera.setState({ x: 0.5, y: 0.5, ratio: 1, angle: 0 });
-    });
+    // this.emitter.on("exportGraph", nameGraph => {
+    //   this.exportGraphAsImage()
+    //   console.log(nameGraph)
+    // });
+
+    // this.emitter.on("unconnectedGraph", state => {
+    //   this.show_unconnectedGraph(state)
+    // });
+
+    // this.emitter.on("searchNode", state => {
+    //   this.$emit('active_node_changed', state)
+    // });
+
+    // this.emitter.on("centerGraph", () => {
+    //   sigma_instance.camera.setState({ x: 0.5, y: 0.5, ratio: 1, angle: 0 });
+    // });
 
     sigma_instance.refresh()
 

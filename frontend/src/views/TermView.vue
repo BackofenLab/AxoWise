@@ -52,11 +52,13 @@ export default {
 
     this.term_data = this.$store.state.term_graph_data
 
+    
     const term_node = this.$store.state.active_node_enrichment
     if(term_node != null){
       for (var idx in this.term_data.nodes) {
         var node = this.term_data.nodes[idx];
-        if(node.id == term_node.id){
+        if(node.attributes["Ensembl ID"] == term_node.id){
+          console.log(this.active_node)
           this.active_node = this.term_data.nodes[idx]
         }
       }

@@ -5,7 +5,7 @@
 
 <script>
 import sigma from 'sigma'
-import Graph from 'graphology'
+// import Graph from 'graphology'
 
 var sigma_instance = null;
 
@@ -16,6 +16,7 @@ export default {
   emits: ['active_node_changed'],
   data() {
     return {
+      edge_opacity: 0.2
     }
   },
   watch: {
@@ -82,37 +83,44 @@ export default {
     });
 
       sigma_instance.refresh();
-    }
+    },
+    edit_opacity: function() {
+      var com = this;
+      sigma_instance.graph.edges().forEach(function (e) {
+        e.color = e.color.replace(/[\d.]+\)$/g, com.edge_opacity + ')');
+      });
+      sigma_instance.refresh();
+    },
   },
   mounted() {
     var com = this;
 
-    //Initializing the sigma instance to draw graph network
-    const graph = new Graph();
-    com.term_data.nodes.forEach(node => {
-      var { id, x, y, color, size, label, attributes, hidden } = node;
-      size = size*0.4
-      graph.addNode(id, { x, y, color, size, label, attributes, hidden});
-    });
+    sigma_instance= new sigma();
+    var camera = sigma_instance.addCamera();
 
-    com.term_data.edges.forEach(edge => {
-      var { id, source, target, attributes, color } = edge;
-      var size = 0.2
-      color = color.replace(/rgba/g, 'rgb').replace(/,[^,)]*\)/g, '').replace(/\(\d+,\d+,\d+/g, '$&)')
-      graph.addEdge(source, target, { id, source, target, attributes, color, size});
-    });
-
-    const container = document.getElementById("sigma-webgl")
-    const settings = {
-        labelColor: {color: '#fff'},
-        allowInvalidContainer: true
+    sigma_instance.addRenderer({
+      container: "sigma-webgl",
+      type: "canvas",
+      camera: camera,
+      settings: {
+        defaultLabelColor: "#FFF",
+        hideEdgesOnMove: true,
+        maxEdgeSize: 0.3,
+        minEdgeSize: 0.3,
+        minNodeSize: 1,
+        maxNodeSize: 20,
+        labelThreshold: 5
       }
-
-    sigma_instance = new sigma(graph, container, settings);
-
-    sigma_instance.on('clickNode',(event) => {
-      this.activeNode(sigma_instance.graph.getNodeAttributes(event.node))
     });
+
+    sigma_instance.graph.clear();
+    sigma_instance.graph.read(com.term_data);
+
+    com.edit_opacity()
+
+    // sigma_instance.on('clickNode',(event) => {
+    //   this.activeNode(sigma_instance.graph.getNodeAttributes(event.node))
+    // });
 
     sigma_instance.refresh()
         
