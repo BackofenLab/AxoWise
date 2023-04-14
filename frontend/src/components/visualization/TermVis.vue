@@ -31,7 +31,7 @@ export default {
       const edges = sigma_instance.graph.edges()
 
       for (let i = 0; i < edges.length; i++) {
-        const e = sigma_instance.graph.getEdgeAttributes(edges[i])
+        const e = edges[i]
         if (e.source === node.attributes["Ensembl ID"]) {
           neighbors.add(e.target);
           e.color = "rgb(255, 255, 255)"
@@ -45,7 +45,7 @@ export default {
 
       const nodes = sigma_instance.graph.nodes();
       for (let i = 0; i < nodes.length; i++) {
-        const n = sigma_instance.graph.getNodeAttributes(nodes[i])
+        const n = sigma_instance.graph.getNodeFromIndex(nodes[i].id)
         if (!neighbors.has(n.attributes["Ensembl ID"]) && n.attributes["Ensembl ID"] !== node.attributes["Ensembl ID"]) {
           n.hidden = true
         }
@@ -74,9 +74,9 @@ export default {
       var com = this;
 
       sigma_instance.graph.edges().forEach(function(e) {
-      const edge = sigma_instance.graph.getEdgeAttributes(e);
-      const s = sigma_instance.graph.getNodeAttributes(edge.source);
-      const t = sigma_instance.graph.getNodeAttributes(edge.target);
+      const edge = e;
+      const s = sigma_instance.graph.getNodeFromIndex(edge.source);
+      const t = sigma_instance.graph.getNodeFromIndex(edge.target);
       s.color = `${com.node_color_index[edge.source]}`; s.hidden = false;
       t.color = `${com.node_color_index[edge.target]}`; t.hidden = false;
       edge.color = `${com.edge_color_index[edge.id]}`; edge.hidden = false;
@@ -118,9 +118,9 @@ export default {
 
     com.edit_opacity()
 
-    // sigma_instance.on('clickNode',(event) => {
-    //   this.activeNode(sigma_instance.graph.getNodeAttributes(event.node))
-    // });
+    sigma_instance.bind('clickNode',(event) => {
+      this.activeNode(event.data.node)
+    });
 
     sigma_instance.refresh()
         

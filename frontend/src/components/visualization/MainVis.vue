@@ -428,7 +428,6 @@ export default {
     com.edit_opacity()
 
     sigma_instance.bind('clickNode',(event) => {
-      console.log(sigma_instance)
       this.activeNode(event.data.node)
     });
 

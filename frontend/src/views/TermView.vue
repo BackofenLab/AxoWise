@@ -58,7 +58,6 @@ export default {
       for (var idx in this.term_data.nodes) {
         var node = this.term_data.nodes[idx];
         if(node.attributes["Ensembl ID"] == term_node.id){
-          console.log(this.active_node)
           this.active_node = this.term_data.nodes[idx]
         }
       }
@@ -77,7 +76,7 @@ export default {
     com.edge_color_index = {};
     for (var idy in com.term_data.edges) {
       var edge = com.term_data.edges[idy];
-      com.edge_color_index[edge.id] = edge.color.replace(/rgba/g, 'rgb').replace(/,[^,)]*\)/g, '').replace(/\(\d+,\d+,\d+/g, '$&)');
+      com.edge_color_index[edge.id] = edge.color;
     }
   }
 }
