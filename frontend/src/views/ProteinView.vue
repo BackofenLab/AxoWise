@@ -99,7 +99,7 @@ export default {
     com.edge_color_index = {};
     for (var idy in com.gephi_data.edges) {
       var edge = com.gephi_data.edges[idy];
-      com.edge_color_index[edge.id] = edge.color.replace(/rgba/g, 'rgb').replace(/,[^,)]*\)/g, '').replace(/\(\d+,\d+,\d+/g, '$&)');
+      com.edge_color_index[edge.id] = edge.color;
     }
 
     const maingraph = new Set(com.gephi_data.subgraph)

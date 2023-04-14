@@ -1,5 +1,5 @@
 <template>
-    <div id="sigma-webgl" ref="sigmaContainer" @contextmenu.prevent="handleSigmaContextMenu">
+    <div id="sigma-webgl" class="sigma-parent" ref="sigmaContainer" @contextmenu.prevent="handleSigmaContextMenu">
     </div>
   </template>
 
@@ -7,9 +7,23 @@
 import sigma from "sigma";
 // import Graph from 'graphology'
 import {scaleLinear} from "d3-scale";
-import saveAsPNG from '../../rendering/saveAsPNG';
+// import saveAsPNG from '../../rendering/saveAsPNG';
 
 var sigma_instance = null;
+
+sigma.classes.graph.addMethod('getNodeFromIndex', function(id) {
+    return this.nodesIndex[id];
+});
+
+sigma.classes.graph.addMethod('ensemblIdToNode', function(ensembl_id) {
+    var nodes = this.nodes();
+    for (var idx in nodes) {
+        var node = nodes[idx];
+        if (node.attributes["Ensembl ID"] === ensembl_id)
+            return node;
+    }
+    return null;
+});
 
 export default {
   name: 'MainVis',
@@ -26,6 +40,13 @@ export default {
       rectHeight: 0,
       state: null,
       edge_opacity: 0.2,
+      rectangular_select: {
+        canvas: null,
+        context: null,
+        rectangle: {},
+        active: false,
+        surface_backup: null,
+      }, 
     }
   },
   watch: {
@@ -49,10 +70,10 @@ export default {
       const neighbors = new Set();
       const edges = sigma_instance.graph.edges()
       
-      sigma_instance.graph.getNodeAttributes(node.attributes["Ensembl ID"]).color = "rgb(255, 255, 255)"
+      node.color = "rgb(255, 255, 255)"
 
       for (let i = 0; i < edges.length; i++) {
-        const e = sigma_instance.graph.getEdgeAttributes(edges[i])
+        const e = edges[i]
         if (e.source === node.attributes["Ensembl ID"]) {
           neighbors.add(e.target);
           e.color = "rgb(255, 255, 255)"
@@ -66,7 +87,7 @@ export default {
 
       const nodes = sigma_instance.graph.nodes();
       for (let i = 0; i < nodes.length; i++) {
-        const n = sigma_instance.graph.getNodeAttributes(nodes[i])
+        const n = nodes[i]
         if (!neighbors.has(n.attributes["Ensembl ID"]) && n.attributes["Ensembl ID"] !== node.attributes["Ensembl ID"]) {
           n.hidden = true
         }
@@ -87,34 +108,32 @@ export default {
       const proteins = new Set(term.proteins);
       const graph = sigma_instance.graph;
 
-      graph.nodes().forEach(function (n) {
-        var node = graph.getNodeAttributes(n);
-        if (proteins.has(n)) {
+      graph.nodes().forEach(function (node) {
+        if (proteins.has(node.id)) {
           node.color = "rgb(255, 255, 255)"
         } else {
           node.color = "rgb(0, 100, 0)"
         }
       });
 
-      graph.edges().forEach(function (e) {
-        const edge = sigma_instance.graph.getEdgeAttributes(e)
-        const source = graph.getNodeAttributes(edge.source);
-        const target = graph.getNodeAttributes(edge.target);
+      graph.edges().forEach(function (edge) {
+        const source = graph.getNodeFromIndex(edge.source);
+        const target = graph.getNodeFromIndex(edge.target);
         const source_present = proteins.has(source.attributes["Ensembl ID"]);
         const target_present = proteins.has(target.attributes["Ensembl ID"]);
 
         if (source_present && !target_present || !source_present && target_present) {
-          edge.color = "rgb(220, 255, 220)"
+          edge.color = "rgba(220, 255, 220, 0.2)"
         } else if (source_present && target_present) {
-          edge.color = "rgb(255, 255, 255)"
+          edge.color = "rgba(255, 255, 255, 0.2)"
         } else {
-          edge.color = "rgb(0, 100, 0)"
+          edge.color = "rgba(0, 100, 0, 0.2)"
         }
       });
 
       if(com.state == "Main Graph" || com.state == null ) {
         com.unconnected_nodes.forEach(function (n) {
-          var node = sigma_instance.graph.getNodeAttributes(n.id);
+          var node = graph.getNodeFromIndex(n.id);
           node.hidden = true
         });
       }
@@ -135,9 +154,8 @@ export default {
       const graph = sigma_instance.graph;
 
       for (const edge of graph.edges()) {
-        const edgeAttrs = graph.getEdgeAttributes(edge);
-        const sourceNode = graph.getNodeAttributes(edgeAttrs.source);
-        const targetNode = graph.getNodeAttributes(edgeAttrs.target);
+        const sourceNode = graph.getNodeFromIndex(edge.source)
+        const targetNode = graph.getNodeFromIndex(edge.target)
         const sourceID = sourceNode.attributes["Ensembl ID"];
         const targetID = targetNode.attributes["Ensembl ID"];
         const sourcePresent = proteins.has(sourceID);
@@ -151,9 +169,9 @@ export default {
 
         // Edge
         if (sourcePresent !== targetPresent) {
-          edgeAttrs.color = sourcePresent && !targetPresent ? "rgba(200, 255, 255)" : "rgba(0, 100, 100)";
+          edge.color = sourcePresent && !targetPresent ? "rgba(200, 255, 255, 0.2)" : "rgba(0, 100, 100, 0.2)";
         } else {
-          edgeAttrs.color = sourcePresent ? "rgba(255, 255, 255)" : "rgba(0, 100, 100)";
+          edge.color = sourcePresent ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 100, 100, 0.2)";
         }
       }
       this.$store.commit('assign_graph_subset', sigma_instance.graph)
@@ -166,13 +184,12 @@ export default {
       const graph = sigma_instance.graph;
 
       if(layer == null){
-        graph.nodes().forEach(function (n) {
-          var node = graph.getNodeAttributes(n);
-            node.hidden = false;
+        graph.nodes().forEach(function (node) {
+          node.hidden = false;
         });
         if(com.state == "Main Graph" || com.state == null ) {
           com.unconnected_nodes.forEach(function (n) {
-            var node = sigma_instance.graph.getNodeAttributes(n.id);
+            var node = graph.getNodeFromIndex(n.id);
             node.hidden = true
           });
         }
@@ -182,9 +199,8 @@ export default {
 
       var proteins = new Set(layer);
 
-      graph.nodes().forEach(function (n) {
-        var node = graph.getNodeAttributes(n);
-        if (proteins.has(n)) {
+      graph.nodes().forEach(function (node) {
+        if (proteins.has(node.id)) {
           node.hidden = false;
         } else {
           node.hidden = true;
@@ -193,7 +209,7 @@ export default {
 
       if(com.state == "Main Graph" || com.state == null ) {
         com.unconnected_nodes.forEach(function (n) {
-          var node = sigma_instance.graph.getNodeAttributes(n.id);
+          var node = graph.getNodeFromIndex(n.id);
           node.hidden = true
         });
       }
@@ -212,15 +228,14 @@ export default {
       const graph = sigma_instance.graph
 
       for (const edge of graph.edges()) {
-        const edgeAttrs = graph.getEdgeAttributes(edge);
-        const sourceNode = graph.getNodeAttributes(edgeAttrs.source);
-        const targetNode = graph.getNodeAttributes(edgeAttrs.target);
+        const sourceNode = graph.getNodeFromIndex(edge.source);
+        const targetNode = graph.getNodeFromIndex(edge.target);
         const source_value = sourceNode.attributes[com.active_decoloumn];
         const target_value = targetNode.attributes[com.active_decoloumn];
 
         sourceNode.color = com.get_normalize(source_value, -1, 1);
         targetNode.color = com.get_normalize(target_value, -1, 1);
-        edgeAttrs.color = com.get_normalize(source_value, -1, 1);
+        edge.color = com.get_normalize(source_value, -1, 1).replace(')', ', 0.2)').replace('rgb', 'rgba');
 
       }
 
@@ -242,17 +257,16 @@ export default {
       var com = this;
 
       sigma_instance.graph.edges().forEach(function(e) {
-      const edge = sigma_instance.graph.getEdgeAttributes(e);
-      const s = sigma_instance.graph.getNodeAttributes(edge.source);
-      const t = sigma_instance.graph.getNodeAttributes(edge.target);
-      s.color = `${com.node_color_index[edge.source]}`; s.hidden = false;
-      t.color = `${com.node_color_index[edge.target]}`; t.hidden = false;
-      edge.color = `${com.edge_color_index[edge.id]}`; edge.hidden = false;
+      var s = sigma_instance.graph.getNodeFromIndex(e.source);
+      var t = sigma_instance.graph.getNodeFromIndex(e.target);
+      s.color = `${com.node_color_index[e.source]}`; s.hidden = false;
+      t.color = `${com.node_color_index[e.target]}`; t.hidden = false;
+      e.color = `${com.edge_color_index[e.id]}`; e.hidden = false;
     });
 
     if(com.state == "Main Graph" || com.state == null ) {
       com.unconnected_nodes.forEach(function (n) {
-        var node = sigma_instance.graph.getNodeAttributes(n.id);
+        var node = sigma_instance.graph.getNodeFromIndex(n.id);
         node.hidden = true
       });
     }
@@ -266,101 +280,118 @@ export default {
 
     return rgb_value;
   },
-  handleSigmaContextMenu(event) {
-    if(!this.isSelecting){
-      this.isSelecting = true;
-        this.startX = event.x; this.startY = event.y;
-         // Create a new selection box element
-        this.selectionBox = document.createElement('div');
-        this.selectionBox.style.position = 'absolute';
-        this.selectionBox.style.border = '1px solid #fff';
-        this.selectionBox.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
-        this.selectionBox.style.zIndex = '100';
-        this.selectionBox.style.pointerEvents = 'none';
-
-        // Add the selection box element to the container
-        this.$refs.sigmaContainer.appendChild(this.selectionBox);
-
-        // Set the initial position of the selection box
-        this.selectionBox.style.left = `${this.startX}px`; this.selectionBox.style.top = `${this.startY}px`;
-        this.selectionBox.style.width = '0'; this.selectionBox.style.height = '0';
-
-        return
-      }
-
-      if (this.isSelecting) {
-        this.isSelecting = false
-
-        this.endX = event.x; this.endY = event.y;
-
-        this.$refs.sigmaContainer.removeChild(this.selectionBox); this.selectionBox = null;
-        // Get all nodes within the selection rectangle
-
-        
-        const nodesInRectangle = sigma_instance.graph.nodes().filter(node => {
-          const nodeAttr = sigma_instance.graph.getNodeAttributes(node)
-          const nodeX = nodeAttr.x; const nodeY = nodeAttr.y;
-          const screen = sigma_instance.graphToViewport({ x: nodeX, y: nodeY })
-          const screenX = screen.x; const screenY = screen.y
-          const startX = Math.min(this.startX, this.endX); const endX = Math.max(this.startX, this.endX);
-          const startY = Math.min(this.startY, this.endY); const endY = Math.max(this.startY, this.endY);
-          return (screenX >= startX && screenX <= endX && screenY >= startY && screenY <= endY);
-        });
-        
-        // Do something with the selected nodes
-        const node_attributes_list = nodesInRectangle.map(node_id => sigma_instance.graph.getNodeAttributes(node_id)); 
-
-        this.$emit('active_subset_changed', node_attributes_list)
-     }
-
-    },
-    handleMouseMove(event) {
-      if(this.isSelecting){
-        this.endX = event.x; this.endY = event.y;
-
-        const position = {
-        x: Math.min(this.startX, this.endX),
-        y: Math.min(this.startY, this.endY)};
-
-        const width = Math.abs(this.endX - this.startX); const height = Math.abs(this.endY - this.startY);
-        this.selectionBox.style.left = `${position.x}px`; this.selectionBox.style.top = `${position.y}px`;
-        this.selectionBox.style.width = `${width}px`; this.selectionBox.style.height = `${height}px`;
-      }
-    },
-    exportGraphAsImage() {
-      // Get a reference to your Sigma.js container element
-      const layers = ["edges", "nodes", "edgeLabels", "labels"]
-      saveAsPNG(sigma_instance, layers)
-      
-    },
-    show_unconnectedGraph(state){
+  // Rectangular select
+  mousedown: function(e) {
+    var com = this;
+    if (e.button == 2) {
+        // var selectedNodes = e.ctrlKey ? NETWORK.getSelectedNodes() : null;
+        com.backup_surface();
+        var rectangle = com.rectangular_select.rectangle;
+        rectangle.startX = e.pageX - com.container.offsetLeft;
+        rectangle.startY = e.pageY - com.container.offsetTop;
+        com.rectangular_select.active = true;
+        com.container.style.cursor = "crosshair";
+    }
+  },
+  mousemove: function(e) {
       var com = this;
-
-      com.state = state
-
-      if (state == null) {
-        com.reset()
+      if (com.rectangular_select.active) {
+          var context = com.rectangular_select.context;
+          var rectangle = com.rectangular_select.rectangle;
+          com.restore_surface();
+          rectangle.w = (e.pageX - com.container.offsetLeft) - rectangle.startX;
+          rectangle.h = (e.pageY - com.container.offsetTop) - rectangle.startY ;
+          var rectBounds = com.container.getBoundingClientRect();
+          context.setLineDash([5]);
+          context.strokeStyle = "rgb(82,182,229)";
+          context.strokeRect(rectangle.startX - rectBounds.x, rectangle.startY, rectangle.w, rectangle.h);
+          context.setLineDash([]);
+          context.fillStyle = "rgba(82,182,229,"+ this.edge_opacity +")";
+          context.fillRect(rectangle.startX- rectBounds.x, rectangle.startY, rectangle.w, rectangle.h);
       }
+  },
+  mouseup: function(e) {
+      var com = this;
+      if (e.button == 2) {
+          com.restore_surface();
+          com.rectangular_select.active = false;
 
-      const graph = sigma_instance.graph
-
-      if(state == "Whole Graph"){
-        com.unconnected_nodes.forEach(function (n) {
-          var node = graph.getNodeAttributes(n.id);
-          node.hidden = false
-        });
-        sigma_instance.refresh();
+          com.container.style.cursor = "default";
+          com.select_nodes_rectangular();
       }
-      
-      if(state == "Main Graph"){
-        com.unconnected_nodes.forEach(function (n) {
-          var node = graph.getNodeAttributes(n.id);
-          node.hidden = true
-        });
-        sigma_instance.refresh();
-      }
+  },
+  backup_surface: function() {
+      var com = this;
+      var canvas = com.rectangular_select.canvas;
+      var context = com.rectangular_select.context;
+      com.rectangular_select.surface_backup = context.getImageData(0, 0, canvas.width, canvas.height);
+  },
+  restore_surface: function() {
+      var com = this;
+      var context = com.rectangular_select.context;
+      var surface = com.rectangular_select.surface_backup;
+      context.putImageData(surface, 0, 0);
+  },
+  select_nodes_rectangular: function() {
+      var com = this;
+      var rectangle = com.rectangular_select.rectangle;
+      var rectBounds = com.container.getBoundingClientRect();
 
-      
+      var selected_nodes = [];
+      var x_range = com.get_select_range(rectangle.startX - rectBounds.x, rectangle.w);
+      var y_range = com.get_select_range(rectangle.startY - rectBounds.y, rectangle.h);
+
+      var nodes = sigma_instance.graph.nodes();
+      for (var i in nodes) {
+          var node = nodes[i];
+          if (node.hidden) continue;
+
+          var node_XY = {
+              x: node["renderer1:x"],
+              y: node["renderer1:y"]
+          };
+
+          if (x_range.start <= node_XY.x && node_XY.x <= x_range.end && y_range.start <= node_XY.y && node_XY.y <= y_range.end) {
+              selected_nodes.push(node);
+          }
+      }
+      if (selected_nodes.length > 0) com.$emit("active_subset_changed", selected_nodes);
+  },
+  get_select_range: function(start, length) {
+      return length > 0 ? {start: start, end: start + length} : {start: start + length, end: start};
+  },
+  exportGraphAsImage() {
+    // Get a reference to your Sigma.js container element
+    // const layers = ["edges", "nodes", "edgeLabels", "labels"]
+    // saveAsPNG(sigma_instance, {download: true})
+    
+  },
+  show_unconnectedGraph(state){
+    var com = this;
+
+    com.state = state
+
+    if (state == null) {
+      com.reset()
+    }
+
+    const graph = sigma_instance.graph
+
+    if(state == "Whole Graph"){
+      com.unconnected_nodes.forEach(function (n) {
+        var node = graph.getNodeFromIndex(n.id);
+        node.hidden = false
+      });
+      sigma_instance.refresh();
+    }
+    
+    if(state == "Main Graph"){
+      com.unconnected_nodes.forEach(function (n) {
+        var node = graph.getNodeFromIndex(n.id);
+        node.hidden = true
+      });
+      sigma_instance.refresh();
+    }   
   },
   edit_opacity: function() {
     var com = this;
@@ -398,33 +429,45 @@ export default {
 
     com.edit_opacity()
 
-    // sigma_instance.on('clickNode',(event) => {
-    //   this.activeNode(sigma_instance.graph.getNodeAttributes(event.node))
-    // });
+    sigma_instance.bind('clickNode',(event) => {
+      console.log(sigma_instance)
+      this.activeNode(event.data.node)
+    });
 
-    // sigma_instance.mouseCaptor.on('mousemove',(event) => {
-    //   com.handleMouseMove(event)
-    // });
 
-    // this.emitter.on("exportGraph", nameGraph => {
-    //   this.exportGraphAsImage()
-    //   console.log(nameGraph)
-    // });
+    // select all elements with the class "sigma-mouse"
+    const sigmaMouse = document.querySelectorAll(".sigma-mouse");
 
-    // this.emitter.on("unconnectedGraph", state => {
-    //   this.show_unconnectedGraph(state)
-    // });
+    // select all elements with the class "sigma-parent"
+    const sigmaParent = document.querySelectorAll(".sigma-parent");
 
-    // this.emitter.on("searchNode", state => {
-    //   this.$emit('active_node_changed', state)
-    // });
+    // set the values of the com object properties using the first element of each NodeList
+    com.rectangular_select.canvas = sigmaMouse[0]
+    com.container = sigmaParent[0],
+    com.rectangular_select.canvas.oncontextmenu = function() { return false; };
+    com.rectangular_select.canvas.onmousedown = com.mousedown;
+    com.rectangular_select.canvas.onmousemove = com.mousemove;
+    com.rectangular_select.canvas.onmouseup = com.mouseup;
+    com.rectangular_select.context = com.rectangular_select.canvas.getContext("2d");
 
-    // this.emitter.on("centerGraph", () => {
-    //   sigma_instance.camera.setState({ x: 0.5, y: 0.5, ratio: 1, angle: 0 });
-    // });
-
+    
+    this.emitter.on("unconnectedGraph", state => {
+      this.show_unconnectedGraph(state)
+    });
+    
+    this.emitter.on("searchNode", state => {
+      this.$emit('active_node_changed', sigma_instance.graph.getNodeFromIndex(state))
+    });
+    
+    this.emitter.on("centerGraph", () => {
+      sigma_instance.camera.goTo({ x: 0, y: 0, ratio: 1, angle: sigma_instance.camera.angle });
+    });
+    
     sigma_instance.refresh()
-
+    
+    // this.emitter.on("exportGraph", () => {
+    //   this.exportGraphAsImage()
+    // });
     
         
   }
