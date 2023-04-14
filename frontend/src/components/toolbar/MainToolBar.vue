@@ -21,7 +21,9 @@
                 :protein_list='protein_list'
                 @status_changed = 'status = $event'
                 ></ProteinList>
-                <SelectionWindow></SelectionWindow>
+                <SelectionWindow
+                @selection_status_changed = 'selection_status = $event'
+                ></SelectionWindow>
                 <DEValue></DEValue>
                 <ConnectedGraph></ConnectedGraph>
             </div>
@@ -53,6 +55,21 @@
                 <button v-on:click="highlight(raw_text)" id="highlight_protein">Go</button>
             </div>
         </div>
+        <div id="selection_highlight" v-show="selection_status === true " class="highlight_list">
+            <div id="selection_highlight_header">
+                <div class="text">
+                    <div class="headertext">
+                        <span>Selection Window</span>
+                        <button v-on:click="selection_status=false" id="highlight-btn-min"></button>
+                    </div>
+                </div>
+            </div>
+            <div class="highlight_main">
+                <HubsSelection
+                :gephi_data='gephi_data'
+                ></HubsSelection>
+            </div>
+        </div>
 
     </div>
 </template>
@@ -66,6 +83,7 @@ import ExportGraph from '@/components/toolbar/ExportGraph.vue'
 import ProteinList from '@/components/toolbar/ProteinList.vue'
 import SelectionWindow from '@/components/toolbar/SelectionWindow.vue'
 import SearchBar from '@/components/toolbar/SearchBar.vue'
+import HubsSelection from '@/components/toolbar/select_options/HubsSelection.vue'
 
 export default {
     name: 'MainToolBar',
@@ -78,7 +96,8 @@ export default {
         ExportGraph,
         ProteinList,
         SelectionWindow,
-        SearchBar
+        SearchBar,
+        HubsSelection
 
     },
     data() {
@@ -87,6 +106,7 @@ export default {
             search_active: false,
             snapshot: null,
             status: false,
+            selection_status: false,
             protein_list: null,
         }
     },

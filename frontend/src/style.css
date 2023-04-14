@@ -858,7 +858,8 @@ font-size:14px;
 
 }
 
-#protein_highlight_header .headertext {
+#protein_highlight_header .headertext,
+#selection_highlight_header .headertext{
 
 	color: white;
 	background-color: rgba(0, 0, 0, 0.9);

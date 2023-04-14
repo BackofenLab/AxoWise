@@ -456,6 +456,10 @@ export default {
       this.$emit('active_node_changed', sigma_instance.graph.getNodeFromIndex(state))
     });
     
+    this.emitter.on("searchSubset", state => {
+      this.$emit('active_subset_changed', state)
+    });
+    
     this.emitter.on("centerGraph", () => {
       sigma_instance.camera.goTo({ x: 0, y: 0, ratio: 1, angle: sigma_instance.camera.angle });
     });

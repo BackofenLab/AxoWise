@@ -36,8 +36,6 @@ export default {
     watch: {
         active_subset() {
             var com = this;
-
-            console.log(com.active_subset)
             
             if (com.active_subset == null) {
 
