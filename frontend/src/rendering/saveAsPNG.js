@@ -1,50 +1,97 @@
-import Sigma from "sigma";
-import FileSaver from "file-saver";
+import sigma from "sigma";
 
-export default function saveAsPNG(renderer, inputLayers) {
-  const { width, height } = renderer.getDimensions();
+export default function saveAsPNG(renderer, params) {
 
-  const pixelRatio = window.devicePixelRatio || 1;
+// Constants
+var CONTEXTS = ['scene', 'edges', 'nodes', 'labels'],
+    TYPES = {
+      png: 'image/png',
+      jpg: 'image/jpeg',
+      gif: 'image/gif',
+      tiff: 'image/tiff'
+    };
+// Main function
+  params = params || {};
 
-  const tmpRoot = document.createElement("DIV");
-  tmpRoot.style.width = `${width}px`;
-  tmpRoot.style.height = `${height}px`;
-  tmpRoot.style.position = "absolute";
-  tmpRoot.style.right = "101%";
-  tmpRoot.style.bottom = "101%";
-  document.body.appendChild(tmpRoot);
+  // Enforcing
+  if (params.format && !(params.format in TYPES))
+    throw Error('sigma.renderers.snaphot: unsupported format "' +
+                params.format + '".');
 
-  const tmpRenderer = new Sigma(renderer.getGraph(), tmpRoot, renderer.getSettings());
+  var self = renderer.renderers[0],
+      webgl = this instanceof sigma.renderers.webgl,
+      doneContexts = [];
 
-  tmpRenderer.getCamera().setState(renderer.getCamera().getState());
-  tmpRenderer.refresh();
+  // Creating a false canvas where we'll merge the other
+  var merged = document.createElement('canvas'),
+      mergedContext = merged.getContext('2d'),
+      sized = false;
 
-  const canvas = document.createElement("CANVAS");
-  canvas.setAttribute("width", width * pixelRatio + "");
-  canvas.setAttribute("height", height * pixelRatio + "");
-  const ctx = canvas.getContext("2d");
+  console.log(renderer)
+  // Iterating through context
+  CONTEXTS.forEach(function(name) {
+    if (!self.contexts[name])
+      return;
 
-  const canvases = tmpRenderer.getCanvases();
-  const layers = inputLayers ? inputLayers.filter((id) => !!canvases[id]) : Object.keys(canvases);
-  layers.forEach((id) => {
-    ctx.drawImage(
-      canvases[id],
-      0,
-      0,
-      width * pixelRatio,
-      height * pixelRatio,
-      0,
-      0,
-      width * pixelRatio,
-      height * pixelRatio,
-    );
+    if (params.labels === false && name === 'labels')
+      return;
+
+    var canvas = self.domElements[name] || self.domElements['scene'],
+        context = self.contexts[name];
+
+    if (~doneContexts.indexOf(context))
+      return;
+
+    if (!sized) {
+      merged.width = webgl && context instanceof WebGLRenderingContext ?
+       canvas.width / 2 :
+       canvas.width;
+      merged.height = webgl && context instanceof WebGLRenderingContext ?
+        canvas.height / 2 :
+        canvas.height
+      sized = true;
+
+      // Do we want a background color?
+      if (params.background) {
+        mergedContext.rect(0, 0, merged.width, merged.height);
+        mergedContext.fillStyle = params.background;
+        mergedContext.fill();
+      }
+    }
+
+    if (context instanceof WebGLRenderingContext)
+      mergedContext.drawImage(canvas, 0, 0,
+        canvas.width / 2, canvas.height / 2);
+    else
+      mergedContext.drawImage(canvas, 0, 0);
+
+    doneContexts.push(context);
   });
 
-  canvas.toBlob((blob) => {
-    if (blob) FileSaver.saveAs(blob, "graph.png");
+  var dataUrl = merged.toDataURL(TYPES[params.format || 'png']);
 
-    tmpRenderer.kill();
-    tmpRoot.remove();
-  }, "image/png");
+  if (params.download)
+    download(
+      dataUrl,
+      params.format || 'png',
+      params.filename
+    );
+
+  return dataUrl;
+
+  // Utilities
+function download(dataUrl, extension, filename) {
+
+  // Anchor
+  var anchor = document.createElement('a');
+  anchor.setAttribute('href', dataUrl);
+  anchor.setAttribute('download', filename || 'graph.' + extension);
+
+  // Click event
+  var event = document.createEvent('MouseEvent');
+  event.initMouseEvent('click', true, false, window, 0, 0, 0 ,0, 0,
+    false, false, false, false, 0, null);
+
+  anchor.dispatchEvent(event);
 }
-
+}

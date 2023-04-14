@@ -7,7 +7,7 @@
 import sigma from "sigma";
 // import Graph from 'graphology'
 import {scaleLinear} from "d3-scale";
-// import saveAsPNG from '../../rendering/saveAsPNG';
+import saveAsPNG from '../../rendering/saveAsPNG';
 
 var sigma_instance = null;
 
@@ -361,9 +361,7 @@ export default {
       return length > 0 ? {start: start, end: start + length} : {start: start + length, end: start};
   },
   exportGraphAsImage() {
-    // Get a reference to your Sigma.js container element
-    // const layers = ["edges", "nodes", "edgeLabels", "labels"]
-    // saveAsPNG(sigma_instance, {download: true})
+    saveAsPNG(sigma_instance, {download: true})
     
   },
   show_unconnectedGraph(state){
@@ -465,9 +463,9 @@ export default {
     
     sigma_instance.refresh()
     
-    // this.emitter.on("exportGraph", () => {
-    //   this.exportGraphAsImage()
-    // });
+    this.emitter.on("exportGraph", () => {
+      this.exportGraphAsImage()
+    });
     
         
   }
