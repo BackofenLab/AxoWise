@@ -23,6 +23,7 @@ import uuid
 import graph_utilities
 from werkzeug.middleware.proxy_fix import ProxyFix
 import enrichment_graph
+import enrichment
 
 import time
 app = Flask(__name__)
@@ -60,10 +61,10 @@ def proteins_enrichment():
     species_id = request.form.get("species_id")
     
     # in-house functional enrichment
-    # list_enrichment = enrichment.functional_enrichment(proteins, species_id)
+    list_enrichment = enrichment.functional_enrichment(proteins, species_id)
     
     # STRING API functional enrichment
-    df_enrichment = stringdb.functional_enrichment(proteins, species_id)
+    """df_enrichment = stringdb.functional_enrichment(proteins, species_id)
     
     list_enrichment = list()
     for _, row in df_enrichment.iterrows():
@@ -74,7 +75,7 @@ def proteins_enrichment():
             category=row["category"],
             p_value=row["p_value"],
             fdr_rate=row["fdr"]
-        ))
+        ))"""
     
     json_str=json.dumps(list_enrichment)  
     return Response(json_str, mimetype="application/json")
