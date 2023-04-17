@@ -838,7 +838,7 @@ font-size:14px;
 	display: block;
 	top:50%;
 	left: 50%;
-	height: 300px;
+	height: auto;
 	width: 300px;
 	border-radius: 20px;
 	background-color:rgba(255,255,255,0.15);
@@ -880,7 +880,7 @@ font-size:14px;
 	position: relative;
 	margin: 5px 5px 5px 5px;
 	border-radius: 20px;
-	height: 255px;
+	height: auto;
 	background-color: rgba(0,0,0,0.9);
 	text-align: center;
 
