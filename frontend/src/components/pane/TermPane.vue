@@ -10,6 +10,17 @@
             </div>
             <button id="go-button" v-on:click="to_term()">Go Term</button>
             <div class="p">
+                <span>Statistics:</span>
+                <button v-on:click="expand_stats = !expand_stats" id="expand-btn">Expand</button>
+            </div>
+                <div class="statistics" id="statistics" v-show="expand_stats === true">
+                    <ul>
+                        <li class="membership" v-for="(value, key) in statistics" :key="key" >
+                            <span><strong>{{key}}: </strong>{{value}}</span>
+                        </li>
+                    </ul>
+                </div>
+            <div class="p">
             <span>Connections:</span>
             <button v-on:click="copyclipboard()" id="copy-btn">Copy</button>
             <button v-on:click="expand_proteins=!expand_proteins" id="expand-btn">Expand</button>
@@ -34,6 +45,8 @@ export default {
         return {
             links: null,
             term_history: [],
+            statistics: {},
+            expand_stats: false,
             expand_proteins: false
         }
     },
@@ -44,6 +57,8 @@ export default {
 
                 return;
             }
+            const { category, id, fdr_rate, p_value } = com.active_term;
+            com.statistics = { category, id, fdr_rate, p_value }
 
             com.$emit('active_item_changed',{ "term": com.active_term })
 

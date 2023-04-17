@@ -23,6 +23,7 @@
 </template>
 
 <script>
+
 export default {
     name: 'PageRank',
     props: ['gephi_data'],

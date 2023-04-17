@@ -113,7 +113,6 @@ def get_functional_graph(list_enrichment):
     edges = edges.drop_duplicates(subset=["source", "target"]) # TODO edges` can be empty
 
     # convert kappa scores to Integer
-
     
     edges['score'] = edges['score'].apply(lambda x: round(x, 2))
     edges['score'] = edges['score'].apply(lambda x: int(x * 100))
@@ -172,6 +171,7 @@ def get_functional_graph(list_enrichment):
             node["attributes"]["Ensembl ID"] = df_node.external_id
             node["attributes"]["Name"] = df_node.name
             node["label"] = df_node.name             # Comment this out if you want no node labels displayed
+            node["attributes"]["Category"] = df_node.category
             
     sub_proteins = []
     ensembl_sub = set(nodes_sub["external_id"])

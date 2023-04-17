@@ -67,6 +67,8 @@ export default {
   mounted() {
     const com = this;
 
+    console.log(this.term_data)
+
     com.node_color_index = {};
     for (var idx in com.term_data.nodes) {
       var node = com.term_data.nodes[idx];

@@ -53,7 +53,7 @@
                 if (com.category) {
                 // If category is set, filter by category
                 filtered = filtered.filter(function(term) {
-                    return term.category === com.category;
+                    return term.attributes["Category"] === com.category;
                 });
                 }
 

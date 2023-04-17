@@ -709,6 +709,7 @@ html,body{
 .pane .statistics {
 	text-align: center;
 	padding: 0 0 0 4px;
+	font-size: 12px;
 }
 
 .pane .statistics li {
