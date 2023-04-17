@@ -22,6 +22,7 @@ export default {
   watch: {
     active_node(node) {
       var com = this;
+      console.log(node)
 
       com.reset()
 
@@ -109,7 +110,7 @@ export default {
         minEdgeSize: 0.3,
         minNodeSize: 1,
         maxNodeSize: 20,
-        labelThreshold: 5
+        labelThreshold: 10
       }
     });
 
@@ -120,6 +121,11 @@ export default {
 
     sigma_instance.bind('clickNode',(event) => {
       this.activeNode(event.data.node)
+    });
+
+    this.emitter.on("searchNode", state => {
+      console.log(state)
+      this.$emit('active_node_changed', sigma_instance.graph.getNodeFromIndex(state.id))
     });
 
     sigma_instance.refresh()

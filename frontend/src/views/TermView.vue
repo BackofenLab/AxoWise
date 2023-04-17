@@ -1,7 +1,6 @@
 <template>
   <keep-alive>
     <div class="term-view">
-      <button id="termbutton" v-on:click="proteinswitch()">PROTEIN</button>
       <TermVis ref="termVis"
         :active_node='active_node' @active_node_changed='active_node = $event'
         :term_data='term_data'
@@ -14,25 +13,24 @@
         :term_data='term_data'
         :node_color_index='node_color_index'
       ></TermPaneSystem>
-      <TermSearch
-        :active_node='active_node' @active_node_changed='active_node = $event'
-        :term_data='term_data'
-      ></TermSearch>
+      <TermToolBar
+      :term_data='term_data'
+      ></TermToolBar>
     </div>
   </keep-alive>
 </template>
 
 <script>
 import TermVis from '@/components/visualization/TermVis.vue'
-import TermSearch from '@/components/term_graph/TermSearch.vue'
 import TermPaneSystem from '@/components/term_graph/TermPaneSystem.vue'
+import TermToolBar from '@/components/term_graph/TermToolBar.vue'
 
 export default {
   name: 'TermView',
   components: {
     TermVis,
-    TermSearch,
-    TermPaneSystem
+    TermPaneSystem,
+    TermToolBar
   },
   data() {
     return {
@@ -41,11 +39,6 @@ export default {
       node_color_index: null,
       edge_color_index: null,
       centering_active: null
-    }
-  },
-  methods: {
-    proteinswitch() {
-      this.$router.push('protein')
     }
   },
   activated() {
@@ -66,8 +59,6 @@ export default {
   },
   mounted() {
     const com = this;
-
-    console.log(this.term_data)
 
     com.node_color_index = {};
     for (var idx in com.term_data.nodes) {

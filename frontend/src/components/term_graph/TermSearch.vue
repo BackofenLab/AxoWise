@@ -1,8 +1,5 @@
 <template>
-    <div id="enrichment" class="term-pane">
-            <div class="headertext">
-            <button v-on:click="open_pane()">Functional Terms:</button>
-            </div>
+    <div id="enrichment" class="term-graph-pane">
             <div class="main-section">
                 <div class="enrichment-filtering">
                     <input type="text" value="Search functional terms by name" v-model="search_raw" class="empty"/>
@@ -24,7 +21,6 @@
     export default{
         name: 'EnrichmentTool',
         props: ['term_data'],
-        emits: ['active_node_changed'],
         data() {
             return {
                 terms: null,
@@ -36,9 +32,8 @@
         methods: {
             select_term(term) {
                 var com = this;
-                console-console.log(com.term_data.nodes);
 
-                com.$emit("active_node_changed", term);
+                com.emitter.emit("searchNode", term);
             },
         },
         computed: {
@@ -73,5 +68,17 @@
 </script>
 
 <style >
+.term-graph-pane {
+	position: absolute;
+	height: 90%;
+	width: 300px;
+	overflow: hidden;
+	border-radius: 20px;
+	word-wrap: break-word;
+	padding: 2px;
+	z-index: 1;
+	color: white;
+	transition: transform ease 500ms;
+}
 
 </style>

@@ -1091,7 +1091,8 @@ color: #000;
 	overflow-y: scroll;
 	overflow-x: hidden;
 }
-.term-pane .results {
+.term-pane .results,
+.term-graph-pane .results {
 	margin-top: 5px;
 	overflow-y: scroll;
 	height: 95%;
@@ -1106,7 +1107,8 @@ color: #000;
 	color: white;
 }
 
-.term-pane .results a {
+.term-pane .results a,
+.term-graph-pane .results a{
 	margin: 10px;
 	background-color: rgba(255, 255, 255, 0.1);
 }
@@ -1212,7 +1214,8 @@ color: #000;
 	margin-top: 10px;
 }
 
-.term-pane .main-section{
+.term-pane .main-section,
+.term-graph-pane .main-section{
 	background-color: rgba(0, 0, 0, 0.9);
 	text-align: center;
 	border-radius: 20px;
