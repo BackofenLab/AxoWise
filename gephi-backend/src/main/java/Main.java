@@ -82,10 +82,10 @@ public class Main {
         // betweenessCentrality(graphModel);
 
         // PageRank
-        // pageRank(graphModel);
+        pageRank(graphModel);
 
         // Eigenvector centrality
-        // eigenvectorCentrality(graphModel);
+        eigenvectorCentrality(graphModel);
 
         // Rank node size by degree
         rankNodeSizeByDegree(graphModel, appearanceController);

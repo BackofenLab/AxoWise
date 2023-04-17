@@ -68,6 +68,9 @@
                 <HubsSelection
                 :gephi_data='gephi_data'
                 ></HubsSelection>
+                <EigenvectorCentrality
+                :gephi_data='gephi_data'
+                ></EigenvectorCentrality>
             </div>
         </div>
 
@@ -84,6 +87,7 @@ import ProteinList from '@/components/toolbar/ProteinList.vue'
 import SelectionWindow from '@/components/toolbar/SelectionWindow.vue'
 import SearchBar from '@/components/toolbar/SearchBar.vue'
 import HubsSelection from '@/components/toolbar/select_options/HubsSelection.vue'
+import EigenvectorCentrality from '@/components/toolbar/select_options/EigenvectorCentrality.vue'
 
 export default {
     name: 'MainToolBar',
@@ -97,7 +101,8 @@ export default {
         ProteinList,
         SelectionWindow,
         SearchBar,
-        HubsSelection
+        HubsSelection,
+        EigenvectorCentrality
 
     },
     data() {
