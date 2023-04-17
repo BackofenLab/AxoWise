@@ -12,11 +12,12 @@ var sigma_instance = null;
 
 export default {
   name: 'TermVis',
-  props: ['term_data', 'active_node', 'node_color_index', 'edge_color_index'],
+  props: ['term_data', 'active_node', 'node_color_index', 'edge_color_index', 'unconnected_nodes'],
   emits: ['active_node_changed'],
   data() {
     return {
-      edge_opacity: 0.2
+      edge_opacity: 0.2,
+      state: null,
     }
   },
   watch: {
@@ -83,6 +84,13 @@ export default {
       edge.color = `${com.edge_color_index[edge.id]}`; edge.hidden = false;
     });
 
+    if(com.state == "Main Graph" || com.state == null ) {
+      com.unconnected_nodes.forEach(function (n) {
+        var node = sigma_instance.graph.getNodeFromIndex(n.id);
+        node.hidden = true
+      });
+    }
+
       sigma_instance.refresh();
     },
     edit_opacity: function() {
@@ -92,6 +100,33 @@ export default {
       });
       sigma_instance.refresh();
     },
+    show_unconnectedGraph(state){
+    var com = this;
+
+    com.state = state
+
+    if (state == null) {
+      com.reset()
+    }
+
+    const graph = sigma_instance.graph
+
+    if(state == "Whole Graph"){
+      com.unconnected_nodes.forEach(function (n) {
+        var node = graph.getNodeFromIndex(n.id);
+        node.hidden = false
+      });
+      sigma_instance.refresh();
+    }
+    
+    if(state == "Main Graph"){
+      com.unconnected_nodes.forEach(function (n) {
+        var node = graph.getNodeFromIndex(n.id);
+        node.hidden = true
+      });
+      sigma_instance.refresh();
+    }   
+  },
   },
   mounted() {
     var com = this;
@@ -126,6 +161,11 @@ export default {
     this.emitter.on("searchNode", state => {
       console.log(state)
       this.$emit('active_node_changed', sigma_instance.graph.getNodeFromIndex(state.id))
+    });
+
+    this.emitter.on("unconnectedGraph", state => {
+      console.log(state)
+      this.show_unconnectedGraph(state)
     });
 
     sigma_instance.refresh()

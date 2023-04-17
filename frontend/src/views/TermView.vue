@@ -7,6 +7,7 @@
         :centering_active='centering_active'
         :node_color_index='node_color_index'
         :edge_color_index='edge_color_index'
+        :unconnected_nodes='unconnected_nodes'
       ></TermVis>
       <TermPaneSystem
         :active_node='active_node' @active_node_changed = 'active_node = $event'
@@ -38,7 +39,8 @@ export default {
       active_node: null,
       node_color_index: null,
       edge_color_index: null,
-      centering_active: null
+      centering_active: null,
+      unconnected_nodes: null
     }
   },
   activated() {
@@ -71,6 +73,9 @@ export default {
       var edge = com.term_data.edges[idy];
       com.edge_color_index[edge.id] = edge.color;
     }
+
+    const maingraph = new Set(com.term_data.subgraph)
+    com.unconnected_nodes = com.term_data.nodes.filter(item => !maingraph.has(item.id));
   }
 }
 </script>
