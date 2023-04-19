@@ -64,7 +64,7 @@ export default {
             this.$router.push("protein")
         },
         center() {
-            // this.emitter.emit("centerGraph", true);
+            this.emitter.emit("centerTermGraph", true);
         }
     }
 }

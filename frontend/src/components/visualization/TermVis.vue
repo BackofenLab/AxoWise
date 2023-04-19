@@ -211,6 +211,10 @@ export default {
       this.exportGraphAsImage()
     });
 
+    this.emitter.on("centerTermGraph", () => {
+      sigma_instance.camera.goTo({ x: 0, y: 0, ratio: 1, angle: sigma_instance.camera.angle });
+    });
+
     sigma_instance.refresh()
         
   },
