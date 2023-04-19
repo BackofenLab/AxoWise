@@ -33,7 +33,7 @@
             select_term(term) {
                 var com = this;
 
-                com.emitter.emit("searchNode", term);
+                com.emitter.emit("searchTermNode", term);
             },
         },
         computed: {

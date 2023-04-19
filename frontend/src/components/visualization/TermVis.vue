@@ -23,7 +23,6 @@ export default {
   watch: {
     active_node(node) {
       var com = this;
-      console.log(node)
 
       com.reset()
 
@@ -158,18 +157,19 @@ export default {
       this.activeNode(event.data.node)
     });
 
-    this.emitter.on("searchNode", state => {
-      console.log(state)
+    this.emitter.on("searchTermNode", state => {
       this.$emit('active_node_changed', sigma_instance.graph.getNodeFromIndex(state.id))
     });
 
-    this.emitter.on("unconnectedGraph", state => {
-      console.log(state)
+    this.emitter.on("unconnectedTermGraph", state => {
       this.show_unconnectedGraph(state)
     });
 
     sigma_instance.refresh()
         
+  },
+  activated() {
+    sigma_instance.refresh()
   }
 }
 </script>

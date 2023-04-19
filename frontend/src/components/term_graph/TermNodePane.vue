@@ -48,7 +48,6 @@ export default {
             if (com.active_node == null) {
                 return;
             }
-            
             com.colornode = com.node_color_index[com.active_node.attributes["Ensembl ID"]]
 
             const neighbors = {};

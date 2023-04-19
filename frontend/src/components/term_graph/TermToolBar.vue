@@ -14,7 +14,7 @@
 
             <div class="menu-items">
                 <ExportScreen></ExportScreen>
-                <ConnectedGraph></ConnectedGraph>
+                <TermConnectedGraph></TermConnectedGraph>
             </div>
 
 
@@ -36,7 +36,7 @@
 <script>
 
 import ExportScreen from '@/components/toolbar/ExportScreen.vue'
-import ConnectedGraph from '@/components/toolbar/ConnectedGraph.vue'
+import TermConnectedGraph from '@/components/term_graph/TermConnectedGraph.vue'
 import TermSearch from '@/components/term_graph/TermSearch.vue'
 
 export default {
@@ -45,7 +45,7 @@ export default {
     emits:[],
     components: {
         ExportScreen,
-        ConnectedGraph,
+        TermConnectedGraph,
         TermSearch
 
     },

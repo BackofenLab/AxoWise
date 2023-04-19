@@ -471,6 +471,9 @@ export default {
     });
     
         
+  },
+  activated() {
+    sigma_instance.refresh()
   }
 }
 </script>

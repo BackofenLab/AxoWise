@@ -3,7 +3,7 @@ module.exports = defineConfig({
   transpileDependencies: true,
   chainWebpack: config => {
     config.performance
-      .maxEntrypointSize(400000)
-      .maxAssetSize(400000)
+      .maxEntrypointSize(600000)
+      .maxAssetSize(600000)
   }
 })
