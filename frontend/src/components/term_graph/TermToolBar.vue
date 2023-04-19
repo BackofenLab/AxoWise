@@ -13,7 +13,7 @@
             v-on:mouseover="tools_active=true;">
 
             <div class="menu-items">
-                <ExportScreen></ExportScreen>
+                <ExportScreen :type="screen_type"></ExportScreen>
                 <FDRValue></FDRValue>
                 <TermConnectedGraph></TermConnectedGraph>
             </div>
@@ -55,6 +55,7 @@ export default {
     data() {
         return {
             tools_active: false,
+            screen_type: "term",
             search_active: false,
         }
     },

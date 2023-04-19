@@ -27,7 +27,6 @@ var CONTEXTS = ['scene', 'edges', 'nodes', 'labels'],
       mergedContext = merged.getContext('2d'),
       sized = false;
 
-  console.log(renderer)
   // Iterating through context
   CONTEXTS.forEach(function(name) {
     if (!self.contexts[name])

@@ -15,6 +15,7 @@
 
             <div class="menu-items">
                 <ExportScreen
+                :type="screen_type"
                 ></ExportScreen>
                 <ExportGraph></ExportGraph>
                 <ProteinList
@@ -114,6 +115,7 @@ export default {
         return {
             tools_active: false,
             search_active: false,
+            screen_type: "protein",
             snapshot: null,
             status: false,
             selection_status: false,

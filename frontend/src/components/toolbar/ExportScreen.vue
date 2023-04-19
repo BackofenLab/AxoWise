@@ -8,14 +8,18 @@
 
 export default {
     name: 'ExportScreen',
-    emits: [],
+    props: ['type'],
     data() {
         return {
         }
     },
     methods: {
         take_screen(){
-            this.emitter.emit("exportGraph", "graph");
+            if(this.type == "protein"){
+                this.emitter.emit("exportGraph", "graph");
+            }else {
+                this.emitter.emit("exportTermGraph", "termgraph");
+            }
         }
     }
 }

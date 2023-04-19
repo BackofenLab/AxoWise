@@ -6,7 +6,7 @@
 <script>
 import sigma from 'sigma'
 import {scaleLinear} from "d3-scale";
-// import Graph from 'graphology'
+import saveAsPNG from '../../rendering/saveAsPNG';
 
 var sigma_instance = null;
 
@@ -161,6 +161,9 @@ export default {
 
     return rgb_value;
     },
+    exportGraphAsImage() {
+      saveAsPNG(sigma_instance, {download: true})
+    },
   },
   mounted() {
     var com = this;
@@ -202,6 +205,10 @@ export default {
 
     this.emitter.on("fdrvalue", state => {
       this.$emit('active_fdr_changed', state)
+    });
+
+    this.emitter.on("exportTermGraph", () => {
+      this.exportGraphAsImage()
     });
 
     sigma_instance.refresh()
