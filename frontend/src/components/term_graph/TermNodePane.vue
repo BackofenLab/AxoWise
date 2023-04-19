@@ -3,6 +3,7 @@
         <div class="headertext">
             <span>{{active_node.attributes['Name']}}</span>
         </div>
+        <button v-on:click="to_proteins()" >To Protein Graph</button>
         <div class="nodeattributes">
             <div id="colorbar" :style="{ backgroundColor: colornode }">{{active_node.attributes['Modularity Class']}}</div>
             <div class="p">
@@ -88,6 +89,11 @@ export default {
         },
         select_node(value) {
             this.emitter.emit("searchTermNode", value);
+        },
+        to_proteins(){
+            var com = this;
+            this.$store.commit('assign_active_enrichment', com.active_node.attributes["Ensembl ID"])
+            this.$router.push("protein")
         }
     }
 }
