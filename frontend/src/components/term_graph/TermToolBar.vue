@@ -14,6 +14,7 @@
 
             <div class="menu-items">
                 <ExportScreen></ExportScreen>
+                <FDRValue></FDRValue>
                 <TermConnectedGraph></TermConnectedGraph>
             </div>
 
@@ -38,6 +39,7 @@
 import ExportScreen from '@/components/toolbar/ExportScreen.vue'
 import TermConnectedGraph from '@/components/term_graph/TermConnectedGraph.vue'
 import TermSearch from '@/components/term_graph/TermSearch.vue'
+import FDRValue from '@/components/term_graph/FDRValue.vue'
 
 export default {
     name: 'TermToolBar',
@@ -46,7 +48,8 @@ export default {
     components: {
         ExportScreen,
         TermConnectedGraph,
-        TermSearch
+        TermSearch,
+        FDRValue
 
     },
     data() {

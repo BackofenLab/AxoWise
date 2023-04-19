@@ -1,5 +1,5 @@
 <template>
-    <div id="attributepane" class="pane" v-show="active_node !== null">
+    <div id="attributepane" class="pane" v-show="active_node !== null || active_fdr !== null">
         <div class="buttons">
             <button id="panebutton" v-on:click="open_pane()"></button>
             <button id="paneclosebutton" v-on:click="close_pane()"></button>
@@ -14,6 +14,10 @@
             :term_data='term_data'
             @active_item_changed = 'active_item = $event'
             ></NodePane>
+            <FDRPane v-show="active_fdr !== null"
+            :term_data='term_data'
+            @active_item_changed = 'active_item = $event'
+            ></FDRPane>
         </div>
     </div>
 </template>
@@ -21,13 +25,15 @@
 <script>
 
 import NodePane from '@/components/term_graph/TermNodePane.vue'
+import FDRPane from '@/components/term_graph/FDRPane.vue'
 
 export default {
     name:"TermPaneSystem",
-    props:['term_data', 'active_node', 'node_color_index'],
-    emits:['active_node_changed'],
+    props:['term_data', 'active_node','active_fdr', 'node_color_index'],
+    emits:['active_node_changed', 'active_fdr_changed'],
     components: {
         NodePane,
+        FDRPane
     },
     data() {
         return{
@@ -56,6 +62,7 @@ export default {
             this.active_dict = {}
 
             this.$emit('active_node_changed', null)
+            this.$emit('active_fdr_changed', null)
 
         },
     }

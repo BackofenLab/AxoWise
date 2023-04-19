@@ -5,15 +5,17 @@
 
 <script>
 import sigma from 'sigma'
+import {scaleLinear} from "d3-scale";
 // import Graph from 'graphology'
 
 var sigma_instance = null;
 
 
+
 export default {
   name: 'TermVis',
-  props: ['term_data', 'active_node', 'node_color_index', 'edge_color_index', 'unconnected_nodes'],
-  emits: ['active_node_changed'],
+  props: ['term_data', 'active_node', 'node_color_index', 'edge_color_index', 'unconnected_nodes', 'active_fdr'],
+  emits: ['active_node_changed', 'active_fdr_changed'],
   data() {
     return {
       edge_opacity: 0.2,
@@ -65,7 +67,33 @@ export default {
           ratio: 1,
           angle: 0
       });
-    }
+    },
+    active_fdr() {
+      var com = this;
+
+      
+
+      if(com.active_fdr == null){com.reset(); return}
+
+      sigma_instance.graph.edges().forEach(function (e) {
+          // Nodes
+          var source = sigma_instance.graph.getNodeFromIndex(e.source);
+          var target = sigma_instance.graph.getNodeFromIndex(e.target);
+          var source_value = 0
+          var target_value = 0
+
+          // Ensembl IDs
+          if(source.attributes['FDR'] != 0) source_value = Math.abs(Math.floor(Math.log10(source.attributes['FDR'])))
+          if(target.attributes['FDR'] != 0) target_value = Math.abs(Math.floor(Math.log10(target.attributes['FDR'])))
+          
+          source.color = com.get_normalize(source_value, 0, 10);
+          target.color = com.get_normalize(target_value, 0, 10);
+          e.color = com.get_normalize(source_value, 0, 10).replace(')', ', 0.2)').replace('rgb', 'rgba');
+              
+      });
+
+      sigma_instance.refresh();
+    },
   },
   methods: {
     activeNode(event) {
@@ -100,32 +128,39 @@ export default {
       sigma_instance.refresh();
     },
     show_unconnectedGraph(state){
-    var com = this;
+      var com = this;
 
-    com.state = state
+      com.state = state
 
-    if (state == null) {
-      com.reset()
-    }
+      if (state == null) {
+        com.reset()
+      }
 
-    const graph = sigma_instance.graph
+      const graph = sigma_instance.graph
 
-    if(state == "Whole Graph"){
-      com.unconnected_nodes.forEach(function (n) {
-        var node = graph.getNodeFromIndex(n.id);
-        node.hidden = false
-      });
-      sigma_instance.refresh();
-    }
-    
-    if(state == "Main Graph"){
-      com.unconnected_nodes.forEach(function (n) {
-        var node = graph.getNodeFromIndex(n.id);
-        node.hidden = true
-      });
-      sigma_instance.refresh();
-    }   
-  },
+      if(state == "Whole Graph"){
+        com.unconnected_nodes.forEach(function (n) {
+          var node = graph.getNodeFromIndex(n.id);
+          node.hidden = false
+        });
+        sigma_instance.refresh();
+      }
+      
+      if(state == "Main Graph"){
+        com.unconnected_nodes.forEach(function (n) {
+          var node = graph.getNodeFromIndex(n.id);
+          node.hidden = true
+        });
+        sigma_instance.refresh();
+      }   
+    },
+    get_normalize: function(data, nmin, nmax) {
+    var rgb_value = scaleLinear()
+      .domain([nmin, 0, nmax])
+      .range(["blue", "white", "red"])(data);
+
+    return rgb_value;
+    },
   },
   mounted() {
     var com = this;
@@ -163,6 +198,10 @@ export default {
 
     this.emitter.on("unconnectedTermGraph", state => {
       this.show_unconnectedGraph(state)
+    });
+
+    this.emitter.on("fdrvalue", state => {
+      this.$emit('active_fdr_changed', state)
     });
 
     sigma_instance.refresh()

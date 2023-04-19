@@ -104,6 +104,17 @@ def get_functional_graph(list_enrichment):
 
     nodes = pd.DataFrame(terms).drop_duplicates(subset="external_id")
     
+    nodesterm = pd.DataFrame(list_enrichment)
+    
+    df2 = nodesterm.rename({'id': 'external_id'}, axis=1)
+    merged = pd.merge(df2[["external_id", "fdr_rate", "p_value"]], nodes, on="external_id")
+
+    # Add the two columns to df2
+    nodes = merged
+    
+    nodes["fdr_rate"] = nodes["fdr_rate"].fillna(0)
+    nodes["p_value"] = nodes["p_value"].fillna(0)
+    
     edges = pd.DataFrame({
         "source": source,
         "target": target,
@@ -172,6 +183,8 @@ def get_functional_graph(list_enrichment):
             node["attributes"]["Name"] = df_node.name
             node["label"] = df_node.name             # Comment this out if you want no node labels displayed
             node["attributes"]["Category"] = df_node.category
+            node["attributes"]["FDR"] = df_node.fdr_rate
+            node["attributes"]["P Value"] = df_node.p_value
             
     sub_proteins = []
     ensembl_sub = set(nodes_sub["external_id"])

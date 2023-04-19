@@ -3,6 +3,7 @@
     <div class="term-view">
       <TermVis ref="termVis"
         :active_node='active_node' @active_node_changed='active_node = $event'
+        :active_fdr='active_fdr' @active_fdr_changed='active_fdr = $event'
         :term_data='term_data'
         :centering_active='centering_active'
         :node_color_index='node_color_index'
@@ -11,6 +12,7 @@
       ></TermVis>
       <TermPaneSystem
         :active_node='active_node' @active_node_changed = 'active_node = $event'
+        :active_fdr='active_fdr' @active_fdr_changed='active_fdr = $event'
         :term_data='term_data'
         :node_color_index='node_color_index'
       ></TermPaneSystem>
@@ -37,6 +39,7 @@ export default {
     return {
       term_data: this.$store.state.term_graph_data,
       active_node: null,
+      active_fdr: null,
       node_color_index: null,
       edge_color_index: null,
       centering_active: null,

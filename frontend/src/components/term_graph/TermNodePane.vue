@@ -3,25 +3,28 @@
         <div class="headertext">
             <span>{{active_node.attributes['Name']}}</span>
         </div>
-        <button v-on:click="to_proteins()" >To Protein Graph</button>
         <div class="nodeattributes">
             <div id="colorbar" :style="{ backgroundColor: colornode }">{{active_node.attributes['Modularity Class']}}</div>
-            <div class="data">
-                <span><i>{{active_node.attributes["Description"]}}</i></span><br/><br/>
-            </div>
             <div class="p">
             <span>Statistics:</span>
-            <button v-on:click="expand_proteins()" id="expand-btn">Expand</button>
+            <button v-on:click="expand_stats = !expand_stats" id="expand-btn">Expand</button>
+            </div>
+            <div class="statistics" id="statistics" v-show="expand_stats === true">
+                <ul>
+                    <li class="membership" v-for="(value, key) in statistics" :key="key" >
+                        <span><strong>{{key}}: </strong>{{value}}</span>
+                    </li>
+                </ul>
             </div>
             <div class="p">
             <span>Connections:</span>
             <button v-on:click="copyclipboard()" id="copy-btn">Copy</button>
-            <button v-on:click="expand_proteins()" id="expand-btn">Expand</button>
+            <button v-on:click="expand_neighbor = !expand_neighbor" id="expand-btn">Expand</button>
             </div>
-            <div class="link" id="link">
+            <div class="link" id="link" v-show="expand_neighbor === true">
                 <ul>
-                    <li class="membership" v-for="link in links" :key="link.id" >
-                        <a href="#" v-on:click="select_node(link.id)">{{link.label}}</a>
+                    <li class="membership" v-for="link in links" :key="link" >
+                        <a href="#" v-on:click="select_node(link)">{{link.label}}</a>
                     </li>
                 </ul>
             </div>
@@ -34,28 +37,37 @@
 export default {
     name: 'TermNodePane',
     props: ['active_node','term_data','node_color_index',],
+    emits: [],
     data() {
         return {
             links: null,
-            colornode: null
+            colornode: null,
+            statistics: {},
+            expand_neighbor: false,
+            expand_stats: false
         }
     },
     watch: {
         active_node() {
             var com = this;
-
             
             if (com.active_node == null) {
                 return;
             }
+            
+            
             com.colornode = com.node_color_index[com.active_node.attributes["Ensembl ID"]]
+            const { "Ensembl ID": EnsemblID, Degree, Category, "P Value": PValue, FDR, PageRank, "Eigenvector Centrality": EC } = com.active_node.attributes;
+            com.statistics = { EnsemblID, Degree,Category, PValue, FDR, PageRank, EC }
+
 
             const neighbors = {};
+            const node_id = com.active_node.attributes["Ensembl ID"]
             com.term_data.edges.forEach(e => {
-                if (com.active_node.id == e.source) {
+                if (node_id == e.source) {
                     neighbors[e.target] = true;
                 }
-                if (com.active_node.id == e.target) {
+                if (node_id == e.target) {
                     neighbors[e.source] = true;
                 }
             });
@@ -74,21 +86,8 @@ export default {
             for(var link of com.links) textToCopy.push(link.label);
             navigator.clipboard.writeText(textToCopy.join("\n"));
         },
-        expand_proteins() {
-            
-            const div = document.getElementById("link")
-
-            if(div.style.visibility == "visible"){
-                div.style.visibility = "hidden";
-            }else{
-                div.style.visibility = "visible";
-            }
-            
-        },
-        to_proteins(){
-            var com = this;
-            this.$store.commit('assign_active_enrichment', com.active_node.attributes["Ensembl ID"])
-            this.$router.push("protein")
+        select_node(value) {
+            this.emitter.emit("searchTermNode", value);
         }
     }
 }
