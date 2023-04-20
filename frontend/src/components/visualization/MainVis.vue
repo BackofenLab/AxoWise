@@ -453,7 +453,7 @@ export default {
     });
     
     this.emitter.on("searchNode", state => {
-      this.$emit('active_node_changed', sigma_instance.graph.getNodeFromIndex(state))
+      this.$emit('active_node_changed', sigma_instance.graph.getNodeFromIndex(state.id))
     });
     
     this.emitter.on("searchSubset", state => {
