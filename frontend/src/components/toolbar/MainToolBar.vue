@@ -1,13 +1,23 @@
 <template >
     <div>
         <ul class="menu-bar">
-            <li v-on:click="switch_home()">H</li>
+            <li v-on:click="switch_home()">
+                <img src="@/assets/toolbar/home.png" alt="Home Icon">
+            </li>
             <li v-on:mouseover="search_active=true"
-                v-on:mouseleave="search_active=false">S</li>
+                v-on:mouseleave="search_active=false">
+                <img src="@/assets/toolbar/search.png" alt="Search Icon">
+            </li>
             <li v-on:mouseover="tools_active=true"
-                v-on:mouseleave="tools_active=false">T</li>
-            <li v-on:click="switch_terms()">G</li>
-            <li v-on:click="center()">C</li>
+                v-on:mouseleave="tools_active=false">
+                <img src="@/assets/toolbar/menu-burger.png" alt="Tool Icon">
+            </li>
+            <li v-on:click="switch_terms()">
+                <img src="@/assets/toolbar/share.png" alt="Graph Icon">
+            </li>
+            <li v-on:click="center()">
+                <img src="@/assets/toolbar/expand.png" alt="Center Icon">
+            </li>
         </ul>
         <div class="menu-window" v-show="tools_active == true" 
             v-on:mouseleave="tools_active = false;"
@@ -168,15 +178,20 @@ export default {
     z-index: 99;
 }
 .menu-bar li {
-	list-style: none;
-	color: white;
-	font-family: sans-serif;
-	font-weight: bold;
-	padding: 12px 16px;
-	margin: 0 8px;
-	position: relative;
-	cursor: pointer;
-	white-space: nowrap;
+    list-style: none;
+    color: white;
+    font-family: sans-serif;
+    font-weight: bold;
+    padding: 12px;
+    margin: 0 8px;
+    position: relative;
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
 }
 .menu-bar li::before {
 	content: " ";
@@ -243,5 +258,14 @@ export default {
     width: 100%;
     align-content: center;
     justify-content: center;
+}
+
+.menu-bar li img {
+    width: 30px;
+    filter: invert(1);
+}
+
+.menu-bar li:hover img {
+    filter: invert(0);
 }
 </style>
