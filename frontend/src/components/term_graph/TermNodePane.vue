@@ -38,7 +38,7 @@
 export default {
     name: 'TermNodePane',
     props: ['active_node','term_data','node_color_index',],
-    emits: [],
+    emits: ['active_item_changed'],
     data() {
         return {
             links: null,
@@ -55,6 +55,8 @@ export default {
             if (com.active_node == null) {
                 return;
             }
+
+            com.$emit('active_item_changed',{ "node": com.active_node })
             
             
             com.colornode = com.node_color_index[com.active_node.attributes["Ensembl ID"]]

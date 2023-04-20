@@ -12,8 +12,8 @@
 
 export default {
     name: 'FDRPane',
-    props: ['term_data',],
-    emits: [],
+    props: ['term_data','active_fdr'],
+    emits: ['active_item_changed'],
     data() {
         return {
             links: null,
@@ -24,9 +24,11 @@ export default {
         active_fdr() {
             var com = this;
             
-            if (com.fdr_active == null) {
+            if (com.active_fdr == null) {
                 return;
             }
+
+            com.$emit('active_item_changed',{ "fdr": com.active_fdr })
 
         }
     },

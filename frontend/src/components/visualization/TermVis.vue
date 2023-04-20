@@ -14,7 +14,7 @@ var sigma_instance = null;
 
 export default {
   name: 'TermVis',
-  props: ['term_data', 'active_node', 'node_color_index', 'edge_color_index', 'unconnected_nodes', 'active_fdr'],
+  props: ['term_data', 'active_node', 'node_color_index', 'edge_color_index', 'unconnected_nodes', 'active_fdr', 'active_combine'],
   emits: ['active_node_changed', 'active_fdr_changed'],
   data() {
     return {
@@ -93,6 +93,10 @@ export default {
       });
 
       sigma_instance.refresh();
+    },
+    active_combine(val){
+      if(val.name == "node") this.$emit('active_node_changed', val.value)
+      if(val.name == "fdr") this.$emit('active_fdr_changed', val.value)
     },
   },
   methods: {

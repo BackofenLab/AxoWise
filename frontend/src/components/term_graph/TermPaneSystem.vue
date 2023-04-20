@@ -8,14 +8,15 @@
             </div>
         </div>
         <div class="main-section">
-            <NodePane v-show="active_node !== null"
+            <NodePane v-show="active_tab === 'node'"
             :active_node='active_node' 
             :node_color_index='node_color_index'
             :term_data='term_data'
             @active_item_changed = 'active_item = $event'
             ></NodePane>
-            <FDRPane v-show="active_fdr !== null"
+            <FDRPane v-show="active_tab === 'fdr'"
             :term_data='term_data'
+            :active_fdr='active_fdr'
             @active_item_changed = 'active_item = $event'
             ></FDRPane>
         </div>
@@ -30,16 +31,27 @@ import FDRPane from '@/components/term_graph/FDRPane.vue'
 export default {
     name:"TermPaneSystem",
     props:['term_data', 'active_node','active_fdr', 'node_color_index'],
-    emits:['active_node_changed', 'active_fdr_changed'],
+    emits:['active_node_changed', 'active_fdr_changed', 'active_combine_changed'],
     components: {
         NodePane,
         FDRPane
     },
     data() {
         return{
+            active_item: null,
+            active_dict: {},
+            active_tab: "node",
         }
     },
     watch: {
+        active_item(val){
+            this.active_tab = Object.keys(val)[0]
+            if(val == null){
+                delete this.active_dict.val;
+                return
+            }
+            Object.assign(this.active_dict, val);
+        },
     },
     methods: {
         open_pane(){
@@ -65,6 +77,18 @@ export default {
             this.$emit('active_fdr_changed', null)
 
         },
+        selectTab(name, tab){
+            if(name == "node"){
+                this.active_tab = "node"
+                this.$emit('active_node_changed', null)
+                this.$emit('active_combine_changed', {value: tab, name: name})
+            }
+            if(name == "fdr"){
+                this.active_tab = "fdr"
+                this.$emit('active_fdr_changed', null)
+                this.$emit('active_combine_changed', {value: tab, name: name})
+            }
+        }
     }
 }
 </script>
