@@ -47,7 +47,11 @@ export default {
             colornode: null,
             statistics: {},
             expand_neighbor: false,
-            expand_stats: false
+            expand_stats: false,
+            node_item: {
+                value: null,
+                imageSrc: require('@/assets/pane/protein-icon.png')
+            }
         }
     },
     watch: {
@@ -57,8 +61,10 @@ export default {
             if (com.active_node == null) {
                 return;
             }
+
+            com.node_item.value = com.active_node
             
-            com.$emit('active_item_changed',{ "node": com.active_node })
+            com.$emit('active_item_changed',{ "node": com.node_item})
             
             com.colornode = com.node_color_index[com.active_node.attributes["Ensembl ID"]]
             const { Degree, "Ensembl ID": EnsemblID } = com.active_node.attributes;

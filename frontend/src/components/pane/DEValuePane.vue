@@ -27,20 +27,25 @@ export default {
         return {
             links: null,
             hide: true,
+            d_item: {
+                value: null,
+                imageSrc: require('@/assets/pane/d-icon.png')
+            }
         }
     },
     watch: {
         active_decoloumn() {
             var com = this;
 
-            console.log(this.active_decoloumn)
             
             if (com.active_decoloumn == null) {
 
                 return;
             }
 
-            com.$emit('active_item_changed',{ "devalue": com.active_decoloumn })
+            this.d_item.value = com.active_decoloumn
+
+            com.$emit('active_item_changed',{ "devalue": this.d_item })
             
         }
     },

@@ -31,6 +31,10 @@ export default {
         return {
             hide: true,
             expand_proteins: false,
+            subset_item: {
+                value: null,
+                imageSrc: require('@/assets/pane/cluster-icon.png')
+            }
         }
     },
     watch: {
@@ -42,7 +46,9 @@ export default {
                 return;
             }
 
-            com.$emit('active_item_changed',{ "subset": com.active_subset })
+            com.subset_item.value = com.active_subset
+
+            com.$emit('active_item_changed',{ "subset": com.subset_item })
             
         }
     },

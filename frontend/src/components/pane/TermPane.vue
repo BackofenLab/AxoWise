@@ -47,7 +47,11 @@ export default {
             term_history: [],
             statistics: {},
             expand_stats: false,
-            expand_proteins: false
+            expand_proteins: false,
+            term_item: {
+                value: null,
+                imageSrc: require('@/assets/pane/enrichment-icon.png')
+            }
         }
     },
     watch: {
@@ -60,7 +64,8 @@ export default {
             const { category, id, fdr_rate, p_value } = com.active_term;
             com.statistics = { category, id, fdr_rate, p_value }
 
-            com.$emit('active_item_changed',{ "term": com.active_term })
+            com.term_item.value = com.active_term
+            com.$emit('active_item_changed',{ "term": com.term_item })
 
             const activeTermProteins = new Set(com.active_term.proteins);
             com.links = com.gephi_data.nodes.filter(node => activeTermProteins.has(node.id));

@@ -1754,6 +1754,7 @@ display: none;
 	width: 25px;
 	height: 25px;
 	margin-top: 5px;
+	
 
 }
 
@@ -1767,6 +1768,9 @@ display: none;
 	text-align: center;
 	width: 25px;
 	height: 25px;
+	justify-content: center;
+	align-content: center;
+	display: grid;
 
 }
 .tabs button {
@@ -1777,6 +1781,9 @@ display: none;
 	color: white;
 	width: 25px;
 	height: 25px;
+	justify-content: center;
+	align-content: center;
+	display: grid;
 }
 
 .pane button:hover{
