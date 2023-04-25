@@ -11,8 +11,8 @@
                 <!-- <div v-if="await_load==false" class="term_number">
                     <span>Terms: {{term_numbers}}</span>
                 </div> -->
-            <!-- <div v-if="await_load == true" class="loading_pane"></div> -->
-            <div class="results" v-if="terms !== null">
+            <div v-if="await_load == true" class="loading_pane"></div>
+            <div class="results" v-if="terms !== null && await_load == false">
                 <div v-for="entry in filtered_terms" :key=entry>
                     <a href="#" v-on:click="select_term(entry)">{{entry.name}}</a>
                 </div>
@@ -20,7 +20,7 @@
                     <i>No terms available.</i>
                 </div>
             </div>
-            <button id="export-enrich-btn" v-on:click="export_enrichment()">Export</button>
+            <button v-if="await_load == false" id="export-enrich-btn" v-on:click="export_enrichment()">Export</button>
         </div>
     </div>
 </template>
@@ -38,7 +38,8 @@
                 terms: null,
                 search_raw: "",
                 filter_terms: this.$store.state.filter_terms,
-                category: ""
+                category: "",
+                await_load: true
             }
         },
         methods: {
@@ -84,10 +85,12 @@
                 formData.append('proteins', subset)
                 formData.append('species_id', com.gephi_data.nodes[0].species)
 
+                com.await_load = true
                 this.axios
                     .post(com.api.subgraph, formData)
                     .then((response) => {
                         com.terms = response.data.sort((t1, t2) => t1.fdr_rate - t2.fdr_rate)
+                        com.await_load = false 
                     })
 
             }
@@ -101,6 +104,7 @@
             formData.append('proteins', com.gephi_data.nodes.map(node => node.id))
             formData.append('species_id', com.gephi_data.nodes[0].species)
                 
+
             //POST request for functional enrichment
             this.axios
               .post(com.api.subgraph, formData)
@@ -108,6 +112,7 @@
                 this.$store.commit('assign_enrichment', response.data.sort((t1, t2) => t1.fdr_rate - t2.fdr_rate))
                 com.terms = this.$store.state.enrichment_terms
                 com.get_term_data(formData)
+                this.await_load = false
                 })
         },
         computed: {
