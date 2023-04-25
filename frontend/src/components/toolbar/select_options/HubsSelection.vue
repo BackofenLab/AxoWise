@@ -98,11 +98,4 @@ export default {
 </script>
 
 <style>
-    .boundary {
-        border-radius: 20px;
-        background: white;
-        padding: 10px;
-        margin: 10px;
-    }
-
 </style>

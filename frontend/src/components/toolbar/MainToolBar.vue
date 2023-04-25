@@ -85,6 +85,9 @@
                 <PageRank
                 :gephi_data='gephi_data'
                 ></PageRank>
+                <BetweenesCentrality
+                :gephi_data='gephi_data'
+                ></BetweenesCentrality>
             </div>
         </div>
 
@@ -103,6 +106,7 @@ import SearchBar from '@/components/toolbar/SearchBar.vue'
 import HubsSelection from '@/components/toolbar/select_options/HubsSelection.vue'
 import EigenvectorCentrality from '@/components/toolbar/select_options/EigenvectorCentrality.vue'
 import PageRank from '@/components/toolbar/select_options/PageRank.vue'
+import BetweenesCentrality from '@/components/toolbar/select_options/BetweenesCentrality.vue'
 
 export default {
     name: 'MainToolBar',
@@ -118,7 +122,8 @@ export default {
         SearchBar,
         HubsSelection,
         EigenvectorCentrality,
-        PageRank
+        PageRank,
+        BetweenesCentrality
 
     },
     data() {

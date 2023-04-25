@@ -1825,3 +1825,10 @@ display: none;
 	border-radius: 20px;
 	cursor: pointer;
 }
+
+.boundary {
+	border-radius: 20px;
+	background: rgba(255, 255, 255, 0.5);
+	padding: 10px;
+	margin: 10px;
+}

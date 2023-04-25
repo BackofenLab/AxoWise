@@ -79,7 +79,7 @@ public class Main {
         // clusterCoefficient(graphModel);
 
         // Betweeness Centrality
-        // betweenessCentrality(graphModel);
+        betweenessCentrality(graphModel);
 
         // PageRank
         pageRank(graphModel);
