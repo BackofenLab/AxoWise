@@ -69,7 +69,27 @@
                         this.$store.commit('assign_term_graph', response.data)
                     })
 
-            }
+            },
+            export_enrichment: function(){
+                var com = this;
+
+                //export terms as csv
+                var csvTermsData = com.terms;
+                var terms_csv = 'category,fdr_rate,name,proteins\n';
+
+                csvTermsData.forEach(function(row) {
+                    terms_csv += row['category'] + ',' + row['fdr_rate'] + ',"'  + row['name'] + '","' +row['proteins']+'"';
+                    terms_csv += '\n';   
+                });
+
+
+                //Create html element to hidden download csv file
+                var hiddenElement = document.createElement('a');
+                hiddenElement.target = '_blank';
+                hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(terms_csv);
+                hiddenElement.download = 'Terms.csv';  
+                hiddenElement.click();
+            },
         },
         watch: {
             active_layer(subset){

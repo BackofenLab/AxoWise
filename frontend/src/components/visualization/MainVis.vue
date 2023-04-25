@@ -70,7 +70,9 @@ export default {
       const neighbors = new Set();
       const edges = sigma_instance.graph.edges()
       
+      console.log(node)
       node.color = "rgb(255, 255, 255)"
+      node.active = true
 
       for (let i = 0; i < edges.length; i++) {
         const e = edges[i]
@@ -418,7 +420,7 @@ export default {
         minEdgeSize: 0.3,
         minNodeSize: 1,
         maxNodeSize: 20,
-        labelThreshold: 5
+        labelThreshold: 5,
       }
     });
 
