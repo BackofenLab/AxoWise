@@ -8,7 +8,7 @@
                 <button id="down_level" v-on:click="change_level()">Apply</button>
                 <button id="up_level" v-on:click="revert_level()">Revert</button>
             </div>
-            <button id="go-button" v-on:click="to_term()">Go Term</button>
+            <button class="go-button" v-on:click="to_term()">Go Term</button>
             <div class="p">
                 <span>Statistics:</span>
                 <button v-on:click="expand_stats = !expand_stats" id="expand-btn">Expand</button>
@@ -127,7 +127,7 @@ export default {
         background-color: rgba(0, 0, 0, 0.7);
         margin-bottom: 5px;
     }
-    #go-button {
+    .go-button {
         color: #fff;
         border-style: outset;
         border-width: 1px;

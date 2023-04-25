@@ -3,7 +3,7 @@
         <div class="headertext">
             <span>{{active_node.attributes['Name']}}</span>
         </div>
-        <button v-on:click="to_proteins()" >To Protein Graph</button>
+        <button class="go-button" v-on:click="to_proteins()" >To Protein Graph</button>
         <div class="nodeattributes">
             <div id="colorbar" :style="{ backgroundColor: colornode }">{{active_node.attributes['Modularity Class']}}</div>
             <div class="p">
@@ -45,7 +45,11 @@ export default {
             colornode: null,
             statistics: {},
             expand_neighbor: false,
-            expand_stats: false
+            expand_stats: false,
+            node_item: {
+                value: null,
+                imageSrc: require('@/assets/pane/protein-icon.png')
+            }
         }
     },
     watch: {
@@ -56,7 +60,9 @@ export default {
                 return;
             }
 
-            com.$emit('active_item_changed',{ "node": com.active_node })
+            com.node_item.value = com.active_node
+            
+            com.$emit('active_item_changed',{ "node": com.node_item})
             
             
             com.colornode = com.node_color_index[com.active_node.attributes["Ensembl ID"]]

@@ -17,7 +17,11 @@ export default {
     data() {
         return {
             links: null,
-            expand_stats: false
+            expand_stats: false,
+            fdr_item: {
+                value: null,
+                imageSrc: require('@/assets/pane/fdr-icon.png')
+            }
         }
     },
     watch: {
@@ -28,7 +32,8 @@ export default {
                 return;
             }
 
-            com.$emit('active_item_changed',{ "fdr": com.active_fdr })
+            com.fdr_item.value = com.active_fdr
+            com.$emit('active_item_changed',{ "fdr": com.fdr_item })
 
         }
     },

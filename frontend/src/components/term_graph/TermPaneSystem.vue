@@ -1,10 +1,16 @@
 <template>
     <div id="attributepane" class="pane" v-show="active_node !== null || active_fdr !== null">
         <div class="buttons">
-            <button id="panebutton" v-on:click="open_pane()"></button>
-            <button id="paneclosebutton" v-on:click="close_pane()"></button>
+            <button id="panebutton" v-on:click="open_pane()">
+                <img id="term-collapse-icon" src="@/assets/toolbar/winkel-rechts.png" alt="Collapse Icon">
+            </button>
+            <button id="paneclosebutton" v-on:click="close_pane()">
+                <img src="@/assets/toolbar/cross.png" alt="Close Icon">
+            </button>
             <div class="tabs">
-                <button v-for="(tab, name) in active_dict" :key="name" @click="selectTab(name,tab)"></button>
+                <button v-for="(tab, name) in active_dict" :key="name" @click="selectTab(name,tab.value)">
+                    <img :src="tab.imageSrc" class="tab_button">
+                </button>
             </div>
         </div>
         <div class="main-section">
@@ -58,15 +64,18 @@ export default {
             const div = document.getElementById('attributepane');
             const paneButton = document.getElementById('panebutton');
             const paneCloseButton = document.getElementById('paneclosebutton');
+            const collapseIcon = document.getElementById('term-collapse-icon');
 
             if (!div.classList.contains('pane-show')) {
                 div.classList.add('pane-show');
                 paneButton.style.height = '100%';
                 paneCloseButton.style.visibility = 'hidden';
+                collapseIcon.classList.add('rotate');
             } else {
                 div.classList.remove('pane-show');
                 paneCloseButton.style.visibility = 'visible';
                 paneButton.style.height = '25px';
+                collapseIcon.classList.remove('rotate');
             }
         },
         close_pane(){
