@@ -28,6 +28,9 @@
                 :type="screen_type"
                 ></ExportScreen>
                 <ExportGraph></ExportGraph>
+                <NodeLabelSelect
+                :type="screen_type"
+                ></NodeLabelSelect>
                 <ProteinList
                 :protein_list='protein_list'
                 @status_changed = 'status = $event'
@@ -37,6 +40,7 @@
                 ></SelectionWindow>
                 <DEValue></DEValue>
                 <ConnectedGraph></ConnectedGraph>
+
             </div>
 
 
@@ -100,6 +104,7 @@ import ExportScreen from '@/components/toolbar/ExportScreen.vue'
 import ConnectedGraph from '@/components/toolbar/ConnectedGraph.vue'
 import DEValue from '@/components/toolbar/DEValue.vue'
 import ExportGraph from '@/components/toolbar/ExportGraph.vue'
+import NodeLabelSelect from '@/components/toolbar/NodeLabelSelect.vue'
 import ProteinList from '@/components/toolbar/ProteinList.vue'
 import SelectionWindow from '@/components/toolbar/SelectionWindow.vue'
 import SearchBar from '@/components/toolbar/SearchBar.vue'
@@ -123,7 +128,8 @@ export default {
         HubsSelection,
         EigenvectorCentrality,
         PageRank,
-        BetweenesCentrality
+        BetweenesCentrality,
+        NodeLabelSelect
 
     },
     data() {

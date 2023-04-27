@@ -71,6 +71,7 @@ export default {
       const edges = sigma_instance.graph.edges()
       
       node.color = "rgb(255, 255, 255)"
+      node.active = true
 
       for (let i = 0; i < edges.length; i++) {
         const e = edges[i]
@@ -273,6 +274,14 @@ export default {
     
     sigma_instance.refresh();
   },
+  reset_label_select() {
+
+    sigma_instance.graph.nodes().forEach(function(n) {
+      n.active = false
+    });
+
+    sigma_instance.refresh()
+  },
   get_normalize: function(data, nmin, nmax) {
     var rgb_value = scaleLinear()
       .domain([nmin, 0, nmax])
@@ -466,6 +475,10 @@ export default {
     
     this.emitter.on("exportGraph", () => {
       this.exportGraphAsImage()
+    });
+
+    this.emitter.on("resetSelect", () => {
+      this.reset_label_select()
     });
     
     sigma_instance.refresh()

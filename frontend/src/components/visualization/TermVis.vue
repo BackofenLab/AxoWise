@@ -52,7 +52,10 @@ export default {
         if (!neighbors.has(n.attributes["Ensembl ID"]) && n.attributes["Ensembl ID"] !== node.attributes["Ensembl ID"]) {
           n.hidden = true
         }
-        if(n.attributes["Ensembl ID"] == node.attributes["Ensembl ID"]) n.color = "rgb(255, 255, 255)";
+        if(n.attributes["Ensembl ID"] == node.attributes["Ensembl ID"]) {
+          n.active = true
+          n.color = "rgb(255, 255, 255)";
+        }
       }
 
       
@@ -124,6 +127,13 @@ export default {
 
       sigma_instance.refresh();
     },
+    reset_label_select() {
+      sigma_instance.graph.nodes().forEach(function(n) {
+        n.active = false
+      });
+
+      sigma_instance.refresh()
+      },
     edit_opacity: function() {
       var com = this;
       sigma_instance.graph.edges().forEach(function (e) {
@@ -217,6 +227,10 @@ export default {
 
     this.emitter.on("centerTermGraph", () => {
       sigma_instance.camera.goTo({ x: 0, y: 0, ratio: 1, angle: sigma_instance.camera.angle });
+    });
+
+    this.emitter.on("resetTermSelect", () => {
+      this.reset_label_select()
     });
 
     sigma_instance.refresh()

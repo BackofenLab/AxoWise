@@ -22,6 +22,7 @@
 
             <div class="menu-items">
                 <ExportScreen :type="screen_type"></ExportScreen>
+                <NodeLabelSelect :type="screen_type"></NodeLabelSelect>
                 <FDRValue></FDRValue>
                 <TermConnectedGraph></TermConnectedGraph>
             </div>
@@ -45,6 +46,7 @@
 <script>
 
 import ExportScreen from '@/components/toolbar/ExportScreen.vue'
+import NodeLabelSelect from '@/components/toolbar/NodeLabelSelect.vue'
 import TermConnectedGraph from '@/components/term_graph/TermConnectedGraph.vue'
 import TermSearch from '@/components/term_graph/TermSearch.vue'
 import FDRValue from '@/components/term_graph/FDRValue.vue'
@@ -57,7 +59,8 @@ export default {
         ExportScreen,
         TermConnectedGraph,
         TermSearch,
-        FDRValue
+        FDRValue,
+        NodeLabelSelect
 
     },
     data() {
