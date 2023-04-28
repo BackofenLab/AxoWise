@@ -1,5 +1,6 @@
 The supported versions of the dependencies in UBUNTU 18.04.06:
 
+* node 18
 * Neo4j=4.4.10
 * cypher-shell=1:4.4
 * openjdk-11-jdk

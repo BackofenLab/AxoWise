@@ -1,8 +1,10 @@
 # Installation
 
+_Hint: if installing on Ubuntu check-out [these versions](ubuntu-versions.txt)!_
+
 ### Requirements
 - [Anaconda](https://conda.io/en/latest/) 
-- [npm/Node.js](https://nodejs.org/en/download) 
+- [npm/Node.js (Version 18 because of Sigma)](https://nodejs.org/en/download)
 - [Java (version 8! because of neo4j 4.4)](https://adoptium.net/de/temurin/archive/?version=8)
 - [Maven](https://maven.apache.org/download.cgi) 
 - [Neo4j (version 4.4!)](https://neo4j.com/download-center/) 
