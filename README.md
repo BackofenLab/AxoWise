@@ -15,6 +15,7 @@ A guid is given [here](docs/Installation.md).
   This dir is only used as a reference for future scraping.
 
 ## How to Use?
+0. ask someone for the "credentials.yml" file
 1. build
    ````commandline
    ./scripts/build.sh

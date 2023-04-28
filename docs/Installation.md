@@ -38,7 +38,7 @@ _Hint: if installing on Ubuntu check-out [these versions](ubuntu-versions.txt)!_
    ```
 3. load the dump file into your own database
    ````commandline
-   neo4j-admin load --from=<backup-directory> --database=<database-name> --forc
+   neo4j-admin load --from=<backup-directory> --database=neo4j --force
    ````
 
 ### Create Neo4J Account
