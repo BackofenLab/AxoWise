@@ -1,0 +1,8 @@
+The supported versions of the dependencies in UBUNTU 18.04.06:
+
+* Neo4j=4.4.10
+* cypher-shell=1:4.4
+* openjdk-11-jdk
+* apoc=4.3.0.8 (https://github.com/neo4j-contrib/neo4j-apoc-procedures/releases/download/4.3.0.8/apoc-4.3.0.8-all.jar)
+* npm install -g phantomjs-prebuilt
+* npm install -g sigma
