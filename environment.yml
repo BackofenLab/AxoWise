@@ -3,17 +3,17 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python>=3.6
-  - py2neo #==4.3 current py2neo library is 2020.0.0
-  - psycopg2
-  - pyyaml
-  - pylint
-  - flask
-  - networkx>=2.2
-  - numpy
-  - scipy #
-  - pandas
-  - packaging
-  - neomodel
-  - monotonic
-  - neo4j-python-driver # - neo4j-driver==1.6.2 #exact version needed to remain compatible with py2neo v4.0
+  - python=3.11.*
+  - py2neo=2021.2.*
+  - psycopg2=2.9.*
+  - pyyaml=6.*
+  - pylint=2.17.*
+  - flask=2.2.*
+  - networkx=3.*
+  - numpy=1.24.*
+  - scipy=1.10.*
+  - pandas=2.0.*
+  - packaging=23.*
+  - neomodel=4.0.*
+  - monotonic=1.*
+  - neo4j-python-driver=5.7.*

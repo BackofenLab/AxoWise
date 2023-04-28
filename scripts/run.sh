@@ -1,15 +1,6 @@
 #!/bin/bash
 
-echo "building frontend..."
-cd frontend || exit
-npm install
-npm run build
-cd ..
-
-echo "building backend..."
-cd backend/gephi || exit
-mvn install
-cd ../..
+echo "please run build.sh before if you made changes outside of the python-backend"
 
 echo "run backend..."
 cd backend/src || exit
