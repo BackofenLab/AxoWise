@@ -8,6 +8,9 @@ import sigma from "sigma";
 // import Graph from 'graphology'
 import {scaleLinear} from "d3-scale";
 import saveAsPNG from '../../rendering/saveAsPNG';
+import customLabelRenderer from '../../rendering/customLabelRenderer';
+
+sigma.canvas.labels.def = customLabelRenderer
 
 var sigma_instance = null;
 
@@ -458,6 +461,7 @@ export default {
 
     sigma_instance.graph.clear();
     sigma_instance.graph.read(com.gephi_data);
+    
 
     com.edit_opacity()
 

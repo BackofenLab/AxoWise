@@ -105,7 +105,7 @@ public class Main {
     }
 
     private static void setEdgeColors(Graph graph) {
-        int alpha = 100;
+        int alpha = 50;
         for (Edge e : graph.getEdges()) {
             Color sourceColor = e.getSource().getColor();
             Color targetColor = e.getTarget().getColor();
@@ -236,7 +236,7 @@ public class Main {
         PreviewModel previewModel = previewController.getModel();
         PreviewProperties previewProperties = previewModel.getProperties();
         previewProperties.putValue(PreviewProperty.EDGE_CURVED, Boolean.TRUE);
-        previewProperties.putValue(PreviewProperty.EDGE_OPACITY, 100);
+        previewProperties.putValue(PreviewProperty.EDGE_OPACITY, 30);
         previewProperties.putValue(PreviewProperty.NODE_BORDER_WIDTH, 0);
         previewProperties.putValue(PreviewProperty.EDGE_COLOR, EdgeColor.Mode.MIXED);
     }
@@ -277,8 +277,8 @@ public class Main {
         Function degreeRanking = appearanceModel.getNodeFunction(degreeColumn,
                 RankingNodeSizeTransformer.class);
         RankingNodeSizeTransformer degreeTransformer = degreeRanking.getTransformer();
-        degreeTransformer.setMinSize(8);
-        degreeTransformer.setMaxSize(35);
+        degreeTransformer.setMinSize(5);
+        degreeTransformer.setMaxSize(80);
         appearanceController.transform(degreeRanking);
 
     }
@@ -300,7 +300,7 @@ public class Main {
 
         PaletteManager paletteManager = PaletteManager.getInstance();
         Collection<Preset> presets = paletteManager.getPresets();
-        Preset preset = presets.stream().skip(7).findFirst().orElse(null);
+        Preset preset = presets.stream().skip(6).findFirst().orElse(null);
         Palette randomPalette = paletteManager.generatePalette(partition.size(undirectedGraph), preset);
         partition.setColors(undirectedGraph, randomPalette.getColors());
 
