@@ -19,6 +19,12 @@
    make env
    conda activate pgdb
    ```
+3. install dependencies for sigma
+```commandline
+   npm install -g phantomjs-prebuilt
+   npm install -g sigma
+   ```
+
 ### Install APOC Plugin
 1. move the Apoc.jar into neo4j/plugin
 2. add following permissions to the neo4j.config
