@@ -38,6 +38,7 @@
         :active_subset='active_subset' @active_subset_changed = 'active_subset = $event'
         > </ModularityClass>
       </div>
+      <ToggleLabel></ToggleLabel>
     </keep-alive>
   </div>
 </template>
@@ -48,6 +49,7 @@ import MainVis from '@/components/visualization/MainVis.vue'
 import PaneSystem from '@/components/pane/PaneSystem.vue'
 import EnrichmentTool from '@/components/enrichment/EnrichmentTool.vue'
 import ModularityClass from '../components/interface/ModularityClass.vue'
+import ToggleLabel from '../components/interface/ToggleLabel.vue'
 import MainToolBar from '../components/toolbar/MainToolBar.vue'
 
 export default {
@@ -57,7 +59,8 @@ export default {
     PaneSystem,
     EnrichmentTool,
     ModularityClass,
-    MainToolBar
+    MainToolBar,
+    ToggleLabel
   },
   data() {
     return {

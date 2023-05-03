@@ -39,7 +39,7 @@ export default {
       rectWidth: 0,
       rectHeight: 0,
       state: null,
-      edge_opacity: 0.2,
+      edge_opacity: 0.3,
       rectangular_select: {
         canvas: null,
         context: null,
@@ -47,6 +47,7 @@ export default {
         active: false,
         surface_backup: null,
       }, 
+      label_active_dict: {}
     }
   },
   watch: {
@@ -112,6 +113,7 @@ export default {
       graph.nodes().forEach(function (node) {
         if (proteins.has(node.id)) {
           node.color = "rgb(255, 255, 255)"
+          node.active = true
         } else {
           node.color = "rgb(0, 100, 0)"
         }
@@ -124,9 +126,9 @@ export default {
         const target_present = proteins.has(target.attributes["Ensembl ID"]);
 
         if (source_present && !target_present || !source_present && target_present) {
-          edge.color = "rgba(220, 255, 220, 0.2)"
+          edge.color = "rgba(220, 255, 220, 0.25)"
         } else if (source_present && target_present) {
-          edge.color = "rgba(255, 255, 255, 0.2)"
+          edge.color = "rgba(255, 255, 255, 0.3)"
         } else {
           edge.color = "rgba(0, 100, 0, 0.2)"
         }
@@ -163,10 +165,22 @@ export default {
         const targetPresent = proteins.has(targetID);
 
         // Source
-        sourceNode.color = sourcePresent ? "rgb(255, 255, 255)" : "rgb(0, 100, 100)";
+        if(sourcePresent) {
+          sourceNode.color = "rgb(255,255,255)"
+          sourceNode.active = true
+        }
+        else{
+          sourceNode.color = "rgb(0,100,100)"
+        }
 
         // Target
-        targetNode.color = targetPresent ? "rgb(255, 255, 255)" : "rgb(0, 100, 100)";
+        if(targetPresent) {
+          targetNode.color = "rgb(255,255,255)"
+          targetNode.active = true
+        }
+        else{
+          targetNode.color = "rgb(0,100,100)"
+        }
 
         // Edge
         if (sourcePresent !== targetPresent) {
@@ -403,10 +417,23 @@ export default {
   edit_opacity: function() {
     var com = this;
     sigma_instance.graph.edges().forEach(function (e) {
-      e.color = e.color.replace(/[\d.]+\)$/g, com.edge_opacity + ')');
+      e.color = e.color.replace(/[\d.]+\)$/g, com.edge_opacity+')');
     });
     sigma_instance.refresh();
   },
+  hide_labels(state) {
+    if(state){
+      sigma_instance.graph.nodes().forEach(function(n) {
+        n.hide_label = true
+      });
+    }else{
+      sigma_instance.graph.nodes().forEach(function(n) {
+        n.hide_label = false
+      });
+    }
+    sigma_instance.refresh()
+  }
+
 },
   mounted() {
     var com = this;
@@ -423,8 +450,6 @@ export default {
       settings: {
         defaultLabelColor: "#FFF",
         hideEdgesOnMove: true,
-        maxEdgeSize: 0.3,
-        minEdgeSize: 0.3,
         minNodeSize: 1,
         maxNodeSize: 20,
         labelThreshold: 5,
@@ -479,6 +504,10 @@ export default {
 
     this.emitter.on("resetSelect", () => {
       this.reset_label_select()
+    });
+
+    this.emitter.on("hideLabels", (state) => {
+      this.hide_labels(state)
     });
     
     sigma_instance.refresh()

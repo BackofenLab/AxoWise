@@ -1057,14 +1057,6 @@ padding: 0px;
 	padding-bottom:15px;
 }
 
-input {
-border: 1px solid #999;
-background-color: #fff;
-padding: 5px 7px 4px 7px;
-width: 205px;
-color: #000;
-}
-
 .search-field {
 	z-index: 999;
 	padding: 5px;
