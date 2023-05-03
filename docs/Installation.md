@@ -1,13 +1,11 @@
-# Installation
-
-_Hint: if installing on Ubuntu check-out [these versions](ubuntu-versions.txt)!_
+# Installation for Ubuntu
 
 ### Requirements
-- [Anaconda](https://conda.io/en/latest/) 
-- [npm/Node.js (Version 18 because of Sigma)](https://nodejs.org/en/download)
-- [Java (version 8! because of neo4j 4.4)](https://adoptium.net/de/temurin/archive/?version=8)
-- [Maven](https://maven.apache.org/download.cgi) 
-- [Neo4j (version 4.4!)](https://neo4j.com/download-center/) 
+- [Anaconda](https://conda.io/en/latest/)  [Tutorial](https://docs.anaconda.com/free/anaconda/install/linux/)
+- [npm/Node.js (Version 18 because of Sigma)](https://nodejs.org/en/download) [Tutorial (recommended with nvm)](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-22-04)
+- [Java (version 11 because of neo4j 4.4 - on mac Java8)](https://adoptium.net/de/temurin/archive/?version=11) [Tutorial](https://wiki.ubuntuusers.de/Java/Installation/OpenJDK/)
+- [Maven](https://maven.apache.org/download.cgi) [Tutorial](https://www.digitalocean.com/community/tutorials/install-maven-linux-ubuntu)
+- [Neo4j (version 4.4!)](https://neo4j.com/download-center/) [Tutorial (remember to adjust version)](https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-neo4j-on-ubuntu-20-04)
   - [APOC-core (version 4.4!)](https://neo4j.com/labs/apoc/4.4/installation/) [(direct download)](https://github.com/neo4j-contrib/neo4j-apoc-procedures/releases/4.4.0.1)
 
 ### Setting up the environment
@@ -34,7 +32,7 @@ _Hint: if installing on Ubuntu check-out [these versions](ubuntu-versions.txt)!_
 1. download [test sample database](https://drive.google.com/file/d/1S8_O2HCeMKwukwnTHlFmf1KLQnbfcXAN/view)
 2. stop the neo4j database if running
    ```commandline
-   stop neo4j
+   neo4j stop
    ```
 3. load the dump file into your own database
    ````commandline
@@ -42,7 +40,7 @@ _Hint: if installing on Ubuntu check-out [these versions](ubuntu-versions.txt)!_
    ````
 
 ### Create Neo4J Account
-1. start neo4j with ````start neo4j````or ````neo4j console````
+1. start neo4j with ````neo4j start````or ````neo4j console````
 2. open [localhost:7474](http://localhost:7474/browser/)
    - login with user:
      - name: neo4j 
