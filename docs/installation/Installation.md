@@ -10,7 +10,7 @@
 2. install needed software (java, maven,...)
    ```commandline
    cd docs/installation
-   make requirements
+   make all
    ```
 
 2. create the conda environment
