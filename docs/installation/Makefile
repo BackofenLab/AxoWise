@@ -1,4 +1,6 @@
-all: prefix conda node java maven neo4j
+.NOTPARALLEL:
+
+all: prefix conda node java maven neo4j apoc
 
 prefix:
 	@echo -n "Are you sure? [y/N] " && read ans && [ $${ans:-N} = y ]
