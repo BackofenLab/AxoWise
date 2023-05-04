@@ -10,6 +10,7 @@ A guide is given [here](docs/installation/Installation.md).
 - [backend/gephi](backend/gephi) contains code to preorganize the data in nodes.
   These preorganized nodes can then be used in the frontend.
   It is used as a submodule in the server.
+- [backend/test_data](backend/test_data) contains test data
 - [frontend](frontend) contains the [Vue](https://vuejs.org/) frontend code to visualize the protein-data.
 - [scrapting/KEGG](scraping/KEGG) contains code to fetch data from the KEGG source.
   This dir is only used as a reference for future scraping.
