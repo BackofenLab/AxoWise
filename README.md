@@ -1,7 +1,7 @@
 # Protein Graph Database
 
 ## How to install?
-A guid is given [here](docs/Installation.md).
+A guide is given [here](docs/installation/Installation.md).
 
 ## Project Structure
 - [docs](docs) contains files used for documentation including images or text-files.
