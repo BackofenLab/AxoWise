@@ -5,7 +5,7 @@ A guide is given [here](docs/installation/Installation.md).
 
 ## Project Structure
 - [docs](docs) contains files used for documentation including images or text-files.
-- [backend/src](backend/src) contains the [Flask](https://flask.palletsprojects.com/en/2.2.x/) server code used to serve all 
+- [backend/src](backend/src) contains the [Flask](https://flask.palletsprojects.com/en/2.2.x/) server code used to serve all
   files and handle requests to the database.
 - [backend/gephi](backend/gephi) contains code to preorganize the data in nodes.
   These preorganized nodes can then be used in the frontend.
@@ -25,4 +25,3 @@ A guide is given [here](docs/installation/Installation.md).
    ````commandline
    ./scripts/run.sh
    ````
-   
