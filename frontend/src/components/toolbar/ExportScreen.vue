@@ -1,6 +1,7 @@
 <template>
     <div class="tool-item">
-        <li v-on:click="take_screen">Save Image...</li>
+        <li v-on:click="take_screen('white')">Save Image White</li>
+        <li v-on:click="take_screen('black')">Save Image Black</li>
     </div>
 </template>
 
@@ -14,11 +15,11 @@ export default {
         }
     },
     methods: {
-        take_screen(){
+        take_screen(mode){
             if(this.type == "protein"){
-                this.emitter.emit("exportGraph", "graph");
+                this.emitter.emit("exportGraph", mode);
             }else {
-                this.emitter.emit("exportTermGraph", "termgraph");
+                this.emitter.emit("exportTermGraph", mode);
             }
         }
     }
