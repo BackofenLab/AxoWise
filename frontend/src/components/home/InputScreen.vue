@@ -119,10 +119,3 @@ export default {
 
 </script>
 
-<style >
-
-#test {
-  width: 20px;
-}
-
-</style>
