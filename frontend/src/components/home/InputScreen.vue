@@ -17,6 +17,7 @@
       <div class="input-data">
           <div class="input field">
               <div class="input-form-data">
+                <button id="test" @click="submit('test')" > Test Sample</button>
                 <h4>Species:</h4>
                 <v-select v-model="selected_species" :options="species"></v-select>
                 <h4>Protein list:</h4>
@@ -62,7 +63,7 @@ export default {
   },
 
   methods: {
-    submit() {
+    submit(mode) {
 
       /*
       Submit function connects the backend with frontend by supplying the user input and retrieving the graph network.
@@ -77,22 +78,30 @@ export default {
       */
       this.isAddClass=true;
 
-      //Detection of empty inputs
-      if (this.selected_species == "") {
-        alert("Please select a species!");
-        return;
-      }
-
-      if ((this.raw_text == null || this.raw_text == "")) {
-        alert("Please provide a list of proteins!");
-        return;
-      }
-
-      // Creating FormData to send files & parameters with an ajax call
       var formData = new FormData();
-      formData.append("threshold", this.threshold.value);
-      formData.append("species_id", this.selected_species.code);
-      formData.append("proteins", this.raw_text.split("\n").join(";"));
+      if(mode == "test"){
+        formData.append("proteins", this.$store.state.test_sample);
+        formData.append("threshold", this.threshold.value);
+        formData.append("species_id", '10090')
+      }else{
+        //Detection of empty inputs
+        if (this.selected_species == "") {
+          alert("Please select a species!");
+          return;
+        }
+
+        if ((this.raw_text == null || this.raw_text == "")) {
+          alert("Please provide a list of proteins!");
+          return;
+        }
+
+        // Creating FormData to send files & parameters with an ajax call
+        
+        formData.append("threshold", this.threshold.value);
+        formData.append("species_id", this.selected_species.code);
+        formData.append("proteins", this.raw_text.split("\n").join(";"));
+      }
+
 
       this.axios
         .post(this.api.subgraph, formData)
@@ -109,3 +118,11 @@ export default {
 
 
 </script>
+
+<style >
+
+#test {
+  width: 20px;
+}
+
+</style>
