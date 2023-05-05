@@ -9,8 +9,10 @@ import sigma from "sigma";
 import {scaleLinear} from "d3-scale";
 import saveAsPNG from '../../rendering/saveAsPNG';
 import customLabelRenderer from '../../rendering/customLabelRenderer';
+import customNodeRenderer from '../../rendering/customNodeRenderer';
 
 sigma.canvas.labels.def = customLabelRenderer
+sigma.canvas.nodes.def = customNodeRenderer
 
 var sigma_instance = null;
 
@@ -82,9 +84,11 @@ export default {
         if (e.source === node.attributes["Ensembl ID"]) {
           neighbors.add(e.target);
           e.color = "rgb(255, 255, 255)"
+          console.log(e)
         } else if (e.target === node.attributes["Ensembl ID"]) {
           neighbors.add(e.source);
           e.color = "rgb(255, 255, 255)"
+          console.log(e)
         }else{
           e.hidden = true
         }
@@ -386,8 +390,8 @@ export default {
   get_select_range: function(start, length) {
       return length > 0 ? {start: start, end: start + length} : {start: start + length, end: start};
   },
-  exportGraphAsImage() {
-    saveAsPNG(sigma_instance, {download: true})
+  exportGraphAsImage(mode) {
+    saveAsPNG(sigma_instance, {download: true}, mode)
     
   },
   show_unconnectedGraph(state){
@@ -502,8 +506,8 @@ export default {
       sigma_instance.camera.goTo({ x: 0, y: 0, ratio: 1, angle: sigma_instance.camera.angle });
     });
     
-    this.emitter.on("exportGraph", () => {
-      this.exportGraphAsImage()
+    this.emitter.on("exportGraph", (mode) => {
+      this.exportGraphAsImage(mode)
     });
 
     this.emitter.on("resetSelect", () => {
