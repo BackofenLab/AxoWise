@@ -1,9 +1,9 @@
 # Installation for Ubuntu
 
 ### Setting up the environment
-1. clone the repository
+1. clone the repository. To access the repo, you need to add SSH key to your GitHub account. Here is the [guide](https://jdblischak.github.io/2014-09-18-chicago/novice/git/05-sshkeys.html).
    ```commandline
-   git clone https://github.com/BackofenLab/protein-graph-database.git
+   git clone git@github.com:BackofenLab/protein-graph-database.git
    cd protein-graph-database/
    ```
 
