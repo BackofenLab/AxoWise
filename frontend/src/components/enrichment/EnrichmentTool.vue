@@ -39,7 +39,8 @@
                 search_raw: "",
                 filter_terms: this.$store.state.filter_terms,
                 category: "",
-                await_load: true
+                await_load: true,
+                controller: new AbortController()
             }
         },
         methods: {
@@ -90,6 +91,10 @@
                 hiddenElement.download = 'Terms.csv';  
                 hiddenElement.click();
             },
+            abort_enrichment() {
+                this.controller.abort()
+                this.await_load = false 
+            }
         },
         watch: {
             active_layer(subset){
@@ -106,14 +111,18 @@
                 formData.append('species_id', com.gephi_data.nodes[0].species)
 
                 com.await_load = true
+                
                 this.axios
-                    .post(com.api.subgraph, formData)
+                    .post(com.api.subgraph, formData, { signal: this.controller.signal })
                     .then((response) => {
                         com.terms = response.data.sort((t1, t2) => t1.fdr_rate - t2.fdr_rate)
                         com.await_load = false 
                     })
-
-            }
+                    .catch(() => {
+                        //TODO: Catch the abort if needed
+                    });
+                
+            },
 
         },
         mounted() {
@@ -134,6 +143,11 @@
                 com.get_term_data(formData)
                 this.await_load = false
                 })
+            
+            this.emitter.on("abortEnrichment", () => {
+                this.abort_enrichment()
+            });
+    
         },
         computed: {
             regex() {

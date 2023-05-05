@@ -89,6 +89,8 @@ export default {
         revert_level() {
             var com = this;
 
+            this.emitter.emit("abortEnrichment");
+
             com.term_history.pop()
             let last_term = com.term_history[com.term_history.length - 1];
 
