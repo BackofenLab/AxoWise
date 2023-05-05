@@ -30,6 +30,6 @@
 1. start neo4j with ````make neo4j````
 2. open [localhost:7474](http://localhost:7474/browser/)
    - login with user:
-     - name: neo4j 
+     - name: neo4j
      - pw: neo4j
    - change password to: pgdb
