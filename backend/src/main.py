@@ -31,7 +31,7 @@ app = Flask(__name__)
 _SCRIPT_DIR = os.path.dirname(__file__)
 _SERVE_DIR = "../../frontend/dist"
 _INDEX_FILE = "index.html"
-_BACKEND_JAR_PATH = "../gephi/target/gephi.backend-1.0-SNAPSHOT.jar"
+_BACKEND_JAR_PATH = "backend/gephi/target/gephi.backend-1.0-SNAPSHOT.jar"
 
 @app.route("/")
 def index():

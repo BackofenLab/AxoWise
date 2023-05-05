@@ -107,8 +107,8 @@ def functional_enrichment(in_proteins, species_id):
                 term_temp["fdr_rate"] = rank_lst[i+1]
                 rank_lst_fil += [term_temp]
 
-    df = pd.DataFrame(rank_lst_fil)
-    df.to_csv("inhouse_enrichment.csv", header=True, index=False)
+    # df = pd.DataFrame(rank_lst_fil)
+    # df.to_csv("inhouse_enrichment.csv", header=True, index=False)
 
     t_cypher = time.time()
     print("Time Spent (fdr_enrichment): ", t_cypher - t_pvalue)
