@@ -15,13 +15,13 @@ conda:
 	sudo apt-get update
 	cd ~/Downloads; sudo wget https://repo.anaconda.com/archive/Anaconda3-2023.03-1-Linux-x86_64.sh
 	bash ~/Downloads/Anaconda3-2023.03-1-Linux-x86_64.sh
-	rm -rf ~/Downloads/Anaconda3-2023.03-1-Linux-x86_64.sh
+	rm -r ~/Downloads/Anaconda3-2023.03-1-Linux-x86_64.sh
 	conda --version
 
 node:
 # https://engineerworkshop.com/blog/how-to-install-a-specific-version-of-node-in-ubuntu-linux/
 	curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-	sudo apt-get install nodejs npm
+	sudo apt-get install nodejs
 	node --version
 	npm --version
 
