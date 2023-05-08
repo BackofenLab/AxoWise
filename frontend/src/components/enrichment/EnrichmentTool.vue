@@ -28,8 +28,8 @@
 <script>
     export default{
         name: 'EnrichmentTool',
-        props: ['gephi_data', 'active_layer'],
-        emits: ['active_term_changed'],
+        props: ['gephi_data','active_term'],
+        emits: ['active_term_changed', 'active_layer_changed'],
         data() {
             return {
                 api: {
@@ -40,7 +40,7 @@
                 filter_terms: this.$store.state.filter_terms,
                 category: "",
                 await_load: true,
-                controller: new AbortController()
+                sourceToken: null
             }
         },
         methods: {
@@ -92,38 +92,56 @@
                 hiddenElement.click();
             },
             abort_enrichment() {
-                this.controller.abort()
+                this.sourceToken.cancel('Request canceled');
                 this.await_load = false 
-            }
-        },
-        watch: {
-            active_layer(subset){
-                var com = this
+            },
+            apply_layer(subset) {
+                var com = this;
 
-                if(subset == null){
-                    com.terms = this.$store.state.enrichment_terms
-                    return
-                }
+                
+                com.$emit("active_layer_changed", subset);
 
                 var formData = new FormData()
-
+                
                 formData.append('proteins', subset)
                 formData.append('species_id', com.gephi_data.nodes[0].species)
-
-                com.await_load = true
                 
+                com.await_load = true
+
+                com.sourceToken = this.axios.CancelToken.source();
+
                 this.axios
-                    .post(com.api.subgraph, formData, { signal: this.controller.signal })
+                    .post(com.api.subgraph, formData, { cancelToken: com.sourceToken.token })
                     .then((response) => {
                         com.terms = response.data.sort((t1, t2) => t1.fdr_rate - t2.fdr_rate)
-                        com.await_load = false 
+                        com.await_load = false
+                        this.$store.commit('assign_new_enrichment', {"term":subset, "term_set": com.terms})
                     })
                     .catch(() => {
                         //TODO: Catch the abort if needed
                     });
-                
             },
+            revert_layer() {
+                var com = this;
 
+                if(com.await_load){
+                    this.emitter.emit("abortEnrichment");
+                    if(this.$store.state.enrichment_set.length != 0) com.$emit("active_layer_changed", this.$store.state.enrichment_set[this.$store.state.enrichment_set.length -1].term );
+                    else com.$emit("active_layer_changed", null);
+                    return
+                }
+                this.$store.commit('pop_old_enrichment')
+                if(this.$store.state.enrichment_set.length == 0) {
+                    com.terms = this.$store.state.enrichment_terms;
+                    com.$emit("active_layer_changed", null);
+                } else {
+                    var enrich_item = this.$store.state.enrichment_set[this.$store.state.enrichment_set.length -1];
+                    com.terms = enrich_item.term_set
+                    com.$emit("active_layer_changed", enrich_item.term );
+                }
+                
+
+            }
         },
         mounted() {
             var com = this
@@ -146,6 +164,12 @@
             
             this.emitter.on("abortEnrichment", () => {
                 this.abort_enrichment()
+                
+            });
+
+            this.emitter.on("enrichTerms", (subset) => {
+                if(subset != null) this.apply_layer(subset);
+                else this.revert_layer();
             });
     
         },

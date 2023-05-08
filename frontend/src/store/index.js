@@ -4,6 +4,7 @@ export const store = createStore({
   state: {
       gephi_json: null,
       enrichment_terms: null,
+      enrichment_set: [],
       term_graph_data: null,
       filter_terms: [
         {value: "TISSUES", label: "Tissue expression"},
@@ -37,6 +38,12 @@ export const store = createStore({
     },
     assign_enrichment(state, value) {
       state.enrichment_terms = value
+    },
+    assign_new_enrichment(state, value) {
+      state.enrichment_set.push(value)
+    },
+    pop_old_enrichment(state) {
+      state.enrichment_set.pop()
     },
     assign_term_graph(state, value) {
       state.term_graph_data = value

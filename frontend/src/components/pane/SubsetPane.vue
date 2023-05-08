@@ -63,19 +63,18 @@ export default {
         show_layer(){
             var com = this;
 
-
             if(com.hide){
-                com.$emit('highlight_subset_changed', com.active_subset.map(node => node.attributes["Ensembl ID"]))
+                this.emitter.emit("enrichTerms", com.active_subset.map(node => node.attributes["Ensembl ID"]));
             }
             else{
-                com.$emit('highlight_subset_changed', null)
+                this.emitter.emit("enrichTerms", null);
             }
             com.hide = !com.hide
         },
         select_node(value) {
             this.emitter.emit("searchNode", value);
         }
-    }
+    },
 }
 </script>
 

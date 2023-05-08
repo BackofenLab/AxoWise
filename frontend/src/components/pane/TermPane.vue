@@ -83,23 +83,12 @@ export default {
         change_level() {
             var com = this;
 
-            com.term_history.push(com.active_term.proteins)
-            com.$emit('highlight_subset_changed', com.active_term.proteins)
+            this.emitter.emit("enrichTerms", com.active_term.proteins);
         },
         revert_level() {
-            var com = this;
 
-            this.emitter.emit("abortEnrichment");
+            this.emitter.emit("enrichTerms", null);
 
-            com.term_history.pop()
-            let last_term = com.term_history[com.term_history.length - 1];
-
-            if(last_term == null) {
-                com.$emit('highlight_subset_changed', null)
-                return
-            }
-
-            com.$emit('highlight_subset_changed', last_term)
         },
         to_term(){
             var com = this;

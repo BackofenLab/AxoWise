@@ -25,8 +25,8 @@
       ></PaneSystem>
       <EnrichmentTool
         :gephi_data='gephi_data'
-        :active_layer='active_layer'
         @active_term_changed = 'active_term = $event'
+        @active_layer_changed = 'active_layer = $event'
       ></EnrichmentTool>
       <MainToolBar
         :gephi_data='gephi_data'

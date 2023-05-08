@@ -75,9 +75,6 @@ export default {
                 return
             }
             Object.assign(this.active_dict, val);
-        },
-        highlight_subset(subset){
-            this.$emit('active_layer_changed', subset)
         }
 
 
