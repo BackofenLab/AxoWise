@@ -23,7 +23,7 @@
 1. download [test sample database](https://drive.google.com/file/d/1S8_O2HCeMKwukwnTHlFmf1KLQnbfcXAN/view)
 2. load the dump file into your own database
    ````commandline
-   neo4j-admin load --from=~/Downloads/newmouse2db.dump --database=neo4j --force
+   sudo neo4j-admin load --from=$HOME/Downloads/newmouse2db.dump --database=neo4j --force
    ````
 
 ### Create Neo4J Account
