@@ -1,5 +1,5 @@
 <template>
-    <div id="attributepane" class="pane" v-show="active_node !== null || active_fdr !== null">
+    <div id="attributepane" class="pane" v-show="active_node !== null || active_fdr !== null || active_subset !== null">
         <div class="buttons">
             <button id="panebutton" v-on:click="open_pane()">
                 <img id="term-collapse-icon" src="@/assets/toolbar/winkel-rechts.png" alt="Collapse Icon">
@@ -20,6 +20,12 @@
             :term_data='term_data'
             @active_item_changed = 'active_item = $event'
             ></NodePane>
+            <TermSubsetPane v-show="active_tab === 'subset'"
+            :active_subset='active_subset'
+            @active_item_changed = 'active_item = $event'
+            @highlight_subset_changed = 'highlight_subset = $event'
+            @active_layer_changed = 'active_layer = $event'
+            ></TermSubsetPane>
             <FDRPane v-show="active_tab === 'fdr'"
             :term_data='term_data'
             :active_fdr='active_fdr'
@@ -33,14 +39,16 @@
 
 import NodePane from '@/components/term_graph/TermNodePane.vue'
 import FDRPane from '@/components/term_graph/FDRPane.vue'
+import TermSubsetPane from '@/components/term_graph/TermSubsetPane.vue'
 
 export default {
     name:"TermPaneSystem",
-    props:['term_data', 'active_node','active_fdr', 'node_color_index'],
-    emits:['active_node_changed', 'active_fdr_changed', 'active_combine_changed'],
+    props:['term_data', 'active_node','active_fdr', 'node_color_index','active_subset'],
+    emits:['active_node_changed', 'active_fdr_changed', 'active_combine_changed', 'active_subset_changed'],
     components: {
         NodePane,
-        FDRPane
+        FDRPane,
+        TermSubsetPane
     },
     data() {
         return{
@@ -84,6 +92,7 @@ export default {
 
             this.$emit('active_node_changed', null)
             this.$emit('active_fdr_changed', null)
+            this.$emit('active_subset_changed', null)
 
         },
         selectTab(name, tab){
@@ -95,6 +104,11 @@ export default {
             if(name == "fdr"){
                 this.active_tab = "fdr"
                 this.$emit('active_fdr_changed', null)
+                this.$emit('active_combine_changed', {value: tab, name: name})
+            }
+            if(name == "subset"){
+                this.active_tab = "subset"
+                this.$emit('active_subset_changed', null)
                 this.$emit('active_combine_changed', {value: tab, name: name})
             }
         }

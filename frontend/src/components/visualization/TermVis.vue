@@ -14,8 +14,8 @@ var sigma_instance = null;
 
 export default {
   name: 'TermVis',
-  props: ['term_data', 'active_node', 'node_color_index', 'edge_color_index', 'unconnected_nodes', 'active_fdr', 'active_combine'],
-  emits: ['active_node_changed', 'active_fdr_changed'],
+  props: ['term_data', 'active_node', 'node_color_index', 'edge_color_index', 'unconnected_nodes', 'active_fdr', 'active_combine', 'active_subset'],
+  emits: ['active_node_changed', 'active_fdr_changed', 'active_subset_changed'],
   data() {
     return {
       edge_opacity: 0.2,
@@ -100,6 +100,56 @@ export default {
     active_combine(val){
       if(val.name == "node") this.$emit('active_node_changed', val.value)
       if(val.name == "fdr") this.$emit('active_fdr_changed', val.value)
+      if(val.name == "subset") this.$emit('active_subset_changed', val.value)
+    },
+    active_subset(subset) {
+      var com = this
+
+      if (subset == null) {
+        com.reset();
+        return
+      }
+
+      const proteins = new Set(subset.map(node => node.attributes["Ensembl ID"]));
+
+      const graph = sigma_instance.graph;
+
+      for (const edge of graph.edges()) {
+        const sourceNode = graph.getNodeFromIndex(edge.source)
+        const targetNode = graph.getNodeFromIndex(edge.target)
+        const sourceID = sourceNode.attributes["Ensembl ID"];
+        const targetID = targetNode.attributes["Ensembl ID"];
+        const sourcePresent = proteins.has(sourceID);
+        const targetPresent = proteins.has(targetID);
+
+        // Source
+        if(sourcePresent) {
+          sourceNode.color = "rgb(255,255,255)"
+          sourceNode.active = true
+        }
+        else{
+          sourceNode.color = "rgb(0,100,100)"
+        }
+
+        // Target
+        if(targetPresent) {
+          targetNode.color = "rgb(255,255,255)"
+          targetNode.active = true
+        }
+        else{
+          targetNode.color = "rgb(0,100,100)"
+        }
+
+        // Edge
+        if (sourcePresent !== targetPresent) {
+          edge.color = sourcePresent && !targetPresent ? "rgba(200, 255, 255, 0.2)" : "rgba(0, 100, 100, 0.2)";
+        } else {
+          edge.color = sourcePresent ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 100, 100, 0.2)";
+        }
+      }
+      // this.$store.commit('assign_graph_subset', sigma_instance.graph)
+
+      sigma_instance.refresh();
     },
   },
   methods: {
@@ -231,6 +281,10 @@ export default {
 
     this.emitter.on("resetTermSelect", () => {
       this.reset_label_select()
+    });
+
+    this.emitter.on("searchTermSubset", state => {
+      this.$emit('active_subset_changed', state)
     });
 
     sigma_instance.refresh()

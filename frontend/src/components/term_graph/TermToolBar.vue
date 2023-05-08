@@ -23,6 +23,9 @@
             <div class="menu-items">
                 <ExportScreen :type="screen_type"></ExportScreen>
                 <NodeLabelSelect :type="screen_type"></NodeLabelSelect>
+                <SelectionWindow
+                @selection_status_changed = 'selection_status = $event'
+                ></SelectionWindow>
                 <FDRValue></FDRValue>
                 <TermConnectedGraph></TermConnectedGraph>
             </div>
@@ -30,6 +33,23 @@
 
 
         </div>
+
+        <div id="selection_highlight" v-show="selection_status === true " class="highlight_list">
+            <div id="selection_highlight_header">
+                <div class="text">
+                    <div class="headertext">
+                        <span>Selection Window</span>
+                        <button v-on:click="selection_status=false" id="highlight-btn-min"></button>
+                    </div>
+                </div>
+            </div>
+            <div class="highlight_main">
+                <TermHubsSelection
+                :term_data='term_data'
+                ></TermHubsSelection>
+            </div>
+        </div>
+
         <div class="term-search-window" v-show="search_active == true" 
             v-on:mouseleave="search_active = false;"
             v-on:mouseover="search_active=true;">
@@ -50,6 +70,8 @@ import NodeLabelSelect from '@/components/toolbar/NodeLabelSelect.vue'
 import TermConnectedGraph from '@/components/term_graph/TermConnectedGraph.vue'
 import TermSearch from '@/components/term_graph/TermSearch.vue'
 import FDRValue from '@/components/term_graph/FDRValue.vue'
+import SelectionWindow from '@/components/toolbar/SelectionWindow.vue'
+import TermHubsSelection from '@/components/term_graph/TermHubsSelection.vue'
 
 export default {
     name: 'TermToolBar',
@@ -60,7 +82,9 @@ export default {
         TermConnectedGraph,
         TermSearch,
         FDRValue,
-        NodeLabelSelect
+        NodeLabelSelect,
+        SelectionWindow,
+        TermHubsSelection
 
     },
     data() {
@@ -68,6 +92,7 @@ export default {
             tools_active: false,
             screen_type: "term",
             search_active: false,
+            selection_status: false
         }
     },
     methods: {

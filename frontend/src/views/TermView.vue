@@ -4,6 +4,7 @@
       <TermVis ref="termVis"
         :active_node='active_node' @active_node_changed='active_node = $event'
         :active_fdr='active_fdr' @active_fdr_changed='active_fdr = $event'
+        :active_subset='active_subset' @active_subset_changed='active_subset = $event'
         :term_data='term_data'
         :active_combine='active_combine'
         :centering_active='centering_active'
@@ -14,6 +15,7 @@
       <TermPaneSystem
         :active_node='active_node' @active_node_changed = 'active_node = $event'
         :active_fdr='active_fdr' @active_fdr_changed='active_fdr = $event'
+        :active_subset='active_subset' @active_subset_changed='active_subset = $event'
         :term_data='term_data'
         :node_color_index='node_color_index'
         @active_combine_changed = 'active_combine = $event'
@@ -42,6 +44,7 @@ export default {
       term_data: this.$store.state.term_graph_data,
       active_node: null,
       active_fdr: null,
+      active_subset: null,
       active_combine: null,
       node_color_index: null,
       edge_color_index: null,
