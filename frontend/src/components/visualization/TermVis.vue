@@ -228,6 +228,18 @@ export default {
     exportGraphAsImage() {
       saveAsPNG(sigma_instance, {download: true})
     },
+    hide_labels(state) {
+    if(state){
+      sigma_instance.graph.nodes().forEach(function(n) {
+        n.hide_label = true
+      });
+    }else{
+      sigma_instance.graph.nodes().forEach(function(n) {
+        n.hide_label = false
+      });
+    }
+    sigma_instance.refresh()
+  }
   },
   mounted() {
     var com = this;
@@ -285,6 +297,10 @@ export default {
 
     this.emitter.on("searchTermSubset", state => {
       this.$emit('active_subset_changed', state)
+    });
+
+    this.emitter.on("hideTermLabels", (state) => {
+      this.hide_labels(state)
     });
 
     sigma_instance.refresh()

@@ -38,7 +38,9 @@
         :active_subset='active_subset' @active_subset_changed = 'active_subset = $event'
         > </ModularityClass>
       </div>
-      <ToggleLabel></ToggleLabel>
+      <ToggleLabel
+      :type='type'
+      ></ToggleLabel>
     </keep-alive>
   </div>
 </template>
@@ -73,7 +75,8 @@ export default {
       node_color_index: null,
       edge_color_index: null,
       active_subset: null,
-      unconnected_nodes: null
+      unconnected_nodes: null,
+      type: 'protein'
     }
   },
   activated() {

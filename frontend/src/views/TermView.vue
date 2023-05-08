@@ -23,6 +23,9 @@
       <TermToolBar
       :term_data='term_data'
       ></TermToolBar>
+      <ToggleLabel
+      :type='type'
+      ></ToggleLabel>
     </div>
   </keep-alive>
 </template>
@@ -31,13 +34,16 @@
 import TermVis from '@/components/visualization/TermVis.vue'
 import TermPaneSystem from '@/components/term_graph/TermPaneSystem.vue'
 import TermToolBar from '@/components/term_graph/TermToolBar.vue'
+import ToggleLabel from '../components/interface/ToggleLabel.vue'
 
 export default {
   name: 'TermView',
   components: {
     TermVis,
     TermPaneSystem,
-    TermToolBar
+    TermToolBar,
+    ToggleLabel
+    
   },
   data() {
     return {
@@ -49,7 +55,8 @@ export default {
       node_color_index: null,
       edge_color_index: null,
       centering_active: null,
-      unconnected_nodes: null
+      unconnected_nodes: null,
+      type: 'term'
     }
   },
   activated() {

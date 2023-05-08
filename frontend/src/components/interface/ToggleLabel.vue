@@ -7,13 +7,15 @@
 <script>
 export default {
     name: 'ToggleLabel',
+    props: ['type'],
     data() {
         return {
         }
     },
     methods: {
       check() {
-        this.emitter.emit("hideLabels", document.getElementById('confirm').checked);
+        if(this.type == 'protein') this.emitter.emit("hideLabels", document.getElementById('confirm').checked);
+        else this.emitter.emit("hideTermLabels", document.getElementById('confirm').checked)
       }
 
     }
