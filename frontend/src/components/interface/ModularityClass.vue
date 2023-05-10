@@ -2,7 +2,16 @@
     <div id="modules-parent" class="modules-position">
         <div id="modules">
             <div v-for="(value, key) in modules" :key="key" >
-                <a href="#"><div class="rectangle" v-bind:style="{background: key}" v-on:click="select_module(value, key)"></div></a>
+                <template v-if="key !== 'rgb(255,255,153)'">
+                    <a href="#">
+                        <div class="rectangle" v-bind:style="{background: key}" v-on:click="select_module(value, key)"></div>
+                    </a>
+                </template>
+                <template v-if="key == 'rgb(255,255,153)'">
+                    <a href="#">
+                        <div id="unconnected_group" class="rectangle" v-bind:style="{background: key}" v-on:click="select_module(value, key)"></div>
+                    </a>
+                </template>
             </div>
         </div>
     </div>
@@ -32,6 +41,17 @@ export default {
             const multiple_clusters = Object.values(com.saved_dict).flat();
 
             this.$emit('active_subset_changed', multiple_clusters)
+        },
+        show_unconnectedGraphModule(state) {
+
+            const module = document.getElementById('unconnected_group')
+            console.log(module)
+            if(state == 'Whole Graph') {
+                console.log(state)
+                module.style.display = 'flex'
+            }
+            else module.style.display = 'none'
+            
         }
     },
     watch: {
@@ -51,6 +71,10 @@ export default {
             if (!(node.color in com.modules)) com.modules[node.color] = [];
             com.modules[node.color].push(node);
         }
+
+        this.emitter.on("unconnectedGraph", state => {
+            this.show_unconnectedGraphModule(state)
+        });
     }
 }
 </script>
@@ -58,5 +82,9 @@ export default {
 <style>
 #modules-parent {
     margin: 0 10px 0 10px;
+}
+
+#unconnected_group {
+  display: none;
 }
 </style>
