@@ -17,5 +17,6 @@ To use the Protein Graph Database, follow these steps:
 1. Follow the [Installation Guide](docs/Installation.md)
 2. Run the project by executing the following commands:
    1. ```make neo4j``` (starts Neo4J database)
-   2. ```make build``` (builds the entire project)
-   3. ```make start``` (runs the project)
+   2. ```conda activate pgdb``` (activates the conda environment)
+   3. ```make build``` (builds the entire project)
+   4. ```make start``` (runs the project)
