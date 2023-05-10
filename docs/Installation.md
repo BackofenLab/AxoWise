@@ -8,7 +8,7 @@ To install the Protein Graph Database on Ubuntu, follow these steps:
    git clone git@github.com:BackofenLab/protein-graph-database.git
    cd protein-graph-database/
    ```
-2. Install the required software, including Anaconda, Java, and Neo4j. Refer to the [Makefile.requirements](../Makefile.requirements) for details.
+2. Install the required software, including Anaconda, Java, and Neo4j. Refer to [Requirements.mk](../Requirements.mk) for details.
    ```commandline
    make requirements
    ```
