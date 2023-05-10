@@ -15,7 +15,6 @@ neo4j:
 	sudo neo4j start
 
 build:
-	cd frontend/sigma.js-1.2.0; npm install; npm run build;
 	cd frontend; npm install; npm run build
 	cd backend/gephi; mvn install
 

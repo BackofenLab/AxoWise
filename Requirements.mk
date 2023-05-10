@@ -56,5 +56,7 @@ neo4j:
 
 apoc:
 # dirs: https://neo4j.com/docs/operations-manual/current/configuration/file-locations/
+# if error: "Unable to register procedure, because the name `apoc.export.graphml.all` is already in use." then look if too many plugins are installed!
+	sudo rm /var/lib/neo4j/plugins/apoc-4.4.*
 	sudo wget https://github.com/neo4j-contrib/neo4j-apoc-procedures/releases/download/4.4.0.1/apoc-4.4.0.1-all.jar -P /var/lib/neo4j/plugins
 	sudo echo -e 'dbms.security.procedures.whitelist=apoc.export.* \napoc.import.file.use_neo4j_config=false \napoc.export.file.enabled=true' | sudo tee -a /etc/neo4j/neo4j.conf
