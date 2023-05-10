@@ -1,8 +1,17 @@
+help:
+	@echo "make prepare:		prepares the environment and installs needed libs for installation"
+	@echo "make conda:          installs conda"
+	@echo "make node:        	installs node"
+	@echo "make java:        	installs java"
+	@echo "make maven:        	installs maven (please be sure to have installed java)"
+	@echo "make neo4j:        	installs neo4j (please be sure to have installed java)"
+	@echo "make apoc:        	installs apoc (please be sure to have installed neo4j)"
+
 .NOTPARALLEL:
 
-all: prefix conda node java maven neo4j apoc
+all: prepare conda node java maven neo4j apoc
 
-prefix:
+prepare:
 	@echo -n "Are you sure? [y/N] " && read ans && [ $${ans:-N} = y ]
 	sudo apt update
 	sudo apt-get update

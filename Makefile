@@ -6,8 +6,7 @@ help:
 	@echo "make start:        runs this project"
 
 requirements:
-
-	cd docs/installation; make all
+	make -f Makefile.requirements all
 
 env:
 	conda env create -f environment.yml

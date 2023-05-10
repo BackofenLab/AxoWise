@@ -1,27 +1,21 @@
 # Protein Graph Database
 
-## How to install?
-A guide is given [here](docs/installation/Installation.md).
-
 ## Project Structure
-- [docs](docs) contains files used for documentation including images or text-files.
-- [backend/src](backend/src) contains the [Flask](https://flask.palletsprojects.com/en/2.2.x/) server code used to serve all
-  files and handle requests to the database.
-- [backend/gephi](backend/gephi) contains code to preorganize the data in nodes.
-  These preorganized nodes can then be used in the frontend.
-  It is used as a submodule in the server.
-- [backend/test_data](backend/test_data) contains test data
-- [frontend](frontend) contains the [Vue](https://vuejs.org/) frontend code to visualize the protein-data.
-- [scrapting/KEGG](scraping/KEGG) contains code to fetch data from the KEGG source.
-  This dir is only used as a reference for future scraping.
+The Protein Graph Database is organized into several directories:
 
-## How to Use?
-0. ask someone for the "credentials.yml" file
-1. build
-   ````commandline
-   ./scripts/build.sh
-   ````
-3. run
-   ````commandline
-   ./scripts/run.sh
-   ````
+- [docs](docs) contains files used for documentation, including images or text files.
+- [backend/src](backend/src) contains the [Flask](https://flask.palletsprojects.com/en/2.2.x/) server code,
+  which serves all files and handles requests to the database.
+- [backend/gephi](backend/gephi) contains the code to pre-organize the data into nodes, 
+  which can then be used in the frontend. It is used as a submodule in the server.
+- [backend/test_data](backend/test_data) contains test data.
+- [frontend](frontend) contains the [Vue](https://vuejs.org/) frontend code used to visualize the protein data.
+- [scrapting/KEGG](scraping/KEGG) contains the code used to fetch data from the KEGG source. This directory is only used as a reference for future scraping.
+## How to Use
+To use the Protein Graph Database, follow these steps:
+
+1. Follow the [Installation Guide](docs/Installation.md)
+2. Run the project by executing the following commands:
+   1. ```make neo4j``` (starts Neo4J database)
+   2. ```make build``` (builds the entire project)
+   3. ```make start``` (runs the project)
