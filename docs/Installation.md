@@ -42,4 +42,12 @@ To create a Neo4j account, follow these steps:
    - Change the password to: pgdb.
 
 ## Set Credentials
-To set credentials, ask someone for the ```credentials.yml``` file.
+1. Create the file ```protein-graph-database/credentials.yml```
+2. Insert the following content:
+    ```yml
+   # Neo4j Database Credentials
+   neo4j:
+       host: "localhost"
+       port: 7687
+       pw: "pgdb"
+   ```
