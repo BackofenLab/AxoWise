@@ -57,13 +57,13 @@ def files(path):
 def proteins_enrichment():
     proteins = request.form.get("proteins").split(",")
     species_id = request.form.get("species_id")
-    
+
     # in-house functional enrichment
     list_enrichment = enrichment.functional_enrichment(proteins, species_id)
-    
+
     # STRING API functional enrichment
     """df_enrichment = stringdb.functional_enrichment(proteins, species_id)
-    
+
     list_enrichment = list()
     for _, row in df_enrichment.iterrows():
         list_enrichment.append(dict(
@@ -74,8 +74,8 @@ def proteins_enrichment():
             p_value=row["p_value"],
             fdr_rate=row["fdr"]
         ))"""
-    
-    json_str=json.dumps(list_enrichment)  
+
+    json_str=json.dumps(list_enrichment)
     return Response(json_str, mimetype="application/json")
 
 
@@ -88,7 +88,7 @@ def proteins_subgraph_api():
 
     #Begin a timer to time
     t_begin = time.time()
-    
+
     # Queried proteins
     if (not request.files.get("file")):
         query_proteins = request.form.get("proteins").split(";")
@@ -108,19 +108,19 @@ def proteins_subgraph_api():
 
     # Threshold
     threshold = int(float(request.form.get("threshold")) * 1000)
-    
+
     # Filename generator
     filename = uuid.uuid4()
 
     # Fuzzy search mapping
     proteins = direct_search.search_protein_list(query_proteins, species_id=species_id)
     protein_ids = list(map(lambda p: p.id, proteins))
-    
-    
+
+
 
     # Create a query to find all associations between protein_ids and create a file with all properties
     def create_query_assoc():
-            
+
         query = """
                 WITH "MATCH (source:Protein)-[association:ASSOCIATION]->(target:Protein)
                 WHERE source.external_id IN
@@ -131,10 +131,10 @@ def proteins_subgraph_api():
                 RETURN file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data;
                 """
         return query
-        
+
     # Create a query to find all neighbours of a single protein_id and create a file with all properties
     def create_query_single():
-        
+
         query = """
                 WITH "MATCH (source:Protein)-[association:ASSOCIATION]-(target:Protein)
                 WHERE source.external_id IN
@@ -151,11 +151,11 @@ def proteins_subgraph_api():
         query = create_query_assoc()
     else:
         query = create_query_single()
-    
-    
+
+
     with open("/tmp/query"+repr(filename)+".txt", "w") as query_text:
         query_text.write("%s" % query)
-    
+
     #Timer to evaluate runtime to setup
     t_setup = time.time()
     print("Time Spent (Setup):", t_setup-t_begin)
@@ -173,7 +173,7 @@ def proteins_subgraph_api():
     os.remove('/tmp/query'+repr(filename)+'.txt')
     #Check standard output 'stdout' whether it's empty to control errors
     if not data.stdout:
-        raise Exception(data.stderr) 
+        raise Exception(data.stderr)
 
     #Timer for Neo4j query
     t_neo4j = time.time()
@@ -204,7 +204,7 @@ def proteins_subgraph_api():
     # Check if there is no data from database, return from here
     if edges.empty:
         return Response(json.dumps([]), mimetype="application/json")
-        
+
     #Timer to evaluate runtime between cypher-shell and extracting data
     t_parsing = time.time()
     print("Time Spent (Parsing):", t_parsing-t_neo4j)
@@ -215,12 +215,12 @@ def proteins_subgraph_api():
     #Timer to evaluate enrichments runtime
     t_dvalue = time.time()
     print("Time Spent (DValue):", t_dvalue-t_parsing)
-         
+
     #D-Value categorize via percentage
     if not (request.files.get("file") is None):
         panda_file.rename(columns={'SYMBOL': 'name'}, inplace=True)
         panda_file['name'] = panda_file['name'].str.upper()
-    
+
 
     # #Timer to evaluate enrichments runtime
     t_enrich = time.time()
@@ -239,7 +239,7 @@ def proteins_subgraph_api():
 
         # JAR accepts only id
         nodes["external_id"].to_csv(nodes_csv, index=False, header=True)
-        
+
         # JAR accepts source, target, score
         edges.to_csv(edges_csv, index=False, header=True)
 
@@ -247,7 +247,7 @@ def proteins_subgraph_api():
         stdout = jar.pipe_call(_BACKEND_JAR_PATH, stdin)
 
         sigmajs_data = json.loads(stdout)
-    
+
     #Timer to evaluate runtime of calling gephi
     t_gephi = time.time()
     print("Time Spent (Gephi):", t_gephi-t_enrich)
@@ -268,8 +268,8 @@ def proteins_subgraph_api():
                     for column in selected_d:
                         node["attributes"][column] = panda_file.loc[panda_file["name"] == df_node.name, column].item()
             node["label"] = df_node.name
-            node["species"] = str(10090) 
-            
+            node["species"] = str(10090)
+
     # Identify subgraph nodes and update their attributes
     sub_proteins = []
     ensembl_sub = set(nodes_sub["external_id"])
@@ -302,13 +302,13 @@ def terms_subgraph_api():
 
     # Functional terms
     list_enrichment = ast.literal_eval(request.form.get("func-terms"))
- 
+
     json_str = enrichment_graph.get_functional_graph(list_enrichment=list_enrichment)
 
     return Response(json_str, mimetype="application/json")
 
 
 if __name__ == "__main__":
-    
+
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
     app.run()
