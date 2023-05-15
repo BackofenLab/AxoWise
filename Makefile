@@ -20,7 +20,7 @@ build:
 
 start:
 	echo "remember to start neo4j with 'make neo4j'"
-	cd backend/src; python main.py
+	cd backend/src; sudo ${HOME}/miniconda3/envs/pgdb/bin/python main.py
 
 test:
 	# check syntax
