@@ -22,9 +22,9 @@ conda:
 # https://docs.anaconda.com/free/anaconda/install/linux/
 	sudo apt-get install libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6
 	sudo apt-get update
-	cd ~/Downloads; sudo wget https://repo.anaconda.com/archive/Anaconda3-2023.03-1-Linux-x86_64.sh
-	bash ~/Downloads/Anaconda3-2023.03-1-Linux-x86_64.sh
-	rm -r ~/Downloads/Anaconda3-2023.03-1-Linux-x86_64.sh
+	curl -o /tmp/Miniconda3-latest-Linux-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+	bash /tmp/Miniconda3-latest-Linux-x86_64.sh
+	rm /tmp/Miniconda3-latest-Linux-x86_64.sh
 	conda --version
 
 node:
