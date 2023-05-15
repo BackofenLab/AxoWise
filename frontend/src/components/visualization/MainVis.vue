@@ -1,7 +1,7 @@
 <template>
   <div class="visualization">
     <div id="sigma-webgl"></div>
-    <div id="sigma-canvas" :class="{'loading': threeview}" @contextmenu.prevent="handleSigmaContextMenu">
+    <div id="sigma-canvas" :class="{'loading': threeview}" class="sigma-parent" ref="sigmaContainer" @contextmenu.prevent="handleSigmaContextMenu">
         <img class="twoview" v-show="threeview" v-on:click="two_view" src="@/assets/share-2.png" alt="Center Icon">
     </div>
   </div>
