@@ -29,18 +29,18 @@ def get_functional_graph(list_enrichment):
     t_begin = time.time()
     # Filename generator
     filename = uuid.uuid4()
-    
+
     list_term = []
     if list_enrichment is not None:
         list_term = [i['id'] for i in list_enrichment]
-        
-    
+
+
 
     # Create a query to find all associations between protein_ids and create a file with all properties
     def create_query_assoc():
 
         # Query for terms based on protein input
-        
+
         query = """
                 WITH "MATCH (source:Terms)-[association:KAPPA]->(target:Terms)
                 WHERE source.external_id IN
@@ -54,11 +54,11 @@ def get_functional_graph(list_enrichment):
         return query
 
     query = create_query_assoc()
-    
-    
+
+
     with open("/tmp/query"+repr(filename)+".txt", "w") as query_text:
         query_text.write("%s" % query)
-    
+
     #Timer to evaluate runtime to setup
     t_setup = time.time()
     print("Time Spent (Setup_Terms):", t_setup-t_begin)
@@ -76,7 +76,7 @@ def get_functional_graph(list_enrichment):
     os.remove('/tmp/query'+repr(filename)+'.txt')
     #Check standard output 'stdout' whether it's empty to control errors
     if not data.stdout:
-        raise Exception(data.stderr) 
+        raise Exception(data.stderr)
 
     #Timer for Neo4j query
     t_neo4j = time.time()
@@ -95,35 +95,35 @@ def get_functional_graph(list_enrichment):
             source.append(source_row_prop.get('external_id'))
             target.append(target_row_prop.get('external_id'))
             score.append(float(row['score']))
-            
+
     t_parsing = time.time()
     print("Time Spent (Parsing):", t_parsing-t_neo4j)
-    
+
     os.remove('/tmp/'+repr(filename)+'.csv')
 
     nodes = pd.DataFrame(terms).drop_duplicates(subset="external_id")
-    
+
     nodesterm = pd.DataFrame(list_enrichment)
-    
+
     df2 = nodesterm.rename({'id': 'external_id'}, axis=1)
     merged = pd.merge(df2[["external_id", "fdr_rate", "p_value"]], nodes, on="external_id")
 
     # Add the two columns to df2
     nodes = merged
-    
+
     nodes["fdr_rate"] = nodes["fdr_rate"].fillna(0)
     nodes["p_value"] = nodes["p_value"].fillna(0)
-    
+
     edges = pd.DataFrame({
         "source": source,
         "target": target,
         "score": score
-        
+
     })
     edges = edges.drop_duplicates(subset=["source", "target"]) # TODO edges` can be empty
 
     # convert kappa scores to Integer
-    
+
     edges['score'] = edges['score'].apply(lambda x: round(x, 2))
     edges['score'] = edges['score'].apply(lambda x: int(x * 100))
 
@@ -133,8 +133,8 @@ def get_functional_graph(list_enrichment):
     # TO-DO Front end response to be handled
     if edges.empty:
         return json.dumps([])
-     
-    
+
+
     #Creating only the main Graph and exclude not connected subgraphs
     nodes_sub = graph_utilities.create_nodes_subgraph(edges, nodes)
     #edges = graph_utilities.create_edges_subgraph(edges)
@@ -158,7 +158,7 @@ def get_functional_graph(list_enrichment):
 
         # JAR accepts only id
         nodes["external_id"].to_csv(nodes_csv, index=False, header=True)
-        
+
         # JAR accepts source, target, score
         edges.to_csv(edges_csv, index=False, header=True)
 
@@ -166,14 +166,14 @@ def get_functional_graph(list_enrichment):
         stdout = jar.pipe_call(_BACKEND_JAR_PATH, stdin)
 
         sigmajs_data = json.loads(stdout)
-    
+
     #Timer to evaluate runtime of calling gephi
     t_gephi = time.time()
     print("Time Spent (Gephi):", t_gephi-t_enrich)
-        
+
     # Create a dictionary mapping ENSEMBL IDs to rows in `nodes`
     ensembl_to_node = dict(zip(nodes["external_id"], nodes.itertuples(index=False)))
-    
+
     for node in sigmajs_data["nodes"]:
         ensembl_id = node["id"]
         df_node = ensembl_to_node.get(ensembl_id)
@@ -184,18 +184,18 @@ def get_functional_graph(list_enrichment):
             node["attributes"]["Category"] = df_node.category
             node["attributes"]["FDR"] = df_node.fdr_rate
             node["attributes"]["P Value"] = df_node.p_value
-            
+
     sub_proteins = []
     ensembl_sub = set(nodes_sub["external_id"])
-    for node in sigmajs_data["nodes"]:          
+    for node in sigmajs_data["nodes"]:
         if node["attributes"]["Ensembl ID"] in ensembl_sub:
             sub_proteins.append(node["attributes"]["Ensembl ID"])
         else:
             node["color"] = 'rgb(255,255,153)'
             node["hidden"] = True
-            
+
     sigmajs_data["subgraph"] = sub_proteins
-    
+
 
     #Timer for final steps
     t_end = time.time()
