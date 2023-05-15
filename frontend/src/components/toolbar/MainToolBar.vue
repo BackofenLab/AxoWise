@@ -18,6 +18,9 @@
             <li v-on:click="center()">
                 <img src="@/assets/toolbar/expand.png" alt="Center Icon">
             </li>
+            <li v-on:click="threeview()">
+                <img src="@/assets/toolbar/3d-icon.png" alt="3D Icon">
+            </li>
         </ul>
         <div class="menu-window" v-show="tools_active == true" 
             v-on:mouseleave="tools_active = false;"
@@ -169,6 +172,9 @@ export default {
         },
         center() {
             this.emitter.emit("centerGraph", true);
+        },
+        threeview() {
+            this.emitter.emit("threeView");
         }
     }
 }

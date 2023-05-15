@@ -1,5 +1,5 @@
 <template>
-    <div id="sigma-webgl">
+    <div id="sigma-canvas">
     </div>
   </template>
 
@@ -248,7 +248,7 @@ export default {
     var camera = sigma_instance.addCamera();
 
     sigma_instance.addRenderer({
-      container: "sigma-webgl",
+      container: "sigma-canvas",
       type: "canvas",
       camera: camera,
       settings: {
@@ -313,7 +313,7 @@ export default {
 </script>
 
 <style>
-  #sigma-webgl {
+  #sigma-canvas {
     position: absolute;
     width: 100%;
     height: 100%;

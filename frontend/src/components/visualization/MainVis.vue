@@ -1,7 +1,11 @@
 <template>
-    <div id="sigma-webgl" class="sigma-parent" ref="sigmaContainer" @contextmenu.prevent="handleSigmaContextMenu">
+  <div class="visualization">
+    <div id="sigma-webgl"></div>
+    <div id="sigma-canvas" :class="{'loading': threeview}" @contextmenu.prevent="handleSigmaContextMenu">
+        <img class="twoview" v-show="threeview" v-on:click="two_view" src="@/assets/share-2.png" alt="Center Icon">
     </div>
-  </template>
+  </div>
+</template>
 
 <script>
 import sigma from "sigma";
@@ -10,11 +14,13 @@ import {scaleLinear} from "d3-scale";
 import saveAsPNG from '../../rendering/saveAsPNG';
 import customLabelRenderer from '../../rendering/customLabelRenderer';
 import customNodeRenderer from '../../rendering/customNodeRenderer';
+import ForceGraph3D from '3d-force-graph';
 
 sigma.canvas.labels.def = customLabelRenderer
 sigma.canvas.nodes.def = customNodeRenderer
 
 var sigma_instance = null;
+var three_instance = null;
 
 sigma.classes.graph.addMethod('getNodeFromIndex', function(id) {
     return this.nodesIndex[id];
@@ -36,6 +42,7 @@ export default {
   emits: ['active_node_changed', 'active_term_changed', 'active_subset_changed', 'active_decoloumn_changed'],
   data() {
     return {
+      threeview: false,
       isSelecting: false,
       startX: null,
       startY: null,
@@ -84,11 +91,9 @@ export default {
         if (e.source === node.attributes["Ensembl ID"]) {
           neighbors.add(e.target);
           e.color = "rgb(255, 255, 255)"
-          console.log(e)
         } else if (e.target === node.attributes["Ensembl ID"]) {
           neighbors.add(e.source);
           e.color = "rgb(255, 255, 255)"
-          console.log(e)
         }else{
           e.hidden = true
         }
@@ -439,6 +444,80 @@ export default {
       });
     }
     sigma_instance.refresh()
+  },
+  async three_view() {
+    var com = this;
+
+    if(com.threeview) return;
+
+    com.threeview = !com.threeview
+
+    await this.wait(1);
+
+    this.reset()
+
+    sigma_instance.camera.goTo({ x: 0, y: 0, ratio: 1, angle: sigma_instance.camera.angle });
+    sigma_instance.refresh()
+    
+    var threeGraphmod = document.getElementById('sigma-webgl')
+
+    threeGraphmod.style.display = "flex"
+
+    if(three_instance != null) return
+
+    var subgraphSet = new Set(com.gephi_data.subgraph)
+    var newNodeList = Array.from(com.gephi_data.nodes.filter(node => subgraphSet.has(node.id)));
+
+    const newEdges = Array.from(com.gephi_data.edges.filter(edge => 
+    subgraphSet.has(edge.source) || subgraphSet.has(edge.target)));
+
+    newEdges.forEach(edge => {
+    edge.color = edge.color.replace("rgba", "rgb").replace(/,\s*\d?\.?\d+\s*\)/, ")");
+    });
+
+    // Random tree
+    const gData = {
+      nodes: newNodeList,
+      links: newEdges
+    };
+
+    three_instance = ForceGraph3D();
+    three_instance(threeGraphmod)
+      .graphData(gData)
+      .nodeLabel(node => `${node.label}`)
+      .enableNodeDrag(false)
+      .nodeAutoColorBy('user')
+      .backgroundColor('rgb(0,0,0)')
+      .showNavInfo(false)
+      .linkWidth(1)
+      .linkOpacity(0.3)
+      .onNodeClick(node => this.activeNode(node));
+       
+
+      three_instance.refresh()
+  },
+  async two_view(){
+    var com = this;
+
+    var threeGraphmod = document.getElementById('sigma-webgl')
+    var twoGraphmod = document.getElementById('sigma-canvas')
+    threeGraphmod.style.display = "none"; twoGraphmod.style.display = "none"
+    
+    com.threeview = !com.threeview
+    await this.wait(1);
+
+    document.getElementById('sigma-canvas').style.display = "flex"
+
+    this.reset()
+
+    sigma_instance.camera.goTo({ x: 0, y: 0, ratio: 1, angle: sigma_instance.camera.angle });
+    sigma_instance.refresh()
+    
+  },
+  async wait(ms) {
+    return new Promise(resolve => {
+      setTimeout(resolve, ms);
+    });
   }
 
 },
@@ -451,7 +530,7 @@ export default {
     var camera = sigma_instance.addCamera();
 
     sigma_instance.addRenderer({
-      container: "sigma-webgl",
+      container: "sigma-canvas",
       type: "canvas",
       camera: camera,
       settings: {
@@ -517,9 +596,13 @@ export default {
     this.emitter.on("hideLabels", (state) => {
       this.hide_labels(state)
     });
+
+    this.emitter.on("threeView", () => {
+      this.three_view()
+    });
     
     sigma_instance.refresh()
-       
+
   },
   activated() {
     sigma_instance.refresh()
@@ -528,15 +611,67 @@ export default {
 </script>
 
 <style>
-  #sigma-webgl {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-  }
 
-  .sigma-label {
-  color: #fff; /* set the font color to white */
-  }
+.visualization {
+  display: flex;
+  width: 100%;
+
+}
+#sigma-webgl{
+position: absolute;
+display: none;
+width: 0;
+height: 0;
+}
+
+
+#sigma-canvas {
+
+  position: absolute;
+  box-sizing: border-box;
+  overflow: hidden;
+  background-color: hsla(0,0%,100%,.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+#sigma-canvas.loading {
+
+border-radius: 30px;
+border-style: solid;
+border-color: white;
+top: 50%;
+left: 0;
+width: 450px;
+height: 350px;
+position: absolute;
+background-color: hsla(0,0%,100%,.05);
+backdrop-filter: blur(10px);
+-webkit-backdrop-filter: blur(10px);
+}
+
+#threeview {
+  position: absolute;
+  z-index: 999;
+}
+
+.twoview {
+  right: 0;
+  position: absolute;
+  margin: 10px;
+  width: 20px;
+  z-index: 999;
+  transition: width 0.2 ease-in;
+}
+
+.twoview:hover {
+  width: 25px;
+  transition: width 0.2 ease-in;
+}
+
+.sigma-label {
+color: #fff; /* set the font color to white */
+}
 </style>
   
   
