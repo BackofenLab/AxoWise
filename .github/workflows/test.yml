@@ -24,7 +24,7 @@ jobs:
         with:
           miniconda-version: "latest"
           environment-file: environment.yml
-          activate-environment: pgdb
+          activate-environment: test
       - name: black
         run: black --version
       # run tests
