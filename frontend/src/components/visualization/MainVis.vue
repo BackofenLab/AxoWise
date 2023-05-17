@@ -464,6 +464,7 @@ export default {
     threeGraphmod.style.display = "flex"
 
     if(three_instance != null) {
+      three_instance.resumeAnimation()
       return
     }
 
@@ -504,6 +505,8 @@ export default {
     var threeGraphmod = document.getElementById('sigma-webgl')
     var twoGraphmod = document.getElementById('sigma-canvas')
     threeGraphmod.style.display = "none"; twoGraphmod.style.display = "none"
+
+    three_instance.pauseAnimation()
     
     com.threeview = !com.threeview
     await this.wait(1);
