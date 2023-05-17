@@ -59,7 +59,8 @@ export default {
         active: false,
         surface_backup: null,
       }, 
-      label_active_dict: {}
+      label_active_dict: {},
+      special_label: false
     }
   },
   watch: {
@@ -84,7 +85,10 @@ export default {
       const edges = sigma_instance.graph.edges()
       
       node.color = "rgb(255, 255, 255)"
-      node.active = true
+      if(com.special_label) {
+        node.sActive = true
+      }
+      else node.active = true;
 
       for (let i = 0; i < edges.length; i++) {
         const e = edges[i]
@@ -277,7 +281,9 @@ export default {
     },
   },
   methods: {
-    activeNode(event) {
+    activeNode(event, special) {
+
+      this.special_label = special
       this.$emit('active_node_changed', event)
     },
     reset() {
@@ -304,6 +310,7 @@ export default {
 
     sigma_instance.graph.nodes().forEach(function(n) {
       n.active = false
+      n.sActive = false
     });
 
     sigma_instance.refresh()
@@ -543,8 +550,7 @@ export default {
     });
 
     sigma_instance.refresh();
-},
-
+  },
 },
   mounted() {
     var com = this;
@@ -573,10 +579,26 @@ export default {
 
     com.edit_opacity()
 
-    sigma_instance.bind('clickNode',(event) => {
-      this.activeNode(event.data.node)
+    
+
+    var keyState = {};
+
+    document.addEventListener('keydown', function(event) {
+      // Set the key state to true when the key is pressed
+      keyState[event.keyCode] = true;
     });
 
+    document.addEventListener('keyup', function(event) {
+      // Reset the key state when the key is released
+      keyState[event.keyCode] = false;
+    });
+
+    sigma_instance.bind('clickNode', function(event) {
+      // Check if the desired key is being held down when clicking a node
+      if (keyState[83]) com.activeNode(event.data.node, true);
+      else com.activeNode(event.data.node, false);
+      
+    });
 
     // select all elements with the class "sigma-mouse"
     const sigmaMouse = document.querySelectorAll(".sigma-mouse");

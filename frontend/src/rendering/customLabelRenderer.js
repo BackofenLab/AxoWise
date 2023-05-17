@@ -10,7 +10,7 @@
           prefix = settings('prefix') || '',
           size = node[prefix + 'size'];
   
-      if (!node.active || node.hide_label)
+      if ((!node.active || node.hide_label) && !node.sActive)
         return;
   
       if (!node.label || typeof node.label !== 'string')
