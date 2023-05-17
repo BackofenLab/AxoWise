@@ -19,9 +19,13 @@ build:
 	cd backend/gephi; mvn install
 
 start:
+	echo "remember to activate your conda environent with 'conda activate pgdb'"
 	echo "remember to start neo4j with 'make neo4j'"
 	cd backend/src; python main.py
 
+lint:
+	find . -name "*.py" | xargs black -l 120 --target-version=py311
+
 test:
-	# check syntax
-	find . -name "*.py" | xargs pylint -E
+	find . -name "*.py" | xargs black -l 120 --check --target-version=py311
+

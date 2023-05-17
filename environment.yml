@@ -17,3 +17,4 @@ dependencies:
   - neomodel=4.0.*
   - monotonic=1.*
   - neo4j-python-driver=5.7.*
+  - black=23.3.*
