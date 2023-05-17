@@ -24,11 +24,14 @@ jobs:
         with:
           miniconda-version: "latest"
           environment-file: environment.yml
-          activate-environment: test
+          activate-environment: pgdb
       - name: black
+        shell: bash -el {0}
         run: black --version
       # run tests
       - name: build application
+        shell: bash -el {0}
         run: make build
       - name: test application
+        shell: bash -el {0}
         run: make test
