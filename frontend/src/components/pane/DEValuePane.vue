@@ -42,7 +42,7 @@
 import * as d3 from "d3";
 export default {
     name: 'DEValuePane',
-    props: ['active_decoloumn','gephi_data', 'd_value'],
+    props: ['active_decoloumn','gephi_data'],
     emits: ['active_item_changed'],
     data() {
         return {
@@ -61,7 +61,7 @@ export default {
         }
     },
     watch: {
-        async active_decoloumn() {
+        active_decoloumn() {
             var com = this;
             
             if (com.active_decoloumn == null) return;
