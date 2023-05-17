@@ -463,7 +463,9 @@ export default {
 
     threeGraphmod.style.display = "flex"
 
-    if(three_instance != null) return
+    if(three_instance != null) {
+      return
+    }
 
     var subgraphSet = new Set(com.gephi_data.subgraph)
     var newNodeList = Array.from(com.gephi_data.nodes.filter(node => subgraphSet.has(node.id)));
@@ -486,7 +488,7 @@ export default {
       .graphData(gData)
       .nodeLabel(node => `${node.label}`)
       .enableNodeDrag(false)
-      .nodeAutoColorBy('user')
+      .nodeAutoColorBy('group')
       .backgroundColor('rgb(0,0,0)')
       .showNavInfo(false)
       .linkWidth(1)
@@ -518,7 +520,27 @@ export default {
     return new Promise(resolve => {
       setTimeout(resolve, ms);
     });
-  }
+  },
+  update_boundary: function(data) {
+    var com = this;
+
+    var minBound = -data;
+    var maxBound = data;
+
+    sigma_instance.graph.edges().forEach(function (e) {
+        // Nodes
+        var source = sigma_instance.graph.getNodeFromIndex(e.source);
+        var target = sigma_instance.graph.getNodeFromIndex(e.target);
+
+        source.color = com.get_normalize(source.attributes[com.active_decoloumn], minBound, maxBound);
+        target.color = com.get_normalize(target.attributes[com.active_decoloumn], minBound, maxBound);
+        e.color = com.get_normalize(source.attributes[com.active_decoloumn], minBound, maxBound).replace(')', ', 0.2)').replace('rgb', 'rgba');
+
+            
+    });
+
+    sigma_instance.refresh();
+},
 
 },
   mounted() {
@@ -599,6 +621,9 @@ export default {
 
     this.emitter.on("threeView", () => {
       this.three_view()
+    });
+    this.emitter.on("adjustDE", (value) => {
+      this.update_boundary(value)
     });
     
     sigma_instance.refresh()
