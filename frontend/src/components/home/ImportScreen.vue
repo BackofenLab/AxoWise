@@ -48,6 +48,7 @@ export default {
     reader.onload = function(e) {
       const gephi_json = JSON.parse(e.target.result);
       com.$store.commit('assign', { data:gephi_json })
+      com.$store.commit('assign_dcoloumn', gephi_json.dvalues)
       com.$router.push("protein")
 
       }
