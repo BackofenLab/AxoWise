@@ -25,7 +25,9 @@ jobs:
           miniconda-version: "latest"
           auto-activate-base: true
           activate-environment: ""
-
+          environment-file: environment.yml
+      - name: black
+        run: black --version
       # run tests
       - name: build application
         run: make build
