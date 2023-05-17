@@ -66,3 +66,5 @@ curl https://github.com/neo4j-contrib/neo4j-apoc-procedures/releases/download/4.
 ```bash
     conda activate pgdb
 ```
+
+# TODO: Install Frontend requirements
