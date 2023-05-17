@@ -25,7 +25,6 @@ jobs:
           miniconda-version: "latest"
           auto-activate-base: true
           activate-environment: ""
-      - run: conda env update --file environment.yml --name base
 
       # run tests
       - name: build application
