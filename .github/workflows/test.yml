@@ -2,6 +2,10 @@ name: test
 
 on: push
 
+defaults:
+  run:
+    shell: bash -el {0}
+
 jobs:
   build:
     runs-on: ubuntu-20.04
@@ -26,12 +30,12 @@ jobs:
           environment-file: environment.yml
           activate-environment: pgdb
       - name: black
-        shell: bash -el {0}
+
         run: black --version
       # run tests
       - name: build application
-        shell: bash -el {0}
+
         run: make build
       - name: test application
-        shell: bash -el {0}
+
         run: make test
