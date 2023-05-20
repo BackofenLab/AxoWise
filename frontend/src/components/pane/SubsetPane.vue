@@ -3,7 +3,11 @@
         <div class="headertext">
             <span>Subset</span>
         </div>
-        <button id="hide-btn" v-on:click="show_layer()">Hide</button>
+        <button id="hide-btn" class="subset-btn" v-on:click="show_layer()">Hide</button>
+        <div class="change-level-menu">
+            <button id="apply-func-btn" class="subset-btn" v-on:click="apply_func(true)">Apply</button>
+            <button id="revert-func-btn" class="subset-btn" v-on:click="apply_func(false)">Revert</button>
+        </div>
         <div class="nodeattributes">
             <div class="p">
                 <span>Connections:</span>
@@ -64,13 +68,27 @@ export default {
             var com = this;
 
             if(com.hide){
-                this.emitter.emit("enrichTerms", com.active_subset.map(node => node.attributes["Ensembl ID"]));
+                this.emitter.emit("hideSubset", com.active_subset.map(node => node.attributes["Ensembl ID"]));
             }
             else{
-                this.emitter.emit("enrichTerms", null);
+                this.emitter.emit("hideSubset", null);
             }
             com.hide = !com.hide
         },
+
+        /**
+        * Calling the procedure in component EnrichmentTool for enriching terms with given set.
+        * @param {boolean} state - functional enrichment gets reverted or applied.
+        */
+        apply_func(state) {
+            if (state) this.emitter.emit("enrichSubset", this.active_subset.map(node => node.attributes["Ensembl ID"]));
+            else this.emitter.emit("enrichSubset", null);
+        },
+
+        /**
+        * Calling the procedure in component MainVis to highlight a specific node
+        * @param {dict} value - A dictionary of a single node
+        */
         select_node(value) {
             this.emitter.emit("searchNode", value);
         }
@@ -86,7 +104,7 @@ export default {
         transform: translateX(326px);
     }
 
-    #hide-btn {
+    .subset-btn {
         position: relative;
         color: #fff;
         border-style: outset;

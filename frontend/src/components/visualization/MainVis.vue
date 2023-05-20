@@ -627,6 +627,10 @@ export default {
     this.emitter.on("searchSubset", state => {
       this.$emit('active_subset_changed', state)
     });
+
+    this.emitter.on("hideSubset", state => {
+      this.$emit('active_layer_changed', state)
+    });
     
     this.emitter.on("centerGraph", () => {
       sigma_instance.camera.goTo({ x: 0, y: 0, ratio: 1, angle: sigma_instance.camera.angle });

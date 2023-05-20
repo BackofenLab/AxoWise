@@ -95,11 +95,11 @@
                 this.sourceToken.cancel('Request canceled');
                 this.await_load = false 
             },
-            apply_layer(subset) {
+            apply_layer(subset, hide) {
                 var com = this;
 
                 
-                com.$emit("active_layer_changed", subset);
+                if (hide) com.$emit("active_layer_changed", subset);
 
                 var formData = new FormData()
                 
@@ -121,26 +121,24 @@
                         //TODO: Catch the abort if needed
                     });
             },
-            revert_layer() {
+            revert_layer(hide) {
                 var com = this;
 
                 if(com.await_load){
                     this.emitter.emit("abortEnrichment");
                     if(this.$store.state.enrichment_set.length != 0) com.$emit("active_layer_changed", this.$store.state.enrichment_set[this.$store.state.enrichment_set.length -1].term );
-                    else com.$emit("active_layer_changed", null);
+                    else if(hide) com.$emit("active_layer_changed", null);
                     return
                 }
                 this.$store.commit('pop_old_enrichment')
                 if(this.$store.state.enrichment_set.length == 0) {
                     com.terms = this.$store.state.enrichment_terms;
-                    com.$emit("active_layer_changed", null);
+                    if(hide) com.$emit("active_layer_changed", null);
                 } else {
                     var enrich_item = this.$store.state.enrichment_set[this.$store.state.enrichment_set.length -1];
                     com.terms = enrich_item.term_set
-                    com.$emit("active_layer_changed", enrich_item.term );
+                    if(hide) com.$emit("active_layer_changed", enrich_item.term );
                 }
-                
-
             }
         },
         mounted() {
@@ -168,8 +166,13 @@
             });
 
             this.emitter.on("enrichTerms", (subset) => {
-                if(subset != null) this.apply_layer(subset);
-                else this.revert_layer();
+                if(subset != null) this.apply_layer(subset, true);
+                else this.revert_layer(true);
+            });
+
+            this.emitter.on("enrichSubset", (subset) => {
+                if(subset != null) this.apply_layer(subset, false);
+                else this.revert_layer(false);
             });
     
         },
