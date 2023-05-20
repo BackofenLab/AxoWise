@@ -23,6 +23,13 @@
       <TermToolBar
       :term_data='term_data'
       ></TermToolBar>
+      <div class="header-menu">
+        <ModularityClass
+        :term_data='term_data'
+        :active_subset='active_subset' @active_subset_changed = 'active_subset = $event'
+        :type='type'
+        > </ModularityClass>
+      </div>
       <ToggleLabel
       :type='type'
       ></ToggleLabel>
@@ -35,6 +42,7 @@ import TermVis from '@/components/visualization/TermVis.vue'
 import TermPaneSystem from '@/components/term_graph/TermPaneSystem.vue'
 import TermToolBar from '@/components/term_graph/TermToolBar.vue'
 import ToggleLabel from '../components/interface/ToggleLabel.vue'
+import ModularityClass from '../components/interface/ModularityClass.vue'
 
 export default {
   name: 'TermView',
@@ -42,7 +50,8 @@ export default {
     TermVis,
     TermPaneSystem,
     TermToolBar,
-    ToggleLabel
+    ToggleLabel,
+    ModularityClass
     
   },
   data() {

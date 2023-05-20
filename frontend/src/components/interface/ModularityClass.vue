@@ -20,7 +20,7 @@
 <script>
 export default {
     name: 'ModularityClass',
-    props: ['gephi_data', 'active_subset'],
+    props: ['gephi_data', 'active_subset', 'type', 'term_data'],
     emits: [],
     data() {
         return {
@@ -45,9 +45,7 @@ export default {
         show_unconnectedGraphModule(state) {
 
             const module = document.getElementById('unconnected_group')
-            console.log(module)
             if(state == 'Whole Graph') {
-                console.log(state)
                 module.style.display = 'flex'
             }
             else module.style.display = 'none'
@@ -63,9 +61,15 @@ export default {
         var com = this;
 
         com.modules = {};
-        if(!com.gephi_data) return; //handling null json from backend
-
-        var nodes = com.gephi_data.nodes;
+        var nodes = null;
+        if(com.type == 'protein'){
+            if(!com.gephi_data) return; //handling null json from backend
+            nodes = com.gephi_data.nodes; 
+        }
+        else {
+            if(!com.term_data) return; //handling null json from backend
+            nodes = com.term_data.nodes; 
+        }
         for (var idx in nodes) {
             var node = nodes[idx];
             if (!(node.color in com.modules)) com.modules[node.color] = [];
@@ -73,6 +77,10 @@ export default {
         }
 
         this.emitter.on("unconnectedGraph", state => {
+            this.show_unconnectedGraphModule(state)
+        });
+
+        this.emitter.on("unconnectedTermGraph", state => {
             this.show_unconnectedGraphModule(state)
         });
     }

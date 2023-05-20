@@ -35,6 +35,7 @@
       <div class="header-menu">
         <ModularityClass
         :gephi_data='gephi_data'
+        :type='type'
         :active_subset='active_subset' @active_subset_changed = 'active_subset = $event'
         > </ModularityClass>
       </div>
