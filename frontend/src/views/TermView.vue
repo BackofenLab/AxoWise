@@ -30,6 +30,10 @@
         :type='type'
         > </ModularityClass>
       </div>
+      <GraphSelection
+      :term_data='term_data' @term_data_changed = 'term_data = $event'
+      >  
+      </GraphSelection>
       <ToggleLabel
       :type='type'
       ></ToggleLabel>
@@ -40,6 +44,7 @@
 <script>
 import TermVis from '@/components/visualization/TermVis.vue'
 import TermPaneSystem from '@/components/term_graph/TermPaneSystem.vue'
+import GraphSelection from '@/components/term_graph/GraphSelection.vue'
 import TermToolBar from '@/components/term_graph/TermToolBar.vue'
 import ToggleLabel from '../components/interface/ToggleLabel.vue'
 import ModularityClass from '../components/interface/ModularityClass.vue'
@@ -51,7 +56,8 @@ export default {
     TermPaneSystem,
     TermToolBar,
     ToggleLabel,
-    ModularityClass
+    ModularityClass,
+    GraphSelection
     
   },
   data() {
@@ -68,10 +74,32 @@ export default {
       type: 'term'
     }
   },
+  watch: {
+    term_data() {
+      console.log(this.term_data)
+
+      const com = this;
+
+      com.node_color_index = {};
+      for (var idx in com.term_data.nodes) {
+        var node = com.term_data.nodes[idx];
+        com.node_color_index[node.id] = node.color;
+      }
+
+      com.edge_color_index = {};
+      for (var idy in com.term_data.edges) {
+        var edge = com.term_data.edges[idy];
+        com.edge_color_index[edge.id] = edge.color;
+      }
+
+      const maingraph = new Set(com.term_data.subgraph)
+      com.unconnected_nodes = com.term_data.nodes.filter(item => !maingraph.has(item.id));
+    }
+
+  },
   activated() {
 
-    this.term_data = this.$store.state.term_graph_data
-
+    if(this.term_data != this.$store.state.term_graph_data) this.term_data = this.$store.state.term_graph_data;
     
     const term_node = this.$store.state.active_node_enrichment
     if(term_node != null){

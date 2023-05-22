@@ -21,6 +21,10 @@
                 </div>
             </div>
             <button v-if="await_load == false" id="export-enrich-btn" v-on:click="export_enrichment()">Export</button>
+            <div class="get_term_graph">
+                <input type="text" v-if="await_load == false" v-model="graph_name">
+                <button v-if="await_load == false" id="apply-enrich-btn" v-on:click="get_term_data()">Get Graph</button>
+            </div>
         </div>
     </div>
 </template>
@@ -40,7 +44,8 @@
                 filter_terms: this.$store.state.filter_terms,
                 category: "",
                 await_load: true,
-                sourceToken: null
+                sourceToken: null,
+                graph_name: 'graph'
             }
         },
         methods: {
@@ -68,6 +73,8 @@
                     .post("/api/subgraph/terms", formData)
                     .then((response) => {
                         this.$store.commit('assign_term_graph', response.data)
+                        if(this.graph_name == null) this.graph_name = 'Main Graph'
+                        this.$store.commit('assign_new_term_graph', {label: this.graph_name, graph: response.data})
                     })
 
             },
@@ -208,5 +215,31 @@
 </script>
 
 <style >
+    #apply-enrich-btn {
+        position: relative;
+        background-color: rgba(0,0,0,.5);
+        margin-top: 10px;
+        width: 70%;
+        color: #fff;
+        padding: 5px;
+        border-radius: 20px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: .5s;
+    }
+    .get_term_graph {
+        position: relative;
+        display: flex;
+        padding: 10px;
+    }
+    .get_term_graph input[type="text"]{
+        position: relative;
+        border-radius: 20px;
+        text-align: center;
+        width: 130px;
+        height: 30px;
+        margin-right: 20px;
+        margin-top: 10px;
 
+    }
 </style>

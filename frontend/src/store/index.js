@@ -6,6 +6,7 @@ export const store = createStore({
       enrichment_terms: null,
       enrichment_set: [],
       term_graph_data: null,
+      term_graph_dict: [],
       filter_terms: [
         {value: "TISSUES", label: "Tissue expression"},
         {value: "KEGG", label: "KEGG Pathway"},
@@ -65,6 +66,9 @@ export const store = createStore({
     },
     assign_dcoloumn(state, value){
       state.dcoloumns = value
-    }
+    },
+    assign_new_term_graph(state, value) {
+      state.term_graph_dict.push(value)
+    },
   }
 })

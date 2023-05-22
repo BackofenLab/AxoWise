@@ -55,6 +55,19 @@ export default {
     watch: {
         active_subset(subset) {
             if(!subset) this.saved_dict={};
+        },
+        term_data(){
+            var com = this;
+
+            com.modules = {};
+            if(!com.term_data) return; //handling null json from backend
+            var nodes = com.term_data.nodes; 
+            for (var idx in nodes) {
+                var node = nodes[idx];
+                if (!(node.color in com.modules)) com.modules[node.color] = [];
+                com.modules[node.color].push(node);
+            }
+
         }
     },
     mounted() {
@@ -65,6 +78,7 @@ export default {
         if(com.type == 'protein'){
             if(!com.gephi_data) return; //handling null json from backend
             nodes = com.gephi_data.nodes; 
+            
         }
         else {
             if(!com.term_data) return; //handling null json from backend

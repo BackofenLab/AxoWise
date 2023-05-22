@@ -23,6 +23,17 @@ export default {
     }
   },
   watch: {
+    term_data(){
+      const com = this
+
+      sigma_instance.graph.clear();
+      sigma_instance.graph.read(com.term_data);
+
+      com.edit_opacity()
+
+      sigma_instance.refresh()
+
+    },
     active_node(node) {
       var com = this;
 
