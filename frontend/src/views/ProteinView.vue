@@ -6,11 +6,13 @@
         :active_term='active_term' @active_term_changed = 'active_term = $event'
         :active_layer='active_layer' @active_layer_changed = 'active_layer = $event'
         :active_subset='active_subset' @active_subset_changed = 'active_subset = $event'
+        :subactive_subset='subactive_subset'
         :gephi_data='gephi_data'
         :active_decoloumn='active_decoloumn'
         :unconnected_nodes='unconnected_nodes'
         :active_combine='active_combine' @active_decoloumn_changed = 'active_decoloumn = $event'
         :node_color_index='node_color_index'
+        :node_size_index='node_size_index'
         :edge_color_index='edge_color_index'
       ></MainVis>
       <PaneSystem
@@ -31,12 +33,14 @@
       <MainToolBar
         :gephi_data='gephi_data'
         @active_subset_changed = 'active_subset = $event'
+
       ></MainToolBar>
       <div class="header-menu">
         <ModularityClass
         :gephi_data='gephi_data'
         :type='type'
         :active_subset='active_subset' @active_subset_changed = 'active_subset = $event'
+        :subactive_subset='subactive_subset' @subactive_subset_changed = 'subactive_subset = $event'
         > </ModularityClass>
       </div>
       <ToggleLabel
@@ -74,8 +78,10 @@ export default {
       active_combine: null,
       active_decoloumn: null,
       node_color_index: null,
+      node_size_index: null,
       edge_color_index: null,
       active_subset: null,
+      subactive_subset: null,
       unconnected_nodes: null,
       type: 'protein'
     }
@@ -103,11 +109,19 @@ export default {
       com.node_color_index[node.id] = node.color;
     }
 
+    com.node_size_index = {};
+    for (var idz in com.gephi_data.nodes) {
+      var nodeZ = com.gephi_data.nodes[idz];
+      com.node_size_index[nodeZ.id] = nodeZ.size;
+    }
+
     com.edge_color_index = {};
     for (var idy in com.gephi_data.edges) {
       var edge = com.gephi_data.edges[idy];
       com.edge_color_index[edge.id] = edge.color;
     }
+
+    
 
     const maingraph = new Set(com.gephi_data.subgraph)
     com.unconnected_nodes = com.gephi_data.nodes.filter(item => !maingraph.has(item.id));

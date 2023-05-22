@@ -5,11 +5,13 @@
         :active_node='active_node' @active_node_changed='active_node = $event'
         :active_fdr='active_fdr' @active_fdr_changed='active_fdr = $event'
         :active_subset='active_subset' @active_subset_changed='active_subset = $event'
+        :subactive_subset='subactive_subset'
         :term_data='term_data'
         :active_combine='active_combine'
         :centering_active='centering_active'
         :node_color_index='node_color_index'
         :edge_color_index='edge_color_index'
+        :node_size_index='node_size_index'
         :unconnected_nodes='unconnected_nodes'
       ></TermVis>
       <TermPaneSystem
@@ -27,6 +29,7 @@
         <ModularityClass
         :term_data='term_data'
         :active_subset='active_subset' @active_subset_changed = 'active_subset = $event'
+        :subactive_subset='subactive_subset' @subactive_subset_changed = 'subactive_subset = $event'
         :type='type'
         > </ModularityClass>
       </div>
@@ -66,9 +69,11 @@ export default {
       active_node: null,
       active_fdr: null,
       active_subset: null,
+      subactive_subset: null,
       active_combine: null,
       node_color_index: null,
       edge_color_index: null,
+      node_size_index: null,
       centering_active: null,
       unconnected_nodes: null,
       type: 'term'
@@ -76,14 +81,18 @@ export default {
   },
   watch: {
     term_data() {
-      console.log(this.term_data)
-
       const com = this;
 
       com.node_color_index = {};
       for (var idx in com.term_data.nodes) {
         var node = com.term_data.nodes[idx];
         com.node_color_index[node.id] = node.color;
+      }
+
+      com.node_size_index = {};
+      for (var idz in com.term_data.nodes) {
+      var nodeZ = com.term_data.nodes[idz];
+      com.node_size_index[nodeZ.id] = nodeZ.size;
       }
 
       com.edge_color_index = {};
@@ -119,6 +128,12 @@ export default {
     for (var idx in com.term_data.nodes) {
       var node = com.term_data.nodes[idx];
       com.node_color_index[node.id] = node.color;
+    }
+
+    com.node_size_index = {};
+    for (var idz in com.term_data.nodes) {
+      var nodeZ = com.term_data.nodes[idz];
+      com.node_size_index[nodeZ.id] = nodeZ.size;
     }
 
     com.edge_color_index = {};

@@ -38,7 +38,7 @@ sigma.classes.graph.addMethod('ensemblIdToNode', function(ensembl_id) {
 
 export default {
   name: 'MainVis',
-  props: ['gephi_data', 'unconnected_nodes', 'active_node', 'active_term', 'active_subset', 'active_layer', 'active_decoloumn', 'active_combine','node_color_index', 'edge_color_index', 'export_graph'],
+  props: ['gephi_data', 'unconnected_nodes', 'active_node', 'active_term', 'active_subset','subactive_subset', 'active_layer', 'active_decoloumn', 'active_combine','node_color_index','node_size_index', 'edge_color_index', 'export_graph'],
   emits: ['active_node_changed', 'active_term_changed', 'active_subset_changed', 'active_decoloumn_changed'],
   data() {
     return {
@@ -209,6 +209,33 @@ export default {
 
       sigma_instance.refresh();
     },
+    subactive_subset(subset) {
+      var com = this
+
+      if (subset == null) {
+        com.reset_size();
+        return
+      }
+
+      const proteins = new Set(subset.map(node => node.attributes["Ensembl ID"]));
+
+      const graph = sigma_instance.graph;
+
+      for (const edge of graph.edges()) {
+        const sourceNode = graph.getNodeFromIndex(edge.source)
+        const targetNode = graph.getNodeFromIndex(edge.target)
+        const sourceID = sourceNode.attributes["Ensembl ID"];
+        const targetID = targetNode.attributes["Ensembl ID"];
+        const sourcePresent = proteins.has(sourceID);
+        const targetPresent = proteins.has(targetID);
+        // Source
+        if(sourcePresent) sourceNode.size = 25;
+        // Target
+        if(targetPresent) targetNode.size = 25;
+      }
+
+      sigma_instance.refresh();
+    },
     active_layer(layer) {
       var com = this;
 
@@ -303,6 +330,18 @@ export default {
         node.hidden = true
       });
     }
+    
+    sigma_instance.refresh();
+  },
+  reset_size() {
+      var com = this;
+
+      sigma_instance.graph.edges().forEach(function(e) {
+      var s = sigma_instance.graph.getNodeFromIndex(e.source);
+      var t = sigma_instance.graph.getNodeFromIndex(e.target);
+      s.size = `${com.node_size_index[e.source]}`;
+      t.size = `${com.node_size_index[e.target]}`;
+    });
     
     sigma_instance.refresh();
   },

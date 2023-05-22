@@ -4,12 +4,12 @@
             <div v-for="(value, key) in modules" :key="key" >
                 <template v-if="key !== 'rgb(255,255,153)'">
                     <a href="#">
-                        <div class="rectangle" v-bind:style="{background: key}" v-on:click="select_module(value, key)"></div>
+                        <div class="rectangle" v-bind:style="{background: key}" @mouseenter="prehighlight(value)" @mouseleave="prehighlight(null)" v-on:click="select_module(value, key)"></div>
                     </a>
                 </template>
                 <template v-if="key == 'rgb(255,255,153)'">
                     <a href="#">
-                        <div id="unconnected_group" class="rectangle" v-bind:style="{background: key}" v-on:click="select_module(value, key)"></div>
+                        <div id="unconnected_group" class="rectangle" v-bind:style="{background: key}" @mouseenter="prehighlight(value)" @mouseleave="prehighlight(null)" v-on:click="select_module(value, key)"></div>
                     </a>
                 </template>
             </div>
@@ -20,8 +20,8 @@
 <script>
 export default {
     name: 'ModularityClass',
-    props: ['gephi_data', 'active_subset', 'type', 'term_data'],
-    emits: [],
+    props: ['gephi_data', 'active_subset', 'type', 'term_data','subactive_subset'],
+    emits: ['subactive_subset_changed'],
     data() {
         return {
             modules: null,
@@ -50,6 +50,9 @@ export default {
             }
             else module.style.display = 'none'
             
+        },
+        prehighlight(subset){
+            this.$emit('subactive_subset_changed', subset)
         }
     },
     watch: {
