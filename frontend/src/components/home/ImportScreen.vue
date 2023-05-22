@@ -19,10 +19,10 @@
             <div class="input field">
                 <div class="input-form-data">
                     <h4>Import your graph:</h4>
-                    <div class="file-upload-wrapper" data-text="Select Json">
+                    <div class="file-upload-wrapper" :data-text="fileuploadText">
                     <input type="file" id="graph-file" accept=".json" v-on:change="load_json">
                     </div>                  
-                  <button id="submit-btn" @click="submit()" >
+                  <button id="submit-btn" @click="submit()" :class="{'loading': isAddClass}">
                     <span class="button__text" onClick="this.disabled=true;">Submit</span>
                   </button>
                 </div>
@@ -36,6 +36,9 @@ export default {
   name: 'ImportScreen',
   data(){
     return {
+      fileuploadText: 'Select Json',
+      gephi_json: null,
+      isAddClass: false
     }
   },
   methods: {
@@ -44,18 +47,27 @@ export default {
 
     //Load json file and overwrite to gephi_json
     const file = e.target.files[0];
+    com.fileuploadText = file.name
     const reader = new FileReader();
     reader.onload = function(e) {
-      const gephi_json = JSON.parse(e.target.result);
-      com.$store.commit('assign', { data:gephi_json })
-      com.$store.commit('assign_dcoloumn', gephi_json.dvalues)
-      com.$router.push("protein")
-
+      com.gephi_json = JSON.parse(e.target.result);
       }
     reader.readAsText(file);
    },
    submit() {
+    var com = this;
 
+    if (com.gephi_json == null) {
+        alert("Please select a import!");
+        return;
+      }
+    com.isAddClass = true
+    
+    com.$store.commit('assign', { data:com.gephi_json })
+    com.$store.commit('assign_dcoloumn', com.gephi_json.dvalues)
+    com.$router.push("protein")
+
+    com.isAddClass = false
    }
   }
 }

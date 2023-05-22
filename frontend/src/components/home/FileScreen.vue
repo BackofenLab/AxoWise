@@ -20,7 +20,7 @@
                   <h4>Species:</h4>
                   <v-select v-model="selected_species" :options="species"></v-select>
                   <h4>Protein file:</h4>
-                  <div class="file-upload-wrapper" data-text="Select your file">
+                  <div class="file-upload-wrapper" :data-text="fileuploadText">
                     <input type="file" id="protein-file" accept=".csv" v-on:change="load_file">                  
                   </div>
                   <div v-if="dcoloumns != null">
@@ -53,6 +53,7 @@ export default {
         max: 1.0,
         step: 0.001,
       },
+      fileuploadText: 'Select your file',
       dcoloumns: null,
       selected_d: [],
       selected_species: null,
@@ -66,6 +67,7 @@ export default {
       //Read csv file to get coloumn information
       com.dcoloumns = [];
       const file = e.target.files[0];
+      com.fileuploadText = file.name
       const reader = new FileReader();
       reader.onload = function (e) {
         var allTextLines = e.target.result.split(/\n|\n/);
