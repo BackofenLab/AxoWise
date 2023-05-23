@@ -76,7 +76,6 @@ export default function saveAsPNG(renderer, params, mode) {
   var dataUrl = merged.toDataURL(TYPES[params.format || 'png']);
 
   self.settings({defaultLabelColor: '#FFF'});
-  console.log(self)
   renderer.refresh()
 
   if (params.download)

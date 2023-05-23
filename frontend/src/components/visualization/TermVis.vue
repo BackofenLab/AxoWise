@@ -275,8 +275,8 @@ export default {
 
     return rgb_value;
     },
-    exportGraphAsImage() {
-      saveAsPNG(sigma_instance, {download: true})
+    exportGraphAsImage(mode) {
+      saveAsPNG(sigma_instance, {download: true}, mode)
     },
     hide_labels(state) {
     if(state){
@@ -333,8 +333,8 @@ export default {
       this.$emit('active_fdr_changed', state)
     });
 
-    this.emitter.on("exportTermGraph", () => {
-      this.exportGraphAsImage()
+    this.emitter.on("exportTermGraph", (mode) => {
+      this.exportGraphAsImage(mode)
     });
 
     this.emitter.on("centerTermGraph", () => {
