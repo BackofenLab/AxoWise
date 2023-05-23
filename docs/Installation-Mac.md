@@ -1,7 +1,18 @@
-# Installing Neo4j on Mac
+# Clone Git Repository
+```bash
+    git clone git@github.com:BackofenLab/protein-graph-database.git
+    cd protein-graph-database/
+```
+
+# Install Neo4j on Mac
 ## 0. Install Homebrew
+```bash
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+	brew doctor # to check if homebrew is working
+```
+
 ## 1. Install java version 11 with brew
-```console
+```bash
 brew install openjdk@11
 ```
 
@@ -39,12 +50,12 @@ TODO: Change default version to 11
 curl https://github.com/neo4j-contrib/neo4j-apoc-procedures/releases/download/4.4.0.1/apoc-4.4.0.1-all.jar -o <NEO4J-HOME>/plugins/apoc-4.4.0.1-all.jar
 ```
 
-## 8. Check if neo4j runs
+## 8. Check if Neo4j runs
 ```bash
 <NEO4J-HOME>/bin/neo4j console
 ```
 
-## 9. OPTIONAL: Add <NEO4J-Home>/bin/ to "PATH" if you're using bash
+## 9. OPTIONAL: Add `<NEO4J-Home>/bin/` to "PATH" if you're using bash
 - Open ~/.bashrc
 - add this line:
 ```bash
@@ -52,7 +63,16 @@ curl https://github.com/neo4j-contrib/neo4j-apoc-procedures/releases/download/4.
 ```
 - Save and exit
 
-# Installing Conda and Set up Conda Environment
+## 10. Create Neo4j account
+- Open `localhost:7474` in your web browser.
+- Login with the following credentials:
+```yaml
+       Username: neo4j
+       Password: neo4j
+       Change the password to: pgdb.
+```
+
+# Install Conda and Set up Conda Environment
 ### For Intel CPUs (otherwise change the Anaconda version)
 ```bash
     curl https://repo.anaconda.com/archive/Anaconda3-2023.03-1-MacOSX-x86_64.sh -o ~/Downloads/Anaconda3-2023.03-1-MacOSX-x86_64.sh
@@ -66,5 +86,20 @@ curl https://github.com/neo4j-contrib/neo4j-apoc-procedures/releases/download/4.
 ```bash
     conda activate pgdb
 ```
+
+# Install Maven
+```bash
+    brew install maven
+	mvn --version
+```
+
+# Setup dummy dataset
+
+## 1.  Download the test sample database to your Downloads folder.
+## 2.  Load the dump file into your own database.
+```bash
+    <NEO4J-HOME>/bin/neo4j-admin load --from=$HOME/Downloads/newmouse2db.dump --database=neo4j --force
+```
+
 
 # TODO: Install Frontend requirements
