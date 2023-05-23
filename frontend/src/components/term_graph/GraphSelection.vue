@@ -23,6 +23,7 @@ export default ({
     },
     methods: {
         retrieve_graph(){
+            this.$store.commit('assign_term_graph', this.selected_graph.graph)
             this.$emit('term_data_changed', this.selected_graph.graph)
         }
     }

@@ -108,7 +108,7 @@ export default {
   },
   activated() {
 
-    if(this.term_data != this.$store.state.term_graph_data) this.term_data = this.$store.state.term_graph_data;
+    this.term_data = this.$store.state.term_graph_data
     
     const term_node = this.$store.state.active_node_enrichment
     if(term_node != null){
