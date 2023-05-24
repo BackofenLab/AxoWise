@@ -60,7 +60,7 @@ export default {
         surface_backup: null,
       }, 
       label_active_dict: {},
-      special_label: false
+      special_label: false,
     }
   },
   watch: {
@@ -76,26 +76,29 @@ export default {
     },
     active_node(node) {
       var com = this;
-
+      
       com.reset()
 
       if(node == null) return
 
+      if(com.three_view) var sigma_node = sigma_instance.graph.getNodeFromIndex(node.id);
+      else sigma_node = node
+
       const neighbors = new Set();
       const edges = sigma_instance.graph.edges()
       
-      node.color = "rgb(255, 255, 255)"
+      sigma_node.color = "rgb(255, 255, 255)"
       if(com.special_label) {
-        node.sActive = true
+        sigma_node.sActive = true
       }
-      else node.active = true;
+      else sigma_node.active = true;
 
       for (let i = 0; i < edges.length; i++) {
         const e = edges[i]
-        if (e.source === node.attributes["Ensembl ID"]) {
+        if (e.source === sigma_node.attributes["Ensembl ID"]) {
           neighbors.add(e.target);
           e.color = "rgb(255, 255, 255)"
-        } else if (e.target === node.attributes["Ensembl ID"]) {
+        } else if (e.target === sigma_node.attributes["Ensembl ID"]) {
           neighbors.add(e.source);
           e.color = "rgb(255, 255, 255)"
         }else{
@@ -106,12 +109,32 @@ export default {
       const nodes = sigma_instance.graph.nodes();
       for (let i = 0; i < nodes.length; i++) {
         const n = nodes[i]
-        if (!neighbors.has(n.attributes["Ensembl ID"]) && n.attributes["Ensembl ID"] !== node.attributes["Ensembl ID"]) {
+        if (!neighbors.has(n.attributes["Ensembl ID"]) && n.attributes["Ensembl ID"] !== sigma_node.attributes["Ensembl ID"]) {
           n.hidden = true
         }
       }
 
       sigma_instance.refresh();
+
+      if(com.threeview){
+        if(node.active){    
+          const nodesById = Object.fromEntries(three_instance.graphData().nodes.map(node3d => [node3d.id, node3d]));
+          node = nodesById[node.id]
+        }
+
+        const distance = 40;
+        const distRatio = 1 + distance/Math.hypot(node.x, node.y, node.z);
+
+        const newPos = node.x || node.y || node.z
+          ? { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio }
+          : { x: 0, y: 0, z: distance }; // special case if node is in (0,0,0)
+
+        three_instance.cameraPosition(
+          newPos, // new position
+          node, // lookAt ({ x, y, z })
+          3000  // ms transition duration
+        );
+      }
 
 
     },
@@ -524,11 +547,13 @@ export default {
     edge.color = edge.color.replace("rgba", "rgb").replace(/,\s*\d?\.?\d+\s*\)/, ")");
     });
 
+
     // Random tree
     const gData = {
-      nodes: newNodeList,
-      links: newEdges
+    nodes: newNodeList,
+    links: newEdges
     };
+
 
     three_instance = ForceGraph3D();
     three_instance(threeGraphmod)
@@ -537,11 +562,11 @@ export default {
       .enableNodeDrag(false)
       .nodeAutoColorBy('group')
       .backgroundColor('rgb(0,0,0)')
+      .linkWidth(2)
       .showNavInfo(false)
-      .linkWidth(1)
-      .linkOpacity(0.3)
       .onNodeClick(node => this.activeNode(node));
        
+  
 
       three_instance.refresh()
   },
