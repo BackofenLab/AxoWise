@@ -73,14 +73,25 @@ curl https://github.com/neo4j-contrib/neo4j-apoc-procedures/releases/download/4.
 ```
 
 # Install Conda and Set up Conda Environment
-### For Intel CPUs (otherwise change the Anaconda version)
+### For Intel Chips
 ```bash
-    curl https://repo.anaconda.com/archive/Anaconda3-2023.03-1-MacOSX-x86_64.sh -o ~/Downloads/Anaconda3-2023.03-1-MacOSX-x86_64.sh
-    bash ~/Downloads/Anaconda3-2023.03-1-MacOSX-x86_64.sh
-    rm -r ~/Downloads/Anaconda3-2023.03-1-MacOSX-x86_64.sh
+    curl https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -o ~/Downloads/Miniconda3-latest-MacOSX-x86_64.sh
+    bash ~/Downloads/Miniconda3-latest-MacOSX-x86_64.sh
+    rm -r ~/Downloads/Miniconda3-latest-MacOSX-x86_64.sh
     conda --version
     conda env create -f environment.yml
 ```
+
+### For Mac M1 Chips
+```bash
+curl https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh -o ~/Downloads/Miniconda3-latest-MacOSX-arm64.sh
+    bash ~/Downloads/Miniconda3-latest-MacOSX-arm64.sh
+    rm -r ~/Downloads/Miniconda3-latest-MacOSX-arm64.sh
+    conda --version
+    conda env create -f environment.yml
+```
+
+
 
 ### To start Conda environment
 ```bash
@@ -100,6 +111,3 @@ curl https://github.com/neo4j-contrib/neo4j-apoc-procedures/releases/download/4.
 ```bash
     <NEO4J-HOME>/bin/neo4j-admin load --from=$HOME/Downloads/newmouse2db.dump --database=neo4j --force
 ```
-
-
-# TODO: Install Frontend requirements
