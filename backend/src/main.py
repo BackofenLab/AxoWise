@@ -5,6 +5,7 @@ import json
 import os.path
 import io
 import csv
+import sys
 
 # import networkx as nx
 from flask import Flask, Response, request, send_from_directory
@@ -309,6 +310,13 @@ def terms_subgraph_api():
 
 
 if __name__ == "__main__":
+    if "--pid" in sys.argv:
+        with open("process.pid", "w+") as file:
+            pid = f"{os.getpid()}"
+            file.write(pid)
 
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
-    app.run()
+    if "--server" in sys.argv:
+        app.run(host="0.0.0.0", port=80)
+    else:
+        app.run()

@@ -2,7 +2,7 @@
 ### CUSTOM DO NOT DELETE ###
 credentials.yml
 .idea
-
+pid-info.txt
 
 # Created by https://www.toptal.com/developers/gitignore/api/node,maven,python,pycharm,intellij,visualstudiocode,macos,windows,linux
 # Edit at https://www.toptal.com/developers/gitignore?templates=node,maven,python,pycharm,intellij,visualstudiocode,macos,windows,linux
