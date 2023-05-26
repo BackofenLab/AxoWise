@@ -21,7 +21,7 @@ build:
 start:
 	echo "remember to activate your conda environent with 'conda activate pgdb'"
 	echo "remember to start neo4j with 'make neo4j'"
-	cd backend/src; python main.py
+	cd backend/src; sudo env "PATH=$$PATH" python main.py
 
 lint:
 	find . -name "*.py" | xargs black -l 120 --target-version=py311
