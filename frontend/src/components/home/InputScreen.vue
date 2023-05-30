@@ -17,12 +17,14 @@
       <div class="input-data">
           <div class="input field">
               <div class="input-form-data">
-                <button id="test" @click="submit('test')" > Test Sample</button>
                 <h4>Species:</h4>
                 <v-select v-model="selected_species" :options="species"></v-select>
-                <h4>Protein list:</h4>
-                <textarea ref="protein_list_input" id="protein-list" v-model="raw_text" rows="10" cols="30" autofocus>
-                </textarea>
+                <div class="input-field-protein">
+                  <h4>Protein list:</h4>
+                  <button id="test-btn" @click="random_proteins" >sample</button>
+                  <textarea ref="protein_list_input" id="protein-list" v-model="raw_text" rows="10" cols="30" autofocus>
+                  </textarea>
+                </div>
                 <button id="submit-btn" @click="submit()" :class="{'loading': isAddClass}">
                   <span class="button__text" onClick="this.disabled=true;">Submit</span>
                 </button>
@@ -33,6 +35,7 @@
 </template>
 
 <script>
+
 export default {
   name: 'InputScreen',
 
@@ -63,7 +66,7 @@ export default {
   },
 
   methods: {
-    submit(mode) {
+    submit() {
 
       /*
       Submit function connects the backend with frontend by supplying the user input and retrieving the graph network.
@@ -78,28 +81,22 @@ export default {
       */
 
       var formData = new FormData();
-      if(mode == "test"){
-        formData.append("proteins", this.$store.state.test_sample);
-        formData.append("threshold", this.threshold.value);
-        formData.append("species_id", '10090')
-      }else{
-        //Detection of empty inputs
-        if (this.selected_species == "") {
-          alert("Please select a species!");
-          return;
-        }
-
-        if ((this.raw_text == null || this.raw_text == "")) {
-          alert("Please provide a list of proteins!");
-          return;
-        }
-
-        // Creating FormData to send files & parameters with an ajax call
-        
-        formData.append("threshold", this.threshold.value);
-        formData.append("species_id", this.selected_species.code);
-        formData.append("proteins", this.raw_text.split("\n").join(";"));
+      //Detection of empty inputs
+      if (this.selected_species == "") {
+        alert("Please select a species!");
+        return;
       }
+
+      if ((this.raw_text == null || this.raw_text == "")) {
+        alert("Please provide a list of proteins!");
+        return;
+      }
+
+      // Creating FormData to send files & parameters with an ajax call
+      
+      formData.append("threshold", this.threshold.value);
+      formData.append("species_id", this.selected_species.code);
+      formData.append("proteins", this.raw_text.split("\n").join(";"));
 
       this.isAddClass=true;
       this.axios
@@ -110,6 +107,31 @@ export default {
           this.$store.commit('assign', response)
           this.$router.push("protein")
         })
+    },
+    async random_proteins() {
+
+      const response = await fetch("./mousedb.csv");
+        if (!response.ok) {
+            throw new Error("HTTP error " + response.status);
+        }
+        const text = await response.text();
+        console.log(text.split(/[\r\n]+/))
+        var randomProteins = this.getRandomElements(text.split(/[\r\n]+/),600)
+
+        this.raw_text = randomProteins.join('\n');
+
+     },
+    getRandomElements(array, numElements) {
+      const randomElements = [];
+      const arrayCopy = array.slice(); // Create a copy of the original array
+
+      while (randomElements.length < numElements && arrayCopy.length > 0) {
+        const randomIndex = Math.floor(Math.random() * arrayCopy.length);
+        const randomElement = arrayCopy.splice(randomIndex, 1)[0];
+        randomElements.push(randomElement);
+      }
+
+      return randomElements;
     }
   }
 }
@@ -117,4 +139,23 @@ export default {
 
 
 </script>
+
+<style>
+
+.input-field-protein{
+    display: block;
+}
+
+#test-btn{
+
+  margin: 0 0 6px 0;
+  text-transform: lowercase;
+  padding: 0px;
+  height: 15px;
+  width: 50px;
+  font-size: 9px;
+
+}
+
+</style>
 
