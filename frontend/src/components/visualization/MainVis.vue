@@ -615,6 +615,11 @@ export default {
 
     sigma_instance.refresh();
   },
+  reset_node_label(node) {
+    node.active = false
+    node.sActive = false
+    sigma_instance.refresh()
+  }
 },
   mounted() {
     var com = this;
@@ -659,7 +664,8 @@ export default {
 
     sigma_instance.bind('clickNode', function(event) {
       // Check if the desired key is being held down when clicking a node
-      if (keyState[83]) com.activeNode(event.data.node, true);
+      if (keyState[17] && keyState[16]) com.reset_node_label(event.data.node);
+      else if (keyState[17] && !keyState[16]) com.activeNode(event.data.node, true);
       else com.activeNode(event.data.node, false);
       
     });
