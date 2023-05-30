@@ -17,13 +17,12 @@ prepare:
 	brew update
 
 conda:
-	curl https://repo.anaconda.com/archive/Anaconda3-2023.03-1-MacOSX-x86_64.sh -o ~/Downloads/Anaconda3-2023.03-1-MacOSX-x86_64.sh
-	bash ~/Downloads/Anaconda3-2023.03-1-MacOSX-x86_64.sh
-	rm -r ~/Downloads/Anaconda3-2023.03-1-MacOSX-x86_64.sh
-	conda --version
+	curl https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -o ~/Downloads/Miniconda3-latest-MacOSX-x86_64.sh
+    bash ~/Downloads/Miniconda3-latest-MacOSX-x86_64.sh
+    rm -r ~/Downloads/Miniconda3-latest-MacOSX-x86_64.sh
+    conda --version
 
 node:
-# TODO: Needed? 
 # curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 	brew install node
 	node --version
