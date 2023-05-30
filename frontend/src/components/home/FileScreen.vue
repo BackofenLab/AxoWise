@@ -89,7 +89,7 @@ export default {
     submit() {
       var com = this
       
-      com.isAddClass=true;
+      
 
       if (com.selected_species == "") {
         alert("Please select a species!");
@@ -112,6 +112,7 @@ export default {
       
       this.$store.commit('assign_dcoloumn', com.selected_d)
       
+      com.isAddClass=true;
       this.axios
         .post(this.api.subgraph, formData)
         .then((response) => {

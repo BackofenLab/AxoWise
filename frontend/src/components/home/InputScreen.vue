@@ -76,7 +76,6 @@ export default {
       Retrieving:
         - gephi_json (data structure of graph network)
       */
-      this.isAddClass=true;
 
       var formData = new FormData();
       if(mode == "test"){
@@ -102,7 +101,7 @@ export default {
         formData.append("proteins", this.raw_text.split("\n").join(";"));
       }
 
-
+      this.isAddClass=true;
       this.axios
         .post(this.api.subgraph, formData)
         .then((response) => {
