@@ -115,7 +115,6 @@ export default {
             throw new Error("HTTP error " + response.status);
         }
         const text = await response.text();
-        console.log(text.split(/[\r\n]+/))
         var randomProteins = this.getRandomElements(text.split(/[\r\n]+/),600)
 
         this.raw_text = randomProteins.join('\n');

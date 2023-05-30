@@ -8,6 +8,10 @@
             <button id="apply-func-btn" class="subset-btn" v-on:click="apply_func(true)">Apply</button>
             <button id="revert-func-btn" class="subset-btn" v-on:click="apply_func(false)">Revert</button>
         </div>
+        <div class="data">
+                <span><strong>Number of Proteins: </strong>{{number_prot}}</span><br/><br/>
+                <span><strong>Number of Links: </strong>{{number_asc}}</span><br/><br/>
+        </div>
         <div class="nodeattributes">
             <div class="p">
                 <span>Connections:</span>
@@ -21,6 +25,20 @@
                     </li>
                 </ul>
             </div>
+            <div class="p2">
+                <b>Links:</b>
+                <button v-on:click="expand_links=!expand_links" id="expand-btn">Expand</button>
+                </div>
+                    <div class="link" id="edges" v-show="expand_links === true">
+                        <ul>
+                            <li v-for="edge in contained_edges" :key="edge">
+                                <div class="edge">
+                                <a href="#" v-on:click="select_node(edge.source[0])">{{edge.source[1]}}</a>
+                                <a href="#" v-on:click="select_node(edge.target[0])">{{edge.target[1]}}</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
         </div>
     </div>
 </template>
@@ -38,7 +56,15 @@ export default {
             subset_item: {
                 value: null,
                 imageSrc: require('@/assets/pane/cluster-icon.png')
-            }
+            },
+            number_prot: "",
+            number_asc: "",
+            contained_edges: [],
+            export_edges: [],
+            subset_ids: [],
+            expand_links: false
+
+
         }
     },
     watch: {
@@ -51,6 +77,34 @@ export default {
             }
 
             com.subset_item.value = com.active_subset
+
+            com.contained_edges = [];
+            com.export_edges = [];
+            com.subset_ids = [];
+
+            var id_dict = {};
+            for (var idX in com.active_subset){
+                id_dict[com.active_subset[idX].id] = com.active_subset[idX].label;
+                com.subset_ids.push(com.active_subset[idX].id);
+            }
+            var subset_proteins = new Set(com.subset_ids);
+            for (var idx in com.gephi_data.edges) {
+                var edge = com.gephi_data.edges[idx];
+                if(subset_proteins.has(edge.source) && subset_proteins.has(edge.target)){
+                    if(edge.source != null && edge.target != null){
+                        com.export_edges.push(edge);
+                        com.contained_edges.push({
+                            
+                            "source": [edge.source, id_dict[edge.source]],
+                            "target": [edge.target, id_dict[edge.target]]
+                        
+                        });
+                    }
+                }
+            }
+
+            com.number_asc = com.export_edges.length.toString()
+            com.number_prot = com.subset_ids.length.toString()
 
             com.$emit('active_item_changed',{ "subset": com.subset_item })
             
