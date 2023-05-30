@@ -6,7 +6,7 @@
             <div class="main-section">
                 <div class="enrichment-filtering">
                     <input type="text" value="Search functional terms by name" v-model="search_raw" class="empty"/>
-                    <v-select id="vsel" placeholder="..." v-model="category" :options="filter_terms" :reduce="label => label.value" label="value" ></v-select>
+                    <v-select id="vsel" placeholder="..." v-model="category" :options="filter_terms" :reduce="label => label.value" label="label" ></v-select>
                 </div>
                 <!-- <div v-if="await_load==false" class="term_number">
                     <span>Terms: {{term_numbers}}</span>
@@ -41,7 +41,7 @@
                 },
                 terms: null,
                 search_raw: "",
-                filter_terms: this.$store.state.filter_terms,
+                filter_terms: [],
                 category: "",
                 await_load: true,
                 sourceToken: null,
@@ -146,6 +146,10 @@
                     com.terms = enrich_item.term_set
                     if(hide) com.$emit("active_layer_changed", enrich_item.term );
                 }
+            },
+            filter_options() {
+                var com = this
+                com.filter_terms = [...new Set(com.terms.map(term => term.category))]
             }
         },
         mounted() {
@@ -164,6 +168,7 @@
                 this.$store.commit('assign_enrichment', response.data.sort((t1, t2) => t1.fdr_rate - t2.fdr_rate))
                 com.terms = this.$store.state.enrichment_terms
                 com.get_term_data(formData)
+                com.filter_options()
                 this.await_load = false
                 })
             
@@ -208,7 +213,7 @@
                 }
 
                 return filtered;
-            },
+            }
 
     },
 }
