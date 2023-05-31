@@ -27,7 +27,7 @@ start:
 	echo "remember to start neo4j with 'make neo4j'"
 	cd backend/src; sudo env "PATH=$$PATH" python main.py
 
-server_restart:
+deployment:
 	sudo kill `cat backend/src/process.pid` || true
 	$(MAKE) update
 	$(MAKE) build
