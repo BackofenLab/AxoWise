@@ -24,3 +24,31 @@ This documentation assumes that you have access to an OpenStack dashboard or wan
 
 2. Once done with installation you can use `ssh ubuntu@floating-ip` (e.g. `ssh ubuntu@134.176.27.91`) to connect to the
    server.
+
+### Add another SSH User
+
+Please follow [this tutorial](https://linuxhandbook.com/add-ssh-public-key-to-server/) and use the manual approach.
+
+### Simple Deployment directly in Ubuntu using CronJobs
+
+This deployment will pull the repository, rebuild and restart the server every night. It is a very simple setup, that
+might not fit your needs! Please think about your deployment strategy first, before applying this blindly.
+
+1. [Create a token for GitHub](https://stackoverflow.com/questions/2505096/clone-a-private-repository-github) to have
+   clone and pull access to the private repository.
+2. create a workspace with `mkdir workspace` and clone the repository into the workspace.
+3. install the environment needed to run the server. This could be java/miniconda/neo4j/... and can be done using the
+   Requirements.mk file
+4. create a script that does the following steps (an example can be found in the Makefile)
+    1. stop the server
+    2. pull git changes
+    3. install all dependencies
+    4. build the project
+    5. restart the server
+5. run the script via a cronjob
+    - create a cronjob by modifying the file of `crontab -e` (first read the boxes!)
+    - to specify the time use [this website](https://crontab.guru/)
+    - all other necessary commands are in the articles below
+   > [be careful with the conda environment](https://unix.stackexchange.com/questions/454957/cron-job-to-run-under-conda-virtual-environment)
+
+   > [be careful with the directory](https://stackoverflow.com/questions/8899737/crontab-run-in-directory)
