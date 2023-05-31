@@ -15,7 +15,10 @@ _SEPARATOR = "%0d"
 # =================================== Map identifiers ===================================
 # https://string-db.org/cgi/help.pl?subpage=api%23mapping-identifiers
 
-_MAP_IDS_TEMPLATE = Template("https://string-db.org/api/${format}/get_string_ids?identifiers=${identifiers}&species=${species}&caller_identity=${identity}&limit=${limit}")
+_MAP_IDS_TEMPLATE = Template(
+    "https://string-db.org/api/${format}/get_string_ids?identifiers=${identifiers}&species=${species}&caller_identity=${identity}&limit=${limit}"
+)
+
 
 def map_identifiers(identifiers, species_id, limit=1, split=350):
     """
@@ -34,11 +37,7 @@ def map_identifiers(identifiers, species_id, limit=1, split=350):
 
     def map_chunk(chunk):
         endpoint = _MAP_IDS_TEMPLATE.substitute(
-            format="tsv",
-            identifiers=_SEPARATOR.join(chunk),
-            species=species_id,
-            limit=limit,
-            identity = _CALLER_IDENTITY
+            format="tsv", identifiers=_SEPARATOR.join(chunk), species=species_id, limit=limit, identity=_CALLER_IDENTITY
         )
         identifiers_file = get(endpoint)
         assert identifiers_file is not None, "GET request did not return anything. Try using a smaller chunk size."
@@ -60,11 +59,13 @@ def map_identifiers(identifiers, species_id, limit=1, split=350):
         df = map_chunk(identifiers)
         yield df
 
+
 # =================================== Functional enrichment ===================================
 # https://string-db.org/cgi/help.pl?subpage=api%23getting-functional-enrichment
 
 _ENRICHMENT_URL_TEMPLATE = Template("https://string-db.org/api/${format}/enrichment")
 _ENRICHMENT_ARGS_TEMPLATE = Template("identifiers=${identifiers}&species=${species}&caller_identity=${identity}")
+
 
 def functional_enrichment(identifiers, species_id):
     """
@@ -77,14 +78,10 @@ def functional_enrichment(identifiers, species_id):
     Returns a single pandas.DataFrame.
     """
 
-    endpoint = _ENRICHMENT_URL_TEMPLATE.substitute(
-        format="tsv"
-    )
+    endpoint = _ENRICHMENT_URL_TEMPLATE.substitute(format="tsv")
 
     data = _ENRICHMENT_ARGS_TEMPLATE.substitute(
-        identifiers = _SEPARATOR.join(identifiers),
-        species = species_id,
-        identity = _CALLER_IDENTITY
+        identifiers=_SEPARATOR.join(identifiers), species=species_id, identity=_CALLER_IDENTITY
     ).encode("utf-8")
 
     enrichment_file = post(endpoint, data)

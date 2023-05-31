@@ -18,6 +18,7 @@ def rstrip_line_generator(iterable, skip_empty=False):
         if skip_empty and new_line != "":
             yield new_line
 
+
 def lines(buffer, encoding="utf-8"):
     """
     Generator which iterates over text lines in the
@@ -25,14 +26,15 @@ def lines(buffer, encoding="utf-8"):
     handle.
     """
 
-    if "\n" in buffer: # If it is a string, split by \n
+    if "\n" in buffer:  # If it is a string, split by \n
         iterable = buffer.split("\n")
         for rstripped_line in rstrip_line_generator(iterable, skip_empty=True):
             yield rstripped_line
-    else: # else assume it is a file handle
+    else:  # else assume it is a file handle
         with open(buffer, "rt", encoding=encoding) as iterable:
             for rstripped_line in rstrip_line_generator(iterable, skip_empty=True):
                 yield rstripped_line
+
 
 def read_table(file_path, types, delimiter=",", header=False):
     """
@@ -58,6 +60,7 @@ def read_table(file_path, types, delimiter=",", header=False):
         except ValueError:
             pass
 
+
 def pair_generator(elements):
     """
     Generate pairs of elements from a list of elements.
@@ -67,6 +70,7 @@ def pair_generator(elements):
     for i in range(n):
         for j in range(i + 1, n):
             yield elements[i], elements[j]
+
 
 def batches(generator, batch_size):
     """
@@ -80,6 +84,7 @@ def batches(generator, batch_size):
             yield batch
             batch = []
     yield batch
+
 
 def concat(list_of_lists):
     """
@@ -98,7 +103,6 @@ def exit_on(*exceptions, print_msg=False, default=None):
     """
 
     def decorate(f):
-
         @functools.wraps(f)
         def _f(*args, **kwargs):
             try:
@@ -114,6 +118,7 @@ def exit_on(*exceptions, print_msg=False, default=None):
 
     return decorate
 
+
 def throttle(wait=1):
     """
     Decorator that ensures `wait` second(s) pass between each
@@ -124,7 +129,6 @@ def throttle(wait=1):
     last_call = 0
 
     def decorate(f):
-
         @functools.wraps(f)
         def _f(*args, **kwargs):
             nonlocal last_call
