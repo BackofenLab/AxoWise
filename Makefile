@@ -28,7 +28,7 @@ start:
 	cd backend/src; sudo env "PATH=$$PATH" python main.py
 
 deployment:
-	sudo kill `cat backend/src/process.pid` > /home/ubuntu/logs/kill.log 2>&1
+	sudo kill `cat backend/src/process.pid` > /home/ubuntu/logs/kill.log 2>&1 || true
 	$(MAKE) update > /home/ubuntu/logs/update.log 2>&1
 	$(MAKE) build > /home/ubuntu/logs/build.log 2>&1
 	cd backend/src; nohup sudo env "PATH=$$PATH" python main.py --pid --server > /home/ubuntu/logs/server.log 2>&1
