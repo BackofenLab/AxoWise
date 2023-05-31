@@ -37,5 +37,9 @@ lint:
 	find . -name "*.py" | xargs black -l 120 --target-version=py311
 
 test:
+	# frontend
+	cd frontend && npm audit --audit-level high
+	# backend
+	python -m unittest discover backend
 	find . -name "*.py" | xargs black -l 120 --check --target-version=py311
 
