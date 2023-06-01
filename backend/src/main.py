@@ -8,7 +8,6 @@ import subprocess
 import sys
 import time
 import uuid
-from asyncio import subprocess
 
 # from networkx.readwrite import json_graph
 import pandas as pd
