@@ -161,6 +161,7 @@ def proteins_subgraph_api():
     print("Time Spent (Setup):", t_setup-t_begin)
 
     #Run the cypher query in cypher shell via terminal
+    # TODO: change to credentials.yml
     data = subprocess.run(
         ["cypher-shell",
          "-a", "bolt://localhost:7687",
