@@ -52,3 +52,13 @@ might not fit your needs! Please think about your deployment strategy first, bef
    > [be careful with the conda environment](https://unix.stackexchange.com/questions/454957/cron-job-to-run-under-conda-virtual-environment)
 
    > [be careful with the directory](https://stackoverflow.com/questions/8899737/crontab-run-in-directory)
+
+### Restart the Server manually
+
+If you can't wait for the cronjob to run, you might want to follow these steps to restart the server:
+
+1. ssh into the server
+2. `conda activate pgdb`
+3. `cd workspace/protein-graph-database`
+4. `git pull`
+5. `make deployment`
