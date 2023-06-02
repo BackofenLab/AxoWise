@@ -7,11 +7,23 @@ from pathlib import Path
 import psycopg2
 import py2neo
 import yaml
+from neo4j import GraphDatabase, Neo4jDriver
+
+from flask import g, current_app
 
 _DEFAULT_CREDENTIALS_PATH = Path(__file__).parent / Path("../../credentials.yml")
 
 neo4j_graph = None
 postgres_connection = None
+
+
+def get_driver() -> Neo4jDriver:
+    if "db" not in g:
+        uri = "bolt://localhost:7687"
+        username = "neo4j"
+        password = "pgdb"
+        g.db = GraphDatabase.driver(uri, auth=(username, password))
+    return g.db
 
 
 def connect_neo4j(credentials_path=_DEFAULT_CREDENTIALS_PATH):

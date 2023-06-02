@@ -22,6 +22,7 @@ import enrichment
 import enrichment_graph
 import graph_utilities
 import jar
+import database
 
 app = Flask(__name__)
 
@@ -116,102 +117,48 @@ def proteins_subgraph_api():
     proteins = direct_search.search_protein_list(query_proteins, species_id=species_id)
     protein_ids = list(map(lambda p: p.id, proteins))
 
-    # Create a query to find all associations between protein_ids and create a file with all properties
-    def create_query_assoc():
-        query = (
-            """
-                WITH "MATCH (source:Protein)-[association:ASSOCIATION]->(target:Protein)
-                WHERE source.external_id IN
-                """
-            + repr(protein_ids)
-            + " AND target.external_id IN "
-            + repr(protein_ids)
-            + " AND association.combined >= "
-            + repr(threshold)
-            + """
-                RETURN source, target, association.combined AS score" AS query
-                CALL apoc.export.csv.query(query, "/tmp/"""
-            + repr(filename)
-            + """.csv", {})
-                YIELD file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data
-                RETURN file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data;
-                """
-        )
-        return query
-
-    # Create a query to find all neighbours of a single protein_id and create a file with all properties
-    def create_query_single():
-        query = (
-            """
-                WITH "MATCH (source:Protein)-[association:ASSOCIATION]-(target:Protein)
-                WHERE source.external_id IN
-                """
-            + repr(protein_ids)
-            + "OR target.external_id IN"
-            + repr(protein_ids)
-            + " AND association.combined >= "
-            + repr(threshold)
-            + """
-                RETURN source, target, association.combined AS score" AS query
-                CALL apoc.export.csv.query(query, "/tmp/"""
-            + repr(filename)
-            + """.csv", {})
-                YIELD file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data
-                RETURN file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data;
-                """
-        )
-        return query
-
     # Decide which query to select (Option 1: associations of a set of genes) (Option 2: neighbours of a single gene)
     if len(protein_ids) > 1:
-        query = create_query_assoc()
+        query = f"""
+                MATCH (source:Protein)-[association:ASSOCIATION]->(target:Protein)
+                WHERE source.external_id IN {repr(protein_ids)}
+                AND target.external_id IN {repr(protein_ids)}
+                AND association.combined >= {repr(threshold)}
+                RETURN source, target, association.combined AS score
+                """
     else:
-        query = create_query_single()
-
-    with open("/tmp/query" + repr(filename) + ".txt", "w") as query_text:
-        query_text.write("%s" % query)
+        query = f"""
+                MATCH (source:Protein)-[association:ASSOCIATION]-(target:Protein)
+                WHERE source.external_id IN {str(protein_ids)} 
+                OR target.external_id IN {str(protein_ids)} 
+                AND association.combined >= {str(threshold)} 
+                RETURN source, target, association.combined AS score
+                """
 
     # Timer to evaluate runtime to setup
     t_setup = time.time()
     print("Time Spent (Setup):", t_setup - t_begin)
 
     # Run the cypher query in cypher shell via terminal
-    data = subprocess.run(
-        [
-            "cypher-shell",
-            "-a",
-            "bolt://localhost:7687",
-            "-u",
-            "neo4j",
-            "-p",
-            "pgdb",
-            "-f",
-            "/tmp/query" + repr(filename) + ".txt",
-        ],
-        capture_output=True,
-        encoding="utf-8",
-    )
-    os.remove("/tmp/query" + repr(filename) + ".txt")
-    # Check standard output 'stdout' whether it's empty to control errors
-    if not data.stdout:
-        raise Exception(data.stderr)
+    driver = database.get_driver()
 
-    # Timer for Neo4j query
-    t_neo4j = time.time()
-    print("Time Spent (Neo4j):", t_neo4j - t_setup)
+    # Execute the query and retrieve the CSV data
+    with driver.session() as session:
+        result = session.run(query)
+        proteins, source, target, score = list(), list(), list(), list()
 
-    # pandas DataFrames for nodes and edges
-
-    proteins, source, target, score = [], [], [], []
-    with open("/tmp/" + repr(filename) + ".csv", newline="") as f:
-        for row in csv.DictReader(f):
-            source_row_prop = json.loads(row["source"])["properties"]
-            target_row_prop = json.loads(row["target"])["properties"]
+        for row in result:
+            source_row_prop = row["source"]
+            target_row_prop = row["target"]
             proteins.append(source_row_prop)
             proteins.append(target_row_prop)
             source.append(source_row_prop.get("external_id"))
             target.append(target_row_prop.get("external_id"))
             score.append(int(row["score"]))
+
+    # Timer for Neo4j query
+    t_neo4j = time.time()
+    print("Time Spent (Neo4j):", t_neo4j - t_setup)
 
     nodes = pd.DataFrame(proteins).drop_duplicates(subset="external_id")
 
