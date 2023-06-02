@@ -16,6 +16,7 @@ import database
 _BACKEND_JAR_PATH = "../gephi/target/gephi.backend-1.0-SNAPSHOT.jar"
 
 
+
 def get_functional_graph(list_enrichment):
     t_begin = time.time()
 
