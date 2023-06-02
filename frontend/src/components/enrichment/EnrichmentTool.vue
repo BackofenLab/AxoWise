@@ -82,7 +82,7 @@
                 var com = this;
 
                 //export terms as csv
-                var csvTermsData = com.terms;
+                var csvTermsData = com.filtered_terms;
                 var terms_csv = 'category,fdr_rate,name,proteins\n';
 
                 csvTermsData.forEach(function(row) {
