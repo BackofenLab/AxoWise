@@ -8,6 +8,7 @@ to be called.
 import subprocess
 
 
+
 def pipe_call(jar_path: str, stdin: str, encoding="utf-8"):
     """
     Runs an executable JAR file specified by `jar_path `and

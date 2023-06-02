@@ -14,6 +14,7 @@ from util.stopwatch import Stopwatch
 _BACKEND_JAR_PATH = "../gephi/target/gephi.backend-1.0-SNAPSHOT.jar"
 
 
+
 def get_functional_graph(list_enrichment):
     stopwatch = Stopwatch()
 
@@ -28,69 +29,81 @@ def get_functional_graph(list_enrichment):
 
     # Create a query to find all associations between protein_ids and create a file with all properties
     def create_query_assoc():
-
         # Query for terms based on protein input
 
-        query = """
+        query = (
+            """
                 WITH "MATCH (source:Terms)-[association:KAPPA]->(target:Terms)
                 WHERE source.external_id IN
-                """ + repr(list_term) + ' AND target.external_id IN ' + repr(list_term) + """
+                """
+            + repr(list_term)
+            + " AND target.external_id IN "
+            + repr(list_term)
+            + """
                 RETURN source, target, association.score AS score" AS query
-                CALL apoc.export.csv.query(query, "/tmp/""" + repr(filename) + """.csv", {})
+                CALL apoc.export.csv.query(query, "/tmp/"""
+            + repr(filename)
+            + """.csv", {})
                 YIELD file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data
                 RETURN file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data;
                 """
+        )
 
         return query
 
     query = create_query_assoc()
 
-
-    with open("/tmp/query"+repr(filename)+".txt", "w") as query_text:
+    with open("/tmp/query" + repr(filename) + ".txt", "w") as query_text:
         query_text.write("%s" % query)
 
-    #Timer to evaluate runtime to setup
+    # Timer to evaluate runtime to setup
     t_setup = time.time()
-    print("Time Spent (Setup_Terms):", t_setup-t_begin)
+    print("Time Spent (Setup_Terms):", t_setup - t_begin)
 
-    #Run the cypher query in cypher shell via terminal
+    # Run the cypher query in cypher shell via terminal
     # TODO: change to credentials.yml
     data = subprocess.run(
-        ["cypher-shell",
-         "-a", "bolt://localhost:7687",
-         "-u", "neo4j",
-         "-p", "pgdb",
-         "-f", "/tmp/query"+repr(filename)+".txt"],
+        [
+            "cypher-shell",
+            "-a",
+            "bolt://localhost:7687",
+            "-u",
+            "neo4j",
+            "-p",
+            "pgdb",
+            "-f",
+            "/tmp/query" + repr(filename) + ".txt",
+        ],
         capture_output=True,
-        encoding="utf-8"
+        encoding="utf-8",
     )
-    os.remove('/tmp/query'+repr(filename)+'.txt')
-    #Check standard output 'stdout' whether it's empty to control errors
+    os.remove("/tmp/query" + repr(filename) + ".txt")
+    # Check standard output 'stdout' whether it's empty to control errors
     if not data.stdout:
         raise Exception(data.stderr)
 
-    #Timer for Neo4j query
+    # Timer for Neo4j query
     t_neo4j = time.time()
-    print("Time Spent (Neo4j):", t_neo4j-t_setup)
+    print("Time Spent (Neo4j):", t_neo4j - t_setup)
 
-    #pandas DataFrames for nodes and edges
+    # pandas DataFrames for nodes and edges
     csv.field_size_limit(sys.maxsize)
     terms = list()
     source, target, score, assoc_names = list(), list(), list(), list()
-    with open('/tmp/'+repr(filename)+'.csv', newline='') as f:
+    with open("/tmp/" + repr(filename) + ".csv", newline="") as f:
         for row in csv.DictReader(f):
-            source_row_prop = json.loads(row['source'])['properties']
-            target_row_prop = json.loads(row['target'])['properties']
+            source_row_prop = json.loads(row["source"])["properties"]
+            target_row_prop = json.loads(row["target"])["properties"]
             terms.append(source_row_prop)
             terms.append(target_row_prop)
-            source.append(source_row_prop.get('external_id'))
-            target.append(target_row_prop.get('external_id'))
-            score.append(float(row['score']))
+            source.append(source_row_prop.get("external_id"))
+            target.append(target_row_prop.get("external_id"))
+            score.append(float(row["score"]))
 
     t_parsing = time.time()
-    print("Time Spent (Parsing):", t_parsing-t_neo4j)
+    print("Time Spent (Parsing):", t_parsing - t_neo4j)
 
-    os.remove('/tmp/'+repr(filename)+'.csv')
+    os.remove("/tmp/" + repr(filename) + ".csv")
 
     nodes = pd.DataFrame(terms).drop_duplicates(subset="external_id")
 
