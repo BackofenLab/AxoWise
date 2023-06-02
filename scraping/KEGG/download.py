@@ -1,4 +1,3 @@
-
 import argparse
 import os
 import sys
@@ -11,18 +10,16 @@ from backend.src.utils import read_table, exit_on
 
 
 def parse_cli_args():
-
-    parser = argparse.ArgumentParser(
-        formatter_class = argparse.ArgumentDefaultsHelpFormatter
-    )
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument(
         "species_name",
-        type = str,
-        help = "Species name (e.g. Homo sapiens / human)",
+        type=str,
+        help="Species name (e.g. Homo sapiens / human)",
     )
 
     return parser.parse_args()
+
 
 @exit_on(KeyboardInterrupt)
 def main():
@@ -36,12 +33,12 @@ def main():
 
     # Directory for saving the data
     DATA_DIR = "data"
-    os.makedirs(DATA_DIR, exist_ok = True)
+    os.makedirs(DATA_DIR, exist_ok=True)
 
     # Diseases, drugs & compounds
-    diseases_file = open(os.path.join(DATA_DIR, "kegg_diseases.{}.tsv".format(kegg_id)), mode = "w", encoding = "utf-8")
-    drugs_file = open(os.path.join(DATA_DIR, "kegg_drugs.{}.tsv".format(kegg_id)), mode = "w", encoding = "utf-8")
-    compounds_file = open(os.path.join(DATA_DIR, "kegg_compounds.{}.tsv".format(kegg_id)), mode = "w", encoding = "utf-8")
+    diseases_file = open(os.path.join(DATA_DIR, "kegg_diseases.{}.tsv".format(kegg_id)), mode="w", encoding="utf-8")
+    drugs_file = open(os.path.join(DATA_DIR, "kegg_drugs.{}.tsv".format(kegg_id)), mode="w", encoding="utf-8")
+    compounds_file = open(os.path.join(DATA_DIR, "kegg_compounds.{}.tsv".format(kegg_id)), mode="w", encoding="utf-8")
 
     written_diseases = set()
     written_drugs = set()
@@ -49,30 +46,25 @@ def main():
 
     # Pathways
     print("Downloading pathways for: {}".format(kegg_id))
-    pathways_file = open(os.path.join(DATA_DIR, "kegg_pathways.{}.tsv".format(kegg_id)), mode = "w", encoding = "utf-8")
+    pathways_file = open(os.path.join(DATA_DIR, "kegg_pathways.{}.tsv".format(kegg_id)), mode="w", encoding="utf-8")
 
     # Write headers
     diseases_file.write("\t".join(["id", "name"]) + "\n")
     drugs_file.write("\t".join(["id", "name"]) + "\n")
     compounds_file.write("\t".join(["id", "name"]) + "\n")
-    pathways_file.write("\t".join([
-        "id",
-        "name",
-        "description",
-        "classes",
-        "genes_external_ids",
-        "diseases_ids",
-        "drugs_ids",
-        "compounds_ids"
-    ]) + "\n")
-
+    pathways_file.write(
+        "\t".join(
+            ["id", "name", "description", "classes", "genes_external_ids", "diseases_ids", "drugs_ids", "compounds_ids"]
+        )
+        + "\n"
+    )
 
     pathways = api.pathways(kegg_id)
 
     # Get the pathway
     pathway_table = list(read_table(pathways, (str, str), "\t"))
     for idx, (pathway_id, pathway_name) in enumerate(pathway_table):
-        pathway = api.pathway(pathway_id, kgml = False)
+        pathway = api.pathway(pathway_id, kgml=False)
 
         # Parse the KEGG pathway flat file
         pathway_parsed = parse.parse_flat_file(pathway)
@@ -103,9 +95,7 @@ def main():
             kegg2external = dict()
             for mapped_identifiers, idx_offset in api.map_identifiers_to_STRING(gene_ids, ncbi_id):
                 for idx, external_id, species_id, species_name, preferred_name, annotation in read_table(
-                    mapped_identifiers,
-                    (int, str, int, str, str, str),
-                    delimiter = "\t"
+                    mapped_identifiers, (int, str, int, str, str, str), delimiter="\t"
                 ):
                     gene_id = gene_ids[idx + idx_offset]
                     if gene_id in kegg2external:
@@ -151,7 +141,8 @@ def main():
         diseases_column = ";".join(disease_ids) if has_diseases else ""
         drugs_column = ";".join(drug_ids) if has_drugs else ""
         compounds_column = ";".join(compound_ids) if has_compounds else ""
-        pathways_file.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(
+        pathways_file.write(
+            "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(
                 pathway_id,
                 pathway_title,
                 description_column,
@@ -159,7 +150,7 @@ def main():
                 genes_column,
                 diseases_column,
                 drugs_column,
-                compounds_column
+                compounds_column,
             )
         )
 
@@ -167,6 +158,7 @@ def main():
     diseases_file.close()
     drugs_file.close()
     compounds_file.close()
+
 
 if __name__ == "__main__":
     main()

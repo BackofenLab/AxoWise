@@ -14,6 +14,7 @@ import database
 
 _Q_GRAM_PAD_CHAR = "$"
 
+
 def make_q_grams(string, q=3):
     """
     Generate padded q-grams from a given string.
@@ -27,6 +28,7 @@ def make_q_grams(string, q=3):
         q_grams.append(string_padded[i : i + q])
 
     return q_grams
+
 
 def search_q_gram_index(query, index, condition=None, top=5):
     """
@@ -48,14 +50,13 @@ def search_q_gram_index(query, index, condition=None, top=5):
     if top == 1:
         return [max(counts.items(), key=lambda item: item[1])[0]]
 
-    return list(map(
-        lambda item: item[0],
-        sorted(counts.items(), key=lambda item: item[1], reverse=True)
-    ))[:top]
+    return list(map(lambda item: item[0], sorted(counts.items(), key=lambda item: item[1], reverse=True)))[:top]
+
 
 #  ========================= Protein =========================
 
 Protein = namedtuple("Protein", ["id", "name", "species_id"])
+
 
 def create_protein_q_gram_index():
     """
@@ -72,26 +73,28 @@ def create_protein_q_gram_index():
 
     return index
 
+
 def get_protein_connection():
     """
     Direct neo4j search of the given proteins.
-    
+
     Returns:
         int: Id of the given string
     """
     neo4j_graph = database.connect_neo4j()
-    
+
     protein_list = defaultdict(set)
     for row in Cypher.get_protein_list(neo4j_graph):
         protein = Protein(**row)
-        protein_list[row['name']].add(protein)
-    
+        protein_list[row["name"]].add(protein)
+
     return protein_list
-    
-    
+
+
 # ========================= Pathway =========================
 
 Pathway = namedtuple("Pathway", ["id", "name", "species_id"])
+
 
 def create_pathway_q_gram_index():
     """
@@ -108,9 +111,11 @@ def create_pathway_q_gram_index():
 
     return index
 
+
 # ========================= Species =========================
 
 Species = namedtuple("Species", ["name", "kegg_id", "ncbi_id"])
+
 
 def create_species_q_gram_index():
     """
@@ -136,9 +141,11 @@ def create_species_q_gram_index():
 
     return index
 
+
 # ========================= Class =========================
 
 Class = namedtuple("Class", ["name"])
+
 
 def create_class_q_gram_index():
     """

@@ -13,6 +13,7 @@ _DEFAULT_CREDENTIALS_PATH = Path(__file__).parent / Path("../../credentials.yml"
 neo4j_graph = None
 postgres_connection = None
 
+
 def connect_neo4j(credentials_path=_DEFAULT_CREDENTIALS_PATH):
     """
     Connects to the Neo4j database described in credentials
@@ -25,13 +26,8 @@ def connect_neo4j(credentials_path=_DEFAULT_CREDENTIALS_PATH):
 
     neo4j = credentials["neo4j"]
 
-    #Connect to the Neo4j database
-    neo4j_graph = py2neo.Graph(
-        host=neo4j["host"],
-        port=neo4j["port"],
-        password=neo4j["pw"],
-        scheme="bolt"
-    )
+    # Connect to the Neo4j database
+    neo4j_graph = py2neo.Graph(host=neo4j["host"], port=neo4j["port"], password=neo4j["pw"], scheme="bolt")
 
     connected = False
     while not connected:
@@ -40,10 +36,12 @@ def connect_neo4j(credentials_path=_DEFAULT_CREDENTIALS_PATH):
             connected = True
         except Exception as e:
             import time
+
             print(f"{e}. Retrying...")
             time.sleep(10)
 
     return neo4j_graph
+
 
 def connect_postgres(credentials_path=_DEFAULT_CREDENTIALS_PATH):
     """
@@ -63,10 +61,11 @@ def connect_postgres(credentials_path=_DEFAULT_CREDENTIALS_PATH):
         user=postgres["user"],
         password=postgres["pw"],
         port=postgres["port"],
-        host=postgres["host"]
+        host=postgres["host"],
     )
 
     return postgres_connection
+
 
 def connect(credentials_path=_DEFAULT_CREDENTIALS_PATH):
     """

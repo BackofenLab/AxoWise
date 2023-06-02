@@ -1,6 +1,6 @@
-
 import re
 import io
+
 
 def parse_flat_file(pathway):
     name = None
@@ -13,7 +13,7 @@ def parse_flat_file(pathway):
 
     def last_index(string, substring):
         return len(string) - len(substring) - string[::-1].index(substring)
-        
+
     def parse_disease_line(line):
         disease_id, disease_name = line.strip().split("  ")
         return disease_id, disease_name
@@ -24,12 +24,12 @@ def parse_flat_file(pathway):
 
     def parse_gene_line(line):
         gene_id, gene_names = line.strip().split("  ")
-        if ";" in gene_names: # Mutliple names
+        if ";" in gene_names:  # Mutliple names
             names = list(map(lambda string: string.strip(), gene_names.split(";")))
             short_name, long_name = names[0], "; ".join(names[1:])
             if "[" in long_name:
                 long_name = long_name[: long_name.index("[") - 1]
-        else: # One name
+        else:  # One name
             short_name = ""
             long_name = gene_names
             if "[" in long_name:
@@ -63,7 +63,7 @@ def parse_flat_file(pathway):
         # One-line entries
         elif line.startswith("NAME"):
             name = line.lstrip("NAME").lstrip()
-            name = name[ : last_index(name, " - ")]
+            name = name[: last_index(name, " - ")]
             assert name.strip() != ""
         elif line.startswith("DESCRIPTION"):
             description = line.lstrip("DESCRIPTION").lstrip()
