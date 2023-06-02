@@ -104,7 +104,46 @@ def proteins_subgraph_api():
     else:
         proteins, source, target, score = queries.get_protein_neighbours(driver, protein_ids, threshold)
 
-    stopwatch.round("Neo4j")
+
+    with open("/tmp/query"+repr(filename)+".txt", "w") as query_text:
+        query_text.write("%s" % query)
+
+    #Timer to evaluate runtime to setup
+    t_setup = time.time()
+    print("Time Spent (Setup):", t_setup-t_begin)
+
+    #Run the cypher query in cypher shell via terminal
+    # TODO: change to credentials.yml
+    data = subprocess.run(
+        ["cypher-shell",
+         "-a", "bolt://localhost:7687",
+         "-u", "neo4j",
+         "-p", "pgdb",
+         "-f", "/tmp/query"+repr(filename)+".txt"],
+        capture_output=True,
+        encoding="utf-8"
+    )
+    os.remove('/tmp/query'+repr(filename)+'.txt')
+    #Check standard output 'stdout' whether it's empty to control errors
+    if not data.stdout:
+        raise Exception(data.stderr)
+
+    #Timer for Neo4j query
+    t_neo4j = time.time()
+    print("Time Spent (Neo4j):", t_neo4j-t_setup)
+
+    #pandas DataFrames for nodes and edges
+
+    proteins, source, target, score = [], [], [], []
+    with open('/tmp/'+repr(filename)+'.csv', newline='') as f:
+        for row in csv.DictReader(f):
+            source_row_prop = json.loads(row['source'])['properties']
+            target_row_prop = json.loads(row['target'])['properties']
+            proteins.append(source_row_prop)
+            proteins.append(target_row_prop)
+            source.append(source_row_prop.get('external_id'))
+            target.append(target_row_prop.get('external_id'))
+            score.append(int(row['score']))
 
     nodes = pd.DataFrame(proteins).drop_duplicates(subset="external_id")
 
