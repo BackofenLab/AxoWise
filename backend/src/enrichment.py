@@ -61,6 +61,7 @@ def hypergeo_testing(intersec, total_proteins, term_proteins, in_proteins):
     return float(p_value)
 
 
+
 def functional_enrichment(driver: neo4j.Driver, in_proteins, species_id: Any):
     """inhouse functional enrichment - performs gene set enrichment analysis
     for a given set of proteins. Calculates p-value and Benjamini-Hochberg FDR

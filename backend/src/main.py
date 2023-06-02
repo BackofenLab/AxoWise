@@ -110,6 +110,7 @@ def proteins_subgraph_api():
     # Timer to evaluate runtime to setup
     t_setup = time.time()
     print("Time Spent (Setup):", t_setup - t_begin)
+    print("Time Spent (Setup):", t_setup - t_begin)
 
     # Run the cypher query in cypher shell via terminal
     # TODO: change to credentials.yml
