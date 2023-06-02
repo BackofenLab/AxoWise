@@ -519,6 +519,7 @@ def get_num_proteins():
         Number of proteins(int)
     """
 
+    # TODO: change to credentials.yml
     data = subprocess.run(
         [
             "cypher-shell",
