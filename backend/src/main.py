@@ -174,7 +174,6 @@ def proteins_subgraph_api():
     print("Time Spent (Parsing):", t_parsing - t_neo4j)
     # Creating only the main Graph and exclude not connected subgraphs
     nodes_sub = graph_utilities.create_nodes_subgraph(edges, nodes)
-    # edges = graph_utilities.create_edges_subgraph(edges)
 
     # Timer to evaluate enrichments runtime
     t_dvalue = time.time()
@@ -237,7 +236,10 @@ def proteins_subgraph_api():
             sub_proteins.append(node["attributes"]["Ensembl ID"])
         else:
             node["color"] = "rgb(255,255,153)"
-            node["hidden"] = True
+
+    for edge in sigmajs_data["edges"]:
+        if edge["source"] not in ensembl_sub and edge["target"] not in ensembl_sub:
+            edge["color"] = "rgba(255,255,153,0.2)"
 
     # Update sigmajs_data with subgraph and other attributes as needed
     if request.form.get("selected_d"):

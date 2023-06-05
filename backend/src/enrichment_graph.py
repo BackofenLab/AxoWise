@@ -9,7 +9,6 @@ import subprocess
 import pandas as pd
 import jar
 import graph_utilities
-from neo4j import GraphDatabase
 import database
 
 # =============== Functional Term Graph ======================
@@ -131,7 +130,10 @@ def get_functional_graph(list_enrichment):
             sub_proteins.append(node["attributes"]["Ensembl ID"])
         else:
             node["color"] = "rgb(255,255,153)"
-            node["hidden"] = True
+
+    for edge in sigmajs_data["edges"]:
+        if edge["source"] not in ensembl_sub and edge["target"] not in ensembl_sub:
+            edge["color"] = "rgba(255,255,153,0.2)"
 
     sigmajs_data["subgraph"] = sub_proteins
 
