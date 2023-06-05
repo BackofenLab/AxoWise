@@ -78,7 +78,7 @@ def proteins_enrichment():
             fdr_rate=row["fdr"]
         ))"""
 
-    json_str=json.dumps(list_enrichment.to_dict('records'), ensure_ascii=False, separators=(',', ':'))
+    json_str = json.dumps(list_enrichment.to_dict("records"), ensure_ascii=False, separators=(",", ":"))
     return Response(json_str, mimetype="application/json")
 
 

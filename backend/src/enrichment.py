@@ -1,19 +1,19 @@
 import sys
 import csv
-import ast
 import cypher_queries as Cypher
 from cypher_queries import *
 import time
-from functools import lru_cache, partial
+from functools import lru_cache
 import mpmath
 import pandas as pd
 import multiprocessing
 import json
 
+
 def calc_proteins_pval(curr, alpha, in_pr, bg_proteins, num_in_prot):
     # Lists are read as strings, evaluate to lists using JSON.
     # alternative is using eval() which is slower
-    prot_list = curr.replace("'", "\"")
+    prot_list = curr.replace("'", '"')
     prot_list = json.loads(prot_list)
 
     # get the protein length of term
@@ -29,22 +29,22 @@ def calc_proteins_pval(curr, alpha, in_pr, bg_proteins, num_in_prot):
         # more or less the same
         p_value = alpha
     else:
-        p_value = hypergeo_testing(num_inter, bg_proteins, num_term_prot,
-                                       num_in_prot)
+        p_value = hypergeo_testing(num_inter, bg_proteins, num_term_prot, num_in_prot)
 
     return (p_value, prots_term)
+
 
 @lru_cache(maxsize=None)
 def hypergeo_testing(intersec, total_proteins, term_proteins, in_proteins):
     """Perfoms hypergeometric testing and returns a p_value
-        Args:
-            intersec(int): number of intersections between input and
-                term proteins
-            total_proteins(int): number of total proteins of organism
-            term_proteins(int): number of proteins for a specific term
-            in_proteins(int): number of input proteins given by the user
-        Return:
-            p-value(float): p-value of hypergeometric testing"""
+    Args:
+        intersec(int): number of intersections between input and
+            term proteins
+        total_proteins(int): number of total proteins of organism
+        term_proteins(int): number of proteins for a specific term
+        in_proteins(int): number of input proteins given by the user
+    Return:
+        p-value(float): p-value of hypergeometric testing"""
     # Set the decimal precision
     mpmath.mp.dps = 64
 
@@ -82,7 +82,7 @@ def functional_enrichment(in_proteins, species_id):
     csv.field_size_limit(sys.maxsize)
 
     # Read Terms and put into Dataframe
-    df_terms = pd.read_csv('/tmp/' + repr(TERM_FILE) + '.csv', sep=',', engine='python', quotechar='"')
+    df_terms = pd.read_csv("/tmp/" + repr(TERM_FILE) + ".csv", sep=",", engine="python", quotechar='"')
     tot_tests = len(df_terms)
 
     t_setup = time.time()
@@ -94,17 +94,17 @@ def functional_enrichment(in_proteins, species_id):
     # calculate p_value for all terms
     new_prots = []
     new_p = []
-    arguments = [(value, alpha, prots, bg_proteins, num_in_prot) for value in df_terms['proteins']]
+    arguments = [(value, alpha, prots, bg_proteins, num_in_prot) for value in df_terms["proteins"]]
     with multiprocessing.Pool() as pool:
         # Apply the function to each input value in parallel and collect the results
-        for a,b in pool.starmap(calc_proteins_pval, arguments):
+        for a, b in pool.starmap(calc_proteins_pval, arguments):
             new_p.append(a)
             new_prots.append(b)
 
     # Update Dataframe and sort by p_value (descending)
-    df_terms['proteins'] = new_prots
-    df_terms['p_value'] = new_p
-    df_terms.sort_values(by='p_value', ascending=False, inplace=True)
+    df_terms["proteins"] = new_prots
+    df_terms["p_value"] = new_p
+    df_terms.sort_values(by="p_value", ascending=False, inplace=True)
     df_terms = df_terms.reset_index(drop=True)
     t_pvalue = time.time()
     print("Time Spent (pvalue_enrichment): ", t_pvalue - t_setup)
@@ -113,7 +113,7 @@ def functional_enrichment(in_proteins, species_id):
     rank_lst = []
     prev = 0
     # Loop over p_value column in Dataframe
-    for i, val in enumerate(df_terms['p_value']):
+    for i, val in enumerate(df_terms["p_value"]):
         rank = tot_tests - i
         p_adj = val * (tot_tests / rank)
         # Ensure FDR rates are non-increasing
@@ -123,10 +123,10 @@ def functional_enrichment(in_proteins, species_id):
         rank_lst += [p_adj]
 
     # Update Dataframe
-    df_terms['fdr_rate'] = rank_lst
+    df_terms["fdr_rate"] = rank_lst
 
     # Remove all entries where FDR >= 0.05
-    df_terms = df_terms[df_terms['fdr_rate'] < alpha]
+    df_terms = df_terms[df_terms["fdr_rate"] < alpha]
     df_terms = df_terms.reset_index(drop=True)
 
     t_cypher = time.time()
