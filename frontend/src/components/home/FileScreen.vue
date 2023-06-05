@@ -25,7 +25,7 @@
                   </div>
                   <div v-if="dcoloumns != null">
                     <h4>D Coloumns:</h4>
-                    <v-select multiple v-model="selected_d" :options="dcoloumns"></v-select>
+                    <v-select multiple v-model="selected_d" :options="dcoloumns" :close-on-select="false"></v-select>
                   </div>
                   <button id="submit-btn" @click="submit()" :class="{'loading': isAddClass}">
                     <span class="button__text" onClick="this.disabled=true;">Submit</span>
