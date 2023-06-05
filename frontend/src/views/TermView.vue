@@ -40,6 +40,9 @@
       <ToggleLabel
       :type='type'
       ></ToggleLabel>
+      <ConnectedGraph
+      :type='type'
+      ></ConnectedGraph>
     </div>
   </keep-alive>
 </template>
@@ -50,6 +53,7 @@ import TermPaneSystem from '@/components/term_graph/TermPaneSystem.vue'
 import GraphSelection from '@/components/term_graph/GraphSelection.vue'
 import TermToolBar from '@/components/term_graph/TermToolBar.vue'
 import ToggleLabel from '../components/interface/ToggleLabel.vue'
+import ConnectedGraph from '../components/interface/ConnectedGraph.vue'
 import ModularityClass from '../components/interface/ModularityClass.vue'
 
 export default {
@@ -59,6 +63,7 @@ export default {
     TermPaneSystem,
     TermToolBar,
     ToggleLabel,
+    ConnectedGraph,
     ModularityClass,
     GraphSelection
     

@@ -173,7 +173,7 @@ export default {
         }
       });
 
-      if(com.state == "Main Graph" || com.state == null ) {
+      if(com.graph_state) {
         com.unconnected_nodes.forEach(function (n) {
           var node = graph.getNodeFromIndex(n.id);
           node.hidden = true
@@ -268,7 +268,7 @@ export default {
         graph.nodes().forEach(function (node) {
           node.hidden = false;
         });
-        if(com.state == "Main Graph" || com.state == null ) {
+        if(com.graph_state ) {
           com.unconnected_nodes.forEach(function (n) {
             var node = graph.getNodeFromIndex(n.id);
             node.hidden = true
@@ -288,7 +288,7 @@ export default {
         }
       });
 
-      if(com.state == "Main Graph" || com.state == null ) {
+      if(com.graph_state) {
         com.unconnected_nodes.forEach(function (n) {
           var node = graph.getNodeFromIndex(n.id);
           node.hidden = true
@@ -347,7 +347,7 @@ export default {
       e.color = `${com.edge_color_index[e.id]}`; e.hidden = false;
     });
 
-    if(com.state == "Main Graph" || com.state == null ) {
+    if(com.graph_state) {
       com.unconnected_nodes.forEach(function (n) {
         var node = sigma_instance.graph.getNodeFromIndex(n.id);
         node.hidden = true
@@ -471,7 +471,7 @@ export default {
   show_unconnectedGraph(state){
     var com = this;
 
-    com.state = state
+    com.graph_state = state
 
     if (state == null) {
       com.reset()
@@ -479,7 +479,7 @@ export default {
 
     const graph = sigma_instance.graph
 
-    if(state == "Whole Graph"){
+    if(!state){
       com.unconnected_nodes.forEach(function (n) {
         var node = graph.getNodeFromIndex(n.id);
         node.hidden = false
@@ -487,7 +487,7 @@ export default {
       sigma_instance.refresh();
     }
     
-    if(state == "Main Graph"){
+    if(state){
       com.unconnected_nodes.forEach(function (n) {
         var node = graph.getNodeFromIndex(n.id);
         node.hidden = true

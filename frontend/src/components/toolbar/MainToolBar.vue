@@ -42,7 +42,6 @@
                 @selection_status_changed = 'selection_status = $event'
                 ></SelectionWindow>
                 <DEValue></DEValue>
-                <ConnectedGraph></ConnectedGraph>
 
             </div>
 
@@ -104,7 +103,6 @@
 <script>
 
 import ExportScreen from '@/components/toolbar/ExportScreen.vue'
-import ConnectedGraph from '@/components/toolbar/ConnectedGraph.vue'
 import DEValue from '@/components/toolbar/DEValue.vue'
 import ExportGraph from '@/components/toolbar/ExportGraph.vue'
 import NodeLabelSelect from '@/components/toolbar/NodeLabelSelect.vue'
@@ -122,7 +120,6 @@ export default {
     emits:['active_subset_changed'],
     components: {
         ExportScreen,
-        ConnectedGraph,
         DEValue,
         ExportGraph,
         ProteinList,
