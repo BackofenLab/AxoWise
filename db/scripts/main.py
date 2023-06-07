@@ -21,6 +21,9 @@ def read_functional_files(path=_DEFAULT_FUNCTIONAL_PATH):
     data = rd.parse_functional(dir_path=path)
     return data
 
+def read_functional_files(path=_DEFAULT_FUNCTIONAL_PATH):
+    data = read.read_functional(dir_path=path)
+    return data
 
 if __name__ == "__main__":
     tg_nodes, tf_nodes, de_values, or_nodes, da_values, tf_tg_corr, tf_or_corr, motif = read_experiment_files()

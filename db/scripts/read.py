@@ -28,6 +28,8 @@ DA_CONTEXT = [
     "RC12h-12h-padj"
 ]
 
+DE_CONTEXT = ['6h-0h', '24h-0h', '336h-0h', 'RC12h-0h', 'RC12h-6h', '6h-0h-padj', '24h-0h-padj', '336h-0h-padj', 'RC12h-0h-padj', 'RC12h-6h-padj']
+DA_CONTEXT = ['12h-0h', '24h-0h', '336h-0h', 'RC12h-0h', 'RC12h-12h', '12h-0h-padj', '24h-0h-padj', '336h-0h-padj', 'RC12h-0h-padj', 'RC12h-12h-padj']
 
 def parse_experiment(dir_path: str = _DEFAULT_EXPERIMENT_PATH, reformat: bool = True):
     """
