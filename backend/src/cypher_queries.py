@@ -519,6 +519,7 @@ def get_num_proteins():
         Number of proteins(int)
     """
 
+    # TODO: change to credentials.yml
     data = subprocess.run(
         [
             "cypher-shell",
@@ -571,6 +572,9 @@ def create_term_df():
 
     with open("/tmp/query" + repr(TERM_FILE) + ".txt", "w") as query_text:
         query_text.write("%s" % query)
+    
+    #Run the cypher query in cypher shell via terminal
+    # TODO: change to credentials.yml
 
     # Run the cypher query in cypher shell via terminal
     data = subprocess.run(

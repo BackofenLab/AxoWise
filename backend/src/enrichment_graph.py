@@ -36,6 +36,46 @@ def get_functional_graph(list_enrichment):
         result = session.run(query)
         terms, source, target, score = list(), list(), list(), list()
 
+        return query
+
+    query = create_query_assoc()
+
+
+    with open("/tmp/query"+repr(filename)+".txt", "w") as query_text:
+        query_text.write("%s" % query)
+
+    #Timer to evaluate runtime to setup
+    t_setup = time.time()
+    print("Time Spent (Setup_Terms):", t_setup-t_begin)
+
+    #Run the cypher query in cypher shell via terminal
+    # TODO: change to credentials.yml
+    data = subprocess.run(
+        ["cypher-shell",
+         "-a", "bolt://localhost:7687",
+         "-u", "neo4j",
+         "-p", "pgdb",
+         "-f", "/tmp/query"+repr(filename)+".txt"],
+        capture_output=True,
+        encoding="utf-8"
+    )
+    os.remove('/tmp/query'+repr(filename)+'.txt')
+    #Check standard output 'stdout' whether it's empty to control errors
+    if not data.stdout:
+        raise Exception(data.stderr)
+
+    #Timer for Neo4j query
+    t_neo4j = time.time()
+    print("Time Spent (Neo4j):", t_neo4j-t_setup)
+
+    #pandas DataFrames for nodes and edges
+    csv.field_size_limit(sys.maxsize)
+    terms = list()
+    source, target, score, assoc_names = list(), list(), list(), list()
+    with open('/tmp/'+repr(filename)+'.csv', newline='') as f:
+        for row in csv.DictReader(f):
+            source_row_prop = json.loads(row['source'])['properties']
+            target_row_prop = json.loads(row['target'])['properties']
         for row in result:
             source_row_prop = row["source"]
             target_row_prop = row["target"]
