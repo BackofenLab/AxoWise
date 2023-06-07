@@ -136,19 +136,25 @@ def proteins_subgraph_api():
     print("Time Spent (Setup):", t_setup - t_begin)
     print("Time Spent (Setup):", t_setup - t_begin)
 
-    #Run the cypher query in cypher shell via terminal
+    # Run the cypher query in cypher shell via terminal
     # TODO: change to credentials.yml
     data = subprocess.run(
-        ["cypher-shell",
-         "-a", "bolt://localhost:7687",
-         "-u", "neo4j",
-         "-p", "pgdb",
-         "-f", "/tmp/query"+repr(filename)+".txt"],
+        [
+            "cypher-shell",
+            "-a",
+            "bolt://localhost:7687",
+            "-u",
+            "neo4j",
+            "-p",
+            "pgdb",
+            "-f",
+            "/tmp/query" + repr(filename) + ".txt",
+        ],
         capture_output=True,
-        encoding="utf-8"
+        encoding="utf-8",
     )
-    os.remove('/tmp/query'+repr(filename)+'.txt')
-    #Check standard output 'stdout' whether it's empty to control errors
+    os.remove("/tmp/query" + repr(filename) + ".txt")
+    # Check standard output 'stdout' whether it's empty to control errors
     if not data.stdout:
         raise Exception(data.stderr)
     # Run the cypher query in cypher shell via terminal
@@ -188,7 +194,9 @@ def proteins_subgraph_api():
     nodes_sub = graph_utilities.create_nodes_subgraph(edges, nodes)
 
     # Timer to evaluate enrichments runtime
+    # Timer to evaluate enrichments runtime
     t_dvalue = time.time()
+    print("Time Spent (DValue):", t_dvalue - t_parsing)
     print("Time Spent (DValue):", t_dvalue - t_parsing)
 
     # D-Value categorize via percentage
