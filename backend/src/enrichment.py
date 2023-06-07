@@ -83,6 +83,10 @@ def functional_enrichment(driver: neo4j.Driver, in_proteins, species_id: Any):
     # TODO: Improve runtime?
     
     #pandas DataFrames for nodes and edges
+
+    # TODO: Improve runtime?
+    
+    #pandas DataFrames for nodes and edges
     csv.field_size_limit(sys.maxsize)
 
     # Read Terms and put into Dataframe

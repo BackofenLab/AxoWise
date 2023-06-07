@@ -30,6 +30,12 @@ def get_functional_graph(list_enrichment):
 
         # Query for terms based on protein input
 
+
+    # Create a query to find all associations between protein_ids and create a file with all properties
+    def create_query_assoc():
+
+        # Query for terms based on protein input
+
     # Execute the query and retrieve the CSV data
     terms, source, target, score = queries.get_terms_connected_by_overlap(driver, list_term)
 
