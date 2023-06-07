@@ -18,3 +18,5 @@ dependencies:
   - monotonic=1.*
   - neo4j-python-driver=5.7.*
   - black=23.3.*
+  - mpmath=1.3.0.*
+  - backports.functools_lru_cache=1.6.4.*
