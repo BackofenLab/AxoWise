@@ -24,22 +24,27 @@ def get_functional_graph(list_enrichment):
     if list_enrichment is not None:
         list_term = [i["id"] for i in list_enrichment]
 
-
-
     # Create a query to find all associations between protein_ids and create a file with all properties
     def create_query_assoc():
-
         # Query for terms based on protein input
 
-        query = """
+        query = (
+            """
                 WITH "MATCH (source:Terms)-[association:KAPPA]->(target:Terms)
                 WHERE source.external_id IN
-                """ + repr(list_term) + ' AND target.external_id IN ' + repr(list_term) + """
+                """
+            + repr(list_term)
+            + " AND target.external_id IN "
+            + repr(list_term)
+            + """
                 RETURN source, target, association.score AS score" AS query
-                CALL apoc.export.csv.query(query, "/tmp/""" + repr(filename) + """.csv", {})
+                CALL apoc.export.csv.query(query, "/tmp/"""
+            + repr(filename)
+            + """.csv", {})
                 YIELD file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data
                 RETURN file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data;
                 """
+        )
 
         return query
 
@@ -84,8 +89,8 @@ def get_functional_graph(list_enrichment):
     source, target, score, assoc_names = list(), list(), list(), list()
     with open("/tmp/" + repr(filename) + ".csv", newline="") as f:
         for row in csv.DictReader(f):
-            source_row_prop = json.loads(row['source'])['properties']
-            target_row_prop = json.loads(row['target'])['properties']
+            source_row_prop = json.loads(row["source"])["properties"]
+            target_row_prop = json.loads(row["target"])["properties"]
             terms.append(source_row_prop)
             terms.append(target_row_prop)
             source.append(source_row_prop.get("external_id"))
@@ -93,9 +98,9 @@ def get_functional_graph(list_enrichment):
             score.append(float(row["score"]))
 
     t_parsing = time.time()
-    print("Time Spent (Parsing):", t_parsing-t_neo4j)
+    print("Time Spent (Parsing):", t_parsing - t_neo4j)
 
-    os.remove('/tmp/'+repr(filename)+'.csv')
+    os.remove("/tmp/" + repr(filename) + ".csv")
 
     nodes = pd.DataFrame(terms).drop_duplicates(subset="external_id")
 
@@ -133,8 +138,7 @@ def get_functional_graph(list_enrichment):
 
     # #Timer to evaluate enrichments runtime
     t_enrich = time.time()
-    print("Time Spent (Enrichment):", t_enrich-t_parsing)
-
+    print("Time Spent (Enrichment):", t_enrich - t_parsing)
 
     if len(nodes.index) == 0:
         sigmajs_data = {"nodes": [], "edges": []}
@@ -178,7 +182,7 @@ def get_functional_graph(list_enrichment):
         if node["attributes"]["Ensembl ID"] in ensembl_sub:
             sub_proteins.append(node["attributes"]["Ensembl ID"])
         else:
-            node["color"] = 'rgb(255,255,153)'
+            node["color"] = "rgb(255,255,153)"
             node["hidden"] = True
 
     sigmajs_data["subgraph"] = sub_proteins
