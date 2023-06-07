@@ -572,8 +572,8 @@ def create_term_df():
 
     with open("/tmp/query" + repr(TERM_FILE) + ".txt", "w") as query_text:
         query_text.write("%s" % query)
-    
-    #Run the cypher query in cypher shell via terminal
+
+    # Run the cypher query in cypher shell via terminal
     # TODO: change to credentials.yml
 
     # Run the cypher query in cypher shell via terminal

@@ -78,8 +78,10 @@ def functional_enrichment(driver: neo4j.Driver, in_proteins, species_id: Any):
     # Get number of all proteins in the organism (from Cypher)
     bg_proteins = queries.get_number_of_proteins(driver)
     num_in_prot = len(in_proteins)
-    prots = set(in_proteins)
-    # pandas DataFrames for nodes and edges
+
+    # TODO: Improve runtime?
+    
+    #pandas DataFrames for nodes and edges
     csv.field_size_limit(sys.maxsize)
 
     # Read Terms and put into Dataframe
@@ -87,6 +89,8 @@ def functional_enrichment(driver: neo4j.Driver, in_proteins, species_id: Any):
     tot_tests = len(df_terms)
 
     stopwatch.round("setup_enrichment")
+
+    in_proteins = frozenset(in_proteins)
 
     # set significance level to 0.05
     alpha = 0.05
@@ -111,19 +115,23 @@ def functional_enrichment(driver: neo4j.Driver, in_proteins, species_id: Any):
 
     # calculate Benjamini-Hochberg FDR
     rank_lst = []
-    prev = 0
-    # Loop over p_value column in Dataframe
-    for i, val in enumerate(df_terms["p_value"]):
-        rank = tot_tests - i
-        p_adj = val * (tot_tests / rank)
-        # Ensure FDR rates are non-increasing
-        if prev < p_adj and i != 0:
-            p_adj = prev
-        prev = p_adj
+    for ind, prop in enumerate(terms):
+        rank = tot_tests-ind
+        p_adj = prop['p_value']*(tot_tests/rank)        # decimal.Decimal()
         rank_lst += [p_adj]
 
-    # Update Dataframe
-    df_terms["fdr_rate"] = rank_lst
+    rank_lst_fil = []
+    for i in range(len(rank_lst) - 1):
+        if rank_lst[i] < rank_lst[i+1]:
+                rank_lst[i+1] = rank_lst[i]
+        if (rank_lst[i] < ALPHA):
+            term_temp = terms[i]
+            term_temp["fdr_rate"] = rank_lst[i]
+            rank_lst_fil += [term_temp]
+            if (i == (len(rank_lst) - 2)):
+                term_temp = terms[i+1]
+                term_temp["fdr_rate"] = rank_lst[i+1]
+                rank_lst_fil += [term_temp]
 
     # Remove all entries where FDR >= 0.05
     df_terms = df_terms[df_terms["fdr_rate"] < alpha]
