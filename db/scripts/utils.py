@@ -11,4 +11,4 @@ class Reformatter:
 
     def run_timeframes(self, input: str):
         s = input.replace(self.prefix, "").split(sep="_")
-        return ",".join([p.replace("wt", "") for p in s])
+        return "-".join([p.replace("wt", "") for p in s])
