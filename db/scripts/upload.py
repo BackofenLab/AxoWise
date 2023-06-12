@@ -14,8 +14,9 @@ def create_study_cell_source():
     execute_query(query=query, read=False)
     return
 
-def create_nodes(nodes:pd.DataFrame, type:str):
-    node_dict = nodes.to_dict('records')
+
+def create_nodes(nodes: pd.DataFrame, type: str):
+    node_dict = nodes.to_dict("records")
     for node in node_dict:
         print(node)
         # TODO: Keys to non-strings
@@ -25,16 +26,20 @@ def create_nodes(nodes:pd.DataFrame, type:str):
         return
     return
 
-def create_tg_nodes(nodes:pd.DataFrame):
+
+def create_tg_nodes(nodes: pd.DataFrame):
     create_nodes(nodes=nodes, type="TG")
 
-def create_tf_nodes(nodes:pd.DataFrame):
+
+def create_tf_nodes(nodes: pd.DataFrame):
     create_nodes(nodes=nodes, type="TF")
 
-def create_or_nodes(nodes:pd.DataFrame):
+
+def create_or_nodes(nodes: pd.DataFrame):
     create_nodes(nodes=nodes, type="OR")
 
-def extend_db_from_experiment(tg_nodes:pd.DataFrame, tf_nodes:pd.DataFrame, or_nodes:pd.DataFrame):
+
+def extend_db_from_experiment(tg_nodes: pd.DataFrame, tf_nodes: pd.DataFrame, or_nodes: pd.DataFrame):
     create_study_cell_source()
     create_tg_nodes(nodes=tg_nodes)
     create_tf_nodes(nodes=tf_nodes)
