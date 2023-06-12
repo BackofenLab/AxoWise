@@ -1,6 +1,8 @@
 from pathlib import Path
 import read as rd
 from upload import extend_db_from_experiment
+import read as rd
+from upload import extend_db_from_experiment
 
 _DEFAULT_EXPERIMENT_PATH = Path("../source/experiment")
 _DEFAULT_STRING_PATH = Path("../source/string")
@@ -22,7 +24,7 @@ def read_functional_files(path=_DEFAULT_FUNCTIONAL_PATH):
     return data
 
 def read_functional_files(path=_DEFAULT_FUNCTIONAL_PATH):
-    data = read.read_functional(dir_path=path)
+    data = rd.parse_functional(dir_path=path)
     return data
 
 if __name__ == "__main__":
