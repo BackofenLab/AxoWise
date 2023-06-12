@@ -7,7 +7,6 @@ import os.path
 import subprocess
 import sys
 import time
-import uuid
 
 # from networkx.readwrite import json_graph
 import pandas as pd
@@ -109,9 +108,6 @@ def proteins_subgraph_api():
 
     # Threshold
     threshold = int(float(request.form.get("threshold")) * 1000)
-
-    # Filename generator
-    filename = uuid.uuid4()
 
     # Fuzzy search mapping
     proteins = direct_search.search_protein_list(query_proteins, species_id=species_id)

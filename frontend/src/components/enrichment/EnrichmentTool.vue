@@ -5,7 +5,7 @@
             </div>
             <div class="main-section">
                 <div class="enrichment-filtering">
-                    <input type="text" value="Search functional terms by name" v-model="search_raw" class="empty"/>
+                    <input type="text" v-model="search_raw" class="empty"/>
                     <v-select id="vsel" placeholder="..." v-model="category" :options="filter_terms" :reduce="label => label.label" label="label" ></v-select>
                 </div>
                 <!-- <div v-if="await_load==false" class="term_number">

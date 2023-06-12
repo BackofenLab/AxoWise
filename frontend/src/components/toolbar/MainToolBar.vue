@@ -139,6 +139,7 @@ export default {
             screen_type: "protein",
             snapshot: null,
             status: false,
+            raw_text: "",
             selection_status: false,
             protein_list: null,
         }

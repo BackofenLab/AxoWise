@@ -2,7 +2,7 @@
     <div id="enrichment" class="term-graph-pane">
             <div class="main-section">
                 <div class="enrichment-filtering">
-                    <input type="text" value="Search functional terms by name" v-model="search_raw" class="empty"/>
+                    <input type="text" v-model="search_raw" class="empty"/>
                     <v-select id="vsel" placeholder="..." v-model="category" :options="filter_terms" :reduce="label => label.value" label="value" ></v-select>
                 </div>
             <div class="results" v-if="term_data.nodes !== null">

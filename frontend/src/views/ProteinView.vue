@@ -15,6 +15,8 @@
         :node_size_index='node_size_index'
         :edge_color_index='edge_color_index'
       ></MainVis>
+      </keep-alive>
+      <keep-alive>
       <PaneSystem
         :active_node='active_node' @active_node_changed = 'active_node = $event'
         :active_term='active_term' @active_term_changed = 'active_term = $event'
@@ -25,16 +27,21 @@
         :gephi_data='gephi_data'
         :node_color_index='node_color_index'
       ></PaneSystem>
+    </keep-alive>
+      <keep-alive>
       <EnrichmentTool
         :gephi_data='gephi_data'
         @active_term_changed = 'active_term = $event'
         @active_layer_changed = 'active_layer = $event'
       ></EnrichmentTool>
+    </keep-alive>
+      <keep-alive>
       <MainToolBar
         :gephi_data='gephi_data'
         @active_subset_changed = 'active_subset = $event'
-
       ></MainToolBar>
+    </keep-alive>
+      <keep-alive>
       <div class="header-menu">
         <ModularityClass
         :gephi_data='gephi_data'
@@ -43,9 +50,13 @@
         :subactive_subset='subactive_subset' @subactive_subset_changed = 'subactive_subset = $event'
         > </ModularityClass>
       </div>
+    </keep-alive>
+      <keep-alive>
       <ToggleLabel
       :type='type'
       ></ToggleLabel>
+      </keep-alive>
+      <keep-alive>
       <ConnectedGraph
       :type='type'
       ></ConnectedGraph>
