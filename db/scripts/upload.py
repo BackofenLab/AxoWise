@@ -1,12 +1,35 @@
 import pandas as pd
 from numpy import isnan
+from numpy import isnan
 from utils import execute_query
 
 
 def create_study_cell_source_meancount():
+def create_study_cell_source_meancount():
     create_study_query = "MERGE (s:Study {number: 1})"
     create_celltype_query = "MERGE (c:Celltype {number: 1})"
     create_source_query = "MERGE (s)-[:HAS]->(o:Source)<-[:HAS]-(c)"
+    create_meancount = "MERGE (m:MeanCount)"
+    return_ids = "RETURN id(o) AS id_source"
+
+    query = create_study_query + " " + create_celltype_query + " " + create_source_query + " " + create_meancount + " " + return_ids
+    result, summary, _ = execute_query(query=query, read=False)
+    return result[0]["id_source"]
+
+
+def create_nodes(source_file:str, type_: str, id:str):
+    
+    # Identifier; For TG / TF is ENSEMBL, OR is SYMBOL
+    id_str = '{' + '{}: map.{}'.format(id, id) + '}'
+    load_data_query = 'LOAD CSV WITH HEADERS from "file:///{}" AS map RETURN map'.format(source_file)
+    merge_into_db_query = 'MERGE (t:{} {} ) SET t = map'.format(type_, id_str)
+    
+    # For large numbers of nodes, using apoc.periodic.iterate
+    # For info, see: https://neo4j.com/labs/apoc/4.2/overview/apoc.periodic/apoc.periodic.iterate/
+
+    per_iter = 'CALL apoc.periodic.iterate("{}", "{}", {{batchSize: 5000}} )'.format(load_data_query, merge_into_db_query)
+    
+    execute_query(query=per_iter, read=False)
     create_meancount = "MERGE (m:MeanCount)"
     return_ids = "RETURN id(o) AS id_source"
 
