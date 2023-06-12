@@ -23,11 +23,8 @@ def get_functional_graph(list_enrichment):
     if list_enrichment is not None:
         list_term = [i["id"] for i in list_enrichment]
 
-
-
     # Create a query to find all associations between protein_ids and create a file with all properties
     def create_query_assoc():
-
         # Query for terms based on protein input
 
 
@@ -141,8 +138,8 @@ def get_functional_graph(list_enrichment):
     source, target, score, assoc_names = list(), list(), list(), list()
     with open("/tmp/" + repr(filename) + ".csv", newline="") as f:
         for row in csv.DictReader(f):
-            source_row_prop = json.loads(row['source'])['properties']
-            target_row_prop = json.loads(row['target'])['properties']
+            source_row_prop = json.loads(row["source"])["properties"]
+            target_row_prop = json.loads(row["target"])["properties"]
             terms.append(source_row_prop)
             terms.append(target_row_prop)
             source.append(source_row_prop.get("external_id"))
@@ -226,7 +223,7 @@ def get_functional_graph(list_enrichment):
         if node["attributes"]["Ensembl ID"] in ensembl_sub:
             sub_proteins.append(node["attributes"]["Ensembl ID"])
         else:
-            node["color"] = 'rgb(255,255,153)'
+            node["color"] = "rgb(255,255,153)"
             node["hidden"] = True
 
     sigmajs_data["subgraph"] = sub_proteins
