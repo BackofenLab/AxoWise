@@ -13,7 +13,7 @@ DE_CONTEXT = [
     "24h-0h-padj",
     "336h-0h-padj",
     "RC12h-0h-padj",
-    "RC12h-6h-padj",
+    "RC12h-6h-padj"
 ]
 DA_CONTEXT = [
     "12h-0h",
@@ -25,7 +25,7 @@ DA_CONTEXT = [
     "24h-0h-padj",
     "336h-0h-padj",
     "RC12h-0h-padj",
-    "RC12h-12h-padj",
+    "RC12h-12h-padj"
 ]
 
 
