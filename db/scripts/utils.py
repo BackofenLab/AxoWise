@@ -13,12 +13,14 @@ class Reformatter:
     def run_timeframes(self, input: str):
         s = input.replace(self.prefix, "").split(sep="_")
         return "-".join([p.replace("wt", "") for p in s])
-    
+
+
 def read_creds():
     # TODO: Read Creds yaml
     return "neo4j://localhost:7687", ("neo4j", "pgdb")
 
-def execute_query(query:str, read:bool):
+
+def execute_query(query: str, read: bool):
     uri, auth = read_creds()
     with GraphDatabase.driver(uri, auth=auth) as driver:
         if not read:
