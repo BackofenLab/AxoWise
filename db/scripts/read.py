@@ -7,6 +7,10 @@ DE_CONTEXT = ['6h-0h', '24h-0h', '336h-0h', 'RC12h-0h', 'RC12h-6h', '6h-0h-padj'
 DA_CONTEXT = ['12h-0h', '24h-0h', '336h-0h', 'RC12h-0h', 'RC12h-12h', '12h-0h-padj', '24h-0h-padj', '336h-0h-padj', 'RC12h-0h-padj', 'RC12h-12h-padj']
 
 def parse_experiment(dir_path:str = _DEFAULT_EXPERIMENT_PATH, reformat: bool = True):
+    """
+    Parses experiment files and returns list of Pandas DataFrames s.t. 
+    [tg_nodes, tf_nodes, de_values, or_nodes, da_values, tf_tg_corr, tf_or_corr]
+    """
     def read_experiment():
         """
         Reads Experiment Files from a given path and returns a list of Pandas dataframes,
@@ -37,43 +41,53 @@ def parse_experiment(dir_path:str = _DEFAULT_EXPERIMENT_PATH, reformat: bool = T
             out = pd.DataFrame({'SYMBOL': filtered['SYMBOL'], 'Context': context, 'Value': filtered[context]})
         return out
     
+    def make_context_dataframes(context_list, df, protein):
+        value_reformat = []
+        for context in context_list:
+            value_reformat.append(filter_df_by_context(context=context, df=df, protein=protein))
+        
+        values = pd.concat(value_reformat)
+        return values
+
+    
+    # Read and Rename columns of Experiment data 
     exp = read_experiment()
+
+    # Filter Dataframes for relevant columns
     de = exp[1].filter(items=['ENSEMBL', 'ENTREZID', 'SYMBOL', 'annot', 'TF', 'in_ATAC'])
     
-    # TODO: gives Loc not DataFrame
-    tg_nodes = de.loc(de['TF'].str == "no")
-    tf_nodes = de.loc(de['TF'].str == "yes")
+    # Division into TG and TF nodes
+    tg_nodes = de[de['TF'] == "no"]
+    tg_nodes = tg_nodes.drop(columns=["TF"])
+    tf_nodes = de[de['TF'] == "yes"]
+    tf_nodes = tf_nodes.drop(columns=["TF"])
+
+    # Filter for DE Values in specific contexts
     tmp_de = exp[1].filter(items=['ENSEMBL'] + DE_CONTEXT)
 
-    de_reformat = []
-    for context in DE_CONTEXT:
-        de_reformat.append(filter_df_by_context(context=context, df=tmp_de, protein=True))
-    
-    de_values = pd.concat(de_reformat)
+    # Create DE DataFrame s.t. context is a column value
+    de_values = make_context_dataframes(DE_CONTEXT, tmp_de, True)
 
-    or_nodes = exp[0].filter(items=['SYMBOL', 'seqnames', 'summit', 'strand', 'annotation', 'feature', 'in_RNAseq'])
+    # Filter for relevant values for OR nodes
+    or_nodes = exp[0].filter(items=['SYMBOL', 'seqnames', 'summit', 'strand', 'annotation', 'feature', 'in_RNAseq', 'nearest_index'])
+    
+    # Filter for DA Values in specific contexts
     tmp_da = exp[0].filter(items=['SYMBOL', 'mean_count'] + DA_CONTEXT)
     
-    da_reformat = []
-    for context in DA_CONTEXT:
-        da_reformat.append(filter_df_by_context(context=context, df=tmp_da, protein=False))
-    
-    da_values = pd.concat(da_reformat)
+    # Create DA DataFrame s.t. context is column value
+    da_values = make_context_dataframes(DA_CONTEXT, tmp_da, False)
 
     tf_tg_corr = exp[2]
 
+    # Filter for relevant columns
     tf_or_corr = exp[3].filter(items=["ENSEMBL", "Correlation", "SYMBOL"])
-    
-    print(tg_nodes)
-    print(tf_nodes)
-    print(de_values)
-    print(or_nodes)
-    print(da_values)
-    print(tf_tg_corr)
-    print(tf_or_corr)
+
+    motif = exp[4]
+
+    return [tg_nodes, tf_nodes, de_values, or_nodes, da_values, tf_tg_corr, tf_or_corr, motif]
 
 
-def read_string(dir_path:str = _DEFAULT_STRING_PATH):
+def parse_string(dir_path:str = _DEFAULT_STRING_PATH):
     """
     Reads STRING files and returns a Pandas dataframe
     """
@@ -82,7 +96,7 @@ def read_string(dir_path:str = _DEFAULT_STRING_PATH):
     # TODO: for more files in string dir, extend...
     return df
 
-def read_functional(dir_path:str = _DEFAULT_FUNCTIONAL_PATH):
+def parse_functional(dir_path:str = _DEFAULT_FUNCTIONAL_PATH):
     for file in os.scandir(dir_path):
         df = pd.read_csv(file, sep=",")
     # TODO: for more files in functional dir, extend...
