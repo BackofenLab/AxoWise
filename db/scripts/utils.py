@@ -24,6 +24,6 @@ def execute_query(query: str, read: bool):
     uri, auth = read_creds()
     with GraphDatabase.driver(uri, auth=auth) as driver:
         if not read:
-            return driver.execute_query(query).summary
+            return driver.execute_query(query)
         else:
-            driver.execute_query(query, RoutingControl.READ)
+            return driver.execute_query(query, RoutingControl.READ)
