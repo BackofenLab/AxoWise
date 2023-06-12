@@ -29,7 +29,6 @@ def add_compound(graph, params):
     graph.run(query, params)
 
 
-
 def add_disease(graph, params):
     """
     Create a disease with the specified id and
