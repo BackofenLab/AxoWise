@@ -22,7 +22,7 @@ DA_CONTEXT = [
 def parse_experiment(dir_path: str = _DEFAULT_EXPERIMENT_PATH, reformat: bool = True):
     """
     Parses experiment files and returns list of Pandas DataFrames s.t.
-    [tg_nodes, tf_nodes, de_values, or_nodes, da_values, tf_tg_corr, tf_or_corr]
+    [ tg_nodes, tf_nodes, de_values, or_nodes, da_values, tf_tg_corr, tf_or_corr ]
     """
 
     def read_experiment():
@@ -134,14 +134,25 @@ def parse_experiment(dir_path: str = _DEFAULT_EXPERIMENT_PATH, reformat: bool = 
 def parse_string(dir_path: str = _DEFAULT_STRING_PATH):
     """
     Reads STRING files and returns a Pandas dataframe
+    [ protein.links.v11.5.tsv, protein.info.v11.5.tsv ]
     """
+
+    string = [None] * 2
+
     for file in os.scandir(dir_path):
-        df = pd.read_csv(file, sep=" ")
+        df = pd.read_csv(file, sep="\t")
     # TODO: for more files in string dir, extend...
     return df
 
 
 def parse_functional(dir_path: str = _DEFAULT_FUNCTIONAL_PATH):
+    """
+    Reads Functional Terms files and returns a Pandas dataframe
+    [ functional_terms_overlap.csv, KappaEdges.csv, TermsWithProteins.csv ]
+    """
+
+    functional = [None] * 3
+
     for file in os.scandir(dir_path):
         df = pd.read_csv(file, sep=",")
     # TODO: for more files in functional dir, extend...

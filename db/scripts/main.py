@@ -7,6 +7,7 @@ _DEFAULT_STRING_PATH = Path("../source/string")
 _DEFAULT_FUNCTIONAL_PATH = Path("../source/functional")
 _DEFAULT_CELLTYPE_INFO = {"name": "Microglia"}
 _DEFAULT_STUDY_INFO = {"source": "in-house"}
+_DEFAULT_CREDENTIALS_PATH = Path(__file__).parent / Path("../../credentials.yml")
 
 
 def read_experiment_files(path=_DEFAULT_EXPERIMENT_PATH):
