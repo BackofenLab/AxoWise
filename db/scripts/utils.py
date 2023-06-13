@@ -1,6 +1,7 @@
 import pandas as pd
+import yaml
 from neo4j import GraphDatabase, RoutingControl
-from neo4j import GraphDatabase, RoutingControl
+from main import _DEFAULT_CREDENTIALS_PATH
 
 
 class Reformatter:
@@ -16,9 +17,12 @@ class Reformatter:
         return "-".join([p.replace("wt", "") for p in s])
 
 
-def read_creds():
-    # TODO: Read Creds yaml
-    return "neo4j://localhost:7687", ("neo4j", "pgdb")
+def read_creds(credentials_path=_DEFAULT_CREDENTIALS_PATH):
+    with open(credentials_path, "rt", encoding="utf-8") as credentials_file:
+        credentials = yaml.load(credentials_file, Loader=yaml.FullLoader)
+
+    neo4j = credentials["neo4j"]
+    return "neo4j://{}:{}".format(neo4j["host"], neo4j["port"]), ("neo4j", neo4j["pw"])
 
 
 def execute_query(query: str, read: bool):

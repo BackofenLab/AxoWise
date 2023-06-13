@@ -37,7 +37,15 @@ def create_study_cell_source_meancount():
 
 
 def create_nodes(source_file: str, type_: str, id: str):
-    # Identifier; For TG / TF is ENSEMBL, OR is nearest_index
+    """
+    Common function to create nodes in the Neo4j Database (MERGE not CREATE)
+
+    Variables:
+        source_file -> Name of file in neo4j import directory
+        type_ -> Type of node (e.g. TG, Context, ...)
+        id -> Identifier of node (TG / TF is ENSEMBL, OR is nearest_index)
+    """
+
     id_str = "{" + "{}: map.{}".format(id, id) + "}"
     load_data_query = "LOAD CSV WITH HEADERS from 'file:///{}' AS map RETURN map".format(source_file)
     merge_into_db_query = "MERGE (t:{} {} ) SET t = map".format(type_, id_str)
@@ -74,15 +82,34 @@ def create_nodes(source_file:str, type_: str, id:str):
     return
 
 
-def create_relationship(source_file: str, type_: str, between: tuple[str], node_types: list[str], values: list[str]):
-    # TODO: Maybe with trick of generating nodes first, then relationships? Could also do apoc periodic iterate, more clear
+def create_relationship(
+    source_file: str, type_: str, between: tuple[str], node_types: tuple[str], values: list[str], merge: bool = False
+):
+    """
+    Common function to create edges in Neo4j Database (both MERGE and CREATE possible, see merge flag)
+
+    Variables:
+        source_file -> Name of file in neo4j import directory
+        type_ -> Type of relationship (e.g. HAS, DE, ...)
+        between -> Comparing value names (0 -> Origin of relationship, 1 -> Destination of relationship; x.0 -> Value in DB, x.1 Value in CSV
+        node_types -> Nodetypes (0 -> Origin of relationship, 1 -> Destination of relationship)
+        values -> Column names in csv that need to be added as properties
+        merge -> Use CREATE or MERGE
+    """
+
+    # TODO: Try trick of generating nodes first, then relationships; Generating edges is very slow...
     load_data_query = "LOAD CSV WITH HEADERS from 'file:///{}' AS map MATCH (m:{}), (n:{}) WHERE n.{} = map.{} AND m.{} = map.{} RETURN map, n, m".format(
         source_file, node_types[0], node_types[1], between[1][0], between[1][1], between[0][0], between[0][1]
     )
     set_values_query = " ".join([""] + ["SET e.{} = map.{}".format(v, v) for v in values])
-    create_edge_query = "CREATE (m)-[e:{}]->(n)".format(type_) + set_values_query
+
+    if merge:
+        create_edge_query = "MERGE (m)-[e:{}]->(n)".format(type_) + set_values_query
+    else:
+        create_edge_query = "CREATE (m)-[e:{}]->(n)".format(type_) + set_values_query
 
     per_iter = 'CALL apoc.periodic.iterate("{}", "{}", {{batchSize: 5000}} )'.format(load_data_query, create_edge_query)
+    
     print(per_iter)
     # execute_query(per_iter, read=False)
 
@@ -90,6 +117,7 @@ def create_relationship(source_file: str, type_: str, between: tuple[str], node_
 def create_tg_nodes(nodes: pd.DataFrame, source: int):
     print("Creating Target Gene nodes ...")
 
+    # filter for MeanCount values to add later
     mean_count = nodes.filter(items=["ENSEMBL", "mean_count"])
     mean_count["Source"] = source
     mean_count.rename(columns={"mean_count": "Value"})
@@ -115,6 +143,7 @@ def create_tg_nodes(nodes: pd.DataFrame, source: int):
 def create_tf_nodes(nodes: pd.DataFrame, source: int):
     print("Creating Transcription Factor nodes ...")
 
+    # filter for MeanCount values to add later
     mean_count = nodes.filter(items=["ENSEMBL", "mean_count"])
     mean_count["Source"] = source
     mean_count.rename(columns={"mean_count": "Value"})
@@ -140,6 +169,7 @@ def create_tf_nodes(nodes: pd.DataFrame, source: int):
 def create_or_nodes(nodes: pd.DataFrame, source: int):
     print("Creating Open Region nodes ...")
 
+    # filter for MeanCount values to add later
     mean_count = nodes.filter(items=["nearest_index", "mean_count"])
     mean_count["Source"] = source
     mean_count.rename(columns={"mean_count": "Value"})
@@ -245,6 +275,7 @@ def create_correlation(correlation: pd.DataFrame, source: int, value_type: int):
 
 def create_motif_edges(motif: pd.DataFrame):
     print("Creating MOTIF edges ...")
+
     motif.to_csv("/usr/local/bin/neo4j/import/motif.csv", index=False)
     create_relationship(
         source_file="motif.csv",
@@ -252,11 +283,13 @@ def create_motif_edges(motif: pd.DataFrame):
         between=(("SYMBOL", "TF"), ("peaks", "nearest_index")),
         node_types=("TF", "OR"),
         values=["Motif"],
+        merge=True,
     )
 
 
 def create_distance_edges(distance: pd.DataFrame):
     print("Creating DISTANCE edges ...")
+
     distance.to_csv("/usr/local/bin/neo4j/import/distance.csv", index=False)
     create_relationship(
         source_file="distance.csv",
@@ -264,20 +297,24 @@ def create_distance_edges(distance: pd.DataFrame):
         between=(("nearest_index", "nearest_index"), ("ENSEMBL", "nearest_ENSEMBL")),
         node_types=("OR", "TG"),
         values=["Distance"],
+        merge=True,
     )
 
 
 def create_string_edges():
     print("Creating STRING ASSOCIATION edges ...")
+
     # TODO
     pass
 
 
 def create_functional():
     print("Creating Functional Term nodes ...")
+
     # TODO
 
     print("Creating OVERLAP edges ...")
+
     # TODO
     pass
 
