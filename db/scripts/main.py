@@ -31,7 +31,25 @@ def read_functional_files(path=_DEFAULT_FUNCTIONAL_PATH):
 
 
 if __name__ == "__main__":
-    tg_nodes, tf_nodes, de_values, or_nodes, da_values, tf_tg_corr, tf_or_corr, motif = read_experiment_files()
+    (
+        tg_nodes,
+        tf_nodes,
+        de_values,
+        or_nodes,
+        da_values,
+        tf_tg_corr,
+        tg_or_corr,
+        motif,
+        distance,
+    ) = read_experiment_files()
     extend_db_from_experiment(
-        tg_nodes=tg_nodes, tf_nodes=tf_nodes, or_nodes=or_nodes, da_values=da_values, de_values=de_values
+        tg_nodes=tg_nodes,
+        tf_nodes=tf_nodes,
+        or_nodes=or_nodes,
+        da_values=da_values,
+        de_values=de_values,
+        tf_tg_corr=tf_tg_corr,
+        tg_or_corr=tg_or_corr,
+        motif=motif,
+        distance=distance,
     )

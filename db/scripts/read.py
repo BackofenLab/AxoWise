@@ -84,10 +84,10 @@ def parse_experiment(dir_path: str = _DEFAULT_EXPERIMENT_PATH, reformat: bool = 
                 }
             )
         else:
-            filtered = df.filter(items=["SYMBOL", context, context + "-padj"])
+            filtered = df.filter(items=["nearest_index", context, context + "-padj"])
             out = pd.DataFrame(
                 {
-                    "SYMBOL": filtered["SYMBOL"],
+                    "nearest_index": filtered["nearest_index"],
                     "Context": context,
                     "Value": filtered[context],
                     "p": filtered[context + "-padj"],
@@ -124,11 +124,25 @@ def parse_experiment(dir_path: str = _DEFAULT_EXPERIMENT_PATH, reformat: bool = 
 
     # Filter for relevant values for OR nodes
     or_nodes = exp[0].filter(
-        items=["SYMBOL", "seqnames", "summit", "strand", "annotation", "feature", "in_RNAseq", "nearest_index"]
+        items=[
+            "seqnames",
+            "summit",
+            "strand",
+            "annotation",
+            "feature",
+            "in_RNAseq",
+            "nearest_index",
+            "nearest_distanceToTSS",
+            "nearest_ENSEMBL",
+        ]
     )
 
+    # Filter for Distance to transcription site
+    distance = exp[0].filter("nearest_index", "nearest_distanceToTSS", "nearest_ENSEMBL")
+    distance.rename(columns={"nearest_distanceToTSS": "Distance"})
+
     # Filter for DA Values in specific contexts
-    tmp_da = exp[0].filter(items=["SYMBOL", "mean_count"] + DA_CONTEXT + [c + "-padj" for c in DA_CONTEXT])
+    tmp_da = exp[0].filter(items=["nearest_index", "mean_count"] + DA_CONTEXT + [c + "-padj" for c in DA_CONTEXT])
 
     # Create DA DataFrame s.t. context is column value
     da_values = make_context_dataframes(DA_CONTEXT, tmp_da, False)
@@ -136,11 +150,11 @@ def parse_experiment(dir_path: str = _DEFAULT_EXPERIMENT_PATH, reformat: bool = 
     tf_tg_corr = exp[2]
 
     # Filter for relevant columns
-    tf_or_corr = exp[3].filter(items=["ENSEMBL", "Correlation", "SYMBOL"])
+    tg_or_corr = exp[3].filter(items=["ENSEMBL", "Correlation", "nearest_index"])
 
     motif = exp[4]
 
-    return [tg_nodes, tf_nodes, de_values, or_nodes, da_values, tf_tg_corr, tf_or_corr, motif]
+    return [tg_nodes, tf_nodes, de_values, or_nodes, da_values, tf_tg_corr, tg_or_corr, motif, distance]
 
 
 def parse_string(dir_path: str = _DEFAULT_STRING_PATH):
@@ -198,4 +212,5 @@ def _reformat_OR_TG(df: pd.DataFrame):
 
 
 def _reformat_Motif(df: pd.DataFrame):
+    df = df.rename(columns={"motif_consensus": "Motif"})
     return df
