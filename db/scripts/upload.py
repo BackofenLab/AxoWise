@@ -36,7 +36,7 @@ def create_study_cell_source_meancount():
 
 
 def create_nodes(source_file: str, type_: str, id: str):
-    # Identifier; For TG / TF is ENSEMBL, OR is SYMBOL
+    # Identifier; For TG / TF is ENSEMBL, OR is nearest_index
     id_str = "{" + "{}: map.{}".format(id, id) + "}"
     load_data_query = "LOAD CSV WITH HEADERS from 'file:///{}' AS map RETURN map".format(source_file)
     merge_into_db_query = "MERGE (t:{} {} ) SET t = map".format(type_, id_str)
@@ -102,7 +102,7 @@ def create_tf_nodes(nodes: pd.DataFrame, source: int):
     nodes.drop(columns=["mean_count"])
     nodes.to_csv("/usr/local/bin/neo4j/import/tf.csv", index=False)
     create_nodes(source_file="tf.csv", type_="TF:TG", id="ENSEMBL")
-    
+
     print("Creating MEANCOUNT edges for Transcription Factors ...")
 
     # create MeanCount edges for TFs
@@ -118,7 +118,7 @@ def create_tf_nodes(nodes: pd.DataFrame, source: int):
 def create_or_nodes(nodes: pd.DataFrame, source: int):
     print("Creating Open Region nodes ...")
 
-    mean_count = nodes.filter(items=["SYMBOL", "mean_count"])
+    mean_count = nodes.filter(items=["nearest_index", "mean_count"])
     mean_count["Source"] = source
     mean_count.rename(columns={"mean_count": "Value"})
     mean_count.to_csv("/usr/local/bin/neo4j/import/or_meancount.csv", index=False)
@@ -126,21 +126,21 @@ def create_or_nodes(nodes: pd.DataFrame, source: int):
     # create new Open Region node for every new OR
     nodes.drop(columns=["mean_count"])
     nodes.to_csv("/usr/local/bin/neo4j/import/or.csv", index=False)
-    create_nodes(source_file="or.csv", type_="OR", id="SYMBOL")
-    
+    create_nodes(source_file="or.csv", type_="OR", id="nearest_index")
+
     print("Creating MEANCOUNT edges for Open Regions ...")
 
     # create MeanCount edges for ORs
     create_relationship(
         source_file="or_meancount.csv",
         type_="MEANCOUNT",
-        between=(("Value", "Value"), ("SYMBOL", "SYMBOL")),
+        between=(("Value", "Value"), ("nearest_index", "nearest_index")),
         node_types=("MeanCount", "OR"),
         values=["Value", "Source"],
     )
 
 
-def create_context(context: pd.DataFrame, source: int, value_type: int): # value_type: 1 -> DE, 0 -> DA
+def create_context(context: pd.DataFrame, source: int, value_type: int):  # value_type: 1 -> DE, 0 -> DA
     print("Creating Context nodes ...")
 
     # create Context node for every new context
@@ -156,13 +156,13 @@ def create_context(context: pd.DataFrame, source: int, value_type: int): # value
     source_edge_df = node_df
     source_edge_df["Source"] = source
     source_edge_df.to_csv("/usr/local/bin/neo4j/import/source_context.csv", index=False)
-    
+
     create_relationship(
         source_file="source_context.csv",
         type_="HAS",
         between=(("id", "Source"), ("Value", "Context")),
         node_types=["Source", "Context"],
-        values=[]
+        values=[],
     )
 
     print("Creating Context DE / DA edges ...")
@@ -188,32 +188,66 @@ def create_context(context: pd.DataFrame, source: int, value_type: int): # value
         create_relationship(
             source_file="da.csv",
             type_="DA",
-            between=(("Context", "Context"), ("SYMBOL", "SYMBOL")),
+            between=(("Context", "Context"), ("nearest_index", "nearest_index")),
             node_types=("Context", "OR"),
             values=["Value", "p", "Source"],
         )
 
 
-def create_motif_edges():
-    print("Creating MOTIF edges ...")
-    # TODO
-    pass
-
-def create_distance_edges():
-    print("Creating DISTANCE edges ...")
-    # TODO
-    pass
-
-def create_correlation():
+def create_correlation(correlation: pd.DataFrame, source: int, value_type: int):  # value_type: 1 -> TF-TG, 0 -> TG-OR
     print("Creating CORRELATION edges ...")
-    # TODO
+    correlation["Source"] = source
 
-    pass
+    # TF-TG edges
+    if value_type == 1:
+        correlation.to_csv("/usr/local/bin/neo4j/import/tf_tg_corr.csv", index=False)
+        create_relationship(
+            source_file="tf_tg_corr.csv",
+            type_="CORRELATION",
+            between=(("SYMBOL", "TF"), ("ENSEMBL", "ENSEMBL")),
+            node_types=("TF", "TG"),
+            values=["Correlation", "Source"],
+        )
+
+    # OR-TG edges
+    elif value_type == 0:
+        correlation.to_csv("/usr/local/bin/neo4j/import/or_tg_corr.csv", index=False)
+        create_relationship(
+            source_file="or_tg_corr.csv",
+            type_="CORRELATION",
+            between=(("nearest_index", "nearest_index"), ("ENSEMBL", "ENSEMBL")),
+            node_types=("OR", "TG"),
+            values=["Correlation", "Source"],
+        )
+
+
+def create_motif_edges(motif: pd.DataFrame):
+    print("Creating MOTIF edges ...")
+    motif.to_csv("/usr/local/bin/neo4j/import/motif.csv", index=False)
+    create_relationship(
+        source_file="motif.csv",
+        type_="MOTIF",
+        between=(("SYMBOL", "TF"), ("peaks", "nearest_index")),
+        node_types=("TF", "OR"),
+        values=["Motif"],
+    )
+
+
+def create_distance_edges(distance: pd.DataFrame):
+    print("Creating DISTANCE edges ...")
+    distance.to_csv("/usr/local/bin/neo4j/import/distance.csv", index=False)
+    create_relationship(
+        source_file="distance.csv",
+        type_="DISTANCE",
+        between=(("nearest_index", "nearest_index"), ("ENSEMBL", "nearest_ENSEMBL")),
+        node_types=("OR", "TG"),
+        values=["Distance"],
+    )
 
 
 def create_string_edges():
     print("Creating STRING ASSOCIATION edges ...")
-    #TODO
+    # TODO
     pass
 
 
@@ -232,6 +266,10 @@ def extend_db_from_experiment(
     or_nodes: pd.DataFrame,
     de_values: pd.DataFrame,
     da_values: pd.DataFrame,
+    tf_tg_corr: pd.DataFrame,
+    tg_or_corr: pd.DataFrame,
+    motif: pd.DataFrame,
+    distance: pd.DataFrame,
 ):
     id_source = create_study_cell_source_meancount()
     create_tg_nodes(nodes=tg_nodes, source=id_source)
@@ -241,11 +279,14 @@ def extend_db_from_experiment(
     # TODO: Make Value and p a Float value not String
     create_context(context=de_values, source=id_source, value_type=1)
     create_context(context=da_values, source=id_source, value_type=0)
-    
-    create_correlation()
-    create_motif_edges()
-    create_distance_edges()
+
+    create_correlation(correlation=tf_tg_corr, source=id_source, value_type=1)
+    create_correlation(correlation=tg_or_corr, source=id_source, value_type=0)
+
+    create_motif_edges(motif=motif)
+    create_distance_edges(distance=distance)
     return
+
 
 def setup_db_external_info():
     create_functional()
