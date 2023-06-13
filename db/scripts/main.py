@@ -5,6 +5,8 @@ from upload import extend_db_from_experiment
 _DEFAULT_EXPERIMENT_PATH = Path("../source/experiment")
 _DEFAULT_STRING_PATH = Path("../source/string")
 _DEFAULT_FUNCTIONAL_PATH = Path("../source/functional")
+_DEFAULT_CELLTYPE_INFO = {"name": "Microglia"}
+_DEFAULT_STUDY_INFO = {"source": "in-house"}
 
 
 def read_experiment_files(path=_DEFAULT_EXPERIMENT_PATH):

@@ -81,7 +81,7 @@ def parse_experiment(dir_path: str = _DEFAULT_EXPERIMENT_PATH, reformat: bool = 
     exp = read_experiment()
 
     # Filter Dataframes for relevant columns
-    de = exp[1].filter(items=["ENSEMBL", "ENTREZID", "SYMBOL", "annot", "TF", "in_ATAC"])
+    de = exp[1].filter(items=["ENSEMBL", "ENTREZID", "SYMBOL", "annot", "TF", "in_ATAC", "mean_count"])
 
     # Division into TG and TF nodes
     tg_nodes = de[de["TF"] == "no"]
