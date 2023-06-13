@@ -9,11 +9,6 @@ DE_CONTEXT = [
     "336h-0h",
     "RC12h-0h",
     "RC12h-6h",
-    "6h-0h-padj",
-    "24h-0h-padj",
-    "336h-0h-padj",
-    "RC12h-0h-padj",
-    "RC12h-6h-padj",
 ]
 DA_CONTEXT = [
     "12h-0h",
@@ -21,11 +16,6 @@ DA_CONTEXT = [
     "336h-0h",
     "RC12h-0h",
     "RC12h-12h",
-    "12h-0h-padj",
-    "24h-0h-padj",
-    "336h-0h-padj",
-    "RC12h-0h-padj",
-    "RC12h-12h-padj",
 ]
 
 DE_CONTEXT = [
@@ -84,11 +74,25 @@ def parse_experiment(dir_path: str = _DEFAULT_EXPERIMENT_PATH, reformat: bool = 
 
     def filter_df_by_context(context: str, df: pd.DataFrame, protein: bool):
         if protein:
-            filtered = df.filter(items=["ENSEMBL", context])
-            out = pd.DataFrame({"ENSEMBL": filtered["ENSEMBL"], "Context": context, "Value": filtered[context]})
+            filtered = df.filter(items=["ENSEMBL", context, context + "-padj"])
+            out = pd.DataFrame(
+                {
+                    "ENSEMBL": filtered["ENSEMBL"],
+                    "Context": context,
+                    "Value": filtered[context],
+                    "p": filtered[context + "-padj"],
+                }
+            )
         else:
-            filtered = df.filter(items=["SYMBOL", context])
-            out = pd.DataFrame({"SYMBOL": filtered["SYMBOL"], "Context": context, "Value": filtered[context]})
+            filtered = df.filter(items=["SYMBOL", context, context + "-padj"])
+            out = pd.DataFrame(
+                {
+                    "SYMBOL": filtered["SYMBOL"],
+                    "Context": context,
+                    "Value": filtered[context],
+                    "p": filtered[context + "-padj"],
+                }
+            )
         return out
 
     def make_context_dataframes(context_list, df, protein):
@@ -108,11 +112,12 @@ def parse_experiment(dir_path: str = _DEFAULT_EXPERIMENT_PATH, reformat: bool = 
     # Division into TG and TF nodes
     tg_nodes = de[de["TF"] == "no"]
     tg_nodes = tg_nodes.drop(columns=["TF"])
+
     tf_nodes = de[de["TF"] == "yes"]
     tf_nodes = tf_nodes.drop(columns=["TF"])
 
     # Filter for DE Values in specific contexts
-    tmp_de = exp[1].filter(items=["ENSEMBL"] + DE_CONTEXT)
+    tmp_de = exp[1].filter(items=["ENSEMBL"] + DE_CONTEXT + [c + "-padj" for c in DE_CONTEXT])
 
     # Create DE DataFrame s.t. context is a column value
     de_values = make_context_dataframes(DE_CONTEXT, tmp_de, True)
@@ -123,7 +128,7 @@ def parse_experiment(dir_path: str = _DEFAULT_EXPERIMENT_PATH, reformat: bool = 
     )
 
     # Filter for DA Values in specific contexts
-    tmp_da = exp[0].filter(items=["SYMBOL", "mean_count"] + DA_CONTEXT)
+    tmp_da = exp[0].filter(items=["SYMBOL", "mean_count"] + DA_CONTEXT + [c + "-padj" for c in DA_CONTEXT])
 
     # Create DA DataFrame s.t. context is column value
     da_values = make_context_dataframes(DA_CONTEXT, tmp_da, False)

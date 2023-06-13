@@ -1,6 +1,5 @@
 import pandas as pd
 from numpy import isnan
-from numpy import isnan
 from utils import execute_query
 
 
@@ -30,7 +29,7 @@ def create_study_cell_source_meancount():
 def create_nodes(source_file: str, type_: str, id: str):
     # Identifier; For TG / TF is ENSEMBL, OR is SYMBOL
     id_str = "{" + "{}: map.{}".format(id, id) + "}"
-    load_data_query = 'LOAD CSV WITH HEADERS from "file:///{}" AS map RETURN map'.format(source_file)
+    load_data_query = "LOAD CSV WITH HEADERS from 'file:///{}' AS map RETURN map".format(source_file)
     merge_into_db_query = "MERGE (t:{} {} ) SET t = map".format(type_, id_str)
 
     # For large numbers of nodes, using apoc.periodic.iterate
@@ -65,49 +64,81 @@ def create_nodes(source_file:str, type_: str, id:str):
     return
 
 
-def create_relationship():
+def create_relationship(source_file: str, type_: str, between: tuple[str], node_type: str, values: list[str]):
     # TODO: Maybe with trick of generating nodes first, then relationships? Could also do apoc periodic iterate, more clear
-    pass
+    load_data_query = "LOAD CSV WITH HEADERS from 'file:///{}' AS map MATCH (n:{}), (m:Context) WHERE n.{} == map.{} AND m.value == map.Context RETURN map, n, m".format(
+        source_file, node_type, between[1], between[1]
+    )
+    set_values_query = " ".join([""] + ["SET e.{} = map.{}".format(v, v) for v in values])
+    create_edge_query = "CREATE (m)-[e:{}]->(n)".format(type_) + set_values_query
 
+    per_iter = 'CALL apoc.periodic.iterate("{}", "{}", {{batchSize: 5000}} )'.format(load_data_query, create_edge_query)
 
-def get_node(by_value: str):
-    # TODO: DO we need this? Could just do the matching in create_relationship()
-    pass
+    execute_query(per_iter, read=False)
 
 
 def create_tg_nodes(nodes: pd.DataFrame):
     print("Creating Target Gene nodes...")
+
+    # create new Target Gene nodes for every new TG
     nodes.to_csv("/usr/local/bin/neo4j/import/tg.csv", index=False)
     create_nodes(source_file="tg.csv", type_="TG", id="ENSEMBL")
 
 
 def create_tf_nodes(nodes: pd.DataFrame):
     print("Creating Transcription Factor nodes ...")
+
     # create new Transcription Factor node for every new TF
     nodes.to_csv("/usr/local/bin/neo4j/import/tf.csv", index=False)
-    create_nodes(source_file="tf.csv", type_="TF", id="ENSEMBL")
+    create_nodes(source_file="tf.csv", type_="TF:TG", id="ENSEMBL")
 
 
 def create_or_nodes(nodes: pd.DataFrame):
     print("Creating Open Region nodes ...")
+
     # create new Open Region node for every new OR
     nodes.to_csv("/usr/local/bin/neo4j/import/or.csv", index=False)
+
+    # TODO: SYMBOL or nearest_index as identifier?
     create_nodes(source_file="or.csv", type_="OR", id="SYMBOL")
 
 
-def create_context(context: pd.DataFrame, source: int):
+def create_context(context: pd.DataFrame, source: int, value_type: int):
+    # 1 -> DE, 0 -> DA
     print("Creating Context nodes ...")
 
     # create Context node for every new context
     nodes = context["Context"].unique()
     node_df = pd.DataFrame.from_records(data=[{"value": c} for c in nodes])
-    print(node_df)
 
-    # node_df.to_csv("/usr/local/bin/neo4j/import/context.csv", index=False)
+    node_df.to_csv("/usr/local/bin/neo4j/import/context.csv", index=False)
     # create_nodes(source_file="context.csv", type_="Context", id="value")
 
+    print("Creating Context edges ...")
+
     # Create edges for DE/DA values
-    create_relationship()
+    edge_df = context
+    edge_df["Source"] = source
+
+    if value_type == 1:
+        edge_df.to_csv("/usr/local/bin/neo4j/import/de.csv", index=False)
+        create_relationship(
+            source_file="de.csv",
+            type_="DE",
+            between=("Context", "ENSEMBL"),
+            node_type="TG",
+            values=["Value", "p", "Source"],
+        )
+
+    elif value_type == 0:
+        edge_df.to_csv("/usr/local/bin/neo4j/import/da.csv", index=False)
+        create_relationship(
+            source_file="da.csv",
+            type_="DA",
+            between=("Context", "SYMBOL"),
+            node_type="OR",
+            values=["Value", "p", "Source"],
+        )
 
 
 def extend_db_from_experiment(
@@ -118,10 +149,10 @@ def extend_db_from_experiment(
     da_values: pd.DataFrame,
 ):
     id_source = create_study_cell_source_meancount()
-    # create_tg_nodes(nodes=tg_nodes)
-    # create_tf_nodes(nodes=tf_nodes)
-    # create_or_nodes(nodes=or_nodes)
-    create_context(context=de_values, source=id_source)
-    create_context(context=da_values, source=id_source)
+    create_tg_nodes(nodes=tg_nodes)
+    create_tf_nodes(nodes=tf_nodes)
+    create_or_nodes(nodes=or_nodes)
+    create_context(context=de_values, source=id_source, value_type=1)
+    create_context(context=da_values, source=id_source, value_type=0)
     return
 
