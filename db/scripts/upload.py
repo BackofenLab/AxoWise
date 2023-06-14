@@ -364,14 +364,14 @@ def create_distance_edges(distance: pd.DataFrame):
     )
 
 
-def create_string_edges(string_rel:pd.DataFrame):
+def create_string_edges(string_rel: pd.DataFrame):
     print("Creating STRING ASSOCIATION edges ...")
 
     # TODO
     pass
 
 
-def create_functional(ft_nodes:pd.DataFrame, ft_overlap:pd.DataFrame, ft_protein_rel:pd.DataFrame):
+def create_functional(ft_nodes: pd.DataFrame, ft_overlap: pd.DataFrame, ft_protein_rel: pd.DataFrame):
     print("Creating Functional Term nodes ...")
 
     # TODO

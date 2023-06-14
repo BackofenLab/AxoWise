@@ -51,9 +51,7 @@ if __name__ == "__main__":
         ft_protein_rel,
     ) = read_functional_files()
 
-    (
-        string_rel
-    ) = read_string_files()
+    (string_rel) = read_string_files()
 
     # first_setup(
     #     tg_nodes=tg_nodes,

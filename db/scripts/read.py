@@ -170,9 +170,7 @@ def parse_string(dir_path: str = _DEFAULT_STRING_PATH):
     for file in os.scandir(dir_path):
         file_name, file_extention = os.path.splitext(file)
         if file_extention == ".tsv":
-            df, index = _reformat_string_file(
-                df=pd.read_csv(file, sep="\t"), file_name=file_name.split("/")[-1]
-            )
+            df, index = _reformat_string_file(df=pd.read_csv(file, sep="\t"), file_name=file_name.split("/")[-1])
         string[index] = df
     return string
 
@@ -237,6 +235,7 @@ def _reformat_motif(df: pd.DataFrame):
     df = df.rename(columns={"motif_consensus": "Motif"})
     return df
 
+
 def _reformat_string_file(df: pd.DataFrame, file_name: str):
     names = ["protein.links.v11.5", "protein.info.v11.5"]
     functions = [_reformat_string_links, _reformat_string_info]
@@ -244,23 +243,28 @@ def _reformat_string_file(df: pd.DataFrame, file_name: str):
 
     return functions[index](df=df), index
 
+
 def _reformat_string_links(df: pd.DataFrame):
     df = df.rename(columns={"combined_score": "Score"})
     return df
+
 
 def _reformat_string_info(df: pd.DataFrame):
     df = df.rename(columns={"preferred_name": "SYMBOL", "string_protein_id": "ENSEMBL"})
     return df
 
+
 def _reformat_functional_term_file(df: pd.DataFrame, file_name: str):
     names = ["functional_terms_overlap", "KappaEdges", "TermsWithProteins"]
     functions = [_reformat_ft_overlap, _reformat_kappa_edges, _reformat_terms_proteins]
     index = names.index(file_name)
-    
+
     return functions[index](df=df), index
+
 
 def _reformat_ft_overlap(df: pd.DataFrame):
     return df
+
 
 def _reformat_terms_proteins(df: pd.DataFrame):
     df_list = []
@@ -271,6 +275,7 @@ def _reformat_terms_proteins(df: pd.DataFrame):
         df_list.append(tmp_df)
     new_df = pd.concat(df_list)
     return new_df
+
 
 def _reformat_kappa_edges(df: pd.DataFrame):
     return df
