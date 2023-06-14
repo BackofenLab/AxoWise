@@ -1,7 +1,7 @@
 import pandas as pd
 import yaml
 from neo4j import GraphDatabase, RoutingControl
-from main import _DEFAULT_CREDENTIALS_PATH, _PRODUCTION
+from main import _DEFAULT_CREDENTIALS_PATH, _PRODUCTION, _DEV_MAX_REL
 
 
 class Reformatter:
@@ -38,4 +38,4 @@ def save_df_to_csv(file_name: str, df: pd.DataFrame, override_prod: bool = False
     if _PRODUCTION or override_prod:
         df.to_csv("/usr/local/bin/neo4j/import/{}".format(file_name), index=False)
     else:
-        df.iloc[:50000].to_csv("/usr/local/bin/neo4j/import/{}".format(file_name), index=False)
+        df.iloc[:_DEV_MAX_REL].to_csv("/usr/local/bin/neo4j/import/{}".format(file_name), index=False)

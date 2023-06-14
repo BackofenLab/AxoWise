@@ -8,6 +8,7 @@ _DEFAULT_FUNCTIONAL_PATH = Path("../source/functional")
 _DEFAULT_CELLTYPE_INFO = {"name": "Microglia"}
 _DEFAULT_STUDY_INFO = {"source": "in-house"}
 _DEFAULT_CREDENTIALS_PATH = Path(__file__).parent / Path("../../credentials.yml")
+_DEV_MAX_REL = 50000
 
 _PRODUCTION = False
 
