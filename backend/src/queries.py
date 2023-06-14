@@ -23,7 +23,19 @@ def get_protein_list(graph):
     return graph.run(query)
 
 
-def get_protein_neighbours(driver: neo4j.Driver, protein_ids: list[int], threshold: int) -> (
+def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id: int) -> list[str]:
+    query = f"""
+        MATCH (protein:Protein)
+        WHERE protein.species_id = {species_id}
+        AND protein.name IN {[n.upper() for n in names]} 
+        RETURN protein.external_id AS id
+    """
+    with driver.session() as session:
+        result = session.run(query)
+        return [x["id"] for x in list(result)]
+
+
+def get_protein_neighbours(driver: neo4j.Driver, protein_ids: list[str], threshold: int) -> (
         list[str], list[str], list[str], list[int]):
     """
     :returns: proteins, source, target, score
@@ -41,7 +53,7 @@ def get_protein_neighbours(driver: neo4j.Driver, protein_ids: list[int], thresho
         return _convert_to_protein_info(result)
 
 
-def get_protein_associations(driver: neo4j.Driver, protein_ids: list[int], threshold: int) -> (
+def get_protein_associations(driver: neo4j.Driver, protein_ids: list[str], threshold: int) -> (
         list[str], list[str], list[str], list[int]):
     """
     :returns: proteins, source, target, score

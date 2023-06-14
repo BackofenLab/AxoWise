@@ -11,7 +11,6 @@ from flask import Flask, Response, request, send_from_directory
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 import database
-import direct_search
 import enrichment
 import enrichment_graph
 import graph_utilities
@@ -80,38 +79,30 @@ def proteins_enrichment():
 # TODO Refactor this
 @app.route("/api/subgraph/proteins", methods=["POST"])
 def proteins_subgraph_api():
+    driver = database.get_driver()
+
     # Begin a timer to time
     t_begin = time.time()
 
     # Queried proteins
     if not request.files.get("file"):
-        query_proteins = request.form.get("proteins").split(";")
-        query_proteins = list(filter(None, query_proteins))
+        protein_names = request.form.get("proteins").split(";")
+        protein_names = list(filter(None, protein_names))
     else:
         panda_file = pd.read_csv(request.files.get("file"))
-        query_proteins = panda_file["SYMBOL"].to_list()
+        protein_names = panda_file["SYMBOL"].to_list()
 
-    # Species
     species_id = int(request.form.get("species_id"))
-
     # DColoumns
-    if request.form.get("selected_d"):
-        selected_d = request.form.get("selected_d").split(",")
-    else:
-        selected_d = None
-
-    # Threshold
+    selected_d = request.form.get("selected_d").split(",") if request.form.get("selected_d") else None
     threshold = int(float(request.form.get("threshold")) * 1000)
 
-    # Fuzzy search mapping
-    proteins = direct_search.search_protein_list(query_proteins, species_id=species_id)
-    protein_ids = list(map(lambda p: p.id, proteins))
+    protein_ids = queries.get_protein_ids_for_names(driver, protein_names, species_id)
 
     # Timer to evaluate runtime to setup
     t_setup = time.time()
     print("Time Spent (Setup):", t_setup - t_begin)
 
-    driver = database.get_driver()
     if len(protein_ids) > 1:
         proteins, source, target, score = queries.get_protein_associations(driver, protein_ids, threshold)
     else:
