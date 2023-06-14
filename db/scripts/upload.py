@@ -35,7 +35,7 @@ def create_study_cell_source_meancount():
     return result[0]["id"]
 
 
-def create_nodes(source_file: str, type_: str, id: str):
+def create_nodes(source_file: str, type_: str, id: str, reformat_values: list[tuple[str]]):
     """
     Common function to create nodes in the Neo4j Database (MERGE not CREATE)
 
@@ -43,17 +43,19 @@ def create_nodes(source_file: str, type_: str, id: str):
         source_file -> Name of file in neo4j import directory
         type_ -> Type of node (e.g. TG, Context, ...)
         id -> Identifier of node (TG / TF is ENSEMBL, OR is nearest_index)
+        reformat_values ->
     """
 
     id_str = "{" + "{}: map.{}".format(id, id) + "}"
     load_data_query = "LOAD CSV WITH HEADERS from 'file:///{}' AS map RETURN map".format(source_file)
     merge_into_db_query = "MERGE (t:{} {} ) SET t = map".format(type_, id_str)
+    reformat_values_str = " ".join(["SET t.{} = {}(t.{})".format(v[0], v[1], v[0]) for v in reformat_values])
 
     # For large numbers of nodes, using apoc.periodic.iterate
     # For info, see: https://neo4j.com/labs/apoc/4.2/overview/apoc.periodic/apoc.periodic.iterate/
 
     per_iter = 'CALL apoc.periodic.iterate("{}", "{}", {{batchSize: 5000}} )'.format(
-        load_data_query, merge_into_db_query
+        load_data_query, merge_into_db_query + " " + reformat_values_str
     )
 
     print(per_iter)
@@ -62,7 +64,13 @@ def create_nodes(source_file: str, type_: str, id: str):
 
 
 def create_relationship(
-    source_file: str, type_: str, between: tuple[str], node_types: tuple[str], values: list[str], merge: bool = False
+    source_file: str,
+    type_: str,
+    between: tuple[str],
+    node_types: tuple[str],
+    values: list[str],
+    reformat_values: list[tuple[str]],
+    merge: bool = False,
 ):
     """
     Common function to create edges in Neo4j Database (both MERGE and CREATE possible, see merge flag)
@@ -80,15 +88,18 @@ def create_relationship(
     load_data_query = "LOAD CSV WITH HEADERS from 'file:///{}' AS map MATCH (m:{}), (n:{}) WHERE n.{} = map.{} AND m.{} = map.{} RETURN map, n, m".format(
         source_file, node_types[0], node_types[1], between[1][0], between[1][1], between[0][0], between[0][1]
     )
-    set_values_query = " ".join([""] + ["SET e.{} = map.{}".format(v, v) for v in values])
-
+    comparing_reformat_values = [v[0] for v in reformat_values]
+    set_values_query = " ".join(
+        [""] + ["SET e.{} = map.{}".format(v, v) for v in values if v not in comparing_reformat_values]
+    )
+    set_values_query = " ".join([""] + ["SET e.{} = {}(map.{})".format(v[0], v[1], v[0]) for v in reformat_values])
     if merge:
         create_edge_query = "MERGE (m)-[e:{}]->(n)".format(type_) + set_values_query
     else:
         create_edge_query = "CREATE (m)-[e:{}]->(n)".format(type_) + set_values_query
 
     per_iter = 'CALL apoc.periodic.iterate("{}", "{}", {{batchSize: 5000}} )'.format(load_data_query, create_edge_query)
-    
+
     print(per_iter)
     # execute_query(per_iter, read=False)
 
@@ -105,7 +116,7 @@ def create_tg_nodes(nodes: pd.DataFrame, source: int):
     # create new Target Gene nodes for every new TG
     nodes.drop(columns=["mean_count"])
     nodes.to_csv("/usr/local/bin/neo4j/import/tg.csv", index=False)
-    create_nodes(source_file="tg.csv", type_="TG", id="ENSEMBL")
+    create_nodes(source_file="tg.csv", type_="TG", id="ENSEMBL", reformat_values=[("ENTREZID", "toInteger")])
 
     print("Creating MEANCOUNT edges for Target Genes ...")
 
@@ -116,6 +127,7 @@ def create_tg_nodes(nodes: pd.DataFrame, source: int):
         between=(("Value", "Value"), ("ENSEMBL", "ENSEMBL")),
         node_types=("MeanCount", "TG"),
         values=["Value", "Source"],
+        reformat_values=[("Value", "toFloat"), ("Source", "toInteger")],
     )
 
 
@@ -131,7 +143,7 @@ def create_tf_nodes(nodes: pd.DataFrame, source: int):
     # create new Transcription Factor node for every new TF
     nodes.drop(columns=["mean_count"])
     nodes.to_csv("/usr/local/bin/neo4j/import/tf.csv", index=False)
-    create_nodes(source_file="tf.csv", type_="TF:TG", id="ENSEMBL")
+    create_nodes(source_file="tf.csv", type_="TF:TG", id="ENSEMBL", reformat_values=[("ENTREZID", "toInteger")])
 
     print("Creating MEANCOUNT edges for Transcription Factors ...")
 
@@ -142,6 +154,7 @@ def create_tf_nodes(nodes: pd.DataFrame, source: int):
         between=(("Value", "Value"), ("ENSEMBL", "ENSEMBL")),
         node_types=("MeanCount", "TF"),
         values=["Value", "Source"],
+        reformat_values=[("Value", "toFloat"), ("Source", "toInteger")],
     )
 
 
@@ -157,7 +170,7 @@ def create_or_nodes(nodes: pd.DataFrame, source: int):
     # create new Open Region node for every new OR
     nodes.drop(columns=["mean_count"])
     nodes.to_csv("/usr/local/bin/neo4j/import/or.csv", index=False)
-    create_nodes(source_file="or.csv", type_="OR", id="nearest_index")
+    create_nodes(source_file="or.csv", type_="OR", id="nearest_index", reformat_values=[("summit", "toInteger")])
 
     print("Creating MEANCOUNT edges for Open Regions ...")
 
@@ -168,6 +181,7 @@ def create_or_nodes(nodes: pd.DataFrame, source: int):
         between=(("Value", "Value"), ("nearest_index", "nearest_index")),
         node_types=("MeanCount", "OR"),
         values=["Value", "Source"],
+        reformat_values=[("Value", "toFloat"), ("Source", "toInteger")],
     )
 
 
@@ -194,6 +208,7 @@ def create_context(context: pd.DataFrame, source: int, value_type: int):  # valu
         between=(("id", "Source"), ("Value", "Context")),
         node_types=["Source", "Context"],
         values=[],
+        reformat_values=[],
     )
 
     print("Creating Context DE / DA edges ...")
@@ -211,6 +226,7 @@ def create_context(context: pd.DataFrame, source: int, value_type: int):  # valu
             between=(("Context", "Context"), ("ENSEMBL", "ENSEMBL")),
             node_types=("Context", "TG"),
             values=["Value", "p", "Source"],
+            reformat_values=[("Value", "toFloat"), ("Source", "toInteger"), ("p", "toFloat")],
         )
 
     # DA Edges
@@ -222,6 +238,7 @@ def create_context(context: pd.DataFrame, source: int, value_type: int):  # valu
             between=(("Context", "Context"), ("nearest_index", "nearest_index")),
             node_types=("Context", "OR"),
             values=["Value", "p", "Source"],
+            reformat_values=[("Value", "toFloat"), ("Source", "toInteger"), ("p", "toFloat")],
         )
 
 
@@ -238,6 +255,7 @@ def create_correlation(correlation: pd.DataFrame, source: int, value_type: int):
             between=(("SYMBOL", "TF"), ("ENSEMBL", "ENSEMBL")),
             node_types=("TF", "TG"),
             values=["Correlation", "Source"],
+            reformat_values=[("Correlation", "toFloat"), ("Source", "toInteger")],
         )
 
     # OR-TG edges
@@ -249,6 +267,7 @@ def create_correlation(correlation: pd.DataFrame, source: int, value_type: int):
             between=(("nearest_index", "nearest_index"), ("ENSEMBL", "ENSEMBL")),
             node_types=("OR", "TG"),
             values=["Correlation", "Source"],
+            reformat_values=[("Correlation", "toFloat"), ("Source", "toInteger")],
         )
 
 
@@ -262,6 +281,7 @@ def create_motif_edges(motif: pd.DataFrame):
         between=(("SYMBOL", "TF"), ("peaks", "nearest_index")),
         node_types=("TF", "OR"),
         values=["Motif"],
+        reformat_values=[],
         merge=True,
     )
 
@@ -276,6 +296,7 @@ def create_distance_edges(distance: pd.DataFrame):
         between=(("nearest_index", "nearest_index"), ("ENSEMBL", "nearest_ENSEMBL")),
         node_types=("OR", "TG"),
         values=["Distance"],
+        reformat_values=[("Distance", "toInteger")],
         merge=True,
     )
 
