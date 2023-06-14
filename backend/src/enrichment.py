@@ -1,13 +1,17 @@
-import sys
 import csv
-import cypher_queries as Cypher
-from cypher_queries import *
+import json
+import multiprocessing
+import sys
 import time
 from functools import lru_cache
+from typing import Any
+
 import mpmath
+import neo4j
 import pandas as pd
-import multiprocessing
-import json
+
+import cypher_queries as Cypher
+from cypher_queries import TERM_FILE
 
 
 def calc_proteins_pval(curr, alpha, in_pr, bg_proteins, num_in_prot):
@@ -58,7 +62,7 @@ def hypergeo_testing(intersec, total_proteins, term_proteins, in_proteins):
     return float(p_value)
 
 
-def functional_enrichment(in_proteins, species_id):
+def functional_enrichment(driver: neo4j.Driver, in_proteins, species_id: Any):
     """inhouse functional enrichment - performs gene set enrichment analysis
     for a given set of proteins. Calculates p-value and Benjamini-Hochberg FDR
     for every functional term
@@ -75,7 +79,7 @@ def functional_enrichment(in_proteins, species_id):
     t_begin = time.time()
 
     # Get number of all proteins in the organism (from Cypher)
-    bg_proteins = NUM_PROTEINS
+    bg_proteins = Cypher.get_number_of_proteins(driver)
     num_in_prot = len(in_proteins)
     prots = set(in_proteins)
     # pandas DataFrames for nodes and edges

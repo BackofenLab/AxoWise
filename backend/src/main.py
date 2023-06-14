@@ -1,27 +1,22 @@
 import ast
-import csv
 import io
 import json
 import os
 import os.path
-import subprocess
 import sys
 import time
 
-# from networkx.readwrite import json_graph
 import pandas as pd
-
-# import networkx as nx
 from flask import Flask, Response, request, send_from_directory
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 import cypher_queries as Cypher
+import database
 import direct_search
 import enrichment
 import enrichment_graph
 import graph_utilities
 import jar
-import database
 
 app = Flask(__name__)
 
@@ -57,11 +52,12 @@ def files(path):
 # Request comes from functional_enrichment.js
 @app.route("/api/subgraph/enrichment", methods=["POST"])
 def proteins_enrichment():
+    driver = database.get_driver()
     proteins = request.form.get("proteins").split(",")
     species_id = request.form.get("species_id")
 
     # in-house functional enrichment
-    list_enrichment = enrichment.functional_enrichment(proteins, species_id)
+    list_enrichment = enrichment.functional_enrichment(driver, proteins, species_id)
 
     # STRING API functional enrichment
     """df_enrichment = stringdb.functional_enrichment(proteins, species_id)
