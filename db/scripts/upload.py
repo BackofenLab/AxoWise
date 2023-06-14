@@ -47,7 +47,7 @@ def create_nodes(source_file: str, type_: str, id: str, reformat_values: list[tu
         source_file -> Name of file in neo4j import directory
         type_ -> Type of node (e.g. TG, Context, ...)
         id -> Identifier of node (TG / TF is ENSEMBL, OR is nearest_index)
-        reformat_values -> TODO
+        reformat_values -> List of Tuples, where 0 -> Name of Value, 1 -> Function to reformat
     """
 
     id_str = "{" + "{}: map.{}".format(id, id) + "}"
@@ -84,7 +84,7 @@ def create_relationship(
         between -> Comparing value names (0 -> Origin of relationship, 1 -> Destination of relationship; x.0 -> Value in DB, x.1 Value in CSV
         node_types -> Nodetypes (0 -> Origin of relationship, 1 -> Destination of relationship)
         values -> Column names in csv that need to be added as properties
-        reformat_values -> TODO
+        reformat_values -> List of Tuples, where 0 -> Name of Value, 1 -> Function to reformat
         merge -> Use CREATE or MERGE
     """
 
@@ -208,7 +208,7 @@ def create_or_nodes(nodes: pd.DataFrame, source: int):
     mean_count = mean_count.rename(columns={"mean_count": "Value"})
 
     # create new Open Region node for every new OR
-    nodes = nodes.drop(columns=["mean_count"])
+    nodes = nodes.drop(columns=["mean_count", "nearest_distanceToTSS", "nearest_ENSEMBL"])
     utils.save_df_to_csv(file_name="or.csv", df=nodes, override_prod=True)
     create_nodes(source_file="or.csv", type_="OR", id="nearest_index", reformat_values=[("summit", "toInteger")])
 
@@ -247,12 +247,12 @@ def create_context(context: pd.DataFrame, source: int, value_type: int):  # valu
         source_file="source_context.csv",
         type_="HAS",
         between=(("id", "Source"), ("Value", "Context")),
-        node_types=["Source", "Context"],
+        node_types=("Source", "Context"),
         values=[],
         reformat_values=[("Source", "toInteger")],
     )
 
-    print("Creating Context DE / DA edges ...")
+    print("Creating Context {} edges ...".format("DE" if value_type == 1 else "DA"))
 
     # Create DE/DA edges with Values and Source node id
     edge_df = context
@@ -284,7 +284,7 @@ def create_context(context: pd.DataFrame, source: int, value_type: int):  # valu
 
 
 def create_correlation(correlation: pd.DataFrame, source: int, value_type: int):  # value_type: 1 -> TF-TG, 0 -> TG-OR
-    print("Creating CORRELATION edges ...")
+    print("Creating {} CORRELATION edges ...".format("TF->TG" if value_type == 1 else "OR->TG"))
     correlation["Source"] = source
 
     # TF-TG edges
@@ -342,14 +342,14 @@ def create_distance_edges(distance: pd.DataFrame):
     )
 
 
-def create_string_edges():
+def create_string_edges(string_rel:pd.DataFrame):
     print("Creating STRING ASSOCIATION edges ...")
 
     # TODO
     pass
 
 
-def create_functional():
+def create_functional(ft_nodes:pd.DataFrame, ft_overlap:pd.DataFrame, ft_protein_rel:pd.DataFrame):
     print("Creating Functional Term nodes ...")
 
     # TODO
@@ -376,7 +376,6 @@ def extend_db_from_experiment(
     create_tf_nodes(nodes=tf_nodes, source=id_source)
     create_or_nodes(nodes=or_nodes, source=id_source)
 
-    # TODO: Make Value and p a Float value not String
     create_context(context=de_values, source=id_source, value_type=1)
     create_context(context=da_values, source=id_source, value_type=0)
 
@@ -388,11 +387,41 @@ def extend_db_from_experiment(
     return
 
 
-def setup_db_external_info():
-    create_functional()
-    create_string_edges()
+def setup_db_external_info(ft_nodes:pd.DataFrame, ft_overlap:pd.DataFrame, ft_protein_rel:pd.DataFrame, string_rel:pd.DataFrame):
+    create_functional(ft_nodes=ft_nodes, ft_overlap=ft_overlap, ft_protein_rel=ft_protein_rel)
+    create_string_edges(string_rel=string_rel)
 
 
-def first_setup():
-    extend_db_from_experiment()
-    setup_db_external_info()
+def first_setup(
+    tg_nodes: pd.DataFrame,
+    tf_nodes: pd.DataFrame,
+    or_nodes: pd.DataFrame,
+    de_values: pd.DataFrame,
+    da_values: pd.DataFrame,
+    tf_tg_corr: pd.DataFrame,
+    tg_or_corr: pd.DataFrame,
+    motif: pd.DataFrame,
+    distance: pd.DataFrame,
+    ft_nodes:pd.DataFrame, 
+    ft_overlap:pd.DataFrame, 
+    ft_protein_rel:pd.DataFrame, 
+    string_rel:pd.DataFrame,
+):
+    extend_db_from_experiment(
+        tg_nodes=tg_nodes, 
+        tf_nodes=tf_nodes,
+        or_nodes=or_nodes,
+        de_values=de_values,
+        da_values=da_values,
+        tf_tg_corr=tf_tg_corr,
+        tg_or_corr=tg_or_corr,
+        motif=motif,
+        distance=distance,
+    )
+
+    setup_db_external_info(
+        ft_nodes=ft_nodes,
+        ft_overlap=ft_overlap,
+        ft_protein_rel=ft_protein_rel,
+        string_rel=string_rel,
+        )

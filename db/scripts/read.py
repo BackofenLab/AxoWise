@@ -1,6 +1,7 @@
 from utils import Reformatter
 import pandas as pd
 import os
+import json
 from main import _DEFAULT_EXPERIMENT_PATH, _DEFAULT_FUNCTIONAL_PATH, _DEFAULT_STRING_PATH
 
 DE_CONTEXT = [
@@ -40,7 +41,7 @@ def parse_experiment(dir_path: str = _DEFAULT_EXPERIMENT_PATH, reformat: bool = 
         for file in os.scandir(dir_path):
             file_name, file_extention = os.path.splitext(file)
             if file_extention == ".tsv":
-                df, index = _reformat_file(
+                df, index = _reformat_experiment_file(
                     df=pd.read_csv(file, sep="\t"), file_name=file_name.split("/")[-1], reformat=reformat
                 )
                 dataframes[index] = df
@@ -141,9 +142,13 @@ def parse_string(dir_path: str = _DEFAULT_STRING_PATH):
     string = [None] * 2
 
     for file in os.scandir(dir_path):
-        df = pd.read_csv(file, sep="\t")
-    # TODO: for more files in string dir, extend...
-    return df
+        file_name, file_extention = os.path.splitext(file)
+        if file_extention == ".tsv":
+            df, index = _reformat_string_file(
+                df=pd.read_csv(file, sep="\t"), file_name=file_name.split("/")[-1]
+            )
+        string[index] = df
+    return string
 
 
 def parse_functional(dir_path: str = _DEFAULT_FUNCTIONAL_PATH):
@@ -155,15 +160,20 @@ def parse_functional(dir_path: str = _DEFAULT_FUNCTIONAL_PATH):
     functional = [None] * 3
 
     for file in os.scandir(dir_path):
-        df = pd.read_csv(file, sep=",")
-    # TODO: for more files in functional dir, extend...
-    return df
+        file_name, file_extention = os.path.splitext(file)
+        if file_extention == ".csv":
+            df, index = _reformat_functional_term_file(
+                df=pd.read_csv(file, sep=","), file_name=file_name.split("/")[-1]
+            )
+        functional[index] = df
+
+    return functional
 
 
-def _reformat_file(df: pd.DataFrame, file_name: str, reformat: bool):
+def _reformat_experiment_file(df: pd.DataFrame, file_name: str, reformat: bool):
     # Filename and function pairs: same index <-> use function for file
     names = ["exp_DA", "exp_DE_filter", "TF_target_cor_", "peak_target_cor_", "TF_motif_peak"]
-    functions = [_reformat_DA, _reformat_DE, _reformat_TF_TG, _reformat_OR_TG, _reformat_Motif]
+    functions = [_reformat_da, _reformat_de, _reformat_tf_tg, _reformat_or_tg, _reformat_motif]
     index = names.index(file_name)
 
     if not reformat:
@@ -171,7 +181,7 @@ def _reformat_file(df: pd.DataFrame, file_name: str, reformat: bool):
     return functions[index](df=df), index
 
 
-def _reformat_DA(df: pd.DataFrame):
+def _reformat_da(df: pd.DataFrame):
     reformatter = Reformatter("open_region_")
 
     rename_dict = dict([(old, reformatter.run(old, "tf")) for old in df.columns if "open_region_" in old])
@@ -179,7 +189,7 @@ def _reformat_DA(df: pd.DataFrame):
     return df
 
 
-def _reformat_DE(df: pd.DataFrame):
+def _reformat_de(df: pd.DataFrame):
     reformatter = Reformatter("")
 
     rename_dict = dict([(old, reformatter.run(old, "tf")) for old in df.columns if "wt" in old])
@@ -187,16 +197,54 @@ def _reformat_DE(df: pd.DataFrame):
     return df
 
 
-def _reformat_TF_TG(df: pd.DataFrame):
+def _reformat_tf_tg(df: pd.DataFrame):
     df = df.rename(columns={"nearest_ENSEMBL": "ENSEMBL", "TF_target_cor": "Correlation"})
     return df
 
 
-def _reformat_OR_TG(df: pd.DataFrame):
+def _reformat_or_tg(df: pd.DataFrame):
     df = df.rename(columns={"nearest_ENSEMBL": "ENSEMBL", "peak_target_cor": "Correlation"})
     return df
 
 
-def _reformat_Motif(df: pd.DataFrame):
+def _reformat_motif(df: pd.DataFrame):
     df = df.rename(columns={"motif_consensus": "Motif"})
+    return df
+
+def _reformat_string_file(df: pd.DataFrame, file_name: str):
+    names = ["protein.links.v11.5", "protein.info.v11.5"]
+    functions = [_reformat_string_links, _reformat_string_info]
+    index = names.index(file_name)
+
+    return functions[index](df=df), index
+
+def _reformat_string_links(df: pd.DataFrame):
+    df = df.rename(columns={"combined_score": "Score"})
+    return df
+
+def _reformat_string_info(df: pd.DataFrame):
+    df = df.rename(columns={"preferred_name": "SYMBOL", "string_protein_id": "ENSEMBL"})
+    return df
+
+def _reformat_functional_term_file(df: pd.DataFrame, file_name: str):
+    names = ["functional_terms_overlap", "KappaEdges", "TermsWithProteins"]
+    functions = [_reformat_ft_overlap, _reformat_kappa_edges, _reformat_terms_proteins]
+    index = names.index(file_name)
+    
+    return functions[index](df=df), index
+
+def _reformat_ft_overlap(df: pd.DataFrame):
+    return df
+
+def _reformat_terms_proteins(df: pd.DataFrame):
+    df_list = []
+    for k, i in df.iterrows():
+        tmp_df = pd.DataFrame()
+        tmp_df["ENSEMBL"] = json.loads(i["proteins"].replace("'", '"'))
+        tmp_df["Term"] = i["external_id"]
+        df_list.append(tmp_df)
+    new_df = pd.concat(df_list)
+    return new_df
+
+def _reformat_kappa_edges(df: pd.DataFrame):
     return df
