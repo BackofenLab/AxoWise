@@ -342,14 +342,14 @@ def create_distance_edges(distance: pd.DataFrame):
     )
 
 
-def create_string_edges(string_rel:pd.DataFrame):
+def create_string_edges(string_rel: pd.DataFrame):
     print("Creating STRING ASSOCIATION edges ...")
 
     # TODO
     pass
 
 
-def create_functional(ft_nodes:pd.DataFrame, ft_overlap:pd.DataFrame, ft_protein_rel:pd.DataFrame):
+def create_functional(ft_nodes: pd.DataFrame, ft_overlap: pd.DataFrame, ft_protein_rel: pd.DataFrame):
     print("Creating Functional Term nodes ...")
 
     # TODO
@@ -387,7 +387,9 @@ def extend_db_from_experiment(
     return
 
 
-def setup_db_external_info(ft_nodes:pd.DataFrame, ft_overlap:pd.DataFrame, ft_protein_rel:pd.DataFrame, string_rel:pd.DataFrame):
+def setup_db_external_info(
+    ft_nodes: pd.DataFrame, ft_overlap: pd.DataFrame, ft_protein_rel: pd.DataFrame, string_rel: pd.DataFrame
+):
     create_functional(ft_nodes=ft_nodes, ft_overlap=ft_overlap, ft_protein_rel=ft_protein_rel)
     create_string_edges(string_rel=string_rel)
 
@@ -402,13 +404,13 @@ def first_setup(
     tg_or_corr: pd.DataFrame,
     motif: pd.DataFrame,
     distance: pd.DataFrame,
-    ft_nodes:pd.DataFrame, 
-    ft_overlap:pd.DataFrame, 
-    ft_protein_rel:pd.DataFrame, 
-    string_rel:pd.DataFrame,
+    ft_nodes: pd.DataFrame,
+    ft_overlap: pd.DataFrame,
+    ft_protein_rel: pd.DataFrame,
+    string_rel: pd.DataFrame,
 ):
     extend_db_from_experiment(
-        tg_nodes=tg_nodes, 
+        tg_nodes=tg_nodes,
         tf_nodes=tf_nodes,
         or_nodes=or_nodes,
         de_values=de_values,
@@ -424,4 +426,4 @@ def first_setup(
         ft_overlap=ft_overlap,
         ft_protein_rel=ft_protein_rel,
         string_rel=string_rel,
-        )
+    )
