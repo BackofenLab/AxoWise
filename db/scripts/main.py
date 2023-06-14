@@ -1,8 +1,6 @@
 from pathlib import Path
 import read as rd
-from upload import extend_db_from_experiment
-import read as rd
-from upload import extend_db_from_experiment
+from upload import extend_db_from_experiment, first_setup
 
 _DEFAULT_EXPERIMENT_PATH = Path("../source/experiment")
 _DEFAULT_STRING_PATH = Path("../source/string")
@@ -46,14 +44,26 @@ if __name__ == "__main__":
         motif,
         distance,
     ) = read_experiment_files()
-    extend_db_from_experiment(
-        tg_nodes=tg_nodes,
-        tf_nodes=tf_nodes,
-        or_nodes=or_nodes,
-        da_values=da_values,
-        de_values=de_values,
-        tf_tg_corr=tf_tg_corr,
-        tg_or_corr=tg_or_corr,
-        motif=motif,
-        distance=distance,
-    )
+
+    (
+        ft_nodes,
+        ft_overlap,
+        ft_protein_rel,
+    ) = read_functional_files()
+
+    (
+        string_rel
+    ) = read_string_files()
+
+    # first_setup(
+    #     tg_nodes=tg_nodes,
+    #     tf_nodes=tf_nodes,
+    #     or_nodes=or_nodes,
+    #     da_values=da_values,
+    #     de_values=de_values,
+    #     tf_tg_corr=tf_tg_corr,
+    #     tg_or_corr=tg_or_corr,
+    #     motif=motif,
+    #     distance=distance,
+
+    # )
