@@ -1,15 +1,13 @@
-import csv
 import io
 import json
-import os
-import sys
 import time
-import uuid
-import subprocess
+
 import pandas as pd
-import jar
+
 import database
 import graph
+import jar
+import queries
 
 # =============== Functional Term Graph ======================
 
@@ -26,24 +24,7 @@ def get_functional_graph(list_enrichment):
     driver = database.get_driver()
 
     # Execute the query and retrieve the CSV data
-    with driver.session() as session:
-        query = f"""
-            MATCH (source:Terms)-[association:KAPPA]->(target:Terms)
-            WHERE source.external_id IN {str(list_term)} 
-            AND target.external_id IN {str(list_term)}
-            RETURN source, target, association.score AS score;
-            """
-        result = session.run(query)
-        terms, source, target, score = list(), list(), list(), list()
-
-        for row in result:
-            source_row_prop = row["source"]
-            target_row_prop = row["target"]
-            terms.append(source_row_prop)
-            terms.append(target_row_prop)
-            source.append(source_row_prop.get("external_id"))
-            target.append(target_row_prop.get("external_id"))
-            score.append(float(row["score"]))
+    terms, source, target, score = queries.get_terms_connected_by_kappa(driver, list_term)
 
     # Timer for Neo4j query
     t_neo4j = time.time()
@@ -66,7 +47,6 @@ def get_functional_graph(list_enrichment):
     edges = edges.drop_duplicates(subset=["source", "target"])  # TODO edges` can be empty
 
     # convert kappa scores to Integer
-
     edges["score"] = edges["score"].apply(lambda x: round(x, 2))
     edges["score"] = edges["score"].apply(lambda x: int(x * 100))
 

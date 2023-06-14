@@ -7,6 +7,19 @@ from typing import List, Any
 import neo4j
 
 
+def get_terms_connected_by_kappa(driver: neo4j.Driver, term_ids: list[str]):
+    """":returns: terms, source, target, score"""
+    with driver.session() as session:
+        query = f"""
+            MATCH (source:Terms)-[association:KAPPA]->(target:Terms)
+            WHERE source.external_id IN {term_ids} 
+            AND target.external_id IN {term_ids}
+            RETURN source, target, association.score AS score;
+            """
+        result = session.run(query)
+        return _convert_to_connection_info_float_score(result)
+
+
 def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id: int) -> list[str]:
     query = f"""
         MATCH (protein:Protein)
@@ -34,7 +47,7 @@ def get_protein_neighbours(driver: neo4j.Driver, protein_ids: list[str], thresho
     """
     with driver.session() as session:
         result = session.run(query)
-        return _convert_to_protein_info(result)
+        return _convert_to_connection_info_int_score(result)
 
 
 def get_protein_associations(driver: neo4j.Driver, protein_ids: list[str], threshold: int) -> (
@@ -52,7 +65,7 @@ def get_protein_associations(driver: neo4j.Driver, protein_ids: list[str], thres
 
     with driver.session() as session:
         result = session.run(query)
-        return _convert_to_protein_info(result)
+        return _convert_to_connection_info_int_score(result)
 
 
 def get_enrichment_terms(driver: neo4j.Driver) -> list[dict[str, Any]]:
@@ -82,14 +95,27 @@ def _convert_to_dict(result: neo4j.Result) -> list[dict[str, Any]]:
     return [x.data() for x in records]
 
 
-def _convert_to_protein_info(result: neo4j.Result) -> (list[str], list[str], list[str], list[int]):
-    proteins, source, target, score = list(), list(), list(), list()
+def _convert_to_connection_info_int_score(result: neo4j.Result) -> (list[str], list[str], list[str], list[int]):
+    nodes, source, target, score = list(), list(), list(), list()
 
     for row in result:
-        proteins.append(row["source"])
-        proteins.append(row["target"])
+        nodes.append(row["source"])
+        nodes.append(row["target"])
         source.append(row["source"].get("external_id"))
         target.append(row["target"].get("external_id"))
         score.append(int(row["score"]))
 
-    return proteins, source, target, score
+    return nodes, source, target, score
+
+
+def _convert_to_connection_info_float_score(result: neo4j.Result) -> (list[str], list[str], list[str], list[int]):
+    nodes, source, target, score = list(), list(), list(), list()
+
+    for row in result:
+        nodes.append(row["source"])
+        nodes.append(row["target"])
+        source.append(row["source"].get("external_id"))
+        target.append(row["target"].get("external_id"))
+        score.append(float(row["score"]))
+
+    return nodes, source, target, score
