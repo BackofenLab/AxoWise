@@ -59,7 +59,7 @@ def create_nodes(source_file: str, type_: str, id: str, reformat_values: list[tu
     # For large numbers of nodes, using apoc.periodic.iterate
     # For info, see: https://neo4j.com/labs/apoc/4.2/overview/apoc.periodic/apoc.periodic.iterate/
 
-    per_iter = 'CALL apoc.periodic.iterate("{}", "{}", {{batchSize: 5000}} )'.format(
+    per_iter = 'CALL apoc.periodic.iterate("{}", "{}", {{batchSize: 5000, parallel: true}} )'.format(
         load_data_query, merge_into_db_query + " " + reformat_values_str
     )
 
@@ -111,7 +111,6 @@ def create_relationship(
     """
 
     # TODO: Try trick of generating nodes first, then relationships; Generating edges is very slow...
-    # TODO: reformat values of map for matching (for Source Node!)
     comparing_reformat_values = [v[0] for v in reformat_values]
     m_query = (
         "m.{} = {}map.{}{}".format(
@@ -154,15 +153,17 @@ def create_relationship(
     set_values_query += " ".join(
         [""] + ["SET e.{} = {}(map.{})".format(v[0], v[1], v[0]) for v in reformat_values if v[0] in values]
     )
+
     if merge:
         create_edge_query = "MERGE (m)-[e:{}]->(n)".format(type_) + set_values_query
     else:
         create_edge_query = "CREATE (m)-[e:{}]->(n)".format(type_) + set_values_query
 
-    per_iter = 'CALL apoc.periodic.iterate("{}", "{}", {{batchSize: 5000}} )'.format(load_data_query, create_edge_query)
+    per_iter = 'CALL apoc.periodic.iterate("{}", "{}", {{batchSize: 5000, parallel: true}} )'.format(
+        load_data_query, create_edge_query
+    )
 
-    print(per_iter)
-    # execute_query(per_iter, read=False)
+    utils.execute_query(per_iter, read=False)
     return
 
 
@@ -172,19 +173,17 @@ def create_tg_nodes(nodes: pd.DataFrame, source: int):
     # filter for MeanCount values to add later
     mean_count = nodes.filter(items=["ENSEMBL", "mean_count"])
     mean_count["Source"] = source
-    mean_count.rename(columns={"mean_count": "Value"})
+    mean_count = mean_count.rename(columns={"mean_count": "Value"})
 
     # create new Target Gene nodes for every new TG
     nodes = nodes.drop(columns=["mean_count"])
     utils.save_df_to_csv(file_name="tg.csv", df=nodes, override_prod=True)
-    # nodes.to_csv("/usr/local/bin/neo4j/import/tg.csv", index=False)
     create_nodes(source_file="tg.csv", type_="TG", id="ENSEMBL", reformat_values=[("ENTREZID", "toInteger")])
 
     print("Creating MEANCOUNT edges for Target Genes ...")
 
     # create MeanCount edges for TGs
     utils.save_df_to_csv(file_name="tg_meancount.csv", df=mean_count)
-    # mean_count.to_csv("/usr/local/bin/neo4j/import/tg_meancount.csv", index=False)
     create_relationship(
         source_file="tg_meancount.csv",
         type_="MEANCOUNT",
@@ -201,19 +200,17 @@ def create_tf_nodes(nodes: pd.DataFrame, source: int):
     # filter for MeanCount values to add later
     mean_count = nodes.filter(items=["ENSEMBL", "mean_count"])
     mean_count["Source"] = source
-    mean_count.rename(columns={"mean_count": "Value"})
+    mean_count = mean_count.rename(columns={"mean_count": "Value"})
 
     # create new Transcription Factor node for every new TF
     nodes = nodes.drop(columns=["mean_count"])
     utils.save_df_to_csv(file_name="tf.csv", df=nodes, override_prod=True)
-    # nodes.to_csv("/usr/local/bin/neo4j/import/tf.csv", index=False)
     create_nodes(source_file="tf.csv", type_="TF:TG", id="ENSEMBL", reformat_values=[("ENTREZID", "toInteger")])
 
     print("Creating MEANCOUNT edges for Transcription Factors ...")
 
     # create MeanCount edges for TFs
     utils.save_df_to_csv(file_name="tf_meancount.csv", df=mean_count)
-    # mean_count.to_csv("/usr/local/bin/neo4j/import/tf_meancount.csv", index=False)
     create_relationship(
         source_file="tf_meancount.csv",
         type_="MEANCOUNT",
@@ -230,19 +227,17 @@ def create_or_nodes(nodes: pd.DataFrame, source: int):
     # filter for MeanCount values to add later
     mean_count = nodes.filter(items=["nearest_index", "mean_count"])
     mean_count["Source"] = source
-    mean_count.rename(columns={"mean_count": "Value"})
+    mean_count = mean_count.rename(columns={"mean_count": "Value"})
 
     # create new Open Region node for every new OR
     nodes = nodes.drop(columns=["mean_count"])
     utils.save_df_to_csv(file_name="or.csv", df=nodes, override_prod=True)
-    # nodes.to_csv("/usr/local/bin/neo4j/import/or.csv", index=False)
     create_nodes(source_file="or.csv", type_="OR", id="nearest_index", reformat_values=[("summit", "toInteger")])
 
     print("Creating MEANCOUNT edges for Open Regions ...")
 
     # create MeanCount edges for ORs
     utils.save_df_to_csv(file_name="or_meancount.csv", df=mean_count)
-    # mean_count.to_csv("/usr/local/bin/neo4j/import/or_meancount.csv", index=False)
     create_relationship(
         source_file="or_meancount.csv",
         type_="MEANCOUNT",
@@ -261,7 +256,6 @@ def create_context(context: pd.DataFrame, source: int, value_type: int):  # valu
     node_df = pd.DataFrame.from_records(data=[{"Value": c} for c in nodes])
 
     utils.save_df_to_csv(file_name="context.csv", df=node_df, override_prod=True)
-    # node_df.to_csv("/usr/local/bin/neo4j/import/context.csv", index=False)
     create_nodes(source_file="context.csv", type_="Context", id="Value", reformat_values=[])
 
     print("Connecting Source and Context nodes ...")
@@ -271,7 +265,6 @@ def create_context(context: pd.DataFrame, source: int, value_type: int):  # valu
     source_edge_df["Source"] = source
 
     utils.save_df_to_csv(file_name="source_context.csv", df=source_edge_df, override_prod=True)
-    # source_edge_df.to_csv("/usr/local/bin/neo4j/import/source_context.csv", index=False)
     create_relationship(
         source_file="source_context.csv",
         type_="HAS",
@@ -290,7 +283,6 @@ def create_context(context: pd.DataFrame, source: int, value_type: int):  # valu
     # DE Edges
     if value_type == 1:
         utils.save_df_to_csv(file_name="de.csv", df=edge_df)
-        # edge_df.to_csv("/usr/local/bin/neo4j/import/de.csv", index=False)
         create_relationship(
             source_file="de.csv",
             type_="DE",
@@ -303,7 +295,6 @@ def create_context(context: pd.DataFrame, source: int, value_type: int):  # valu
     # DA Edges
     elif value_type == 0:
         utils.save_df_to_csv(file_name="da.csv", df=edge_df)
-        # edge_df.to_csv("/usr/local/bin/neo4j/import/da.csv", index=False)
         create_relationship(
             source_file="da.csv",
             type_="DA",
@@ -321,7 +312,6 @@ def create_correlation(correlation: pd.DataFrame, source: int, value_type: int):
     # TF-TG edges
     if value_type == 1:
         utils.save_df_to_csv(file_name="tf_tg_corr.csv", df=correlation)
-        # correlation.to_csv("/usr/local/bin/neo4j/import/tf_tg_corr.csv", index=False)
         create_relationship(
             source_file="tf_tg_corr.csv",
             type_="CORRELATION",
@@ -334,7 +324,6 @@ def create_correlation(correlation: pd.DataFrame, source: int, value_type: int):
     # OR-TG edges
     elif value_type == 0:
         utils.save_df_to_csv(file_name="or_tg_corr.csv", df=correlation)
-        # correlation.to_csv("/usr/local/bin/neo4j/import/or_tg_corr.csv", index=False)
         create_relationship(
             source_file="or_tg_corr.csv",
             type_="CORRELATION",
@@ -349,7 +338,6 @@ def create_motif_edges(motif: pd.DataFrame):
     print("Creating MOTIF edges ...")
 
     utils.save_df_to_csv(file_name="motif.csv", df=motif)
-    # motif.to_csv("/usr/local/bin/neo4j/import/motif.csv", index=False)
     create_relationship(
         source_file="motif.csv",
         type_="MOTIF",
@@ -365,7 +353,6 @@ def create_distance_edges(distance: pd.DataFrame):
     print("Creating DISTANCE edges ...")
 
     utils.save_df_to_csv(file_name="distance.csv", df=distance)
-    # distance.to_csv("/usr/local/bin/neo4j/import/distance.csv", index=False)
     create_relationship(
         source_file="distance.csv",
         type_="DISTANCE",
