@@ -10,7 +10,7 @@ import mpmath
 import neo4j
 import pandas as pd
 
-import cypher_queries as Cypher
+import queries
 
 
 def calc_proteins_pval(curr, alpha, in_pr, bg_proteins, num_in_prot):
@@ -78,14 +78,14 @@ def functional_enrichment(driver: neo4j.Driver, in_proteins, species_id: Any):
     t_begin = time.time()
 
     # Get number of all proteins in the organism (from Cypher)
-    bg_proteins = Cypher.get_number_of_proteins(driver)
+    bg_proteins = queries.get_number_of_proteins(driver)
     num_in_prot = len(in_proteins)
     prots = set(in_proteins)
     # pandas DataFrames for nodes and edges
     csv.field_size_limit(sys.maxsize)
 
     # Read Terms and put into Dataframe
-    df_terms = pd.DataFrame(Cypher.get_enrichment_terms(driver))
+    df_terms = pd.DataFrame(queries.get_enrichment_terms(driver))
     tot_tests = len(df_terms)
 
     t_setup = time.time()

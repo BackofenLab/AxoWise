@@ -2,13 +2,12 @@
 Collection of functions for creating and searching
 q-gram indexes for various entities.
 """
-
 import os
 import os.path
 from collections import defaultdict, namedtuple
 
-import cypher_queries as Cypher
 import database
+import queries
 
 # ========================= q-gram index =========================
 
@@ -18,6 +17,9 @@ _Q_GRAM_PAD_CHAR = "$"
 def make_q_grams(string, q=3):
     """
     Generate padded q-grams from a given string.
+    :param string: string to work with
+    :param q: length of padding applied left and right
+    :returns: q-grams
     """
     q_grams = list()
 
@@ -25,7 +27,7 @@ def make_q_grams(string, q=3):
     string_padded = padding + string + padding
 
     for i in range(len(string_padded) - q + 1):
-        q_grams.append(string_padded[i : i + q])
+        q_grams.append(string_padded[i: i + q])
 
     return q_grams
 
@@ -58,58 +60,20 @@ def search_q_gram_index(query, index, condition=None, top=5):
 Protein = namedtuple("Protein", ["id", "name", "species_id"])
 
 
-def create_protein_q_gram_index():
-    """
-    Create a q-gram index for protein names.
-    """
-
-    neo4j_graph = database.connect_neo4j()
-
-    index = defaultdict(set)
-    for row in Cypher.get_protein_list(neo4j_graph):
-        protein = Protein(**row)
-        for q_gram in make_q_grams(protein.name.lower()):
-            index[q_gram].add(protein)
-
-    return index
-
-
-def get_protein_connection():
+def get_protein_connection() -> dict:
     """
     Direct neo4j search of the given proteins.
 
-    Returns:
-        int: Id of the given string
+    :returns: id of the given string
     """
     neo4j_graph = database.connect_neo4j()
 
     protein_list = defaultdict(set)
-    for row in Cypher.get_protein_list(neo4j_graph):
+    for row in queries.get_protein_list(neo4j_graph):
         protein = Protein(**row)
         protein_list[row["name"]].add(protein)
 
     return protein_list
-
-
-# ========================= Pathway =========================
-
-Pathway = namedtuple("Pathway", ["id", "name", "species_id"])
-
-
-def create_pathway_q_gram_index():
-    """
-    Create a q-gram index for pathway names.
-    """
-
-    neo4j_graph = database.connect_neo4j()
-
-    index = defaultdict(set)
-    for row in Cypher.get_pathway_list(neo4j_graph):
-        pathway = Pathway(**row)
-        for q_gram in make_q_grams(pathway.name.lower()):
-            index[q_gram].add(pathway)
-
-    return index
 
 
 # ========================= Species =========================
@@ -117,9 +81,11 @@ def create_pathway_q_gram_index():
 Species = namedtuple("Species", ["name", "kegg_id", "ncbi_id"])
 
 
-def create_species_q_gram_index():
+def create_species_q_gram_index() -> dict:
     """
     Create a q-gram index for species names.
+
+    :returns: index
     """
 
     index = defaultdict(set)
@@ -138,26 +104,5 @@ def create_species_q_gram_index():
             species = Species(species_name, kegg_id, int(ncbi_id))
             for q_gram in make_q_grams(species.name.lower()):
                 index[q_gram].add(species)
-
-    return index
-
-
-# ========================= Class =========================
-
-Class = namedtuple("Class", ["name"])
-
-
-def create_class_q_gram_index():
-    """
-    Create a q-gram index for pathway class names.
-    """
-
-    neo4j_graph = database.connect_neo4j()
-
-    index = defaultdict(set)
-    for row in Cypher.get_class_list(neo4j_graph):
-        klass = Class(**row)
-        for q_gram in make_q_grams(klass.name.lower()):
-            index[q_gram].add(klass)
 
     return index

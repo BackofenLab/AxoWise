@@ -10,13 +10,13 @@ import pandas as pd
 from flask import Flask, Response, request, send_from_directory
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-import cypher_queries as Cypher
 import database
 import direct_search
 import enrichment
 import enrichment_graph
 import graph_utilities
 import jar
+import queries
 
 app = Flask(__name__)
 
@@ -113,9 +113,9 @@ def proteins_subgraph_api():
 
     driver = database.get_driver()
     if len(protein_ids) > 1:
-        proteins, source, target, score = Cypher.get_protein_associations(driver, protein_ids, threshold)
+        proteins, source, target, score = queries.get_protein_associations(driver, protein_ids, threshold)
     else:
-        proteins, source, target, score = Cypher.get_protein_neighbours(driver, protein_ids, threshold)
+        proteins, source, target, score = queries.get_protein_neighbours(driver, protein_ids, threshold)
 
     # Timer for Neo4j query
     t_neo4j = time.time()
