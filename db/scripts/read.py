@@ -134,11 +134,12 @@ def parse_experiment(dir_path: str = _DEFAULT_EXPERIMENT_PATH, reformat: bool = 
             "nearest_index",
             "nearest_distanceToTSS",
             "nearest_ENSEMBL",
+            "mean_count",
         ]
     )
 
     # Filter for Distance to transcription site
-    distance = exp[0].filter("nearest_index", "nearest_distanceToTSS", "nearest_ENSEMBL")
+    distance = exp[0].filter(items=["nearest_index", "nearest_distanceToTSS", "nearest_ENSEMBL"])
     distance.rename(columns={"nearest_distanceToTSS": "Distance"})
 
     # Filter for DA Values in specific contexts
