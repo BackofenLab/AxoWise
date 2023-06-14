@@ -9,6 +9,8 @@ _DEFAULT_CELLTYPE_INFO = {"name": "Microglia"}
 _DEFAULT_STUDY_INFO = {"source": "in-house"}
 _DEFAULT_CREDENTIALS_PATH = Path(__file__).parent / Path("../../credentials.yml")
 
+_PRODUCTION = False
+
 
 def read_experiment_files(path=_DEFAULT_EXPERIMENT_PATH):
     data = rd.parse_experiment(dir_path=path, reformat=True)

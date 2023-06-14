@@ -1,7 +1,7 @@
 import pandas as pd
 import yaml
 from neo4j import GraphDatabase, RoutingControl
-from main import _DEFAULT_CREDENTIALS_PATH
+from main import _DEFAULT_CREDENTIALS_PATH, _PRODUCTION
 
 
 class Reformatter:
@@ -32,3 +32,10 @@ def execute_query(query: str, read: bool):
             return driver.execute_query(query)
         else:
             return driver.execute_query(query, RoutingControl.READ)
+
+
+def save_df_to_csv(file_name: str, df: pd.DataFrame, override_prod: bool = False):
+    if _PRODUCTION or override_prod:
+        df.to_csv("/usr/local/bin/neo4j/import/{}".format(file_name), index=False)
+    else:
+        df.iloc[:50000].to_csv("/usr/local/bin/neo4j/import/{}".format(file_name), index=False)
