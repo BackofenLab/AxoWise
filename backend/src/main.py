@@ -107,44 +107,15 @@ def proteins_subgraph_api():
     proteins = direct_search.search_protein_list(query_proteins, species_id=species_id)
     protein_ids = list(map(lambda p: p.id, proteins))
 
-    # Decide which query to select (Option 1: associations of a set of genes) (Option 2: neighbours of a single gene)
-    if len(protein_ids) > 1:
-        query = f"""
-                MATCH (source:Protein)-[association:ASSOCIATION]->(target:Protein)
-                WHERE source.external_id IN {repr(protein_ids)}
-                AND target.external_id IN {repr(protein_ids)}
-                AND association.combined >= {repr(threshold)}
-                RETURN source, target, association.combined AS score
-                """
-    else:
-        query = f"""
-                MATCH (source:Protein)-[association:ASSOCIATION]-(target:Protein)
-                WHERE source.external_id IN {str(protein_ids)} 
-                OR target.external_id IN {str(protein_ids)} 
-                AND association.combined >= {str(threshold)} 
-                RETURN source, target, association.combined AS score
-                """
-
     # Timer to evaluate runtime to setup
     t_setup = time.time()
     print("Time Spent (Setup):", t_setup - t_begin)
 
-    # Run the cypher query in cypher shell via terminal
     driver = database.get_driver()
-
-    # Execute the query and retrieve the CSV data
-    with driver.session() as session:
-        result = session.run(query)
-        proteins, source, target, score = list(), list(), list(), list()
-
-        for row in result:
-            source_row_prop = row["source"]
-            target_row_prop = row["target"]
-            proteins.append(source_row_prop)
-            proteins.append(target_row_prop)
-            source.append(source_row_prop.get("external_id"))
-            target.append(target_row_prop.get("external_id"))
-            score.append(int(row["score"]))
+    if len(protein_ids) > 1:
+        proteins, source, target, score = Cypher.get_protein_associations(driver, protein_ids, threshold)
+    else:
+        proteins, source, target, score = Cypher.get_protein_neighbours(driver, protein_ids, threshold)
 
     # Timer for Neo4j query
     t_neo4j = time.time()
