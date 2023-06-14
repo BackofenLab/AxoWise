@@ -58,7 +58,7 @@ def create_nodes(source_file: str, type_: str, id: str, reformat_values: list[tu
     # For large numbers of nodes, using apoc.periodic.iterate
     # For info, see: https://neo4j.com/labs/apoc/4.2/overview/apoc.periodic/apoc.periodic.iterate/
 
-    per_iter = 'CALL apoc.periodic.iterate("{}", "{}", {{batchSize: 5000, parallel: true}} )'.format(
+    per_iter = 'CALL apoc.periodic.iterate("{}", "{}", {{batchSize: 1000, parallel: true}} )'.format(
         load_data_query, merge_into_db_query + " " + reformat_values_str
     )
 
@@ -137,7 +137,7 @@ def create_relationship(
     else:
         create_edge_query = "CREATE (m)-[e:{}]->(n)".format(type_) + set_values_query
 
-    per_iter = 'CALL apoc.periodic.iterate("{}", "{}", {{batchSize: 5000, parallel: true}} )'.format(
+    per_iter = 'CALL apoc.periodic.iterate("{}", "{}", {{batchSize: 1000, parallel: true}} )'.format(
         load_data_query, create_edge_query
     )
 
@@ -231,10 +231,10 @@ def create_context(context: pd.DataFrame, source: int, value_type: int):  # valu
 
     # create Context node for every new context
     nodes = context["Context"].unique()
-    node_df = pd.DataFrame.from_records(data=[{"Value": c} for c in nodes])
+    node_df = pd.DataFrame.from_records(data=[{"Context": c} for c in nodes])
 
     utils.save_df_to_csv(file_name="context.csv", df=node_df, override_prod=True)
-    create_nodes(source_file="context.csv", type_="Context", id="Value", reformat_values=[])
+    create_nodes(source_file="context.csv", type_="Context", id="Context", reformat_values=[])
 
     print("Connecting Source and Context nodes ...")
 
@@ -242,14 +242,16 @@ def create_context(context: pd.DataFrame, source: int, value_type: int):  # valu
     source_edge_df = node_df
     source_edge_df["Source"] = source
 
+    # TODO: All context -> other rel not yet working !!!
     utils.save_df_to_csv(file_name="source_context.csv", df=source_edge_df, override_prod=True)
     create_relationship(
         source_file="source_context.csv",
         type_="HAS",
-        between=(("id", "Source"), ("Value", "Context")),
+        between=(("id", "Source"), ("Context", "Context")),
         node_types=("Source", "Context"),
         values=[],
         reformat_values=[("Source", "toInteger")],
+        merge=True,
     )
 
     print("Creating Context {} edges ...".format("DE" if value_type == 1 else "DA"))
@@ -319,7 +321,7 @@ def create_motif_edges(motif: pd.DataFrame):
     create_relationship(
         source_file="motif.csv",
         type_="MOTIF",
-        between=(("SYMBOL", "TF"), ("peaks", "nearest_index")),
+        between=(("SYMBOL", "TF"), ("nearest_index", "peaks")),
         node_types=("TF", "OR"),
         values=["Motif"],
         reformat_values=[],
@@ -384,6 +386,8 @@ def extend_db_from_experiment(
 
     create_motif_edges(motif=motif)
     create_distance_edges(distance=distance)
+
+    print("Done extending DB from Experimental Data")
     return
 
 
@@ -392,6 +396,8 @@ def setup_db_external_info(
 ):
     create_functional(ft_nodes=ft_nodes, ft_overlap=ft_overlap, ft_protein_rel=ft_protein_rel)
     create_string_edges(string_rel=string_rel)
+
+    return
 
 
 def first_setup(

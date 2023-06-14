@@ -8,7 +8,8 @@ _DEFAULT_FUNCTIONAL_PATH = Path("../source/functional")
 _DEFAULT_CELLTYPE_INFO = {"name": "Microglia"}
 _DEFAULT_STUDY_INFO = {"source": "in-house"}
 _DEFAULT_CREDENTIALS_PATH = Path(__file__).parent / Path("../../credentials.yml")
-_DEV_MAX_REL = 50000
+_DEV_MAX_REL = 10000
+_NEO4J_IMPORT_PATH = "/usr/local/bin/neo4j/import/"
 
 _PRODUCTION = False
 
@@ -47,17 +48,20 @@ if __name__ == "__main__":
         ft_protein_rel,
     ) = read_functional_files()
 
-    (string_rel) = read_string_files()
+    string_rel = read_string_files()
 
-    # first_setup(
-    #     tg_nodes=tg_nodes,
-    #     tf_nodes=tf_nodes,
-    #     or_nodes=or_nodes,
-    #     da_values=da_values,
-    #     de_values=de_values,
-    #     tf_tg_corr=tf_tg_corr,
-    #     tg_or_corr=tg_or_corr,
-    #     motif=motif,
-    #     distance=distance,
-
-    # )
+    first_setup(
+        tg_nodes=tg_nodes,
+        tf_nodes=tf_nodes,
+        or_nodes=or_nodes,
+        da_values=da_values,
+        de_values=de_values,
+        tf_tg_corr=tf_tg_corr,
+        tg_or_corr=tg_or_corr,
+        motif=motif,
+        distance=distance,
+        ft_nodes=ft_nodes,
+        ft_overlap=ft_overlap,
+        ft_protein_rel=ft_protein_rel,
+        string_rel=string_rel,
+    )

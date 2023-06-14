@@ -136,10 +136,10 @@ def parse_experiment(dir_path: str = _DEFAULT_EXPERIMENT_PATH, reformat: bool = 
 def parse_string(dir_path: str = _DEFAULT_STRING_PATH):
     """
     Reads STRING files and returns a Pandas dataframe
-    [ protein.links.v11.5.tsv, protein.info.v11.5.tsv ]
+    [ protein.links.v11.5.tsv, protein.info.v11.5.tsv, string_SYMBOL_ENSEMBL.tsv ]
     """
 
-    string = [None] * 2
+    string = [None] * 3
 
     for file in os.scandir(dir_path):
         file_name, file_extention = os.path.splitext(file)
@@ -211,8 +211,8 @@ def _reformat_motif(df: pd.DataFrame):
 
 
 def _reformat_string_file(df: pd.DataFrame, file_name: str):
-    names = ["protein.links.v11.5", "protein.info.v11.5"]
-    functions = [_reformat_string_links, _reformat_string_info]
+    names = ["protein.links.v11.5", "protein.info.v11.5", "string_SYMBOL_ENSEMBL"]
+    functions = [_reformat_string_links, _reformat_string_info, _reformat_protein_gene_dict]
     index = names.index(file_name)
 
     return functions[index](df=df), index
@@ -225,6 +225,11 @@ def _reformat_string_links(df: pd.DataFrame):
 
 def _reformat_string_info(df: pd.DataFrame):
     df = df.rename(columns={"preferred_name": "SYMBOL", "string_protein_id": "ENSEMBL"})
+    return df
+
+
+def _reformat_protein_gene_dict(df: pd.DataFrame):
+    # TODO
     return df
 
 
@@ -242,7 +247,7 @@ def _reformat_ft_overlap(df: pd.DataFrame):
 
 def _reformat_terms_proteins(df: pd.DataFrame):
     df_list = []
-    for k, i in df.iterrows():
+    for _, i in df.iterrows():
         tmp_df = pd.DataFrame()
         tmp_df["ENSEMBL"] = json.loads(i["proteins"].replace("'", '"'))
         tmp_df["Term"] = i["external_id"]
