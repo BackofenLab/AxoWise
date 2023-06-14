@@ -11,7 +11,6 @@ import neo4j
 import pandas as pd
 
 import cypher_queries as Cypher
-from cypher_queries import TERM_FILE
 
 
 def calc_proteins_pval(curr, alpha, in_pr, bg_proteins, num_in_prot):
@@ -86,7 +85,7 @@ def functional_enrichment(driver: neo4j.Driver, in_proteins, species_id: Any):
     csv.field_size_limit(sys.maxsize)
 
     # Read Terms and put into Dataframe
-    df_terms = pd.read_csv("/tmp/" + repr(TERM_FILE) + ".csv", sep=",", engine="python", quotechar='"')
+    df_terms = pd.DataFrame(Cypher.get_enrichment_terms(driver))
     tot_tests = len(df_terms)
 
     t_setup = time.time()

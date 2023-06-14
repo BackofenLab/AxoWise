@@ -30,8 +30,6 @@ _BACKEND_JAR_PATH = "../gephi/target/gephi.backend-1.0-SNAPSHOT.jar"
 
 @app.route("/")
 def index():
-    # create term_file csv
-    Cypher.create_term_df()
     return send_from_directory(os.path.join(_SCRIPT_DIR, _SERVE_DIR), _INDEX_FILE)
 
 
