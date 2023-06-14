@@ -5,10 +5,7 @@ i.e. `java` is in PATH variable and available
 to be called.
 """
 
-from asyncio.subprocess import STDOUT
-from os import system
 import subprocess
-from sys import stderr, stdout
 
 
 def pipe_call(jar_path: str, stdin: str, encoding="utf-8"):

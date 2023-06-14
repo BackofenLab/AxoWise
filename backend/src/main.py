@@ -13,7 +13,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 import database
 import enrichment
 import enrichment_graph
-import graph_utilities
+import graph
 import jar
 import queries
 
@@ -38,9 +38,6 @@ def index():
 @app.route("/<path:path>")
 def files(path):
     return send_from_directory(os.path.join(_SCRIPT_DIR, _SERVE_DIR), path)
-
-
-# @app.rooute("/api/subgraph/init")
 
 
 # ====================== Functional Enrichment ======================
@@ -125,7 +122,7 @@ def proteins_subgraph_api():
     t_parsing = time.time()
     print("Time Spent (Parsing):", t_parsing - t_neo4j)
     # Creating only the main Graph and exclude not connected subgraphs
-    nodes_sub = graph_utilities.create_nodes_subgraph(edges, nodes)
+    nodes_sub = graph.create_nodes_subgraph(edges, nodes)
 
     # Timer to evaluate enrichments runtime
     t_dvalue = time.time()

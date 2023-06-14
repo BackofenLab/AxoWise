@@ -7,22 +7,6 @@ from typing import List, Any
 import neo4j
 
 
-def get_protein_list(graph):
-    """
-    Retrieve a list of proteins including the protein ID
-    and the protein name.
-    """
-
-    query = """
-        MATCH (protein:Protein)
-        RETURN protein.external_id AS id,
-               protein.name AS name,
-               protein.species_id AS species_id
-    """
-
-    return graph.run(query)
-
-
 def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id: int) -> list[str]:
     query = f"""
         MATCH (protein:Protein)

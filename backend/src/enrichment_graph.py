@@ -8,8 +8,8 @@ import uuid
 import subprocess
 import pandas as pd
 import jar
-import graph_utilities
 import database
+import graph
 
 # =============== Functional Term Graph ======================
 
@@ -78,12 +78,8 @@ def get_functional_graph(list_enrichment):
         return json.dumps([])
 
     # Creating only the main Graph and exclude not connected subgraphs
-    nodes_sub = graph_utilities.create_nodes_subgraph(edges, nodes)
-    # edges = graph_utilities.create_edges_subgraph(edges)
+    nodes_sub = graph.create_nodes_subgraph(edges, nodes)
 
-    # Timer to evaluate runtime between cypher-shell and extracting data
-
-    # #Timer to evaluate enrichments runtime
     t_enrich = time.time()
     print("Time Spent (Enrichment):", t_enrich - t_neo4j)
 
