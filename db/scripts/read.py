@@ -1,4 +1,4 @@
-from utils import Reformatter
+from utils import Reformatter, time_function
 import pandas as pd
 import os
 import json
@@ -79,7 +79,7 @@ def parse_experiment(dir_path: str = _DEFAULT_EXPERIMENT_PATH, reformat: bool = 
         return values
 
     # Read and Rename columns of Experiment data
-    exp = read_experiment()
+    exp = time_function(read_experiment)
 
     # Filter Dataframes for relevant columns
     de = exp[1].filter(items=["ENSEMBL", "ENTREZID", "SYMBOL", "annot", "TF", "in_ATAC", "mean_count"])
@@ -95,7 +95,9 @@ def parse_experiment(dir_path: str = _DEFAULT_EXPERIMENT_PATH, reformat: bool = 
     tmp_de = exp[1].filter(items=["ENSEMBL"] + DE_CONTEXT + [c + "-padj" for c in DE_CONTEXT])
 
     # Create DE DataFrame s.t. context is a column value
-    de_values = make_context_dataframes(DE_CONTEXT, tmp_de, True)
+    de_values = time_function(
+        make_context_dataframes, variables={"context_list": DE_CONTEXT, "df": tmp_de, "protein": True}
+    )
 
     # Filter for relevant values for OR nodes
     or_nodes = exp[0].filter(
@@ -120,16 +122,18 @@ def parse_experiment(dir_path: str = _DEFAULT_EXPERIMENT_PATH, reformat: bool = 
     tmp_da = exp[0].filter(items=["nearest_index", "mean_count"] + DA_CONTEXT + [c + "-padj" for c in DA_CONTEXT])
 
     # Create DA DataFrame s.t. context is column value
-    da_values = make_context_dataframes(DA_CONTEXT, tmp_da, False)
+    da_values = time_function(
+        make_context_dataframes, variables={"context_list": DA_CONTEXT, "df": tmp_da, "protein": False}
+    )
 
     tf_tg_corr = exp[2]
 
     # Filter for relevant columns
-    tg_or_corr = exp[3].filter(items=["ENSEMBL", "Correlation", "nearest_index"])
+    or_tg_corr = exp[3].filter(items=["ENSEMBL", "Correlation", "nearest_index"])
 
     motif = exp[4]
 
-    return tg_nodes, tf_nodes, de_values, or_nodes, da_values, tf_tg_corr, tg_or_corr, motif, distance
+    return tg_nodes, tf_nodes, de_values, or_nodes, da_values, tf_tg_corr, or_tg_corr, motif, distance
 
 
 def parse_string(dir_path: str = _DEFAULT_STRING_PATH):
@@ -138,15 +142,19 @@ def parse_string(dir_path: str = _DEFAULT_STRING_PATH):
     [ protein.links.v11.5.tsv, protein.info.v11.5.tsv, string_SYMBOL_ENSEMBL.tsv ]
     """
 
-    string = [None] * 3
+    def read_string():
+        dataframes = [None] * 3
 
-    for file in os.scandir(dir_path):
-        file_name, file_extention = os.path.splitext(file)
-        if file_extention == ".tsv":
-            df, index = _reformat_string_file(df=pd.read_csv(file, sep="\t"), file_name=file_name.split("/")[-1])
-        elif file_extention == ".txt":
-            df, index = _reformat_string_file(df=pd.read_csv(file, sep=" "), file_name=file_name.split("/")[-1])
-        string[index] = df
+        for file in os.scandir(dir_path):
+            file_name, file_extention = os.path.splitext(file)
+            if file_extention == ".tsv":
+                df, index = _reformat_string_file(df=pd.read_csv(file, sep="\t"), file_name=file_name.split("/")[-1])
+            elif file_extention == ".txt":
+                df, index = _reformat_string_file(df=pd.read_csv(file, sep=" "), file_name=file_name.split("/")[-1])
+            dataframes[index] = df
+        return dataframes
+
+    string = time_function(read_string)
 
     gene_gene_scores = string[0].merge(string[2], left_on="protein1", right_on="Protein")
     gene_gene_scores = gene_gene_scores.filter(items=["ENSEMBL", "protein2", "Score"])
@@ -166,15 +174,19 @@ def parse_functional(protein_gene_dict: pd.DataFrame, dir_path: str = _DEFAULT_F
     [ functional_terms_overlap.csv, KappaEdges.csv, TermsWithProteins.csv ]
     """
 
-    functional = [None] * 3
+    def read_functional():
+        dataframes = [None] * 3
 
-    for file in os.scandir(dir_path):
-        file_name, file_extention = os.path.splitext(file)
-        if file_extention == ".csv":
-            df, index = _reformat_functional_term_file(
-                df=pd.read_csv(file, sep=","), file_name=file_name.split("/")[-1]
-            )
-        functional[index] = df
+        for file in os.scandir(dir_path):
+            file_name, file_extention = os.path.splitext(file)
+            if file_extention == ".csv":
+                df, index = _reformat_functional_term_file(
+                    df=pd.read_csv(file, sep=","), file_name=file_name.split("/")[-1]
+                )
+            dataframes[index] = df
+        return dataframes
+
+    functional = time_function(read_functional)
 
     ft_nodes = functional[2].filter(items=["external_id", "name", "category"])
     ft_nodes = ft_nodes.rename(columns={"external_id": "Term"})

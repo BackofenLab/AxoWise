@@ -1,6 +1,7 @@
 import pandas as pd
 import utils
 import main
+import csv
 
 
 def create_study_cell_source_meancount():
@@ -63,6 +64,7 @@ def create_nodes(source_file: str, type_: str, id: str, reformat_values: list[tu
     )
 
     utils.execute_query(query=per_iter, read=False)
+
     return
 
 
@@ -141,7 +143,7 @@ def create_relationship(
         load_data_query, create_edge_query
     )
 
-    utils.execute_query(per_iter, read=False)
+    utils.execute_query(query=per_iter, read=False)
     return
 
 
@@ -404,23 +406,23 @@ def extend_db_from_experiment(
     de_values: pd.DataFrame,
     da_values: pd.DataFrame,
     tf_tg_corr: pd.DataFrame,
-    tg_or_corr: pd.DataFrame,
+    or_tg_corr: pd.DataFrame,
     motif: pd.DataFrame,
     distance: pd.DataFrame,
 ):
-    id_source = create_study_cell_source_meancount()
-    create_tg_nodes(nodes=tg_nodes, source=id_source)
-    create_tf_nodes(nodes=tf_nodes, source=id_source)
-    create_or_nodes(nodes=or_nodes, source=id_source)
+    id_source = utils.time_function(create_study_cell_source_meancount)
+    utils.time_function(create_tg_nodes, variables={"nodes": tg_nodes, "source": id_source})
+    utils.time_function(create_tf_nodes, variables={"nodes": tf_nodes, "source": id_source})
+    utils.time_function(create_or_nodes, variables={"nodes": or_nodes, "source": id_source})
 
-    create_context(context=de_values, source=id_source, value_type=1)
-    create_context(context=da_values, source=id_source, value_type=0)
+    utils.time_function(create_context, variables={"context": de_values, "source": id_source, "value_type": 1})
+    utils.time_function(create_context, variables={"context": da_values, "source": id_source, "value_type": 0})
 
-    create_correlation(correlation=tf_tg_corr, source=id_source, value_type=1)
-    create_correlation(correlation=tg_or_corr, source=id_source, value_type=0)
+    utils.time_function(create_correlation, variables={"correlation": tf_tg_corr, "source": id_source, "value_type": 1})
+    utils.time_function(create_correlation, variables={"correlation": or_tg_corr, "source": id_source, "value_type": 0})
 
-    create_motif_edges(motif=motif)
-    create_distance_edges(distance=distance)
+    utils.time_function(create_motif_edges, variables={"motif": motif})
+    utils.time_function(create_distance_edges, variables={"distance": distance})
 
     print("Done extending DB from Experimental Data")
     return
@@ -429,8 +431,10 @@ def extend_db_from_experiment(
 def setup_db_external_info(
     ft_nodes: pd.DataFrame, ft_ft_overlap: pd.DataFrame, ft_gene: pd.DataFrame, gene_gene_scores: pd.DataFrame
 ):
-    create_string_edges(gene_gene_scores=gene_gene_scores)
-    create_functional(ft_nodes=ft_nodes, ft_ft_overlap=ft_ft_overlap, ft_gene=ft_gene)
+    utils.time_function(create_string_edges, variables={"gene_gene_scores": gene_gene_scores})
+    utils.time_function(
+        create_functional, variables={"ft_nodes": ft_nodes, "ft_ft_overlap": ft_ft_overlap, "ft_gene": ft_gene}
+    )
 
     return
 
@@ -442,7 +446,7 @@ def first_setup(
     de_values: pd.DataFrame,
     da_values: pd.DataFrame,
     tf_tg_corr: pd.DataFrame,
-    tg_or_corr: pd.DataFrame,
+    or_tg_corr: pd.DataFrame,
     motif: pd.DataFrame,
     distance: pd.DataFrame,
     ft_nodes: pd.DataFrame,
@@ -450,17 +454,17 @@ def first_setup(
     ft_gene: pd.DataFrame,
     gene_gene_scores: pd.DataFrame,
 ):
-    # extend_db_from_experiment(
-    #     tg_nodes=tg_nodes,
-    #     tf_nodes=tf_nodes,
-    #     or_nodes=or_nodes,
-    #     de_values=de_values,
-    #     da_values=da_values,
-    #     tf_tg_corr=tf_tg_corr,
-    #     tg_or_corr=tg_or_corr,
-    #     motif=motif,
-    #     distance=distance,
-    # )
+    extend_db_from_experiment(
+        tg_nodes=tg_nodes,
+        tf_nodes=tf_nodes,
+        or_nodes=or_nodes,
+        de_values=de_values,
+        da_values=da_values,
+        tf_tg_corr=tf_tg_corr,
+        or_tg_corr=or_tg_corr,
+        motif=motif,
+        distance=distance,
+    )
 
     setup_db_external_info(
         ft_nodes=ft_nodes,

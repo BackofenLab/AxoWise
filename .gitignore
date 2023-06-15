@@ -4,6 +4,7 @@ credentials.yml
 .idea
 pid-info.txt
 db/source/*
+db/scripts/function_times.csv
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/node,maven,python,pycharm,intellij,visualstudiocode,macos,windows,linux

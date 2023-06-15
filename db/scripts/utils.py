@@ -1,7 +1,9 @@
 import pandas as pd
 import yaml
+import csv
+from time import time
 from neo4j import GraphDatabase, RoutingControl
-from main import _DEFAULT_CREDENTIALS_PATH, _PRODUCTION, _DEV_MAX_REL, _NEO4J_IMPORT_PATH
+from main import _DEFAULT_CREDENTIALS_PATH, _PRODUCTION, _DEV_MAX_REL, _NEO4J_IMPORT_PATH, _FUNCTION_TIME_PATH
 
 
 class Reformatter:
@@ -39,3 +41,18 @@ def save_df_to_csv(file_name: str, df: pd.DataFrame, override_prod: bool = False
         df.to_csv(_NEO4J_IMPORT_PATH + file_name, index=False)
     else:
         df.iloc[:_DEV_MAX_REL].to_csv(_NEO4J_IMPORT_PATH + file_name, index=False)
+
+
+def time_function(function, variables: dict = {}):
+    start_time = time()
+    result = function(**variables)
+    end_time = time()
+
+    # print("Function: {}".format(function.__name__))
+    # print("Elapsed Time: {}".format(end_time - start_time))
+
+    with open(_FUNCTION_TIME_PATH, "a", newline="\n") as csvfile:
+        writer = csv.writer(csvfile, delimiter="\t")
+        writer.writerow([function.__name__, end_time - start_time])
+
+    return result
