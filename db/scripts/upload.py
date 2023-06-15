@@ -363,7 +363,7 @@ def create_string_edges(gene_gene_scores: pd.DataFrame):
 def create_functional(ft_nodes: pd.DataFrame, ft_ft_overlap: pd.DataFrame, ft_gene: pd.DataFrame):
     print("Creating Functional Term nodes ...")
 
-    utils.save_df_to_csv(file_name="ft_nodes.csv", df=ft_nodes)
+    utils.save_df_to_csv(file_name="ft_nodes.csv", df=ft_nodes, override_prod=True)
     create_nodes(
         source_file="ft_nodes.csv",
         type_="FT",
