@@ -56,3 +56,13 @@ def time_function(function, variables: dict = {}):
         writer.writerow([function.__name__, end_time - start_time])
 
     return result
+
+def print_update(update_type:str, text:str, color:str):
+    colors = {
+        "orange": "\033[0;33m",
+        "blue": "\033[0;34m",
+        "pink": "\033[0;35m",
+        "cyan": "\033[0;36m",
+        "none": "\033[0m"
+    }
+    print("{}{}{}: {}".format(colors[color], update_type, colors["none"], text))

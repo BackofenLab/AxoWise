@@ -1,4 +1,4 @@
-from utils import Reformatter, time_function
+from utils import Reformatter, time_function, print_update
 import pandas as pd
 import os
 import json
@@ -235,7 +235,8 @@ def parse_functional(protein_gene_dict: pd.DataFrame, dir_path: str = _DEFAULT_F
 
 
 def _reformat_experiment_file(df: pd.DataFrame, file_name: str, reformat: bool):
-    print("Reformatting {} ...".format(file_name))
+    print_update(update_type="Reformatting", text=file_name, color="orange")
+    # print("Reformatting {} ...".format(file_name))
 
     # Filename and function pairs: same index <-> use function for file
     names = ["exp_DA", "exp_DE_filter", "TF_target_cor_", "peak_target_cor_", "TF_motif_peak"]
@@ -279,7 +280,8 @@ def _reformat_motif(df: pd.DataFrame):
 
 
 def _reformat_string_file(df: pd.DataFrame, file_name: str):
-    print("Reformatting {} ...".format(file_name))
+    print_update(update_type="Reformatting", text=file_name, color="orange")
+    # print("Reformatting {} ...".format(file_name))
 
     names = ["protein.links.v11.5", "protein.info.v11.5", "string_SYMBOL_ENSEMBL"]
     functions = [_reformat_string_links, _reformat_string_info, _reformat_protein_gene_dict]
@@ -305,7 +307,8 @@ def _reformat_protein_gene_dict(df: pd.DataFrame):
 
 
 def _reformat_functional_term_file(df: pd.DataFrame, file_name: str):
-    print("Reformatting {} ...".format(file_name))
+    print_update(update_type="Reformatting", text=file_name, color="orange")
+    # print("Reformatting {} ...".format(file_name))
 
     names = ["functional_terms_overlap", "KappaEdges", "TermsWithProteins"]
     functions = [_reformat_ft_overlap, _reformat_kappa_edges, _reformat_terms_proteins]
