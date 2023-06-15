@@ -133,7 +133,6 @@ def parse_experiment(dir_path: str = _DEFAULT_EXPERIMENT_PATH, reformat: bool = 
             "feature",
             "in_RNAseq",
             "nearest_index",
-            "nearest_distanceToTSS",
             "nearest_ENSEMBL",
             "mean_count",
         ]
@@ -156,7 +155,7 @@ def parse_experiment(dir_path: str = _DEFAULT_EXPERIMENT_PATH, reformat: bool = 
 
     motif = exp[4]
 
-    return [tg_nodes, tf_nodes, de_values, or_nodes, da_values, tf_tg_corr, tg_or_corr, motif, distance]
+    return tg_nodes, tf_nodes, de_values, or_nodes, da_values, tf_tg_corr, tg_or_corr, motif, distance
 
 
 def parse_string(dir_path: str = _DEFAULT_STRING_PATH):
@@ -171,11 +170,25 @@ def parse_string(dir_path: str = _DEFAULT_STRING_PATH):
         file_name, file_extention = os.path.splitext(file)
         if file_extention == ".tsv":
             df, index = _reformat_string_file(df=pd.read_csv(file, sep="\t"), file_name=file_name.split("/")[-1])
+        elif file_extention == ".txt":
+            df, index = _reformat_string_file(df=pd.read_csv(file, sep=" "), file_name=file_name.split("/")[-1])
         string[index] = df
-    return string
+    
+    gene_gene_scores = string[0].merge(string[2], left_on='protein1', right_on='Protein')
+    gene_gene_scores = gene_gene_scores.filter(items=["ENSEMBL", "protein2", "Score"])
+    gene_gene_scores = gene_gene_scores.rename(columns={"ENSEMBL": "ENSEMBL1"})
+    gene_gene_scores = gene_gene_scores.merge(string[2], left_on='protein2', right_on='Protein')
+    gene_gene_scores = gene_gene_scores.filter(items=["ENSEMBL1", "ENSEMBL", "Score"])
+    gene_gene_scores = gene_gene_scores.rename(columns={"ENSEMBL": "ENSEMBL2"})
+    
+    protein_gene_dict = string[2]
+
+    return gene_gene_scores, protein_gene_dict
+
+    
 
 
-def parse_functional(dir_path: str = _DEFAULT_FUNCTIONAL_PATH):
+def parse_functional(protein_gene_dict:pd.DataFrame, dir_path: str = _DEFAULT_FUNCTIONAL_PATH):
     """
     Reads Functional Terms files and returns a Pandas dataframe
     [ functional_terms_overlap.csv, KappaEdges.csv, TermsWithProteins.csv ]
@@ -190,11 +203,30 @@ def parse_functional(dir_path: str = _DEFAULT_FUNCTIONAL_PATH):
                 df=pd.read_csv(file, sep=","), file_name=file_name.split("/")[-1]
             )
         functional[index] = df
+    
+    ft_nodes = functional[2].filter(items=["external_id", "name", "category"])
+    ft_nodes = ft_nodes.rename(columns={"external_id": "Term"})
 
-    return functional
+    ft_protein_df_list = []
+    for _, i in functional[2].iterrows():
+        tmp_df = pd.DataFrame()
+        tmp_df["Protein"] = json.loads(i["proteins"].replace("'", '"'))
+        tmp_df["Term"] = i["external_id"]
+        ft_protein_df_list.append(tmp_df)
+    ft_protein = pd.concat(ft_protein_df_list)
+
+    ft_protein = ft_protein.merge(protein_gene_dict, left_on="Protein", right_on="Protein")
+    
+    ft_gene = ft_protein.filter(items=["Term", "ENSEMBL"])
+
+    ft_ft_overlap = functional[0]
+
+    return ft_nodes, ft_gene, ft_ft_overlap
 
 
 def _reformat_experiment_file(df: pd.DataFrame, file_name: str, reformat: bool):
+    print("Reformatting {} ...".format(file_name))
+
     # Filename and function pairs: same index <-> use function for file
     names = ["exp_DA", "exp_DE_filter", "TF_target_cor_", "peak_target_cor_", "TF_motif_peak"]
     functions = [_reformat_da, _reformat_de, _reformat_tf_tg, _reformat_or_tg, _reformat_motif]
@@ -237,6 +269,8 @@ def _reformat_motif(df: pd.DataFrame):
 
 
 def _reformat_string_file(df: pd.DataFrame, file_name: str):
+    print("Reformatting {} ...".format(file_name))
+
     names = ["protein.links.v11.5", "protein.info.v11.5", "string_SYMBOL_ENSEMBL"]
     functions = [_reformat_string_links, _reformat_string_info, _reformat_protein_gene_dict]
     index = names.index(file_name)
@@ -255,11 +289,14 @@ def _reformat_string_info(df: pd.DataFrame):
 
 
 def _reformat_protein_gene_dict(df: pd.DataFrame):
-    # TODO
+    df = df.filter(items=["#string_protein_id", "ENSEMBL"])
+    df = df.rename(columns={"#string_protein_id": "Protein"})
     return df
 
 
 def _reformat_functional_term_file(df: pd.DataFrame, file_name: str):
+    print("Reformatting {} ...".format(file_name))
+
     names = ["functional_terms_overlap", "KappaEdges", "TermsWithProteins"]
     functions = [_reformat_ft_overlap, _reformat_kappa_edges, _reformat_terms_proteins]
     index = names.index(file_name)
@@ -268,18 +305,12 @@ def _reformat_functional_term_file(df: pd.DataFrame, file_name: str):
 
 
 def _reformat_ft_overlap(df: pd.DataFrame):
+    df = df.rename({"score": "Score"})
     return df
 
 
 def _reformat_terms_proteins(df: pd.DataFrame):
-    df_list = []
-    for _, i in df.iterrows():
-        tmp_df = pd.DataFrame()
-        tmp_df["ENSEMBL"] = json.loads(i["proteins"].replace("'", '"'))
-        tmp_df["Term"] = i["external_id"]
-        df_list.append(tmp_df)
-    new_df = pd.concat(df_list)
-    return new_df
+    return df
 
 
 def _reformat_kappa_edges(df: pd.DataFrame):

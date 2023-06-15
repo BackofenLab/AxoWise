@@ -230,7 +230,7 @@ def create_or_nodes(nodes: pd.DataFrame, source: int):
     mean_count = mean_count.rename(columns={"mean_count": "Value"})
 
     # create new Open Region node for every new OR
-    nodes = nodes.drop(columns=["mean_count", "nearest_distanceToTSS", "nearest_ENSEMBL"])
+    nodes = nodes.drop(columns=["mean_count", "nearest_ENSEMBL"])
     utils.save_df_to_csv(file_name="or.csv", df=nodes, override_prod=True)
     create_nodes(source_file="or.csv", type_="OR", id="nearest_index", reformat_values=[("summit", "toInteger")])
 
@@ -366,22 +366,57 @@ def create_distance_edges(distance: pd.DataFrame):
     )
 
 
-def create_string_edges(string_rel: pd.DataFrame):
+def create_string_edges(gene_gene_scores: pd.DataFrame):
     print("Creating STRING ASSOCIATION edges ...")
 
-    # TODO
-    pass
+    utils.save_df_to_csv(file_name="string_scores.csv", df=gene_gene_scores)
+    create_relationship(
+        source_file="string_scores.csv",
+        type_="STRING",
+        between=(("ENSEMBL", "ENSEMBL1"), ("ENSEMBL", "ENSEMBL2")),
+        node_types=("TG", "TG"),
+        values=["Score"],
+        reformat_values=[("Score", "toInteger")],
+    )
+
+    return
 
 
-def create_functional(ft_nodes: pd.DataFrame, ft_overlap: pd.DataFrame, ft_protein_rel: pd.DataFrame):
+def create_functional(ft_nodes: pd.DataFrame, ft_ft_overlap: pd.DataFrame, ft_gene: pd.DataFrame):
     print("Creating Functional Term nodes ...")
 
-    # TODO
+    utils.save_df_to_csv(file_name="ft_nodes.csv", df=ft_nodes)
+    create_nodes(
+        source_file="ft_nodes.csv",
+        type_="FT",
+        id="Term",
+        reformat_values=[],
+    )
 
     print("Creating OVERLAP edges ...")
+    
+    utils.save_df_to_csv(file_name="ft_overlap.csv", df=ft_ft_overlap)
+    create_relationship(
+        source_file="ft_overlap.csv",
+        type_="OVERLAP",
+        between=(("Term", "source"), ("Term", "target")),
+        node_types=("FT", "FT"),
+        values=["Score"],
+        reformat_values=[("Score", "toFloat")],
+    )
 
-    # TODO
-    pass
+    print("Creating LINK (Gene -> Functional Term) edges ...")
+
+    utils.save_df_to_csv(file_name="ft_gene.csv", df=ft_gene)
+    create_relationship(
+        source_file="ft_gene.csv",
+        type_="LINK",
+        between=(("ENSEMBL", "ENSEMBL"), ("Term", "Term")),
+        node_types=("TG", "FT"),
+        values=[],
+        reformat_values=[],
+    )
+    return
 
 
 def extend_db_from_experiment(

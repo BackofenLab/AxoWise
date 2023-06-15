@@ -24,8 +24,8 @@ def read_string_files(path=_DEFAULT_STRING_PATH):
     return data
 
 
-def read_functional_files(path=_DEFAULT_FUNCTIONAL_PATH):
-    data = rd.parse_functional(dir_path=path)
+def read_functional_files(protein_gene_dict, path=_DEFAULT_FUNCTIONAL_PATH):
+    data = rd.parse_functional(protein_gene_dict=protein_gene_dict, dir_path=path)
     return data
 
 def read_functional_files(path=_DEFAULT_FUNCTIONAL_PATH):
@@ -47,12 +47,15 @@ if __name__ == "__main__":
     ) = read_experiment_files()
 
     (
-        ft_nodes,
-        ft_overlap,
-        ft_protein_rel,
-    ) = read_functional_files()
+        gene_gene_scores, 
+        protein_gene_dict
+    ) = read_string_files()
 
-    string_rel = read_string_files()
+    (
+        ft_nodes,
+        ft_gene,
+        ft_ft_overlap,
+    ) = read_functional_files(protein_gene_dict=protein_gene_dict)
 
     first_setup(
         tg_nodes=tg_nodes,
@@ -65,7 +68,7 @@ if __name__ == "__main__":
         motif=motif,
         distance=distance,
         ft_nodes=ft_nodes,
-        ft_overlap=ft_overlap,
-        ft_protein_rel=ft_protein_rel,
-        string_rel=string_rel,
+        ft_gene=ft_gene,
+        ft_ft_overlap=ft_ft_overlap,
+        gene_gene_scores=gene_gene_scores, 
     )
