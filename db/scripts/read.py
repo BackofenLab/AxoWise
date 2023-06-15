@@ -147,22 +147,20 @@ def parse_string(dir_path: str = _DEFAULT_STRING_PATH):
         elif file_extention == ".txt":
             df, index = _reformat_string_file(df=pd.read_csv(file, sep=" "), file_name=file_name.split("/")[-1])
         string[index] = df
-    
-    gene_gene_scores = string[0].merge(string[2], left_on='protein1', right_on='Protein')
+
+    gene_gene_scores = string[0].merge(string[2], left_on="protein1", right_on="Protein")
     gene_gene_scores = gene_gene_scores.filter(items=["ENSEMBL", "protein2", "Score"])
     gene_gene_scores = gene_gene_scores.rename(columns={"ENSEMBL": "ENSEMBL1"})
-    gene_gene_scores = gene_gene_scores.merge(string[2], left_on='protein2', right_on='Protein')
+    gene_gene_scores = gene_gene_scores.merge(string[2], left_on="protein2", right_on="Protein")
     gene_gene_scores = gene_gene_scores.filter(items=["ENSEMBL1", "ENSEMBL", "Score"])
     gene_gene_scores = gene_gene_scores.rename(columns={"ENSEMBL": "ENSEMBL2"})
-    
+
     protein_gene_dict = string[2]
 
     return gene_gene_scores, protein_gene_dict
 
-    
 
-
-def parse_functional(protein_gene_dict:pd.DataFrame, dir_path: str = _DEFAULT_FUNCTIONAL_PATH):
+def parse_functional(protein_gene_dict: pd.DataFrame, dir_path: str = _DEFAULT_FUNCTIONAL_PATH):
     """
     Reads Functional Terms files and returns a Pandas dataframe
     [ functional_terms_overlap.csv, KappaEdges.csv, TermsWithProteins.csv ]
@@ -177,7 +175,7 @@ def parse_functional(protein_gene_dict:pd.DataFrame, dir_path: str = _DEFAULT_FU
                 df=pd.read_csv(file, sep=","), file_name=file_name.split("/")[-1]
             )
         functional[index] = df
-    
+
     ft_nodes = functional[2].filter(items=["external_id", "name", "category"])
     ft_nodes = ft_nodes.rename(columns={"external_id": "Term"})
 
@@ -190,7 +188,7 @@ def parse_functional(protein_gene_dict:pd.DataFrame, dir_path: str = _DEFAULT_FU
     ft_protein = pd.concat(ft_protein_df_list)
 
     ft_protein = ft_protein.merge(protein_gene_dict, left_on="Protein", right_on="Protein")
-    
+
     ft_gene = ft_protein.filter(items=["Term", "ENSEMBL"])
 
     ft_ft_overlap = functional[0]

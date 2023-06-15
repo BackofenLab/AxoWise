@@ -372,7 +372,7 @@ def create_functional(ft_nodes: pd.DataFrame, ft_ft_overlap: pd.DataFrame, ft_ge
     )
 
     print("Creating OVERLAP edges ...")
-    
+
     utils.save_df_to_csv(file_name="ft_overlap.csv", df=ft_ft_overlap)
     create_relationship(
         source_file="ft_overlap.csv",

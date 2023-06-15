@@ -42,10 +42,7 @@ if __name__ == "__main__":
         distance,
     ) = read_experiment_files()
 
-    (
-        gene_gene_scores, 
-        protein_gene_dict
-    ) = read_string_files()
+    (gene_gene_scores, protein_gene_dict) = read_string_files()
 
     (
         ft_nodes,
@@ -66,5 +63,5 @@ if __name__ == "__main__":
         ft_nodes=ft_nodes,
         ft_gene=ft_gene,
         ft_ft_overlap=ft_ft_overlap,
-        gene_gene_scores=gene_gene_scores, 
+        gene_gene_scores=gene_gene_scores,
     )
