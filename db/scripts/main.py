@@ -10,6 +10,7 @@ _DEFAULT_STUDY_INFO = {"source": "in-house"}
 _DEFAULT_CREDENTIALS_PATH = Path(__file__).parent / Path("../../credentials.yml")
 _DEV_MAX_REL = 10000
 _NEO4J_IMPORT_PATH = "/usr/local/bin/neo4j/import/"
+_FUNCTION_TIME_PATH = Path(__file__).parent / Path("./function_times.csv")
 
 _PRODUCTION = False
 
@@ -41,18 +42,18 @@ if __name__ == "__main__":
         or_nodes,
         da_values,
         tf_tg_corr,
-        tg_or_corr,
+        or_tg_corr,
         motif,
         distance,
-    ) = read_experiment_files()
+    ) = utils.time_function(read_experiment_files)
 
-    (gene_gene_scores, protein_gene_dict) = read_string_files()
+    (gene_gene_scores, protein_gene_dict) = utils.time_function(read_string_files)
 
     (
         ft_nodes,
         ft_gene,
         ft_ft_overlap,
-    ) = read_functional_files(protein_gene_dict=protein_gene_dict)
+    ) = utils.time_function(read_functional_files, variables={"protein_gene_dict": protein_gene_dict})
 
     first_setup(
         tg_nodes=tg_nodes,
@@ -61,7 +62,7 @@ if __name__ == "__main__":
         da_values=da_values,
         de_values=de_values,
         tf_tg_corr=tf_tg_corr,
-        tg_or_corr=tg_or_corr,
+        or_tg_corr=or_tg_corr,
         motif=motif,
         distance=distance,
         ft_nodes=ft_nodes,

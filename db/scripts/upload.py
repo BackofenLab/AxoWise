@@ -163,7 +163,7 @@ def create_relationship(
         load_data_query, create_edge_query
     )
 
-    utils.execute_query(per_iter, read=False)
+    utils.execute_query(query=per_iter, read=False)
     return
 
 
@@ -426,23 +426,23 @@ def extend_db_from_experiment(
     de_values: pd.DataFrame,
     da_values: pd.DataFrame,
     tf_tg_corr: pd.DataFrame,
-    tg_or_corr: pd.DataFrame,
+    or_tg_corr: pd.DataFrame,
     motif: pd.DataFrame,
     distance: pd.DataFrame,
 ):
-    id_source = create_study_cell_source_meancount()
-    create_tg_nodes(nodes=tg_nodes, source=id_source)
-    create_tf_nodes(nodes=tf_nodes, source=id_source)
-    create_or_nodes(nodes=or_nodes, source=id_source)
+    id_source = utils.time_function(create_study_cell_source_meancount)
+    utils.time_function(create_tg_nodes, variables={"nodes": tg_nodes, "source": id_source})
+    utils.time_function(create_tf_nodes, variables={"nodes": tf_nodes, "source": id_source})
+    utils.time_function(create_or_nodes, variables={"nodes": or_nodes, "source": id_source})
 
-    create_context(context=de_values, source=id_source, value_type=1)
-    create_context(context=da_values, source=id_source, value_type=0)
+    utils.time_function(create_context, variables={"context": de_values, "source": id_source, "value_type": 1})
+    utils.time_function(create_context, variables={"context": da_values, "source": id_source, "value_type": 0})
 
-    create_correlation(correlation=tf_tg_corr, source=id_source, value_type=1)
-    create_correlation(correlation=tg_or_corr, source=id_source, value_type=0)
+    utils.time_function(create_correlation, variables={"correlation": tf_tg_corr, "source": id_source, "value_type": 1})
+    utils.time_function(create_correlation, variables={"correlation": or_tg_corr, "source": id_source, "value_type": 0})
 
-    create_motif_edges(motif=motif)
-    create_distance_edges(distance=distance)
+    utils.time_function(create_motif_edges, variables={"motif": motif})
+    utils.time_function(create_distance_edges, variables={"distance": distance})
 
     print("Done extending DB from Experimental Data")
     return
