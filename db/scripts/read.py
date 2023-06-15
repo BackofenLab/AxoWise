@@ -218,7 +218,6 @@ def parse_functional(protein_gene_dict: pd.DataFrame, dir_path: str = _DEFAULT_F
     ft_gene = ft_protein.filter(items=["Term", "ENSEMBL"])
 
     ft_ft_overlap = functional[0]
-    print(ft_ft_overlap)
 
     return ft_nodes, ft_gene, ft_ft_overlap
 
