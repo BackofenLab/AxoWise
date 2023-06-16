@@ -2,7 +2,7 @@ import pandas as pd
 import yaml
 import csv
 from time import time
-from neo4j import GraphDatabase, RoutingControl
+from neo4j import GraphDatabase, RoutingControl, Driver
 from main import _DEFAULT_CREDENTIALS_PATH, _PRODUCTION, _DEV_MAX_REL, _NEO4J_IMPORT_PATH, _FUNCTION_TIME_PATH
 
 
@@ -27,13 +27,21 @@ def read_creds(credentials_path=_DEFAULT_CREDENTIALS_PATH):
     return "neo4j://{}:{}".format(neo4j["host"], neo4j["port"]), ("neo4j", neo4j["pw"])
 
 
-def execute_query(query: str, read: bool):
+def start_driver():
     uri, auth = read_creds()
-    with GraphDatabase.driver(uri, auth=auth) as driver:
-        if not read:
-            return driver.execute_query(query)
-        else:
-            return driver.execute_query(query, RoutingControl.READ)
+    driver = GraphDatabase.driver(uri, auth=auth)
+    return driver
+
+
+def stop_driver(driver: Driver):
+    driver.stop()
+
+
+def execute_query(query: str, read: bool, driver: Driver):
+    if not read:
+        return driver.execute_query(query)
+    else:
+        return driver.execute_query(query, RoutingControl.READ)
 
 
 def save_df_to_csv(file_name: str, df: pd.DataFrame, override_prod: bool = False):
@@ -48,21 +56,19 @@ def time_function(function, variables: dict = {}):
     result = function(**variables)
     end_time = time()
 
-    # print("Function: {}".format(function.__name__))
-    # print("Elapsed Time: {}".format(end_time - start_time))
-
     with open(_FUNCTION_TIME_PATH, "a", newline="\n") as csvfile:
         writer = csv.writer(csvfile, delimiter="\t")
         writer.writerow([function.__name__, end_time - start_time])
 
     return result
 
-def print_update(update_type:str, text:str, color:str):
+
+def print_update(update_type: str, text: str, color: str):
     colors = {
         "orange": "\033[0;33m",
         "blue": "\033[0;34m",
         "pink": "\033[0;35m",
         "cyan": "\033[0;36m",
-        "none": "\033[0m"
+        "none": "\033[0m",
     }
     print("{}{}{}: {}".format(colors[color], update_type, colors["none"], text))

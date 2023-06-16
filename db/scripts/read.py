@@ -205,7 +205,9 @@ def parse_functional(protein_gene_dict: pd.DataFrame, dir_path: str = _DEFAULT_F
 
     ft_ft_overlap = functional[0]
 
-    return ft_nodes, ft_gene, ft_ft_overlap
+    ft_ft_kappa = functional[1]
+
+    return ft_nodes, ft_gene, ft_ft_overlap, ft_ft_kappa
 
 
 def _reformat_experiment_file(df: pd.DataFrame, file_name: str, reformat: bool):
@@ -301,4 +303,5 @@ def _reformat_terms_proteins(df: pd.DataFrame):
 
 
 def _reformat_kappa_edges(df: pd.DataFrame):
+    df = df.rename(columns={"score": "Score"})
     return df
