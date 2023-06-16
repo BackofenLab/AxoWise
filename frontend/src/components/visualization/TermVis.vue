@@ -7,6 +7,12 @@
 import sigma from 'sigma'
 import {scaleLinear} from "d3-scale";
 import saveAsPNG from '../../rendering/saveAsPNG';
+import saveAsSVG from '../../rendering/saveAsSVG';
+import customLabelRenderer from '../../rendering/customLabelRenderer';
+import customNodeRenderer from '../../rendering/customNodeRenderer';
+
+sigma.canvas.labels.def = customLabelRenderer
+sigma.canvas.nodes.def = customNodeRenderer
 
 var sigma_instance = null;
 
@@ -275,8 +281,9 @@ export default {
 
     return rgb_value;
     },
-    exportGraphAsImage(mode) {
-      saveAsPNG(sigma_instance, {download: true}, mode)
+    exportGraphAsImage(params) {
+      if(params.format=="svg") saveAsSVG(sigma_instance, {download: true}, params.mode);
+      else saveAsPNG(sigma_instance, {download: true}, params.mode);
     },
     hide_labels(state) {
     if(state){
@@ -333,8 +340,8 @@ export default {
       this.$emit('active_fdr_changed', state)
     });
 
-    this.emitter.on("exportTermGraph", (mode) => {
-      this.exportGraphAsImage(mode)
+    this.emitter.on("exportTermGraph", (params) => {
+      this.exportGraphAsImage(params)
     });
 
     this.emitter.on("centerTermGraph", () => {
