@@ -4,9 +4,8 @@ from utils import execute_query
 from main import _DEFAULT_CELLTYPE_INFO, _DEFAULT_STUDY_INFO
 
 
-def create_study_cell_source_meancount():
-    utils.print_update(update_type="Creating", text="Study, Celltype, Source and MeanCount nodes", color="blue")
-    # print("Creating Study, Celltype, Source and MeanCount nodes ...")
+def create_study_cell_source_meancount(driver: Driver):
+    utils.print_update(update_type="Node Creation", text="Study, Celltype, Source and MeanCount", color="blue")
     study_info_str = (
         "{" + ", ".join(["{}: '{}'".format(c, main._DEFAULT_STUDY_INFO[c]) for c in main._DEFAULT_STUDY_INFO]) + "}"
     )
@@ -36,12 +35,12 @@ def create_study_cell_source_meancount():
         + " "
         + return_id
     )
-    result, _, _ = utils.execute_query(query=query, read=False)
+    result, _, _ = utils.execute_query(query=query, read=False, driver=driver)
 
     return result[0]["id"]
 
 
-def create_nodes(source_file: str, type_: str, id: str, reformat_values: list[tuple[str]]):
+def create_nodes(source_file: str, type_: str, id: str, reformat_values: list[tuple[str]], driver: Driver):
     """
     Common function to create nodes in the Neo4j Database (MERGE not CREATE)
 
@@ -60,7 +59,7 @@ def create_nodes(source_file: str, type_: str, id: str, reformat_values: list[tu
     # For large numbers of nodes, using apoc.periodic.iterate
     # For info, see: https://neo4j.com/labs/apoc/4.2/overview/apoc.periodic/apoc.periodic.iterate/
 
-    per_iter = 'CALL apoc.periodic.iterate("{}", "{}", {{batchSize: 1000, parallel: true}} )'.format(
+    per_iter = 'CALL apoc.periodic.iterate("{}", "{}", {{batchSize: 500, parallel: true}} )'.format(
         load_data_query, merge_into_db_query + " " + reformat_values_str
     )
 
@@ -96,6 +95,7 @@ def create_relationship(
     node_types: tuple[str],
     values: list[str],
     reformat_values: list[tuple[str]],
+    driver: Driver,
     merge: bool = False,
 ):
     """
@@ -160,17 +160,16 @@ def create_relationship(
     else:
         create_edge_query = "CREATE (m)-[e:{}]->(n)".format(type_) + set_values_query
 
-    per_iter = 'CALL apoc.periodic.iterate("{}", "{}", {{batchSize: 1000, parallel: true}} )'.format(
+    per_iter = 'CALL apoc.periodic.iterate("{}", "{}", {{batchSize: 500, parallel: true}} )'.format(
         load_data_query, create_edge_query
     )
 
-    utils.execute_query(query=per_iter, read=False)
+    utils.execute_query(query=per_iter, read=False, driver=driver)
     return
 
 
-def create_tg_nodes(nodes: pd.DataFrame, source: int):
-    utils.print_update(update_type="Creating", text="Target Gene nodes", color="blue")
-    # print("Creating Target Gene nodes ...")
+def create_tg_nodes(nodes: pd.DataFrame, source: int, driver: Driver):
+    utils.print_update(update_type="Node Creation", text="Target Gene", color="blue")
 
     # filter for MeanCount values to add later
     mean_count = nodes.filter(items=["ENSEMBL", "mean_count"])
@@ -180,10 +179,11 @@ def create_tg_nodes(nodes: pd.DataFrame, source: int):
     # create new Target Gene nodes for every new TG
     nodes = nodes.drop(columns=["mean_count"])
     utils.save_df_to_csv(file_name="tg.csv", df=nodes, override_prod=True)
-    create_nodes(source_file="tg.csv", type_="TG", id="ENSEMBL", reformat_values=[("ENTREZID", "toInteger")])
+    create_nodes(
+        source_file="tg.csv", type_="TG", id="ENSEMBL", reformat_values=[("ENTREZID", "toInteger")], driver=driver
+    )
 
-    utils.print_update(update_type="Creating", text="MEANCOUNT edges for Target Genes", color="cyan")
-    # print("Creating MEANCOUNT edges for Target Genes ...")
+    utils.print_update(update_type="Edge Creation", text="MEANCOUNT for Target Genes", color="cyan")
 
     # create MeanCount edges for TGs
     utils.save_df_to_csv(file_name="tg_meancount.csv", df=mean_count)
@@ -194,12 +194,12 @@ def create_tg_nodes(nodes: pd.DataFrame, source: int):
         node_types=("MeanCount", "TG"),
         values=["Value", "Source"],
         reformat_values=[("Value", "toFloat"), ("Source", "toInteger")],
+        driver=driver,
     )
 
 
-def create_tf_nodes(nodes: pd.DataFrame, source: int):
-    utils.print_update(update_type="Creating", text="Transcription Factor nodes", color="blue")
-    # print("Creating Transcription Factor nodes ...")
+def create_tf_nodes(nodes: pd.DataFrame, source: int, driver: Driver):
+    utils.print_update(update_type="Node Creation", text="Transcription Factor", color="blue")
 
     # filter for MeanCount values to add later
     mean_count = nodes.filter(items=["ENSEMBL", "mean_count"])
@@ -209,10 +209,11 @@ def create_tf_nodes(nodes: pd.DataFrame, source: int):
     # create new Transcription Factor node for every new TF
     nodes = nodes.drop(columns=["mean_count"])
     utils.save_df_to_csv(file_name="tf.csv", df=nodes, override_prod=True)
-    create_nodes(source_file="tf.csv", type_="TF:TG", id="ENSEMBL", reformat_values=[("ENTREZID", "toInteger")])
+    create_nodes(
+        source_file="tf.csv", type_="TF:TG", id="ENSEMBL", reformat_values=[("ENTREZID", "toInteger")], driver=driver
+    )
 
-    utils.print_update(update_type="Creating", text="MEANCOUNT edges for Transcription Factors", color="cyan")
-    #print("Creating MEANCOUNT edges for Transcription Factors ...")
+    utils.print_update(update_type="Edge Creation", text="MEANCOUNT for Transcription Factors", color="cyan")
 
     # create MeanCount edges for TFs
     utils.save_df_to_csv(file_name="tf_meancount.csv", df=mean_count)
@@ -223,12 +224,12 @@ def create_tf_nodes(nodes: pd.DataFrame, source: int):
         node_types=("MeanCount", "TF"),
         values=["Value", "Source"],
         reformat_values=[("Value", "toFloat"), ("Source", "toInteger")],
+        driver=driver,
     )
 
 
-def create_or_nodes(nodes: pd.DataFrame, source: int):
-    utils.print_update(update_type="Creating", text="Open Region nodes", color="blue")
-    # print("Creating Open Region nodes ...")
+def create_or_nodes(nodes: pd.DataFrame, source: int, driver: Driver):
+    utils.print_update(update_type="Node Creation", text="Open Region", color="blue")
 
     # filter for MeanCount values to add later
     mean_count = nodes.filter(items=["nearest_index", "mean_count"])
@@ -238,10 +239,11 @@ def create_or_nodes(nodes: pd.DataFrame, source: int):
     # create new Open Region node for every new OR
     nodes = nodes.drop(columns=["mean_count", "nearest_ENSEMBL"])
     utils.save_df_to_csv(file_name="or.csv", df=nodes, override_prod=True)
-    create_nodes(source_file="or.csv", type_="OR", id="nearest_index", reformat_values=[("summit", "toInteger")])
+    create_nodes(
+        source_file="or.csv", type_="OR", id="nearest_index", reformat_values=[("summit", "toInteger")], driver=driver
+    )
 
-    utils.print_update(update_type="Creating", text="MEANCOUNT edges for Open Regions", color="cyan")
-    # print("Creating MEANCOUNT edges for Open Regions ...")
+    utils.print_update(update_type="Edge Creation", text="MEANCOUNT for Open Regions", color="cyan")
 
     # create MeanCount edges for ORs
     utils.save_df_to_csv(file_name="or_meancount.csv", df=mean_count)
@@ -252,22 +254,21 @@ def create_or_nodes(nodes: pd.DataFrame, source: int):
         node_types=("MeanCount", "OR"),
         values=["Value", "Source"],
         reformat_values=[("Value", "toFloat"), ("Source", "toInteger")],
+        driver=driver,
     )
 
 
-def create_context(context: pd.DataFrame, source: int, value_type: int):  # value_type: 1 -> DE, 0 -> DA
-    utils.print_update(update_type="Creating", text="Context nodes", color="blue")
-    # print("Creating Context nodes ...")
+def create_context(context: pd.DataFrame, source: int, value_type: int, driver: Driver):  # value_type: 1 -> DE, 0 -> DA
+    utils.print_update(update_type="Node Creation", text="Context", color="blue")
 
     # create Context node for every new context
     nodes = context["Context"].unique()
     node_df = pd.DataFrame.from_records(data=[{"Context": c} for c in nodes])
 
     utils.save_df_to_csv(file_name="context.csv", df=node_df, override_prod=True)
-    create_nodes(source_file="context.csv", type_="Context", id="Context", reformat_values=[])
+    create_nodes(source_file="context.csv", type_="Context", id="Context", reformat_values=[], driver=driver)
 
-    utils.print_update(update_type="Creating", text="Source-Context edges", color="cyan")
-    # print("Connecting Source and Context nodes ...")
+    utils.print_update(update_type="Edge Creation", text="HAS for Source, Context", color="cyan")
 
     # create HAS edge from source to Context node for every context represented in the source
     source_edge_df = node_df
@@ -283,10 +284,10 @@ def create_context(context: pd.DataFrame, source: int, value_type: int):  # valu
         values=[],
         reformat_values=[("Source", "toInteger")],
         merge=True,
+        driver=driver,
     )
 
-    utils.print_update(update_type="Creating", text="Context {} edges".format("DE" if value_type == 1 else "DA"), color="cyan")
-    # print("Creating Context {} edges ...".format("DE" if value_type == 1 else "DA"))
+    utils.print_update(update_type="Edge Creation", text="{}".format("DE" if value_type == 1 else "DA"), color="cyan")
 
     # Create DE/DA edges with Values and Source node id
     edge_df = context
@@ -302,6 +303,7 @@ def create_context(context: pd.DataFrame, source: int, value_type: int):  # valu
             node_types=("Context", "TG"),
             values=["Value", "p", "Source"],
             reformat_values=[("Value", "toFloat"), ("Source", "toInteger"), ("p", "toFloat")],
+            driver=driver,
         )
 
     # DA Edges
@@ -314,12 +316,19 @@ def create_context(context: pd.DataFrame, source: int, value_type: int):  # valu
             node_types=("Context", "OR"),
             values=["Value", "p", "Source"],
             reformat_values=[("Value", "toFloat"), ("Source", "toInteger"), ("p", "toFloat")],
+            driver=driver,
         )
 
 
-def create_correlation(correlation: pd.DataFrame, source: int, value_type: int):  # value_type: 1 -> TF-TG, 0 -> TG-OR
-    utils.print_update(update_type="Creating", text="{} CORRELATION edges".format("TF->TG" if value_type == 1 else "OR->TG"), color="cyan")
-    # print("Creating {} CORRELATION edges ...".format("TF->TG" if value_type == 1 else "OR->TG"))
+def create_correlation(
+    correlation: pd.DataFrame, source: int, value_type: int, driver: Driver
+):  # value_type: 1 -> TF-TG, 0 -> TG-OR
+    utils.print_update(
+        update_type="Edge Creation",
+        text="{} CORRELATION".format("TF->TG" if value_type == 1 else "OR->TG"),
+        color="cyan",
+    )
+
     correlation["Source"] = source
 
     # TF-TG edges
@@ -332,6 +341,7 @@ def create_correlation(correlation: pd.DataFrame, source: int, value_type: int):
             node_types=("TF", "TG"),
             values=["Correlation", "Source"],
             reformat_values=[("Correlation", "toFloat"), ("Source", "toInteger")],
+            driver=driver,
         )
 
     # OR-TG edges
@@ -344,12 +354,12 @@ def create_correlation(correlation: pd.DataFrame, source: int, value_type: int):
             node_types=("OR", "TG"),
             values=["Correlation", "Source"],
             reformat_values=[("Correlation", "toFloat"), ("Source", "toInteger")],
+            driver=driver,
         )
 
 
-def create_motif_edges(motif: pd.DataFrame):
-    utils.print_update(update_type="Creating", text="MOTIF edges", color="cyan")
-    # print("Creating MOTIF edges ...")
+def create_motif_edges(motif: pd.DataFrame, driver: Driver):
+    utils.print_update(update_type="Edge Creation", text="MOTIF", color="cyan")
 
     utils.save_df_to_csv(file_name="motif.csv", df=motif)
     create_relationship(
@@ -360,12 +370,12 @@ def create_motif_edges(motif: pd.DataFrame):
         values=["Motif"],
         reformat_values=[],
         merge=True,
+        driver=driver,
     )
 
 
-def create_distance_edges(distance: pd.DataFrame):
-    utils.print_update(update_type="Creating", text="DISTANCE edges", color="cyan")
-    # print("Creating DISTANCE edges ...")
+def create_distance_edges(distance: pd.DataFrame, driver: Driver):
+    utils.print_update(update_type="Edge Creation", text="DISTANCE", color="cyan")
 
     utils.save_df_to_csv(file_name="distance.csv", df=distance)
     create_relationship(
@@ -376,12 +386,12 @@ def create_distance_edges(distance: pd.DataFrame):
         values=["Distance"],
         reformat_values=[("Distance", "toInteger")],
         merge=True,
+        driver=driver,
     )
 
 
-def create_string_edges(gene_gene_scores: pd.DataFrame):
-    utils.print_update(update_type="Creating", text="STRING ASSOCIATION edges", color="cyan")
-    # print("Creating STRING ASSOCIATION edges ...")
+def create_string_edges(gene_gene_scores: pd.DataFrame, driver: Driver):
+    utils.print_update(update_type="Edge Creation", text="STRING", color="cyan")
 
     utils.save_df_to_csv(file_name="string_scores.csv", df=gene_gene_scores)
     create_relationship(
@@ -391,14 +401,20 @@ def create_string_edges(gene_gene_scores: pd.DataFrame):
         node_types=("TG", "TG"),
         values=["Score"],
         reformat_values=[("Score", "toInteger")],
+        driver=driver,
     )
 
     return
 
 
-def create_functional(ft_nodes: pd.DataFrame, ft_ft_overlap: pd.DataFrame, ft_gene: pd.DataFrame):
-    utils.print_update(update_type="Creating", text="Functional Term nodes", color="blue")
-    # print("Creating Functional Term nodes ...")
+def create_functional(
+    ft_nodes: pd.DataFrame,
+    ft_ft_overlap: pd.DataFrame,
+    ft_gene: pd.DataFrame,
+    ft_ft_kappa: pd.DataFrame,
+    driver: Driver,
+):
+    utils.print_update(update_type="Node Creation", text="Functional Term", color="blue")
 
     utils.save_df_to_csv(file_name="ft_nodes.csv", df=ft_nodes, override_prod=True)
     create_nodes(
@@ -406,10 +422,10 @@ def create_functional(ft_nodes: pd.DataFrame, ft_ft_overlap: pd.DataFrame, ft_ge
         type_="FT",
         id="Term",
         reformat_values=[],
+        driver=driver,
     )
 
-    utils.print_update(update_type="Creating", text="OVERLAP edges", color="cyan")
-    # print("Creating OVERLAP edges ...")
+    utils.print_update(update_type="Edge Creation", text="OVERLAP", color="cyan")
 
     utils.save_df_to_csv(file_name="ft_overlap.csv", df=ft_ft_overlap)
     create_relationship(
@@ -419,10 +435,10 @@ def create_functional(ft_nodes: pd.DataFrame, ft_ft_overlap: pd.DataFrame, ft_ge
         node_types=("FT", "FT"),
         values=["Score"],
         reformat_values=[("Score", "toFloat")],
+        driver=driver,
     )
 
-    utils.print_update(update_type="Creating", text="LINK (Gene -> Functional Term) edges", color="cyan")
-    # print("Creating LINK (Gene -> Functional Term) edges ...")
+    utils.print_update(update_type="Edge Creation", text="LINK (Gene -> Functional Term)", color="cyan")
 
     utils.save_df_to_csv(file_name="ft_gene.csv", df=ft_gene)
     create_relationship(
@@ -432,7 +448,22 @@ def create_functional(ft_nodes: pd.DataFrame, ft_ft_overlap: pd.DataFrame, ft_ge
         node_types=("TG", "FT"),
         values=[],
         reformat_values=[],
+        driver=driver,
     )
+
+    utils.print_update(update_type="Edge Creation", text="KAPPA", color="cyan")
+
+    utils.save_df_to_csv(file_name="kappa.csv", df=ft_ft_kappa)
+    create_relationship(
+        source_file="kappa.csv",
+        type_="KAPPA",
+        between=(("Term", "source"), ("Term", "target")),
+        node_types=("FT", "FT"),
+        values=["Score"],
+        reformat_values=[("Score", "toFloat")],
+        driver=driver,
+    )
+
     return
 
 
@@ -446,22 +477,35 @@ def extend_db_from_experiment(
     or_tg_corr: pd.DataFrame,
     motif: pd.DataFrame,
     distance: pd.DataFrame,
+    driver: Driver,
 ):
     id_source = utils.time_function(create_study_cell_source_meancount)
-    utils.time_function(create_tg_nodes, variables={"nodes": tg_nodes, "source": id_source})
-    utils.time_function(create_tf_nodes, variables={"nodes": tf_nodes, "source": id_source})
-    utils.time_function(create_or_nodes, variables={"nodes": or_nodes, "source": id_source})
+    utils.time_function(create_tg_nodes, variables={"nodes": tg_nodes, "source": id_source, "driver": driver})
 
-    utils.time_function(create_context, variables={"context": de_values, "source": id_source, "value_type": 1})
-    utils.time_function(create_context, variables={"context": da_values, "source": id_source, "value_type": 0})
+    utils.time_function(create_tf_nodes, variables={"nodes": tf_nodes, "source": id_source, "driver": driver})
 
-    utils.time_function(create_correlation, variables={"correlation": tf_tg_corr, "source": id_source, "value_type": 1})
-    utils.time_function(create_correlation, variables={"correlation": or_tg_corr, "source": id_source, "value_type": 0})
+    utils.time_function(create_or_nodes, variables={"nodes": or_nodes, "source": id_source, "driver": driver})
 
-    utils.time_function(create_motif_edges, variables={"motif": motif})
-    utils.time_function(create_distance_edges, variables={"distance": distance})
+    utils.time_function(
+        create_context, variables={"context": de_values, "source": id_source, "value_type": 1, "driver": driver}
+    )
+    utils.time_function(
+        create_context, variables={"context": da_values, "source": id_source, "value_type": 0, "driver": driver}
+    )
+
+    utils.time_function(
+        create_correlation,
+        variables={"correlation": tf_tg_corr, "source": id_source, "value_type": 1, "driver": driver},
+    )
+    utils.time_function(
+        create_correlation,
+        variables={"correlation": or_tg_corr, "source": id_source, "value_type": 0, "driver": driver},
+    )
+
+    utils.time_function(create_motif_edges, variables={"motif": motif, "driver": driver})
+
+    utils.time_function(create_distance_edges, variables={"distance": distance, "driver": driver})
 
     utils.print_update(update_type="Done", text="Extending DB from Experimental Data", color="pink")
-    # print("Done extending DB from Experimental Data")
     return
 

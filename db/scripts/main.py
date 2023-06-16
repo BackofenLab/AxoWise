@@ -5,8 +5,8 @@ from upload import extend_db_from_experiment, first_setup
 _DEFAULT_EXPERIMENT_PATH = Path("../source/experiment")
 _DEFAULT_STRING_PATH = Path("../source/string")
 _DEFAULT_FUNCTIONAL_PATH = Path("../source/functional")
-_DEFAULT_CELLTYPE_INFO = {"name": "Microglia"}
-_DEFAULT_STUDY_INFO = {"source": "in-house"}
+_DEFAULT_CELLTYPE_INFO = {"Name": "Microglia"}
+_DEFAULT_STUDY_INFO = {"Source": "in-house"}
 _DEFAULT_CREDENTIALS_PATH = Path(__file__).parent / Path("../../credentials.yml")
 _DEV_MAX_REL = 10000
 _NEO4J_IMPORT_PATH = "/usr/local/bin/neo4j/import/"
@@ -53,6 +53,7 @@ if __name__ == "__main__":
         ft_nodes,
         ft_gene,
         ft_ft_overlap,
+        ft_ft_kappa,
     ) = utils.time_function(read_functional_files, variables={"protein_gene_dict": protein_gene_dict})
 
     first_setup(
@@ -69,4 +70,5 @@ if __name__ == "__main__":
         ft_gene=ft_gene,
         ft_ft_overlap=ft_ft_overlap,
         gene_gene_scores=gene_gene_scores,
+        ft_ft_kappa=ft_ft_kappa,
     )
