@@ -182,6 +182,9 @@ def parse_string(dir_path: str = _DEFAULT_STRING_PATH):
 
     string = time_function(read_string)
 
+    string_gene_nodes = string[2].filter(items=["ENSEMBL", "ENTREZID", "annot", "SYMBOL"])
+    string_gene_nodes = string_gene_nodes.dropna(subset=["ENSEMBL"])
+
     gene_gene_scores = string[0].merge(string[2], left_on="protein1", right_on="Protein")
     gene_gene_scores = gene_gene_scores.filter(items=["ENSEMBL", "protein2", "Score"])
     gene_gene_scores = gene_gene_scores.rename(columns={"ENSEMBL": "ENSEMBL1"})
@@ -191,7 +194,7 @@ def parse_string(dir_path: str = _DEFAULT_STRING_PATH):
 
     protein_gene_dict = string[2]
 
-    return gene_gene_scores, protein_gene_dict
+    return gene_gene_scores, protein_gene_dict, string_gene_nodes
 
 
 def parse_functional(protein_gene_dict: pd.DataFrame, dir_path: str = _DEFAULT_FUNCTIONAL_PATH):
@@ -303,8 +306,8 @@ def _reformat_string_info(df: pd.DataFrame):
 
 
 def _reformat_protein_gene_dict(df: pd.DataFrame):
-    df = df.filter(items=["#string_protein_id", "ENSEMBL"])
-    df = df.rename(columns={"#string_protein_id": "Protein"})
+    df = df.filter(items=["#string_protein_id", "ENSEMBL", "annotation", "ENTREZID", "preferred_name"])
+    df = df.rename(columns={"#string_protein_id": "Protein", "annotation": "annot", "preferred_name": "SYMBOL"})
     return df
 
 

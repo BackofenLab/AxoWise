@@ -7,7 +7,7 @@ _DEFAULT_STRING_PATH = Path("../source/string")
 _DEFAULT_FUNCTIONAL_PATH = Path("../source/functional")
 _DEFAULT_CELLTYPE_INFO = {"Name": "Microglia"}
 _DEFAULT_STUDY_INFO = {"Source": "in-house"}
-_DEFAULT_CREDENTIALS_PATH = Path(__file__).parent / Path("../../credentials.yml")
+_DEFAULT_CREDENTIALS_PATH = Path(__file__).parent / Path("../../config.yml")
 _DEV_MAX_REL = 10000
 _NEO4J_IMPORT_PATH = "/usr/local/bin/neo4j/import/"
 _FUNCTION_TIME_PATH = Path(__file__).parent / Path("./function_times.csv")
@@ -47,7 +47,7 @@ if __name__ == "__main__":
         distance,
     ) = utils.time_function(read_experiment_files)
 
-    (gene_gene_scores, protein_gene_dict) = utils.time_function(read_string_files)
+    (gene_gene_scores, protein_gene_dict, string_gene_nodes) = utils.time_function(read_string_files)
 
     (
         ft_nodes,
@@ -71,4 +71,5 @@ if __name__ == "__main__":
         ft_ft_overlap=ft_ft_overlap,
         gene_gene_scores=gene_gene_scores,
         ft_ft_kappa=ft_ft_kappa,
+        string_gene_nodes=string_gene_nodes,
     )

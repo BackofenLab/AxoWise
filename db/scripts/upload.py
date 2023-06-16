@@ -390,7 +390,19 @@ def create_distance_edges(distance: pd.DataFrame, driver: Driver):
     )
 
 
-def create_string_edges(gene_gene_scores: pd.DataFrame, driver: Driver):
+def create_string(gene_gene_scores: pd.DataFrame, string_gene_nodes: pd.DataFrame, driver: Driver):
+    utils.print_update(update_type="Node Creation", text="STRING TG", color="blue")
+
+    utils.save_df_to_csv(file_name="string_genes.csv", df=string_gene_nodes, override_prod=True)
+
+    create_nodes(
+        source_file="string_genes.csv",
+        type_="TG",
+        id="ENSEMBL",
+        reformat_values=[("ENTREZID", "toInteger")],
+        driver=driver,
+    )
+
     utils.print_update(update_type="Edge Creation", text="STRING", color="cyan")
 
     utils.save_df_to_csv(file_name="string_scores.csv", df=gene_gene_scores)
@@ -402,6 +414,7 @@ def create_string_edges(gene_gene_scores: pd.DataFrame, driver: Driver):
         values=["Score"],
         reformat_values=[("Score", "toInteger")],
         driver=driver,
+        merge=True,  # TODO Remove
     )
 
     return
@@ -436,6 +449,7 @@ def create_functional(
         values=["Score"],
         reformat_values=[("Score", "toFloat")],
         driver=driver,
+        merge=True,  # TODO Remove
     )
 
     utils.print_update(update_type="Edge Creation", text="LINK (Gene -> Functional Term)", color="cyan")
@@ -449,6 +463,7 @@ def create_functional(
         values=[],
         reformat_values=[],
         driver=driver,
+        merge=True,  # TODO Remove
     )
 
     utils.print_update(update_type="Edge Creation", text="KAPPA", color="cyan")
@@ -462,6 +477,7 @@ def create_functional(
         values=["Score"],
         reformat_values=[("Score", "toFloat")],
         driver=driver,
+        merge=True,  # TODO Remove
     )
 
     return
