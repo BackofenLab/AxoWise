@@ -371,7 +371,19 @@ def create_distance_edges(distance: pd.DataFrame, driver: Driver):
     )
 
 
-def create_string_edges(gene_gene_scores: pd.DataFrame, driver: Driver):
+def create_string(gene_gene_scores: pd.DataFrame, string_gene_nodes: pd.DataFrame, driver: Driver):
+    utils.print_update(update_type="Node Creation", text="STRING TG", color="blue")
+
+    utils.save_df_to_csv(file_name="string_genes.csv", df=string_gene_nodes, override_prod=True)
+
+    create_nodes(
+        source_file="string_genes.csv",
+        type_="TG",
+        id="ENSEMBL",
+        reformat_values=[("ENTREZID", "toInteger")],
+        driver=driver,
+    )
+
     utils.print_update(update_type="Edge Creation", text="STRING", color="cyan")
 
     utils.save_df_to_csv(file_name="string_scores.csv", df=gene_gene_scores)
@@ -383,6 +395,7 @@ def create_string_edges(gene_gene_scores: pd.DataFrame, driver: Driver):
         values=["Score"],
         reformat_values=[("Score", "toInteger")],
         driver=driver,
+        merge=True,  # TODO Remove
     )
 
     return
@@ -417,6 +430,7 @@ def create_functional(
         values=["Score"],
         reformat_values=[("Score", "toFloat")],
         driver=driver,
+        merge=True,  # TODO Remove
     )
 
     utils.print_update(update_type="Edge Creation", text="LINK (Gene -> Functional Term)", color="cyan")
@@ -430,6 +444,7 @@ def create_functional(
         values=[],
         reformat_values=[],
         driver=driver,
+        merge=True,  # TODO Remove
     )
 
     utils.print_update(update_type="Edge Creation", text="KAPPA", color="cyan")
@@ -443,6 +458,7 @@ def create_functional(
         values=["Score"],
         reformat_values=[("Score", "toFloat")],
         driver=driver,
+        merge=True,  # TODO Remove
     )
 
     return
@@ -497,9 +513,13 @@ def setup_db_external_info(
     ft_gene: pd.DataFrame,
     gene_gene_scores: pd.DataFrame,
     ft_ft_kappa: pd.DataFrame,
+    string_gene_nodes: pd.DataFrame,
     driver: Driver,
 ):
-    utils.time_function(create_string_edges, variables={"gene_gene_scores": gene_gene_scores, "driver": driver})
+    utils.time_function(
+        create_string,
+        variables={"gene_gene_scores": gene_gene_scores, "string_gene_nodes": string_gene_nodes, "driver": driver},
+    )
 
     utils.time_function(
         create_functional,
@@ -531,6 +551,7 @@ def first_setup(
     ft_gene: pd.DataFrame,
     gene_gene_scores: pd.DataFrame,
     ft_ft_kappa: pd.DataFrame,
+    string_gene_nodes: pd.DataFrame,
 ):
     driver = utils.start_driver()
 
@@ -553,7 +574,8 @@ def first_setup(
         ft_gene=ft_gene,
         gene_gene_scores=gene_gene_scores,
         ft_ft_kappa=ft_ft_kappa,
+        string_gene_nodes=string_gene_nodes,
         driver=driver,
     )
 
-    utils.stop_driver()
+    utils.stop_driver(driver=driver)

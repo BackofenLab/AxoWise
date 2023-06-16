@@ -1,6 +1,6 @@
 
 ### CUSTOM DO NOT DELETE ###
-credentials.yml
+config.yml
 .idea
 pid-info.txt
 db/source/*

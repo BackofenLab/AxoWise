@@ -24,7 +24,7 @@ def read_creds(credentials_path=_DEFAULT_CREDENTIALS_PATH):
         credentials = yaml.load(credentials_file, Loader=yaml.FullLoader)
 
     neo4j = credentials["neo4j"]
-    return "neo4j://{}:{}".format(neo4j["host"], neo4j["port"]), ("neo4j", neo4j["pw"])
+    return "neo4j://{}:{}".format(neo4j["host"], neo4j["port"]), (neo4j["username"], neo4j["password"])
 
 
 def start_driver():
@@ -34,7 +34,7 @@ def start_driver():
 
 
 def stop_driver(driver: Driver):
-    driver.stop()
+    driver.close()
 
 
 def execute_query(query: str, read: bool, driver: Driver):
@@ -71,4 +71,4 @@ def print_update(update_type: str, text: str, color: str):
         "cyan": "\033[0;36m",
         "none": "\033[0m",
     }
-    print("{}{}{}: {}".format(colors[color], update_type, colors["none"], text))
+    print("{}{}{}:{}{}".format(colors[color], update_type, colors["none"], " " * (14 - len(update_type)), text))
