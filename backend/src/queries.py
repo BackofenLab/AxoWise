@@ -8,7 +8,7 @@ import neo4j
 
 
 def get_terms_connected_by_kappa(driver: neo4j.Driver, term_ids: list[str]):
-    """":returns: terms, source, target, score"""
+    """:returns: terms, source, target, score"""
     with driver.session() as session:
         query = f"""
             MATCH (source:Terms)-[association:KAPPA]->(target:Terms)
@@ -32,8 +32,9 @@ def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id
         return [x["id"] for x in list(result)]
 
 
-def get_protein_neighbours(driver: neo4j.Driver, protein_ids: list[str], threshold: int) -> (
-        list[str], list[str], list[str], list[int]):
+def get_protein_neighbours(
+    driver: neo4j.Driver, protein_ids: list[str], threshold: int
+) -> (list[str], list[str], list[str], list[int]):
     """
     :returns: proteins, source, target, score
     """
@@ -50,8 +51,9 @@ def get_protein_neighbours(driver: neo4j.Driver, protein_ids: list[str], thresho
         return _convert_to_connection_info_int_score(result)
 
 
-def get_protein_associations(driver: neo4j.Driver, protein_ids: list[str], threshold: int) -> (
-        list[str], list[str], list[str], list[int]):
+def get_protein_associations(
+    driver: neo4j.Driver, protein_ids: list[str], threshold: int
+) -> (list[str], list[str], list[str], list[int]):
     """
     :returns: proteins, source, target, score
     """
