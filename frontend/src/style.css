@@ -324,8 +324,10 @@ html,body{
 	font-size: 12px;
 	color: white;
 	width: 55px;
+	height: 20px;
 	position: absolute;
 	overflow-x: hidden;
+	align-items: baseline;
 	}
 
 #vsel .vs__open-indicator,
