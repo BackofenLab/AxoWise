@@ -62,3 +62,11 @@ If you can't wait for the cronjob to run, you might want to follow these steps t
 3. `cd workspace/protein-graph-database`
 4. `git pull`
 5. `make deployment`
+6. [make sure to disconnect the process from the shell](https://www.baeldung.com/linux/detach-process-from-terminal)
+    1. strg + z
+    2. bg
+    3. disown
+
+### Debug Cronjobs
+
+All logs of cronjobs are saved in `/var/mail/{user}`. To see them run for example: `cat /var/mail/ubuntu`.
