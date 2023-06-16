@@ -4,17 +4,11 @@ channels:
   - defaults
 dependencies:
   - python=3.11.*
-  - py2neo=2021.2.*
-  - psycopg2=2.9.*
   - pyyaml=6.*
-  - pylint=2.17.*
   - flask=2.2.*
   - networkx=3.*
   - numpy=1.24.*
-  - scipy=1.10.*
   - pandas=2.0.*
-  - packaging=23.*
-  - neomodel=4.0.*
   - monotonic=1.*
   - neo4j-python-driver=5.7.*
   - black=23.3.*
