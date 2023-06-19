@@ -60,6 +60,8 @@
                 });
                 }
 
+                filtered.sort((t1, t2) => t1.attributes['FDR'] - t2.attributes['FDR'] )
+
                 return filtered;
             },
 

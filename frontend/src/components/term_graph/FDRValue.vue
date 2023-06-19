@@ -1,6 +1,6 @@
 <template>
     <div class="tool-item">
-        <li v-on:click="show_fdr">Show FDR</li>
+        <li v-on:click="show_fdr">Show Padj</li>
     </div>
 </template>
 
