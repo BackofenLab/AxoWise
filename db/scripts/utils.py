@@ -48,7 +48,7 @@ def save_df_to_csv(file_name: str, df: pd.DataFrame, override_prod: bool = False
     if os.getenv("_PRODUCTION") == str(True) or override_prod:
         df.to_csv(os.getenv("_NEO4J_IMPORT_PATH") + file_name, index=False)
     else:
-        df.iloc[:int(os.getenv("_DEV_MAX_REL"))].to_csv(os.getenv("_NEO4J_IMPORT_PATH") + file_name, index=False)
+        df.iloc[: int(os.getenv("_DEV_MAX_REL"))].to_csv(os.getenv("_NEO4J_IMPORT_PATH") + file_name, index=False)
 
 
 def time_function(function):
@@ -56,9 +56,10 @@ def time_function(function):
         start_time = time()
         result = function(**variables)
         end_time = time()
-        with open(os.getenv("_FUNCTION_TIME_PATH"), "a", newline="\n") as csvfile:
-            writer = csv.writer(csvfile, delimiter="\t")
-            writer.writerow([function.__name__, end_time - start_time])
+        if os.getenv("_TIME_FUNCTIONS") == str(True):
+            with open(os.getenv("_FUNCTION_TIME_PATH"), "a", newline="\n") as csvfile:
+                writer = csv.writer(csvfile, delimiter="\t")
+                writer.writerow([function.__name__, end_time - start_time])
         return result
 
     return timing
@@ -72,4 +73,20 @@ def print_update(update_type: str, text: str, color: str):
         "cyan": "\033[0;36m",
         "none": "\033[0m",
     }
-    print("{}{}{}:{}{}".format(colors[color], update_type, colors["none"], " " * (14 - len(update_type)), text))
+    if os.getenv("_SILENT") != str(True):
+        print("{}{}{}:{}{}".format(colors[color], update_type, colors["none"], " " * (14 - len(update_type)), text))
+
+
+@time_function
+def get_consistent_entries(comparing_genes: pd.DataFrame, ensembl_genes: pd.DataFrame, mode: int):
+    comparing_genes_filter = comparing_genes.filter(items=["ENSEMBL"]).drop_duplicates(ignore_index=True)
+    not_included = comparing_genes[
+        comparing_genes["ENSEMBL"].isin(set(comparing_genes_filter["ENSEMBL"]).difference(ensembl_genes["ENSEMBL"]))
+    ]
+    not_included.to_csv(
+        "../source/not_included_{}.csv".format("string" if mode == 0 else "exp"), mode="a", header=False, index=False
+    )
+
+    return comparing_genes[
+        ~comparing_genes["ENSEMBL"].isin(set(comparing_genes["ENSEMBL"]).difference(ensembl_genes["ENSEMBL"]))
+    ]
