@@ -200,11 +200,11 @@ def parse_string(dir_path: str = _DEFAULT_STRING_PATH):
 def parse_functional(protein_gene_dict: pd.DataFrame, dir_path: str = _DEFAULT_FUNCTIONAL_PATH):
     """
     Reads Functional Terms files and returns a Pandas dataframe
-    [ functional_terms_overlap.csv, KappaEdges.csv, TermsWithProteins.csv ]
+    [ functional_terms_overlap.csv, TermsWithProteins.csv ]
     """
 
     def read_functional():
-        dataframes = [None] * 3
+        dataframes = [None] * 2
 
         for file in os.scandir(dir_path):
             file_name, file_extention = os.path.splitext(file)
@@ -217,11 +217,11 @@ def parse_functional(protein_gene_dict: pd.DataFrame, dir_path: str = _DEFAULT_F
 
     functional = time_function(read_functional)
 
-    ft_nodes = functional[2].filter(items=["external_id", "name", "category"])
+    ft_nodes = functional[1].filter(items=["external_id", "name", "category"])
     ft_nodes = ft_nodes.rename(columns={"external_id": "Term"})
 
     ft_protein_df_list = []
-    for _, i in functional[2].iterrows():
+    for _, i in functional[1].iterrows():
         tmp_df = pd.DataFrame()
         tmp_df["Protein"] = json.loads(i["proteins"].replace("'", '"'))
         tmp_df["Term"] = i["external_id"]
@@ -234,9 +234,7 @@ def parse_functional(protein_gene_dict: pd.DataFrame, dir_path: str = _DEFAULT_F
 
     ft_ft_overlap = functional[0]
 
-    ft_ft_kappa = functional[1]
-
-    return ft_nodes, ft_gene, ft_ft_overlap, ft_ft_kappa
+    return ft_nodes, ft_gene, ft_ft_overlap
 
 
 def _reformat_experiment_file(df: pd.DataFrame, file_name: str, reformat: bool):

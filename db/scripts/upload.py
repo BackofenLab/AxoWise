@@ -466,20 +466,6 @@ def create_functional(
         merge=True,  # TODO Remove
     )
 
-    utils.print_update(update_type="Edge Creation", text="KAPPA", color="cyan")
-
-    utils.save_df_to_csv(file_name="kappa.csv", df=ft_ft_kappa)
-    create_relationship(
-        source_file="kappa.csv",
-        type_="KAPPA",
-        between=(("Term", "source"), ("Term", "target")),
-        node_types=("FT", "FT"),
-        values=["Score"],
-        reformat_values=[("Score", "toFloat")],
-        driver=driver,
-        merge=True,  # TODO Remove
-    )
-
     return
 
 
