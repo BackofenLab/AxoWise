@@ -447,20 +447,6 @@ def create_functional(
         merge=True,  # TODO Remove
     )
 
-    utils.print_update(update_type="Edge Creation", text="KAPPA", color="cyan")
-
-    utils.save_df_to_csv(file_name="kappa.csv", df=ft_ft_kappa)
-    create_relationship(
-        source_file="kappa.csv",
-        type_="KAPPA",
-        between=(("Term", "source"), ("Term", "target")),
-        node_types=("FT", "FT"),
-        values=["Score"],
-        reformat_values=[("Score", "toFloat")],
-        driver=driver,
-        merge=True,  # TODO Remove
-    )
-
     return
 
 
@@ -512,7 +498,6 @@ def setup_db_external_info(
     ft_ft_overlap: pd.DataFrame,
     ft_gene: pd.DataFrame,
     gene_gene_scores: pd.DataFrame,
-    ft_ft_kappa: pd.DataFrame,
     string_gene_nodes: pd.DataFrame,
     driver: Driver,
 ):
@@ -527,7 +512,6 @@ def setup_db_external_info(
             "ft_nodes": ft_nodes,
             "ft_ft_overlap": ft_ft_overlap,
             "ft_gene": ft_gene,
-            "ft_ft_kappa": ft_ft_kappa,
             "driver": driver,
         },
     )
@@ -550,30 +534,28 @@ def first_setup(
     ft_ft_overlap: pd.DataFrame,
     ft_gene: pd.DataFrame,
     gene_gene_scores: pd.DataFrame,
-    ft_ft_kappa: pd.DataFrame,
     string_gene_nodes: pd.DataFrame,
 ):
     driver = utils.start_driver()
 
-    # extend_db_from_experiment(
-    #     tg_nodes=tg_nodes,
-    #     tf_nodes=tf_nodes,
-    #     or_nodes=or_nodes,
-    #     de_values=de_values,
-    #     da_values=da_values,
-    #     tf_tg_corr=tf_tg_corr,
-    #     or_tg_corr=or_tg_corr,
-    #     motif=motif,
-    #     distance=distance,
-    #     driver=driver,
-    # )
+    extend_db_from_experiment(
+        tg_nodes=tg_nodes,
+        tf_nodes=tf_nodes,
+        or_nodes=or_nodes,
+        de_values=de_values,
+        da_values=da_values,
+        tf_tg_corr=tf_tg_corr,
+        or_tg_corr=or_tg_corr,
+        motif=motif,
+        distance=distance,
+        driver=driver,
+    )
 
     setup_db_external_info(
         ft_nodes=ft_nodes,
         ft_ft_overlap=ft_ft_overlap,
         ft_gene=ft_gene,
         gene_gene_scores=gene_gene_scores,
-        ft_ft_kappa=ft_ft_kappa,
         string_gene_nodes=string_gene_nodes,
         driver=driver,
     )

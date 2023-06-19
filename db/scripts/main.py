@@ -50,7 +50,6 @@ if __name__ == "__main__":
         ft_nodes,
         ft_gene,
         ft_ft_overlap,
-        ft_ft_kappa,
     ) = utils.time_function(read_functional_files, variables={"protein_gene_dict": protein_gene_dict})
 
     first_setup(
@@ -67,6 +66,5 @@ if __name__ == "__main__":
         ft_gene=ft_gene,
         ft_ft_overlap=ft_ft_overlap,
         gene_gene_scores=gene_gene_scores,
-        ft_ft_kappa=ft_ft_kappa,
         string_gene_nodes=string_gene_nodes,
     )
