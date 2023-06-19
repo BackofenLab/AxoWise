@@ -41,6 +41,8 @@
      * @param  {configurable}             settings The settings function.
      */
      export function updateSVGLabel(node, text, settings){
+
+      text.style.display = 'None';
       
       var prefix = settings('prefix') || '',
           size = node[prefix + 'size'];
@@ -49,16 +51,16 @@
         settings('defaultLabelSize') :
         settings('labelSizeRatio') * size;
 
+      // Updating
+      text.setAttributeNS(null, 'x',
+      Math.round(node[prefix + 'x'] + size + 3));
+      text.setAttributeNS(null, 'y',
+      Math.round(node[prefix + 'y'] + fontSize / 3));
+          
       // Case when we don't want to display the label
       if ((!node.active || node.hide_label) && !node.sActive) return
 
       if (typeof node.label !== 'string') return;
-
-      // Updating
-      text.setAttributeNS(null, 'x',
-        Math.round(node[prefix + 'x'] + size + 3));
-      text.setAttributeNS(null, 'y',
-        Math.round(node[prefix + 'y'] + fontSize / 3));
 
       // Showing
       text.style.display = '';
