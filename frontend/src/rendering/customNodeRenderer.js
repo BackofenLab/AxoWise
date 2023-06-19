@@ -25,4 +25,29 @@
     context.closePath();
     context.fill();
 }
+
+export function createCustomNodeSVG(node,settings){
+       /**
+     * SVG Element creation.
+     *
+     * @param  {object}                   node     The node object.
+     * @param  {configurable}             settings The settings function.
+     */
+    var circle = document.createElementNS(settings('xmlns'), 'circle');
+
+    // Defining the node's circle
+    circle.setAttributeNS(null, 'data-node-id', node.id);
+    circle.setAttributeNS(null, 'class', settings('classPrefix') + '-node');
+    circle.setAttributeNS(
+        null, 'fill', node.color || settings('defaultNodeColor'));
+
+    // Adding stroke properties
+    circle.setAttributeNS(null, 'stroke', 'black'); // Set the stroke color
+    circle.setAttributeNS(null, 'stroke-width', '1'); // Set the stroke width
+
+
+    // Returning the DOM Element
+    return circle;
+          
+}
   

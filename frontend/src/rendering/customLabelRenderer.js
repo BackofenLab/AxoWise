@@ -32,3 +32,36 @@
         Math.round(node[prefix + 'y'] + fontSize / 3)
       );
     }
+
+    /**
+     * SVG Element update.
+     *
+     * @param  {object}                   node     The node object.
+     * @param  {DOMElement}               text     The label DOM element.
+     * @param  {configurable}             settings The settings function.
+     */
+     export function updateSVGLabel(node, text, settings){
+      
+      var prefix = settings('prefix') || '',
+          size = node[prefix + 'size'];
+
+      var fontSize = (settings('labelSize') === 'fixed') ?
+        settings('defaultLabelSize') :
+        settings('labelSizeRatio') * size;
+
+      // Case when we don't want to display the label
+      if ((!node.active || node.hide_label) && !node.sActive) return
+
+      if (typeof node.label !== 'string') return;
+
+      // Updating
+      text.setAttributeNS(null, 'x',
+        Math.round(node[prefix + 'x'] + size + 3));
+      text.setAttributeNS(null, 'y',
+        Math.round(node[prefix + 'y'] + fontSize / 3));
+
+      // Showing
+      text.style.display = '';
+
+      return this;
+    }

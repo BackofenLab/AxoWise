@@ -12,6 +12,7 @@ import sigma from "sigma";
 // import Graph from 'graphology'
 import {scaleLinear} from "d3-scale";
 import saveAsPNG from '../../rendering/saveAsPNG';
+import saveAsSVG from '../../rendering/saveAsSVG';
 import customLabelRenderer from '../../rendering/customLabelRenderer';
 import customNodeRenderer from '../../rendering/customNodeRenderer';
 import ForceGraph3D from '3d-force-graph';
@@ -464,8 +465,10 @@ export default {
   get_select_range: function(start, length) {
       return length > 0 ? {start: start, end: start + length} : {start: start + length, end: start};
   },
-  exportGraphAsImage(mode) {
-    saveAsPNG(sigma_instance, {download: true}, mode)
+  exportGraphAsImage(params) {
+    if(params.format=="svg") saveAsSVG(sigma_instance, {download: true}, params.mode);
+    else saveAsPNG(sigma_instance, {download: true}, params.mode);
+    
     
   },
   show_unconnectedGraph(state){
@@ -706,8 +709,8 @@ export default {
       sigma_instance.camera.goTo({ x: 0, y: 0, ratio: 1, angle: sigma_instance.camera.angle });
     });
     
-    this.emitter.on("exportGraph", (mode) => {
-      this.exportGraphAsImage(mode)
+    this.emitter.on("exportGraph", (params) => {
+      this.exportGraphAsImage(params)
     });
 
     this.emitter.on("resetSelect", () => {

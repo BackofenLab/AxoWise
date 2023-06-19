@@ -13,9 +13,9 @@
                 </div> -->
             <div v-if="await_load == true" class="loading_pane"></div>
             <div class="results" v-if="terms !== null && await_load == false">
-                <div v-for="entry in filtered_terms" :key=entry>
-                    <a href="#" v-on:click="select_term(entry)">{{entry.name}}</a>
-                </div>
+                <select id ="result_select" size="11" @change="select_term($event.target.value)" @click="select_term($event.target.value)">
+                <option v-for="entry in filtered_terms" :key="entry" :value="entry.id">{{ entry.name }}</option>
+                </select>
                 <div v-if="terms.length == 0">
                     <i>No terms available.</i>
                 </div>
@@ -61,7 +61,12 @@
             select_term(term) {
                 var com = this;
 
-                com.$emit("active_term_changed", term);
+                this.filtered_terms.forEach(entry => {
+                    if (entry.id === term) {
+                        com.$emit("active_term_changed", entry);
+                    }
+                    });
+                
             },
             get_term_data() {
                 var com = this
@@ -249,6 +254,18 @@
         height: 30px;
         margin-right: 20px;
         margin-top: 10px;
+
+    }
+    #result_select{
+        appearance: none;
+        border-style: none;
+        width: 100%;
+        padding: 10px;
+        background: none;
+        color: white;
+        height: 100%;
+        font-weight: 900;
+        font-family: 'Roboto Mono', monospace;
 
     }
 </style>
