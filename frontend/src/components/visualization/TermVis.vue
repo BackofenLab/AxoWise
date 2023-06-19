@@ -1,5 +1,5 @@
 <template>
-    <div id="sigma-canvas">
+    <div id="sigma-canvas" @contextmenu.prevent="handleSigmaContextMenu">
     </div>
   </template>
 
@@ -26,6 +26,7 @@ export default {
     return {
       edge_opacity: 0.2,
       graph_state: null,
+      special_label: false
     }
   },
   watch: {
@@ -50,6 +51,8 @@ export default {
       const neighbors = new Set();
       const edges = sigma_instance.graph.edges()
 
+
+
       for (let i = 0; i < edges.length; i++) {
         const e = edges[i]
         if (e.source === node.attributes["Ensembl ID"]) {
@@ -70,13 +73,10 @@ export default {
           n.hidden = true
         }
         if(n.attributes["Ensembl ID"] == node.attributes["Ensembl ID"]) {
-          n.active = true
           n.color = "rgb(255, 255, 255)";
+          com.special_label ? node.sActive = true : node.active = true;
         }
       }
-
-      
-
       sigma_instance.refresh();
 
     },
@@ -197,7 +197,8 @@ export default {
     },
   },
   methods: {
-    activeNode(event) {
+    activeNode(event, special) {
+      this.special_label = special
       this.$emit('active_node_changed', event)
     },
     reset() {
@@ -236,6 +237,7 @@ export default {
     reset_label_select() {
       sigma_instance.graph.nodes().forEach(function(n) {
         n.active = false
+        n.sActive = false
       });
 
       sigma_instance.refresh()
@@ -296,6 +298,11 @@ export default {
       });
     }
     sigma_instance.refresh()
+  },
+  reset_node_label(node) {
+    node.active = false
+    node.sActive = false
+    sigma_instance.refresh()
   }
   },
   mounted() {
@@ -324,8 +331,24 @@ export default {
 
     com.edit_opacity()
 
-    sigma_instance.bind('clickNode',(event) => {
-      this.activeNode(event.data.node)
+    var keyState = {};
+
+    document.addEventListener('keydown', function(event) {
+      // Set the key state to true when the key is pressed
+      keyState[event.keyCode] = true;
+    });
+
+    document.addEventListener('keyup', function(event) {
+      // Reset the key state when the key is released
+      keyState[event.keyCode] = false;
+    });
+
+    sigma_instance.bind('clickNode', function(event) {
+      // Check if the desired key is being held down when clicking a node
+      if (keyState[17] && keyState[16]) com.reset_node_label(event.data.node);
+      else if (keyState[17] && !keyState[16]) com.activeNode(event.data.node, true);
+      else com.activeNode(event.data.node, false);
+      
     });
 
     this.emitter.on("searchTermNode", state => {
