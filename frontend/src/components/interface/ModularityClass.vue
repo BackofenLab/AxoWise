@@ -45,7 +45,7 @@ export default {
         show_unconnectedGraphModule(state) {
 
             const module = document.getElementById('unconnected_group')
-            if(state == 'Whole Graph') {
+            if(!state) {
                 module.style.display = 'flex'
             }
             else module.style.display = 'none'
@@ -110,6 +110,6 @@ export default {
 }
 
 #unconnected_group {
-  display: none;
+  display: flex;
 }
 </style>

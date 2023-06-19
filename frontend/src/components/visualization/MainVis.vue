@@ -476,6 +476,8 @@ export default {
 
     com.graph_state = state
 
+    if(com.active_node) return
+
     if (state == null) {
       com.reset()
     }
@@ -487,7 +489,6 @@ export default {
         var node = graph.getNodeFromIndex(n.id);
         node.hidden = false
       });
-      sigma_instance.refresh();
     }
     
     if(state){
@@ -495,8 +496,9 @@ export default {
         var node = graph.getNodeFromIndex(n.id);
         node.hidden = true
       });
-      sigma_instance.refresh();
-    }   
+    }
+
+    sigma_instance.refresh();
   },
   edit_opacity: function() {
     var com = this;

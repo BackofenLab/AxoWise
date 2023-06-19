@@ -252,6 +252,8 @@ export default {
     show_unconnectedGraph(state){
       var com = this;
 
+      if(com.active_node) return
+      
       com.graph_state = state
 
       if (state == null) {
