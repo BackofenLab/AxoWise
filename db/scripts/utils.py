@@ -1,9 +1,9 @@
 import pandas as pd
 import yaml
 import csv
+import os
 from time import time
 from neo4j import GraphDatabase, RoutingControl, Driver
-from main import _DEFAULT_CREDENTIALS_PATH, _PRODUCTION, _DEV_MAX_REL, _NEO4J_IMPORT_PATH, _FUNCTION_TIME_PATH
 
 
 class Reformatter:
@@ -19,7 +19,7 @@ class Reformatter:
         return "-".join([p.replace("wt", "") for p in s])
 
 
-def read_creds(credentials_path=_DEFAULT_CREDENTIALS_PATH):
+def read_creds(credentials_path=os.getenv("_DEFAULT_CREDENTIALS_PATH")):
     with open(credentials_path, "rt", encoding="utf-8") as credentials_file:
         credentials = yaml.load(credentials_file, Loader=yaml.FullLoader)
 
@@ -45,22 +45,23 @@ def execute_query(query: str, read: bool, driver: Driver):
 
 
 def save_df_to_csv(file_name: str, df: pd.DataFrame, override_prod: bool = False):
-    if _PRODUCTION or override_prod:
-        df.to_csv(_NEO4J_IMPORT_PATH + file_name, index=False)
+    if os.getenv("_PRODUCTION") == str(True) or override_prod:
+        df.to_csv(os.getenv("_NEO4J_IMPORT_PATH") + file_name, index=False)
     else:
-        df.iloc[:_DEV_MAX_REL].to_csv(_NEO4J_IMPORT_PATH + file_name, index=False)
+        df.iloc[:int(os.getenv("_DEV_MAX_REL"))].to_csv(os.getenv("_NEO4J_IMPORT_PATH") + file_name, index=False)
 
 
-def time_function(function, variables: dict = {}):
-    start_time = time()
-    result = function(**variables)
-    end_time = time()
+def time_function(function):
+    def timing(**variables):
+        start_time = time()
+        result = function(**variables)
+        end_time = time()
+        with open(os.getenv("_FUNCTION_TIME_PATH"), "a", newline="\n") as csvfile:
+            writer = csv.writer(csvfile, delimiter="\t")
+            writer.writerow([function.__name__, end_time - start_time])
+        return result
 
-    with open(_FUNCTION_TIME_PATH, "a", newline="\n") as csvfile:
-        writer = csv.writer(csvfile, delimiter="\t")
-        writer.writerow([function.__name__, end_time - start_time])
-
-    return result
+    return timing
 
 
 def print_update(update_type: str, text: str, color: str):

@@ -2,7 +2,6 @@ from utils import Reformatter, time_function, print_update
 import pandas as pd
 import os
 import json
-from main import _DEFAULT_EXPERIMENT_PATH, _DEFAULT_FUNCTIONAL_PATH, _DEFAULT_STRING_PATH
 
 DE_CONTEXT = [
     "6h-0h",
@@ -19,13 +18,13 @@ DA_CONTEXT = [
     "RC12h-12h",
 ]
 
-
-def parse_experiment(dir_path: str = _DEFAULT_EXPERIMENT_PATH, reformat: bool = True):
+@time_function
+def parse_experiment(dir_path: str = os.getenv("_DEFAULT_EXPERIMENT_PATH"), reformat: bool = True):
     """
     Parses experiment files and returns list of Pandas DataFrames s.t.
     [ tg_nodes, tf_nodes, de_values, or_nodes, da_values, tf_tg_corr, tf_or_corr ]
     """
-
+    @time_function
     def read_experiment():
         """
         Reads Experiment Files from a given path and returns a list of Pandas dataframes,
@@ -47,6 +46,7 @@ def parse_experiment(dir_path: str = _DEFAULT_EXPERIMENT_PATH, reformat: bool = 
                 dataframes[index] = df
         return dataframes
 
+    @time_function
     def filter_df_by_context(context: str, df: pd.DataFrame, protein: bool):
         if protein:
             filtered = df.filter(items=["ENSEMBL", context, context + "-padj"])
@@ -70,6 +70,7 @@ def parse_experiment(dir_path: str = _DEFAULT_EXPERIMENT_PATH, reformat: bool = 
             )
         return out
 
+    @time_function
     def make_context_dataframes(context_list, df, protein):
         value_reformat = []
         for context in context_list:
@@ -79,7 +80,7 @@ def parse_experiment(dir_path: str = _DEFAULT_EXPERIMENT_PATH, reformat: bool = 
         return values
 
     # Read and Rename columns of Experiment data
-    exp = time_function(read_experiment)
+    exp = read_experiment()
 
     # Filter Dataframes for relevant columns
     de = exp[1].filter(items=["ENSEMBL", "ENTREZID", "SYMBOL", "annot", "TF", "in_ATAC", "mean_count"])
@@ -95,9 +96,7 @@ def parse_experiment(dir_path: str = _DEFAULT_EXPERIMENT_PATH, reformat: bool = 
     tmp_de = exp[1].filter(items=["ENSEMBL"] + DE_CONTEXT + [c + "-padj" for c in DE_CONTEXT])
 
     # Create DE DataFrame s.t. context is a column value
-    de_values = time_function(
-        make_context_dataframes, variables={"context_list": DE_CONTEXT, "df": tmp_de, "protein": True}
-    )
+    de_values = make_context_dataframes(context_list=DE_CONTEXT, df=tmp_de, protein=True)
 
     # Filter for relevant values for OR nodes
     or_nodes = exp[0].filter(
@@ -122,9 +121,7 @@ def parse_experiment(dir_path: str = _DEFAULT_EXPERIMENT_PATH, reformat: bool = 
     tmp_da = exp[0].filter(items=["nearest_index", "mean_count"] + DA_CONTEXT + [c + "-padj" for c in DA_CONTEXT])
 
     # Create DA DataFrame s.t. context is column value
-    da_values = time_function(
-        make_context_dataframes, variables={"context_list": DA_CONTEXT, "df": tmp_da, "protein": False}
-    )
+    da_values = make_context_dataframes(context_list=DA_CONTEXT, df=tmp_da, protein=False)
 
     tf_tg_corr = exp[2]
 
@@ -135,13 +132,13 @@ def parse_experiment(dir_path: str = _DEFAULT_EXPERIMENT_PATH, reformat: bool = 
 
     return tg_nodes, tf_nodes, de_values, or_nodes, da_values, tf_tg_corr, or_tg_corr, motif, distance
 
-
-def parse_string(dir_path: str = _DEFAULT_STRING_PATH):
+@time_function
+def parse_string(dir_path: str = os.getenv("_DEFAULT_STRING_PATH")):
     """
     Reads STRING files and returns a Pandas dataframe
     [ protein.links.v11.5.tsv, protein.info.v11.5.tsv, string_SYMBOL_ENSEMBL.tsv ]
     """
-
+    @time_function
     def read_string():
         dataframes = [None] * 3
 
@@ -154,7 +151,7 @@ def parse_string(dir_path: str = _DEFAULT_STRING_PATH):
             dataframes[index] = df
         return dataframes
 
-    string = time_function(read_string)
+    string = read_string()
 
     string_gene_nodes = string[2].filter(items=["ENSEMBL", "ENTREZID", "annot", "SYMBOL"])
     string_gene_nodes = string_gene_nodes.dropna(subset=["ENSEMBL"])
@@ -170,13 +167,13 @@ def parse_string(dir_path: str = _DEFAULT_STRING_PATH):
 
     return gene_gene_scores, protein_gene_dict, string_gene_nodes
 
-
-def parse_functional(protein_gene_dict: pd.DataFrame, dir_path: str = _DEFAULT_FUNCTIONAL_PATH):
+@time_function
+def parse_functional(protein_gene_dict: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT_FUNCTIONAL_PATH")):
     """
     Reads Functional Terms files and returns a Pandas dataframe
     [ functional_terms_overlap.csv, TermsWithProteins.csv ]
     """
-
+    @time_function
     def read_functional():
         dataframes = [None] * 2
 
@@ -189,7 +186,7 @@ def parse_functional(protein_gene_dict: pd.DataFrame, dir_path: str = _DEFAULT_F
             dataframes[index] = df
         return dataframes
 
-    functional = time_function(read_functional)
+    functional = read_functional()
 
     ft_nodes = functional[1].filter(items=["external_id", "name", "category"])
     ft_nodes = ft_nodes.rename(columns={"external_id": "Term"})
@@ -210,7 +207,31 @@ def parse_functional(protein_gene_dict: pd.DataFrame, dir_path: str = _DEFAULT_F
 
     return ft_nodes, ft_gene, ft_ft_overlap
 
+@time_function
+def parse_ensembl(dir_path: str = os.getenv("_DEFAULT_ENSEMBL_PATH")):
+    """
+    Reads ENSEMBL files and returns a Pandas dataframe
+    [ Mus_musculus.GRCm39.109.ena.tsv, Mus_musculus.GRCm39.109.entrez.tsv, Mus_musculus.GRCm39.109.refseq.tsv, Mus_musculus.GRCm39.109.uniprot.tsv ]
+    """
 
+    @time_function
+    def read_ensembl():
+        dataframes = [None] * 4
+
+        for file in os.scandir(dir_path):
+            file_name, file_extention = os.path.splitext(file)
+            if file_extention == ".tsv":
+                df, index = _reformat_ensembl_term_file(
+                    df=pd.read_csv(file, sep="\t"), file_name=file_name.split("/")[-1]
+                )
+            dataframes[index] = df
+        return dataframes
+    ensembl = read_ensembl()
+    # TODO
+
+    return ensembl
+
+@time_function
 def _reformat_experiment_file(df: pd.DataFrame, file_name: str, reformat: bool):
     print_update(update_type="Reformatting", text=file_name, color="orange")
     # print("Reformatting {} ...".format(file_name))
@@ -224,7 +245,7 @@ def _reformat_experiment_file(df: pd.DataFrame, file_name: str, reformat: bool):
         return df, index
     return functions[index](df=df), index
 
-
+@time_function
 def _reformat_da(df: pd.DataFrame):
     reformatter = Reformatter("open_region_")
 
@@ -232,7 +253,7 @@ def _reformat_da(df: pd.DataFrame):
     df = df.rename(columns=rename_dict)
     return df
 
-
+@time_function
 def _reformat_de(df: pd.DataFrame):
     reformatter = Reformatter("")
 
@@ -240,22 +261,22 @@ def _reformat_de(df: pd.DataFrame):
     df = df.rename(columns=rename_dict)
     return df
 
-
+@time_function
 def _reformat_tf_tg(df: pd.DataFrame):
     df = df.rename(columns={"nearest_ENSEMBL": "ENSEMBL", "TF_target_cor": "Correlation"})
     return df
 
-
+@time_function
 def _reformat_or_tg(df: pd.DataFrame):
     df = df.rename(columns={"nearest_ENSEMBL": "ENSEMBL", "peak_target_cor": "Correlation"})
     return df
 
-
+@time_function
 def _reformat_motif(df: pd.DataFrame):
     df = df.rename(columns={"motif_consensus": "Motif"})
     return df
 
-
+@time_function
 def _reformat_string_file(df: pd.DataFrame, file_name: str):
     print_update(update_type="Reformatting", text=file_name, color="orange")
     # print("Reformatting {} ...".format(file_name))
@@ -266,43 +287,72 @@ def _reformat_string_file(df: pd.DataFrame, file_name: str):
 
     return functions[index](df=df), index
 
-
+@time_function
 def _reformat_string_links(df: pd.DataFrame):
     df = df.rename(columns={"combined_score": "Score"})
     return df
 
-
+@time_function
 def _reformat_string_info(df: pd.DataFrame):
     df = df.rename(columns={"preferred_name": "SYMBOL", "string_protein_id": "ENSEMBL"})
     return df
 
-
+@time_function
 def _reformat_protein_gene_dict(df: pd.DataFrame):
     df = df.filter(items=["#string_protein_id", "ENSEMBL", "annotation", "ENTREZID", "preferred_name"])
     df = df.rename(columns={"#string_protein_id": "Protein", "annotation": "annot", "preferred_name": "SYMBOL"})
     return df
 
-
+@time_function
 def _reformat_functional_term_file(df: pd.DataFrame, file_name: str):
     print_update(update_type="Reformatting", text=file_name, color="orange")
-    # print("Reformatting {} ...".format(file_name))
 
-    names = ["functional_terms_overlap", "KappaEdges", "TermsWithProteins"]
-    functions = [_reformat_ft_overlap, _reformat_kappa_edges, _reformat_terms_proteins]
+    names = ["functional_terms_overlap", "TermsWithProteins"]
+    functions = [_reformat_ft_overlap, _reformat_terms_proteins]
     index = names.index(file_name)
 
     return functions[index](df=df), index
 
-
+@time_function
 def _reformat_ft_overlap(df: pd.DataFrame):
     df = df.rename(columns={"score": "Score"})
     return df
 
-
+@time_function
 def _reformat_terms_proteins(df: pd.DataFrame):
     return df
 
-
+@time_function
 def _reformat_kappa_edges(df: pd.DataFrame):
     df = df.rename(columns={"score": "Score"})
+    return df
+
+@time_function
+def _reformat_ensembl_term_file(df: pd.DataFrame, file_name: str):
+    print_update(update_type="Reformatting", text=file_name, color="orange")
+
+    names = ["Mus_musculus.GRCm39.109.ena", "Mus_musculus.GRCm39.109.entrez", "Mus_musculus.GRCm39.109.refseq", "Mus_musculus.GRCm39.109.uniprot"]
+    functions = [_reformat_ena, _reformat_entrez, _reformat_refseq, _reformat_uniprot]
+    index = names.index(file_name)
+
+    return functions[index](df=df), index
+
+@time_function
+def _reformat_ena(df: pd.DataFrame):
+    # TODO
+    return df
+
+@time_function
+def _reformat_entrez(df: pd.DataFrame):
+    # TODO
+    return df
+
+@time_function
+def _reformat_refseq(df: pd.DataFrame):
+    # TODO
+    return df
+
+@time_function
+def _reformat_uniprot(df: pd.DataFrame):
+    # TODO
     return df
