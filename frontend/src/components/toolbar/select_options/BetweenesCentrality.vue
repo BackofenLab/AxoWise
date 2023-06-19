@@ -25,7 +25,7 @@
 <script>
 export default {
     name: 'BetweenesCentrality',
-    props: ['gephi_data'],
+    props: ['gephi_data','term_data'],
     data() {
         return {
 			once: true,
@@ -40,10 +40,15 @@ export default {
     methods: {
 		draw_hubs: function() {
             var com = this;
+
+			var dataForm = com.gephi_data || com.term_data;
+            var searchSubset = (dataForm === com.gephi_data) ? "searchSubset" : "searchTermSubset";
+
 			// initialize values of slider
 			if (com.once) {
 				// _____ this calculation has only to be done once _______
-				var subset_bc = com.gephi_data.nodes.map(arrayItem => {
+				var subset_bc
+				subset_bc = dataForm.nodes.map(arrayItem => {
 					return arrayItem.attributes["Betweenness Centrality"]
 				});
 
@@ -60,12 +65,13 @@ export default {
 			// filter
 			var nodes = [];
 			// degree filtering
-			for (var idx in com.gephi_data.nodes){
-				if(parseFloat(com.gephi_data.nodes[idx].attributes["Betweenness Centrality"]) >= this.bc_boundary.value){
-					nodes.push(com.gephi_data.nodes[idx])
+
+			for (var idy in dataForm.nodes){
+				if(parseFloat(dataForm.nodes[idy].attributes["Betweenness Centrality"]) >= this.bc_boundary.value){
+					nodes.push(dataForm.nodes[idy])
 				}
 			}
-			this.emitter.emit("searchSubset", nodes);
+			this.emitter.emit(searchSubset, nodes);
 		},
 	},
 }
