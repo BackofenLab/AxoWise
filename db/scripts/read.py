@@ -2,6 +2,7 @@ from utils import Reformatter, time_function, print_update
 import pandas as pd
 import os
 import json
+import numpy as np
 
 DE_CONTEXT = [
     "6h-0h",
@@ -139,7 +140,7 @@ def parse_experiment(dir_path: str = os.getenv("_DEFAULT_EXPERIMENT_PATH"), refo
 
 
 @time_function
-def parse_string(temporary_protein_gene_dict: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT_STRING_PATH")):
+def parse_string(complete: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT_STRING_PATH")):
     """
     Reads STRING files and returns a Pandas dataframe
     [ protein.links.v11.5.tsv, protein.info.v11.5.tsv, string_SYMBOL_ENSEMBL.tsv ]
@@ -160,17 +161,31 @@ def parse_string(temporary_protein_gene_dict: pd.DataFrame, dir_path: str = os.g
 
     @time_function
     def post_processing(string: list[pd.DataFrame]):
-        string_gene_nodes = string[1].merge(temporary_protein_gene_dict, left_on="Protein", right_on="Protein")
+        genes_annotated = string[1].merge(complete, left_on="Protein", right_on="Protein", how="left")
+        genes_annotated = genes_annotated.filter(items=["ENSEMBL", "SYMBOL", "annotation", "ENTREZID"])
 
-        string_gene_nodes = string_gene_nodes.filter(items=["ENSEMBL", "SYMBOL", "annotation"])
-        string_gene_nodes = string_gene_nodes.dropna(subset=["ENSEMBL"])
+        # Drop duplicate annotations, keep last entry
+        genes_annotated = genes_annotated.drop_duplicates(subset=["ENSEMBL"], keep="first", ignore_index=True)
+        genes_annotated = genes_annotated.dropna(subset=["ENSEMBL"])
 
-        protein_gene_dict = string[2]
-        protein_gene_dict = protein_gene_dict.filter(items=["ENSEMBL", "Protein"])
-        protein_gene_dict = protein_gene_dict.dropna()
-        protein_gene_dict = pd.concat([temporary_protein_gene_dict, protein_gene_dict]).drop_duplicates(
-            ignore_index=True
-        )
+        complete_unannot = complete.filter(items=["ENSEMBL", "ENTREZID"])
+        complete_unannot = complete.drop_duplicates(subset=["ENSEMBL"], keep="first", ignore_index=True)
+
+        # Concat unannot and annotated, where there is
+        genes_annotated = pd.concat(
+            [
+                complete_unannot[
+                    ~complete_unannot["ENSEMBL"].isin(
+                        set(complete_unannot["ENSEMBL"]).intersection(genes_annotated["ENSEMBL"])
+                    )
+                ],
+                genes_annotated,
+            ],
+            ignore_index=True,
+        ).drop(columns=["Protein"])
+
+        protein_gene_dict = complete.filter(items=["ENSEMBL", "Protein"])
+        protein_gene_dict = protein_gene_dict.drop_duplicates(ignore_index=True)
 
         gene_gene_scores = string[0].merge(protein_gene_dict, left_on="protein1", right_on="Protein")
         gene_gene_scores = gene_gene_scores.filter(items=["ENSEMBL", "protein2", "Score"])
@@ -179,14 +194,14 @@ def parse_string(temporary_protein_gene_dict: pd.DataFrame, dir_path: str = os.g
         gene_gene_scores = gene_gene_scores.filter(items=["ENSEMBL1", "ENSEMBL", "Score"])
         gene_gene_scores = gene_gene_scores.rename(columns={"ENSEMBL": "ENSEMBL2"})
 
-        return gene_gene_scores, protein_gene_dict, string_gene_nodes
+        return gene_gene_scores, genes_annotated
 
     string = read_string()
     return post_processing(string=string)
 
 
 @time_function
-def parse_functional(protein_gene_dict: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT_FUNCTIONAL_PATH")):
+def parse_functional(complete: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT_FUNCTIONAL_PATH")):
     """
     Reads Functional Terms files and returns a Pandas dataframe
     [ functional_terms_overlap.csv, TermsWithProteins.csv ]
@@ -218,9 +233,9 @@ def parse_functional(protein_gene_dict: pd.DataFrame, dir_path: str = os.getenv(
             ft_protein_df_list.append(tmp_df)
         ft_protein = pd.concat(ft_protein_df_list)
 
-        ft_protein = ft_protein.merge(protein_gene_dict, left_on="Protein", right_on="Protein")
+        ft_protein = ft_protein.merge(complete, left_on="Protein", right_on="Protein")
 
-        ft_gene = ft_protein.filter(items=["Term", "ENSEMBL"])
+        ft_gene = ft_protein.filter(items=["Term", "ENSEMBL"]).drop_duplicates(ignore_index=True)
 
         ft_ft_overlap = functional[0]
 
@@ -234,7 +249,9 @@ def parse_functional(protein_gene_dict: pd.DataFrame, dir_path: str = os.getenv(
 def parse_ensembl(dir_path: str = os.getenv("_DEFAULT_ENSEMBL_PATH")):
     """
     Reads ENSEMBL files and returns a Pandas dataframe
-    [ Mus_musculus.GRCm39.109.ena.tsv, Mus_musculus.GRCm39.109.entrez.tsv, Mus_musculus.GRCm39.109.refseq.tsv, Mus_musculus.GRCm39.109.uniprot.tsv ]
+    [ Mus_musculus.GRCm39.109.ena.tsv,    Mus_musculus.GRCm39.109.entrez.tsv,
+      Mus_musculus.GRCm39.109.refseq.tsv, Mus_musculus.GRCm39.109.uniprot.tsv ]
+
     """
 
     @time_function
@@ -253,11 +270,28 @@ def parse_ensembl(dir_path: str = os.getenv("_DEFAULT_ENSEMBL_PATH")):
     @time_function
     def post_processing(ensembl: list[pd.DataFrame]):
         complete = pd.concat(ensembl)
+        complete = complete.drop(columns=["ENTREZID"])
         complete = complete.drop_duplicates(ignore_index=True)
-        complete_genes = complete.filter(items=["ENSEMBL"]).drop_duplicates(ignore_index=True)
-        temporary_protein_gene_dict = complete[~complete["Protein"].isin(["10090.-"])]
-        temporary_protein_gene_dict = temporary_protein_gene_dict.dropna()
-        return complete_genes, temporary_protein_gene_dict
+
+        tmp_1 = complete[~complete["Protein"].isna()]
+        tmp_2 = complete[complete["Protein"].isna()]
+
+        # Remove rows where ENSEMBL has at least one associated Protein in other row, but where its Protein value is NaN
+        complete = pd.concat(
+            [tmp_2[~tmp_2["ENSEMBL"].isin(set(tmp_2["ENSEMBL"]).difference(tmp_1["ENSEMBL"]))], tmp_1],
+            ignore_index=True,
+        )
+
+        # get entrez ids and merge them into the complete df
+        # drop duplicate ENSEMBL IDs, keep first ENTREZ Gene ID
+        entrez = (
+            ensembl[0]
+            .filter(items=["ENSEMBL", "ENTREZID"])
+            .drop_duplicates(subset=["ENSEMBL"], keep="first", ignore_index=True)
+        )
+
+        complete = complete.merge(entrez, left_on="ENSEMBL", right_on="ENSEMBL", how="left")
+        return complete
 
     ensembl = read_ensembl()
     return post_processing(ensembl=ensembl)
@@ -370,12 +404,12 @@ def _reformat_ensembl_term_file(df: pd.DataFrame, file_name: str):
     print_update(update_type="Reformatting", text=file_name, color="orange")
 
     names = [
-        "Mus_musculus.GRCm39.109.ena",
         "Mus_musculus.GRCm39.109.entrez",
+        "Mus_musculus.GRCm39.109.ena",
         "Mus_musculus.GRCm39.109.refseq",
         "Mus_musculus.GRCm39.109.uniprot",
     ]
-    functions = [_reformat_ena, _reformat_entrez, _reformat_refseq, _reformat_uniprot]
+    functions = [_reformat_entrez, _reformat_ena, _reformat_refseq, _reformat_uniprot]
     index = names.index(file_name)
 
     return functions[index](df=df), index
@@ -387,15 +421,17 @@ def _reformat_ena(df: pd.DataFrame):
     df = df.filter(items=["gene_stable_id", "protein_stable_id"])
     df = df.rename(columns={"gene_stable_id": "ENSEMBL", "protein_stable_id": "Protein"})
     df["Protein"] = "10090." + df["Protein"]
+    df = df.replace("10090.-", np.nan)
     return df
 
 
 @time_function
 def _reformat_entrez(df: pd.DataFrame):
     # TODO
-    df = df.filter(items=["gene_stable_id", "protein_stable_id"])
-    df = df.rename(columns={"gene_stable_id": "ENSEMBL", "protein_stable_id": "Protein"})
+    df = df.filter(items=["gene_stable_id", "protein_stable_id", "xref"])
+    df = df.rename(columns={"gene_stable_id": "ENSEMBL", "protein_stable_id": "Protein", "xref": "ENTREZID"})
     df["Protein"] = "10090." + df["Protein"]
+    df = df.replace("10090.-", np.nan)
     return df
 
 
@@ -405,13 +441,14 @@ def _reformat_refseq(df: pd.DataFrame):
     df = df.filter(items=["gene_stable_id", "protein_stable_id"])
     df = df.rename(columns={"gene_stable_id": "ENSEMBL", "protein_stable_id": "Protein"})
     df["Protein"] = "10090." + df["Protein"]
+    df = df.replace("10090.-", np.nan)
     return df
 
 
 @time_function
 def _reformat_uniprot(df: pd.DataFrame):
-    # TODO
     df = df.filter(items=["gene_stable_id", "protein_stable_id"])
     df = df.rename(columns={"gene_stable_id": "ENSEMBL", "protein_stable_id": "Protein"})
     df["Protein"] = "10090." + df["Protein"]
+    df = df.replace("10090.-", np.nan)
     return df

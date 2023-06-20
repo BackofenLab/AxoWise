@@ -78,8 +78,9 @@ def print_update(update_type: str, text: str, color: str):
 
 
 @time_function
-def get_consistent_entries(comparing_genes: pd.DataFrame, ensembl_genes: pd.DataFrame, mode: int):
+def get_consistent_entries(comparing_genes: pd.DataFrame, complete: pd.DataFrame, mode: int):
     comparing_genes_filter = comparing_genes.filter(items=["ENSEMBL"]).drop_duplicates(ignore_index=True)
+    ensembl_genes = complete.filter(items=["ENSEMBL"]).drop_duplicates(ignore_index=True)
     not_included = comparing_genes[
         comparing_genes["ENSEMBL"].isin(set(comparing_genes_filter["ENSEMBL"]).difference(ensembl_genes["ENSEMBL"]))
     ]

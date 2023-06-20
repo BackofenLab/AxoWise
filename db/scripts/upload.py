@@ -1,5 +1,5 @@
 import pandas as pd
-from utils import time_function, print_update, save_df_to_csv, execute_query
+from utils import time_function, print_update, save_df_to_csv, execute_query, stop_driver, start_driver
 from neo4j import Driver
 
 _DEFAULT_CELLTYPE_INFO = {"Name": "Microglia"}

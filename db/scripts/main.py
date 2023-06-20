@@ -13,7 +13,7 @@ os.environ["_DEV_MAX_REL"] = str(10000)
 os.environ["_NEO4J_IMPORT_PATH"] = "/usr/local/bin/neo4j/import/"
 os.environ["_FUNCTION_TIME_PATH"] = "./function_times.csv"
 
-os.environ["_TIME_FUNCTIONS"] = str(True)
+os.environ["_TIME_FUNCTIONS"] = str(False)
 os.environ["_SILENT"] = str(False)
 os.environ["_PRODUCTION"] = str(False)
 
@@ -23,13 +23,13 @@ def read_experiment_files(path=os.getenv("_DEFAULT_EXPERIMENT_PATH")):
     return data
 
 
-def read_string_files(temporary_protein_gene_dict, path=os.getenv("_DEFAULT_STRING_PATH")):
-    data = rd.parse_string(temporary_protein_gene_dict=temporary_protein_gene_dict, dir_path=path)
+def read_string_files(complete: pd.DataFrame, path=os.getenv("_DEFAULT_STRING_PATH")):
+    data = rd.parse_string(complete=complete, dir_path=path)
     return data
 
 
-def read_functional_files(protein_gene_dict: pd.DataFrame, path=os.getenv("_DEFAULT_FUNCTIONAL_PATH")):
-    data = rd.parse_functional(protein_gene_dict=protein_gene_dict, dir_path=path)
+def read_functional_files(complete: pd.DataFrame, path=os.getenv("_DEFAULT_FUNCTIONAL_PATH")):
+    data = rd.parse_functional(complete=complete, dir_path=path)
     return data
 
 
@@ -51,23 +51,33 @@ if __name__ == "__main__":
         distance,
     ) = read_experiment_files()
 
-    (complete_genes, temporary_protein_gene_dict) = read_ensembl_files()
+    print(de_values.columns)
+    print(da_values.columns)
+    print(tf_tg_corr.columns)
+    print(or_tg_corr.columns)
 
-    (gene_gene_scores, protein_gene_dict, string_gene_nodes) = read_string_files(
-        temporary_protein_gene_dict=temporary_protein_gene_dict
-    )
+    complete = read_ensembl_files()
+
+    (gene_gene_scores, genes_annotated) = read_string_files(complete=complete)
+    print(gene_gene_scores.columns)
+    print(genes_annotated.columns)
 
     (
         ft_nodes,
         ft_gene,
         ft_ft_overlap,
-    ) = read_functional_files(protein_gene_dict=protein_gene_dict)
+    ) = read_functional_files(complete=complete)
+    print(ft_nodes.columns)
+    print(ft_gene.columns)
+    print(ft_ft_overlap.columns)
 
-    string_gene_nodes = get_consistent_entries(comparing_genes=string_gene_nodes, ensembl_genes=complete_genes, mode=0)
-    tg_nodes = get_consistent_entries(comparing_genes=tg_nodes, ensembl_genes=complete_genes, mode=1)
-    tf_nodes = get_consistent_entries(comparing_genes=tf_nodes, ensembl_genes=complete_genes, mode=1)
+    tg_nodes = get_consistent_entries(comparing_genes=tg_nodes, complete=complete, mode=1)
+    tf_nodes = get_consistent_entries(comparing_genes=tf_nodes, complete=complete, mode=1)
+
+    # TODO Filter DE, DA, Correlation on consistent entries
 
     # first_setup(
+    #     gene_nodes=complete,
     #     tg_nodes=tg_nodes,
     #     tf_nodes=tf_nodes,
     #     or_nodes=or_nodes,
@@ -81,5 +91,4 @@ if __name__ == "__main__":
     #     ft_gene=ft_gene,
     #     ft_ft_overlap=ft_ft_overlap,
     #     gene_gene_scores=gene_gene_scores,
-    #     string_gene_nodes=string_gene_nodes,
     # )
