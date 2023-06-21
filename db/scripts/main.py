@@ -12,7 +12,9 @@ _DEV_MAX_REL = 10000
 _NEO4J_IMPORT_PATH = "/usr/local/bin/neo4j/import/"
 _FUNCTION_TIME_PATH = Path(__file__).parent / Path("./function_times.csv")
 
-_PRODUCTION = False
+os.environ["_TIME_FUNCTIONS"] = str(True)
+os.environ["_SILENT"] = str(False)
+os.environ["_PRODUCTION"] = str(False)
 
 
 def read_experiment_files():
@@ -37,8 +39,8 @@ def read_functional_files(complete: pd.DataFrame):
 
 if __name__ == "__main__":
     (
-        tg_nodes,
-        tf_nodes,
+        tg_mean_count,
+        tf_mean_count,
         de_values,
         or_nodes,
         da_values,
@@ -46,20 +48,11 @@ if __name__ == "__main__":
         or_tg_corr,
         motif,
         distance,
-    ) = utils.time_function(read_experiment_files)
-
-    print(len(de_values))
-    print(len(da_values))
-    print(len(tf_tg_corr))
-    print(len(or_tg_corr))
+    ) = read_experiment_files()
 
     complete = read_ensembl_files()
 
-    print(len(complete))
-
     (gene_gene_scores, genes_annotated) = read_string_files(complete=complete)
-    print(len(gene_gene_scores))
-    print(len(genes_annotated))
 
     (
         ft_nodes,
@@ -67,13 +60,10 @@ if __name__ == "__main__":
         ft_ft_overlap,
     ) = read_functional_files(complete=complete)
 
-    print(len(ft_nodes))
-    print(len(ft_gene))
-    print(len(ft_ft_overlap))
-
     first_setup(
-        tg_nodes=tg_nodes,
-        tf_nodes=tf_nodes,
+        gene_nodes=genes_annotated,
+        tg_mean_count=tg_mean_count,
+        tf_mean_count=tf_mean_count,
         or_nodes=or_nodes,
         da_values=da_values,
         de_values=de_values,
@@ -85,5 +75,4 @@ if __name__ == "__main__":
         ft_gene=ft_gene,
         ft_ft_overlap=ft_ft_overlap,
         gene_gene_scores=gene_gene_scores,
-        string_gene_nodes=string_gene_nodes,
     )

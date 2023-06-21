@@ -1,10 +1,9 @@
-from utils import time_function, print_update
+from utils import print_update
 import pandas as pd
 import os
 import numpy as np
 
 
-@time_function
 def parse_ensembl(dir_path: str = os.getenv("_DEFAULT_ENSEMBL_PATH")):
     """
     Reads ENSEMBL files and returns a Pandas dataframe
@@ -13,7 +12,6 @@ def parse_ensembl(dir_path: str = os.getenv("_DEFAULT_ENSEMBL_PATH")):
 
     """
 
-    @time_function
     def read_ensembl():
         dataframes = [None] * 4
 
@@ -26,7 +24,6 @@ def parse_ensembl(dir_path: str = os.getenv("_DEFAULT_ENSEMBL_PATH")):
             dataframes[index] = df
         return dataframes
 
-    @time_function
     def post_processing(ensembl: list[pd.DataFrame]):
         complete = pd.concat(ensembl)
         complete = complete.drop(columns=["ENTREZID"])
@@ -56,7 +53,6 @@ def parse_ensembl(dir_path: str = os.getenv("_DEFAULT_ENSEMBL_PATH")):
     return post_processing(ensembl=ensembl)
 
 
-@time_function
 def _reformat_ensembl_term_file(df: pd.DataFrame, file_name: str):
     print_update(update_type="Reformatting", text=file_name, color="orange")
 
@@ -72,7 +68,6 @@ def _reformat_ensembl_term_file(df: pd.DataFrame, file_name: str):
     return functions[index](df=df), index
 
 
-@time_function
 def _reformat_ena(df: pd.DataFrame):
     # TODO
     df = df.filter(items=["gene_stable_id", "protein_stable_id"])
@@ -82,7 +77,6 @@ def _reformat_ena(df: pd.DataFrame):
     return df
 
 
-@time_function
 def _reformat_entrez(df: pd.DataFrame):
     # TODO
     df = df.filter(items=["gene_stable_id", "protein_stable_id", "xref"])
@@ -92,7 +86,6 @@ def _reformat_entrez(df: pd.DataFrame):
     return df
 
 
-@time_function
 def _reformat_refseq(df: pd.DataFrame):
     # TODO
     df = df.filter(items=["gene_stable_id", "protein_stable_id"])
@@ -102,7 +95,6 @@ def _reformat_refseq(df: pd.DataFrame):
     return df
 
 
-@time_function
 def _reformat_uniprot(df: pd.DataFrame):
     df = df.filter(items=["gene_stable_id", "protein_stable_id"])
     df = df.rename(columns={"gene_stable_id": "ENSEMBL", "protein_stable_id": "Protein"})

@@ -1,16 +1,14 @@
-from utils import time_function, print_update
+from utils import print_update
 import pandas as pd
 import os
 
 
-@time_function
 def parse_string(complete: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT_STRING_PATH")):
     """
     Reads STRING files and returns a Pandas dataframe
     [ protein.links.v11.5.tsv, protein.info.v11.5.tsv, string_SYMBOL_ENSEMBL.tsv ]
     """
 
-    @time_function
     def read_string():
         dataframes = [None] * 3
 
@@ -23,7 +21,6 @@ def parse_string(complete: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT_STR
             dataframes[index] = df
         return dataframes
 
-    @time_function
     def post_processing(string: list[pd.DataFrame]):
         genes_annotated = string[1].merge(complete, left_on="Protein", right_on="Protein", how="left")
         genes_annotated = genes_annotated.filter(items=["ENSEMBL", "SYMBOL", "annotation", "ENTREZID"])
@@ -64,7 +61,6 @@ def parse_string(complete: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT_STR
     return post_processing(string=string)
 
 
-@time_function
 def _reformat_string_file(df: pd.DataFrame, file_name: str):
     print_update(update_type="Reformatting", text=file_name, color="orange")
 
@@ -75,19 +71,16 @@ def _reformat_string_file(df: pd.DataFrame, file_name: str):
     return functions[index](df=df), index
 
 
-@time_function
 def _reformat_string_links(df: pd.DataFrame):
     df = df.rename(columns={"combined_score": "Score"})
     return df
 
 
-@time_function
 def _reformat_string_info(df: pd.DataFrame):
     df = df.rename(columns={"preferred_name": "SYMBOL", "#string_protein_id": "Protein"})
     return df
 
 
-@time_function
 def _reformat_protein_gene_dict(df: pd.DataFrame):
     df = df.filter(items=["#string_protein_id", "ENSEMBL", "annotation", "ENTREZID", "preferred_name"])
     df = df.rename(columns={"#string_protein_id": "Protein", "annotation": "annot", "preferred_name": "SYMBOL"})

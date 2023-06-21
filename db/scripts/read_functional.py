@@ -1,17 +1,15 @@
-from utils import time_function, print_update
+from utils import print_update
 import pandas as pd
 import os
 import json
 
 
-@time_function
 def parse_functional(complete: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT_FUNCTIONAL_PATH")):
     """
     Reads Functional Terms files and returns a Pandas dataframe
     [ functional_terms_overlap.csv, TermsWithProteins.csv ]
     """
 
-    @time_function
     def read_functional():
         dataframes = [None] * 2
 
@@ -24,7 +22,6 @@ def parse_functional(complete: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT
             dataframes[index] = df
         return dataframes
 
-    @time_function
     def post_processing(functional: list[pd.DataFrame]):
         ft_nodes = functional[1].filter(items=["external_id", "name", "category"])
         ft_nodes = ft_nodes.rename(columns={"external_id": "Term"})
@@ -49,7 +46,6 @@ def parse_functional(complete: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT
     return post_processing(functional=functional)
 
 
-@time_function
 def _reformat_functional_term_file(df: pd.DataFrame, file_name: str):
     print_update(update_type="Reformatting", text=file_name, color="orange")
 
@@ -60,12 +56,10 @@ def _reformat_functional_term_file(df: pd.DataFrame, file_name: str):
     return functions[index](df=df), index
 
 
-@time_function
 def _reformat_ft_overlap(df: pd.DataFrame):
     df = df.rename(columns={"score": "Score"})
     return df
 
 
-@time_function
 def _reformat_terms_proteins(df: pd.DataFrame):
     return df

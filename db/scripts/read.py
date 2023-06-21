@@ -1,11 +1,13 @@
 import os
 import pandas as pd
+from utils import time_function
 from read_experiment import parse_experiment
 from read_string import parse_string
 from read_ensembl import parse_ensembl
 from read_functional import parse_functional
 
 
+@time_function
 def read(dir_path: str = None, reformat: bool = True, mode: int = -1, complete: pd.DataFrame = pd.DataFrame([])):
     if mode == 0:
         # Experiment

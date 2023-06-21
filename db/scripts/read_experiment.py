@@ -1,4 +1,4 @@
-from utils import Reformatter, time_function, print_update
+from utils import Reformatter, print_update
 import pandas as pd
 import os
 
@@ -18,14 +18,12 @@ DA_CONTEXT = [
 ]
 
 
-@time_function
 def parse_experiment(dir_path: str = os.getenv("_DEFAULT_EXPERIMENT_PATH"), reformat: bool = True):
     """
     Parses experiment files and returns list of Pandas DataFrames s.t.
     [ tg_nodes, tf_nodes, de_values, or_nodes, da_values, tf_tg_corr, tf_or_corr ]
     """
 
-    @time_function
     def read_experiment():
         """
         Reads Experiment Files from a given path and returns a list of Pandas dataframes,
@@ -47,7 +45,6 @@ def parse_experiment(dir_path: str = os.getenv("_DEFAULT_EXPERIMENT_PATH"), refo
                 dataframes[index] = df
         return dataframes
 
-    @time_function
     def filter_df_by_context(context: str, df: pd.DataFrame, protein: bool):
         if protein:
             filtered = df.filter(items=["ENSEMBL", context, context + "-padj"])
@@ -71,7 +68,6 @@ def parse_experiment(dir_path: str = os.getenv("_DEFAULT_EXPERIMENT_PATH"), refo
             )
         return out
 
-    @time_function
     def make_context_dataframes(context_list, df, protein):
         value_reformat = []
         for context in context_list:
@@ -80,7 +76,6 @@ def parse_experiment(dir_path: str = os.getenv("_DEFAULT_EXPERIMENT_PATH"), refo
         values = pd.concat(value_reformat)
         return values
 
-    @time_function
     def post_processing(exp: list[pd.DataFrame]):
         # Filter Dataframes for relevant columns
         de = exp[1].filter(items=["ENSEMBL", "ENTREZID", "SYMBOL", "annot", "TF", "in_ATAC", "mean_count"])
@@ -88,9 +83,11 @@ def parse_experiment(dir_path: str = os.getenv("_DEFAULT_EXPERIMENT_PATH"), refo
         # Division into TG and TF nodes
         tg_nodes = de[de["TF"] == "no"]
         tg_nodes = tg_nodes.drop(columns=["TF"])
+        tg_mean_count = tg_nodes.filter(items=["mean_count", "ENSEMBL"])
 
         tf_nodes = de[de["TF"] == "yes"]
         tf_nodes = tf_nodes.drop(columns=["TF"])
+        tf_mean_count = tf_nodes.filter(items=["mean_count", "ENSEMBL"])
 
         # Filter for DE Values in specific contexts
         tmp_de = exp[1].filter(items=["ENSEMBL"] + DE_CONTEXT + [c + "-padj" for c in DE_CONTEXT])
@@ -130,14 +127,13 @@ def parse_experiment(dir_path: str = os.getenv("_DEFAULT_EXPERIMENT_PATH"), refo
 
         motif = exp[4]
 
-        return tg_nodes, tf_nodes, de_values, or_nodes, da_values, tf_tg_corr, or_tg_corr, motif, distance
+        return tg_mean_count, tf_mean_count, de_values, or_nodes, da_values, tf_tg_corr, or_tg_corr, motif, distance
 
     # Read and Rename columns of Experiment data
     exp = read_experiment()
     return post_processing(exp=exp)
 
 
-@time_function
 def _reformat_experiment_file(df: pd.DataFrame, file_name: str, reformat: bool):
     print_update(update_type="Reformatting", text=file_name, color="orange")
 
@@ -151,7 +147,6 @@ def _reformat_experiment_file(df: pd.DataFrame, file_name: str, reformat: bool):
     return functions[index](df=df), index
 
 
-@time_function
 def _reformat_da(df: pd.DataFrame):
     reformatter = Reformatter("open_region_")
 
@@ -160,7 +155,6 @@ def _reformat_da(df: pd.DataFrame):
     return df
 
 
-@time_function
 def _reformat_de(df: pd.DataFrame):
     reformatter = Reformatter("")
 
@@ -169,19 +163,16 @@ def _reformat_de(df: pd.DataFrame):
     return df
 
 
-@time_function
 def _reformat_tf_tg(df: pd.DataFrame):
     df = df.rename(columns={"nearest_ENSEMBL": "ENSEMBL", "TF_target_cor": "Correlation"})
     return df
 
 
-@time_function
 def _reformat_or_tg(df: pd.DataFrame):
     df = df.rename(columns={"nearest_ENSEMBL": "ENSEMBL", "peak_target_cor": "Correlation"})
     return df
 
 
-@time_function
 def _reformat_motif(df: pd.DataFrame):
     df = df.rename(columns={"motif_consensus": "Motif"})
     return df

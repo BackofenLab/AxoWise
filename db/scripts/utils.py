@@ -19,7 +19,7 @@ class Reformatter:
         return "-".join([p.replace("wt", "") for p in s])
 
 
-def read_creds(credentials_path=_DEFAULT_CREDENTIALS_PATH):
+def read_creds(credentials_path: str):
     with open(credentials_path, "rt", encoding="utf-8") as credentials_file:
         credentials = yaml.load(credentials_file, Loader=yaml.FullLoader)
 
@@ -28,7 +28,7 @@ def read_creds(credentials_path=_DEFAULT_CREDENTIALS_PATH):
 
 
 def start_driver():
-    uri, auth = read_creds()
+    uri, auth = read_creds(credentials_path=os.getenv("_DEFAULT_CREDENTIALS_PATH"))
     driver = GraphDatabase.driver(uri, auth=auth)
     return driver
 
