@@ -18,23 +18,23 @@ os.environ["_SILENT"] = str(False)
 os.environ["_PRODUCTION"] = str(False)
 
 
-def read_experiment_files(path=os.getenv("_DEFAULT_EXPERIMENT_PATH")):
-    data = rd.parse_experiment(dir_path=path, reformat=True)
+def read_experiment_files():
+    data = rd.read(reformat=True, mode=0)
     return data
 
 
-def read_string_files(complete: pd.DataFrame, path=os.getenv("_DEFAULT_STRING_PATH")):
-    data = rd.parse_string(complete=complete, dir_path=path)
+def read_string_files(complete: pd.DataFrame):
+    data = rd.read(complete=complete, mode=1)
     return data
 
 
-def read_functional_files(complete: pd.DataFrame, path=os.getenv("_DEFAULT_FUNCTIONAL_PATH")):
-    data = rd.parse_functional(complete=complete, dir_path=path)
+def read_ensembl_files():
+    data = rd.read(mode=2)
     return data
 
 
-def read_ensembl_files(path=os.getenv("_DEFAULT_ENSEMBL_PATH")):
-    data = rd.parse_ensembl(dir_path=path)
+def read_functional_files(complete: pd.DataFrame):
+    data = rd.read(complete=complete, mode=3)
     return data
 
 
@@ -51,25 +51,28 @@ if __name__ == "__main__":
         distance,
     ) = read_experiment_files()
 
-    print(de_values.columns)
-    print(da_values.columns)
-    print(tf_tg_corr.columns)
-    print(or_tg_corr.columns)
+    print(len(de_values))
+    print(len(da_values))
+    print(len(tf_tg_corr))
+    print(len(or_tg_corr))
 
     complete = read_ensembl_files()
 
+    print(len(complete))
+
     (gene_gene_scores, genes_annotated) = read_string_files(complete=complete)
-    print(gene_gene_scores.columns)
-    print(genes_annotated.columns)
+    print(len(gene_gene_scores))
+    print(len(genes_annotated))
 
     (
         ft_nodes,
         ft_gene,
         ft_ft_overlap,
     ) = read_functional_files(complete=complete)
-    print(ft_nodes.columns)
-    print(ft_gene.columns)
-    print(ft_ft_overlap.columns)
+
+    print(len(ft_nodes))
+    print(len(ft_gene))
+    print(len(ft_ft_overlap))
 
     tg_nodes = get_consistent_entries(comparing_genes=tg_nodes, complete=complete, mode=1)
     tf_nodes = get_consistent_entries(comparing_genes=tf_nodes, complete=complete, mode=1)

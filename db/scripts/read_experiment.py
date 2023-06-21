@@ -1,0 +1,187 @@
+from utils import Reformatter, time_function, print_update
+import pandas as pd
+import os
+
+DE_CONTEXT = [
+    "6h-0h",
+    "24h-0h",
+    "336h-0h",
+    "RC12h-0h",
+    "RC12h-6h",
+]
+DA_CONTEXT = [
+    "12h-0h",
+    "24h-0h",
+    "336h-0h",
+    "RC12h-0h",
+    "RC12h-12h",
+]
+
+
+@time_function
+def parse_experiment(dir_path: str = os.getenv("_DEFAULT_EXPERIMENT_PATH"), reformat: bool = True):
+    """
+    Parses experiment files and returns list of Pandas DataFrames s.t.
+    [ tg_nodes, tf_nodes, de_values, or_nodes, da_values, tf_tg_corr, tf_or_corr ]
+    """
+
+    @time_function
+    def read_experiment():
+        """
+        Reads Experiment Files from a given path and returns a list of Pandas dataframes,
+        where indices are as follows:
+        0: DA values
+        1: DE values
+        2: TF_target_cor
+        3: peak_target_cor
+        4: TF_motif_peak
+        If some of the data is not present, the value will be None.
+        """
+        dataframes = [None] * 5
+        for file in os.scandir(dir_path):
+            file_name, file_extention = os.path.splitext(file)
+            if file_extention == ".tsv":
+                df, index = _reformat_experiment_file(
+                    df=pd.read_csv(file, sep="\t"), file_name=file_name.split("/")[-1], reformat=reformat
+                )
+                dataframes[index] = df
+        return dataframes
+
+    @time_function
+    def filter_df_by_context(context: str, df: pd.DataFrame, protein: bool):
+        if protein:
+            filtered = df.filter(items=["ENSEMBL", context, context + "-padj"])
+            out = pd.DataFrame(
+                {
+                    "ENSEMBL": filtered["ENSEMBL"],
+                    "Context": context,
+                    "Value": filtered[context],
+                    "p": filtered[context + "-padj"],
+                }
+            )
+        else:
+            filtered = df.filter(items=["nearest_index", context, context + "-padj"])
+            out = pd.DataFrame(
+                {
+                    "nearest_index": filtered["nearest_index"],
+                    "Context": context,
+                    "Value": filtered[context],
+                    "p": filtered[context + "-padj"],
+                }
+            )
+        return out
+
+    @time_function
+    def make_context_dataframes(context_list, df, protein):
+        value_reformat = []
+        for context in context_list:
+            value_reformat.append(filter_df_by_context(context=context, df=df, protein=protein))
+
+        values = pd.concat(value_reformat)
+        return values
+
+    @time_function
+    def post_processing(exp: list[pd.DataFrame]):
+        # Filter Dataframes for relevant columns
+        de = exp[1].filter(items=["ENSEMBL", "ENTREZID", "SYMBOL", "annot", "TF", "in_ATAC", "mean_count"])
+
+        # Division into TG and TF nodes
+        tg_nodes = de[de["TF"] == "no"]
+        tg_nodes = tg_nodes.drop(columns=["TF"])
+
+        tf_nodes = de[de["TF"] == "yes"]
+        tf_nodes = tf_nodes.drop(columns=["TF"])
+
+        # Filter for DE Values in specific contexts
+        tmp_de = exp[1].filter(items=["ENSEMBL"] + DE_CONTEXT + [c + "-padj" for c in DE_CONTEXT])
+
+        # Create DE DataFrame s.t. context is a column value
+        de_values = make_context_dataframes(context_list=DE_CONTEXT, df=tmp_de, protein=True)
+
+        # Filter for relevant values for OR nodes
+        or_nodes = exp[0].filter(
+            items=[
+                "seqnames",
+                "summit",
+                "strand",
+                "annotation",
+                "feature",
+                "in_RNAseq",
+                "nearest_index",
+                "nearest_ENSEMBL",
+                "mean_count",
+            ]
+        )
+
+        # Filter for Distance to transcription site
+        distance = exp[0].filter(items=["nearest_index", "nearest_distanceToTSS", "nearest_ENSEMBL"])
+        distance = distance.rename(columns={"nearest_distanceToTSS": "Distance"})
+
+        # Filter for DA Values in specific contexts
+        tmp_da = exp[0].filter(items=["nearest_index", "mean_count"] + DA_CONTEXT + [c + "-padj" for c in DA_CONTEXT])
+
+        # Create DA DataFrame s.t. context is column value
+        da_values = make_context_dataframes(context_list=DA_CONTEXT, df=tmp_da, protein=False)
+
+        tf_tg_corr = exp[2]
+
+        # Filter for relevant columns
+        or_tg_corr = exp[3].filter(items=["ENSEMBL", "Correlation", "nearest_index"])
+
+        motif = exp[4]
+
+        return tg_nodes, tf_nodes, de_values, or_nodes, da_values, tf_tg_corr, or_tg_corr, motif, distance
+
+    # Read and Rename columns of Experiment data
+    exp = read_experiment()
+    return post_processing(exp=exp)
+
+
+@time_function
+def _reformat_experiment_file(df: pd.DataFrame, file_name: str, reformat: bool):
+    print_update(update_type="Reformatting", text=file_name, color="orange")
+
+    # Filename and function pairs: same index <-> use function for file
+    names = ["exp_DA", "exp_DE_filter", "TF_target_cor_", "peak_target_cor_", "TF_motif_peak"]
+    functions = [_reformat_da, _reformat_de, _reformat_tf_tg, _reformat_or_tg, _reformat_motif]
+    index = names.index(file_name)
+
+    if not reformat:
+        return df, index
+    return functions[index](df=df), index
+
+
+@time_function
+def _reformat_da(df: pd.DataFrame):
+    reformatter = Reformatter("open_region_")
+
+    rename_dict = dict([(old, reformatter.run(old, "tf")) for old in df.columns if "open_region_" in old])
+    df = df.rename(columns=rename_dict)
+    return df
+
+
+@time_function
+def _reformat_de(df: pd.DataFrame):
+    reformatter = Reformatter("")
+
+    rename_dict = dict([(old, reformatter.run(old, "tf")) for old in df.columns if "wt" in old])
+    df = df.rename(columns=rename_dict)
+    return df
+
+
+@time_function
+def _reformat_tf_tg(df: pd.DataFrame):
+    df = df.rename(columns={"nearest_ENSEMBL": "ENSEMBL", "TF_target_cor": "Correlation"})
+    return df
+
+
+@time_function
+def _reformat_or_tg(df: pd.DataFrame):
+    df = df.rename(columns={"nearest_ENSEMBL": "ENSEMBL", "peak_target_cor": "Correlation"})
+    return df
+
+
+@time_function
+def _reformat_motif(df: pd.DataFrame):
+    df = df.rename(columns={"motif_consensus": "Motif"})
+    return df
