@@ -20,6 +20,7 @@ export default ({
     watch:{
         term_data(){
             this.graphs = this.$store.state.term_graph_dict
+            this.graphs.forEach(entry => { if(entry.graph == this.term_data) this.selected_graph = entry; } )
         }
     },
     methods: {

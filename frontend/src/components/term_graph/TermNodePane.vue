@@ -1,11 +1,11 @@
 <template>
     <div class="text" v-if="active_node !== null">
         <div class="headertext">
-            <span>{{active_node.attributes['Name']}}</span>
+            <span>{{active_node.node.attributes['Name']}}</span>
         </div>
         <button class="go-button" v-on:click="to_proteins()" >To Protein Graph</button>
         <div class="nodeattributes">
-            <div id="colorbar" :style="{ backgroundColor: colornode }">{{active_node.attributes['Modularity Class']}}</div>
+            <div id="colorbar" :style="{ backgroundColor: colornode }">{{active_node.node.attributes['Modularity Class']}}</div>
             <div class="p">
             <span>Statistics:</span>
             <button v-on:click="expand_stats = !expand_stats" id="expand-btn">Expand</button>
@@ -55,23 +55,22 @@ export default {
     watch: {
         active_node() {
             var com = this;
-            
-            if (com.active_node == null) {
+
+            if (com.active_node == null || com.active_node.node == null) {
                 return;
             }
 
-            com.node_item.value = com.active_node
+            com.node_item.value = com.active_node.node
             
             com.$emit('active_item_changed',{ "node": com.node_item})
-            
-            
-            com.colornode = com.node_color_index[com.active_node.attributes["Ensembl ID"]]
-            const { "Ensembl ID": EnsemblID, Degree, Category, "P Value": PValue, FDR, PageRank, "Eigenvector Centrality": EC } = com.active_node.attributes;
+
+            com.colornode = com.node_color_index[com.active_node.node.attributes["Ensembl ID"]]
+            const { "Ensembl ID": EnsemblID, Degree, Category, "P Value": PValue, FDR, PageRank, "Eigenvector Centrality": EC } = com.active_node.node.attributes;
             com.statistics = { EnsemblID, Degree,Category, PValue, FDR, PageRank, EC }
 
 
             const neighbors = {};
-            const node_id = com.active_node.attributes["Ensembl ID"]
+            const node_id = com.active_node.node.attributes["Ensembl ID"]
             com.term_data.edges.forEach(e => {
                 if (node_id == e.source) {
                     neighbors[e.target] = true;
@@ -100,7 +99,7 @@ export default {
         },
         to_proteins(){
             var com = this;
-            this.$store.commit('assign_active_enrichment', com.active_node.attributes["Ensembl ID"])
+            this.$store.commit('assign_active_enrichment', com.active_node.node.attributes["Ensembl ID"])
             this.$router.push("protein")
         }
     }

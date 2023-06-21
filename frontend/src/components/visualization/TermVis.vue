@@ -36,18 +36,25 @@ export default {
       sigma_instance.graph.clear();
       sigma_instance.graph.read(com.term_data);
 
+      if(com.graph_state) this.show_unconnectedGraph(com.graph_state);
+
       com.edit_opacity()
+
+      if(com.active_node) this.$emit('active_node_changed', {node: sigma_instance.graph.getNodeFromIndex(com.active_node.node.id), graph:com.term_data});
 
       sigma_instance.refresh()
 
     },
-    active_node(node) {
+    active_node(nodeDict) {
       var com = this;
 
       com.reset()
-
-      if(node == null) return
-
+      
+      if(nodeDict == null ) return;
+      if(nodeDict.node == null) return;
+      
+      var node = nodeDict.node
+      
       const neighbors = new Set();
       const edges = sigma_instance.graph.edges()
 
@@ -115,7 +122,7 @@ export default {
       sigma_instance.refresh();
     },
     active_combine(val){
-      if(val.name == "node") this.$emit('active_node_changed', val.value)
+      if(val.name == "node") this.$emit('active_node_changed', {node: val.value, graph: this.terms})
       if(val.name == "fdr") this.$emit('active_fdr_changed', val.value)
       if(val.name == "subset") this.$emit('active_subset_changed', val.value)
     },
@@ -199,7 +206,7 @@ export default {
   methods: {
     activeNode(event, special) {
       this.special_label = special
-      this.$emit('active_node_changed', event)
+      this.$emit('active_node_changed', {node:event, graph:this.terms})
     },
     reset() {
       var com = this;
@@ -333,6 +340,8 @@ export default {
 
     com.edit_opacity()
 
+    if(com.graph_state) this.show_unconnectedGraph(com.graph_state);
+
     var keyState = {};
 
     document.addEventListener('keydown', function(event) {
@@ -354,7 +363,7 @@ export default {
     });
 
     this.emitter.on("searchTermNode", state => {
-      this.$emit('active_node_changed', sigma_instance.graph.getNodeFromIndex(state.id))
+      this.$emit('active_node_changed', {node: sigma_instance.graph.getNodeFromIndex(state.id), graph:com.term_data})
     });
 
     this.emitter.on("unconnectedTermGraph", state => {
