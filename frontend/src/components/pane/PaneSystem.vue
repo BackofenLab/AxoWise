@@ -1,5 +1,5 @@
 <template>
-    <div id="attributepane" class="pane" v-show="active_node !== null || active_subset !== null || active_term !== null || active_decoloumn !== null">
+    <div id="attributepane" class="pane" v-show="active_node !== null || active_subset !== null || active_term !== null || active_decoloumn !== null || paneHidden == false">
         <div class="buttons">
             <button id="panebutton" v-on:click="open_pane()">
                 <img id="collapse-icon" src="@/assets/toolbar/winkel-rechts.png" alt="Collapse Icon">
@@ -64,7 +64,8 @@ export default {
             active_item: null,
             active_dict: {},
             active_tab: "node",
-            highlight_subset: null
+            highlight_subset: null,
+            paneHidden: true
         }
     },
     watch: {
@@ -91,11 +92,27 @@ export default {
                 paneButton.style.height = '100%';
                 paneCloseButton.style.visibility = 'hidden';
                 collapseIcon.classList.add('rotate');
+
+                this.paneHidden = false;
+
+                this.$emit('active_node_changed', null)
+                this.$emit('active_term_changed', null)
+                this.$emit('active_subset_changed', null)
+                this.$emit('active_layer_changed', null)
+                this.$emit('active_decoloumn_changed', null)
+                this.emitter.emit('enrichTerms', null)
+                this.emitter.emit('enrichSubset', null)
+                
+
             } else {
                 div.classList.remove('pane-show');
                 paneCloseButton.style.visibility = 'visible';
                 paneButton.style.height = '25px';
                 collapseIcon.classList.remove('rotate');
+                this.paneHidden = true
+                var nameKey = Object.keys(this.active_dict)[0]
+                this.selectTab(nameKey, this.active_dict[nameKey].value)
+
             }
         },
         close_pane(){
