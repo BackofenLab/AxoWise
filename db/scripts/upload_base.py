@@ -18,6 +18,7 @@ def create_gene_nodes(nodes: pd.DataFrame, driver: Driver):
         source_file="genes.csv",
         type_="TG",
         id="ENSEMBL",
+        values=["ENTREZID", "ENSEMBL", "SYMBOL", "annotation"],
         reformat_values=[("ENTREZID", "toInteger")],
         driver=driver,
         merge=False,
@@ -30,7 +31,7 @@ def create_tf_label(tf: pd.DataFrame, driver: Driver):
 
     save_df_to_csv(file_name="tf.csv", df=tf, override_prod=True)
     update_nodes(
-        source_file="tf.csv", type_="TG", id="ENSEMBL", reformat_values=[], additional_label="TF", driver=driver
+        source_file="tf.csv", type_="TG", id="ENSEMBL", values=[], reformat_values=[], additional_label="TF", driver=driver
     )
 
 
@@ -42,7 +43,7 @@ def create_or_nodes(nodes: pd.DataFrame, driver: Driver):
     print_update(update_type="Node Creation", text="Open Region", color="blue")
 
     save_df_to_csv(file_name="or.csv", df=nodes, override_prod=True)
-    create_nodes(source_file="or.csv", type_="OR", id="id", reformat_values=[], merge=False, driver=driver)
+    create_nodes(source_file="or.csv", type_="OR", id="id", values=["id", "annotation", "feature"], reformat_values=[], merge=False, driver=driver)
 
 
 @time_function
@@ -60,6 +61,7 @@ def create_motif_edges(motif: pd.DataFrame, driver: Driver):
         node_types=("TF", "OR"),
         values=["Motif"],
         reformat_values=[],
+        merge=False,
         driver=driver,
     )
 
@@ -79,6 +81,7 @@ def create_distance_edges(distance: pd.DataFrame, driver: Driver):
         node_types=("OR", "TG"),
         values=["Distance"],
         reformat_values=[("Distance", "toInteger")],
+        merge=False,
         driver=driver,
     )
 
@@ -98,6 +101,7 @@ def create_string(gene_gene_scores: pd.DataFrame, driver: Driver):
         node_types=("TG", "TG"),
         values=["Score"],
         reformat_values=[("Score", "toInteger")],
+        merge=False,
         driver=driver,
     )
 
@@ -121,6 +125,7 @@ def create_functional(
         source_file="ft_nodes.csv",
         type_="FT",
         id="Term",
+        values=["Term", "Name", "Category"],
         reformat_values=[],
         merge=False,
         driver=driver,
@@ -136,6 +141,7 @@ def create_functional(
         node_types=("FT", "FT"),
         values=["Score"],
         reformat_values=[("Score", "toFloat")],
+        merge=False,
         driver=driver,
     )
 
@@ -149,6 +155,7 @@ def create_functional(
         node_types=("TG", "FT"),
         values=[],
         reformat_values=[],
+        merge=False,
         driver=driver,
     )
 

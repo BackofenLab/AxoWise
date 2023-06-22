@@ -132,7 +132,7 @@ def create_context(context: pd.DataFrame, source: int, value_type: int, driver: 
     node_df = pd.DataFrame.from_records(data=[{"Context": c} for c in nodes])
 
     save_df_to_csv(file_name="context.csv", df=node_df, override_prod=True)
-    create_nodes(source_file="context.csv", type_="Context", id="Context", reformat_values=[], driver=driver)
+    create_nodes(source_file="context.csv", type_="Context", id="Context", values=["Context"], reformat_values=[], driver=driver)
 
     print_update(update_type="Edge Creation", text="HAS for Source, Context", color="cyan")
 
@@ -168,6 +168,7 @@ def create_context(context: pd.DataFrame, source: int, value_type: int, driver: 
             node_types=("Context", "TG"),
             values=["Value", "p", "Source"],
             reformat_values=[("Value", "toFloat"), ("Source", "toInteger"), ("p", "toFloat")],
+            merge=False,
             driver=driver,
         )
 
@@ -181,6 +182,7 @@ def create_context(context: pd.DataFrame, source: int, value_type: int, driver: 
             node_types=("Context", "OR"),
             values=["Value", "p", "Source"],
             reformat_values=[("Value", "toFloat"), ("Source", "toInteger"), ("p", "toFloat")],
+            merge=False,
             driver=driver,
         )
 
@@ -210,6 +212,7 @@ def create_correlation(
             node_types=("TF", "TG"),
             values=["Correlation", "Source"],
             reformat_values=[("Correlation", "toFloat"), ("Source", "toInteger")],
+            merge=False,
             driver=driver,
         )
 
@@ -223,6 +226,7 @@ def create_correlation(
             node_types=("OR", "TG"),
             values=["Correlation", "Source"],
             reformat_values=[("Correlation", "toFloat"), ("Source", "toInteger")],
+            merge=False,
             driver=driver,
         )
 

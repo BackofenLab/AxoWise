@@ -24,7 +24,7 @@ def parse_functional(complete: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT
 
     def post_processing(functional: list[pd.DataFrame]):
         ft_nodes = functional[1].filter(items=["external_id", "name", "category"])
-        ft_nodes = ft_nodes.rename(columns={"external_id": "Term"})
+        ft_nodes = ft_nodes.rename(columns={"external_id": "Term", "name": "Name", "category": "Category"})
 
         ft_protein_df_list = []
         for _, i in functional[1].iterrows():
