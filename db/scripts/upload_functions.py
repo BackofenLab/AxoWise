@@ -5,7 +5,7 @@ from neo4j import Driver
 # TODO: dont do t = map, but set values like in relationships
 @time_function
 def create_nodes(
-    source_file: str, type_: str, id: str, reformat_values: list[tuple[str]], driver: Driver, merge: bool = True
+    source_file: str, type_: str, id: str, values: list[str],reformat_values: list[tuple[str]], driver: Driver, merge: bool = True
 ):
     """
     Common function to create nodes in the Neo4j Database (MERGE not CREATE)
@@ -19,17 +19,25 @@ def create_nodes(
 
     id_str = "{" + "{}: map.{}".format(id, id) + "}"
     load_data_query = "LOAD CSV WITH HEADERS from 'file:///{}' AS map RETURN map".format(source_file)
+
+    comparing_reformat_values = [v[0] for v in reformat_values]
+    set_values_query = " ".join(
+        [""] + ["SET e.{} = map.{}".format(v, v) for v in values if v not in comparing_reformat_values]
+    )
+    set_values_query += " ".join(
+        [""] + ["SET e.{} = {}(map.{})".format(v[0], v[1], v[0]) for v in reformat_values if v[0] in values]
+    )
+
     if merge:
-        into_db_query = "MERGE (t:{} {} ) SET t = map".format(type_, id_str)
+        into_db_query = "MERGE (t:{} {} ) {}".format(type_, id_str, set_values_query)
     else:
-        into_db_query = "CREATE (t:{} {} ) SET t = map".format(type_, id_str)
-    reformat_values_str = " ".join(["SET t.{} = {}(t.{})".format(v[0], v[1], v[0]) for v in reformat_values])
+        into_db_query = "CREATE (t:{} {} ) {}".format(type_, id_str, set_values_query)
 
     # For large numbers of nodes, using apoc.periodic.iterate
     # For info, see: https://neo4j.com/labs/apoc/4.2/overview/apoc.periodic/apoc.periodic.iterate/
 
     per_iter = 'CALL apoc.periodic.iterate("{}", "{}", {{batchSize: 500, parallel: true}} )'.format(
-        load_data_query, into_db_query + " " + reformat_values_str
+        load_data_query, into_db_query
     )
 
     execute_query(query=per_iter, read=False, driver=driver)
@@ -38,7 +46,7 @@ def create_nodes(
 
 @time_function
 def update_nodes(
-    source_file: str, type_: str, id: str, reformat_values: list[tuple[str]], additional_label: str, driver: Driver
+    source_file: str, type_: str, id: str, values:list[str], reformat_values: list[tuple[str]], additional_label: str, driver: Driver
 ):
     """
     Updates properties of nodes, (+ Currently only adds label)
@@ -54,14 +62,22 @@ def update_nodes(
 
     id_str = "{" + "{}: map.{}".format(id, id) + "}"
     load_data_query = "LOAD CSV WITH HEADERS from 'file:///{}' AS map RETURN map".format(source_file)
+
+    comparing_reformat_values = [v[0] for v in reformat_values]
+    set_values_query = " ".join(
+        [""] + ["SET e.{} = map.{}".format(v, v) for v in values if v not in comparing_reformat_values]
+    )
+    set_values_query += " ".join(
+        [""] + ["SET e.{} = {}(map.{})".format(v[0], v[1], v[0]) for v in reformat_values if v[0] in values]
+    )
+
     if additional_label != "":
-        set_label = "SET t:{}".format(additional_label)
-    else:
-        set_label = ""
+        set_values_query += "SET t:{}".format(additional_label)
+
     match_db_query = "MATCH (t:{} {} )".format(type_, id_str)
 
     per_iter = 'CALL apoc.periodic.iterate("{}", "{}", {{batchSize: 500, parallel: true}} )'.format(
-        load_data_query, match_db_query + " " + set_label
+        load_data_query, match_db_query + " " + set_values_query
     )
 
     execute_query(query=per_iter, read=False, driver=driver)
@@ -77,7 +93,7 @@ def create_relationship(
     values: list[str],
     reformat_values: list[tuple[str]],
     driver: Driver,
-    merge: bool = False,
+    merge: bool = True,
 ):
     """
     Common function to create edges in Neo4j Database (both MERGE and CREATE possible, see merge flag)
