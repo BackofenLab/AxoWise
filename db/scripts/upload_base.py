@@ -27,11 +27,17 @@ def create_gene_nodes(nodes: pd.DataFrame, driver: Driver):
 
 @time_function
 def create_tf_label(tf: pd.DataFrame, driver: Driver):
-    print_update(update_type="Node Update", text="Transcription Factor", color="blue")
+    print_update(update_type="Node Update", text="Transcription Factor", color="red")
 
     save_df_to_csv(file_name="tf.csv", df=tf, override_prod=True)
     update_nodes(
-        source_file="tf.csv", type_="TG", id="ENSEMBL", values=[], reformat_values=[], additional_label="TF", driver=driver
+        source_file="tf.csv",
+        type_="TG",
+        id="ENSEMBL",
+        values=[],
+        reformat_values=[],
+        additional_label="TF",
+        driver=driver,
     )
 
 
@@ -43,7 +49,15 @@ def create_or_nodes(nodes: pd.DataFrame, driver: Driver):
     print_update(update_type="Node Creation", text="Open Region", color="blue")
 
     save_df_to_csv(file_name="or.csv", df=nodes, override_prod=True)
-    create_nodes(source_file="or.csv", type_="OR", id="id", values=["id", "annotation", "feature"], reformat_values=[], merge=False, driver=driver)
+    create_nodes(
+        source_file="or.csv",
+        type_="OR",
+        id="id",
+        values=["id", "annotation", "feature"],
+        reformat_values=[],
+        merge=False,
+        driver=driver,
+    )
 
 
 @time_function

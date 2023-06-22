@@ -5,7 +5,13 @@ from neo4j import Driver
 # TODO: dont do t = map, but set values like in relationships
 @time_function
 def create_nodes(
-    source_file: str, type_: str, id: str, values: list[str],reformat_values: list[tuple[str]], driver: Driver, merge: bool = True
+    source_file: str,
+    type_: str,
+    id: str,
+    values: list[str],
+    reformat_values: list[tuple[str]],
+    driver: Driver,
+    merge: bool = True,
 ):
     """
     Common function to create nodes in the Neo4j Database (MERGE not CREATE)
@@ -22,10 +28,10 @@ def create_nodes(
 
     comparing_reformat_values = [v[0] for v in reformat_values]
     set_values_query = " ".join(
-        [""] + ["SET e.{} = map.{}".format(v, v) for v in values if v not in comparing_reformat_values]
+        [""] + ["SET t.{} = map.{}".format(v, v) for v in values if v not in comparing_reformat_values]
     )
     set_values_query += " ".join(
-        [""] + ["SET e.{} = {}(map.{})".format(v[0], v[1], v[0]) for v in reformat_values if v[0] in values]
+        [""] + ["SET t.{} = {}(map.{})".format(v[0], v[1], v[0]) for v in reformat_values if v[0] in values]
     )
 
     if merge:
@@ -46,7 +52,13 @@ def create_nodes(
 
 @time_function
 def update_nodes(
-    source_file: str, type_: str, id: str, values:list[str], reformat_values: list[tuple[str]], additional_label: str, driver: Driver
+    source_file: str,
+    type_: str,
+    id: str,
+    values: list[str],
+    reformat_values: list[tuple[str]],
+    additional_label: str,
+    driver: Driver,
 ):
     """
     Updates properties of nodes, (+ Currently only adds label)
@@ -65,10 +77,10 @@ def update_nodes(
 
     comparing_reformat_values = [v[0] for v in reformat_values]
     set_values_query = " ".join(
-        [""] + ["SET e.{} = map.{}".format(v, v) for v in values if v not in comparing_reformat_values]
+        [""] + ["SET t.{} = map.{}".format(v, v) for v in values if v not in comparing_reformat_values]
     )
     set_values_query += " ".join(
-        [""] + ["SET e.{} = {}(map.{})".format(v[0], v[1], v[0]) for v in reformat_values if v[0] in values]
+        [""] + ["SET t.{} = {}(map.{})".format(v[0], v[1], v[0]) for v in reformat_values if v[0] in values]
     )
 
     if additional_label != "":
@@ -108,10 +120,9 @@ def create_relationship(
         merge -> Use CREATE or MERGE
     """
 
-    # TODO: Try trick of generating nodes first, then relationships; Generating edges is very slow...
     comparing_reformat_values = [v[0] for v in reformat_values]
-    m_query = (
-        "m.{} = {}map.{}{}".format(
+    m_info = (
+        "SET r.m_{} = {}map.{}{}".format(
             between[0][0],
             ""
             if between[0][1] not in comparing_reformat_values
@@ -122,8 +133,8 @@ def create_relationship(
         if len(between[0]) == 2
         else ""
     )
-    n_query = (
-        "n.{} = {}map.{}{}".format(
+    n_info = (
+        "SET r.n_{} = {}map.{}{}".format(
             between[1][0],
             ""
             if between[1][1] not in comparing_reformat_values
@@ -134,23 +145,54 @@ def create_relationship(
         if len(between[1]) == 2
         else ""
     )
-    load_data_query = (
-        "LOAD CSV WITH HEADERS from 'file:///{}' AS map MATCH (m:{}), (n:{}) WHERE{}{}{}RETURN map, n, m".format(
-            source_file,
-            node_types[0],
-            node_types[1],
-            " " + n_query + " ",
-            "AND" if n_query != "" and m_query != "" else "",
-            " " + m_query + " ",
-        )
-    )
-    comparing_reformat_values = [v[0] for v in reformat_values]
+
     set_values_query = " ".join(
-        [""] + ["SET e.{} = map.{}".format(v, v) for v in values if v not in comparing_reformat_values]
+        [""] + ["SET r.{} = map.{}".format(v, v) for v in values if v not in comparing_reformat_values]
     )
     set_values_query += " ".join(
-        [""] + ["SET e.{} = {}(map.{})".format(v[0], v[1], v[0]) for v in reformat_values if v[0] in values]
+        [""] + ["SET r.{} = {}(map.{})".format(v[0], v[1], v[0]) for v in reformat_values if v[0] in values]
     )
+
+    load_data_query = "LOAD CSV WITH HEADERS from 'file:///{}' AS map RETURN map".format(
+        source_file,
+    )
+
+    create_temp_nodes = "CREATE (r:{}_temp) {}".format(type_, set_values_query + " " + m_info + " " + n_info)
+
+    per_iter = 'CALL apoc.periodic.iterate("{}", "{}", {{batchSize: 500, parallel: true}} )'.format(
+        load_data_query, create_temp_nodes
+    )
+    execute_query(query=per_iter, read=False, driver=driver)
+
+    where_query_m = (
+        "r.m_{} = m.{}".format(
+            between[0][0],
+            between[0][0],
+        )
+        if len(between[0]) == 2
+        else ""
+    )
+
+    where_query_n = (
+        "r.n_{} = n.{}".format(
+            between[1][0],
+            between[1][0],
+        )
+        if len(between[1]) == 2
+        else ""
+    )
+
+    match_nodes = "MATCH (r:{}_temp), (m:{}), (n:{}){}{}{}{} RETURN r, m, n".format(
+        type_,
+        node_types[0],
+        node_types[1],
+        " WHERE " if where_query_n != "" or where_query_m != "" else "",
+        where_query_m,
+        " AND " if where_query_n != "" and where_query_m != "" else "",
+        where_query_n,
+    )
+
+    set_values_query = " ".join([""] + ["SET e.{} = r.{}".format(v, v) for v in values])
 
     if merge:
         create_edge_query = "MERGE (m)-[e:{}]->(n)".format(type_) + set_values_query
@@ -158,8 +200,18 @@ def create_relationship(
         create_edge_query = "CREATE (m)-[e:{}]->(n)".format(type_) + set_values_query
 
     per_iter = 'CALL apoc.periodic.iterate("{}", "{}", {{batchSize: 500, parallel: true}} )'.format(
-        load_data_query, create_edge_query
+        match_nodes, create_edge_query
     )
 
     execute_query(query=per_iter, read=False, driver=driver)
+
+    match_temp_nodes = "MATCH (r:{}_temp) RETURN r".format(type_)
+    delete_temp_nodes = "DELETE r"
+
+    per_iter = 'CALL apoc.periodic.iterate("{}", "{}", {{batchSize: 500, parallel: true}} )'.format(
+        match_temp_nodes, delete_temp_nodes
+    )
+
+    execute_query(query=per_iter, read=False, driver=driver)
+
     return
