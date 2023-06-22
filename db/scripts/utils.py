@@ -70,6 +70,7 @@ def time_function(function, variables: dict = {}):
 
 def print_update(update_type: str, text: str, color: str):
     colors = {
+        "red": "\033[0;31m",
         "orange": "\033[0;33m",
         "blue": "\033[0;34m",
         "pink": "\033[0;35m",
