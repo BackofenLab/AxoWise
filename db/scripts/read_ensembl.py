@@ -7,13 +7,16 @@ import numpy as np
 def parse_ensembl(dir_path: str = os.getenv("_DEFAULT_ENSEMBL_PATH")):
     """
     Reads ENSEMBL files and returns a Pandas dataframe
-    [ Mus_musculus.GRCm39.109.ena.tsv,    Mus_musculus.GRCm39.109.entrez.tsv,
-      Mus_musculus.GRCm39.109.refseq.tsv, Mus_musculus.GRCm39.109.uniprot.tsv ]
+    [
+      Mus_musculus.GRCm39.109.ena.tsv,    Mus_musculus.GRCm39.109.entrez.tsv,
+      Mus_musculus.GRCm39.109.refseq.tsv, Mus_musculus.GRCm39.109.uniprot.tsv,
+      TFCheckpoint_download_180515.tsv
+    ]
 
     """
 
     def read_ensembl():
-        dataframes = [None] * 4
+        dataframes = [None] * 5
 
         for file in os.scandir(dir_path):
             file_name, file_extention = os.path.splitext(file)
@@ -25,7 +28,7 @@ def parse_ensembl(dir_path: str = os.getenv("_DEFAULT_ENSEMBL_PATH")):
         return dataframes
 
     def post_processing(ensembl: list[pd.DataFrame]):
-        complete = pd.concat(ensembl)
+        complete = pd.concat(ensembl[:4])
         complete = complete.drop(columns=["ENTREZID"])
         complete = complete.drop_duplicates(ignore_index=True)
 
@@ -47,7 +50,18 @@ def parse_ensembl(dir_path: str = os.getenv("_DEFAULT_ENSEMBL_PATH")):
         )
 
         complete = complete.merge(entrez, left_on="ENSEMBL", right_on="ENSEMBL", how="left")
-        return complete
+
+        entrez["ENTREZID"] = entrez["ENTREZID"].astype(int)
+        tf = (
+            ensembl[4][ensembl[4]["ENTREZID"] != 0]
+            .astype(int)
+            .drop_duplicates(subset=["ENTREZID"], keep="first", ignore_index=True)
+        )
+        tf = tf.merge(entrez, left_on="ENTREZID", right_on="ENTREZID", how="left")
+        tf = tf.drop(columns=["ENTREZID"])
+        tf = tf.drop_duplicates(subset=["ENSEMBL"], keep="first", ignore_index=True)
+
+        return complete, tf
 
     ensembl = read_ensembl()
     return post_processing(ensembl=ensembl)
@@ -61,15 +75,15 @@ def _reformat_ensembl_term_file(df: pd.DataFrame, file_name: str):
         "Mus_musculus.GRCm39.109.ena",
         "Mus_musculus.GRCm39.109.refseq",
         "Mus_musculus.GRCm39.109.uniprot",
+        "TFCheckpoint_download_180515",
     ]
-    functions = [_reformat_entrez, _reformat_ena, _reformat_refseq, _reformat_uniprot]
+    functions = [_reformat_entrez, _reformat_ena, _reformat_refseq, _reformat_uniprot, _reformat_tf]
     index = names.index(file_name)
 
     return functions[index](df=df), index
 
 
 def _reformat_ena(df: pd.DataFrame):
-    # TODO
     df = df.filter(items=["gene_stable_id", "protein_stable_id"])
     df = df.rename(columns={"gene_stable_id": "ENSEMBL", "protein_stable_id": "Protein"})
     df["Protein"] = "10090." + df["Protein"]
@@ -78,7 +92,6 @@ def _reformat_ena(df: pd.DataFrame):
 
 
 def _reformat_entrez(df: pd.DataFrame):
-    # TODO
     df = df.filter(items=["gene_stable_id", "protein_stable_id", "xref"])
     df = df.rename(columns={"gene_stable_id": "ENSEMBL", "protein_stable_id": "Protein", "xref": "ENTREZID"})
     df["Protein"] = "10090." + df["Protein"]
@@ -87,7 +100,6 @@ def _reformat_entrez(df: pd.DataFrame):
 
 
 def _reformat_refseq(df: pd.DataFrame):
-    # TODO
     df = df.filter(items=["gene_stable_id", "protein_stable_id"])
     df = df.rename(columns={"gene_stable_id": "ENSEMBL", "protein_stable_id": "Protein"})
     df["Protein"] = "10090." + df["Protein"]
@@ -100,4 +112,10 @@ def _reformat_uniprot(df: pd.DataFrame):
     df = df.rename(columns={"gene_stable_id": "ENSEMBL", "protein_stable_id": "Protein"})
     df["Protein"] = "10090." + df["Protein"]
     df = df.replace("10090.-", np.nan)
+    return df
+
+
+def _reformat_tf(df: pd.DataFrame):
+    df = df.filter(items=["entrez_mouse"])
+    df = df.rename(columns={"entrez_mouse": "ENTREZID"})
     return df
