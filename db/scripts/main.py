@@ -1,20 +1,22 @@
 from pathlib import Path
 import read as rd
-from upload import extend_db_from_experiment, first_setup
+from upload import first_setup
+import os
+import pandas as pd
 
-_DEFAULT_EXPERIMENT_PATH = Path("../source/experiment")
-_DEFAULT_STRING_PATH = Path("../source/string")
-_DEFAULT_FUNCTIONAL_PATH = Path("../source/functional")
-_DEFAULT_CELLTYPE_INFO = {"Name": "Microglia"}
-_DEFAULT_STUDY_INFO = {"Source": "in-house"}
-_DEFAULT_CREDENTIALS_PATH = Path(__file__).parent / Path("../../config.yml")
-_DEV_MAX_REL = 10000
-_NEO4J_IMPORT_PATH = "/usr/local/bin/neo4j/import/"
-_FUNCTION_TIME_PATH = Path(__file__).parent / Path("./function_times.csv")
+os.environ["_DEFAULT_EXPERIMENT_PATH"] = "../source/experiment"
+os.environ["_DEFAULT_STRING_PATH"] = "../source/string"
+os.environ["_DEFAULT_FUNCTIONAL_PATH"] = "../source/functional"
+os.environ["_DEFAULT_ENSEMBL_PATH"] = "../source/ensembl"
+os.environ["_DEFAULT_CREDENTIALS_PATH"] = "../../config.yml"
+os.environ["_DEV_MAX_REL"] = str(10000)
+os.environ["_NEO4J_IMPORT_PATH"] = "/usr/local/bin/neo4j/import/"
+os.environ["_FUNCTION_TIME_PATH"] = "./function_times.tsv"
 
 os.environ["_TIME_FUNCTIONS"] = str(True)
 os.environ["_SILENT"] = str(False)
 os.environ["_PRODUCTION"] = str(False)
+os.environ["_UPDATE_NEO4J"] = str(True)
 
 
 def read_experiment_files():
@@ -43,6 +45,7 @@ if __name__ == "__main__":
         tf_mean_count,
         de_values,
         or_nodes,
+        or_mean_count,
         da_values,
         tf_tg_corr,
         or_tg_corr,
@@ -50,7 +53,7 @@ if __name__ == "__main__":
         distance,
     ) = read_experiment_files()
 
-    complete = read_ensembl_files()
+    (complete, tf) = read_ensembl_files()
 
     (gene_gene_scores, genes_annotated) = read_string_files(complete=complete)
 
@@ -75,4 +78,6 @@ if __name__ == "__main__":
         ft_gene=ft_gene,
         ft_ft_overlap=ft_ft_overlap,
         gene_gene_scores=gene_gene_scores,
+        or_mean_count=or_mean_count,
+        tf=tf,
     )

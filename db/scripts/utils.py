@@ -30,6 +30,7 @@ def read_creds(credentials_path: str):
 def start_driver():
     uri, auth = read_creds(credentials_path=os.getenv("_DEFAULT_CREDENTIALS_PATH"))
     driver = GraphDatabase.driver(uri, auth=auth)
+    driver.verify_connectivity()
     return driver
 
 
@@ -38,10 +39,14 @@ def stop_driver(driver: Driver):
 
 
 def execute_query(query: str, read: bool, driver: Driver):
-    if not read:
-        return driver.execute_query(query)
+    if os.getenv("_UPDATE_NEO4J") == str(True):
+        if not read:
+            return driver.execute_query(query)
+        else:
+            return driver.execute_query(query, RoutingControl.READ)
     else:
-        return driver.execute_query(query, RoutingControl.READ)
+        print(query)
+        return [{"id": 0}], None, None
 
 
 def save_df_to_csv(file_name: str, df: pd.DataFrame, override_prod: bool = False):

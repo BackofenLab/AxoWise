@@ -89,6 +89,14 @@
         - Correlation (Float): Correlation Value found in experiment between two entities
 
 
+7. (DISTANCE)
+    * Between:
+        - OR -> TG
+    * Properties:
+        - Distance (Integer): Distance between OR and TG
+    * Note: This information is not specific to the experiment
+
+
 ### Source unspecific
 
 ![FT-TG](./figs/model/graph_v5.3_ft_tg.png)
