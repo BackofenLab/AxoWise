@@ -41,6 +41,9 @@ export default ({
                 }
             }
         }
+    },
+    mounted() {
+        this.selected_graph = this.graphs[0]
     }
 })
 </script>
