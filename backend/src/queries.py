@@ -10,9 +10,7 @@ import numpy as np
 
 def get_terms_connected_by_kappa(driver: neo4j.Driver, term_ids: list[str]):
     """:returns: terms, source, target, score"""
-    parameters = {
-        "term_ids": term_ids
-    }
+    parameters = {"term_ids": term_ids}
     query = f"""
         MATCH (source:Terms)-[association:KAPPA]->(target:Terms)
         WHERE source.external_id IN {term_ids} 
@@ -36,10 +34,7 @@ def get_terms_connected_by_kappa(driver: neo4j.Driver, term_ids: list[str]):
 
 
 def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id: int) -> list[str]:
-    parameters = {
-        "species_id": species_id,
-        "names": [n.upper() for n in names]
-    }
+    parameters = {"species_id": species_id, "names": [n.upper() for n in names]}
     query = f"""
         MATCH (protein:Protein)
         WHERE protein.species_id = $species_id
@@ -52,15 +47,12 @@ def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id
 
 
 def get_protein_neighbours(
-        driver: neo4j.Driver, protein_ids: list[str], threshold: int
+    driver: neo4j.Driver, protein_ids: list[str], threshold: int
 ) -> (list[str], list[str], list[str], list[int]):
     """
     :returns: proteins, source_ids, target_ids, scores
     """
-    parameters = {
-        "protein_ids": protein_ids,
-        "threshold": threshold
-    }
+    parameters = {"protein_ids": protein_ids, "threshold": threshold}
     query = f"""
         MATCH (source:Protein)-[association:ASSOCIATION]-(target:Protein)
         WHERE source.external_id IN {parameters["protein_ids"]}
@@ -84,15 +76,12 @@ def get_protein_neighbours(
 
 
 def get_protein_associations(
-        driver: neo4j.Driver, protein_ids: list[str], threshold: int
+    driver: neo4j.Driver, protein_ids: list[str], threshold: int
 ) -> (list[str], list[str], list[str], list[int]):
     """
     :returns: proteins (nodes), source_ids, target_ids, score
     """
-    parameters = {
-        "protein_ids": protein_ids,
-        "threshold": threshold
-    }
+    parameters = {"protein_ids": protein_ids, "threshold": threshold}
     query = f"""
         MATCH (source:Protein)-[association:ASSOCIATION]->(target:Protein)
         WHERE source.external_id IN {parameters["protein_ids"]}

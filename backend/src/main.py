@@ -197,7 +197,7 @@ def proteins_subgraph_api():
 @app.route("/api/subgraph/terms", methods=["POST"])
 def terms_subgraph_api():
     stopwatch = Stopwatch()
-    
+
     # Functional terms
     list_enrichment = ast.literal_eval(request.form.get("func-terms"))
 
