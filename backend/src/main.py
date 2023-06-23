@@ -15,7 +15,7 @@ import enrichment_graph
 import graph
 import jar
 import queries
-from backend.src.util.stopwatch import Stopwatch
+from util.stopwatch import Stopwatch
 
 app = Flask(__name__)
 

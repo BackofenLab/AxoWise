@@ -7,7 +7,7 @@ import database
 import graph
 import jar
 import queries
-from backend.src.util.stopwatch import Stopwatch
+from util.stopwatch import Stopwatch
 
 # =============== Functional Term Graph ======================
 

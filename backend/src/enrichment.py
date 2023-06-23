@@ -10,7 +10,7 @@ import neo4j
 import pandas as pd
 
 import queries
-from backend.src.util.stopwatch import Stopwatch
+from util.stopwatch import Stopwatch
 
 
 def calc_proteins_pval(curr, alpha, in_pr, bg_proteins, num_in_prot):
