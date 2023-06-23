@@ -97,3 +97,21 @@ def get_consistent_entries(comparing_genes: pd.DataFrame, complete: pd.DataFrame
     return comparing_genes[
         ~comparing_genes["ENSEMBL"].isin(set(comparing_genes["ENSEMBL"]).difference(ensembl_genes["ENSEMBL"]))
     ]
+
+
+def remove_bidirectionality(df: pd.DataFrame, columns: tuple[str], additional: list[str]):
+    df_dict = dict()
+    for _, row in df.iterrows():
+        if row[columns[1]] not in df_dict.keys():
+            vals = [row[j] for j in additional]
+            if row[columns[0]] not in df_dict.keys():
+                df_dict[row[columns[0]]] = [[row[columns[1]]] + [vals]]
+            else:
+                df_dict[row[columns[0]]].append([[row[columns[1]]] + [vals]])
+    df_list = []
+    for i in df_dict.keys():
+        df_list.extend([[i, k[0], *k[1:]] for k in df_dict[i]])
+    df_list = pd.DataFrame(df_list, columns=[columns[0], columns[1], *additional])
+    print(df_list)
+    df_list.to_csv("../source/reformat/test.csv", index=False)
+    return df

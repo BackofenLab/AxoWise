@@ -12,10 +12,10 @@ os.environ["_DEV_MAX_REL"] = str(10000)
 os.environ["_NEO4J_IMPORT_PATH"] = "/usr/local/bin/neo4j/import/"
 os.environ["_FUNCTION_TIME_PATH"] = "./function_times.tsv"
 
-os.environ["_TIME_FUNCTIONS"] = str(True)
+os.environ["_TIME_FUNCTIONS"] = str(False)
 os.environ["_SILENT"] = str(False)
-os.environ["_PRODUCTION"] = str(True)
-os.environ["_UPDATE_NEO4J"] = str(True)
+os.environ["_PRODUCTION"] = str(False)
+os.environ["_UPDATE_NEO4J"] = str(False)
 
 
 def read_experiment_files():

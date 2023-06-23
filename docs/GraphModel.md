@@ -2,37 +2,39 @@
 ## Node Types
 1. Celltype
     * Properties:
-        - name (String): Celltype Name
+        - Name (String): Celltype Name
+
 2. Study
     * Properties:
-        - source (String): Source of the study (e.g. in-house)
+        - Source (String): Source of the study (e.g. in-house)
+
 3. Context
     * Properties:
         - Context (String): Specified context (e.g. 6h-0h, RC12h-12h etc.)
+
 4. FT (Functional Term)
     * Properties:
         - Term (String): Term of entity (e.g. GO:0007275)
-        - category (String): Category of FT (e.g. Biological Process (Gene Ontology))
-        - name (String): Name of FT (e.g. Multicellular organism development)
+        - Category (String): Category of FT (e.g. Biological Process (Gene Ontology))
+        - Name (String): Name of FT (e.g. Multicellular organism development)
+
 5. MeanCount (Placeholder node)
     * Properties: None
+
 6. OR (Open Region)
     * Properties:
-        - nearest_index (String): 
-        - annotation (String):
-        - feature (String):
-        - in_RNAseq (String):
-        - seqnames (String):
-        - strand (String):
-        - summit (String):
+        - Annotation (String):
+        - Feature (String):
+
 7. Source (Placeholder / Aggregation Node)
     * Properties: None
+    
 8. TF (Transcription Factor) / TG (Target Gene)
     * Properties:
         - ENSEMBL (String): The ENSEMBL ID of the Entity
         - ENTREZID (Integer): The Entez Gene ID
         - SYMBOL (String): Symbol(s) of the Gene
-        - annot (String): Annotation / More info on the Gene
+        - Annotation (String): Annotation / More info on the Gene
     * Note: Transcription Factors have both TF and TG labels
 
 ## Relationships
@@ -83,20 +85,6 @@
         - Source (Integer): ID of Source node in DB
         - Correlation (Float): Correlation Value found in experiment between two entities
 
-6. (MOTIF)
-    * Between:
-        - TF -> OR
-    * Properties:
-        - Motif (String): Motif of OR that TF binds to
-    * Note: This information is not specific to the experiment
-
-7. (DISTANCE)
-    * Between:
-        - OR -> TG
-    * Properties:
-        - Distance (Integer): Distance between OR and TG
-    * Note: This information is not specific to the experiment
-
 
 ### Source unspecific
 
@@ -119,3 +107,17 @@
         - TG -> TG
     * Properties:
         - Score (Integer): STRING Association Score between two Genes
+
+4. MOTIF
+    * Between:
+        - TF -> OR
+    * Properties:
+        - Motif (String): Motif of OR that TF binds to
+    * Note: This information is not specific to the experiment
+
+5. DISTANCE
+    * Between:
+        - OR -> TG
+    * Properties:
+        - Distance (Integer): Distance between OR and TG
+    * Note: This information is not specific to the experiment
