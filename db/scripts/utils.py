@@ -77,4 +77,39 @@ def print_update(update_type: str, text: str, color: str):
         "cyan": "\033[0;36m",
         "none": "\033[0m",
     }
-    print("{}{}{}:{}{}".format(colors[color], update_type, colors["none"], " " * (14 - len(update_type)), text))
+    if os.getenv("_SILENT") != str(True):
+        print("{}{}{}:{}{}".format(colors[color], update_type, colors["none"], " " * (14 - len(update_type)), text))
+
+
+@time_function
+def get_consistent_entries(comparing_genes: pd.DataFrame, complete: pd.DataFrame, mode: int):
+    comparing_genes_filter = comparing_genes.filter(items=["ENSEMBL"]).drop_duplicates(ignore_index=True)
+    ensembl_genes = complete.filter(items=["ENSEMBL"]).drop_duplicates(ignore_index=True)
+    not_included = comparing_genes[
+        comparing_genes["ENSEMBL"].isin(set(comparing_genes_filter["ENSEMBL"]).difference(ensembl_genes["ENSEMBL"]))
+    ]
+    not_included.to_csv(
+        "../source/not_included_{}.csv".format("string" if mode == 0 else "exp"), mode="a", header=False, index=False
+    )
+
+    return comparing_genes[
+        ~comparing_genes["ENSEMBL"].isin(set(comparing_genes["ENSEMBL"]).difference(ensembl_genes["ENSEMBL"]))
+    ]
+
+
+def remove_bidirectionality(df: pd.DataFrame, columns: tuple[str], additional: list[str]):
+    df_dict = dict()
+    for _, row in df.iterrows():
+        if row[columns[1]] not in df_dict.keys():
+            vals = [row[j] for j in additional]
+            if row[columns[0]] not in df_dict.keys():
+                df_dict[row[columns[0]]] = [[row[columns[1]]] + [vals]]
+            else:
+                df_dict[row[columns[0]]].append([[row[columns[1]]] + [vals]])
+    df_list = []
+    for i in df_dict.keys():
+        df_list.extend([[i, k[0], *k[1:]] for k in df_dict[i]])
+    df_list = pd.DataFrame(df_list, columns=[columns[0], columns[1], *additional])
+    print(df_list)
+    df_list.to_csv("../source/reformat/test.csv", index=False)
+    return df

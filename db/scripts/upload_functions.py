@@ -2,7 +2,6 @@ from utils import time_function, execute_query
 from neo4j import Driver
 
 
-# TODO: dont do t = map, but set values like in relationships
 @time_function
 def create_nodes(
     source_file: str,
@@ -70,7 +69,6 @@ def update_nodes(
         reformat_values -> List of Tuples, where 0 -> Name of Value, 1 -> Function to reformat
         additional_label -> Label to be added to nodes
     """
-    # TODO Make more general for not only additional labels
 
     id_str = "{" + "{}: map.{}".format(id, id) + "}"
     load_data_query = "LOAD CSV WITH HEADERS from 'file:///{}' AS map RETURN map".format(source_file)
@@ -106,6 +104,7 @@ def create_relationship(
     reformat_values: list[tuple[str]],
     driver: Driver,
     merge: bool = True,
+    bidirectional: bool = False,
 ):
     """
     Common function to create edges in Neo4j Database (both MERGE and CREATE possible, see merge flag)
@@ -195,7 +194,7 @@ def create_relationship(
     set_values_query = " ".join([""] + ["SET e.{} = r.{}".format(v, v) for v in values])
 
     if merge:
-        create_edge_query = "MERGE (m)-[e:{}]->(n)".format(type_) + set_values_query
+        create_edge_query = "MERGE (m)-[e:{}]-{}(n)".format(type_, "" if bidirectional else ">") + set_values_query
     else:
         create_edge_query = "CREATE (m)-[e:{}]->(n)".format(type_) + set_values_query
 
