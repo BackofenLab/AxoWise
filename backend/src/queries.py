@@ -13,21 +13,21 @@ def get_terms_connected_by_kappa(driver: neo4j.Driver, term_ids: list[str]):
     parameters = {
         "term_ids": term_ids
     }
-    query = """
+    query = f"""
         MATCH (source:Terms)-[association:KAPPA]->(target:Terms)
-        WHERE source.external_id IN $term_ids 
-            AND target.external_id IN $term_ids
+        WHERE source.external_id IN {term_ids} 
+            AND target.external_id IN {term_ids}
         WITH 
             collect(source) + collect(target) as terms_all,
             collect(source.external_id) as term_ids_source, 
             collect(target.external_id) as term_ids_target, 
             collect(association.score) as association_scores
-        RETURN {
+        RETURN {{
             terms: terms_all,
             source_ids: term_ids_source,
             target_ids: term_ids_target,
             scores: association_scores
-        };
+        }};
         """
     with driver.session() as session:
         result = session.run(query, parameters).single(strict=True).value()
@@ -43,7 +43,7 @@ def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id
     query = f"""
         MATCH (protein:Protein)
         WHERE protein.species_id = $species_id
-            AND protein.name IN $names 
+            AND protein.name IN {parameters["names"]} 
         WITH collect(protein.external_id) AS ids
         RETURN ids
     """
@@ -61,22 +61,22 @@ def get_protein_neighbours(
         "protein_ids": protein_ids,
         "threshold": threshold
     }
-    query = """
+    query = f"""
         MATCH (source:Protein)-[association:ASSOCIATION]-(target:Protein)
-        WHERE source.external_id IN $protein_ids
-            OR target.external_id IN $protein_ids
+        WHERE source.external_id IN {parameters["protein_ids"]}
+            OR target.external_id IN {parameters["protein_ids"]}
             AND association.combined >= $threshold
         WITH 
             collect(source) + collect(target) as proteins_all,
             collect(source.external_id) as protein_ids_source, 
             collect(target.external_id) as protein_ids_target, 
             collect(association.combined) as association_scores
-        RETURN {
+        RETURN {{
             proteins: proteins_all,
             source_ids: protein_ids_source,
             target_ids: protein_ids_target,
             scores: association_scores
-        }
+        }}
     """
     with driver.session() as session:
         result = session.run(query, parameters).single(strict=True).value()
@@ -93,22 +93,22 @@ def get_protein_associations(
         "protein_ids": protein_ids,
         "threshold": threshold
     }
-    query = """
+    query = f"""
         MATCH (source:Protein)-[association:ASSOCIATION]->(target:Protein)
-        WHERE source.external_id IN $protein_ids
-            AND target.external_id IN $protein_ids
+        WHERE source.external_id IN {parameters["protein_ids"]}
+            AND target.external_id IN {parameters["protein_ids"]}
             AND association.combined >= $threshold
         WITH 
             collect(source) + collect(target) as proteins_all,
             collect(source.external_id) as protein_ids_source, 
             collect(target.external_id) as protein_ids_target, 
             collect(association.combined) as association_scores
-        RETURN {
+        RETURN {{
             proteins: proteins_all,
             source_ids: protein_ids_source,
             target_ids: protein_ids_target,
             scores: association_scores
-        }
+        }}
     """
     with driver.session() as session:
         result = session.run(query, parameters).single(strict=True).value()
