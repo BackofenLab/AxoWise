@@ -3,6 +3,8 @@
         <div class="headertext">
             <span>{{active_term.name}}</span>
         </div>
+        <button class="go-button" v-on:click="add_enrichment(true)">Add Term</button>
+        <button class="go-button" v-on:click="add_enrichment(false)">Remove Term</button>
         <div class="nodeattributes">
             <div class="change-level-menu">
                 <button id="down_level" v-on:click="change_level()">Apply</button>
@@ -97,6 +99,9 @@ export default {
         },
         select_node(value) {
             this.emitter.emit("searchNode", value);
+        },
+        add_enrichment(check) {
+            this.emitter.emit("addEnrichment", {"term":this.active_term, "check": check});
         }
     }
 }

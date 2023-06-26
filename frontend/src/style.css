@@ -1135,9 +1135,8 @@ padding: 0px;
 
 .tool-pane {
 	position: absolute;
-    bottom:-282px;
+    bottom:-380px;
     left:10px;
-	height: 320px;
 	width: 300px;
 	overflow: hidden;
 	border-radius: 20px;
@@ -1165,7 +1164,7 @@ padding: 0px;
 }
 
 .tool-pane-show{
-	transform: translate(0,-292px);
+	transform: translate(0,-390px);
 }
 .tool-pane .headertext{
 

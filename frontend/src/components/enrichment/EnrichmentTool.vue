@@ -11,10 +11,25 @@
                 <!-- <div v-if="await_load==false" class="term_number">
                     <span>Terms: {{term_numbers}}</span>
                 </div> -->
+            <div class="tabsystem-enrichment">
+                <div id="main-tab" v-on:click="main_tab = true">
+                    <span>main</span></div>
+                <div id="personal-tab" v-on:click="main_tab = false"> 
+                    <span>personal</span>
+                </div>
+            </div>
             <div v-if="await_load == true" class="loading_pane"></div>
-            <div class="results" v-if="terms !== null && await_load == false">
+            <div class="results" v-if="terms !== null && await_load == false && main_tab == true">
                 <select id ="result_select" size="11" @change="select_term($event.target.value)" @click="select_term($event.target.value)">
                 <option v-for="entry in filtered_terms" :key="entry" :value="entry.id">{{ entry.name }}</option>
+                </select>
+                <div v-if="terms.length == 0">
+                    <i>No terms available.</i>
+                </div>
+            </div>
+            <div class="results" v-if="terms !== null && await_load == false && main_tab == false">
+                <select id ="result_select" size="11" @change="select_term($event.target.value)" @click="select_term($event.target.value)">
+                <option v-for="entry in selected_terms" :key="entry" :value="entry.id">{{ entry.name }}</option>
                 </select>
                 <div v-if="terms.length == 0">
                     <i>No terms available.</i>
@@ -45,7 +60,10 @@
                 category: "",
                 await_load: true,
                 sourceToken: null,
-                graph_name: 'graph'
+                graph_name: 'graph',
+                main_tab: true,
+                selected_terms: []
+
             }
         },
         methods: {
@@ -88,10 +106,21 @@
 
                 //export terms as csv
                 var csvTermsData = com.filtered_terms;
-                var terms_csv = 'category,fdr_rate,name,proteins\n';
 
+                var terms_csv = 'category,fdr_rate,name,proteins\n';
+                
                 csvTermsData.forEach(function(row) {
-                    terms_csv += row['category'] + ',' + row['fdr_rate'] + ',"'  + row['name'] + '","' +row['proteins']+'"';
+                    var protein_names = []
+                    for (const ensemblId of row['proteins']) {
+                        // Search for the corresponding real name in Gephi_data.nodes
+                        for (const node of com.gephi_data.nodes) {
+                            if (node.attributes["Ensembl ID"] === ensemblId) {
+                                protein_names.push(node.label);
+                            break; // Found the real name, move to the next Ensembl ID
+                            }
+                        }
+                    }
+                    terms_csv += row['category'] + ',' + row['fdr_rate'] + ',"'  + row['name'] + '","' +protein_names+'"';
                     terms_csv += '\n';   
                 });
 
@@ -159,6 +188,15 @@
                 remove_duplicates.forEach(term => {
                     com.filter_terms.push({'label': term})
                 })
+            },
+            add_enrichment(enrichment) {
+                var check_enrichment = new Set(this.selected_terms)
+                if(!enrichment["check"]) {
+                    if (check_enrichment.has(enrichment.term)) check_enrichment.delete(enrichment.term);
+                    this.selected_terms = [...check_enrichment]
+                }else{
+                    if (!check_enrichment.has(enrichment.term)) this.selected_terms.push(enrichment.term);
+                }
             }
         },
         mounted() {
@@ -194,6 +232,10 @@
             this.emitter.on("enrichSubset", (subset) => {
                 if(subset != null) this.apply_layer(subset, false);
                 else this.revert_layer(false);
+            });
+
+            this.emitter.on("addEnrichment", (value) => {
+                this.add_enrichment(value)
             });
     
         },
@@ -267,5 +309,29 @@
         font-weight: 900;
         font-family: 'Roboto Mono', monospace;
 
+    }
+    .tabsystem-enrichment {
+        position: relative;
+        display: inline-flex;
+        height: 13px;
+        cursor: pointer;
+        margin-top: 10px;
+        width: 250px;
+        justify-content: center;
+    }
+    #main-tab {
+        border-top-left-radius: 20px;
+        border-bottom-left-radius: 20px;
+        background-color: rgba(255,0,0,0.7);
+        width: 50%;
+        font-size: x-small;
+
+    }
+    #personal-tab {
+        border-top-right-radius: 20px;
+        border-bottom-right-radius: 20px;
+        background-color: rgba(0,255,0,0.4);
+        width: 50%;
+        font-size: x-small;
     }
 </style>
