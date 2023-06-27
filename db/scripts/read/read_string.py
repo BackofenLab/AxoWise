@@ -22,6 +22,7 @@ def parse_string(complete: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT_STR
         return dataframes
 
     def post_processing(string: list[pd.DataFrame]):
+        print_update(update_type="Post processing", text="STRING files", color="red")
         genes_annotated = string[1].merge(complete, left_on="Protein", right_on="Protein", how="left")
         genes_annotated = genes_annotated.filter(items=["ENSEMBL", "SYMBOL", "annotation", "ENTREZID"])
 
@@ -54,7 +55,11 @@ def parse_string(complete: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT_STR
         gene_gene_scores = gene_gene_scores.merge(protein_gene_dict, left_on="protein2", right_on="Protein")
         gene_gene_scores = gene_gene_scores.filter(items=["ENSEMBL1", "ENSEMBL", "Score"])
         gene_gene_scores = gene_gene_scores.rename(columns={"ENSEMBL": "ENSEMBL2"})
+        gene_gene_scores = remove_bidirectionality(
+            df=gene_gene_scores, columns=("ENSEMBL1", "ENSEMBL2"), additional=["Score"]
+        )
         gene_gene_scores = gene_gene_scores.drop_duplicates(keep="first")
+        gene_gene_scores.to_csv("../source/string/gene_links.csv", index=False)
 
         return gene_gene_scores, genes_annotated
 
@@ -74,7 +79,6 @@ def _reformat_string_file(df: pd.DataFrame, file_name: str):
 
 def _reformat_string_links(df: pd.DataFrame):
     df = df.rename(columns={"combined_score": "Score"})
-    df = remove_bidirectionality(df=df, columns=("protein1", "protein2"), additional=["Score"])
     return df
 
 

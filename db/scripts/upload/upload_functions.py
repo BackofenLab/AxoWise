@@ -21,6 +21,7 @@ def create_nodes(
         id -> Identifier of node (TG / TF is ENSEMBL, OR is nearest_index)
         reformat_values -> List of Tuples, where 0 -> Name of Value, 1 -> Function to reformat
     """
+    # TODO: Use upload functions instead of hardcoding query
 
     id_str = "{" + "{}: map.{}".format(id, id) + "}"
     load_data_query = "LOAD CSV WITH HEADERS from 'file:///{}' AS map RETURN map".format(source_file)
@@ -91,7 +92,7 @@ def update_nodes(
     )
 
     execute_query(query=per_iter, read=False, driver=driver)
-    pass
+    return
 
 
 @time_function
@@ -212,5 +213,4 @@ def create_relationship(
     )
 
     execute_query(query=per_iter, read=False, driver=driver)
-
     return

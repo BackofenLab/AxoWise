@@ -1,5 +1,6 @@
-import read as rd
-from upload import first_setup
+import reader as rd
+from uploader import first_setup
+from utils import print_update
 import os
 import pandas as pd
 
@@ -14,7 +15,7 @@ os.environ["_FUNCTION_TIME_PATH"] = "./function_times.tsv"
 
 os.environ["_TIME_FUNCTIONS"] = str(False)
 os.environ["_SILENT"] = str(False)
-os.environ["_PRODUCTION"] = str(False)
+os.environ["_PRODUCTION"] = str(True)
 os.environ["_UPDATE_NEO4J"] = str(False)
 
 
@@ -61,6 +62,8 @@ if __name__ == "__main__":
         ft_gene,
         ft_ft_overlap,
     ) = read_functional_files(complete=complete)
+
+    print_update(update_type="Done", text="Reformatting files", color="pink")
 
     first_setup(
         gene_nodes=genes_annotated,
