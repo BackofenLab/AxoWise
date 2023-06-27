@@ -157,6 +157,7 @@ export default {
           node.active = true
         } else {
           node.color = "rgb(0, 100, 0)"
+          node.active = false
         }
       });
 
