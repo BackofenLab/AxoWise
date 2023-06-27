@@ -28,6 +28,7 @@ def parse_ensembl(dir_path: str = os.getenv("_DEFAULT_ENSEMBL_PATH")):
         return dataframes
 
     def post_processing(ensembl: list[pd.DataFrame]):
+        print_update(update_type="Post processing", text="ENSEMBL files", color="red")
         complete = pd.concat(ensembl[:4])
         complete = complete.drop(columns=["ENTREZID"])
         complete = complete.drop_duplicates(ignore_index=True)

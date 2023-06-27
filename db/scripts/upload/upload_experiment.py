@@ -1,6 +1,6 @@
 import pandas as pd
 from utils import time_function, print_update, save_df_to_csv, execute_query
-from upload_functions import create_nodes, create_relationship
+from .upload_functions import create_nodes, create_relationship
 from neo4j import Driver
 
 _DEFAULT_CELLTYPE_INFO = {"Name": "Microglia"}
@@ -41,9 +41,8 @@ def create_study_cell_source_meancount(driver: Driver):
         + " "
         + return_id
     )
-    result, _, _ = execute_query(query=query, read=False, driver=driver)
-
-    return result[0]["id"]
+    result = execute_query(query=query, read=False, driver=driver)
+    return result["id"][0]
 
 
 @time_function

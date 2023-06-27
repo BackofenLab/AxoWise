@@ -23,6 +23,7 @@ def parse_functional(complete: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT
         return dataframes
 
     def post_processing(functional: list[pd.DataFrame]):
+        print_update(update_type="Post processing", text="Functional files", color="red")
         ft_nodes = functional[1].filter(items=["external_id", "name", "category"])
         ft_nodes = ft_nodes.rename(columns={"external_id": "Term", "name": "Name", "category": "Category"})
 

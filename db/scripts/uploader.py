@@ -1,7 +1,7 @@
 import pandas as pd
 from utils import time_function, stop_driver, start_driver
-from upload_base import setup_base_db
-from upload_experiment import extend_db_from_experiment
+from upload.upload_base import setup_base_db
+from upload.upload_experiment import extend_db_from_experiment
 
 
 @time_function

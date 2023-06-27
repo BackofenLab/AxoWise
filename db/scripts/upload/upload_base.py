@@ -1,5 +1,5 @@
 from utils import time_function, print_update, save_df_to_csv
-from upload_functions import create_nodes, create_relationship, update_nodes
+from .upload_functions import create_nodes, create_relationship, update_nodes
 import pandas as pd
 from neo4j import Driver
 
@@ -27,7 +27,7 @@ def create_gene_nodes(nodes: pd.DataFrame, driver: Driver):
 
 @time_function
 def create_tf_label(tf: pd.DataFrame, driver: Driver):
-    print_update(update_type="Node Update", text="Transcription Factor", color="red")
+    print_update(update_type="Node Update", text="Transcription Factor", color="orange")
 
     save_df_to_csv(file_name="tf.csv", df=tf, override_prod=True)
     update_nodes(
@@ -115,7 +115,6 @@ def create_string(gene_gene_scores: pd.DataFrame, driver: Driver):
         node_types=("TG", "TG"),
         values=["Score"],
         reformat_values=[("Score", "toInteger")],
-        merge=False,
         driver=driver,
     )
 

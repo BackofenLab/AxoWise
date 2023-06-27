@@ -77,6 +77,7 @@ def parse_experiment(dir_path: str = os.getenv("_DEFAULT_EXPERIMENT_PATH"), refo
         return values
 
     def post_processing(exp: list[pd.DataFrame]):
+        print_update(update_type="Post processing", text="Experiment files", color="red")
         # Filter Dataframes for relevant columns
         de = exp[1].filter(items=["ENSEMBL", "ENTREZID", "SYMBOL", "annot", "TF", "in_ATAC", "mean_count"])
 

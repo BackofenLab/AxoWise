@@ -2,8 +2,7 @@ import pandas as pd
 import yaml
 import csv
 from time import time
-from neo4j import GraphDatabase, RoutingControl, Driver
-from main import _DEFAULT_CREDENTIALS_PATH, _PRODUCTION, _DEV_MAX_REL, _NEO4J_IMPORT_PATH, _FUNCTION_TIME_PATH
+import neo4j
 
 
 class Reformatter:
@@ -29,23 +28,27 @@ def read_creds(credentials_path: str):
 
 def start_driver():
     uri, auth = read_creds(credentials_path=os.getenv("_DEFAULT_CREDENTIALS_PATH"))
-    driver = GraphDatabase.driver(uri, auth=auth)
+    driver = neo4j.GraphDatabase.driver(uri, auth=auth)
     driver.verify_connectivity()
     return driver
 
 
-def stop_driver(driver: Driver):
+def stop_driver(driver: neo4j.Driver):
     driver.close()
 
 
-def execute_query(query: str, read: bool, driver: Driver):
+def execute_query(query: str, read: bool, driver: neo4j.Driver):
     if os.getenv("_UPDATE_NEO4J") == str(True):
-        if not read:
-            return driver.execute_query(query)
-        else:
-            return driver.execute_query(query, RoutingControl.READ)
+        with driver.session() as session:
+            if not read:
+                tmp = session.run(query).to_df()
+                tmp.to_csv("../source/reformat/query_response.csv", mode="a", header=False, index=False)
+                return tmp
+            else:
+                tmp = session.run(query)
+                tmp.to_df().to_csv("../source/reformat/query_response.csv", mode="a", header=False, index=False)
+                return tmp
     else:
-        print(query)
         return [{"id": 0}], None, None
 
 
@@ -75,10 +78,13 @@ def print_update(update_type: str, text: str, color: str):
         "blue": "\033[0;34m",
         "pink": "\033[0;35m",
         "cyan": "\033[0;36m",
+        "light-yellow": "\033[0;93m",
         "none": "\033[0m",
     }
     if os.getenv("_SILENT") != str(True):
-        print("{}{}{}:{}{}".format(colors[color], update_type, colors["none"], " " * (14 - len(update_type)), text))
+        print("{}{}{}:{}{}".format(colors[color], update_type, colors["none"], " " * (16 - len(update_type)), text))
+        if update_type == "Done":
+            print("")
 
 
 @time_function
@@ -100,16 +106,11 @@ def get_consistent_entries(comparing_genes: pd.DataFrame, complete: pd.DataFrame
 def remove_bidirectionality(df: pd.DataFrame, columns: tuple[str], additional: list[str]):
     df_dict = dict()
     for _, row in df.iterrows():
-        if row[columns[1]] not in df_dict.keys():
-            vals = [row[j] for j in additional]
-            if row[columns[0]] not in df_dict.keys():
-                df_dict[row[columns[0]]] = [[row[columns[1]]] + [vals]]
-            else:
-                df_dict[row[columns[0]]].append([[row[columns[1]]] + [vals]])
-    df_list = []
-    for i in df_dict.keys():
-        df_list.extend([[i, k[0], *k[1:]] for k in df_dict[i]])
+        vals = [row[j] for j in additional]
+        key = frozenset([row[columns[0]], row[columns[1]]])
+        if key not in df_dict.keys():
+            df_dict[key] = vals
+    df_list = [[*list(i), *df_dict[i]] for i in df_dict.keys()]
     df_list = pd.DataFrame(df_list, columns=[columns[0], columns[1], *additional])
-    print(df_list)
     df_list.to_csv("../source/reformat/test.csv", index=False)
-    return df
+    return df_list
