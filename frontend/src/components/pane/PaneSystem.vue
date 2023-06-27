@@ -150,7 +150,13 @@ export default {
                 this.$emit('active_combine_changed', {value: tab, name: name})
             }
         }
-    }
+    },
+    mounted(){
+        this.emitter.on("reset_protein",(state) => {
+            this.selectTab("node",state)
+        })
+
+        }
 }
 </script>
 

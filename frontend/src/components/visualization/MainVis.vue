@@ -16,6 +16,7 @@ import saveAsSVG from '../../rendering/saveAsSVG';
 import customLabelRenderer from '../../rendering/customLabelRenderer';
 import customNodeRenderer from '../../rendering/customNodeRenderer';
 import ForceGraph3D from '3d-force-graph';
+import "@/rendering/astarAlgorithm.js"
 
 sigma.canvas.labels.def = customLabelRenderer
 sigma.canvas.nodes.def = customNodeRenderer
@@ -624,7 +625,26 @@ export default {
     node.active = false
     node.sActive = false
     sigma_instance.refresh()
+  },
+  visualize_pathway(startID, endID){
+
+    this.reset()
+    const startNode = sigma_instance.graph.getNodeFromIndex(startID);
+    const endNode = sigma_instance.graph.getNodeFromIndex(endID);
+    const paths = new Set(sigma_instance.graph.astar(startNode.id, endNode.id));
+    if(paths.size == 0) this.emitter.emit("emptySet", false);
+    
+    sigma_instance.graph.nodes().forEach(n =>{
+      if(paths.has(n)){
+        n.hidden = false;
+        n.active = true
+      } 
+      else n.hidden = true;
+    });
+
+    sigma_instance.refresh()
   }
+
 },
   mounted() {
     var com = this;
@@ -698,6 +718,9 @@ export default {
     this.emitter.on("searchNode", state => {
       this.$emit('active_node_changed', sigma_instance.graph.getNodeFromIndex(state.id))
     });
+    this.emitter.on("searchPathway", element => {
+      this.visualize_pathway(element.source, element.target)
+    });
     
     this.emitter.on("searchSubset", state => {
       this.$emit('active_subset_changed', state)
@@ -731,6 +754,7 @@ export default {
     });
     
     sigma_instance.refresh()
+
 
   },
   activated() {
