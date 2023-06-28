@@ -33,6 +33,12 @@ deployment:
 	$(MAKE) build > /home/ubuntu/logs/build.log 2>&1
 	cd backend/src; nohup sudo env "PATH=$$PATH" python main.py --pid --server > /home/ubuntu/logs/server.log 2>&1
 
+asdf:
+	docker kill $$(docker ps -q)
+	docker build -t pgdb-nginx proxy
+	docker run -dp 0.0.0.0:3000:80 pgdb-nginx
+	cd backend/src & gunicorn -w 4 --pid process.pid 'main:create_deployment_app()'
+
 lint:
 	find . -name "*.py" | xargs black -l 120 --target-version=py311
 

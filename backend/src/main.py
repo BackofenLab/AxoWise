@@ -208,14 +208,10 @@ def terms_subgraph_api():
     return Response(json_str, mimetype="application/json")
 
 
-if __name__ == "__main__":
-    if "--pid" in sys.argv:
-        with open("process.pid", "w+") as file:
-            pid = f"{os.getpid()}"
-            file.write(pid)
-
+def create_deployment_app() -> Flask:
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
-    if "--server" in sys.argv:
-        app.run(host="0.0.0.0", port=80)
-    else:
-        app.run()
+    return app
+
+
+if __name__ == "__main__":
+    app.run()
