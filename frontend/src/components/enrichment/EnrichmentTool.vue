@@ -237,8 +237,6 @@
 
             },
             shouldDisplayOption(entry) {
-                console.log(entry)
-                console.log(this.filtered_terms)
                 return this.filtered_terms.includes(entry);
             }
                         
