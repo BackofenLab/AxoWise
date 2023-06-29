@@ -20,7 +20,7 @@
             </div>
             <div v-if="await_load == true" class="loading_pane" ></div>
             <div class="results" v-if="terms !== null && await_load == false" tabindex="0" @keydown="handleKeyDown" ref="resultsContainer">
-                <div v-for="(entry,index) in filtered_terms" :key="entry" class="option" :class="{ selected: selectedIndex === index }" :style="{ display: main_tab || checkboxStates[index] ? '-webkit-flex' : 'none' }">
+                <div v-for="(entry,index) in terms" :key="entry" class="option" :class="{ selected: selectedIndex === index }" :style="{ display: shouldDisplayOption(entry) && (main_tab || checkboxStates[index]) ? '-webkit-flex' : 'none' }">
                 <input type="checkbox" class="selectCheck" v-model="checkboxStates[index]" v-on:change="add_enrichment(entry,index)" ref="checkBoxes" >
                 <a href="#" v-on:click="select_term(entry,index)" ref="selectedNodes" >{{entry.name}}</a>
                 </div>
@@ -58,7 +58,8 @@
                 main_tab: true,
                 selected_terms: [],
                 selectedIndex: -1,
-                checkboxStates: {}
+                checkboxStates: {},
+                filtered_terms: [],
 
             }
         },
@@ -234,13 +235,47 @@
                     selectedDiv.scrollIntoView(false);
                 }
 
-                }
+            },
+            shouldDisplayOption(entry) {
+                console.log(entry)
+                console.log(this.filtered_terms)
+                return this.filtered_terms.includes(entry);
+            }
                         
+        },
+        watch: {
+            category() {
+                var com = this;
+                if(com.category == null) {
+                    com.filtered_terms = com.terms
+                    return
+                }
+                com.filtered_terms = com.filtered_terms.filter(function(term) {
+                    return term.category === com.category;
+                });
+            },
+            search_raw() {
+                var com = this;
+
+                if(com.search_raw == "") {
+                    com.filtered_terms = com.terms
+                    return
+                }
+                var regex = new RegExp(com.regex, 'i');
+                com.filtered_terms = com.filtered_terms.filter(function(term) {
+                    return regex.test(term.name);
+                });
+
+            },
+            terms() {
+                this.filtered_terms = this.terms
+            }
         },
         mounted() {
             var com = this
 
             var formData = new FormData()
+
 
             formData.append('proteins', com.gephi_data.nodes.map(node => node.id))
             formData.append('species_id', com.gephi_data.nodes[0].species)
@@ -278,28 +313,6 @@
                 var com = this;
                 return RegExp(com.search_raw.toLowerCase());
             },
-            filtered_terms() {
-                var com = this;
-                var filtered = com.terms;
-                
-                if (com.category) {
-                // If category is set, filter by category
-                filtered = filtered.filter(function(term) {
-                    return term.category === com.category;
-                });
-                }
-
-                if (com.search_raw !== "") {
-                // If search term is not empty, filter by search term
-                var regex = new RegExp(com.regex, 'i');
-                filtered = filtered.filter(function(term) {
-                    return regex.test(term.name);
-                });
-                }
-
-                return filtered;
-            },
-
     },
 }
 </script>
