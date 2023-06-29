@@ -15,24 +15,17 @@
                 <div id="main-tab" v-on:click="main_tab = true">
                     <span>main</span></div>
                 <div id="personal-tab" v-on:click="main_tab = false"> 
-                    <span>personal</span>
+                    <span>bookmark</span>
                 </div>
             </div>
-            <div v-if="await_load == true" class="loading_pane"></div>
-            <div class="results" v-if="terms !== null && await_load == false && main_tab == true">
-                <select id ="result_select" size="11" @change="select_term($event.target.value)" @click="select_term($event.target.value)">
-                <option v-for="entry in filtered_terms" :key="entry" :value="entry.id">{{ entry.name }}</option>
-                </select>
-                <div v-if="terms.length == 0">
-                    <i>No terms available.</i>
+            <div v-if="await_load == true" class="loading_pane" ></div>
+            <div class="results" v-if="terms !== null && await_load == false" tabindex="0" @keydown="handleKeyDown" ref="resultsContainer">
+                <div v-for="(entry,index) in filtered_terms" :key="entry" class="option" :class="{ selected: selectedIndex === index }" :style="{ display: main_tab || checkboxStates[index] ? '-webkit-flex' : 'none' }">
+                <input type="checkbox" class="selectCheck" v-model="checkboxStates[index]" v-on:change="add_enrichment(entry,index)" ref="checkBoxes" >
+                <a href="#" v-on:click="select_term(entry,index)" ref="selectedNodes" >{{entry.name}}</a>
                 </div>
-            </div>
-            <div class="results" v-if="terms !== null && await_load == false && main_tab == false">
-                <select id ="result_select" size="11" @change="select_term($event.target.value)" @click="select_term($event.target.value)">
-                <option v-for="entry in selected_terms" :key="entry" :value="entry.id">{{ entry.name }}</option>
-                </select>
                 <div v-if="terms.length == 0">
-                    <i>No terms available.</i>
+                <i>No terms available.</i>
                 </div>
             </div>
             <button v-if="await_load == false" id="export-enrich-btn" v-on:click="export_enrichment()">Export</button>
@@ -45,6 +38,7 @@
 </template>
 
 <script>
+
     export default{
         name: 'EnrichmentTool',
         props: ['gephi_data','active_term'],
@@ -62,7 +56,9 @@
                 sourceToken: null,
                 graph_name: 'graph',
                 main_tab: true,
-                selected_terms: []
+                selected_terms: [],
+                selectedIndex: -1,
+                checkboxStates: {}
 
             }
         },
@@ -76,14 +72,10 @@
                     div.classList.remove("tool-pane-show");
                 }
             },
-            select_term(term) {
+            select_term(term, index) {
                 var com = this;
-
-                this.filtered_terms.forEach(entry => {
-                    if (entry.id === term) {
-                        com.$emit("active_term_changed", entry);
-                    }
-                    });
+                this.selectedIndex = index
+                com.$emit("active_term_changed", term);
                 
             },
             get_term_data() {
@@ -189,15 +181,61 @@
                     com.filter_terms.push({'label': term})
                 })
             },
-            add_enrichment(enrichment) {
-                var check_enrichment = new Set(this.selected_terms)
-                if(!enrichment["check"]) {
-                    if (check_enrichment.has(enrichment.term)) check_enrichment.delete(enrichment.term);
-                    this.selected_terms = [...check_enrichment]
-                }else{
-                    if (!check_enrichment.has(enrichment.term)) this.selected_terms.push(enrichment.term);
+            add_enrichment(enrichment, index) {
+                if (this.checkboxStates[index]) {
+                    // Checkbox is checked, add its state to the object
+                        this.checkboxStates[index] = true;
+                    } else {
+                    // Checkbox is unchecked, remove its state from the object
+                        delete this.checkboxStates[index];
+                    }
+            },
+            handleKeyDown(event) {
+                // const container = event.target;
+                const keyCode = event.keyCode;
+
+                if (keyCode === 38) {
+                    event.preventDefault();
+                    if (this.selectedIndex > 0){
+                        this.selectedIndex--;
+                        this.scrollToSelected(this.$refs.selectedNodes[this.selectedIndex])
+                        this.clickNode()
+                    }
+                } else if (keyCode === 40) {
+                    event.preventDefault();
+                    if (this.selectedIndex < this.filtered_terms.length - 1){
+                        this.selectedIndex++;
+                        this.scrollToSelected(this.$refs.selectedNodes[this.selectedIndex])
+                        this.clickNode()
+                    }
                 }
-            }
+            },
+            clickNode() {
+                const selectedNode = this.$refs.selectedNodes[this.selectedIndex];
+                if (selectedNode) {
+                selectedNode.click();
+                }
+            },
+            scrollToSelected(selectedDiv) {
+                const parent = this.$refs.resultsContainer; // Updated line to use this.$refs
+
+                if (!selectedDiv) {
+                    return;
+                }
+
+                const selectedDivPosition = selectedDiv.getBoundingClientRect()
+                const parentBorders = parent.getBoundingClientRect()
+
+                if(selectedDivPosition.top >= parentBorders.bottom){
+                    selectedDiv.scrollIntoView(false);
+                }
+
+                if(selectedDivPosition.bottom <= parentBorders.top){
+                    selectedDiv.scrollIntoView(false);
+                }
+
+                }
+                        
         },
         mounted() {
             var com = this
@@ -233,10 +271,6 @@
                 if(subset != null) this.apply_layer(subset, false);
                 else this.revert_layer(false);
             });
-
-            this.emitter.on("addEnrichment", (value) => {
-                this.add_enrichment(value)
-            });
     
         },
         computed: {
@@ -264,7 +298,7 @@
                 }
 
                 return filtered;
-            }
+            },
 
     },
 }
@@ -333,5 +367,16 @@
         background-color: rgba(0,255,0,0.4);
         width: 50%;
         font-size: x-small;
+    }
+    .selectCheck {
+        display:block
+    }
+    .option {
+        display: -webkit-flex;
+        align-items: center;
+        font-size: small;
+    }
+    .selected {
+        background-color: rgba(255,0,0,0.7); /* Customize the selected style as desired */
     }
 </style>
