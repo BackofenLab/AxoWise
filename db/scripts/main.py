@@ -12,7 +12,7 @@ os.environ["_DEFAULT_ENSEMBL_PATH"] = "../source/ensembl"
 os.environ["_DEFAULT_CREDENTIALS_PATH"] = "../../config.yml"
 os.environ["_DEV_MAX_REL"] = str(10000)
 os.environ["_NEO4J_IMPORT_PATH"] = "/usr/local/bin/neo4j/import/"
-os.environ["_FUNCTION_TIME_PATH"] = "./function_times.tsv"
+os.environ["_FUNCTION_TIME_PATH"] = "../source/misc/function_times.tsv"
 
 os.environ["_TIME_FUNCTIONS"] = str(False)
 os.environ["_SILENT"] = str(False)
@@ -87,5 +87,5 @@ def upload_workflow():
 
 
 if __name__ == "__main__":
-    # upload_workflow()
-    test()
+    upload_workflow()
+    # test()

@@ -44,11 +44,9 @@ def execute_query(query: str, read: bool, driver: neo4j.Driver) -> pd.DataFrame:
             # TODO Remove if statement?
             if not read:
                 tmp = session.run(query).values()
-                # tmp.to_csv("../source/reformat/query_response.csv", mode="a", header=False, index=False)
                 return tmp
             else:
                 tmp = session.run(query).values()
-                # tmp.to_csv("../source/reformat/query_response.csv", mode="a", header=False, index=False)
                 return tmp
     else:
         return pd.DataFrame([0], columns=["id"])
@@ -116,7 +114,7 @@ def remove_bidirectionality(df: pd.DataFrame, columns: tuple[str], additional: l
             df_dict[key] = vals
     df_list = [[*list(i), *df_dict[i]] for i in df_dict.keys()]
     df_list = pd.DataFrame(df_list, columns=[columns[0], columns[1], *additional])
-    df_list.to_csv("../source/reformat/test.csv", index=False)
+    df_list.to_csv("../source/misc/test.csv", index=False)
     return df_list
 
 

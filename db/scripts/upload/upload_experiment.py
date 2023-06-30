@@ -42,7 +42,7 @@ def create_study_cell_source_meancount(driver: Driver):
         + return_id
     )
     result = execute_query(query=query, read=False, driver=driver)
-    return result["id"][0]
+    return result[0][0]
 
 
 @time_function
