@@ -38,19 +38,20 @@ def stop_driver(driver: neo4j.Driver):
     driver.close()
 
 
-def execute_query(query: str, read: bool, driver: neo4j.Driver):
+def execute_query(query: str, read: bool, driver: neo4j.Driver) -> pd.DataFrame:
     if os.getenv("_UPDATE_NEO4J") == str(True):
         with driver.session() as session:
+            # TODO Remove if statement?
             if not read:
-                tmp = session.run(query).to_df()
-                tmp.to_csv("../source/reformat/query_response.csv", mode="a", header=False, index=False)
+                tmp = session.run(query).values()
+                # tmp.to_csv("../source/reformat/query_response.csv", mode="a", header=False, index=False)
                 return tmp
             else:
-                tmp = session.run(query)
-                tmp.to_df().to_csv("../source/reformat/query_response.csv", mode="a", header=False, index=False)
+                tmp = session.run(query).values()
+                # tmp.to_csv("../source/reformat/query_response.csv", mode="a", header=False, index=False)
                 return tmp
     else:
-        return [{"id": 0}], None, None
+        return pd.DataFrame([0], columns=["id"])
 
 
 def save_df_to_csv(file_name: str, df: pd.DataFrame, override_prod: bool = False):
@@ -106,7 +107,7 @@ def get_consistent_entries(comparing_genes: pd.DataFrame, complete: pd.DataFrame
     ]
 
 
-def remove_bidirectionality(df: pd.DataFrame, columns: tuple[str], additional: list[str]):
+def remove_bidirectionality(df: pd.DataFrame, columns: tuple[str], additional: list[str]) -> pd.DataFrame:
     df_dict = dict()
     for _, row in df.iterrows():
         vals = [row[j] for j in additional]
@@ -117,3 +118,30 @@ def remove_bidirectionality(df: pd.DataFrame, columns: tuple[str], additional: l
     df_list = pd.DataFrame(df_list, columns=[columns[0], columns[1], *additional])
     df_list.to_csv("../source/reformat/test.csv", index=False)
     return df_list
+
+
+def generate_props(source:dict[str, list[tuple[str]]], item:str, reformat_values:dict[str], where:bool):
+    """
+    source -> Prop_name, Value, Comparison
+    """
+    tmp_query = ""
+    for key in source.keys():
+        tuples = source[key]
+        tmp_query = "("
+        for k, i in enumerate(tuples):
+            front, back = (reformat_values[i[0]][0], reformat_values[i[0]][1]) if i[0] in reformat_values.keys() else ("", "")
+            tmp_query += f"{item}.{i[0]} {i[2]} {front}{i[1]}{back} "
+            if k < len(tuples) - 1:
+                tmp_query += f"{key} "
+        tmp_query += ") "
+    if len(tmp_query) > 0 and where:
+        props_query = "WHERE "
+        where = not where
+    elif len(tmp_query) > 0 and not where:
+        props_query = "AND "
+    else:
+        props_query = ""
+
+    props_query += tmp_query
+    return props_query, where
+        
