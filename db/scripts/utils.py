@@ -115,7 +115,7 @@ def remove_bidirectionality(df: pd.DataFrame, columns: tuple[str], additional: l
     return df_list
 
 
-def generate_props(source:dict[str, list[tuple[str]]], item:str, reformat_values:dict[str], where:bool):
+def generate_props(source: dict[str, list[tuple[str]]], item: str, reformat_values: dict[str], where: bool):
     """
     source -> Prop_name, Value, Comparison
     """
@@ -124,7 +124,9 @@ def generate_props(source:dict[str, list[tuple[str]]], item:str, reformat_values
         tuples = source[key]
         tmp_query = "("
         for k, i in enumerate(tuples):
-            front, back = (reformat_values[i[0]][0], reformat_values[i[0]][1]) if i[0] in reformat_values.keys() else ("", "")
+            front, back = (
+                (reformat_values[i[0]][0], reformat_values[i[0]][1]) if i[0] in reformat_values.keys() else ("", "")
+            )
             tmp_query += f"{item}.{i[0]} {i[2]} {front}{i[1]}{back} "
             if k < len(tuples) - 1:
                 tmp_query += f"{key} "
@@ -139,4 +141,3 @@ def generate_props(source:dict[str, list[tuple[str]]], item:str, reformat_values
 
     props_query += tmp_query
     return props_query, where
-        
