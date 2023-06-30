@@ -22,16 +22,19 @@ To install the Protein Graph Database on Ubuntu, follow these steps:
    conda activate pgdb
    ```
 
-## Set up Dummy-Data
+## Dummy Data Setup
 
-To set up the dummy-data, follow these steps:
+To automate the download of dummy data from Google Drive and the insertion into the database, follow these steps:
 
-1. Download the [test sample database](https://drive.google.com/file/d/1S8_O2HCeMKwukwnTHlFmf1KLQnbfcXAN/view) to your
-   Downloads folder.
-2. Load the dump file into your own database.
+1. Run the following command to set up the dummy data:
+
    ```commandline
-   sudo neo4j-admin load --from=$HOME/Downloads/newmouse2db.dump --database=neo4j --force
+   make dummydata
    ```
+
+Executing the above command will seamlessly handle the installation of the `gdown` tool, download the dummy data, and
+insert it into the database.
+`Gdown` is a helper tool to automate the download from Google Drive.
 
 ## Create a Neo4J Account
 
