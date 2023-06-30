@@ -1,6 +1,7 @@
 import reader as rd
 from uploader import first_setup
 from utils import print_update
+from query.query_functions import test
 import os
 import pandas as pd
 
@@ -16,7 +17,7 @@ os.environ["_FUNCTION_TIME_PATH"] = "./function_times.tsv"
 os.environ["_TIME_FUNCTIONS"] = str(False)
 os.environ["_SILENT"] = str(False)
 os.environ["_PRODUCTION"] = str(True)
-os.environ["_UPDATE_NEO4J"] = str(False)
+os.environ["_UPDATE_NEO4J"] = str(True)
 
 
 def read_experiment_files():
@@ -39,7 +40,7 @@ def read_functional_files(complete: pd.DataFrame):
     return data
 
 
-if __name__ == "__main__":
+def upload_workflow():
     (
         tg_mean_count,
         tf_mean_count,
@@ -83,3 +84,8 @@ if __name__ == "__main__":
         or_mean_count=or_mean_count,
         tf=tf,
     )
+
+
+if __name__ == "__main__":
+    # upload_workflow()
+    test()

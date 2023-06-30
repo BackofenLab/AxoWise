@@ -199,16 +199,14 @@ def create_relationship(
     else:
         create_edge_query = "CREATE (m)-[e:{}]->(n)".format(type_) + set_values_query
 
-    per_iter = 'CALL apoc.periodic.iterate("{}", "{}", {{batchSize: 500, parallel: true}} )'.format(
-        match_nodes, create_edge_query
-    )
+    per_iter = 'CALL apoc.periodic.iterate("{}", "{}", {{batchSize: 500}} )'.format(match_nodes, create_edge_query)
 
     execute_query(query=per_iter, read=False, driver=driver)
 
     match_temp_nodes = "MATCH (r:{}_temp) RETURN r".format(type_)
     delete_temp_nodes = "DELETE r"
 
-    per_iter = 'CALL apoc.periodic.iterate("{}", "{}", {{batchSize: 500, parallel: true}} )'.format(
+    per_iter = 'CALL apoc.periodic.iterate("{}", "{}", {{batchSize: 500, parallel: true}})'.format(
         match_temp_nodes, delete_temp_nodes
     )
 

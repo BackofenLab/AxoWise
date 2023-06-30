@@ -115,6 +115,7 @@ def create_string(gene_gene_scores: pd.DataFrame, driver: Driver):
         node_types=("TG", "TG"),
         values=["Score"],
         reformat_values=[("Score", "toInteger")],
+        merge=False,
         driver=driver,
     )
 
