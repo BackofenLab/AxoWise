@@ -209,10 +209,10 @@ def create_correlation(
         create_relationship(
             source_file="tf_tg_corr.csv",
             type_="CORRELATION",
-            between=(("SYMBOL", "TF"), ("ENSEMBL", "ENSEMBL")),
+            between=(("ENSEMBL", "ENSEMBL_TF"), ("ENSEMBL", "ENSEMBL_TG")),
             node_types=("TF", "TG"),
-            values=["Correlation", "Source"],
-            reformat_values=[("Correlation", "toFloat"), ("Source", "toInteger")],
+            values=["Correlation", "p", "Source"],
+            reformat_values=[("Correlation", "toFloat"), ("Source", "toInteger"), ("p", "toFloat")],
             merge=False,
             driver=driver,
         )
@@ -225,8 +225,8 @@ def create_correlation(
             type_="CORRELATION",
             between=(("id", "id"), ("ENSEMBL", "ENSEMBL")),
             node_types=("OR", "TG"),
-            values=["Correlation", "Source"],
-            reformat_values=[("Correlation", "toFloat"), ("Source", "toInteger")],
+            values=["Correlation", "p", "Source"],
+            reformat_values=[("Correlation", "toFloat"), ("Source", "toInteger"), ("p", "toFloat")],
             merge=False,
             driver=driver,
         )
