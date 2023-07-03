@@ -43,6 +43,11 @@ def parse_experiment(dir_path: str = os.getenv("_DEFAULT_EXPERIMENT_PATH"), refo
                     df=pd.read_csv(file, sep="\t"), file_name=file_name.split("/")[-1], reformat=reformat
                 )
                 dataframes[index] = df
+            elif file_extention == ".csv":
+                df, index = _reformat_experiment_file(
+                    df=pd.read_csv(file, sep=","), file_name=file_name.split("/")[-1], reformat=reformat
+                )
+                dataframes[index] = df
         return dataframes
 
     def filter_df_by_context(context: str, df: pd.DataFrame, protein: bool):
@@ -129,7 +134,7 @@ def parse_experiment(dir_path: str = os.getenv("_DEFAULT_EXPERIMENT_PATH"), refo
 
         # Filter for relevant columns
         tmp_or_id = relevant_info.filter(items=["id", "nearest_index"])
-        or_tg_corr = exp[3].filter(items=["ENSEMBL", "Correlation", "nearest_index"])
+        or_tg_corr = exp[3].filter(items=["ENSEMBL", "Correlation", "nearest_index", "p"])
         or_tg_corr = or_tg_corr.merge(tmp_or_id, left_on="nearest_index", right_on="nearest_index", how="left")
         or_tg_corr = or_tg_corr.drop(columns=["nearest_index"])
 
@@ -158,7 +163,7 @@ def _reformat_experiment_file(df: pd.DataFrame, file_name: str, reformat: bool):
     print_update(update_type="Reformatting", text=file_name, color="orange")
 
     # Filename and function pairs: same index <-> use function for file
-    names = ["exp_DA", "exp_DE_filter", "TF_target_cor_", "peak_target_cor_", "TF_motif_peak"]
+    names = ["exp_DA", "exp_DE_filter", "correlation_pval_TF_target", "corr_peak_target", "TF_motif_peak"]
     functions = [_reformat_da, _reformat_de, _reformat_tf_tg, _reformat_or_tg, _reformat_motif]
     index = names.index(file_name)
 
@@ -184,12 +189,14 @@ def _reformat_de(df: pd.DataFrame):
 
 
 def _reformat_tf_tg(df: pd.DataFrame):
-    df = df.rename(columns={"nearest_ENSEMBL": "ENSEMBL", "TF_target_cor": "Correlation"})
+    df = df.filter(items=["nearest_ENSEMBL_target", "ENSEMBL_TF", "korrelationskoeffizient", "p-Wert"])
+    df = df.rename(columns={"nearest_ENSEMBL_target": "ENSEMBL_TG", "korrelationskoeffizient": "Correlation", "p-Wert": "p"})
     return df
 
 
 def _reformat_or_tg(df: pd.DataFrame):
-    df = df.rename(columns={"nearest_ENSEMBL": "ENSEMBL", "peak_target_cor": "Correlation"})
+    df = df.filter(items=["nearest_ENSEMBL_x", "nearest_index", "correlation_coefficient", "p-value"])
+    df = df.rename(columns={"nearest_ENSEMBL_x": "ENSEMBL", "correlation_coefficient": "Correlation", "p-value": "p"})
     return df
 
 
