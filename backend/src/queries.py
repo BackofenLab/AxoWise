@@ -95,7 +95,7 @@ def get_number_of_proteins(driver: neo4j.Driver) -> int:
         return int(num_proteins)
 
 
-def _convert_to_connection_info_score(result: neo4j.Result, _int:bool) -> (list[str], list[str], list[str], list[int]):
+def _convert_to_connection_info_score(result: neo4j.Result, _int: bool) -> (list[str], list[str], list[str], list[int]):
     nodes, source, target, score = list(), list(), list(), list()
 
     for row in result:
@@ -103,7 +103,7 @@ def _convert_to_connection_info_score(result: neo4j.Result, _int:bool) -> (list[
         nodes.append(row["target"])
         source.append(row["source"].get("external_id"))
         target.append(row["target"].get("external_id"))
-        if _int: 
+        if _int:
             score.append(int(row["score"]))
         else:
             score.append(float(row["score"]))
