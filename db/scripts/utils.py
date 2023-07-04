@@ -141,3 +141,39 @@ def generate_props(source: dict[str, list[tuple[str]]], item: str, reformat_valu
 
     props_query += tmp_query
     return props_query, where
+
+
+def check_for_files(mode: int):
+    if mode == 0:
+        # Experiment
+        return not (
+            os.path.exists("../source/processed/tg_mean_count.csv")
+            and os.path.exists("../source/processed/tf_mean_count.csv")
+            and os.path.exists("../source/processed/de_values.csv")
+            and os.path.exists("../source/processed/or_nodes.csv")
+            and os.path.exists("../source/processed/or_mean_count.csv")
+            and os.path.exists("../source/processed/da_values.csv")
+            and os.path.exists("../source/processed/tf_tg_corr.csv")
+            and os.path.exists("../source/processed/or_tg_corr.csv")
+            and os.path.exists("../source/processed/motif.csv")
+            and os.path.exists("../source/processed/distance.csv")
+        )
+
+    elif mode == 1:
+        # STRING
+        return not (
+            os.path.exists("../source/processed/gene_gene_scores.csv")
+            and os.path.exists("../source/processed/genes_annotated.csv")
+        )
+
+    elif mode == 2:
+        # ENSEMBL
+        return not (os.path.exists("../source/processed/complete.csv") and os.path.exists("../source/processed/tf.csv"))
+
+    elif mode == 3:
+        # Functional
+        return not (
+            os.path.exists("../source/processed/ft_nodes.csv")
+            and os.path.exists("../source/processed/ft_gene.csv")
+            and os.path.exists("../source/processed/ft_ft_overlap.csv")
+        )

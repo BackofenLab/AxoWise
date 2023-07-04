@@ -64,7 +64,7 @@ def upload_workflow():
         ft_ft_overlap,
     ) = read_functional_files(complete=complete)
 
-    print_update(update_type="Done", text="Reformatting files", color="pink")
+    print_update(update_type="Done", text="Reading files", color="pink")
 
     first_setup(
         gene_nodes=genes_annotated,
