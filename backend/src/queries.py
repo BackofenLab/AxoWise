@@ -7,13 +7,14 @@ from typing import Any
 import neo4j
 
 
-def get_terms_connected_by_kappa(driver: neo4j.Driver, term_ids: list[str]):
+def get_terms_connected_by_overlap(driver: neo4j.Driver, term_ids: list[str]):
     """:returns: terms, source, target, score"""
     query = f"""
-        MATCH (source:Terms)-[association:KAPPA]->(target:Terms)
+        MATCH (source:Terms)-[association:OVERLAP]->(target:Terms)
         WHERE source.external_id IN {term_ids}
-        AND target.external_id IN {term_ids}
-        RETURN source, target, association.score AS score;
+            AND target.external_id IN {term_ids}
+            AND association.Score >= 0.75
+        RETURN source, target, association.Score AS score;
         """
     with driver.session() as session:
         result = session.run(query)
