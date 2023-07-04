@@ -190,7 +190,9 @@ def _reformat_de(df: pd.DataFrame):
 
 def _reformat_tf_tg(df: pd.DataFrame):
     df = df.filter(items=["nearest_ENSEMBL_target", "ENSEMBL_TF", "korrelationskoeffizient", "p-Wert"])
-    df = df.rename(columns={"nearest_ENSEMBL_target": "ENSEMBL_TG", "korrelationskoeffizient": "Correlation", "p-Wert": "p"})
+    df = df.rename(
+        columns={"nearest_ENSEMBL_target": "ENSEMBL_TG", "korrelationskoeffizient": "Correlation", "p-Wert": "p"}
+    )
     return df
 
 

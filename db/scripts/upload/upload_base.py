@@ -23,6 +23,7 @@ def create_gene_nodes(nodes: pd.DataFrame, driver: Driver):
         driver=driver,
         merge=False,
     )
+    nodes.sample(n=10000)["ENSEMBL"].to_csv("../source/misc/gene_selection_10k.csv", index=False, header=False)
 
 
 @time_function
@@ -132,19 +133,19 @@ def create_functional(
     """
     Creates Functional Term nodes, OVERLAP egdes between FT and FT, and LINK edges between TG and FT
     """
-    print_update(update_type="Node Creation", text="Functional Term", color="blue")
-
-    # TODO: Change "Terms" to "FT"
-    save_df_to_csv(file_name="ft_nodes.csv", df=ft_nodes, override_prod=True)
-    create_nodes(
-        source_file="ft_nodes.csv",
-        type_="Terms",
-        id="Term",
-        values=["Term", "Name", "Category"],
-        reformat_values=[],
-        merge=False,
-        driver=driver,
-    )
+    # print_update(update_type="Node Creation", text="Functional Term", color="blue")
+    #
+    # TODO: Change "Terms" to "FT" and "external_id" to "Term"
+    # save_df_to_csv(file_name="ft_nodes.csv", df=ft_nodes, override_prod=True)
+    # create_nodes(
+    #     source_file="ft_nodes.csv",
+    #     type_="FT",
+    #     id="Term",
+    #     values=["Term", "Name", "Category"],
+    #     reformat_values=[],
+    #     merge=False,
+    #     driver=driver,
+    # )
 
     print_update(update_type="Edge Creation", text="OVERLAP", color="cyan")
 
@@ -152,8 +153,8 @@ def create_functional(
     create_relationship(
         source_file="ft_overlap.csv",
         type_="OVERLAP",
-        between=(("Term", "source"), ("Term", "target")),
-        node_types=("Terms", "Terms"),
+        between=(("external_id", "source"), ("external_id", "target")),
+        node_types=("FT", "FT"),
         values=["Score"],
         reformat_values=[("Score", "toFloat")],
         merge=False,
@@ -166,8 +167,8 @@ def create_functional(
     create_relationship(
         source_file="ft_gene.csv",
         type_="LINK",
-        between=(("ENSEMBL", "ENSEMBL"), ("Term", "Term")),
-        node_types=("TG", "Terms"),
+        between=(("ENSEMBL", "ENSEMBL"), ("external_id", "Term")),
+        node_types=("TG", "FT"),
         values=[],
         reformat_values=[],
         merge=False,
