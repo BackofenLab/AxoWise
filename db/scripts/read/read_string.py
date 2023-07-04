@@ -45,6 +45,7 @@ def parse_string(complete: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT_STR
             ],
             ignore_index=True,
         ).drop(columns=["Protein"])
+        genes_annotated.SYMBOL.fillna(genes_annotated.ENSEMBL, inplace=True)
 
         protein_gene_dict = complete.filter(items=["ENSEMBL", "Protein"])
         protein_gene_dict = protein_gene_dict.drop_duplicates(ignore_index=True)
