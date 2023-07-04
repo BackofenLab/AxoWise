@@ -1,7 +1,7 @@
 import reader as rd
 from uploader import first_setup
 from utils import print_update
-from query.query_functions import test
+from querier import run_queries
 import os
 import pandas as pd
 
@@ -87,5 +87,5 @@ def upload_workflow():
 
 
 if __name__ == "__main__":
-    upload_workflow()
-    # test()
+    # upload_workflow()
+    run_queries()
