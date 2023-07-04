@@ -3,7 +3,8 @@ import neo4j
 import pprint
 from utils import start_driver, stop_driver, execute_query, generate_props
 
-def get_tg_ensembl_by_symbol(gene_list:list[str]):
+
+def get_tg_ensembl_by_symbol(gene_list: list[str]):
     query = f""" 
     MATCH (n:TG)
         WHERE n.SYMBOL IN {gene_list}
@@ -12,7 +13,8 @@ def get_tg_ensembl_by_symbol(gene_list:list[str]):
     # TODO
     pass
 
-def get_tg_by_correlation_tfs(tf:str, subset:list[str], positive:bool, threshold:float):
+
+def get_tg_by_correlation_tfs(tf: str, subset: list[str], positive: bool, threshold: float):
     query = f"""
     MATCH (n:TF)-[c:CORRELATION]->(g:TG)
         WHERE n.ENSEMBL = {tf}
@@ -23,7 +25,8 @@ def get_tg_by_correlation_tfs(tf:str, subset:list[str], positive:bool, threshold
     # TODO
     pass
 
-def get_tg_by_link_ft(ft:str, subset:list[str]):
+
+def get_tg_by_link_ft(ft: str, subset: list[str]):
     query = f"""
     MATCH (n:FT)-[:LINK]->(g:TG)
         WHERE n.Term = {ft}
@@ -33,7 +36,8 @@ def get_tg_by_link_ft(ft:str, subset:list[str]):
     # TODO
     pass
 
-def get_tg_by_de_under_contexts(contexts:list[str], subset:list[str], positive:bool, threshold:float):
+
+def get_tg_by_de_under_contexts(contexts: list[str], subset: list[str], positive: bool, threshold: float):
     query = f"""
     MATCH (n:Context)-[d:DE]->(g:TG)
         WHERE n.Context IN {contexts}
@@ -44,7 +48,8 @@ def get_tg_by_de_under_contexts(contexts:list[str], subset:list[str], positive:b
     # TODO
     pass
 
-def get_or_by_distance_to_tg(subset:list[str]):
+
+def get_or_by_distance_to_tg(subset: list[str]):
     query = f"""
     MATCH (n:OR)-[d:DISTANCE]->(g:TG)
         WHERE g.ENSEMBL IN {subset}
@@ -53,7 +58,8 @@ def get_or_by_distance_to_tg(subset:list[str]):
     # TODO
     pass
 
-def get_or_by_motif_to_tf(tf:str, subset:list[str]):
+
+def get_or_by_motif_to_tf(tf: str, subset: list[str]):
     query = f"""
     MATCH (n:TF)-[d:MOTIF]->(m:OR)
         WHERE n.ENSEMBL = {tf}
@@ -63,7 +69,8 @@ def get_or_by_motif_to_tf(tf:str, subset:list[str]):
     # TODO
     pass
 
-def get_or_by_da_under_contexts(contexts:list[str], subset:list[str], positive:bool, threshold:float):
+
+def get_or_by_da_under_contexts(contexts: list[str], subset: list[str], positive: bool, threshold: float):
     query = f"""
     MATCH (n:Context)-[d:DA]->(m:OR)
         WHERE n.Context IN {contexts}
