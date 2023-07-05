@@ -807,6 +807,7 @@ html,body{
 }
 
 #export-enrich-btn{
+	margin-right:5px;
 	background-color: rgba(0, 0, 0, 0.5) ;
 	margin-top: 10px;
 	width:70%;

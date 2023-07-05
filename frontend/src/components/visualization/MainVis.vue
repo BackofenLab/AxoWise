@@ -17,6 +17,7 @@ import customLabelRenderer from '../../rendering/customLabelRenderer';
 import customNodeRenderer from '../../rendering/customNodeRenderer';
 import ForceGraph3D from '3d-force-graph';
 import "@/rendering/astarAlgorithm.js"
+import randomColorRGB from 'random-color-rgb'
 
 sigma.canvas.labels.def = customLabelRenderer
 sigma.canvas.nodes.def = customNodeRenderer
@@ -644,7 +645,45 @@ export default {
     });
 
     sigma_instance.refresh()
-  }
+  },
+  visualize_enrichment_layer(list) {
+    // var com = this;
+
+    const colorPalette = {};
+
+    for (const terms of list){
+
+     colorPalette[terms.name] = randomColorRGB()
+
+    }
+
+    sigma_instance.graph.nodes().forEach(n =>{
+      let count = 0;
+      n.color = "rgb(50,50,50)"
+      for (const terms of list) {
+        // Check if the element exists in the proteins list
+        if (terms.proteins.includes(n.attributes["Ensembl ID"])) {
+          count++;
+          n.color = colorPalette[terms.name]
+          if (count == list.size) {
+            n.color = "rgb(255,255,255)"
+            // Element exists in more than one list
+            break;
+          }
+        }
+      }
+    });
+    sigma_instance.graph.edges().forEach(function (e) {
+        // Nodes
+        var source = sigma_instance.graph.getNodeFromIndex(e.source);
+        // var target = sigma_instance.graph.getNodeFromIndex(e.target);
+
+        e.color = source.color.replace(')', ', 0.5)').replace('rgb', 'rgba');
+            
+    });
+
+    sigma_instance.refresh()
+  },
 
 },
   mounted() {
@@ -752,6 +791,9 @@ export default {
     });
     this.emitter.on("adjustDE", (value) => {
       this.update_boundary(value)
+    });
+    this.emitter.on("visualizeEnrichLayer", (value) => {
+      this.visualize_enrichment_layer(value)
     });
     
     sigma_instance.refresh()

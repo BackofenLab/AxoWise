@@ -28,7 +28,10 @@
                 <i>No terms available.</i>
                 </div>
             </div>
-            <button v-if="await_load == false" id="export-enrich-btn" v-on:click="export_enrichment()">Export</button>
+            <div v-if="await_load == false" class="enrichment-tuning">
+                <button  id="export-enrich-btn" v-on:click="export_enrichment()">Export</button>
+                <button  id="visualize-favourites" v-on:click="visualize_layers()">Visualize</button>
+            </div>
             <div class="get_term_graph">
                 <input type="text" v-if="await_load == false" v-model="graph_name">
                 <button v-if="await_load == false" id="apply-enrich-btn" v-on:click="get_term_data()">Get Graph</button>
@@ -60,6 +63,7 @@
                 selectedIndex: -1,
                 checkboxStates: {},
                 filtered_terms: [],
+                favourite_tab: new Set()
 
             }
         },
@@ -185,10 +189,12 @@
             add_enrichment(enrichment, index) {
                 if (this.checkboxStates[index]) {
                     // Checkbox is checked, add its state to the object
-                        this.checkboxStates[index] = true;
-                    } else {
+                    this.checkboxStates[index] = true;
+                    this.favourite_tab.add(enrichment)
+                } else {
                     // Checkbox is unchecked, remove its state from the object
-                        delete this.checkboxStates[index];
+                    delete this.checkboxStates[index];
+                    this.favourite_tab.delete(enrichment)
                     }
             },
             handleKeyDown(event) {
@@ -238,6 +244,9 @@
             },
             shouldDisplayOption(entry) {
                 return this.filtered_terms.includes(entry);
+            },
+            visualize_layers(){
+                this.emitter.emit("visualizeEnrichLayer", this.favourite_tab)
             }
                         
         },
@@ -390,4 +399,21 @@
     .selected {
         background-color: rgba(255,0,0,0.7); /* Customize the selected style as desired */
     }
+
+    #visualize-favourites {
+        margin-left:5px;
+        background-color: rgba(0, 0, 0, 0.5);
+        margin-top: 10px;
+        width: 70%;
+        color: white;
+        padding: 5px;
+        border-radius: 20px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: .5s;
+    }
+    .enrichment-tuning {
+        display: inline-flex;
+    }
+
 </style>
