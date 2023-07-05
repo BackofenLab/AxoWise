@@ -24,7 +24,7 @@ def get_functional_graph(list_enrichment):
     driver = database.get_driver()
 
     # Execute the query and retrieve the CSV data
-    terms, source, target, score = queries.get_terms_connected_by_kappa(driver, list_term)
+    terms, source, target, score = queries.get_terms_connected_by_overlap(driver, list_term)
 
     stopwatch.round("Neo4j")
 
