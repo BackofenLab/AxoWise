@@ -9,33 +9,33 @@ def get_tg_ensembl_by_symbol(gene_list: list[str], driver: neo4j.Driver):
     RETURN n.ENSEMBL
     """
     result = execute_query(query=query, read=True, driver=driver)
-    # TODO
-    pass
+    return [i[0] for i in result]
 
 
-def get_tg_by_correlation_tfs(tf: str, subset: list[str], positive: bool, threshold: float, driver: neo4j.Driver):
+def get_tg_by_correlation_tf(tf: str, subset: list[str], positive: bool, threshold: float, driver: neo4j.Driver):
     query = f"""
     MATCH (n:TF)-[c:CORRELATION]->(g:TG)
-        WHERE n.ENSEMBL = {tf}
+        WHERE n.ENSEMBL = "{tf}"
             AND g.ENSEMBL IN {subset}
             AND c.Correlation {">" if positive else "<"}= {threshold}
     RETURN g.ENSEMBL, c.Correlation, c.p
     """
     result = execute_query(query=query, read=True, driver=driver)
     # TODO
-    pass
+    return result
 
 
 def get_tg_by_link_ft(ft: str, subset: list[str], driver: neo4j.Driver):
+    # TODO: change external_id to Term
     query = f"""
-    MATCH (n:FT)-[:LINK]->(g:TG)
-        WHERE n.Term = {ft}
+    MATCH (n:FT)<-[:LINK]-(g:TG)
+        WHERE n.external_id = "{ft}"
             AND g.ENSEMBL IN {subset}
     RETURN g.ENSEMBL
     """
     result = execute_query(query=query, read=True, driver=driver)
     # TODO
-    pass
+    return [i[0] for i in result]
 
 
 def get_tg_by_de_under_contexts(
@@ -50,30 +50,29 @@ def get_tg_by_de_under_contexts(
     """
     result = execute_query(query=query, read=True, driver=driver)
     # TODO
-    pass
+    return result
 
 
 def get_or_by_distance_to_tg(subset: list[str], driver: neo4j.Driver):
     query = f"""
     MATCH (n:OR)-[d:DISTANCE]->(g:TG)
         WHERE g.ENSEMBL IN {subset}
-    RETURN n, d.Distance, g.ENSEMBL
+    RETURN n.id, d.Distance, g.ENSEMBL
     """
     result = execute_query(query=query, read=True, driver=driver)
-    # TODO
-    pass
+    return result
 
 
 def get_or_by_motif_to_tf(tf: str, subset: list[str], driver: neo4j.Driver):
     query = f"""
     MATCH (n:TF)-[d:MOTIF]->(m:OR)
-        WHERE n.ENSEMBL = {tf}
+        WHERE n.ENSEMBL = "{tf}"
             AND m.id IN {subset}
         RETURN n.ENSEMBL, d.Motif, m.id
     """
     result = execute_query(query=query, read=True, driver=driver)
     # TODO
-    pass
+    return result
 
 
 def get_or_by_da_under_contexts(
@@ -88,4 +87,4 @@ def get_or_by_da_under_contexts(
     """
     result = execute_query(query=query, read=True, driver=driver)
     # TODO
-    pass
+    return result
