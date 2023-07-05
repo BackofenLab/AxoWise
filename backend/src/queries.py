@@ -19,7 +19,7 @@ def get_terms_connected_by_kappa(driver: neo4j.Driver, term_ids: list[str]):
     with driver.session() as session:
         result = session.run(query, parameters)
         # custom conversion is needed because otherwise it takes 10s with neo4j (for unknown reasons)
-        return _convert_to_connection_info_score(result, _int=False)
+        return _convert_to_connection_info_score(result=result, _int=False)
 
 
 def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id: int) -> list[str]:
@@ -52,7 +52,7 @@ def get_protein_neighbours(
     """
 
     with driver.session() as session:
-        result = session.run(query).single(strict=True).value()
+        result = session.run(query, parameters).single(strict=True).value()
         return _convert_to_connection_info_score(result=result, _int=True)
 
 
@@ -97,7 +97,7 @@ def get_number_of_proteins(driver: neo4j.Driver) -> int:
         return int(num_proteins)
 
 
-def _convert_to_connection_info_score(result: neo4j.Result, _int: bool) -> (list[str], list[str], list[str], list[int]):
+def _convert_to_connection_info_score(result: neo4j.Result, _int:bool) -> (list[str], list[str], list[str], list[int]):
     nodes, source, target, score = list(), list(), list(), list()
 
     for row in result:
@@ -105,7 +105,7 @@ def _convert_to_connection_info_score(result: neo4j.Result, _int: bool) -> (list
         nodes.append(row["target"])
         source.append(row["source"].get("external_id"))
         target.append(row["target"].get("external_id"))
-        if _int:
+        if _int: 
             score.append(int(row["score"]))
         else:
             score.append(float(row["score"]))
