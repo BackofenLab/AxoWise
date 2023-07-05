@@ -13,7 +13,8 @@ def get_terms_connected_by_overlap(driver: neo4j.Driver, term_ids: list[str]):
         MATCH (source:Terms)-[association:OVERLAP]->(target:Terms)
         WHERE source.external_id IN {term_ids}
             AND target.external_id IN {term_ids}
-            AND association.Score >= 0.75
+            AND source.category IN ["KEGG", "Reactome Pathways"]
+            AND target.category IN ["KEGG", "Reactome Pathways"]
         RETURN source, target, association.Score AS score;
         """
     with driver.session() as session:
