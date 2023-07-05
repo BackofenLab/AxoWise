@@ -121,3 +121,32 @@
     * Properties:
         - Distance (Integer): Distance between OR and TG
     * Note: This information is not specific to the experiment
+
+## Statistics
+
+### Nodes:
+| Type | old | new |
+| --- | --- | --- |
+| Terms / (in new DB: FT) | 24170 | 24170 |
+| Proteins | 22048 | 0 (to be deprecated) |
+| Target Genes (TG) | 0 | 22342 |
+| Transcription Factors (TF, are also TGs) | 0 | 2893 |
+| Open Regions (OR) | 0 | 106644 |
+| Context/Source/Celltype/Study/MeanCount | 0 | 11 |
+| Total | 46218 | 153167  |
+
+### Edges:
+| Type | old | new |
+| --- | --- | --- |
+| ASSOCIATION / (in new DB: STRING) | 7248179 | 6888868 |
+| CORRELATION (TG, TF) | 0 | 1758104 |
+| CORRELATION (TG, OR) | 0 | 81686 |
+| DA | 0 | 533220 |
+| DE | 0 | 50100 |
+| DISTANCE | 0 | 95341 |
+| KAPPA | 81676 | 0 (to be deprecated) |
+| LINK | 0 | 1710177 |
+| MEANCOUNT | 0 | 116664 |
+| MOTIF | 0 | 5558944 |
+| OVERLAP | 0 | 3734015 |
+| Total | 7329855 | 20527119 |
