@@ -45,7 +45,7 @@
     export default{
         name: 'EnrichmentTool',
         props: ['gephi_data','active_term'],
-        emits: ['active_term_changed', 'active_layer_changed'],
+        emits: ['active_term_changed', 'active_layer_changed', 'active_termlayers_changed'],
         data() {
             return {
                 api: {
@@ -246,7 +246,8 @@
                 return this.filtered_terms.includes(entry);
             },
             visualize_layers(){
-                this.emitter.emit("visualizeEnrichLayer", this.favourite_tab)
+                var com = this;
+                com.$emit("active_termlayers_changed", com.favourite_tab);
             }
                         
         },

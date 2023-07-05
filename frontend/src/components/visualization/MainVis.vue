@@ -41,8 +41,8 @@ sigma.classes.graph.addMethod('ensemblIdToNode', function(ensembl_id) {
 
 export default {
   name: 'MainVis',
-  props: ['gephi_data', 'unconnected_nodes', 'active_node', 'active_term', 'active_subset','subactive_subset', 'active_layer', 'active_decoloumn', 'active_combine','node_color_index','node_size_index', 'edge_color_index', 'export_graph'],
-  emits: ['active_node_changed', 'active_term_changed', 'active_subset_changed', 'active_decoloumn_changed'],
+  props: ['gephi_data', 'unconnected_nodes', 'active_node', 'active_term', 'active_subset','active_termlayers','subactive_subset', 'active_layer', 'active_decoloumn', 'active_combine','node_color_index','node_size_index', 'edge_color_index', 'export_graph'],
+  emits: ['active_node_changed', 'active_term_changed', 'active_subset_changed', 'active_decoloumn_changed', 'active_termlayers_changed'],
   data() {
     return {
       threeview: false,
@@ -327,11 +327,54 @@ export default {
       sigma_instance.refresh();
 
     },
+    active_termlayers(list) {
+
+      if(this.active_termlayers == null){
+        this.reset()
+        return
+      }
+
+      const colorPalette = {};
+
+      for (const terms of list){
+
+      colorPalette[terms.name] = randomColorRGB()
+
+      }
+
+      sigma_instance.graph.nodes().forEach(n =>{
+        let count = 0;
+        n.color = "rgb(50,50,50)"
+        for (const terms of list) {
+          // Check if the element exists in the proteins list
+          if (terms.proteins.includes(n.attributes["Ensembl ID"])) {
+            count++;
+            n.color = colorPalette[terms.name]
+            if (count == list.size) {
+              n.color = "rgb(255,255,255)"
+              // Element exists in more than one list
+              break;
+            }
+          }
+        }
+      });
+      sigma_instance.graph.edges().forEach(function (e) {
+          // Nodes
+          var source = sigma_instance.graph.getNodeFromIndex(e.source);
+          // var target = sigma_instance.graph.getNodeFromIndex(e.target);
+
+          e.color = source.color.replace(')', ', 0.5)').replace('rgb', 'rgba');
+              
+      });
+
+      sigma_instance.refresh()
+    },
     active_combine(val){
       if(val.name == "node") this.$emit('active_node_changed', val.value)
       if(val.name == "term") this.$emit('active_term_changed', val.value)
       if(val.name == "subset") this.$emit('active_subset_changed', val.value)
       if(val.name == "devalue") this.$emit('active_decoloumn_changed', val.value)
+      if(val.name == "layers") this.$emit('active_termlayers_changed', val.value)
     },
   },
   methods: {
@@ -646,44 +689,6 @@ export default {
 
     sigma_instance.refresh()
   },
-  visualize_enrichment_layer(list) {
-    // var com = this;
-
-    const colorPalette = {};
-
-    for (const terms of list){
-
-     colorPalette[terms.name] = randomColorRGB()
-
-    }
-
-    sigma_instance.graph.nodes().forEach(n =>{
-      let count = 0;
-      n.color = "rgb(50,50,50)"
-      for (const terms of list) {
-        // Check if the element exists in the proteins list
-        if (terms.proteins.includes(n.attributes["Ensembl ID"])) {
-          count++;
-          n.color = colorPalette[terms.name]
-          if (count == list.size) {
-            n.color = "rgb(255,255,255)"
-            // Element exists in more than one list
-            break;
-          }
-        }
-      }
-    });
-    sigma_instance.graph.edges().forEach(function (e) {
-        // Nodes
-        var source = sigma_instance.graph.getNodeFromIndex(e.source);
-        // var target = sigma_instance.graph.getNodeFromIndex(e.target);
-
-        e.color = source.color.replace(')', ', 0.5)').replace('rgb', 'rgba');
-            
-    });
-
-    sigma_instance.refresh()
-  },
 
 },
   mounted() {
@@ -766,6 +771,10 @@ export default {
       this.$emit('active_subset_changed', state)
     });
 
+    this.emitter.on("searchEnrichment", state => {
+      this.$emit('active_term_changed', state)
+    });
+
     this.emitter.on("hideSubset", state => {
       this.$emit('active_layer_changed', state)
     });
@@ -791,9 +800,6 @@ export default {
     });
     this.emitter.on("adjustDE", (value) => {
       this.update_boundary(value)
-    });
-    this.emitter.on("visualizeEnrichLayer", (value) => {
-      this.visualize_enrichment_layer(value)
     });
     
     sigma_instance.refresh()

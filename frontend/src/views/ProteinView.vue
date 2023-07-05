@@ -4,6 +4,7 @@
       <MainVis ref="mainVis"
         :active_node='active_node' @active_node_changed = 'active_node = $event'
         :active_term='active_term' @active_term_changed = 'active_term = $event'
+        :active_termlayers='active_termlayers' @active_termlayers_changed = 'active_termlayers = $event'
         :active_layer='active_layer' @active_layer_changed = 'active_layer = $event'
         :active_subset='active_subset' @active_subset_changed = 'active_subset = $event'
         :subactive_subset='subactive_subset'
@@ -22,6 +23,7 @@
         :active_term='active_term' @active_term_changed = 'active_term = $event'
         :active_subset='active_subset' @active_subset_changed = 'active_subset = $event'
         :active_decoloumn='active_decoloumn' @active_decoloumn_changed = 'active_decoloumn = $event'
+        :active_termlayers='active_termlayers' @active_termlayers_changed = 'active_termlayers = $event'
         @active_layer_changed = 'active_layer = $event'
         @active_combine_changed = 'active_combine = $event'
         :gephi_data='gephi_data'
@@ -32,6 +34,7 @@
       <EnrichmentTool
         :gephi_data='gephi_data'
         @active_term_changed = 'active_term = $event'
+        @active_termlayers_changed = 'active_termlayers = $event'
         @active_layer_changed = 'active_layer = $event'
       ></EnrichmentTool>
     </keep-alive>
@@ -93,6 +96,7 @@ export default {
       active_layer: null,
       active_combine: null,
       active_decoloumn: null,
+      active_termlayers: null,
       node_color_index: null,
       node_size_index: null,
       edge_color_index: null,
