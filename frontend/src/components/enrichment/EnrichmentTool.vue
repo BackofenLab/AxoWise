@@ -247,6 +247,7 @@
             },
             visualize_layers(){
                 var com = this;
+                console.log(com.favourite_tab)
                 com.$emit("active_termlayers_changed", com.favourite_tab);
             }
                         

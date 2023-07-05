@@ -77,6 +77,7 @@ export default {
     },
     watch: {
         active_item(val){
+            console.log(this.active_item)
             this.active_tab = Object.keys(val)[0]
             if(val == null){
                 delete this.active_dict.val;
@@ -160,7 +161,6 @@ export default {
             }
             if(name == "layers"){
                 this.active_tab = "layers"
-                console.log(name, tab)
                 this.$emit('active_termlayers_changed', null)
                 this.$emit('active_combine_changed', {value: tab, name: name})
             }

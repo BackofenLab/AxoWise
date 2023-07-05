@@ -64,6 +64,7 @@ export default {
       }, 
       label_active_dict: {},
       special_label: false,
+      colorPalette: {}
     }
   },
   watch: {
@@ -327,48 +328,45 @@ export default {
       sigma_instance.refresh();
 
     },
-    active_termlayers(list) {
+    active_termlayers: {
+      handler(newList) {
+        console.log(newList)
 
-      if(this.active_termlayers == null){
-        this.reset()
-        return
-      }
+        if (newList == null) {
+          this.reset();
+          return;
+        }
 
-      const colorPalette = {};
+        for (const terms of newList) {
+          if (!this.colorPalette[terms.name])
+            this.colorPalette[terms.name] = randomColorRGB();
+        }
 
-      for (const terms of list){
-
-      colorPalette[terms.name] = randomColorRGB()
-
-      }
-
-      sigma_instance.graph.nodes().forEach(n =>{
-        let count = 0;
-        n.color = "rgb(50,50,50)"
-        for (const terms of list) {
-          // Check if the element exists in the proteins list
-          if (terms.proteins.includes(n.attributes["Ensembl ID"])) {
-            count++;
-            n.color = colorPalette[terms.name]
-            if (count == list.size) {
-              n.color = "rgb(255,255,255)"
-              // Element exists in more than one list
-              break;
+        sigma_instance.graph.nodes().forEach((n) => {
+          let count = 0;
+          n.color = "rgb(50,50,50)";
+          for (const terms of newList) {
+            if (terms.proteins.includes(n.attributes["Ensembl ID"])) {
+              count++;
+              n.color = this.colorPalette[terms.name];
+              if (count === newList.size) {
+                n.color = "rgb(255,255,255)";
+                break;
+              }
             }
           }
-        }
-      });
-      sigma_instance.graph.edges().forEach(function (e) {
-          // Nodes
+        });
+
+        sigma_instance.graph.edges().forEach((e) => {
           var source = sigma_instance.graph.getNodeFromIndex(e.source);
-          // var target = sigma_instance.graph.getNodeFromIndex(e.target);
+          e.color = source.color.replace(")", ", 0.5)").replace("rgb", "rgba");
+        });
 
-          e.color = source.color.replace(')', ', 0.5)').replace('rgb', 'rgba');
-              
-      });
-
-      sigma_instance.refresh()
+        sigma_instance.refresh();
+      },
+      deep: true,
     },
+    
     active_combine(val){
       if(val.name == "node") this.$emit('active_node_changed', val.value)
       if(val.name == "term") this.$emit('active_term_changed', val.value)
