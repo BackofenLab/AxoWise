@@ -66,6 +66,6 @@ dummydata:
 # explanation: https://stackoverflow.com/questions/25010369/wget-curl-large-file-from-google-drive
 # docs: https://pypi.org/project/gdown/
 	pip install gdown
-	cd $$HOME/Downloads && gdown 1S8_O2HCeMKwukwnTHlFmf1KLQnbfcXAN
+	cd $$HOME/Downloads && gdown 1BfpXGdwcdmt8zh6K8MjrQf360ZaOpY_A
 	sudo neo4j-admin load --from=$$HOME/Downloads/newmouse2db.dump --database=neo4j --force
 	rm $$HOME/Downloads/newmouse2db.dump

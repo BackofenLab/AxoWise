@@ -95,10 +95,11 @@ curl https://github.com/neo4j-contrib/neo4j-apoc-procedures/releases/download/4.
 
 # Setup dummy dataset
 
-## 1.  Download the test sample database to your Downloads folder.
+## 1.  Download the [test sample](https://drive.google.com/file/d/1BfpXGdwcdmt8zh6K8MjrQf360ZaOpY_A/) database to your Downloads folder.
+
 ## 2.  Load the dump file into your own database.
 ```bash
-    <NEO4J-HOME>/bin/neo4j-admin load --from=$HOME/Downloads/newmouse2db.dump --database=neo4j --force
+    <NEO4J-HOME>/bin/neo4j-admin load --from=$HOME/Downloads/merged.dump --database=neo4j --force
 ```
 
 
