@@ -9,29 +9,31 @@ import neo4j
 
 def get_terms_connected_by_kappa(driver: neo4j.Driver, term_ids: list[str]):
     """:returns: terms, source, target, score"""
+    parameters = {"term_ids": term_ids}
     query = f"""
         MATCH (source:Terms)-[association:KAPPA]->(target:Terms)
-        WHERE source.external_id IN {term_ids}
-        AND target.external_id IN {term_ids}
+        WHERE source.external_id IN $term_ids
+        AND target.external_id IN $term_ids
         RETURN source, target, association.score AS score;
         """
     with driver.session() as session:
-        result = session.run(query)
+        result = session.run(query, parameters)
         # custom conversion is needed because otherwise it takes 10s with neo4j (for unknown reasons)
-        return _convert_to_connection_info_score(result=result, _int=False)
+        return _convert_to_connection_info_score(result, _int=False)
 
 
 def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id: int) -> list[str]:
+    parameters = {"species_id": species_id, "names": [n.upper() for n in names]}
     # unsafe parameters because otherwise this query takes 10s with neo4j for unknown reasons
     query = f"""
         MATCH (protein:Protein)
-        WHERE protein.species_id = {species_id}
-            AND protein.name IN {str([n.upper() for n in names])} 
+        WHERE protein.species_id = $species_id
+            AND protein.name IN {parameters["names"]} 
         WITH collect(protein.external_id) AS ids
         RETURN ids
     """
     with driver.session() as session:
-        return session.run(query).single(strict=True).value()
+        return session.run(query, parameters).single(strict=True).value()
 
 
 def get_protein_neighbours(
