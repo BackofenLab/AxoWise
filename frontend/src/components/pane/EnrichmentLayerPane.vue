@@ -10,7 +10,7 @@
             <div class="link" id="link">
                 <ul>
                     <li class="membership" v-for="term in terms" :key="term" >
-                        <a href="#" v-on:click="select_enrichment(term)">{{term.name}}</a>
+                        <a href="#" v-on:click="select_enrichment(term)" @mouseenter="prehighlight(term.proteins)" @mouseleave="prehighlight(null)">{{term.name}}</a>
                     </li>
                 </ul>
             </div>
@@ -55,6 +55,9 @@ export default {
         select_enrichment(value){
 
             this.emitter.emit("searchEnrichment", value);
+        },
+        prehighlight(proteins){
+            this.emitter.emit("highlightProteinList", proteins);
         }
         
     },

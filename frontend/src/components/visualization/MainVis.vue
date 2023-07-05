@@ -42,7 +42,7 @@ sigma.classes.graph.addMethod('ensemblIdToNode', function(ensembl_id) {
 export default {
   name: 'MainVis',
   props: ['gephi_data', 'unconnected_nodes', 'active_node', 'active_term', 'active_subset','active_termlayers','subactive_subset', 'active_layer', 'active_decoloumn', 'active_combine','node_color_index','node_size_index', 'edge_color_index', 'export_graph'],
-  emits: ['active_node_changed', 'active_term_changed', 'active_subset_changed', 'active_decoloumn_changed', 'active_termlayers_changed'],
+  emits: ['active_node_changed', 'active_term_changed', 'active_subset_changed', 'active_decoloumn_changed', 'active_termlayers_changed', 'subactive_subset_changed'],
   data() {
     return {
       threeview: false,
@@ -245,7 +245,14 @@ export default {
         return
       }
 
-      const proteins = new Set(subset.map(node => node.attributes["Ensembl ID"]));
+      var proteins;
+
+      if(subset[0].attributes) {
+        proteins = new Set(subset.map(node => node.attributes["Ensembl ID"]));
+        }
+      else { 
+        proteins = new Set(subset) 
+      }
 
       const graph = sigma_instance.graph;
 
@@ -330,7 +337,6 @@ export default {
     },
     active_termlayers: {
       handler(newList) {
-        console.log(newList)
 
         if (newList == null) {
           this.reset();
@@ -771,6 +777,10 @@ export default {
 
     this.emitter.on("searchEnrichment", state => {
       this.$emit('active_term_changed', state)
+    });
+
+    this.emitter.on("highlightProteinList", state => {
+      this.$emit('subactive_subset_changed', state)
     });
 
     this.emitter.on("hideSubset", state => {

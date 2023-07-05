@@ -7,7 +7,7 @@
         :active_termlayers='active_termlayers' @active_termlayers_changed = 'active_termlayers = $event'
         :active_layer='active_layer' @active_layer_changed = 'active_layer = $event'
         :active_subset='active_subset' @active_subset_changed = 'active_subset = $event'
-        :subactive_subset='subactive_subset'
+        :subactive_subset='subactive_subset' @subactive_subset_changed = 'subactive_subset = $event'
         :gephi_data='gephi_data'
         :active_decoloumn='active_decoloumn'
         :unconnected_nodes='unconnected_nodes'
