@@ -6,8 +6,10 @@ import os.path
 import sys
 
 import pandas as pd
+import networkit as nk
 from flask import Flask, Response, request, send_from_directory
 from werkzeug.middleware.proxy_fix import ProxyFix
+from multiprocessing import Process
 
 import database
 import enrichment
@@ -15,6 +17,7 @@ import enrichment_graph
 import graph
 import jar
 import queries
+import signal
 from util.stopwatch import Stopwatch
 
 app = Flask(__name__)
@@ -112,6 +115,38 @@ def proteins_subgraph_api():
     if edges.empty:
         return Response(json.dumps([]), mimetype="application/json")
 
+    # networkit
+    # Create an empty graph
+    graph_nk = nk.Graph()
+    # Create a mapping between string node IDs and integer node IDs
+    node_mapping = {}
+    integer_id = 0
+
+    # Add nodes to the graph and update the mapping
+    for node_id in nodes["external_id"]:
+        graph_nk.addNode()
+        node_mapping[node_id] = integer_id
+        integer_id += 1
+
+    # Add edges to the graph using integer node IDs
+    for edge in edges[["source", "target"]].itertuples(index=False):
+        source = node_mapping[edge.source]
+        target = node_mapping[edge.target]
+        graph_nk.addEdge(source, target)
+
+    betweenness = nk.centrality.Betweenness(graph_nk).run().scores()
+    pagerank = nk.centrality.PageRank(graph_nk).run().scores()
+    degree = nk.centrality.DegreeCentrality(graph_nk).run().scores()
+    score_between = []
+    score_page = []
+    score_deg = []
+    for i in betweenness:
+        score_between.append(i)
+    for i in pagerank:
+        score_page.append(i)
+    for i in degree:
+        score_deg.append(i)
+
     stopwatch.round("Parsing")
 
     # Creating only the main Graph and exclude not connected subgraphs
@@ -154,6 +189,14 @@ def proteins_subgraph_api():
         ensembl_id = node["id"]
         df_node = ensembl_to_node.get(ensembl_id)
         if df_node:
+            if ensembl_id in node_mapping:
+                mapped_node_id = node_mapping[ensembl_id]
+                score_betweenness = score_between[mapped_node_id]
+                score_pagerank = score_page[mapped_node_id]
+                score_degree = score_deg[mapped_node_id]
+                node["attributes"]["Betweenness Centrality"] = str(score_betweenness)
+                node["attributes"]["PageRank"] = str(score_pagerank)
+                node["attributes"]["Degree"] = str(int(score_degree))
             node["attributes"]["Description"] = df_node.description
             node["attributes"]["Ensembl ID"] = df_node.external_id
             node["attributes"]["Name"] = df_node.name
@@ -208,14 +251,26 @@ def terms_subgraph_api():
     return Response(json_str, mimetype="application/json")
 
 
-if __name__ == "__main__":
+# Signal handler needed after changing to Networkit
+def signal_handler(signum, frame):
+    # Handle the KeyboardInterrupt (Ctrl+C) here
+    flask_process.terminate()
+    os._exit(0)
+
+
+def run_flask():
     if "--pid" in sys.argv:
         with open("process.pid", "w+") as file:
             pid = f"{os.getpid()}"
             file.write(pid)
-
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
     if "--server" in sys.argv:
         app.run(host="0.0.0.0", port=80)
     else:
         app.run()
+
+
+if __name__ == "__main__":
+    signal.signal(signal.SIGINT, signal_handler)
+    flask_process = Process(target=run_flask)
+    flask_process.start()
