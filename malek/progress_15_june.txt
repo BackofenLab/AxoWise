@@ -1,3 +1,0 @@
-using networkit i get much faster betweenness: <15s for 10k symbols
-the results is for some reason double that of the gephi (exactly double) used smaller datasets
-
