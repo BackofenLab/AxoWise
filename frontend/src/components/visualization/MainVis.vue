@@ -343,7 +343,12 @@ export default {
           return;
         }
 
+        var proteinList = new Set()
+
         for (const terms of newList) {
+          var proteinSet = new Set([...terms.proteins]);
+          console.log(proteinSet.size)
+          proteinList = new Set([...proteinList, ...proteinSet]);
           if (!this.colorPalette[terms.name])
             this.colorPalette[terms.name] = randomColorRGB();
         }
@@ -363,9 +368,12 @@ export default {
           }
         });
 
+        console.log(proteinList)
+
         sigma_instance.graph.edges().forEach((e) => {
           var source = sigma_instance.graph.getNodeFromIndex(e.source);
-          e.color = source.color.replace(")", ", 0.5)").replace("rgb", "rgba");
+          if(proteinList.has(e.source) && proteinList.has(e.target) ) e.color = source.color.replace(")", ", 0.5)").replace("rgb", "rgba");
+          else e.color = "rgba(50,50,50,0.2)";
         });
 
         sigma_instance.refresh();
