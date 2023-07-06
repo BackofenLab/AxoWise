@@ -79,13 +79,13 @@ public class Main {
         // clusterCoefficient(graphModel);
 
         // Betweeness Centrality
-        betweenessCentrality(graphModel);
+        // betweenessCentrality(graphModel);
 
         // PageRank
-        pageRank(graphModel);
+        // pageRank(graphModel);
 
         // Eigenvector centrality
-        eigenvectorCentrality(graphModel);
+        // eigenvectorCentrality(graphModel);
 
         // Rank node size by degree
         rankNodeSizeByDegree(graphModel, appearanceController);
