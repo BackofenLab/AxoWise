@@ -6,9 +6,9 @@
                     <v-select id="vsel" placeholder="..." v-model="category" :options="filter_terms" :reduce="label => label.value" label="value" ></v-select>
                 </div>
             <div class="results" v-if="term_data.nodes !== null">
-                <div v-for="entry in filtered_terms" :key=entry>
-                    <a href="#" v-on:click="select_term(entry)">{{entry.label}}</a>
-                </div>
+                <select id ="result_select" size="11" @change="select_term($event.target.value)" @click="select_term($event.target.value)">
+                <option v-for="entry in filtered_terms" :key="entry" :value="entry.id">{{ entry.label }}</option>
+                </select>
                 <div v-if="term_data.nodes == 0">
                     <i>No terms available.</i>
                 </div>
@@ -33,7 +33,8 @@
             select_term(term) {
                 var com = this;
 
-                com.emitter.emit("searchTermNode", term);
+                this.filtered_terms.forEach(entry => { if (entry.id === term) com.emitter.emit("searchTermNode", entry); });
+
             },
         },
         computed: {
@@ -59,6 +60,8 @@
                     return regex.test(term.label);
                 });
                 }
+
+                filtered.sort((t1, t2) => t1.attributes['FDR'] - t2.attributes['FDR'] )
 
                 return filtered;
             },

@@ -4,7 +4,6 @@ import json
 import os
 import os.path
 import sys
-import time
 
 import pandas as pd
 from flask import Flask, Response, request, send_from_directory
@@ -16,6 +15,7 @@ import enrichment_graph
 import graph
 import jar
 import queries
+from util.stopwatch import Stopwatch
 
 app = Flask(__name__)
 
@@ -77,9 +77,7 @@ def proteins_enrichment():
 @app.route("/api/subgraph/proteins", methods=["POST"])
 def proteins_subgraph_api():
     driver = database.get_driver()
-
-    # Begin a timer to time
-    t_begin = time.time()
+    stopwatch = Stopwatch()
 
     # Queried proteins
     if not request.files.get("file"):
@@ -96,18 +94,14 @@ def proteins_subgraph_api():
 
     protein_ids = queries.get_protein_ids_for_names(driver, protein_names, species_id)
 
-    # Timer to evaluate runtime to setup
-    t_setup = time.time()
-    print("Time Spent (Setup):", t_setup - t_begin)
+    stopwatch.round("Setup")
 
     if len(protein_ids) > 1:
         proteins, source, target, score = queries.get_protein_associations(driver, protein_ids, threshold)
     else:
         proteins, source, target, score = queries.get_protein_neighbours(driver, protein_ids, threshold)
 
-    # Timer for Neo4j query
-    t_neo4j = time.time()
-    print("Time Spent (Neo4j):", t_neo4j - t_setup)
+    stopwatch.round("Neo4j")
 
     nodes = pd.DataFrame(proteins).drop_duplicates(subset="external_id")
 
@@ -118,24 +112,19 @@ def proteins_subgraph_api():
     if edges.empty:
         return Response(json.dumps([]), mimetype="application/json")
 
-    # Timer to evaluate runtime between cypher-shell and extracting data
-    t_parsing = time.time()
-    print("Time Spent (Parsing):", t_parsing - t_neo4j)
+    stopwatch.round("Parsing")
+
     # Creating only the main Graph and exclude not connected subgraphs
     nodes_sub = graph.create_nodes_subgraph(edges, nodes)
 
-    # Timer to evaluate enrichments runtime
-    t_dvalue = time.time()
-    print("Time Spent (DValue):", t_dvalue - t_parsing)
+    stopwatch.round("DValue")
 
     # D-Value categorize via percentage
     if not (request.files.get("file") is None):
         panda_file.rename(columns={"SYMBOL": "name"}, inplace=True)
         panda_file["name"] = panda_file["name"].str.upper()
 
-    # #Timer to evaluate enrichments runtime
-    t_enrich = time.time()
-    print("Time Spent (Enrichment):", t_enrich - t_dvalue)
+    stopwatch.round("Enrichment")
 
     if len(nodes.index) == 0:
         sigmajs_data = {"nodes": [], "edges": []}
@@ -155,9 +144,7 @@ def proteins_subgraph_api():
 
         sigmajs_data = json.loads(stdout)
 
-    # Timer to evaluate runtime of calling gephi
-    t_gephi = time.time()
-    print("Time Spent (Gephi):", t_gephi - t_enrich)
+    stopwatch.round("Gephi")
 
     # Create a dictionary mapping ENSEMBL IDs to rows in `nodes`
     ensembl_to_node = dict(zip(nodes["external_id"], nodes.itertuples(index=False)))
@@ -195,9 +182,8 @@ def proteins_subgraph_api():
         sigmajs_data["dvalues"] = selected_d
     sigmajs_data["subgraph"] = sub_proteins
 
-    # Timer for final steps
-    t_end = time.time()
-    print("Time Spent (End):", t_end - t_gephi)
+    stopwatch.round("End")
+    stopwatch.total("proteins_subgraph_api")
 
     json_str = json.dumps(sigmajs_data)
 
@@ -210,10 +196,14 @@ def proteins_subgraph_api():
 # TODO Refactor this
 @app.route("/api/subgraph/terms", methods=["POST"])
 def terms_subgraph_api():
+    stopwatch = Stopwatch()
+
     # Functional terms
     list_enrichment = ast.literal_eval(request.form.get("func-terms"))
 
     json_str = enrichment_graph.get_functional_graph(list_enrichment=list_enrichment)
+
+    stopwatch.total("terms_subgraph_api")
 
     return Response(json_str, mimetype="application/json")
 

@@ -60,3 +60,12 @@ apoc:
 	sudo rm /var/lib/neo4j/plugins/apoc-4.4.* || true
 	sudo wget https://github.com/neo4j-contrib/neo4j-apoc-procedures/releases/download/4.4.0.1/apoc-4.4.0.1-all.jar -P /var/lib/neo4j/plugins
 	sudo echo -e 'dbms.security.procedures.whitelist=apoc.export.* \napoc.import.file.use_neo4j_config=false \napoc.export.file.enabled=true' | sudo tee -a /etc/neo4j/neo4j.conf
+
+dummydata:
+# file: https://drive.google.com/file/d/1S8_O2HCeMKwukwnTHlFmf1KLQnbfcXAN/view
+# explanation: https://stackoverflow.com/questions/25010369/wget-curl-large-file-from-google-drive
+# docs: https://pypi.org/project/gdown/
+	pip install gdown
+	cd $$HOME/Downloads && gdown 1BfpXGdwcdmt8zh6K8MjrQf360ZaOpY_A
+	sudo neo4j-admin load --from=$$HOME/Downloads/newmouse2db.dump --database=neo4j --force
+	rm $$HOME/Downloads/newmouse2db.dump

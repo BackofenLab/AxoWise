@@ -85,9 +85,9 @@
                 <HubsSelection
                 :gephi_data='gephi_data'
                 ></HubsSelection>
-                <EigenvectorCentrality
+                <!-- <EigenvectorCentrality
                 :gephi_data='gephi_data'
-                ></EigenvectorCentrality>
+                ></EigenvectorCentrality> -->
                 <PageRank
                 :gephi_data='gephi_data'
                 ></PageRank>
@@ -110,7 +110,8 @@ import ProteinList from '@/components/toolbar/ProteinList.vue'
 import SelectionWindow from '@/components/toolbar/SelectionWindow.vue'
 import SearchBar from '@/components/toolbar/SearchBar.vue'
 import HubsSelection from '@/components/toolbar/select_options/HubsSelection.vue'
-import EigenvectorCentrality from '@/components/toolbar/select_options/EigenvectorCentrality.vue'
+// Excluded this statistics since its not needed at the current status
+// import EigenvectorCentrality from '@/components/toolbar/select_options/EigenvectorCentrality.vue'
 import PageRank from '@/components/toolbar/select_options/PageRank.vue'
 import BetweenesCentrality from '@/components/toolbar/select_options/BetweenesCentrality.vue'
 
@@ -126,7 +127,7 @@ export default {
         SelectionWindow,
         SearchBar,
         HubsSelection,
-        EigenvectorCentrality,
+        // EigenvectorCentrality,
         PageRank,
         BetweenesCentrality,
         NodeLabelSelect

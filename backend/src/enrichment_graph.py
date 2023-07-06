@@ -1,6 +1,5 @@
 import io
 import json
-import time
 
 import pandas as pd
 
@@ -8,6 +7,7 @@ import database
 import graph
 import jar
 import queries
+from util.stopwatch import Stopwatch
 
 # =============== Functional Term Graph ======================
 
@@ -15,7 +15,7 @@ _BACKEND_JAR_PATH = "../gephi/target/gephi.backend-1.0-SNAPSHOT.jar"
 
 
 def get_functional_graph(list_enrichment):
-    t_begin = time.time()
+    stopwatch = Stopwatch()
 
     list_term = []
     if list_enrichment is not None:
@@ -24,11 +24,9 @@ def get_functional_graph(list_enrichment):
     driver = database.get_driver()
 
     # Execute the query and retrieve the CSV data
-    terms, source, target, score = queries.get_terms_connected_by_kappa(driver, list_term)
+    terms, source, target, score = queries.get_terms_connected_by_overlap(driver, list_term)
 
-    # Timer for Neo4j query
-    t_neo4j = time.time()
-    print("Time Spent (Neo4j):", t_neo4j - t_begin)
+    stopwatch.round("Neo4j")
 
     nodes = pd.DataFrame(terms).drop_duplicates(subset="external_id")
 
@@ -60,8 +58,7 @@ def get_functional_graph(list_enrichment):
     # Creating only the main Graph and exclude not connected subgraphs
     nodes_sub = graph.create_nodes_subgraph(edges, nodes)
 
-    t_enrich = time.time()
-    print("Time Spent (Enrichment):", t_enrich - t_neo4j)
+    stopwatch.round("Enrichment")
 
     if len(nodes.index) == 0:
         sigmajs_data = {"nodes": [], "edges": []}
@@ -81,9 +78,7 @@ def get_functional_graph(list_enrichment):
 
         sigmajs_data = json.loads(stdout)
 
-    # Timer to evaluate runtime of calling gephi
-    t_gephi = time.time()
-    print("Time Spent (Gephi):", t_gephi - t_enrich)
+    stopwatch.round("Gephi")
 
     # Create a dictionary mapping ENSEMBL IDs to rows in `nodes`
     ensembl_to_node = dict(zip(nodes["external_id"], nodes.itertuples(index=False)))
@@ -113,8 +108,7 @@ def get_functional_graph(list_enrichment):
 
     sigmajs_data["subgraph"] = sub_proteins
 
-    # Timer for final steps
-    t_end = time.time()
-    print("Time Spent (End):", t_end - t_gephi)
+    stopwatch.round("End")
+    stopwatch.total("get_functional_graph")
 
     return json.dumps(sigmajs_data)

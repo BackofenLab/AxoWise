@@ -2,7 +2,6 @@ import csv
 import json
 import multiprocessing
 import sys
-import time
 from functools import lru_cache
 from typing import Any
 
@@ -11,6 +10,7 @@ import neo4j
 import pandas as pd
 
 import queries
+from util.stopwatch import Stopwatch
 
 
 def calc_proteins_pval(curr, alpha, in_pr, bg_proteins, num_in_prot):
@@ -73,9 +73,7 @@ def functional_enrichment(driver: neo4j.Driver, in_proteins, species_id: Any):
             properties of a term: external_id, name, category, proteins,
             p-value, fdr-rate
     """
-
-    # Begin a timer to time
-    t_begin = time.time()
+    stopwatch = Stopwatch()
 
     # Get number of all proteins in the organism (from Cypher)
     bg_proteins = queries.get_number_of_proteins(driver)
@@ -88,8 +86,7 @@ def functional_enrichment(driver: neo4j.Driver, in_proteins, species_id: Any):
     df_terms = pd.DataFrame(queries.get_enrichment_terms(driver))
     tot_tests = len(df_terms)
 
-    t_setup = time.time()
-    print("Time Spent (setup_enrichment): ", t_setup - t_begin)
+    stopwatch.round("setup_enrichment")
 
     # set significance level to 0.05
     alpha = 0.05
@@ -109,8 +106,8 @@ def functional_enrichment(driver: neo4j.Driver, in_proteins, species_id: Any):
     df_terms["p_value"] = new_p
     df_terms.sort_values(by="p_value", ascending=False, inplace=True)
     df_terms = df_terms.reset_index(drop=True)
-    t_pvalue = time.time()
-    print("Time Spent (pvalue_enrichment): ", t_pvalue - t_setup)
+
+    stopwatch.round("pvalue_enrichment")
 
     # calculate Benjamini-Hochberg FDR
     rank_lst = []
@@ -132,6 +129,6 @@ def functional_enrichment(driver: neo4j.Driver, in_proteins, species_id: Any):
     df_terms = df_terms[df_terms["fdr_rate"] < alpha]
     df_terms = df_terms.reset_index(drop=True)
 
-    t_cypher = time.time()
-    print("Time Spent (fdr_enrichment): ", t_cypher - t_pvalue)
+    stopwatch.round("fdr_enrichment")
+    stopwatch.total("functional_enrichment")
     return df_terms

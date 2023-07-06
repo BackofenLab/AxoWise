@@ -25,7 +25,7 @@
 <script>
 export default {
     name: 'HubsSelection',
-    props: ['gephi_data'],
+    props: ['gephi_data','term_data'],
     data() {
         return {
             once: true,
@@ -46,11 +46,17 @@ export default {
     methods: {
 		draw_hubs: function() {
 			var com = this;
+
+			var dataForm = com.gephi_data || com.term_data;
+            var searchSubset = (dataForm === com.gephi_data) ? "searchSubset" : "searchTermSubset";
+
 			// initialize values of slider
 			if (com.once) {
 				// _____ this calculation has only to be done once _______
 				let mean = 0;
-				var subset_degree = com.gephi_data.nodes.map(arrayItem => {
+				var subset_degree;
+
+				subset_degree = dataForm.nodes.map(arrayItem => {
 					return arrayItem.attributes["Degree"]
 				});
 
@@ -85,13 +91,13 @@ export default {
 			var finalNodes = [];
 			var nodes = [];
 			// degree filtering
-			for (var idx in com.gephi_data.nodes){
-				if(parseInt(com.gephi_data.nodes[idx].attributes["Degree"]) >= this.degree_boundary.value){
-					nodes.push(com.gephi_data.nodes[idx])
+			for (var idz in dataForm.nodes){
+				if(parseInt(dataForm.nodes[idz].attributes["Degree"]) >= this.degree_boundary.value){
+					nodes.push(dataForm.nodes[idz])
 				}
 			}
 			finalNodes = nodes;
-            this.emitter.emit("searchSubset", finalNodes);
+			this.emitter.emit(searchSubset, finalNodes);
 		},
 	},
 }

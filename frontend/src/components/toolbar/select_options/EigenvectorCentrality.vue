@@ -25,7 +25,7 @@
 <script>
 export default {
     name: 'EigenvectorCentrality',
-    props: ['gephi_data'],
+    props: ['gephi_data','term_data'],
     data() {
         return {
             ec_boundary: {
@@ -39,16 +39,18 @@ export default {
     methods: {
 		draw_hubs: function() {
 			var com = this;
+            var dataForm = com.gephi_data || com.term_data;
+            var searchSubset = (dataForm === com.gephi_data) ? "searchSubset" : "searchTermSubset";
 
 			// filter
 			var nodes = [];
 			// degree filtering
-			for (var idx in com.gephi_data.nodes){
-				if(parseFloat(com.gephi_data.nodes[idx].attributes["Eigenvector Centrality"]) >= this.ec_boundary.value){
-					nodes.push(com.gephi_data.nodes[idx])
+			for (var idz in dataForm.nodes){
+				if(parseFloat(dataForm.nodes[idz].attributes["Eigenvector Centrality"]) >= this.ec_boundary.value){
+					nodes.push(dataForm.nodes[idz])
 				}
 			}
-			this.emitter.emit("searchSubset", nodes);
+			this.emitter.emit(searchSubset, nodes);
 		},
 	},
 }

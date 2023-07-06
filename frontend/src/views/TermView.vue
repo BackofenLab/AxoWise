@@ -120,7 +120,7 @@ export default {
       for (var idx in this.term_data.nodes) {
         var node = this.term_data.nodes[idx];
         if(node.attributes["Ensembl ID"] == term_node.id){
-          this.active_node = this.term_data.nodes[idx]
+          this.active_node = {node:this.term_data.nodes[idx], graph:this.term_data}
         }
       }
       this.$store.commit('assign_active_enrichment_node', null)

@@ -2,86 +2,77 @@
 Collection of Cypher queries for writing and reading the resulting
 Neo4j graph database.
 """
-from typing import List, Any
+from typing import Any
 
 import neo4j
 
 
-def get_terms_connected_by_kappa(driver: neo4j.Driver, term_ids: list[str]):
+def get_terms_connected_by_overlap(driver: neo4j.Driver, term_ids: list[str]):
     """:returns: terms, source, target, score"""
-    parameters = {
-        "term_ids": term_ids
-    }
     query = f"""
-                MATCH (source:Terms)-[association:KAPPA]->(target:Terms)
-                WHERE source.external_id IN $term_ids 
-                AND target.external_id IN $term_ids
-                RETURN source, target, association.score AS score;
-                """
+        MATCH (source:Terms)-[association:OVERLAP]->(target:Terms)
+        WHERE source.external_id IN {term_ids}
+            AND target.external_id IN {term_ids}
+            AND source.category IN ["KEGG", "Reactome Pathways"]
+            AND target.category IN ["KEGG", "Reactome Pathways"]
+        RETURN source, target, association.Score AS score;
+        """
     with driver.session() as session:
-        result = session.run(query, parameters)
-        return _convert_to_connection_info_float_score(result)
+        result = session.run(query)
+        # custom conversion is needed because otherwise it takes 10s with neo4j (for unknown reasons)
+        return _convert_to_connection_info_score(result=result, _int=False)
 
 
 def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id: int) -> list[str]:
-    parameters = {
-        "species_id": species_id,
-        "names": [n.upper() for n in names]
-    }
+    # unsafe parameters because otherwise this query takes 10s with neo4j for unknown reasons
     query = f"""
         MATCH (protein:Protein)
-        WHERE protein.species_id = $species_id
-        AND protein.name IN $names 
-        RETURN protein.external_id AS id
+        WHERE protein.species_id = {species_id}
+            AND protein.name IN {str([n.upper() for n in names])} 
+        WITH collect(protein.external_id) AS ids
+        RETURN ids
     """
     with driver.session() as session:
-        result = session.run(query, parameters)
-        return [x["id"] for x in list(result)]
+        return session.run(query).single(strict=True).value()
 
 
 def get_protein_neighbours(
-        driver: neo4j.Driver, protein_ids: list[str], threshold: int
+    driver: neo4j.Driver, protein_ids: list[str], threshold: int
 ) -> (list[str], list[str], list[str], list[int]):
     """
-    :returns: proteins, source, target, score
+    :returns: proteins, source_ids, target_ids, scores
     """
-    parameters = {
-        "protein_ids": protein_ids,
-        "threshold": threshold
-    }
+    # unsafe parameters because otherwise this query takes 10s with neo4j for unknown reasons
     query = f"""
-        MATCH (source:Protein)-[association:ASSOCIATION]-(target:Protein)
-        WHERE source.external_id IN $protein_ids
-        OR target.external_id IN $protein_ids
-        AND association.combined >= $threshold
+        MATCH (source:Protein)-[association:ASSOCIATION]->(target:Protein)
+        WHERE source.external_id IN {protein_ids}
+            AND target.external_id IN {protein_ids}
+            AND association.combined >= {threshold}
         RETURN source, target, association.combined AS score
     """
+
     with driver.session() as session:
-        result = session.run(query, parameters)
-        return _convert_to_connection_info_int_score(result)
+        result = session.run(query).single(strict=True).value()
+        return _convert_to_connection_info_score(result=result, _int=True)
 
 
 def get_protein_associations(
-        driver: neo4j.Driver, protein_ids: list[str], threshold: int
+    driver: neo4j.Driver, protein_ids: list[str], threshold: int
 ) -> (list[str], list[str], list[str], list[int]):
     """
-    :returns: proteins, source, target, score
+    :returns: proteins (nodes), source_ids, target_ids, score
     """
-    parameters = {
-        "protein_ids": protein_ids,
-        "threshold": threshold
-    }
+    # unsafe parameters are needed because otherwise this query takes 10s with neo4j for unknown reasons
     query = f"""
         MATCH (source:Protein)-[association:ASSOCIATION]->(target:Protein)
-        WHERE source.external_id IN $protein_ids
-        AND target.external_id IN $protein_ids
-        AND association.combined >= $threshold
+        WHERE source.external_id IN {protein_ids}
+            AND target.external_id IN {protein_ids}
+            AND association.combined >= {threshold}
         RETURN source, target, association.combined AS score
     """
-
     with driver.session() as session:
-        result = session.run(query, parameters)
-        return _convert_to_connection_info_int_score(result)
+        result = session.run(query)
+        return _convert_to_connection_info_score(result=result, _int=True)
 
 
 def get_enrichment_terms(driver: neo4j.Driver) -> list[dict[str, Any]]:
@@ -92,7 +83,7 @@ def get_enrichment_terms(driver: neo4j.Driver) -> list[dict[str, Any]]:
 
     with driver.session() as session:
         result = session.run(query)
-        return _convert_to_dict(result)
+        return result.data()
 
 
 def get_number_of_proteins(driver: neo4j.Driver) -> int:
@@ -106,12 +97,7 @@ def get_number_of_proteins(driver: neo4j.Driver) -> int:
         return int(num_proteins)
 
 
-def _convert_to_dict(result: neo4j.Result) -> list[dict[str, Any]]:
-    records: List[neo4j.Record] = list(result)
-    return [x.data() for x in records]
-
-
-def _convert_to_connection_info_int_score(result: neo4j.Result) -> (list[str], list[str], list[str], list[int]):
+def _convert_to_connection_info_score(result: neo4j.Result, _int: bool) -> (list[str], list[str], list[str], list[int]):
     nodes, source, target, score = list(), list(), list(), list()
 
     for row in result:
@@ -119,19 +105,9 @@ def _convert_to_connection_info_int_score(result: neo4j.Result) -> (list[str], l
         nodes.append(row["target"])
         source.append(row["source"].get("external_id"))
         target.append(row["target"].get("external_id"))
-        score.append(int(row["score"]))
-
-    return nodes, source, target, score
-
-
-def _convert_to_connection_info_float_score(result: neo4j.Result) -> (list[str], list[str], list[str], list[int]):
-    nodes, source, target, score = list(), list(), list(), list()
-
-    for row in result:
-        nodes.append(row["source"])
-        nodes.append(row["target"])
-        source.append(row["source"].get("external_id"))
-        target.append(row["target"].get("external_id"))
-        score.append(float(row["score"]))
+        if _int:
+            score.append(int(row["score"]))
+        else:
+            score.append(float(row["score"]))
 
     return nodes, source, target, score

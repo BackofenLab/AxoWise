@@ -1,5 +1,5 @@
 <template>
-    <div id="sigma-canvas">
+    <div id="sigma-canvas" @contextmenu.prevent="handleSigmaContextMenu">
     </div>
   </template>
 
@@ -26,6 +26,7 @@ export default {
     return {
       edge_opacity: 0.2,
       graph_state: null,
+      special_label: false
     }
   },
   watch: {
@@ -35,20 +36,29 @@ export default {
       sigma_instance.graph.clear();
       sigma_instance.graph.read(com.term_data);
 
+      if(com.graph_state) this.show_unconnectedGraph(com.graph_state);
+
       com.edit_opacity()
+
+      if(com.active_node) this.$emit('active_node_changed', {node: sigma_instance.graph.getNodeFromIndex(com.active_node.node.id), graph:com.term_data});
 
       sigma_instance.refresh()
 
     },
-    active_node(node) {
+    active_node(nodeDict) {
       var com = this;
 
       com.reset()
-
-      if(node == null) return
-
+      
+      if(nodeDict == null ) return;
+      if(nodeDict.node == null) return;
+      
+      var node = nodeDict.node
+      
       const neighbors = new Set();
       const edges = sigma_instance.graph.edges()
+
+
 
       for (let i = 0; i < edges.length; i++) {
         const e = edges[i]
@@ -70,13 +80,10 @@ export default {
           n.hidden = true
         }
         if(n.attributes["Ensembl ID"] == node.attributes["Ensembl ID"]) {
-          n.active = true
           n.color = "rgb(255, 255, 255)";
+          com.special_label ? node.sActive = true : node.active = true;
         }
       }
-
-      
-
       sigma_instance.refresh();
 
     },
@@ -115,7 +122,7 @@ export default {
       sigma_instance.refresh();
     },
     active_combine(val){
-      if(val.name == "node") this.$emit('active_node_changed', val.value)
+      if(val.name == "node") this.$emit('active_node_changed', {node: val.value, graph: this.terms})
       if(val.name == "fdr") this.$emit('active_fdr_changed', val.value)
       if(val.name == "subset") this.$emit('active_subset_changed', val.value)
     },
@@ -197,8 +204,9 @@ export default {
     },
   },
   methods: {
-    activeNode(event) {
-      this.$emit('active_node_changed', event)
+    activeNode(event, special) {
+      this.special_label = special
+      this.$emit('active_node_changed', {node:event, graph:this.terms})
     },
     reset() {
       var com = this;
@@ -236,6 +244,7 @@ export default {
     reset_label_select() {
       sigma_instance.graph.nodes().forEach(function(n) {
         n.active = false
+        n.sActive = false
       });
 
       sigma_instance.refresh()
@@ -250,6 +259,8 @@ export default {
     show_unconnectedGraph(state){
       var com = this;
 
+      if(com.active_node) return
+      
       com.graph_state = state
 
       if (state == null) {
@@ -296,6 +307,11 @@ export default {
       });
     }
     sigma_instance.refresh()
+  },
+  reset_node_label(node) {
+    node.active = false
+    node.sActive = false
+    sigma_instance.refresh()
   }
   },
   mounted() {
@@ -324,12 +340,30 @@ export default {
 
     com.edit_opacity()
 
-    sigma_instance.bind('clickNode',(event) => {
-      this.activeNode(event.data.node)
+    if(com.graph_state) this.show_unconnectedGraph(com.graph_state);
+
+    var keyState = {};
+
+    document.addEventListener('keydown', function(event) {
+      // Set the key state to true when the key is pressed
+      keyState[event.keyCode] = true;
+    });
+
+    document.addEventListener('keyup', function(event) {
+      // Reset the key state when the key is released
+      keyState[event.keyCode] = false;
+    });
+
+    sigma_instance.bind('clickNode', function(event) {
+      // Check if the desired key is being held down when clicking a node
+      if (keyState[17] && keyState[16]) com.reset_node_label(event.data.node);
+      else if (keyState[17] && !keyState[16]) com.activeNode(event.data.node, true);
+      else com.activeNode(event.data.node, false);
+      
     });
 
     this.emitter.on("searchTermNode", state => {
-      this.$emit('active_node_changed', sigma_instance.graph.getNodeFromIndex(state.id))
+      this.$emit('active_node_changed', {node: sigma_instance.graph.getNodeFromIndex(state.id), graph:com.term_data})
     });
 
     this.emitter.on("unconnectedTermGraph", state => {
