@@ -23,7 +23,6 @@ def create_gene_nodes(nodes: pd.DataFrame, driver: Driver):
         driver=driver,
         merge=False,
     )
-    nodes.sample(n=10000)["ENSEMBL"].to_csv("../source/misc/gene_selection_10k.csv", index=False, header=False)
 
 
 @time_function
@@ -134,7 +133,7 @@ def create_functional(
     Creates Functional Term nodes, OVERLAP egdes between FT and FT, and LINK edges between TG and FT
     """
     # print_update(update_type="Node Creation", text="Functional Term", color="blue")
-    #
+    # 
     # TODO: Change "Terms" to "FT" and "external_id" to "Term"
     # save_df_to_csv(file_name="ft_nodes.csv", df=ft_nodes, override_prod=True)
     # create_nodes(
