@@ -16,7 +16,7 @@ def run_queries():
     driver = start_driver()
 
     genes = list(pd.read_csv("../source/misc/gene_selection_10k.csv")["SYMBOL"])
-    
+
     # Queries
 
     gene_subset = get_tg_ensembl_by_symbol(gene_list=genes, driver=driver)

@@ -37,7 +37,6 @@ def get_tf_correlated_tg(tf: str, subset: list[str], driver: neo4j.Driver):
     return result
 
 
-
 def get_tg_by_link_ft(ft: str, subset: list[str], driver: neo4j.Driver):
     # TODO: change external_id to Term
     query = f"""

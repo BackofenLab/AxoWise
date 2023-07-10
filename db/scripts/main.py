@@ -87,5 +87,5 @@ def upload_workflow():
 
 
 if __name__ == "__main__":
-    # upload_workflow()
+    upload_workflow()
     run_queries()

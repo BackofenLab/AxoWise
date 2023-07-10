@@ -3,7 +3,9 @@ import yaml
 import csv
 import os
 from time import time
+import urllib.request
 import neo4j
+import re
 
 
 class Reformatter:
@@ -49,7 +51,7 @@ def execute_query(query: str, read: bool, driver: neo4j.Driver) -> pd.DataFrame:
                 tmp = session.run(query).values()
                 return tmp
     else:
-        return pd.DataFrame([0], columns=["id"])
+        return [[0]]
 
 
 def save_df_to_csv(file_name: str, df: pd.DataFrame, override_prod: bool = False):
@@ -180,3 +182,16 @@ def check_for_files(mode: int):
             and os.path.exists("../source/processed/ft_gene.csv")
             and os.path.exists("../source/processed/ft_ft_overlap.csv")
         )
+
+
+def retrieve_gene_id_by_symbol(symbol: str):
+    def parse_from_html(result: str):
+        expression = "(id:\s\w+)+"
+        matched = re.findall(pattern=expression, string=result)
+        if len(matched) > 0:
+            matched = [m.removeprefix("id: ") for m in matched]
+        return matched
+
+    url = f"http://rest.ensembl.org/xrefs/symbol/mus_musculus/{symbol}"
+    result = urllib.request.urlopen(url=url).read()
+    return parse_from_html(str(result))
