@@ -796,6 +796,7 @@ export default {
     });
 
     this.emitter.on("hideTermLayer", state => {
+      this.colorpalette = this.$store.state.colorpalette
       this.$emit('active_termlayers_changed', state)
     });
 
