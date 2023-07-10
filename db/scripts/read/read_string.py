@@ -105,7 +105,6 @@ def parse_string(complete: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT_STR
         )
 
         gene_gene_scores = gene_gene_scores.drop_duplicates(keep="first")
-        print(len(gene_gene_scores))
         return gene_gene_scores, genes_annotated
 
     string = read_string()
