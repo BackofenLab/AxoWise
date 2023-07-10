@@ -105,18 +105,16 @@ export default {
         } else if (e.target === sigma_node.attributes["Ensembl ID"]) {
           neighbors.add(e.source);
           e.color = "rgb(255, 255, 255)"
-        }else{
-          e.hidden = true
         }
       }
 
-      const nodes = sigma_instance.graph.nodes();
-      for (let i = 0; i < nodes.length; i++) {
-        const n = nodes[i]
-        if (!neighbors.has(n.attributes["Ensembl ID"]) && n.attributes["Ensembl ID"] !== sigma_node.attributes["Ensembl ID"]) {
-          n.hidden = true
-        }
-      }
+      // const nodes = sigma_instance.graph.nodes();
+      // for (let i = 0; i < nodes.length; i++) {
+      //   const n = nodes[i]
+      //   if (!neighbors.has(n.attributes["Ensembl ID"]) && n.attributes["Ensembl ID"] !== sigma_node.attributes["Ensembl ID"]) {
+      //     n.hidden = true
+      //   }
+      // }
 
       sigma_instance.refresh();
 
