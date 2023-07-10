@@ -136,16 +136,12 @@ def proteins_subgraph_api():
 
     betweenness = nk.centrality.Betweenness(graph_nk).run().scores()
     pagerank = nk.centrality.PageRank(graph_nk).run().scores()
-    degree = nk.centrality.DegreeCentrality(graph_nk).run().scores()
     score_between = []
     score_page = []
-    score_deg = []
     for i in betweenness:
         score_between.append(i)
     for i in pagerank:
         score_page.append(i)
-    for i in degree:
-        score_deg.append(i)
 
     stopwatch.round("Parsing")
 
@@ -193,10 +189,8 @@ def proteins_subgraph_api():
                 mapped_node_id = node_mapping[ensembl_id]
                 score_betweenness = score_between[mapped_node_id]
                 score_pagerank = score_page[mapped_node_id]
-                score_degree = score_deg[mapped_node_id]
                 node["attributes"]["Betweenness Centrality"] = str(score_betweenness)
                 node["attributes"]["PageRank"] = str(score_pagerank)
-                node["attributes"]["Degree"] = str(int(score_degree))
             node["attributes"]["Description"] = df_node.description
             node["attributes"]["Ensembl ID"] = df_node.external_id
             node["attributes"]["Name"] = df_node.name
