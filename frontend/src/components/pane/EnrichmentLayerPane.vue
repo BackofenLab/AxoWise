@@ -7,11 +7,12 @@
             <div class="p">
             <span>Layers:</span>
             </div>
-            <div class="link" id="link">
+            <div class="link-enrichment">
                 <ul>
                     <li class="membership" v-for="(term) in terms" :key="term" >
                         <div class="color-rect" @click="open_picker($event,term)" :style="{ backgroundColor: colorpalette[term.name] }"></div>
-                        <button class="hide-termlayer" @click="hide_termlayer(term)"></button>
+                        <button id="hide-termlayer" @click="hide_termlayer(term)" :class="{ hide: hiding_terms.has(term) }">
+                            <img :src="imageSrc" class="hide_button"></button>
                         <a href="#" v-on:click="select_enrichment(term)" @mouseenter="prehighlight(term.proteins)" @mouseleave="prehighlight(null)">{{term.name}}</a>
                     </li>
                     <Sketch class="color-picker" v-if="color_picker==true" v-model="colors" @update:model-value="handleColorChange(term)" :style="{ top: mouseY + 'px', left: mouseX + 'px' }" />
@@ -39,6 +40,7 @@ export default {
                 imageSrc: require('@/assets/pane/layer-icon.png')
             },
             terms: null,
+            imageSrc: require('@/assets/pane/visible.png'),
             hiding_terms: new Set(),
             colorpalette: {},
             colors: 'rgba(0,0,0,1)',
@@ -134,6 +136,7 @@ export default {
     .color-rect {
         width: 20px;
         height: 20px;
+        margin-right: 5px;
         position: relative;
         display: inline-flex;   
         border-radius: 5px;
@@ -141,17 +144,32 @@ export default {
         border-width: 1px;
         border-color: white;
     }
-    .hide-termlayer {
-        width: 20px;
-        height: 20px;
+    #hide-termlayer {
+        width: 15px;
+        height: 15px;
+        margin-right: 5px;
         position: relative;
-        border-radius: 20px;
+        border-radius: 15px;
         border-style: none;
+        background-color: white;
 
     }
     .color-picker{
         position: fixed;
         z-index: 999;
+    }
+    .link-enrichment {
+        font-size: 12px;
+        text-align: left;
+    }
+
+    .link-enrichment a {
+	color: white;
+	text-decoration: none;
+    }
+
+    #hide-termlayer.hide {
+        background-color: black;
     }
 
 </style>
