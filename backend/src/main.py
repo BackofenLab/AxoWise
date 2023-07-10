@@ -13,6 +13,7 @@ from multiprocessing import Process
 
 import database
 import enrichment
+import graph_statistics
 import enrichment_graph
 import graph
 import jar
@@ -115,33 +116,10 @@ def proteins_subgraph_api():
     if edges.empty:
         return Response(json.dumps([]), mimetype="application/json")
 
-    # networkit
-    # Create an empty graph
-    graph_nk = nk.Graph()
-    # Create a mapping between string node IDs and integer node IDs
-    node_mapping = {}
-    integer_id = 0
-
-    # Add nodes to the graph and update the mapping
-    for node_id in nodes["external_id"]:
-        graph_nk.addNode()
-        node_mapping[node_id] = integer_id
-        integer_id += 1
-
-    # Add edges to the graph using integer node IDs
-    for edge in edges[["source", "target"]].itertuples(index=False):
-        source = node_mapping[edge.source]
-        target = node_mapping[edge.target]
-        graph_nk.addEdge(source, target)
-
-    betweenness = nk.centrality.Betweenness(graph_nk).run().scores()
-    pagerank = nk.centrality.PageRank(graph_nk).run().scores()
-    score_between = []
-    score_page = []
-    for i in betweenness:
-        score_between.append(i)
-    for i in pagerank:
-        score_page.append(i)
+    # Networkit related (graph and parameters)
+    nk_graph, node_mapping = graph_statistics.nk_graph(nodes, edges)
+    betweenness = graph_statistics.betweenness(nk_graph)
+    pagerank = graph_statistics.pagerank(nk_graph)
 
     stopwatch.round("Parsing")
 
@@ -187,10 +165,9 @@ def proteins_subgraph_api():
         if df_node:
             if ensembl_id in node_mapping:
                 mapped_node_id = node_mapping[ensembl_id]
-                score_betweenness = score_between[mapped_node_id]
-                score_pagerank = score_page[mapped_node_id]
-                node["attributes"]["Betweenness Centrality"] = str(score_betweenness)
-                node["attributes"]["PageRank"] = str(score_pagerank)
+                # Use node mapping to add corresponding values of betweenness and pagerank
+                node["attributes"]["Betweenness Centrality"] = str(betweenness[mapped_node_id])
+                node["attributes"]["PageRank"] = str(pagerank[mapped_node_id])
             node["attributes"]["Description"] = df_node.description
             node["attributes"]["Ensembl ID"] = df_node.external_id
             node["attributes"]["Name"] = df_node.name
