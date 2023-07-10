@@ -5,6 +5,7 @@ import pandas as pd
 
 import database
 import graph
+import graph_statistics
 import jar
 import queries
 from util.stopwatch import Stopwatch
@@ -48,6 +49,9 @@ def get_functional_graph(list_enrichment):
     edges["score"] = edges["score"].apply(lambda x: round(x, 2))
     edges["score"] = edges["score"].apply(lambda x: int(x * 100))
 
+    nk_graph, node_mapping = graph_statistics.nk_graph(nodes, edges)
+    pagerank = graph_statistics.pagerank(nk_graph)
+    ec = graph_statistics.eigenvector_centrality(nk_graph)
     # ____________________________________________________________
 
     # no data from database, return from here
@@ -87,6 +91,11 @@ def get_functional_graph(list_enrichment):
         ensembl_id = node["id"]
         df_node = ensembl_to_node.get(ensembl_id)
         if df_node:
+            if ensembl_id in node_mapping:
+                mapped_node_id = node_mapping[ensembl_id]
+                # Use node mapping to add corresponding values of betweenness and pagerank
+                node["attributes"]["Eigenvector Centrality"] = str(ec[mapped_node_id])
+                node["attributes"]["PageRank"] = str(pagerank[mapped_node_id])
             node["attributes"]["Ensembl ID"] = df_node.external_id
             node["attributes"]["Name"] = df_node.name
             node["label"] = df_node.name  # Comment this out if you want no node labels displayed

@@ -50,3 +50,15 @@ def pagerank(graph):
 
     scores = nk.centrality.PageRank(graph).run().scores()
     return scores
+
+
+def eigenvector_centrality(graph):
+    """
+    Return a list of Eigenvector centrality scores through networkit.
+
+    Arguments:
+    graph: a networkit graph
+    """
+
+    scores = nk.centrality.EigenvectorCentrality(graph).run().scores()
+    return scores
