@@ -77,7 +77,6 @@ export default {
     },
     watch: {
         active_item(val){
-            console.log(this.active_item)
             this.active_tab = Object.keys(val)[0]
             if(val == null){
                 delete this.active_dict.val;

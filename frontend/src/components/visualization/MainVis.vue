@@ -343,24 +343,30 @@ export default {
           return;
         }
 
+        var visibleTermlayers = [...newList.main]
+        var hiddenTermLayer = newList.hide
+        
+        const filteredArray = new Set(visibleTermlayers.filter(value => !hiddenTermLayer.has(value)));
+        
         var proteinList = new Set()
 
-        for (const terms of newList) {
+        for (const terms of filteredArray) {
           var proteinSet = new Set([...terms.proteins]);
-          console.log(proteinSet.size)
           proteinList = new Set([...proteinList, ...proteinSet]);
           if (!this.colorPalette[terms.name])
             this.colorPalette[terms.name] = randomColorRGB();
         }
 
+        this.$store.commit('assign_colorpalette', this.colorPalette)
+
         sigma_instance.graph.nodes().forEach((n) => {
           let count = 0;
-          n.color = "rgb(50,50,50)";
-          for (const terms of newList) {
+          n.color = "rgb(0,100,100)";
+          for (const terms of filteredArray) {
             if (terms.proteins.includes(n.attributes["Ensembl ID"])) {
               count++;
               n.color = this.colorPalette[terms.name];
-              if (count === newList.size) {
+              if (count === filteredArray.size) {
                 n.color = "rgb(255,255,255)";
                 break;
               }
@@ -368,12 +374,10 @@ export default {
           }
         });
 
-        console.log(proteinList)
-
         sigma_instance.graph.edges().forEach((e) => {
           var source = sigma_instance.graph.getNodeFromIndex(e.source);
           if(proteinList.has(e.source) && proteinList.has(e.target) ) e.color = source.color.replace(")", ", 0.5)").replace("rgb", "rgba");
-          else e.color = "rgba(50,50,50,0.2)";
+          else e.color = "rgba(0,100,100,0.2)";
         });
 
         sigma_instance.refresh();
@@ -789,6 +793,10 @@ export default {
 
     this.emitter.on("highlightProteinList", state => {
       this.$emit('subactive_subset_changed', state)
+    });
+
+    this.emitter.on("hideTermLayer", state => {
+      this.$emit('active_termlayers_changed', state)
     });
 
     this.emitter.on("hideSubset", state => {
