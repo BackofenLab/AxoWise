@@ -13,6 +13,7 @@ from multiprocessing import Process
 
 import database
 import enrichment
+import graph_statistics
 import enrichment_graph
 import graph
 import jar
