@@ -13,7 +13,6 @@ from multiprocessing import Process
 
 import database
 import enrichment
-import graph_statistics
 import enrichment_graph
 import graph
 import jar
@@ -117,14 +116,14 @@ def proteins_subgraph_api():
         return Response(json.dumps([]), mimetype="application/json")
 
     # Networkit related (graph and parameters)
-    nk_graph, node_mapping = graph_statistics.nk_graph(nodes, edges)
-    betweenness = graph_statistics.betweenness(nk_graph)
-    pagerank = graph_statistics.pagerank(nk_graph)
+    nk_graph, node_mapping = graph.nk_graph(nodes, edges)
+    betweenness = graph.betweenness(nk_graph)
+    pagerank = graph.pagerank(nk_graph)
 
     stopwatch.round("Parsing")
 
     # Creating only the main Graph and exclude not connected subgraphs
-    nodes_sub = graph.create_nodes_subgraph(edges, nodes)
+    nodes_sub = graph.create_nodes_subgraph(nk_graph, nodes)
 
     stopwatch.round("DValue")
 

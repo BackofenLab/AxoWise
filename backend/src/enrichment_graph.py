@@ -5,7 +5,6 @@ import pandas as pd
 
 import database
 import graph
-import graph_statistics
 import jar
 import queries
 from util.stopwatch import Stopwatch
@@ -49,10 +48,12 @@ def get_functional_graph(list_enrichment):
     edges["score"] = edges["score"].apply(lambda x: round(x, 2))
     edges["score"] = edges["score"].apply(lambda x: int(x * 100))
 
-    nk_graph, node_mapping = graph_statistics.nk_graph(nodes, edges)
-    pagerank = graph_statistics.pagerank(nk_graph)
-    betweenness = graph_statistics.betweenness(nk_graph)
-    ec = graph_statistics.eigenvector_centrality(nk_graph)
+    # Create nk_graph and needed stats
+    nk_graph, node_mapping = graph.nk_graph(nodes, edges)
+    pagerank = graph.pagerank(nk_graph)
+    betweenness = graph.betweenness(nk_graph)
+    ec = graph.eigenvector_centrality(nk_graph)
+
     # ____________________________________________________________
 
     # no data from database, return from here
@@ -61,7 +62,7 @@ def get_functional_graph(list_enrichment):
         return json.dumps([])
 
     # Creating only the main Graph and exclude not connected subgraphs
-    nodes_sub = graph.create_nodes_subgraph(edges, nodes)
+    nodes_sub = graph.create_nodes_subgraph(nk_graph, nodes)
 
     stopwatch.round("Enrichment")
 
