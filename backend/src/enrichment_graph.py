@@ -51,6 +51,7 @@ def get_functional_graph(list_enrichment):
 
     nk_graph, node_mapping = graph_statistics.nk_graph(nodes, edges)
     pagerank = graph_statistics.pagerank(nk_graph)
+    betweenness = graph_statistics.betweenness(nk_graph)
     ec = graph_statistics.eigenvector_centrality(nk_graph)
     # ____________________________________________________________
 
@@ -95,6 +96,7 @@ def get_functional_graph(list_enrichment):
                 mapped_node_id = node_mapping[ensembl_id]
                 # Use node mapping to add corresponding values of betweenness and pagerank
                 node["attributes"]["Eigenvector Centrality"] = str(ec[mapped_node_id])
+                node["attributes"]["Betweenness Centrality"] = str(betweenness[mapped_node_id])
                 node["attributes"]["PageRank"] = str(pagerank[mapped_node_id])
             node["attributes"]["Ensembl ID"] = df_node.external_id
             node["attributes"]["Name"] = df_node.name
