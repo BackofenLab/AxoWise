@@ -215,6 +215,7 @@ export default {
         }
         else{
           sourceNode.color = "rgb(0,100,100)"
+          sourceNode.active = false
         }
 
         // Target
@@ -224,6 +225,7 @@ export default {
         }
         else{
           targetNode.color = "rgb(0,100,100)"
+          targetNode.active = false
         }
 
         // Edge
