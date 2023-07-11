@@ -320,8 +320,6 @@ export default {
         return
       }
 
-      console.log(com.active_termlayers)
-
       if(com.active_termlayers != null) {
 
         var proteinsTermLayer = com.active_termlayers.main;
@@ -335,7 +333,6 @@ export default {
 
         const graph = sigma_instance.graph
 
-        console.log(proteinList)
 
         for (const edge of graph.edges()) {
 
