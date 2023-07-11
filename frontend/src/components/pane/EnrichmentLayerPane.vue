@@ -15,7 +15,7 @@
                             <img :src="imageSrc" class="hide_button"></button>
                         <a href="#" v-on:click="select_enrichment(term)" @mouseenter="prehighlight(term.proteins)" @mouseleave="prehighlight(null)">{{term.name}}</a>
                     </li>
-                    <Sketch class="color-picker" v-if="color_picker==true" v-model="colors" @update:model-value="handleColorChange(term)" :style="{ top: mouseY + 'px', left: mouseX + 'px' }" />
+                    <Sketch id="color-picker" v-if="color_picker==true" v-model="colors" @update:model-value="handleColorChange(term)" :style="{ top: mouseY + 'px', left: mouseX + 'px' }" />
                 </ul>
             </div>
             
@@ -154,7 +154,7 @@ export default {
         background-color: white;
 
     }
-    .color-picker{
+    #color-picker{
         position: fixed;
         z-index: 999;
     }
