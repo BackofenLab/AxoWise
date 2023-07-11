@@ -320,6 +320,55 @@ export default {
         return
       }
 
+      console.log(com.active_termlayers)
+
+      if(com.active_termlayers != null) {
+
+        var proteinsTermLayer = com.active_termlayers.main;
+
+        var proteinList = new Set()
+
+        for (const terms of proteinsTermLayer) {
+          var proteinSet = new Set([...terms.proteins]);
+          proteinList = new Set([...proteinList, ...proteinSet]);
+        }
+
+        const graph = sigma_instance.graph
+
+        console.log(proteinList)
+
+        for (const edge of graph.edges()) {
+
+          const sourceNode = graph.getNodeFromIndex(edge.source);
+          if(proteinList.has(edge.source)) {
+            const source_value = sourceNode.attributes[com.active_decoloumn];
+            
+            sourceNode.color = com.get_normalize(source_value, -1, 1);
+            edge.color = com.get_normalize(source_value, -1, 1).replace(')', ', 0.2)').replace('rgb', 'rgba');
+            
+          }else {
+            sourceNode.hidden = true
+            edge.hidden = true
+          }
+
+          const targetNode = graph.getNodeFromIndex(edge.target);
+          if(proteinList.has(edge.target)) {
+            const target_value = targetNode.attributes[com.active_decoloumn];
+            targetNode.color = com.get_normalize(target_value, -1, 1);
+            edge.color = com.get_normalize(target_value, -1, 1).replace(')', ', 0.2)').replace('rgb', 'rgba');          
+          }else {
+            targetNode.hidden = true
+            edge.hidden = true
+          }
+          
+
+        }
+
+        sigma_instance.refresh();
+        return;
+
+      }
+
       const graph = sigma_instance.graph
 
       for (const edge of graph.edges()) {
