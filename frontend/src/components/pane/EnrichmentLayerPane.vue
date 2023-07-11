@@ -1,5 +1,5 @@
 <template>
-    <div class="text" v-if="active_termlayers !== null">
+    <div id="layerpane" class="text" v-if="active_termlayers !== null">
         <div class="headertext">
             <span>Term Visualization</span>
         </div>
@@ -15,8 +15,8 @@
                             <img :src="imageSrc" class="hide_button"></button>
                         <a href="#" v-on:click="select_enrichment(term)" @mouseenter="prehighlight(term.proteins)" @mouseleave="prehighlight(null)">{{term.name}}</a>
                     </li>
-                    <Sketch id="color-picker" v-if="color_picker==true" v-model="colors" @update:model-value="handleColorChange(term)" :style="{ top: mouseY + 'px', left: mouseX + 'px' }" />
                 </ul>
+                <Sketch id="color-picker" v-if="color_picker==true" v-model="colors" @update:model-value="handleColorChange(term)" :style="{ top: mouseY + 'px', left: mouseX + 'px' }" />
             </div>
             
         </div>
@@ -104,9 +104,14 @@ export default {
         open_picker(event,term){
             var com = this;
 
+            const divElement = document.getElementById('layerpane');
+            const rect = divElement.getBoundingClientRect();
+
+            const x = rect.left;
+            const y = rect.top;
             
-            com.mouseX = event.clientX - 10;
-            com.mouseY = event.clientY + 10;
+            com.mouseX = event.clientX - x - 10;
+            com.mouseY = event.clientY - y + 10;
             
             
             if(((com.term == term) && com.color_picker) || com.color_picker == false) { 
@@ -155,7 +160,7 @@ export default {
 
     }
     #color-picker{
-        position: fixed;
+        position: absolute;
         z-index: 999;
     }
     .link-enrichment {
