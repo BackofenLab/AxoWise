@@ -156,5 +156,5 @@
 | Total | 7329855 | 20968242 |
 
 ## Notes
-TODO:
-Removed protein gene 
+
+Since some ENSEMBL Gene IDs are mapped to multiple ENSEMBL Protein IDs (protein isoforms), and duplicate associations between traget genes were removed, the resulting number of STRING edges is smaller than that of the ASSOCIATION edges in the previous database. Additionally, for 66 Proteins in STRING no equivalent ENSEMBL Gene IDs were found.
