@@ -586,8 +586,6 @@ export default {
 
     com.graph_state = state
 
-    if(com.active_node) return
-
     if (state == null) {
       com.reset()
     }
