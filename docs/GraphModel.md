@@ -1,4 +1,7 @@
 # Graph Model
+
+![Graph](./figs/model/graph_v5.4_presentation.png)
+
 ## Node Types
 1. Celltype
     * Properties:
@@ -151,3 +154,7 @@
 | MOTIF | 0 | 5558944 |
 | OVERLAP | 0 | 3812328 |
 | Total | 7329855 | 20968242 |
+
+## Notes
+TODO:
+Removed protein gene 

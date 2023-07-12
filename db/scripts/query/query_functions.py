@@ -24,26 +24,13 @@ def get_tg_by_correlation_tf(tf: str, subset: list[str], positive: bool, thresho
     # TODO
     return result
 
-
-# Used by Christina to get TGs correlated with list of TFs
-def get_tf_correlated_tg(tf: str, subset: list[str], driver: neo4j.Driver):
-    query = f"""
-    MATCH (n:TF)-[c:CORRELATION]->(g:TG)
-        WHERE n.ENSEMBL = "{tf}"
-            AND g.ENSEMBL IN {subset}
-    RETURN n.SYMBOL, g.SYMBOL, c.Correlation, c.p
-    """
-    result = execute_query(query=query, read=True, driver=driver)
-    return result
-
-
 def get_tg_by_link_ft(ft: str, subset: list[str], driver: neo4j.Driver):
     # TODO: change external_id to Term
     query = f"""
     MATCH (n:FT)<-[:LINK]-(g:TG)
         WHERE n.external_id = "{ft}"
             AND g.ENSEMBL IN {subset}
-    RETURN g.ENSEMBL
+    RETURN g.ENSEMBL, n.Term
     """
     result = execute_query(query=query, read=True, driver=driver)
     # TODO
@@ -99,4 +86,17 @@ def get_or_by_da_under_contexts(
     """
     result = execute_query(query=query, read=True, driver=driver)
     # TODO
+    return result
+
+
+# ---------------------- NOT FOR PRODUCTION ---------------------- 
+# Used by Christina to get TGs correlated with list of TFs
+def get_tf_correlated_tg(tf: str, subset: list[str], driver: neo4j.Driver):
+    query = f"""
+    MATCH (n:TF)-[c:CORRELATION]->(g:TG)
+        WHERE n.ENSEMBL = "{tf}"
+            AND g.ENSEMBL IN {subset}
+    RETURN n.SYMBOL, g.SYMBOL, c.Correlation, c.p
+    """
+    result = execute_query(query=query, read=True, driver=driver)
     return result
