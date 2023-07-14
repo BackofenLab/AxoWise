@@ -731,7 +731,7 @@ html,body{
 	color: white;
 	font-size: 9px;
 	text-decoration: none;
-	width: 60px;
+	display: block;
 	border-radius: 20px;
 	text-align: center;
 	padding: 7px;
@@ -739,8 +739,6 @@ html,body{
 .pane #edges .edge {
 	color: white;
 	text-decoration: none;
-	width: 60%;
-	margin-left: 20%;
 	background-color: rgba(0, 0, 0, 0.2);
 	border-radius: 20px;
 	text-align: center;

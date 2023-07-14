@@ -18,7 +18,32 @@
                 </ul>
                 <Sketch id="color-picker" v-if="color_picker==true" v-model="colors" @update:model-value="handleColorChange(term)" :style="{ top: mouseY + 'px', left: mouseX + 'px' }" />
             </div>
-            
+            <div class="p">
+                <span>Connections:</span>
+                <button v-on:click="copyclipboard()" id="copy-btn">Copy</button>
+                <button v-on:click="expand_proteins=!expand_proteins" id="expand-btn">Expand</button>
+            </div>
+            <div class="link" id="highlighted_proteins" v-show="expand_proteins === true">
+                <ul>
+                    <li class="membership" v-for="protein in intersectionSet" :key="protein" >
+                        <a href="#" v-on:click="select_node(protein)" @mouseenter="prehighlight([protein])" @mouseleave="prehighlight(null)">{{protein.attributes["Name"]}}</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="p2">
+                <b>Links:</b>
+                <button v-on:click="expand_links=!expand_links" id="expand-btn">Expand</button>
+                </div>
+                    <div class="link" id="edges" v-show="expand_links === true">
+                        <ul>
+                            <li v-for="edge in intersectingDicts" :key="edge">
+                                <div class="edge">
+                                <a href="#" >{{edge[0].name}}</a>
+                                <a href="#" >{{edge[1].name}}</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
         </div>
     </div>
 </template>
@@ -47,29 +72,67 @@ export default {
             color_picker: false,
             term: null,
             mouseX: 0,
-            mouseY: 0
+            mouseY: 0,
+            intersectionSet: null,
+            expand_proteins: true,
+            expand_links: true,
+            intersectingDicts: null
         }
     },
     watch: {
-        active_termlayers() {
+        active_termlayers: {
+            handler(newList) {
             var com = this;
-            
-            if (com.active_termlayers == null) {
+
+            if (newList == null) {
                 com.terms = null
                 return;
             }
             
-            com.layer_item.value = com.active_termlayers
+            com.layer_item.value = newList
 
             this.colorpalette = this.$store.state.colorpalette
 
-            com.terms  = com.active_termlayers.main
+            com.terms  = newList.main
 
+            com.intersectionSet = new Set();
+            var intersectionSet = new Set();
+
+            for (var checkElement of com.active_termlayers.main){
+                if(!com.hiding_terms.has(checkElement) && com.active_termlayers.main.size >= 1){
+                    intersectionSet= new Set(checkElement.proteins);
+                    break
+                }
+
+            }
+                
+            for (var element of com.active_termlayers.main){
+                if(!com.hiding_terms.has(element)){
+                    intersectionSet = new Set(element.proteins.filter((value) => intersectionSet.has(value)));
+                }
+
+            }
+
+
+            for (var proteins of this.gephi_data.nodes){
+                if(intersectionSet.has(proteins.attributes["Ensembl ID"])){
+                    com.intersectionSet.add(proteins)
+                }
+            }
+
+
+            // Find intersecting dictionaries
+            com.intersectingDicts = this.findIntersectingDictionaries(com.active_termlayers.main);
+        
+
+            
 
             com.$emit('active_item_changed',{ "layers": com.layer_item})
             
 
         },
+        deep: true,
+    },
 
     },
     methods: {
@@ -126,8 +189,46 @@ export default {
             }
             
 
-        }
-        
+        },
+        /**
+        * Calling the procedure in component MainVis to highlight a specific node
+        * @param {dict} value - A dictionary of a single node
+        */
+        select_node(value) {
+            this.emitter.emit("searchNode", value);
+        },
+        copyclipboard(){
+            var com = this;
+
+            var textToCopy = [];
+            for(var link of com.links) textToCopy.push(link.label);
+            navigator.clipboard.writeText(textToCopy.join("\n"));
+        },
+        findIntersectingDictionaries(mySet) {
+            const result = [];
+            const arr = Array.from(mySet);
+            for (let i = 0; i < arr.length; i++) {
+                for (let j = i + 1; j < arr.length; j++) {
+                const dict1 = arr[i];
+                const dict2 = arr[j];
+                if (this.intersectingElements(dict1.proteins, dict2.proteins)) {
+                    result.push([dict1, dict2]);
+                }
+                }
+            }
+            return result;
+            },
+
+            // Helper function to check if arrays have intersecting elements
+            intersectingElements(arr1, arr2) {
+            for (let i = 0; i < arr1.length; i++) {
+                if (arr2.includes(arr1[i])) {
+                return true;
+                }
+            }
+            return false;
+            }
+
     },
     
 }
@@ -166,6 +267,9 @@ export default {
     .link-enrichment {
         font-size: 12px;
         text-align: left;
+        height: 28%;
+        overflow-y: scroll;
+        margin-bottom: 20px;
     }
 
     .link-enrichment a {
@@ -175,6 +279,14 @@ export default {
 
     #hide-termlayer.hide {
         background-color: black;
+    }
+
+    #highlighted_proteins {
+        text-align: center;
+        padding: 0 0 0 4px;
+        font-size: 12px;
+        overflow-y: scroll;
+        height: 27%;
     }
 
 </style>

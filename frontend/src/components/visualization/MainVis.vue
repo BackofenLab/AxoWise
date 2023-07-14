@@ -242,6 +242,7 @@ export default {
     subactive_subset(subset) {
       var com = this
 
+
       if (subset == null) {
         com.reset_size();
         return
