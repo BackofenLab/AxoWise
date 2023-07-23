@@ -98,6 +98,7 @@ def data_formatting(species):
     kegg_df = read_kegg_data(specifier)
 
     merged_df = pd.concat([df, kegg_df], ignore_index=True)
+    merged_df = merged_df.drop_duplicates(subset="name")
     merged_df.to_csv(f"AllPathways_{species}.csv")
     os.remove(file_name)
 
