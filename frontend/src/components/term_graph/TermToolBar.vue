@@ -50,9 +50,9 @@
                 <BetweenesCentrality
                 :term_data='term_data'
                 ></BetweenesCentrality>
-                <!-- <EigenvectorCentrality
+                <PadjSelection
                 :term_data='term_data'
-                ></EigenvectorCentrality> -->
+                ></PadjSelection>
                 <PageRank
                 :term_data='term_data'
                 ></PageRank>
@@ -81,6 +81,7 @@ import TermSearch from '@/components/term_graph/TermSearch.vue'
 import FDRValue from '@/components/term_graph/FDRValue.vue'
 import SelectionWindow from '@/components/toolbar/SelectionWindow.vue'
 import HubsSelection from '@/components/toolbar/select_options/HubsSelection.vue'
+import PadjSelection from '@/components/term_graph/PadjSelection.vue'
 import BetweenesCentrality from '@/components/toolbar/select_options/BetweenesCentrality.vue'
 // Excluded this statistics since its not needed at the current status
 // import EigenvectorCentrality from '@/components/toolbar/select_options/EigenvectorCentrality.vue'
@@ -99,6 +100,7 @@ export default {
         SelectionWindow,
         HubsSelection,
         BetweenesCentrality,
+        PadjSelection,
         // EigenvectorCentrality,
         PageRank
 
