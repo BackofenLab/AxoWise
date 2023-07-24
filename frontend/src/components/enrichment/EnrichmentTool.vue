@@ -243,7 +243,7 @@
 
             },
             shouldDisplayOption(entry) {
-                return this.filtered_terms.includes(entry);
+                return this.filt_terms.includes(entry);
             },
             visualize_layers(){
                 var com = this;
@@ -252,29 +252,6 @@
                         
         },
         watch: {
-            category() {
-                var com = this;
-                if(com.category == null) {
-                    com.filtered_terms = com.terms
-                    return
-                }
-                com.filtered_terms = com.filtered_terms.filter(function(term) {
-                    return term.category === com.category;
-                });
-            },
-            search_raw() {
-                var com = this;
-
-                if(com.search_raw == "") {
-                    com.filtered_terms = com.terms
-                    return
-                }
-                var regex = new RegExp(com.regex, 'i');
-                com.filtered_terms = com.filtered_terms.filter(function(term) {
-                    return regex.test(term.name);
-                });
-
-            },
             terms() {
                 this.filtered_terms = this.terms
             }
@@ -320,6 +297,27 @@
             regex() {
                 var com = this;
                 return RegExp(com.search_raw.toLowerCase());
+            },
+            filt_terms() {
+                var com = this;
+                var filtered = com.terms;
+                
+                if (com.category) {
+                // If category is set, filter by category
+                filtered = filtered.filter(function(term) {
+                    return term.category === com.category;
+                });
+                }
+
+                if (com.search_raw !== "") {
+                // If search term is not empty, filter by search term
+                var regex = new RegExp(com.regex, 'i');
+                filtered = filtered.filter(function(term) {
+                    return regex.test(term.name);
+                });
+                }
+
+                return filtered;
             },
     },
 }
