@@ -106,16 +106,20 @@
 
                 var terms_csv = 'category,fdr_rate,name,proteins\n';
                 
+                // Create a mapping between Ensembl ID and label
+                const ensemblIdToLabelMap = {};
+                for (const node of com.gephi_data.nodes) {
+                ensemblIdToLabelMap[node.attributes["Ensembl ID"]] = node.label;
+                }
+
                 csvTermsData.forEach(function(row) {
                     var protein_names = []
                     for (const ensemblId of row['proteins']) {
-                        // Search for the corresponding real name in Gephi_data.nodes
-                        for (const node of com.gephi_data.nodes) {
-                            if (node.attributes["Ensembl ID"] === ensemblId) {
-                                protein_names.push(node.label);
-                            break; // Found the real name, move to the next Ensembl ID
-                            }
+                        const label = ensemblIdToLabelMap[ensemblId];
+                        if (label) {
+                            protein_names.push(label);
                         }
+                    
                     }
                     terms_csv += row['category'] + ',' + row['fdr_rate'] + ',"'  + row['name'] + '","' +protein_names+'"';
                     terms_csv += '\n';   
