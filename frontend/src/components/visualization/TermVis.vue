@@ -69,7 +69,7 @@ export default {
           neighbors.add(e.source);
           e.color = "rgb(255, 255, 255)"
         }else{
-          e.hidden = true
+          e.color = "rgba(0, 100, 100, 0.2)"
         }
       }
 
@@ -77,7 +77,7 @@ export default {
       for (let i = 0; i < nodes.length; i++) {
         const n = sigma_instance.graph.getNodeFromIndex(nodes[i].id)
         if (!neighbors.has(n.attributes["Ensembl ID"]) && n.attributes["Ensembl ID"] !== node.attributes["Ensembl ID"]) {
-          n.hidden = true
+          n.color = "rgb(0, 100, 100)"
         }
         if(n.attributes["Ensembl ID"] == node.attributes["Ensembl ID"]) {
           n.color = "rgb(255, 255, 255)";
@@ -153,6 +153,7 @@ export default {
         }
         else{
           sourceNode.color = "rgb(0,100,100)"
+          sourceNode.active = false
         }
 
         // Target
@@ -162,6 +163,7 @@ export default {
         }
         else{
           targetNode.color = "rgb(0,100,100)"
+          targetNode.active = false
         }
 
         // Edge
@@ -258,8 +260,6 @@ export default {
     },
     show_unconnectedGraph(state){
       var com = this;
-
-      if(com.active_node) return
       
       com.graph_state = state
 

@@ -5,6 +5,10 @@
         </div>
         <div class="nodeattributes">
             <div id="colorbar" :style="{ backgroundColor: colornode }">{{active_node.attributes['Modularity Class']}}</div>
+            <v-select id="pathway-protein" v-model="selected_protein" :options="nodes" :clearable="true" :model-value="selected_protein" @update:model-value="retrieve_path()"></v-select>
+            <div v-if="path == false">
+                <i class="signal">No path found.</i>
+            </div>
             <div class="data">
                 <span><i>{{active_node.attributes["Description"]}}</i></span><br/><br/>
             </div>
@@ -51,7 +55,10 @@ export default {
             node_item: {
                 value: null,
                 imageSrc: require('@/assets/pane/protein-icon.png')
-            }
+            },
+            nodes: this.gephi_data.nodes,
+            selected_protein: null,
+            path: true
         }
     },
     watch: {
@@ -103,7 +110,22 @@ export default {
         },
         select_node(value) {
             this.emitter.emit("searchNode", value);
-        }
+        },
+        retrieve_path() {
+            this.path = true
+            if(this.selected_protein == null) {
+                this.emitter.emit("reset_protein", this.active_node)
+                return
+            }
+            this.emitter.emit("searchPathway", {"source":this.active_node.id ,"target": this.selected_protein.id});
+        },
+        
+    },
+    mounted(){
+        this.emitter.on("emptySet", (state) => {
+            this.path = state
+        });
+
     }
 }
 </script>
@@ -122,5 +144,43 @@ export default {
         text-align: center;
         transform: translate(50%);
     }
+    #pathway-protein .vs__dropdown-toggle {
+        border-radius: 0px;
+        margin-top: 10px;
+        width: 100px;
+        height: 20px;
+
+    }
+    #pathway-protein .vs__selected {
+        display: block;
+        margin: 0;
+    }
+
+    #pathway-protein .vs__search{
+        display: block;
+        align-items: center;
+        border-radius: var(--vs-border-radius);
+        font-size: 14px;
+        color: var(--vs-selected-color);
+        line-height: var(--vs-line-height);
+        margin: 0;
+        padding: 0 .25em;
+        z-index: 0;
+    }
+
+    #pathway-protein.v-select {
+        justify-content: center;
+        display: flex;
+    }
+
+    #pathway-protein.vs--single.vs--open .vs__selected {
+        opacity: 0;
+    }
+
+    .signal {
+        margin-top: 10px;
+        background-color: red;
+    }
+
 
 </style>

@@ -41,6 +41,7 @@
                 <SelectionWindow
                 @selection_status_changed = 'selection_status = $event'
                 ></SelectionWindow>
+                <EdgeOpacity></EdgeOpacity>
                 <DEValue></DEValue>
 
             </div>
@@ -109,6 +110,7 @@ import NodeLabelSelect from '@/components/toolbar/NodeLabelSelect.vue'
 import ProteinList from '@/components/toolbar/ProteinList.vue'
 import SelectionWindow from '@/components/toolbar/SelectionWindow.vue'
 import SearchBar from '@/components/toolbar/SearchBar.vue'
+import EdgeOpacity from '@/components/toolbar/EdgeOpacity.vue'
 import HubsSelection from '@/components/toolbar/select_options/HubsSelection.vue'
 // Excluded this statistics since its not needed at the current status
 // import EigenvectorCentrality from '@/components/toolbar/select_options/EigenvectorCentrality.vue'
@@ -126,6 +128,7 @@ export default {
         ProteinList,
         SelectionWindow,
         SearchBar,
+        EdgeOpacity,
         HubsSelection,
         // EigenvectorCentrality,
         PageRank,

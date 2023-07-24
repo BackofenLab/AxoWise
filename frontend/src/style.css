@@ -731,7 +731,7 @@ html,body{
 	color: white;
 	font-size: 9px;
 	text-decoration: none;
-	width: 60px;
+	display: block;
 	border-radius: 20px;
 	text-align: center;
 	padding: 7px;
@@ -739,8 +739,6 @@ html,body{
 .pane #edges .edge {
 	color: white;
 	text-decoration: none;
-	width: 60%;
-	margin-left: 20%;
 	background-color: rgba(0, 0, 0, 0.2);
 	border-radius: 20px;
 	text-align: center;
@@ -807,6 +805,7 @@ html,body{
 }
 
 #export-enrich-btn{
+	margin-right:5px;
 	background-color: rgba(0, 0, 0, 0.5) ;
 	margin-top: 10px;
 	width:70%;
@@ -1082,9 +1081,8 @@ padding: 0px;
 
 
 .tool-pane .results {
-	margin-top: 5px;
-	max-height: 100vh;
-	height: 52%;
+	height: 200px;
+	display: block;
 	overflow-y: scroll;
 	overflow-x: hidden;
 }
@@ -1098,10 +1096,14 @@ padding: 0px;
 
 #enrichment .results a {
 	padding: 1px 2px;
-	display: block;
 	cursor: pointer;
 	text-decoration: none;
 	color: white;
+	display: inline-block;
+	text-align: left;
+	white-space: nowrap;
+	overflow: hidden;
+	max-width: 100%;
 }
 
 .term-pane .results a,
@@ -1117,10 +1119,6 @@ padding: 0px;
 	width: 0 !important;
 }
 
-#enrichment .results a:hover {
-	background-color: #999;
-	border-radius: 20px;
-}
 .term_number {
 	position: relative;
 	display: block;
@@ -1135,10 +1133,10 @@ padding: 0px;
 
 .tool-pane {
 	position: absolute;
-    bottom:-282px;
+    bottom:-380px;
     left:10px;
-	height: 320px;
 	width: 300px;
+	height: 417px;
 	overflow: hidden;
 	border-radius: 20px;
 	word-wrap: break-word;
@@ -1165,7 +1163,7 @@ padding: 0px;
 }
 
 .tool-pane-show{
-	transform: translate(0,-292px);
+	transform: translate(0,-390px);
 }
 .tool-pane .headertext{
 

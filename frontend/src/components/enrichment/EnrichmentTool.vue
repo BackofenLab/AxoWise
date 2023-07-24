@@ -11,16 +11,27 @@
                 <!-- <div v-if="await_load==false" class="term_number">
                     <span>Terms: {{term_numbers}}</span>
                 </div> -->
-            <div v-if="await_load == true" class="loading_pane"></div>
-            <div class="results" v-if="terms !== null && await_load == false">
-                <select id ="result_select" size="11" @change="select_term($event.target.value)" @click="select_term($event.target.value)">
-                <option v-for="entry in filtered_terms" :key="entry" :value="entry.id">{{ entry.name }}</option>
-                </select>
-                <div v-if="terms.length == 0">
-                    <i>No terms available.</i>
+            <div class="tabsystem-enrichment">
+                <div id="main-tab" v-on:click="main_tab = true">
+                    <span>main</span></div>
+                <div id="personal-tab" v-on:click="main_tab = false"> 
+                    <span>bookmark</span>
                 </div>
             </div>
-            <button v-if="await_load == false" id="export-enrich-btn" v-on:click="export_enrichment()">Export</button>
+            <div v-if="await_load == true" class="loading_pane" ></div>
+            <div class="results" v-if="terms !== null && await_load == false" tabindex="0" @keydown="handleKeyDown" ref="resultsContainer">
+                <div v-for="(entry,index) in terms" :key="entry" class="option" :class="{ selected: selectedIndex === index }" :style="{ display: shouldDisplayOption(entry) && (main_tab || checkboxStates[index]) ? '-webkit-flex' : 'none' }">
+                <input type="checkbox" class="selectCheck" v-model="checkboxStates[index]" v-on:change="add_enrichment(entry,index)" ref="checkBoxes" >
+                <a href="#" v-on:click="select_term(entry,index)" ref="selectedNodes" >{{entry.name}}</a>
+                </div>
+                <div v-if="terms.length == 0">
+                <i>No terms available.</i>
+                </div>
+            </div>
+            <div v-if="await_load == false" class="enrichment-tuning">
+                <button  id="export-enrich-btn" v-on:click="export_enrichment()">Export</button>
+                <button  id="visualize-favourites" v-on:click="visualize_layers()">Visualize</button>
+            </div>
             <div class="get_term_graph">
                 <input type="text" v-if="await_load == false" v-model="graph_name">
                 <button v-if="await_load == false" id="apply-enrich-btn" v-on:click="get_term_data()">Get Graph</button>
@@ -30,10 +41,11 @@
 </template>
 
 <script>
+
     export default{
         name: 'EnrichmentTool',
         props: ['gephi_data','active_term'],
-        emits: ['active_term_changed', 'active_layer_changed'],
+        emits: ['active_term_changed', 'active_layer_changed', 'active_termlayers_changed'],
         data() {
             return {
                 api: {
@@ -45,7 +57,14 @@
                 category: "",
                 await_load: true,
                 sourceToken: null,
-                graph_name: 'graph'
+                graph_name: 'graph',
+                main_tab: true,
+                selected_terms: [],
+                selectedIndex: -1,
+                checkboxStates: {},
+                filtered_terms: [],
+                favourite_tab: new Set()
+
             }
         },
         methods: {
@@ -58,14 +77,10 @@
                     div.classList.remove("tool-pane-show");
                 }
             },
-            select_term(term) {
+            select_term(term, index) {
                 var com = this;
-
-                this.filtered_terms.forEach(entry => {
-                    if (entry.id === term) {
-                        com.$emit("active_term_changed", entry);
-                    }
-                    });
+                this.selectedIndex = index
+                com.$emit("active_term_changed", term);
                 
             },
             get_term_data() {
@@ -88,10 +103,25 @@
 
                 //export terms as csv
                 var csvTermsData = com.filtered_terms;
+
                 var terms_csv = 'category,fdr_rate,name,proteins\n';
+                
+                // Create a mapping between Ensembl ID and label
+                const ensemblIdToLabelMap = {};
+                for (const node of com.gephi_data.nodes) {
+                ensemblIdToLabelMap[node.attributes["Ensembl ID"]] = node.label;
+                }
 
                 csvTermsData.forEach(function(row) {
-                    terms_csv += row['category'] + ',' + row['fdr_rate'] + ',"'  + row['name'] + '","' +row['proteins']+'"';
+                    var protein_names = []
+                    for (const ensemblId of row['proteins']) {
+                        const label = ensemblIdToLabelMap[ensemblId];
+                        if (label) {
+                            protein_names.push(label);
+                        }
+                    
+                    }
+                    terms_csv += row['category'] + ',' + row['fdr_rate'] + ',"'  + row['name'] + '","' +protein_names+'"';
                     terms_csv += '\n';   
                 });
 
@@ -159,12 +189,82 @@
                 remove_duplicates.forEach(term => {
                     com.filter_terms.push({'label': term})
                 })
+            },
+            add_enrichment(enrichment, index) {
+                if (this.checkboxStates[index]) {
+                    // Checkbox is checked, add its state to the object
+                    this.checkboxStates[index] = true;
+                    this.favourite_tab.add(enrichment)
+                } else {
+                    // Checkbox is unchecked, remove its state from the object
+                    delete this.checkboxStates[index];
+                    this.favourite_tab.delete(enrichment)
+                    }
+            },
+            handleKeyDown(event) {
+                // const container = event.target;
+                const keyCode = event.keyCode;
+
+                if (keyCode === 38) {
+                    event.preventDefault();
+                    if (this.selectedIndex > 0){
+                        this.selectedIndex--;
+                        this.scrollToSelected(this.$refs.selectedNodes[this.selectedIndex])
+                        this.clickNode()
+                    }
+                } else if (keyCode === 40) {
+                    event.preventDefault();
+                    if (this.selectedIndex < this.filtered_terms.length - 1){
+                        this.selectedIndex++;
+                        this.scrollToSelected(this.$refs.selectedNodes[this.selectedIndex])
+                        this.clickNode()
+                    }
+                }
+            },
+            clickNode() {
+                const selectedNode = this.$refs.selectedNodes[this.selectedIndex];
+                if (selectedNode) {
+                selectedNode.click();
+                }
+            },
+            scrollToSelected(selectedDiv) {
+                const parent = this.$refs.resultsContainer; // Updated line to use this.$refs
+
+                if (!selectedDiv) {
+                    return;
+                }
+
+                const selectedDivPosition = selectedDiv.getBoundingClientRect()
+                const parentBorders = parent.getBoundingClientRect()
+
+                if(selectedDivPosition.top >= parentBorders.bottom){
+                    selectedDiv.scrollIntoView(false);
+                }
+
+                if(selectedDivPosition.bottom <= parentBorders.top){
+                    selectedDiv.scrollIntoView(false);
+                }
+
+            },
+            shouldDisplayOption(entry) {
+                return this.filt_terms.includes(entry);
+            },
+            visualize_layers(){
+                var com = this;
+                com.$emit("active_termlayers_changed", {"main":com.favourite_tab, "hide": new Set()});
+            }
+                        
+        },
+        watch: {
+            terms() {
+                this.filtered_terms = this.terms
             }
         },
         mounted() {
             var com = this
 
             var formData = new FormData()
+
 
             formData.append('proteins', com.gephi_data.nodes.map(node => node.id))
             formData.append('species_id', com.gephi_data.nodes[0].species)
@@ -202,7 +302,7 @@
                 var com = this;
                 return RegExp(com.search_raw.toLowerCase());
             },
-            filtered_terms() {
+            filt_terms() {
                 var com = this;
                 var filtered = com.terms;
                 
@@ -222,8 +322,7 @@
                 }
 
                 return filtered;
-            }
-
+            },
     },
 }
 </script>
@@ -268,4 +367,56 @@
         font-family: 'Roboto Mono', monospace;
 
     }
+    .tabsystem-enrichment {
+        position: relative;
+        display: inline-flex;
+        height: 13px;
+        cursor: pointer;
+        margin-top: 10px;
+        width: 250px;
+        justify-content: center;
+    }
+    #main-tab {
+        border-top-left-radius: 20px;
+        border-bottom-left-radius: 20px;
+        background-color: rgba(255,0,0,0.7);
+        width: 50%;
+        font-size: x-small;
+
+    }
+    #personal-tab {
+        border-top-right-radius: 20px;
+        border-bottom-right-radius: 20px;
+        background-color: rgba(0,255,0,0.4);
+        width: 50%;
+        font-size: x-small;
+    }
+    .selectCheck {
+        display:block
+    }
+    .option {
+        display: -webkit-flex;
+        align-items: center;
+        font-size: small;
+    }
+    .selected {
+        background-color: rgba(255,0,0,0.7); /* Customize the selected style as desired */
+    }
+
+    #visualize-favourites {
+        margin-left:5px;
+        background-color: rgba(0, 0, 0, 0.5);
+        margin-top: 10px;
+        width: 70%;
+        color: white;
+        padding: 5px;
+        border-radius: 20px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: .5s;
+    }
+    .enrichment-tuning {
+        display: inline-flex;
+    }
+
 </style>
