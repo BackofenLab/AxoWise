@@ -54,7 +54,8 @@ export default {
       rectWidth: 0,
       rectHeight: 0,
       state: null,
-      edge_opacity: 0.2,
+      highlight_opacity: 0.2,
+      base_opacity: 0.2,
       rectangular_select: {
         canvas: null,
         context: null,
@@ -73,7 +74,7 @@ export default {
 
       sigma_instance.clear()
       sigma_instance.read(com.gephi_data)
-      com.edit_opacity()
+      com.edit_opacity('full')
       
       sigma_instance.refresh();
 
@@ -89,6 +90,7 @@ export default {
       else sigma_node = node
 
       const neighbors = new Set();
+      const highlighted_edges = new Set();
       const edges = sigma_instance.graph.edges()
       
       sigma_node.color = "rgb(255, 255, 255)"
@@ -101,12 +103,14 @@ export default {
         const e = edges[i]
         if (e.source === sigma_node.attributes["Ensembl ID"]) {
           neighbors.add(e.target);
-          e.color = "rgb(255, 255, 255)"
+          e.color = "rgb(255, 255, 255," + com.highlight_opacity + ")"
+          highlighted_edges.add(e)
         } else if (e.target === sigma_node.attributes["Ensembl ID"]) {
           neighbors.add(e.source);
-          e.color = "rgb(255, 255, 255)"
+          highlighted_edges.add(e)
+          e.color = "rgb(255, 255, 255," + com.highlight_opacity + ")"
         } else {
-          e.color = "rgba(0, 100, 100," + com.edge_opacity + ")"
+          e.color = "rgba(0, 100, 100," + com.base_opacity + ")"
         }
       }
 
@@ -117,6 +121,8 @@ export default {
           n.color = "rgb(0, 100, 100)"
         }
       }
+
+      this.$store.commit('assign_highlightedSet', highlighted_edges)
 
       sigma_instance.refresh();
 
@@ -151,6 +157,7 @@ export default {
       }
 
       const proteins = new Set(term.proteins);
+      const highlighted_edges = new Set()
       const graph = sigma_instance.graph;
 
       graph.nodes().forEach(function (node) {
@@ -170,13 +177,17 @@ export default {
         const target_present = proteins.has(target.attributes["Ensembl ID"]);
 
         if (source_present && !target_present || !source_present && target_present) {
-          edge.color = "rgba(220, 255, 220," + com.edge_opacity + ")"
+          edge.color = "rgba(220, 255, 220," + com.highlight_opacity + ")"
+          highlighted_edges.add(edge)
         } else if (source_present && target_present) {
-          edge.color = "rgba(255, 255, 255," + com.edge_opacity + ")"
+          edge.color = "rgba(255, 255, 255," + com.highlight_opacity + ")"
+          highlighted_edges.add(edge)
         } else {
-          edge.color = "rgba(0, 100, 0," + com.edge_opacity + ")"
+          edge.color = "rgba(0, 100, 0," + com.base_opacity + ")"
         }
       });
+
+      this.$store.commit('assign_highlightedSet', highlighted_edges)
 
       if(com.graph_state) {
         com.unconnected_nodes.forEach(function (n) {
@@ -186,6 +197,7 @@ export default {
       }
 
       sigma_instance.refresh()
+
 
     },
     active_subset(subset) {
@@ -197,6 +209,7 @@ export default {
       }
 
       const proteins = new Set(subset.map(node => node.attributes["Ensembl ID"]));
+      const highlighted_edges = new Set()
 
       const graph = sigma_instance.graph;
 
@@ -212,6 +225,7 @@ export default {
         if(sourcePresent) {
           sourceNode.color = "rgb(255,255,255)"
           sourceNode.active = true
+          highlighted_edges.add(edge)
         }
         else{
           sourceNode.color = "rgb(0,100,100)"
@@ -222,6 +236,7 @@ export default {
         if(targetPresent) {
           targetNode.color = "rgb(255,255,255)"
           targetNode.active = true
+          highlighted_edges.add(edge)
         }
         else{
           targetNode.color = "rgb(0,100,100)"
@@ -230,11 +245,12 @@ export default {
 
         // Edge
         if (sourcePresent !== targetPresent) {
-          edge.color = sourcePresent && !targetPresent ? "rgba(200, 255, 255," + com.edge_opacity + ")" : "rgba(0, 100, 100," + com.edge_opacity + ")";
+          edge.color = sourcePresent && !targetPresent ? "rgba(200, 255, 255," + com.highlight_opacity + ")" : "rgba(0, 100, 100," + com.base_opacity + ")";
         } else {
-          edge.color = sourcePresent ? "rgba(255, 255, 255," + com.edge_opacity + ")" : "rgba(0, 100, 100, " + com.edge_opacity + ")";
+          edge.color = sourcePresent ? "rgba(255, 255, 255," + com.highlight_opacity + ")" : "rgba(0, 100, 100, " + com.base_opacity + ")";
         }
       }
+      this.$store.commit('assign_highlightedSet', highlighted_edges)
       this.$store.commit('assign_graph_subset', sigma_instance.graph)
 
       sigma_instance.refresh();
@@ -342,7 +358,7 @@ export default {
             const source_value = sourceNode.attributes[com.active_decoloumn];
             
             sourceNode.color = com.get_normalize(source_value, -1, 1);
-            edge.color = com.get_normalize(source_value, -1, 1).replace(')', ',' + com.edge_opacity +')').replace('rgb', 'rgba');
+            edge.color = com.get_normalize(source_value, -1, 1).replace(')', ',' + com.base_opacity +')').replace('rgb', 'rgba');
             
           }else {
             sourceNode.hidden = true
@@ -353,7 +369,7 @@ export default {
           if(proteinList.has(edge.target)) {
             const target_value = targetNode.attributes[com.active_decoloumn];
             targetNode.color = com.get_normalize(target_value, -1, 1);
-            edge.color = com.get_normalize(target_value, -1, 1).replace(')', ',' + com.edge_opacity +')').replace('rgb', 'rgba');          
+            edge.color = com.get_normalize(target_value, -1, 1).replace(')', ',' + com.base_opacity +')').replace('rgb', 'rgba');          
           }else {
             targetNode.hidden = true
             edge.hidden = true
@@ -361,6 +377,8 @@ export default {
           
 
         }
+
+        this.$store.commit('assign_highlightedSet', new Set())
 
         sigma_instance.refresh();
         return;
@@ -377,7 +395,7 @@ export default {
 
         sourceNode.color = com.get_normalize(source_value, -1, 1);
         targetNode.color = com.get_normalize(target_value, -1, 1);
-        edge.color = com.get_normalize(source_value, -1, 1).replace(')', ',' + com.edge_opacity +')').replace('rgb', 'rgba');
+        edge.color = com.get_normalize(source_value, -1, 1).replace(')', ',' + com.base_opacity +')').replace('rgb', 'rgba');
 
       }
 
@@ -396,6 +414,7 @@ export default {
         var hiddenTermLayer = newList.hide
         
         const filteredArray = new Set(visibleTermlayers.filter(value => !hiddenTermLayer.has(value)));
+        var highlighted_edges = new Set()
         
         var proteinList = new Set()
 
@@ -425,9 +444,16 @@ export default {
 
         sigma_instance.graph.edges().forEach((e) => {
           var source = sigma_instance.graph.getNodeFromIndex(e.source);
-          if(proteinList.has(e.source) && proteinList.has(e.target) ) e.color = source.color.replace(")", ", " + this.edge_opacity + ")").replace("rgb", "rgba");
-          else e.color = "rgba(0,100,100," + this.edge_opacity + ")";
+          if(proteinList.has(e.source) && proteinList.has(e.target) ) 
+          {
+            e.color = source.color.replace(")", ", " + this.highlight_opacity + ")").replace("rgb", "rgba");
+            highlighted_edges.add(e)
+
+          }
+          else e.color = "rgba(0,100,100," + this.base_opacity + ")";
         });
+
+        this.$store.commit('assign_highlightedSet', highlighted_edges)
 
         sigma_instance.refresh();
       },
@@ -457,15 +483,16 @@ export default {
       s.color = `${com.node_color_index[e.source]}`; s.hidden = false;
       t.color = `${com.node_color_index[e.target]}`; t.hidden = false;
       e.color = `${com.edge_color_index[e.id]}`; e.hidden = false;
-      com.edit_opacity()
     });
-
+    
     if(com.graph_state) {
       com.unconnected_nodes.forEach(function (n) {
         var node = sigma_instance.graph.getNodeFromIndex(n.id);
         node.hidden = true
       });
     }
+    this.$store.commit('assign_highlightedSet', new Set())
+    com.edit_opacity('full')
     
     sigma_instance.refresh();
   },
@@ -523,7 +550,7 @@ export default {
           context.strokeStyle = "rgb(82,182,229)";
           context.strokeRect(rectangle.startX - rectBounds.x, rectangle.startY, rectangle.w, rectangle.h);
           context.setLineDash([]);
-          context.fillStyle = "rgba(82,182,229,"+ this.edge_opacity +")";
+          context.fillStyle = "rgba(82,182,229,"+ this.base_opacity +")";
           context.fillRect(rectangle.startX- rectBounds.x, rectangle.startY, rectangle.w, rectangle.h);
       }
   },
@@ -610,11 +637,33 @@ export default {
 
     sigma_instance.refresh();
   },
-  edit_opacity() {
+  edit_opacity(state) {
     var com = this;
-    sigma_instance.graph.edges().forEach(function (e) {
-      e.color = e.color.replace(/[\d.]+\)$/g, com.edge_opacity+')');
+
+    var edges = com.$store.state.highlighted_edges
+
+    if(state == "highlight"){
+
+
+      sigma_instance.graph.edges().forEach(function (e) {
+        if(edges.has(e)) e.color = e.color.replace(/[\d.]+\)$/g, com.highlight_opacity+')');
+     });
+      
+    }
+    if(state == "background"){
+      sigma_instance.graph.edges().forEach(function (e) {
+      if(!edges.has(e)) e.color = e.color.replace(/[\d.]+\)$/g, com.base_opacity+')');
+     
     });
+
+    }
+    if(state == "full"){
+      sigma_instance.graph.edges().forEach(function (e) {
+      e.color = e.color.replace(/[\d.]+\)$/g, com.base_opacity+')')
+    });
+
+    }
+
     sigma_instance.refresh();
   },
   hide_labels(state) {
@@ -723,7 +772,7 @@ export default {
 
         source.color = com.get_normalize(source.attributes[com.active_decoloumn], minBound, maxBound);
         target.color = com.get_normalize(target.attributes[com.active_decoloumn], minBound, maxBound);
-        e.color = com.get_normalize(source.attributes[com.active_decoloumn], minBound, maxBound).replace(')', ',' + this.edge_opacity + ')').replace('rgb', 'rgba');
+        e.color = com.get_normalize(source.attributes[com.active_decoloumn], minBound, maxBound).replace(')', ',' + this.base_opacity + ')').replace('rgb', 'rgba');
 
             
     });
@@ -780,7 +829,7 @@ export default {
     sigma_instance.graph.read(com.gephi_data);
     
 
-    com.edit_opacity()
+    com.edit_opacity('full')
 
     
 
@@ -875,8 +924,11 @@ export default {
       this.update_boundary(value)
     });
     this.emitter.on("changeOpacity", (value) => {
-      com.edge_opacity = value
-      com.edit_opacity()
+      if(value.layers == "highlight") com.highlight_opacity = value.opacity;
+      else com.base_opacity = value.opacity;
+
+      
+      com.edit_opacity(value.layers)
     });
     
     sigma_instance.refresh()
