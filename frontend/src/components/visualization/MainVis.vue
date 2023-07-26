@@ -457,9 +457,8 @@ export default {
       s.color = `${com.node_color_index[e.source]}`; s.hidden = false;
       t.color = `${com.node_color_index[e.target]}`; t.hidden = false;
       e.color = `${com.edge_color_index[e.id]}`; e.hidden = false;
-      com.edit_opacity()
     });
-
+    
     if(com.graph_state) {
       com.unconnected_nodes.forEach(function (n) {
         var node = sigma_instance.graph.getNodeFromIndex(n.id);
@@ -467,6 +466,8 @@ export default {
       });
     }
     
+    com.edit_opacity()
+
     sigma_instance.refresh();
   },
   reset_size() {
