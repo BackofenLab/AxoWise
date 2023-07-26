@@ -76,15 +76,17 @@ export default {
 
         //Return only coloumns that contends for d-value
         for (var i = 0; i < save_dcoloumns.length; i++) {
+          type_coloumns[i]=type_coloumns[i].trim()
           if (com.onlyNumbers(type_coloumns[i])) {
+            save_dcoloumns[i]=save_dcoloumns[i].trim()
             com.dcoloumns.push(save_dcoloumns[i].replace(/^"(.*)"$/, "$1"));
           }
         }
       };
       reader.readAsText(file);
     },
-    onlyNumbers: function (str) {
-      return /^[0-9.,-]+$/.test(str);
+    onlyNumbers(possibleNumber) {
+      return /^[0-9.,-]+$/.test(possibleNumber);
     },
     submit() {
       var com = this
