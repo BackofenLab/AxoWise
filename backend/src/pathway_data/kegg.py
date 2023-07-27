@@ -34,3 +34,17 @@ def version():
     match = re.search(r"Release \d+\.\d+\+/\d{2}-\d{2}, (\w{3} \d{2})", content)
     release_number = match.group(1)
     return release_number
+
+
+def get_pathways(organism_id):
+    endpoint = _pathway_template.substitute(organism_id=organism_id)
+    pathways_file = util.get(endpoint)
+    assert pathways_file is not None
+    return pathways_file
+
+
+def get_pathway_file(id, kgml=False):
+    endpoint = _get_template.substitute(entries=id, kgml="/kgml" if kgml else "")
+    pathway_file = util.get(endpoint)
+    assert pathway_file is not None
+    return pathway_file
