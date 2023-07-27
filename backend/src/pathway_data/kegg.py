@@ -48,3 +48,51 @@ def get_pathway_file(id, kgml=False):
     pathway_file = util.get(endpoint)
     assert pathway_file is not None
     return pathway_file
+
+
+def map_identifiers_to_STRING(identifiers, species=None, split=70):
+    template = _map_id_template
+    if species is None:
+        template = _map_id_template_no_species
+
+    if len(identifiers) > split:
+        i = 0
+        while True:
+            identifiers_chunk = identifiers[i : i + split]
+            endpoint = template.substitute(format="tsv", identifiers="%0d".join(identifiers_chunk), species=species)
+            identifiers_file = util.get(endpoint)
+            assert identifiers_file is not None
+            yield identifiers_file, i
+            if i + split >= len(identifiers):
+                break
+            else:
+                i += split
+    else:
+        endpoint = template.substitute(format="tsv", identifiers="%0d".join(identifiers), species=species)
+        identifiers_file = util.get(endpoint)
+        assert identifiers_file is not None
+        yield identifiers_file, 0
+
+
+def map_genes(pathway_genes, ncbi_id, kegg_id):
+    gene_ids, gene_short_names, gene_long_names = zip(*pathway_genes)
+    gene_ids = list(map(lambda gene_id: "{}:{}".format(kegg_id, gene_id), list(gene_ids)))
+    print("\tGenes:", len(gene_ids))
+
+    # Map KEGG gene identifiers to STRING external identifiers
+    kegg2external = dict()
+    for mapped_identifiers, idx_offset in map_identifiers_to_STRING(gene_ids, ncbi_id):
+        for idx, external_id, species_id, species_name, preferred_name, annotation in util.read_table(
+            mapped_identifiers, (int, str, int, str, str, str), delimiter="\t"
+        ):
+            gene_id = gene_ids[idx + idx_offset]
+            if gene_id in kegg2external:
+                print("\tMapping for {} not unique!".format(gene_id))
+            else:
+                kegg2external[gene_id] = external_id
+
+    num_not_mapped = len(gene_ids) - len(kegg2external)
+    if num_not_mapped > 0:
+        print("\t{} gene(s) could not be mapped to STRING external ID!".format(num_not_mapped))
+
+    return kegg2external
