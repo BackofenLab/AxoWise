@@ -41,7 +41,7 @@ def download_data(species):
         return "Invalid species."
 
     response = requests.get(url)
-    with open(f"{species}_AllPathways.gmt", "wb") as file:
+    with open(f"data/{species}_all_pathways.gmt", "wb") as file:
         file.write(response.content)
     return 1
 
@@ -144,22 +144,40 @@ def download_necessary(filepath):
 
 
 def main():
-    # Parse CLI arguments
-    args = parse_cli_args()
-    species_name = args.species_name
-    print("Downloading Pathway data for {}.".format(species_name))
-    input("Press any key to continue...")
-    # Download the data from Baderlabs
-    result = download_data(species_name)
-    # If input species not supported terminate
-    if result != 1:
-        print(result)
-        return
-    print("Download succesfull")
-    print("Formatting the data...")
-    input("Press any key to continue...")
-    data_formatting(species_name)
-    print("Formating succesfull")
+    # Directory for saving the data
+    folder = "data"
+    os.makedirs(folder, exist_ok=True)
+
+    # Set correct url and pattern
+    gene_pattern = r"bader: (.*)"
+    kegg_pattern = r"kegg: (.*)"
+    filepath = os.path.join(folder, f"release_versions.txt")
+
+    kegg_update, geneset_update, geneset_name, kegg_version = download_necessary(filepath)
+    if geneset_update:
+        # Download the data from Baderlabs
+        print("Downloading Pathway data for mouse")
+        download_data("mouse")
+        print("Geneset download succesfull for mouse")
+        # print("Downloading Pathway data for human") uncomment once human will be included
+        # download_data("human") uncomment once human will be included
+        # print("Geneset download succesfull for human") uncomment once human will be included
+        util.update_line(filepath, gene_pattern, geneset_name)
+    if kegg_update:
+        # Download the KEGG data
+        print("Downloading KEGG data for mouse")
+        # kegg.scrapping(folder, "mouse")
+        print("KEGG download succesfull for mouse")
+        # kegg.scrapping(folder, "human") uncomment once human will be included
+        # print("KEGG download succesfull for human") uncomment once human will be included
+        util.update_line(filepath, kegg_pattern, kegg_version)
+    if kegg_update or geneset_update:
+        print("Formatting mouse data...")
+        data_formatting("mouse", folder)
+        print("Formating mouse data succesfull")
+        # print("Formatting human data...") uncomment once human will be included
+        # data_formatting("human", folder) uncomment once human will be included
+        # print("Formating human data succesfull") uncomment once human will be included
 
 
 if __name__ == "__main__":
