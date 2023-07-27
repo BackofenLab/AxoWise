@@ -166,7 +166,7 @@ def main():
     if kegg_update:
         # Download the KEGG data
         print("Downloading KEGG data for mouse")
-        # kegg.scrapping(folder, "mouse")
+        kegg.scrapping(folder, "mouse")
         print("KEGG download succesfull for mouse")
         # kegg.scrapping(folder, "human") uncomment once human will be included
         # print("KEGG download succesfull for human") uncomment once human will be included
