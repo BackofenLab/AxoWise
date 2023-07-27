@@ -123,3 +123,107 @@ def write_compounds(pathway_compounds, compounds_file, written_compounds):
             compounds_file.write("{}\t{}\n".format(*compound))
             written_compounds.add(compound)
     return compound_ids
+
+
+def scrapping(path, species):
+    """
+    Scraps relevant data from KEGG
+
+    Arguments:
+    path: the directory in which the data will be stored
+    species: the species of interest for scrapping
+    """
+    kegg_id = "mmu" if species == "mouse" else "hsa"
+    ncbi_id = "10090" if species == "mouse" else "9606"
+
+    # Diseases, drugs & compounds
+    diseases_file = open(os.path.join(path, "kegg_diseases.{}.tsv".format(species)), mode="w", encoding="utf-8")
+    drugs_file = open(os.path.join(path, "kegg_drugs.{}.tsv".format(species)), mode="w", encoding="utf-8")
+    compounds_file = open(os.path.join(path, "kegg_compounds.{}.tsv".format(species)), mode="w", encoding="utf-8")
+
+    written_diseases = set()
+    written_drugs = set()
+    written_compounds = set()
+
+    # Pathways
+    pathways_file = open(os.path.join(path, "kegg_pathways.{}.tsv".format(species)), mode="w", encoding="utf-8")
+
+    # Write headers
+    diseases_file.write("\t".join(["id", "name"]) + "\n")
+    drugs_file.write("\t".join(["id", "name"]) + "\n")
+    compounds_file.write("\t".join(["id", "name"]) + "\n")
+    pathways_file.write(
+        "\t".join(
+            ["id", "name", "description", "classes", "genes_external_ids", "diseases_ids", "drugs_ids", "compounds_ids"]
+        )
+        + "\n"
+    )
+
+    pathways = get_pathways(kegg_id)
+
+    # Get the pathway
+    pathway_table = list(util.read_table(pathways, (str, str), "\t"))
+    for idx, (pathway_id, pathway_name) in enumerate(pathway_table):
+        pathway = get_pathway_file(pathway_id, kgml=False)
+
+        # Parse the KEGG pathway flat file
+        pathway_parsed = util.parse_flat_file(pathway)
+        pathway_title = pathway_parsed[0]
+        pathway_description = pathway_parsed[1]
+        pathway_classes = pathway_parsed[2]
+        pathway_diseases = pathway_parsed[3]
+        pathway_drugs = pathway_parsed[4]
+        pathway_genes = pathway_parsed[5]
+        pathway_compounds = pathway_parsed[6]
+
+        print("[{} / {}]".format(idx + 1, len(pathway_table)), pathway_title)
+
+        # Description
+        has_description = pathway_description is not None
+
+        # Classes
+        has_classes = pathway_classes is not None
+
+        # Genes
+        has_genes = pathway_genes is not None
+        if has_genes:
+            kegg2external = map_genes(pathway_genes, ncbi_id, kegg_id)
+
+        # Diseases
+        has_diseases = pathway_diseases is not None
+        if has_diseases:
+            disease_ids = write_diseases(pathway_diseases, diseases_file, written_diseases)
+
+        # Drugs
+        has_drugs = pathway_drugs is not None
+        if has_drugs:
+            drug_ids = write_drugs(pathway_drugs, drugs_file, written_drugs)
+
+        # Compounds
+        has_compounds = pathway_compounds is not None
+        if has_compounds:
+            compound_ids = write_compounds(pathway_compounds, compounds_file, written_compounds)
+
+        # Save the pathway
+        description_column = pathway_description if has_description else ""
+        genes_column = ";".join(kegg2external.values()) if has_genes else ""
+        classes_column = ";".join(pathway_classes) if has_classes else ""
+        diseases_column = ";".join(disease_ids) if has_diseases else ""
+        drugs_column = ";".join(drug_ids) if has_drugs else ""
+        compounds_column = ";".join(compound_ids) if has_compounds else ""
+        pathways_file.write(
+            "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(
+                pathway_id,
+                pathway_title,
+                description_column,
+                classes_column,
+                genes_column,
+                diseases_column,
+                drugs_column,
+                compounds_column,
+            )
+        )
+    pathways_file.close()
+    diseases_file.close()
+    drugs_file.close()
+    compounds_file.close()
