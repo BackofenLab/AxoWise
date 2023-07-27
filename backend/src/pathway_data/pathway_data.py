@@ -69,7 +69,7 @@ def read_kegg_data(specifier):
     specifier: the species specifier (e.g. 'mmu' or 'human')
     """
     kegg_df = pd.read_csv(
-        f"../../scraping/KEGG/data/kegg_pathways.{specifier}.tsv",
+        f"data/kegg_pathways.{specifier}.tsv",
         delimiter="\t",
         usecols=["id", "name", "genes_external_ids"],
     )
