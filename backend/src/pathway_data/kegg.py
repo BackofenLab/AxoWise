@@ -96,3 +96,30 @@ def map_genes(pathway_genes, ncbi_id, kegg_id):
         print("\t{} gene(s) could not be mapped to STRING external ID!".format(num_not_mapped))
 
     return kegg2external
+
+
+def write_diseases(pathway_diseases, diseases_file, written_diseases):
+    disease_ids, disease_names = zip(*pathway_diseases)
+    for disease in pathway_diseases:
+        if disease not in written_diseases:
+            diseases_file.write("{}\t{}\n".format(*disease))
+            written_diseases.add(disease)
+    return disease_ids
+
+
+def write_drugs(pathway_drugs, drugs_file, written_drugs):
+    drug_ids, drug_names = zip(*pathway_drugs)
+    for drug in pathway_drugs:
+        if drug not in written_drugs:
+            drugs_file.write("{}\t{}\n".format(*drug))
+            written_drugs.add(drug)
+    return drug_ids
+
+
+def write_compounds(pathway_compounds, compounds_file, written_compounds):
+    compound_ids, compound_names = zip(*pathway_compounds)
+    for compound in pathway_compounds:
+        if compound not in written_compounds:
+            compounds_file.write("{}\t{}\n".format(*compound))
+            written_compounds.add(compound)
+    return compound_ids
