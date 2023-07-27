@@ -3,6 +3,12 @@ import requests
 import argparse
 import pandas as pd
 import csv
+import kegg
+import sys
+import datetime
+
+sys.path.append("..")
+import util.data_util as util
 
 
 def parse_cli_args():
@@ -96,6 +102,45 @@ def data_formatting(species, folder):
     merged_df = pd.concat([df, kegg_df], ignore_index=True)
     merged_df = merged_df.drop_duplicates(subset=["name", "category"])
     merged_df.to_csv(f"data/AllPathways_{species}.csv")
+
+
+def download_necessary(filepath):
+    """
+    Check if new releases are available
+
+    Arguments:
+    filepath: filepath of the text file that contains last used release
+
+    Returns:
+    Tuple of (bool, bool, string) which correspond to whether KEGG and/or Baderlabs
+    respectively have a new release and lastly a string of the versions of both.
+    """
+    update_kegg = False
+    update_geneset = False
+    response = requests.get("http://download.baderlab.org/EM_Genesets/")
+    kegg_release = f"kegg: {kegg.version()}"
+    # get the content of the webpage as a string
+    webpage_content = response.text
+    geneset_file = f"bader: {util.get_latest_release_date_bader(webpage_content).strftime('%Y-%m-%d')}"
+    with open(filepath, "a+") as file:
+        file.seek(0)
+        content = file.read()
+        if len(content) == 0:
+            update_geneset = True
+            update_kegg = True
+        else:
+            old_version_geneset = util.search_line(filepath, r"bader: (.*)")
+            old_version_kegg = util.search_line(filepath, r"kegg: (.*)")
+            if not old_version_geneset or datetime.datetime.strptime(
+                old_version_geneset, "%Y-%m-%d"
+            ) < util.get_latest_release_date_bader(webpage_content):
+                update_geneset = True
+            if not old_version_kegg or datetime.datetime.strptime(
+                old_version_kegg, "%b %d"
+            ) < datetime.datetime.strptime(kegg.version(), "%b %d"):
+                update_kegg = True
+
+    return (update_kegg, update_geneset, geneset_file, kegg_release)
 
 
 def main():
