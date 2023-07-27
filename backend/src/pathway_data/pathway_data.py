@@ -78,29 +78,24 @@ def read_kegg_data(specifier):
     return kegg_df
 
 
-def data_formatting(species):
+def data_formatting(species, folder):
     """
     Formats the data to our specifications
 
     Arguments:
     species: the species which data we want to format
     """
-    if species.lower() == "mouse":
-        specifier = "mmu"
-    else:
-        specifier = "human"
-    file_name = f"{species}_AllPathways.gmt"
+    file_name = os.path.join(folder, f"{species.lower()}_all_pathways.gmt")
 
     # Read the data from Baderlabs
     df = read_data(file_name)
 
     # Read the KEGG data
-    kegg_df = read_kegg_data(specifier)
+    kegg_df = read_kegg_data(species.lower())
 
     merged_df = pd.concat([df, kegg_df], ignore_index=True)
-    merged_df = merged_df.drop_duplicates(subset="name")
-    merged_df.to_csv(f"AllPathways_{species}.csv")
-    os.remove(file_name)
+    merged_df = merged_df.drop_duplicates(subset=["name", "category"])
+    merged_df.to_csv(f"data/AllPathways_{species}.csv")
 
 
 def main():
