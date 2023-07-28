@@ -774,7 +774,7 @@ export default {
 
         source.color = com.get_normalize(source.attributes[com.active_decoloumn], minBound, maxBound);
         target.color = com.get_normalize(target.attributes[com.active_decoloumn], minBound, maxBound);
-        e.color = com.get_normalize(source.attributes[com.active_decoloumn], minBound, maxBound).replace(')', ',' + this.base_opacity + ')').replace('rgb', 'rgba');
+        e.color = com.get_normalize(source.attributes[com.active_decoloumn], minBound, maxBound).replace(')', ',' + com.base_opacity + ')').replace('rgb', 'rgba');
 
             
     });
