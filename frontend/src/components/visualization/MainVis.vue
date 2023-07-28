@@ -762,6 +762,7 @@ export default {
     });
   },
   update_boundary: function(data) {
+
     var com = this;
 
     var minBound = -data;
@@ -804,6 +805,21 @@ export default {
 
     sigma_instance.refresh()
   },
+  highlight_de(value){
+    var com = this;
+
+
+
+    var checkSet = new Set(value.map(n => n.attributes["Ensembl ID"]))
+    var unconnected_nodes = new Set(com.unconnected_nodes.map(n => n.attributes["Ensembl ID"]))
+    sigma_instance.graph.nodes().forEach(n =>{
+      if(checkSet.has(n.attributes["Ensembl ID"]) && !(unconnected_nodes.has(n.attributes["Ensembl ID"]) && com.graph_state)){
+        n.hidden = false;
+      } 
+      else n.hidden = true;
+    });
+    sigma_instance.refresh()
+  }
 
 },
   mounted() {
@@ -924,6 +940,9 @@ export default {
     });
     this.emitter.on("adjustDE", (value) => {
       this.update_boundary(value)
+    });
+    this.emitter.on("selectDE", (value) => {
+      this.highlight_de(value)
     });
     this.emitter.on("changeOpacity", (value) => {
       if(value.layers == "highlight") com.highlight_opacity = value.opacity;
