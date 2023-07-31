@@ -3,8 +3,8 @@ from utils import time_function, print_update, save_df_to_csv, execute_query
 from .upload_functions import create_nodes, create_relationship
 from neo4j import Driver
 
-_DEFAULT_CELLTYPE_INFO = {"Name": "Microglia"}
-_DEFAULT_STUDY_INFO = {"Source": "in-house"}
+_DEFAULT_CELLTYPE_INFO = {"name": "Microglia"}
+_DEFAULT_STUDY_INFO = {"name": "Bulk ATAC-Seq, RNA-seq", "source": "in-house"}
 
 
 @time_function
@@ -120,7 +120,7 @@ def create_or_meancount(mean_count: pd.DataFrame, source: int, driver: Driver):
 
 
 @time_function
-def create_context(context: pd.DataFrame, source: int, value_type: int, driver: Driver):  # value_type: 1 -> DE, 0 -> DA
+def create_context(context: pd.DataFrame, source: int, value_type: int, driver: Driver):  # value_type: 1 -> TG, 0 -> OR
     """
     Creates Context nodes from Experiment data if not already existent in DB, and DE / DA edges between Context and OR/TG
     """
@@ -169,8 +169,6 @@ def create_context(context: pd.DataFrame, source: int, value_type: int, driver: 
             for i in values
             if edge_df[i].dtype != "object"
         ]
-        print(reformat)
-        print(values)
 
         save_df_to_csv(file_name="tg_context.csv", df=edge_df)
         create_relationship(
@@ -192,8 +190,6 @@ def create_context(context: pd.DataFrame, source: int, value_type: int, driver: 
             for i in values
             if edge_df[i].dtype != "object"
         ]
-        print(reformat)
-        print(values)
 
         save_df_to_csv(file_name="da.csv", df=edge_df)
         create_relationship(
@@ -231,8 +227,6 @@ def create_correlation(
             for i in values
             if correlation[i].dtype != "object"
         ]
-        print(values)
-        print(reformat)
 
         save_df_to_csv(file_name="tf_tg_corr.csv", df=correlation)
         create_relationship(
@@ -254,8 +248,6 @@ def create_correlation(
             for i in values
             if correlation[i].dtype != "object"
         ]
-        print(values)
-        print(reformat)
 
         save_df_to_csv(file_name="or_tg_corr.csv", df=correlation)
         create_relationship(
