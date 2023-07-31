@@ -62,13 +62,14 @@ def parse_experiment(dir_path: str = os.getenv("_DEFAULT_EXPERIMENT_PATH"), refo
                 }
             )
         else:
-            filtered = df.filter(items=["id", context, context + "-padj"])
+            filtered = df.filter(items=["id", context, context + "-padj", "summit"])
             out = pd.DataFrame(
                 {
                     "id": filtered["id"],
                     "Context": context,
                     "Value": filtered[context],
                     "p": filtered[context + "-padj"],
+                    "summit": filtered["summit"],
                 }
             )
         return out
@@ -125,7 +126,7 @@ def parse_experiment(dir_path: str = os.getenv("_DEFAULT_EXPERIMENT_PATH"), refo
         # Filter for DA Values in specific contexts
         tmp_da = exp[0].filter(items=["seqnames", "summit"] + DA_CONTEXT + [c + "-padj" for c in DA_CONTEXT])
         tmp_da["id"] = tmp_da["seqnames"] + "_" + tmp_da["summit"].astype(str)
-        tmp_da = tmp_da.drop(columns=["seqnames", "summit"])
+        tmp_da = tmp_da.drop(columns=["seqnames"])
 
         # Create DA DataFrame s.t. context is column value
         da_values = make_context_dataframes(context_list=DA_CONTEXT, df=tmp_da, protein=False)

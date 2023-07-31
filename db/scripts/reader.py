@@ -5,6 +5,7 @@ from read.read_experiment import parse_experiment
 from read.read_string import parse_string
 from read.read_ensembl import parse_ensembl
 from read.read_functional import parse_functional
+from read.read_catlas import parse_catlas
 
 
 @time_function
@@ -119,5 +120,24 @@ def read(dir_path: str = None, reformat: bool = True, mode: int = -1, complete: 
             ft_gene,
             ft_ft_overlap,
         )
+
+    elif mode == 4:
+        # Catlas
+
+        if check_for_files(mode=mode):
+            or_nodes = pd.read_csv("../source/processed/or_nodes.csv")
+            (or_extended, catlas_or_context, catlas_correlation, catlas_celltype) = parse_catlas(or_nodes=or_nodes)
+
+            or_extended.to_csv("../source/processed/or_extended.csv")
+            catlas_or_context.to_csv("../source/processed/catlas_or_context.csv")
+            catlas_correlation.to_csv("../source/processed/catlas_correlation.csv")
+            catlas_celltype.to_csv("../source/processed/catlas_celltype.csv")
+        else:
+            or_extended = pd.read_csv("../source/processed/or_extended.csv")
+            catlas_or_context = pd.read_csv("../source/processed/catlas_or_context.csv")
+            catlas_correlation = pd.read_csv("../source/processed/catlas_correlation.csv")
+            catlas_celltype = pd.read_csv("../source/processed/catlas_celltype.csv")
+
+        result = (or_extended, catlas_or_context, catlas_correlation, catlas_celltype)
 
     return result

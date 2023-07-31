@@ -24,6 +24,7 @@ def get_tg_by_correlation_tf(tf: str, subset: list[str], positive: bool, thresho
     # TODO
     return result
 
+
 def get_tg_by_link_ft(ft: str, subset: list[str], driver: neo4j.Driver):
     # TODO: change external_id to Term
     query = f"""
@@ -89,7 +90,7 @@ def get_or_by_da_under_contexts(
     return result
 
 
-# ---------------------- NOT FOR PRODUCTION ---------------------- 
+# ---------------------- NOT FOR PRODUCTION ----------------------
 # Used by Christina to get TGs correlated with list of TFs
 def get_tf_correlated_tg(tf: str, subset: list[str], driver: neo4j.Driver):
     query = f"""

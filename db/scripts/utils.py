@@ -183,6 +183,15 @@ def check_for_files(mode: int):
             and os.path.exists("../source/processed/ft_ft_overlap.csv")
         )
 
+    elif mode == 4:
+        # Catlas
+        return not (
+            os.path.exists("../source/processed/or_extended.csv")
+            and os.path.exists("../source/processed/catlas_or_context.csv")
+            and os.path.exists("../source/processed/catlas_correlation.csv")
+            and os.path.exists("../source/processed/catlas_celltype.csv")
+        )
+
 
 def retrieve_gene_id_by_symbol(symbol: str):
     def parse_from_html(result: str):
