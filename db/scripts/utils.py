@@ -41,6 +41,7 @@ def stop_driver(driver: neo4j.Driver):
 
 
 def execute_query(query: str, read: bool, driver: neo4j.Driver) -> pd.DataFrame:
+    print(query)
     if os.getenv("_UPDATE_NEO4J") == str(True):
         with driver.session() as session:
             # TODO Remove if statement?

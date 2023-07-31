@@ -128,10 +128,10 @@ def read(dir_path: str = None, reformat: bool = True, mode: int = -1, complete: 
             or_nodes = pd.read_csv("../source/processed/or_nodes.csv")
             (or_extended, catlas_or_context, catlas_correlation, catlas_celltype) = parse_catlas(or_nodes=or_nodes)
 
-            or_extended.to_csv("../source/processed/or_extended.csv")
-            catlas_or_context.to_csv("../source/processed/catlas_or_context.csv")
-            catlas_correlation.to_csv("../source/processed/catlas_correlation.csv")
-            catlas_celltype.to_csv("../source/processed/catlas_celltype.csv")
+            or_extended.to_csv("../source/processed/or_extended.csv", index=False)
+            catlas_or_context.to_csv("../source/processed/catlas_or_context.csv", index=False)
+            catlas_correlation.to_csv("../source/processed/catlas_correlation.csv", index=False)
+            catlas_celltype.to_csv("../source/processed/catlas_celltype.csv", index=False)
         else:
             or_extended = pd.read_csv("../source/processed/or_extended.csv")
             catlas_or_context = pd.read_csv("../source/processed/catlas_or_context.csv")

@@ -74,24 +74,24 @@ def upload_workflow():
 
     print_update(update_type="Done", text="Reading files", color="pink")
 
-    first_setup(
-        gene_nodes=genes_annotated,
-        tg_mean_count=tg_mean_count,
-        tf_mean_count=tf_mean_count,
-        or_nodes=or_extended,
-        or_context_values=da_values,
-        tg_context_values=de_values,
-        tf_tg_corr=tf_tg_corr,
-        or_tg_corr=or_tg_corr,
-        motif=motif,
-        distance=distance,
-        ft_nodes=ft_nodes,
-        ft_gene=ft_gene,
-        ft_ft_overlap=ft_ft_overlap,
-        gene_gene_scores=gene_gene_scores,
-        or_mean_count=or_mean_count,
-        tf=tf,
-    )
+    # first_setup(
+    #     gene_nodes=genes_annotated,
+    #     tg_mean_count=tg_mean_count,
+    #     tf_mean_count=tf_mean_count,
+    #     or_nodes=or_extended,
+    #     or_context_values=da_values,
+    #     tg_context_values=de_values,
+    #     tf_tg_corr=tf_tg_corr,
+    #     or_tg_corr=or_tg_corr,
+    #     motif=motif,
+    #     distance=distance,
+    #     ft_nodes=ft_nodes,
+    #     ft_gene=ft_gene,
+    #     ft_ft_overlap=ft_ft_overlap,
+    #     gene_gene_scores=gene_gene_scores,
+    #     or_mean_count=or_mean_count,
+    #     tf=tf,
+    # )
 
     catlas_extention(
         catlas_or_context=catlas_or_context, catlas_correlation=catlas_correlation, catlas_celltype=catlas_celltype
