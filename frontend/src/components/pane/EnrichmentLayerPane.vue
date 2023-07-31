@@ -201,7 +201,7 @@ export default {
             var com = this;
 
             var textToCopy = [];
-            for(var link of com.links) textToCopy.push(link.label);
+            for(var link of com.intersectionSet) textToCopy.push(link.label);
             navigator.clipboard.writeText(textToCopy.join("\n"));
         },
         findIntersectingDictionaries(mySet) {
