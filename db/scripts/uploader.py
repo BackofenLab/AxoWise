@@ -2,6 +2,7 @@ import pandas as pd
 from utils import time_function, stop_driver, start_driver
 from upload.upload_base import setup_base_db
 from upload.upload_experiment import extend_db_from_experiment
+from upload.upload_catlas import extend_db_from_catlas
 
 
 @time_function
@@ -11,8 +12,8 @@ def first_setup(
     tf_mean_count: pd.DataFrame,
     or_mean_count: pd.DataFrame,
     or_nodes: pd.DataFrame,
-    de_values: pd.DataFrame,
-    da_values: pd.DataFrame,
+    tg_context_values: pd.DataFrame,
+    or_context_values: pd.DataFrame,
     tf_tg_corr: pd.DataFrame,
     or_tg_corr: pd.DataFrame,
     motif: pd.DataFrame,
@@ -45,17 +46,24 @@ def first_setup(
         tg_mean_count=tg_mean_count,
         tf_mean_count=tf_mean_count,
         or_mean_count=or_mean_count,
-        de_values=de_values,
-        da_values=da_values,
+        tg_context_values=tg_context_values,
+        or_context_values=or_context_values,
         tf_tg_corr=tf_tg_corr,
         or_tg_corr=or_tg_corr,
         driver=driver,
     )
 
-    utils.time_function(create_motif_edges, variables={"motif": motif, "driver": driver})
+    stop_driver(driver=driver)
 
-    utils.time_function(create_distance_edges, variables={"distance": distance, "driver": driver})
 
-    utils.print_update(update_type="Done", text="Extending DB from Experimental Data", color="pink")
-    return
+def catlas_extention(catlas_or_context, catlas_correlation, catlas_celltype):
+    driver = start_driver()
 
+    extend_db_from_catlas(
+        catlas_or_context=catlas_or_context,
+        catlas_correlation=catlas_correlation,
+        catlas_celltype=catlas_celltype,
+        driver=driver,
+    )
+
+    stop_driver(driver=driver)

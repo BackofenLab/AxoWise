@@ -1,5 +1,5 @@
 import reader as rd
-from uploader import first_setup
+from uploader import first_setup, catlas_extention
 from utils import print_update
 from querier import run_queries
 import os
@@ -17,7 +17,7 @@ os.environ["_FUNCTION_TIME_PATH"] = "../source/misc/function_times.tsv"
 os.environ["_TIME_FUNCTIONS"] = str(False)
 os.environ["_SILENT"] = str(False)
 os.environ["_PRODUCTION"] = str(True)
-os.environ["_UPDATE_NEO4J"] = str(True)
+os.environ["_UPDATE_NEO4J"] = str(False)
 
 
 def read_experiment_files():
@@ -37,6 +37,11 @@ def read_ensembl_files():
 
 def read_functional_files(complete: pd.DataFrame):
     data = rd.read(complete=complete, mode=3)
+    return data
+
+
+def read_catlas_files():
+    data = rd.read(mode=4)
     return data
 
 
@@ -64,15 +69,18 @@ def upload_workflow():
         ft_ft_overlap,
     ) = read_functional_files(complete=complete)
 
+    # TODO: Distance, MOTIF
+    (or_extended, catlas_or_context, catlas_correlation, catlas_celltype) = read_catlas_files()
+
     print_update(update_type="Done", text="Reading files", color="pink")
 
     first_setup(
         gene_nodes=genes_annotated,
         tg_mean_count=tg_mean_count,
         tf_mean_count=tf_mean_count,
-        or_nodes=or_nodes,
-        da_values=da_values,
-        de_values=de_values,
+        or_nodes=or_extended,
+        or_context_values=da_values,
+        tg_context_values=de_values,
         tf_tg_corr=tf_tg_corr,
         or_tg_corr=or_tg_corr,
         motif=motif,
@@ -85,7 +93,11 @@ def upload_workflow():
         tf=tf,
     )
 
+    catlas_extention(
+        catlas_or_context=catlas_or_context, catlas_correlation=catlas_correlation, catlas_celltype=catlas_celltype
+    )
+
 
 if __name__ == "__main__":
     upload_workflow()
-    run_queries()
+    # run_queries()

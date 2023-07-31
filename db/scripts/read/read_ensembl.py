@@ -10,13 +10,13 @@ def parse_ensembl(dir_path: str = os.getenv("_DEFAULT_ENSEMBL_PATH")):
     [
       Mus_musculus.GRCm39.109.ena.tsv,    Mus_musculus.GRCm39.109.entrez.tsv,
       Mus_musculus.GRCm39.109.refseq.tsv, Mus_musculus.GRCm39.109.uniprot.tsv,
-      TFCheckpoint_download_180515.tsv
+      TFCheckpoint_download_180515.tsv,   lost_correlations_symbols
     ]
 
     """
 
     def read_ensembl():
-        dataframes = [None] * 5
+        dataframes = [None] * 6
 
         for file in os.scandir(dir_path):
             file_name, file_extention = os.path.splitext(file)
@@ -77,8 +77,16 @@ def _reformat_ensembl_term_file(df: pd.DataFrame, file_name: str):
         "Mus_musculus.GRCm39.109.refseq",
         "Mus_musculus.GRCm39.109.uniprot",
         "TFCheckpoint_download_180515",
+        "lost_correlations_symbols",
     ]
-    functions = [_reformat_entrez, _reformat_ena, _reformat_refseq, _reformat_uniprot, _reformat_tf]
+    functions = [
+        _reformat_entrez,
+        _reformat_ena,
+        _reformat_refseq,
+        _reformat_uniprot,
+        _reformat_tf,
+        _reformat_lost_symbols,
+    ]
     index = names.index(file_name)
 
     return functions[index](df=df), index
@@ -119,4 +127,8 @@ def _reformat_uniprot(df: pd.DataFrame):
 def _reformat_tf(df: pd.DataFrame):
     df = df.filter(items=["entrez_mouse"])
     df = df.rename(columns={"entrez_mouse": "ENTREZID"})
+    return df
+
+
+def _reformat_lost_symbols(df: pd.DataFrame):
     return df

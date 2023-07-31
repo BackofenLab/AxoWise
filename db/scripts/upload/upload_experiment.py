@@ -153,36 +153,56 @@ def create_context(context: pd.DataFrame, source: int, value_type: int, driver: 
         driver=driver,
     )
 
-    print_update(update_type="Edge Creation", text="{}".format("DE" if value_type == 1 else "DA"), color="cyan")
+    print_update(
+        update_type="Edge Creation", text="{}".format("TG Context" if value_type == 1 else "OR Context"), color="cyan"
+    )
 
-    # Create DE/DA edges with Values and Source node id
+    # Create TG/OR Context edges with Values and Source node id
     edge_df = context
     edge_df["Source"] = source
 
-    # DE Edges
+    # TG Context Edges
     if value_type == 1:
-        save_df_to_csv(file_name="de.csv", df=edge_df)
+        values = list(set(list(edge_df.columns)) - set(["Context", "ENSEMBL"]))
+        reformat = [
+            (i, "toFloat" if edge_df[i].dtype == "float64" else "toInteger")
+            for i in values
+            if edge_df[i].dtype != "object"
+        ]
+        print(reformat)
+        print(values)
+
+        save_df_to_csv(file_name="tg_context.csv", df=edge_df)
         create_relationship(
-            source_file="de.csv",
-            type_="DE",
+            source_file="tg_context.csv",
+            type_="VALUE",
             between=(("Context", "Context"), ("ENSEMBL", "ENSEMBL")),
             node_types=("Context", "TG"),
-            values=["Value", "p", "Source"],
-            reformat_values=[("Value", "toFloat"), ("Source", "toInteger"), ("p", "toFloat")],
+            values=values,
+            reformat_values=reformat,
             merge=False,
             driver=driver,
         )
 
-    # DA Edges
+    # OR Context Edges
     elif value_type == 0:
+        values = list(set(list(edge_df.columns)) - set(["Context", "id"]))
+        reformat = [
+            (i, "toFloat" if edge_df[i].dtype == "float64" else "toInteger")
+            for i in values
+            if edge_df[i].dtype != "object"
+        ]
+        print(reformat)
+        print(values)
+
         save_df_to_csv(file_name="da.csv", df=edge_df)
         create_relationship(
             source_file="da.csv",
-            type_="DA",
+            type_="VALUE",
             between=(("Context", "Context"), ("id", "id")),
             node_types=("Context", "OR"),
-            values=["Value", "p", "Source"],
-            reformat_values=[("Value", "toFloat"), ("Source", "toInteger"), ("p", "toFloat")],
+            values=values,
+            reformat_values=reformat,
             merge=False,
             driver=driver,
         )
@@ -205,28 +225,46 @@ def create_correlation(
 
     # TF-TG edges
     if value_type == 1:
+        values = list(set(list(correlation.columns)) - set(["ENSEMBL_TF", "ENSEMBL_TG"]))
+        reformat = [
+            (i, "toFloat" if correlation[i].dtype == "float64" else "toInteger")
+            for i in values
+            if correlation[i].dtype != "object"
+        ]
+        print(values)
+        print(reformat)
+
         save_df_to_csv(file_name="tf_tg_corr.csv", df=correlation)
         create_relationship(
             source_file="tf_tg_corr.csv",
             type_="CORRELATION",
             between=(("ENSEMBL", "ENSEMBL_TF"), ("ENSEMBL", "ENSEMBL_TG")),
             node_types=("TF", "TG"),
-            values=["Correlation", "p", "Source"],
-            reformat_values=[("Correlation", "toFloat"), ("Source", "toInteger"), ("p", "toFloat")],
+            values=values,
+            reformat_values=reformat,
             merge=False,
             driver=driver,
         )
 
     # OR-TG edges
     elif value_type == 0:
+        values = list(set(list(correlation.columns)) - set(["id", "ENSEMBL"]))
+        reformat = [
+            (i, "toFloat" if correlation[i].dtype == "float64" else "toInteger")
+            for i in values
+            if correlation[i].dtype != "object"
+        ]
+        print(values)
+        print(reformat)
+
         save_df_to_csv(file_name="or_tg_corr.csv", df=correlation)
         create_relationship(
             source_file="or_tg_corr.csv",
             type_="CORRELATION",
             between=(("id", "id"), ("ENSEMBL", "ENSEMBL")),
             node_types=("OR", "TG"),
-            values=["Correlation", "p", "Source"],
-            reformat_values=[("Correlation", "toFloat"), ("Source", "toInteger"), ("p", "toFloat")],
+            values=values,
+            reformat_values=reformat,
             merge=False,
             driver=driver,
         )
@@ -234,14 +272,14 @@ def create_correlation(
 
 @time_function
 def extend_db_from_experiment(
-    tg_mean_count: pd.DataFrame,
-    tf_mean_count: pd.DataFrame,
-    or_mean_count: pd.DataFrame,
-    de_values: pd.DataFrame,
-    da_values: pd.DataFrame,
-    tf_tg_corr: pd.DataFrame,
-    or_tg_corr: pd.DataFrame,
     driver: Driver,
+    tg_mean_count: pd.DataFrame | None = None,
+    tf_mean_count: pd.DataFrame | None = None,
+    or_mean_count: pd.DataFrame | None = None,
+    tg_context_values: pd.DataFrame | None = None,
+    or_context_values: pd.DataFrame | None = None,
+    tf_tg_corr: pd.DataFrame | None = None,
+    or_tg_corr: pd.DataFrame | None = None,
 ):
     """
     Extends Base DB with Data from Experiment
@@ -249,15 +287,22 @@ def extend_db_from_experiment(
 
     id_source = create_study_cell_source_meancount(driver=driver)
 
-    create_tg_meancount(mean_count=tg_mean_count, source=id_source, driver=driver)
-    create_tf_meancount(mean_count=tf_mean_count, source=id_source, driver=driver)
-    create_or_meancount(mean_count=or_mean_count, source=id_source, driver=driver)
+    if tg_mean_count is not None:
+        create_tg_meancount(mean_count=tg_mean_count, source=id_source, driver=driver)
+    if tf_mean_count is not None:
+        create_tf_meancount(mean_count=tf_mean_count, source=id_source, driver=driver)
+    if or_mean_count is not None:
+        create_or_meancount(mean_count=or_mean_count, source=id_source, driver=driver)
 
-    create_context(context=de_values, source=id_source, value_type=1, driver=driver)
-    create_context(context=da_values, source=id_source, value_type=0, driver=driver)
+    if tg_context_values is not None:
+        create_context(context=tg_context_values, source=id_source, value_type=1, driver=driver)
+    if or_context_values is not None:
+        create_context(context=or_context_values, source=id_source, value_type=0, driver=driver)
 
-    create_correlation(correlation=tf_tg_corr, source=id_source, value_type=1, driver=driver)
-    create_correlation(correlation=or_tg_corr, source=id_source, value_type=0, driver=driver)
+    if tf_tg_corr is not None:
+        create_correlation(correlation=tf_tg_corr, source=id_source, value_type=1, driver=driver)
+    if or_tg_corr is not None:
+        create_correlation(correlation=or_tg_corr, source=id_source, value_type=0, driver=driver)
 
     print_update(update_type="Done", text="Extending DB from Experimental Data", color="pink")
     return
