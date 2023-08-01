@@ -6,9 +6,16 @@ from utils import execute_query
 
 __CATLAS__STUDY = {"name": "Catlas, Whole Mouse Brain", "source": "catlas.org/wholemousebrain/"}
 
-def create_source(cell_info:pd.DataFrame, driver:Driver):
+
+def create_source(cell_info: pd.DataFrame, driver: Driver):
     id = 0
-    region, nuclei_counts, celltype, subtype, subsubtype = cell_info["region"], cell_info["nuclei_counts"], cell_info["celltype"], cell_info["subtype"], cell_info["sub-subtype"]
+    region, nuclei_counts, celltype, subtype, subsubtype = (
+        cell_info["region"],
+        cell_info["nuclei_counts"],
+        cell_info["celltype"],
+        cell_info["subtype"],
+        cell_info["sub-subtype"],
+    )
     query = ""
 
     # Create Study
@@ -22,7 +29,7 @@ def create_source(cell_info:pd.DataFrame, driver:Driver):
     if subtype is not np.NaN:
         query += f""" MERGE (n2:Celltype{{name: "{subtype}"}})"""
         query += f""" MERGE (n1)-[:IS]->(n2)"""
-    else: 
+    else:
         query += """ CREATE (n1)-[:HAS]->(o:Source)<-[:HAS]-(s)"""
 
     # Create Cell Node (for Subsubtype)
@@ -41,7 +48,6 @@ def create_source(cell_info:pd.DataFrame, driver:Driver):
     return result[0][0]
 
 
-
 def extend_db_from_catlas(
     catlas_or_context: pd.DataFrame, catlas_correlation: pd.DataFrame, catlas_celltype: pd.DataFrame, driver: Driver
 ):
@@ -53,4 +59,3 @@ def extend_db_from_catlas(
 
         correlation = catlas_correlation[catlas_correlation["cell_id"] == i["name"]].drop(columns=["cell_id"])
         create_correlation(correlation=correlation, source=source, value_type=0, driver=driver)
-
