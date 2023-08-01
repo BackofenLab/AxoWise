@@ -127,7 +127,9 @@ def read(dir_path: str = None, reformat: bool = True, mode: int = -1, complete: 
         if check_for_files(mode=mode):
             or_nodes = pd.read_csv("../source/processed/or_nodes.csv")
             distance = pd.read_csv("../source/processed/distance.csv")
-            (or_extended, catlas_or_context, catlas_correlation, catlas_celltype, distance_extended) = parse_catlas(or_nodes=or_nodes, distance=distance)
+            (or_extended, catlas_or_context, catlas_correlation, catlas_celltype, distance_extended) = parse_catlas(
+                or_nodes=or_nodes, distance=distance
+            )
 
             or_extended.to_csv("../source/processed/or_extended.csv", index=False)
             catlas_or_context.to_csv("../source/processed/catlas_or_context.csv", index=False)

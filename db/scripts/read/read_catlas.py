@@ -25,13 +25,24 @@ def parse_catlas(or_nodes: pd.DataFrame, distance: pd.DataFrame):
         catlas_or_context = pd.concat([catlas_or_context, df_ccre], ignore_index=True)
 
     catlas_or_context = catlas_or_context.merge(catlas_celltype, left_on="cell_id", right_on="name", how="left")
-    catlas_or_context = catlas_or_context.rename(columns={"region": "Context"}).filter(items=["Context", "id", "cell_id", "summit"])
+    catlas_or_context = catlas_or_context.rename(columns={"region": "Context"}).filter(
+        items=["Context", "id", "cell_id", "summit"]
+    )
 
     catlas_correlation = pd.read_csv("../source/catlas/cell_specific_correlation.csv", sep="\t")
     catlas_correlation = catlas_correlation.merge(or_ids, how="left", left_on="cCRE", right_on="name")
-    catlas_correlation = catlas_correlation.filter(["id", "ENSEMBL", "Correlation", "Cell"]).rename(columns={"Cell": "cell_id"})
+    catlas_correlation = catlas_correlation.filter(["id", "ENSEMBL", "Correlation", "Cell"]).rename(
+        columns={"Cell": "cell_id"}
+    )
 
-    catlas_distance = pd.read_csv("../source/catlas/gene_ccre_distance.csv").merge(or_ids, left_on="cCRE", right_on="name", how="left").filter(items=["id", "Distance", "ENSEMBL"]).dropna()
-    
-    distance_extended = pd.concat([distance, catlas_distance], ignore_index=True).drop_duplicates(subset=["id", "ENSEMBL"], keep="first")
+    catlas_distance = (
+        pd.read_csv("../source/catlas/gene_ccre_distance.csv")
+        .merge(or_ids, left_on="cCRE", right_on="name", how="left")
+        .filter(items=["id", "Distance", "ENSEMBL"])
+        .dropna()
+    )
+
+    distance_extended = pd.concat([distance, catlas_distance], ignore_index=True).drop_duplicates(
+        subset=["id", "ENSEMBL"], keep="first"
+    )
     return or_extended, catlas_or_context, catlas_correlation, catlas_celltype, distance_extended
