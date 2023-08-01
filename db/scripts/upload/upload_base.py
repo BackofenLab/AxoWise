@@ -91,7 +91,7 @@ def create_distance_edges(distance: pd.DataFrame, driver: Driver):
     create_relationship(
         source_file="distance.csv",
         type_="DISTANCE",
-        between=(("id", "id"), ("ENSEMBL", "nearest_ENSEMBL")),
+        between=(("id", "id"), ("ENSEMBL", "ENSEMBL")),
         node_types=("OR", "TG"),
         values=["Distance"],
         reformat_values=[("Distance", "toInteger")],

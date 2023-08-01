@@ -121,7 +121,7 @@ def parse_experiment(dir_path: str = os.getenv("_DEFAULT_EXPERIMENT_PATH"), refo
 
         # Filter for Distance to transcription site
         distance = relevant_info.filter(items=["id", "nearest_distanceToTSS", "nearest_ENSEMBL"])
-        distance = distance.rename(columns={"nearest_distanceToTSS": "Distance"})
+        distance = distance.rename(columns={"nearest_distanceToTSS": "Distance", "nearest_ENSEMBL": "ENSEMBL"}).dropna()
 
         # Filter for DA Values in specific contexts
         tmp_da = exp[0].filter(items=["seqnames", "summit"] + DA_CONTEXT + [c + "-padj" for c in DA_CONTEXT])
@@ -131,16 +131,16 @@ def parse_experiment(dir_path: str = os.getenv("_DEFAULT_EXPERIMENT_PATH"), refo
         # Create DA DataFrame s.t. context is column value
         da_values = make_context_dataframes(context_list=DA_CONTEXT, df=tmp_da, protein=False)
 
-        tf_tg_corr = exp[2]
+        tf_tg_corr = exp[2].dropna()
 
         # Filter for relevant columns
         tmp_or_id = relevant_info.filter(items=["id", "nearest_index"])
         or_tg_corr = exp[3].filter(items=["ENSEMBL", "Correlation", "nearest_index", "p"])
         or_tg_corr = or_tg_corr.merge(tmp_or_id, left_on="nearest_index", right_on="nearest_index", how="left")
-        or_tg_corr = or_tg_corr.drop(columns=["nearest_index"])
+        or_tg_corr = or_tg_corr.drop(columns=["nearest_index"]).dropna()
 
         motif = exp[4].merge(tmp_or_id, left_on="peaks", right_on="nearest_index", how="left")
-        motif = motif.drop(columns=["peaks"])
+        motif = motif.drop(columns=["peaks", "motif_id", "nearest_index"])
 
         return (
             tg_mean_count,

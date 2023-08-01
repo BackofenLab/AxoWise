@@ -69,8 +69,8 @@ def upload_workflow():
         ft_ft_overlap,
     ) = read_functional_files(complete=complete)
 
-    # TODO: Distance, MOTIF
-    (or_extended, catlas_or_context, catlas_correlation, catlas_celltype) = read_catlas_files()
+    # TODO: Distance (correct, not dummy), MOTIF
+    (or_extended, catlas_or_context, catlas_correlation, catlas_celltype, distance_extended) = read_catlas_files()
 
     print_update(update_type="Done", text="Reading files", color="pink")
 
@@ -84,7 +84,7 @@ def upload_workflow():
     #     tf_tg_corr=tf_tg_corr,
     #     or_tg_corr=or_tg_corr,
     #     motif=motif,
-    #     distance=distance,
+    #     distance=distance_extended,
     #     ft_nodes=ft_nodes,
     #     ft_gene=ft_gene,
     #     ft_ft_overlap=ft_ft_overlap,
@@ -93,9 +93,9 @@ def upload_workflow():
     #     tf=tf,
     # )
 
-    catlas_extention(
-        catlas_or_context=catlas_or_context, catlas_correlation=catlas_correlation, catlas_celltype=catlas_celltype
-    )
+    # catlas_extention(
+    #     catlas_or_context=catlas_or_context, catlas_correlation=catlas_correlation, catlas_celltype=catlas_celltype
+    # )
 
 
 if __name__ == "__main__":
