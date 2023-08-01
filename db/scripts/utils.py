@@ -188,6 +188,7 @@ def check_for_files(mode: int):
             and os.path.exists("../source/processed/catlas_or_context.csv")
             and os.path.exists("../source/processed/catlas_correlation.csv")
             and os.path.exists("../source/processed/catlas_celltype.csv")
+            and os.path.exists("../source/processed/distance_extended.csv")
         )
 
 
