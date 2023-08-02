@@ -13,13 +13,15 @@ def create_gene_nodes(nodes: pd.DataFrame, driver: Driver):
         nodes -> Dataframe with Node info (ENSEMBL, ENTREZID, SYMBOL, annotation)
     """
     print_update(update_type="Node Creation", text="Genes from ENSEMBL", color="blue")
+
+    values, reformat = get_values_reformat(df=nodes, match=[])
     save_df_to_csv(file_name="genes.csv", df=nodes, override_prod=True)
     create_nodes(
         source_file="genes.csv",
         type_="TG",
         id="ENSEMBL",
-        values=["ENTREZID", "ENSEMBL", "SYMBOL", "annotation"],
-        reformat_values=[("ENTREZID", "toInteger")],
+        values=values,
+        reformat_values=reformat,
         driver=driver,
         merge=False,
     )
@@ -29,13 +31,14 @@ def create_gene_nodes(nodes: pd.DataFrame, driver: Driver):
 def create_tf_label(tf: pd.DataFrame, driver: Driver):
     print_update(update_type="Node Update", text="Transcription Factor", color="orange")
 
+    values, reformat = get_values_reformat(df=tf, match=["ENSEMBL"])
     save_df_to_csv(file_name="tf.csv", df=tf, override_prod=True)
     update_nodes(
         source_file="tf.csv",
         type_="TG",
         id="ENSEMBL",
-        values=[],
-        reformat_values=[],
+        values=values,
+        reformat_values=reformat,
         additional_label="TF",
         driver=driver,
     )
@@ -48,13 +51,14 @@ def create_or_nodes(nodes: pd.DataFrame, driver: Driver):
     """
     print_update(update_type="Node Creation", text="Open Region", color="blue")
 
+    values, reformat = get_values_reformat(df=nodes, match=[])
     save_df_to_csv(file_name="or.csv", df=nodes, override_prod=True)
     create_nodes(
         source_file="or.csv",
         type_="OR",
         id="id",
-        values=["id", "annotation", "feature"],
-        reformat_values=[],
+        values=values,
+        reformat_values=reformat,
         merge=False,
         driver=driver,
     )
@@ -135,19 +139,20 @@ def create_functional(
     """
     Creates Functional Term nodes, OVERLAP egdes between FT and FT, and LINK edges between TG and FT
     """
-    # print_update(update_type="Node Creation", text="Functional Term", color="blue")
-    #
+    print_update(update_type="Node Creation", text="Functional Term", color="blue")
+
     # TODO: Change "Terms" to "FT" and "external_id" to "Term"
-    # save_df_to_csv(file_name="ft_nodes.csv", df=ft_nodes, override_prod=True)
-    # create_nodes(
-    #     source_file="ft_nodes.csv",
-    #     type_="FT",
-    #     id="Term",
-    #     values=["Term", "Name", "Category"],
-    #     reformat_values=[],
-    #     merge=False,
-    #     driver=driver,
-    # )
+    values, reformat = get_values_reformat(df=ft_nodes, match=[])
+    save_df_to_csv(file_name="ft_nodes.csv", df=ft_nodes, override_prod=True)
+    create_nodes(
+        source_file="ft_nodes.csv",
+        type_="FT",
+        id="Term",
+        values=values,
+        reformat_values=reformat,
+        merge=False,
+        driver=driver,
+    )
 
     print_update(update_type="Edge Creation", text="OVERLAP", color="cyan")
 
