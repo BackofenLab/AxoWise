@@ -133,9 +133,10 @@ def create_context(context: pd.DataFrame, source: int, value_type: int, driver: 
     nodes = context["Context"].unique()
     node_df = pd.DataFrame.from_records(data=[{"Context": c} for c in nodes])
 
+    values, reformat = get_values_reformat(df=node_df, match=[])
     save_df_to_csv(file_name="context.csv", df=node_df, override_prod=True)
     create_nodes(
-        source_file="context.csv", type_="Context", id="Context", values=["Context"], reformat_values=[], driver=driver
+        source_file="context.csv", type_="Context", id="Context", values=values, reformat_values=reformat, driver=driver
     )
 
     print_update(update_type="Edge Creation", text="HAS for Source, Context", color="cyan")
