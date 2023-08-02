@@ -16,6 +16,9 @@ def read(dir_path: str = None, reformat: bool = True, mode: int = -1, complete: 
             dir_path = os.getenv("_DEFAULT_EXPERIMENT_PATH")
 
         if check_for_files(mode=mode):
+            symbol_ensembl_dict = pd.read_csv("../source/processed/genes_annotated.csv").filter(
+                items=["ENSEMBL", "SYMBOL"]
+            )
             (
                 tg_mean_count,
                 tf_mean_count,
@@ -27,7 +30,7 @@ def read(dir_path: str = None, reformat: bool = True, mode: int = -1, complete: 
                 or_tg_corr,
                 motif,
                 distance,
-            ) = parse_experiment(dir_path=dir_path, reformat=reformat)
+            ) = parse_experiment(symbol_ensembl_dict=symbol_ensembl_dict, dir_path=dir_path, reformat=reformat)
 
             tg_mean_count.to_csv("../source/processed/tg_mean_count.csv", index=False)
             tf_mean_count.to_csv("../source/processed/tf_mean_count.csv", index=False)
@@ -127,22 +130,37 @@ def read(dir_path: str = None, reformat: bool = True, mode: int = -1, complete: 
         if check_for_files(mode=mode):
             or_nodes = pd.read_csv("../source/processed/or_nodes.csv")
             distance = pd.read_csv("../source/processed/distance.csv")
-            (or_extended, catlas_or_context, catlas_correlation, catlas_celltype, distance_extended) = parse_catlas(
-                or_nodes=or_nodes, distance=distance
-            )
+            motif = pd.read_csv("../source/processed/motif.csv")
+            (
+                or_extended,
+                catlas_or_context,
+                catlas_correlation,
+                catlas_celltype,
+                distance_extended,
+                motif_extended,
+            ) = parse_catlas(or_nodes=or_nodes, distance=distance, motif=motif)
 
             or_extended.to_csv("../source/processed/or_extended.csv", index=False)
             catlas_or_context.to_csv("../source/processed/catlas_or_context.csv", index=False)
             catlas_correlation.to_csv("../source/processed/catlas_correlation.csv", index=False)
             catlas_celltype.to_csv("../source/processed/catlas_celltype.csv", index=False)
             distance_extended.to_csv("../source/processed/distance_extended.csv", index=False)
+            motif_extended.to_csv("../source/processed/motif_extended.csv", index=False)
         else:
             or_extended = pd.read_csv("../source/processed/or_extended.csv")
             catlas_or_context = pd.read_csv("../source/processed/catlas_or_context.csv")
             catlas_correlation = pd.read_csv("../source/processed/catlas_correlation.csv")
             catlas_celltype = pd.read_csv("../source/processed/catlas_celltype.csv")
             distance_extended = pd.read_csv("../source/processed/distance_extended.csv")
+            motif_extended = pd.read_csv("../source/processed/motif_extended.csv")
 
-        result = (or_extended, catlas_or_context, catlas_correlation, catlas_celltype, distance_extended)
+        result = (
+            or_extended,
+            catlas_or_context,
+            catlas_correlation,
+            catlas_celltype,
+            distance_extended,
+            motif_extended,
+        )
 
     return result

@@ -18,7 +18,9 @@ DA_CONTEXT = [
 ]
 
 
-def parse_experiment(dir_path: str = os.getenv("_DEFAULT_EXPERIMENT_PATH"), reformat: bool = True):
+def parse_experiment(
+    symbol_ensembl_dict: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT_EXPERIMENT_PATH"), reformat: bool = True
+):
     """
     Parses experiment files and returns list of Pandas DataFrames s.t.
     [ tg_nodes, tf_nodes, de_values, or_nodes, da_values, tf_tg_corr, tf_or_corr ]
@@ -139,8 +141,16 @@ def parse_experiment(dir_path: str = os.getenv("_DEFAULT_EXPERIMENT_PATH"), refo
         or_tg_corr = or_tg_corr.merge(tmp_or_id, left_on="nearest_index", right_on="nearest_index", how="left")
         or_tg_corr = or_tg_corr.drop(columns=["nearest_index"]).dropna()
 
-        motif = exp[4].merge(tmp_or_id, left_on="peaks", right_on="nearest_index", how="left")
-        motif = motif.drop(columns=["peaks", "motif_id", "nearest_index"])
+        motif = (
+            exp[4]
+            .merge(tmp_or_id, left_on="peaks", right_on="nearest_index", how="left")
+            .drop(columns=["peaks", "motif_id", "nearest_index"])
+        )
+        motif = (
+            motif.merge(symbol_ensembl_dict, left_on="TF", right_on="SYMBOL", how="left")
+            .drop(columns=["TF", "SYMBOL"])
+            .dropna()
+        )
 
         return (
             tg_mean_count,

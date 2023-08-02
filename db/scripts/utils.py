@@ -40,7 +40,7 @@ def stop_driver(driver: neo4j.Driver):
 
 
 def execute_query(query: str, read: bool, driver: neo4j.Driver) -> pd.DataFrame:
-    print(query)
+    # print(query)
     if os.getenv("_UPDATE_NEO4J") == str(True):
         with driver.session() as session:
             # TODO Remove if statement?
@@ -189,6 +189,7 @@ def check_for_files(mode: int):
             and os.path.exists("../source/processed/catlas_correlation.csv")
             and os.path.exists("../source/processed/catlas_celltype.csv")
             and os.path.exists("../source/processed/distance_extended.csv")
+            and os.path.exists("../source/processed/motif_extended.csv")
         )
 
 
@@ -203,3 +204,10 @@ def retrieve_gene_id_by_symbol(symbol: str):
     url = f"http://rest.ensembl.org/xrefs/symbol/mus_musculus/{symbol}"
     result = urllib.request.urlopen(url=url).read()
     return parse_from_html(str(result))
+
+
+def get_values_reformat(df: pd.DataFrame, match: list):
+    values = list(set(list(df.columns)) - set(match))
+    reformat = [(i, "toFloat" if df[i].dtype == "float64" else "toInteger") for i in values if df[i].dtype != "object"]
+
+    return values, reformat
