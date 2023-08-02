@@ -1,5 +1,5 @@
 import pandas as pd
-from utils import time_function, print_update, save_df_to_csv, execute_query
+from utils import time_function, print_update, save_df_to_csv, execute_query, get_values_reformat
 from .upload_functions import create_nodes, create_relationship
 from neo4j import Driver
 
@@ -56,14 +56,15 @@ def create_tg_meancount(mean_count: pd.DataFrame, source: int, driver: Driver):
     mean_count = mean_count.rename(columns={"mean_count": "Value"})
 
     # create MeanCount edges for TGs
+    values, reformat = get_values_reformat(df=mean_count, match=["ENSEMBL"])
     save_df_to_csv(file_name="tg_meancount.csv", df=mean_count)
     create_relationship(
         source_file="tg_meancount.csv",
         type_="MEANCOUNT",
         between=((), ("ENSEMBL", "ENSEMBL")),
         node_types=("MeanCount", "TG"),
-        values=["Value", "Source"],
-        reformat_values=[("Value", "toFloat"), ("Source", "toInteger")],
+        values=values,
+        reformat_values=reformat,
         merge=False,
         driver=driver,
     )
@@ -81,14 +82,15 @@ def create_tf_meancount(mean_count: pd.DataFrame, source: int, driver: Driver):
     mean_count = mean_count.rename(columns={"mean_count": "Value"})
 
     # create MeanCount edges for TFs
+    values, reformat = get_values_reformat(df=mean_count, match=["ENSEMBL"])
     save_df_to_csv(file_name="tf_meancount.csv", df=mean_count)
     create_relationship(
         source_file="tf_meancount.csv",
         type_="MEANCOUNT",
         between=((), ("ENSEMBL", "ENSEMBL")),
         node_types=("MeanCount", "TF"),
-        values=["Value", "Source"],
-        reformat_values=[("Value", "toFloat"), ("Source", "toInteger")],
+        values=values,
+        reformat_values=reformat,
         driver=driver,
     )
 
@@ -107,14 +109,15 @@ def create_or_meancount(mean_count: pd.DataFrame, source: int, driver: Driver):
     print_update(update_type="Edge Creation", text="MEANCOUNT for Open Regions", color="cyan")
 
     # create MeanCount edges for ORs
+    values, reformat = get_values_reformat(df=mean_count, match=["id"])
     save_df_to_csv(file_name="or_meancount.csv", df=mean_count)
     create_relationship(
         source_file="or_meancount.csv",
         type_="MEANCOUNT",
         between=((), ("id", "id")),
         node_types=("MeanCount", "OR"),
-        values=["Value", "Source"],
-        reformat_values=[("Value", "toFloat"), ("Source", "toInteger")],
+        values=values,
+        reformat_values=reformat,
         driver=driver,
     )
 
@@ -141,14 +144,16 @@ def create_context(context: pd.DataFrame, source: int, value_type: int, driver: 
     source_edge_df = node_df
     source_edge_df["Source"] = source
 
+    values, reformat = get_values_reformat(df=source_edge_df, match=["Source", "Context"])
+
     save_df_to_csv(file_name="source_context.csv", df=source_edge_df, override_prod=True)
     create_relationship(
         source_file="source_context.csv",
         type_="HAS",
         between=(("id", "Source"), ("Context", "Context")),
         node_types=("Source", "Context"),
-        values=[],
-        reformat_values=[("Source", "toInteger")],
+        values=values,
+        reformat_values=reformat,
         merge=True,
         driver=driver,
     )
@@ -163,12 +168,13 @@ def create_context(context: pd.DataFrame, source: int, value_type: int, driver: 
 
     # TG Context Edges
     if value_type == 1:
-        values = list(set(list(edge_df.columns)) - set(["Context", "ENSEMBL"]))
-        reformat = [
-            (i, "toFloat" if edge_df[i].dtype == "float64" else "toInteger")
-            for i in values
-            if edge_df[i].dtype != "object"
-        ]
+        values, reformat = get_values_reformat(df=edge_df, match=["Context", "ENSEMBL"])
+        # values = list(set(list(edge_df.columns)) - set(["Context", "ENSEMBL"]))
+        # reformat = [
+        #     (i, "toFloat" if edge_df[i].dtype == "float64" else "toInteger")
+        #     for i in values
+        #     if edge_df[i].dtype != "object"
+        # ]
 
         save_df_to_csv(file_name="tg_context.csv", df=edge_df)
         create_relationship(
@@ -184,16 +190,17 @@ def create_context(context: pd.DataFrame, source: int, value_type: int, driver: 
 
     # OR Context Edges
     elif value_type == 0:
-        values = list(set(list(edge_df.columns)) - set(["Context", "id"]))
-        reformat = [
-            (i, "toFloat" if edge_df[i].dtype == "float64" else "toInteger")
-            for i in values
-            if edge_df[i].dtype != "object"
-        ]
+        values, reformat = get_values_reformat(df=edge_df, match=["Context", "id"])
+        # values = list(set(list(edge_df.columns)) - set(["Context", "id"]))
+        # reformat = [
+        #     (i, "toFloat" if edge_df[i].dtype == "float64" else "toInteger")
+        #     for i in values
+        #     if edge_df[i].dtype != "object"
+        # ]
 
-        save_df_to_csv(file_name="da.csv", df=edge_df)
+        save_df_to_csv(file_name="or_context.csv", df=edge_df)
         create_relationship(
-            source_file="da.csv",
+            source_file="or_context.csv",
             type_="VALUE",
             between=(("Context", "Context"), ("id", "id")),
             node_types=("Context", "OR"),
@@ -221,12 +228,13 @@ def create_correlation(
 
     # TF-TG edges
     if value_type == 1:
-        values = list(set(list(correlation.columns)) - set(["ENSEMBL_TF", "ENSEMBL_TG"]))
-        reformat = [
-            (i, "toFloat" if correlation[i].dtype == "float64" else "toInteger")
-            for i in values
-            if correlation[i].dtype != "object"
-        ]
+        values, reformat = get_values_reformat(df=correlation, match=["ENSEMBL_TF", "ENSEMBL_TG"])
+        # values = list(set(list(correlation.columns)) - set(["ENSEMBL_TF", "ENSEMBL_TG"]))
+        # reformat = [
+        #     (i, "toFloat" if correlation[i].dtype == "float64" else "toInteger")
+        #     for i in values
+        #     if correlation[i].dtype != "object"
+        # ]
 
         save_df_to_csv(file_name="tf_tg_corr.csv", df=correlation)
         create_relationship(
@@ -242,12 +250,13 @@ def create_correlation(
 
     # OR-TG edges
     elif value_type == 0:
-        values = list(set(list(correlation.columns)) - set(["id", "ENSEMBL"]))
-        reformat = [
-            (i, "toFloat" if correlation[i].dtype == "float64" else "toInteger")
-            for i in values
-            if correlation[i].dtype != "object"
-        ]
+        values, reformat = get_values_reformat(df=correlation, match=["id", "ENSEMBL"])
+        # values = list(set(list(correlation.columns)) - set(["id", "ENSEMBL"]))
+        # reformat = [
+        #     (i, "toFloat" if correlation[i].dtype == "float64" else "toInteger")
+        #     for i in values
+        #     if correlation[i].dtype != "object"
+        # ]
 
         save_df_to_csv(file_name="or_tg_corr.csv", df=correlation)
         create_relationship(

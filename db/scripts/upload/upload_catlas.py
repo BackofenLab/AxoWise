@@ -2,14 +2,14 @@ import pandas as pd
 import numpy as np
 from neo4j import Driver
 from upload.upload_experiment import create_correlation, create_context
-from utils import execute_query
+from utils import execute_query, print_update
 
 __CATLAS__STUDY = {"name": "Catlas, Whole Mouse Brain", "source": "catlas.org/wholemousebrain/"}
 
 
 def create_source(cell_info: pd.DataFrame, driver: Driver):
-    id = 0
-    region, nuclei_counts, celltype, subtype, subsubtype = (
+    print_update(update_type="Node Creation", text="Study, (Sub-/Subsub-)Celltype and Source", color="blue")
+    _, nuclei_counts, celltype, subtype, subsubtype = (
         cell_info["region"],
         cell_info["nuclei_counts"],
         cell_info["celltype"],
@@ -59,3 +59,5 @@ def extend_db_from_catlas(
 
         correlation = catlas_correlation[catlas_correlation["cell_id"] == i["name"]].drop(columns=["cell_id"])
         create_correlation(correlation=correlation, source=source, value_type=0, driver=driver)
+
+    print_update(update_type="Done", text="Extending DB from Catlas Data", color="pink")

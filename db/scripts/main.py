@@ -69,33 +69,40 @@ def upload_workflow():
         ft_ft_overlap,
     ) = read_functional_files(complete=complete)
 
-    # TODO: Distance (correct, not dummy), MOTIF
-    (or_extended, catlas_or_context, catlas_correlation, catlas_celltype, distance_extended) = read_catlas_files()
+    # TODO: Distance (correct, not dummy), MOTIF (correct, not dummy)
+    (
+        or_extended,
+        catlas_or_context,
+        catlas_correlation,
+        catlas_celltype,
+        distance_extended,
+        motif_extended,
+    ) = read_catlas_files()
 
     print_update(update_type="Done", text="Reading files", color="pink")
 
-    # first_setup(
-    #     gene_nodes=genes_annotated,
-    #     tg_mean_count=tg_mean_count,
-    #     tf_mean_count=tf_mean_count,
-    #     or_nodes=or_extended,
-    #     or_context_values=da_values,
-    #     tg_context_values=de_values,
-    #     tf_tg_corr=tf_tg_corr,
-    #     or_tg_corr=or_tg_corr,
-    #     motif=motif,
-    #     distance=distance_extended,
-    #     ft_nodes=ft_nodes,
-    #     ft_gene=ft_gene,
-    #     ft_ft_overlap=ft_ft_overlap,
-    #     gene_gene_scores=gene_gene_scores,
-    #     or_mean_count=or_mean_count,
-    #     tf=tf,
-    # )
+    first_setup(
+        gene_nodes=genes_annotated,
+        tg_mean_count=tg_mean_count,
+        tf_mean_count=tf_mean_count,
+        or_nodes=or_extended,
+        or_context_values=da_values,
+        tg_context_values=de_values,
+        tf_tg_corr=tf_tg_corr,
+        or_tg_corr=or_tg_corr,
+        motif=motif_extended,
+        distance=distance_extended,
+        ft_nodes=ft_nodes,
+        ft_gene=ft_gene,
+        ft_ft_overlap=ft_ft_overlap,
+        gene_gene_scores=gene_gene_scores,
+        or_mean_count=or_mean_count,
+        tf=tf,
+    )
 
-    # catlas_extention(
-    #     catlas_or_context=catlas_or_context, catlas_correlation=catlas_correlation, catlas_celltype=catlas_celltype
-    # )
+    catlas_extention(
+        catlas_or_context=catlas_or_context, catlas_correlation=catlas_correlation, catlas_celltype=catlas_celltype
+    )
 
 
 if __name__ == "__main__":

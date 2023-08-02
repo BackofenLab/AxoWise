@@ -1,4 +1,4 @@
-from utils import time_function, print_update, save_df_to_csv
+from utils import time_function, print_update, save_df_to_csv, get_values_reformat
 from .upload_functions import create_nodes, create_relationship, update_nodes
 import pandas as pd
 from neo4j import Driver
@@ -67,14 +67,15 @@ def create_motif_edges(motif: pd.DataFrame, driver: Driver):
     """
     print_update(update_type="Edge Creation", text="MOTIF", color="cyan")
 
+    values, reformat = get_values_reformat(df=motif, match=["ENSEMBL", "id"])
     save_df_to_csv(file_name="motif.csv", df=motif)
     create_relationship(
         source_file="motif.csv",
         type_="MOTIF",
-        between=(("SYMBOL", "TF"), ("id", "id")),
+        between=(("ENSEMBL", "ENSEMBL"), ("id", "id")),
         node_types=("TF", "OR"),
-        values=["Motif"],
-        reformat_values=[],
+        values=values,
+        reformat_values=reformat,
         merge=False,
         driver=driver,
     )
@@ -87,14 +88,15 @@ def create_distance_edges(distance: pd.DataFrame, driver: Driver):
     """
     print_update(update_type="Edge Creation", text="DISTANCE", color="cyan")
 
+    values, reformat = get_values_reformat(df=distance, match=["id", "ENSEMBL"])
     save_df_to_csv(file_name="distance.csv", df=distance)
     create_relationship(
         source_file="distance.csv",
         type_="DISTANCE",
         between=(("id", "id"), ("ENSEMBL", "ENSEMBL")),
         node_types=("OR", "TG"),
-        values=["Distance"],
-        reformat_values=[("Distance", "toInteger")],
+        values=values,
+        reformat_values=reformat,
         merge=False,
         driver=driver,
     )
@@ -107,14 +109,15 @@ def create_string(gene_gene_scores: pd.DataFrame, driver: Driver):
     """
     print_update(update_type="Edge Creation", text="STRING", color="cyan")
 
+    values, reformat = get_values_reformat(df=gene_gene_scores, match=["ENSEMBL1", "ENSEMBL2"])
     save_df_to_csv(file_name="string_scores.csv", df=gene_gene_scores)
     create_relationship(
         source_file="string_scores.csv",
         type_="STRING",
         between=(("ENSEMBL", "ENSEMBL1"), ("ENSEMBL", "ENSEMBL2")),
         node_types=("TG", "TG"),
-        values=["Score"],
-        reformat_values=[("Score", "toInteger")],
+        values=values,
+        reformat_values=reformat,
         merge=False,
         driver=driver,
     )
@@ -148,28 +151,30 @@ def create_functional(
 
     print_update(update_type="Edge Creation", text="OVERLAP", color="cyan")
 
+    values, reformat = get_values_reformat(df=ft_ft_overlap, match=["source", "target"])
     save_df_to_csv(file_name="ft_overlap.csv", df=ft_ft_overlap)
     create_relationship(
         source_file="ft_overlap.csv",
         type_="OVERLAP",
         between=(("external_id", "source"), ("external_id", "target")),
         node_types=("FT", "FT"),
-        values=["Score"],
-        reformat_values=[("Score", "toFloat")],
+        values=values,
+        reformat_values=reformat,
         merge=False,
         driver=driver,
     )
 
     print_update(update_type="Edge Creation", text="LINK (Gene -> Functional Term)", color="cyan")
 
+    values, reformat = get_values_reformat(df=ft_gene, match=["ENSEMBL", "Term"])
     save_df_to_csv(file_name="ft_gene.csv", df=ft_gene)
     create_relationship(
         source_file="ft_gene.csv",
         type_="LINK",
         between=(("ENSEMBL", "ENSEMBL"), ("external_id", "Term")),
         node_types=("TG", "FT"),
-        values=[],
-        reformat_values=[],
+        values=values,
+        reformat_values=reformat,
         merge=False,
         driver=driver,
     )
