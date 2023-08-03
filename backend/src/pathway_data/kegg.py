@@ -1,6 +1,6 @@
 import re
 from string import Template
-
+import mygene
 import sys
 import os
 import requests
@@ -50,54 +50,6 @@ def get_pathway_file(id, kgml=False):
     return pathway_file
 
 
-def map_identifiers_to_STRING(identifiers, species=None, split=70):
-    template = _map_id_template
-    if species is None:
-        template = _map_id_template_no_species
-
-    if len(identifiers) > split:
-        i = 0
-        while True:
-            identifiers_chunk = identifiers[i : i + split]
-            endpoint = template.substitute(format="tsv", identifiers="%0d".join(identifiers_chunk), species=species)
-            identifiers_file = util.get(endpoint)
-            assert identifiers_file is not None
-            yield identifiers_file, i
-            if i + split >= len(identifiers):
-                break
-            else:
-                i += split
-    else:
-        endpoint = template.substitute(format="tsv", identifiers="%0d".join(identifiers), species=species)
-        identifiers_file = util.get(endpoint)
-        assert identifiers_file is not None
-        yield identifiers_file, 0
-
-
-def map_genes(pathway_genes, ncbi_id, kegg_id):
-    gene_ids, gene_short_names, gene_long_names = zip(*pathway_genes)
-    gene_ids = list(map(lambda gene_id: "{}:{}".format(kegg_id, gene_id), list(gene_ids)))
-    print("\tGenes:", len(gene_ids))
-
-    # Map KEGG gene identifiers to STRING external identifiers
-    kegg2external = dict()
-    for mapped_identifiers, idx_offset in map_identifiers_to_STRING(gene_ids, ncbi_id):
-        for idx, external_id, species_id, species_name, preferred_name, annotation in util.read_table(
-            mapped_identifiers, (int, str, int, str, str, str), delimiter="\t"
-        ):
-            gene_id = gene_ids[idx + idx_offset]
-            if gene_id in kegg2external:
-                print("\tMapping for {} not unique!".format(gene_id))
-            else:
-                kegg2external[gene_id] = external_id
-
-    num_not_mapped = len(gene_ids) - len(kegg2external)
-    if num_not_mapped > 0:
-        print("\t{} gene(s) could not be mapped to STRING external ID!".format(num_not_mapped))
-
-    return kegg2external
-
-
 def write_diseases(pathway_diseases, diseases_file, written_diseases):
     disease_ids, disease_names = zip(*pathway_diseases)
     for disease in pathway_diseases:
@@ -125,6 +77,33 @@ def write_compounds(pathway_compounds, compounds_file, written_compounds):
     return compound_ids
 
 
+def symbols_to_ensemble(symbols, species):
+    """
+    Convert a list of symbols to ensemble_ids
+
+    Arguments:
+    symbols: a list containing symbols to convert
+    species: species which the symbols belong to
+
+    Returns:
+    ensemble_list: A list of ensemble_ids
+    """
+    mg = mygene.MyGeneInfo()
+    ensembl_list = []
+    results = mg.querymany(symbols, scopes="symbol", fields="ensembl.gene", species=f"{species}")
+    for result in results:
+        if "ensembl" in result:
+            res = result["ensembl"]
+            if isinstance(res, list):
+                ensembl_id = res[0]["gene"]
+            else:
+                ensembl_id = res["gene"]
+            ensembl_list.append(ensembl_id)
+        else:
+            print(f"{result['query']} not found")
+    return ensembl_list
+
+
 def scrapping(path, species):
     """
     Scraps relevant data from KEGG
@@ -134,7 +113,6 @@ def scrapping(path, species):
     species: the species of interest for scrapping
     """
     kegg_id = "mmu" if species == "mouse" else "hsa"
-    ncbi_id = "10090" if species == "mouse" else "9606"
 
     # Diseases, drugs & compounds
     diseases_file = open(os.path.join(path, "kegg_diseases.{}.tsv".format(species)), mode="w", encoding="utf-8")
@@ -187,7 +165,10 @@ def scrapping(path, species):
         # Genes
         has_genes = pathway_genes is not None
         if has_genes:
-            kegg2external = map_genes(pathway_genes, ncbi_id, kegg_id)
+            pathway_gene_symbols = []
+            for i in pathway_genes:
+                pathway_gene_symbols.append(i[1])
+            kegg2external = symbols_to_ensemble(pathway_gene_symbols, species)
 
         # Diseases
         has_diseases = pathway_diseases is not None
@@ -206,11 +187,11 @@ def scrapping(path, species):
 
         # Save the pathway
         description_column = pathway_description if has_description else ""
-        genes_column = ";".join(kegg2external.values()) if has_genes else ""
-        classes_column = ";".join(pathway_classes) if has_classes else ""
-        diseases_column = ";".join(disease_ids) if has_diseases else ""
-        drugs_column = ";".join(drug_ids) if has_drugs else ""
-        compounds_column = ";".join(compound_ids) if has_compounds else ""
+        genes_column = kegg2external if has_genes else ""
+        classes_column = ",".join(pathway_classes) if has_classes else ""
+        diseases_column = ",".join(disease_ids) if has_diseases else ""
+        drugs_column = ",".join(drug_ids) if has_drugs else ""
+        compounds_column = ",".join(compound_ids) if has_compounds else ""
         pathways_file.write(
             "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(
                 pathway_id,
