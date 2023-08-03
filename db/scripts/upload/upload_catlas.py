@@ -16,6 +16,7 @@ def create_source(cell_info: pd.DataFrame, driver: Driver):
         cell_info["subtype"],
         cell_info["sub-subtype"],
     )
+    flag = True
     query = ""
 
     # Create Study
@@ -31,14 +32,16 @@ def create_source(cell_info: pd.DataFrame, driver: Driver):
         query += f""" MERGE (n1)-[:IS]->(n2)"""
     else:
         query += """ CREATE (n1)-[:HAS]->(o:Source)<-[:HAS]-(s)"""
+        flag = False
 
     # Create Cell Node (for Subsubtype)
-    if subsubtype is not np.NaN:
-        query += f""" MERGE (n3:Celltype{{name: "{subsubtype}"}})"""
-        query += f""" MERGE (n2)-[:IS]->(n3)"""
-        query += """ CREATE (n3)-[:HAS]->(o:Source)<-[:HAS]-(s)"""
-    else:
-        query += """ CREATE (n2)-[:HAS]->(o:Source)<-[:HAS]-(s)"""
+    if flag:
+        if subsubtype is not np.NaN:
+            query += f""" MERGE (n3:Celltype{{name: "{subsubtype}"}})"""
+            query += f""" MERGE (n2)-[:IS]->(n3)"""
+            query += """ CREATE (n3)-[:HAS]->(o:Source)<-[:HAS]-(s)"""
+        else:
+            query += """ CREATE (n2)-[:HAS]->(o:Source)<-[:HAS]-(s)"""
 
     query += """ SET o.id = id(o)"""
     query += """ RETURN id(o) as id """
@@ -52,6 +55,7 @@ def extend_db_from_catlas(
     catlas_or_context: pd.DataFrame, catlas_correlation: pd.DataFrame, catlas_celltype: pd.DataFrame, driver: Driver
 ):
     for _, i in catlas_celltype.iterrows():
+        print_update(update_type="Uploading", text=i["name"], color="pink")
         source = create_source(cell_info=i, driver=driver)
 
         or_context = catlas_or_context[catlas_or_context["cell_id"] == i["name"]].drop(columns=["cell_id"])

@@ -17,7 +17,7 @@ os.environ["_FUNCTION_TIME_PATH"] = "../source/misc/function_times.tsv"
 os.environ["_TIME_FUNCTIONS"] = str(False)
 os.environ["_SILENT"] = str(False)
 os.environ["_PRODUCTION"] = str(True)
-os.environ["_UPDATE_NEO4J"] = str(False)
+os.environ["_UPDATE_NEO4J"] = str(True)
 
 
 def read_experiment_files():
