@@ -123,7 +123,9 @@ def create_or_meancount(mean_count: pd.DataFrame, source: int, driver: Driver):
 
 
 @time_function
-def create_context(context: pd.DataFrame, source: int, value_type: int, driver: Driver):  # value_type: 1 -> TG, 0 -> OR
+def create_context(
+    context: pd.DataFrame, context_type: str, source: int, value_type: int, driver: Driver
+):  # value_type: 1 -> TG, 0 -> OR
     """
     Creates Context nodes from Experiment data if not already existent in DB, and DE / DA edges between Context and OR/TG
     """
@@ -133,10 +135,15 @@ def create_context(context: pd.DataFrame, source: int, value_type: int, driver: 
     nodes = context["Context"].unique()
     node_df = pd.DataFrame.from_records(data=[{"Context": c} for c in nodes])
 
-    values, reformat = get_values_reformat(df=node_df, match=[])
+    values, reformat = get_values_reformat(df=node_df, match=["Context"])
     save_df_to_csv(file_name="context.csv", df=node_df, override_prod=True)
     create_nodes(
-        source_file="context.csv", type_="Context", id="Context", values=values, reformat_values=reformat, driver=driver
+        source_file="context.csv",
+        type_=f"Context:{context_type}",
+        id="Context",
+        values=values,
+        reformat_values=reformat,
+        driver=driver,
     )
 
     print_update(update_type="Edge Creation", text="HAS for Source, Context", color="cyan")
@@ -297,9 +304,13 @@ def extend_db_from_experiment(
         create_or_meancount(mean_count=or_mean_count, source=id_source, driver=driver)
 
     if tg_context_values is not None:
-        create_context(context=tg_context_values, source=id_source, value_type=1, driver=driver)
+        create_context(
+            context_type="Timeframe", context=tg_context_values, source=id_source, value_type=1, driver=driver
+        )
     if or_context_values is not None:
-        create_context(context=or_context_values, source=id_source, value_type=0, driver=driver)
+        create_context(
+            context_type="Timeframe", context=or_context_values, source=id_source, value_type=0, driver=driver
+        )
 
     if tf_tg_corr is not None:
         create_correlation(correlation=tf_tg_corr, source=id_source, value_type=1, driver=driver)

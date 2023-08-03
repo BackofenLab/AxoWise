@@ -14,7 +14,7 @@ def create_gene_nodes(nodes: pd.DataFrame, driver: Driver):
     """
     print_update(update_type="Node Creation", text="Genes from ENSEMBL", color="blue")
 
-    values, reformat = get_values_reformat(df=nodes, match=[])
+    values, reformat = get_values_reformat(df=nodes, match=["ENSEMBL"])
     save_df_to_csv(file_name="genes.csv", df=nodes, override_prod=True)
     create_nodes(
         source_file="genes.csv",
@@ -51,7 +51,7 @@ def create_or_nodes(nodes: pd.DataFrame, driver: Driver):
     """
     print_update(update_type="Node Creation", text="Open Region", color="blue")
 
-    values, reformat = get_values_reformat(df=nodes, match=[])
+    values, reformat = get_values_reformat(df=nodes, match=["id"])
     save_df_to_csv(file_name="or.csv", df=nodes, override_prod=True)
     create_nodes(
         source_file="or.csv",
@@ -141,8 +141,7 @@ def create_functional(
     """
     print_update(update_type="Node Creation", text="Functional Term", color="blue")
 
-    # TODO: Change "Terms" to "FT" and "external_id" to "Term"
-    values, reformat = get_values_reformat(df=ft_nodes, match=[])
+    values, reformat = get_values_reformat(df=ft_nodes, match=["Term"])
     save_df_to_csv(file_name="ft_nodes.csv", df=ft_nodes, override_prod=True)
     create_nodes(
         source_file="ft_nodes.csv",
@@ -161,7 +160,7 @@ def create_functional(
     create_relationship(
         source_file="ft_overlap.csv",
         type_="OVERLAP",
-        between=(("external_id", "source"), ("external_id", "target")),
+        between=(("Term", "source"), ("Term", "target")),
         node_types=("FT", "FT"),
         values=values,
         reformat_values=reformat,
@@ -176,7 +175,7 @@ def create_functional(
     create_relationship(
         source_file="ft_gene.csv",
         type_="LINK",
-        between=(("ENSEMBL", "ENSEMBL"), ("external_id", "Term")),
+        between=(("ENSEMBL", "ENSEMBL"), ("Term", "Term")),
         node_types=("TG", "FT"),
         values=values,
         reformat_values=reformat,
