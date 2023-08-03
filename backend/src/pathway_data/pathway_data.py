@@ -42,6 +42,10 @@ def download_data(species):
         return "Invalid species."
 
     response = requests.get(url)
+    # Handle 404 error (Case: database updated for human but mouse not yet available)
+    if response.status_code == 404:
+        print(f"The URL {url} returned a 404 error")
+        return 0
     with open(f"data/{species}_all_pathways.gmt", "wb") as file:
         file.write(response.content)
     return 1
@@ -60,10 +64,10 @@ def read_data(file_name):
         for row in reader:
             name = row[0].split("%")
             source = name[1]
-            id = name[2]
+            ids = name[2]
             descr = row[1]
             proteins = ",".join(row[2:])
-            data.append([id, descr, source, proteins])
+            data.append([ids, descr, source, proteins])
         df = pd.DataFrame(data, columns=["id", "name", "category", "proteins"])
     return df
 
@@ -185,8 +189,9 @@ def main():
     kegg_update, geneset_update, geneset_name, kegg_version = download_necessary(filepath)
     if geneset_update:
         # Download the data from Baderlabs
-        print("Downloading Pathway data for mouse")
-        download_data("mouse")
+        if download_data("mouse") == 0:
+            print("Mouse file not available on the server yet")
+            return
         print("Geneset download succesfull for mouse")
         # print("Downloading Pathway data for human") uncomment once human will be included
         # download_data("human") uncomment once human will be included
