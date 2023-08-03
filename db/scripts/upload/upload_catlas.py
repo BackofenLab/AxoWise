@@ -59,7 +59,7 @@ def extend_db_from_catlas(
         source = create_source(cell_info=i, driver=driver)
 
         or_context = catlas_or_context[catlas_or_context["cell_id"] == i["name"]].drop(columns=["cell_id"])
-        create_context(context=or_context, source=source, value_type=0, driver=driver)
+        create_context(context_type="Location", context=or_context, source=source, value_type=0, driver=driver)
 
         correlation = catlas_correlation[catlas_correlation["cell_id"] == i["name"]].drop(columns=["cell_id"])
         create_correlation(correlation=correlation, source=source, value_type=0, driver=driver)

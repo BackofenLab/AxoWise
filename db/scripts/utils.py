@@ -40,7 +40,6 @@ def stop_driver(driver: neo4j.Driver):
 
 
 def execute_query(query: str, read: bool, driver: neo4j.Driver) -> pd.DataFrame:
-    # print(query)
     if os.getenv("_UPDATE_NEO4J") == str(True):
         with driver.session() as session:
             # TODO Remove if statement?
@@ -51,6 +50,7 @@ def execute_query(query: str, read: bool, driver: neo4j.Driver) -> pd.DataFrame:
                 tmp = session.run(query).values()
                 return tmp
     else:
+        print(query)
         return [[0]]
 
 
@@ -208,6 +208,7 @@ def retrieve_gene_id_by_symbol(symbol: str):
 
 def get_values_reformat(df: pd.DataFrame, match: list):
     values = list(set(list(df.columns)) - set(match))
-    reformat = [(i, "toFloat" if df[i].dtype == "float64" else "toInteger") for i in values if df[i].dtype != "object"]
-
+    reformat = [
+        (i, "toFloat" if df[i].dtype == "float64" else "toInteger") for i in list(df.columns) if df[i].dtype != "object"
+    ]
     return values, reformat
