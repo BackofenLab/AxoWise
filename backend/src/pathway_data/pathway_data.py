@@ -84,10 +84,11 @@ def read_kegg_data(specifier):
     kegg_df = kegg_df.rename(columns={"genes_external_ids": "proteins"})
     return kegg_df
 
+
 def symbols_to_ensembl(symbols, species):
     """
     Maps Symbols to Ensemble_Gene_id
-    
+
     Arguments:
     symbols: list of symbols to be mapped
     species: species that the symbols belong to, eg: "mouse"
@@ -97,19 +98,20 @@ def symbols_to_ensembl(symbols, species):
     """
     mapping = {}
     mg = mygene.MyGeneInfo()
-    results = mg.querymany(symbols, scopes='symbol', fields='ensembl.gene', species=f'{species}')
+    results = mg.querymany(symbols, scopes="symbol", fields="ensembl.gene", species=f"{species}")
     for result in results:
-        if 'ensembl' in result:
-            res = result['ensembl']
-            old = result['query']
+        if "ensembl" in result:
+            res = result["ensembl"]
+            old = result["query"]
             if isinstance(res, list):
-                ensembl_id = res[0]['gene']
+                ensembl_id = res[0]["gene"]
             else:
-                ensembl_id = res['gene']
+                ensembl_id = res["gene"]
             mapping[old] = ensembl_id
         else:
             print(f"{result['query']} not found")
     return mapping
+
 
 def data_formatting(species, folder):
     """
