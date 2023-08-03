@@ -33,10 +33,10 @@ def download_data(species):
     """
 
     if species.lower() == "mouse":
-        url = "http://download.baderlab.org/EM_Genesets/current_release/Mouse/UniProt/Mouse_GO_AllPathways_with_GO_iea_July_03_2023_UniProt.gmt"
+        url = "http://download.baderlab.org/EM_Genesets/current_release/Mouse/symbol/Mouse_GO_AllPathways_with_GO_iea_July_03_2023_symbol.gmt"
 
     elif species.lower() == "human":
-        url = "http://download.baderlab.org/EM_Genesets/current_release/Human/UniProt/Human_GO_AllPathways_with_GO_iea_July_03_2023_UniProt.gmt"
+        url = "http://download.baderlab.org/EM_Genesets/current_release/Human/symbol/Human_GO_AllPathways_with_GO_iea_July_03_2023_symbol.gmt"
 
     else:
         return "Invalid species."
