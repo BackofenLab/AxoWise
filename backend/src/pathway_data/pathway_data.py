@@ -7,6 +7,7 @@ import kegg
 import sys
 import datetime
 import mygene
+import re
 
 sys.path.append("..")
 import util.data_util as util
@@ -24,6 +25,26 @@ def parse_cli_args():
     return parser.parse_args()
 
 
+def get_url(species):
+    """
+    Gets the url for the Symbol file
+
+    Arguments:
+    species: the species which data we want to download
+    """
+    url = f"http://download.baderlab.org/EM_Genesets/current_release/{species.capitalize()}/symbol/"
+    response = requests.get(url)
+    if response.status_code == 404:
+        print(f"The URL {url} returned a 404 error")
+        return 0
+    match = re.search(
+        rf'{species.capitalize()}_GO_AllPathways_with_GO_iea_[A-Z][a-z]+_\d{{2}}_\d{{4}}_symbol\.gmt(?=">)',
+        response.text,
+    )
+    result = match.group()
+    return url + result
+
+
 def download_data(species):
     """
     Downloads the data from Baderlabs
@@ -31,27 +52,24 @@ def download_data(species):
     Arguments:
     species: the species which data we want to download
     """
-
-    if species.lower() == "mouse":
-        url = "http://download.baderlab.org/EM_Genesets/current_release/Mouse/symbol/Mouse_GO_AllPathways_with_GO_iea_July_03_2023_symbol.gmt"
-
-    elif species.lower() == "human":
-        url = "http://download.baderlab.org/EM_Genesets/current_release/Human/symbol/Human_GO_AllPathways_with_GO_iea_July_03_2023_symbol.gmt"
-
-    else:
-        return "Invalid species."
+    url = get_url(species)
+    if url == 0:
+        return 0
 
     response = requests.get(url)
     # Handle 404 error (Case: database updated for human but mouse not yet available)
     if response.status_code == 404:
         print(f"The URL {url} returned a 404 error")
         return 0
+    if len(response.text) == 0:
+        print("Empty gmt file, come back later")
+        return 0
     with open(f"data/{species}_all_pathways.gmt", "wb") as file:
         file.write(response.content)
     return 1
 
 
-def read_data(file_name):
+def read_data(species, file_name):
     """
     Reads the data from the specified file and returns it as a DataFrame.
 
@@ -72,7 +90,7 @@ def read_data(file_name):
             data.append([ids, descr, source])
             prots.append(proteins)
             unique_proteins.extend([item for item in proteins if item not in unique_proteins])
-    mapping = symbols_to_ensembl(unique_proteins, "mouse")
+    mapping = symbols_to_ensembl(unique_proteins, f"{species}")
     lis = []
     for i in prots:
         k = []
@@ -140,7 +158,7 @@ def data_formatting(species, folder):
     file_name = os.path.join(folder, f"{species.lower()}_all_pathways.gmt")
 
     # Read the data from Baderlabs
-    df = read_data(file_name)
+    df = read_data(species, file_name)
 
     # Read the KEGG data
     kegg_df = read_kegg_data(species.lower())
