@@ -58,6 +58,8 @@ def read_data(file_name):
     Arguments:
     file_name: the name of the file to read
     """
+    prots = []
+    unique_proteins = []
     with open(file_name, "r") as file:
         reader = csv.reader(file, delimiter="\t")
         data = []
@@ -66,9 +68,20 @@ def read_data(file_name):
             source = name[1]
             ids = name[2]
             descr = row[1]
-            proteins = ",".join(row[2:])
-            data.append([ids, descr, source, proteins])
-        df = pd.DataFrame(data, columns=["id", "name", "category", "proteins"])
+            proteins = list(filter(None, row[2:]))
+            data.append([ids, descr, source])
+            prots.append(proteins)
+            unique_proteins.extend([item for item in proteins if item not in unique_proteins])
+    mapping = symbols_to_ensembl(unique_proteins, "mouse")
+    lis = []
+    for i in prots:
+        k = []
+        for j in i:
+            if j in mapping:
+                k.append(mapping[j])
+        lis.append(k)
+    df = pd.DataFrame(data, columns=["id", "name", "category"])
+    df["proteins"] = lis
     return df
 
 
