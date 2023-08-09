@@ -19,3 +19,5 @@ app.use(VueAxios, axios)
 app.component("v-select", vSelect)
 app.config.globalProperties.emitter = emitter
 app.mount('#app')
+
+export { emitter };
