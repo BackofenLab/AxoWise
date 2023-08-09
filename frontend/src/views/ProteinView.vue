@@ -15,6 +15,8 @@
         :node_color_index='node_color_index'
         :node_size_index='node_size_index'
         :edge_color_index='edge_color_index'
+        :node_modul_index='node_modul_index'
+
       ></MainVis>
       </keep-alive>
       <keep-alive>
@@ -46,12 +48,12 @@
     </keep-alive>
       <keep-alive>
       <div class="header-menu">
-        <ModularityClass
+        <!-- <ModularityClass
         :gephi_data='gephi_data'
         :type='type'
         :active_subset='active_subset' @active_subset_changed = 'active_subset = $event'
         :subactive_subset='subactive_subset' @subactive_subset_changed = 'subactive_subset = $event'
-        > </ModularityClass>
+        > </ModularityClass> -->
       </div>
     </keep-alive>
       <keep-alive>
@@ -72,7 +74,7 @@
 import MainVis from '@/components/visualization/MainVis.vue'
 import PaneSystem from '@/components/pane/PaneSystem.vue'
 import EnrichmentTool from '@/components/enrichment/EnrichmentTool.vue'
-import ModularityClass from '../components/interface/ModularityClass.vue'
+// import ModularityClass from '../components/interface/ModularityClass.vue'
 import ToggleLabel from '../components/interface/ToggleLabel.vue'
 import ConnectedGraph from '../components/interface/ConnectedGraph.vue'
 import MainToolBar from '../components/toolbar/MainToolBar.vue'
@@ -83,7 +85,7 @@ export default {
     MainVis,
     PaneSystem,
     EnrichmentTool,
-    ModularityClass,
+    // ModularityClass,
     MainToolBar,
     ToggleLabel,
     ConnectedGraph
@@ -103,6 +105,7 @@ export default {
       active_subset: null,
       subactive_subset: null,
       unconnected_nodes: null,
+      node_modul_index: null,
       type: 'protein'
     }
   },
@@ -145,6 +148,12 @@ export default {
 
     const maingraph = new Set(com.gephi_data.subgraph)
     com.unconnected_nodes = com.gephi_data.nodes.filter(item => !maingraph.has(item.id));
+    
+    com.node_modul_index = new Set()
+    for (var idm in com.unconnected_nodes) {
+      var node_m = com.unconnected_nodes[idm];
+      com.node_modul_index.add(node_m.attributes["Modularity Class"])
+    }
 
     this.emitter.on("decoloumn", state => {
       com.active_decoloumn = state
