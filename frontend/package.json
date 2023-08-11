@@ -20,6 +20,7 @@
     "mitt": "^3.0.0",
     "random-color-rgb": "^1.1.1",
     "sigma": "^1.2.2",
+    "smallest-enclosing-circle": "^1.0.2",
     "vue": "^3.2.13",
     "vue-axios": "^3.5.2",
     "vue-router": "^4.0.3",
