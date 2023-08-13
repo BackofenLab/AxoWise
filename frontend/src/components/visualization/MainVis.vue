@@ -68,6 +68,7 @@ export default {
       rectWidth: 0,
       rectHeight: 0,
       state: null,
+      graph_state:null,
       highlight_opacity: 0.2,
       base_opacity: 0.2,
       rectangular_select: {
