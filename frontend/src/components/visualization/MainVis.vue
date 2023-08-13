@@ -34,7 +34,7 @@ import smallestEnclosingCircle from 'smallest-enclosing-circle';
 
 sigma.canvas.labels.def = customLabelRenderer
 sigma.canvas.nodes.def = customNodeRenderer
-sigma.renderers.canvas = sigmaRenderer
+sigma.renderers.canvas.prototype.resize = sigmaRenderer
 
 var sigma_instance = null;
 var three_instance = null;
