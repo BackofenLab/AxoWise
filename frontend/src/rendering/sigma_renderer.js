@@ -9,10 +9,7 @@
      * @param  {?number}                height The new height of the container.
      * @return {sigma.renderers.canvas}        Returns the instance itself.
      */
-<<<<<<< HEAD
-=======
     export default sigma.renderers.canvas.prototype.resize = function(w, h) {
->>>>>>> f0d9874c41b680f5b7d381cfe6b60b480a134f2b
       emitter.emit('resizeCircle')
       var k,
           oldWidth = this.width,
