@@ -247,7 +247,7 @@
 
             },
             shouldDisplayOption(entry) {
-                return this.filt_terms.includes(entry);
+                return this.filt_terms.has(entry);
             },
             visualize_layers(){
                 var com = this;
@@ -321,7 +321,7 @@
                 });
                 }
 
-                return filtered;
+                return new Set(filtered);
             },
     },
 }
