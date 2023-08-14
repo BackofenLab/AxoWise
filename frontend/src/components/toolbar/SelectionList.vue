@@ -101,10 +101,10 @@ export default {
 				step: 1
 			},
             pr_boundary: {
-                value: 0,
-                min: 0,
-                max: 1,
-                step: 0.01
+                value: 0.0001,
+				min: 0,
+				max: 0.02,
+				step: 0.0001
             },
             bc_boundary: {
 				value: 0,
