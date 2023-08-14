@@ -83,18 +83,10 @@
                 </div>
             </div>
             <div class="highlight_main">
-                <HubsSelection
+                <SelectionList
                 :gephi_data='gephi_data'
-                ></HubsSelection>
-                <!-- <EigenvectorCentrality
-                :gephi_data='gephi_data'
-                ></EigenvectorCentrality> -->
-                <PageRank
-                :gephi_data='gephi_data'
-                ></PageRank>
-                <BetweenesCentrality
-                :gephi_data='gephi_data'
-                ></BetweenesCentrality>
+                ></SelectionList>
+
             </div>
         </div>
 
@@ -111,11 +103,7 @@ import ProteinList from '@/components/toolbar/ProteinList.vue'
 import SelectionWindow from '@/components/toolbar/SelectionWindow.vue'
 import SearchBar from '@/components/toolbar/SearchBar.vue'
 import EdgeOpacity from '@/components/toolbar/EdgeOpacity.vue'
-import HubsSelection from '@/components/toolbar/select_options/HubsSelection.vue'
-// Excluded this statistics since its not needed at the current status
-// import EigenvectorCentrality from '@/components/toolbar/select_options/EigenvectorCentrality.vue'
-import PageRank from '@/components/toolbar/select_options/PageRank.vue'
-import BetweenesCentrality from '@/components/toolbar/select_options/BetweenesCentrality.vue'
+import SelectionList from '@/components/toolbar/SelectionList.vue'
 
 export default {
     name: 'MainToolBar',
@@ -129,10 +117,7 @@ export default {
         SelectionWindow,
         SearchBar,
         EdgeOpacity,
-        HubsSelection,
-        // EigenvectorCentrality,
-        PageRank,
-        BetweenesCentrality,
+        SelectionList,
         NodeLabelSelect
 
     },

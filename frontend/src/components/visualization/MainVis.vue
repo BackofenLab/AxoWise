@@ -2,8 +2,19 @@
   <div class="visualization">
     <div id="sigma-webgl"></div>
     <div id="sigma-canvas" :class="{'loading': threeview}" class="sigma-parent" ref="sigmaContainer" @contextmenu.prevent="handleSigmaContextMenu">
-        <img class="twoview" v-show="threeview" v-on:click="two_view" src="@/assets/share-2.png" alt="Center Icon">
+      <div
+      v-for="(circle, index) in moduleSet"
+      :key="index"
+      :class="{
+        'outside': !isMouseInside(circle.data),
+        'inside': isMouseInside(circle.data) && !unconnectedActive(circle.modularity),
+      }"
+      v-bind:style="getCircleStyle(circle.data)"
+    ></div>
+      
+      <img class="twoview" v-show="threeview" v-on:click="two_view" src="@/assets/share-2.png" alt="Center Icon">
     </div>
+    
   </div>
 </template>
 
@@ -15,12 +26,15 @@ import saveAsPNG from '../../rendering/saveAsPNG';
 import saveAsSVG from '../../rendering/saveAsSVG';
 import customLabelRenderer from '../../rendering/customLabelRenderer';
 import customNodeRenderer from '../../rendering/customNodeRenderer';
+import sigmaRenderer from '../../rendering/sigma_renderer';
 import ForceGraph3D from '3d-force-graph';
 import "@/rendering/astarAlgorithm.js"
 import randomColorRGB from 'random-color-rgb'
+import smallestEnclosingCircle from 'smallest-enclosing-circle';
 
 sigma.canvas.labels.def = customLabelRenderer
 sigma.canvas.nodes.def = customNodeRenderer
+sigma.renderers.canvas.prototype.resize = sigmaRenderer
 
 var sigma_instance = null;
 var three_instance = null;
@@ -41,7 +55,7 @@ sigma.classes.graph.addMethod('ensemblIdToNode', function(ensembl_id) {
 
 export default {
   name: 'MainVis',
-  props: ['gephi_data', 'unconnected_nodes', 'active_node', 'active_term', 'active_subset','active_termlayers','subactive_subset', 'active_layer', 'active_decoloumn', 'active_combine','node_color_index','node_size_index', 'edge_color_index', 'export_graph'],
+  props: ['gephi_data', 'unconnected_nodes', 'active_node', 'active_term', 'active_subset','active_termlayers','subactive_subset', 'active_layer', 'active_decoloumn', 'active_combine','node_color_index','node_size_index', 'edge_color_index','node_modul_index', 'export_graph'],
   emits: ['active_node_changed', 'active_term_changed', 'active_subset_changed', 'active_decoloumn_changed', 'active_termlayers_changed', 'subactive_subset_changed'],
   data() {
     return {
@@ -54,6 +68,7 @@ export default {
       rectWidth: 0,
       rectHeight: 0,
       state: null,
+      graph_state:null,
       highlight_opacity: 0.2,
       base_opacity: 0.2,
       rectangular_select: {
@@ -65,7 +80,12 @@ export default {
       }, 
       label_active_dict: {},
       special_label: false,
-      colorPalette: {}
+      colorPalette: {},
+      moduleSet: null,
+      sigma_instance: null,
+      mouseX: 0,
+      mouseY: 0,
+      clusterDict: new Set()
     }
   },
   watch: {
@@ -541,6 +561,8 @@ export default {
   },
   mousemove: function(e) {
       var com = this;
+      this.mouseX = e.pageX;
+      this.mouseY = e.pageY;
       if (com.rectangular_select.active) {
           var context = com.rectangular_select.context;
           var rectangle = com.rectangular_select.rectangle;
@@ -558,6 +580,9 @@ export default {
   },
   mouseup: function(e) {
       var com = this;
+      for (var element in this.moduleSet){
+        if(this.isMouseInside(this.moduleSet[element].data)) this.getClusterElements(this.moduleSet[element])
+      }
       if (e.button == 2) {
           com.restore_surface();
           com.rectangular_select.active = false;
@@ -819,6 +844,67 @@ export default {
       else n.hidden = true;
     });
     sigma_instance.refresh()
+  },
+  get_module_circles () {
+
+    var moduleSet = {}
+    this.moduleSet = []
+
+    sigma_instance.graph.nodes().forEach(n =>{
+
+      if(moduleSet[n.attributes["Modularity Class"]]) moduleSet[n.attributes["Modularity Class"]].push({x: n["renderer1:x"],y: n["renderer1:y"]});
+      else moduleSet[n.attributes["Modularity Class"]] = [{x: n["renderer1:x"],y: n["renderer1:y"]}];
+    });
+
+    for (const element in moduleSet){
+    
+      this.moduleSet.push({ modularity: element, data: smallestEnclosingCircle(moduleSet[element])})
+
+    }
+    
+
+  },
+  getCircleStyle(circle){
+
+    return {
+        width: `${(circle.r+10) * 2}px`,
+        height: `${(circle.r+10) * 2}px`,
+        borderRadius: "50%", // Set border-radius to 50% to make it a circle
+        position: "absolute", // Position absolute to control x and y coordinates
+        left: `${circle.x - (circle.r+10)}px`,
+        top: `${circle.y - (circle.r+10)}px`,
+      };
+  },
+    isMouseInside(circle) {
+      const distance = Math.sqrt(
+        Math.pow(circle.x - this.mouseX, 2) + Math.pow(circle.y - this.mouseY, 2)
+      );
+      return distance < circle.r;
+    },
+    unconnectedActive(circle) {
+      return (this.node_modul_index.has(circle) && this.graph_state)
+    },
+  getClusterElements(circle) {
+    var com = this;
+    var nodeSet = []
+
+    if(this.active_subset) {
+      nodeSet.push(...com.active_subset)
+    }else {
+      com.clusterDict = new Set()
+    }
+
+    sigma_instance.graph.nodes().forEach(function (node) {
+      if (node.attributes["Modularity Class"] == circle.modularity){
+        nodeSet.push(node)
+      }
+    });
+
+    if(com.clusterDict.has(circle.modularity)) com.clusterDict.delete(circle.modularity)
+    else com.clusterDict.add(circle.modularity)
+
+    this.$emit('active_subset_changed', nodeSet.filter(item => com.clusterDict.has(item.attributes["Modularity Class"])))
+    
   }
 
 },
@@ -827,7 +913,7 @@ export default {
 
     //Initializing the sigma instance to draw graph network
 
-    sigma_instance= new sigma();
+    sigma_instance = new sigma();
     var camera = sigma_instance.addCamera();
 
     sigma_instance.addRenderer({
@@ -845,11 +931,10 @@ export default {
 
     sigma_instance.graph.clear();
     sigma_instance.graph.read(com.gephi_data);
-    
 
     com.edit_opacity('full')
 
-    
+    this.get_module_circles()
 
     var keyState = {};
 
@@ -902,6 +987,10 @@ export default {
       this.$emit('active_subset_changed', state)
     });
 
+    this.emitter.on("resizeCircle", () => {
+      this.get_module_circles()
+    });
+
     this.emitter.on("searchEnrichment", state => {
       this.$emit('active_term_changed', state)
     });
@@ -921,6 +1010,7 @@ export default {
     
     this.emitter.on("centerGraph", () => {
       sigma_instance.camera.goTo({ x: 0, y: 0, ratio: 1, angle: sigma_instance.camera.angle });
+      this.get_module_circles()
     });
     
     this.emitter.on("exportGraph", (params) => {
@@ -958,7 +1048,7 @@ export default {
   },
   activated() {
     sigma_instance.refresh()
-  }
+  },
 }
 </script>
 
@@ -1024,6 +1114,17 @@ backdrop-filter: blur(10px);
 .sigma-label {
 color: #fff; /* set the font color to white */
 }
+
+.inside {
+  background-color: rgba(255, 255, 255, 0.4);
+  border-style: solid;
+  border-width: 1px;
+  border-color: white;
+}
+.outside {
+  background-color: transparent;
+}
+
 </style>
   
   

@@ -44,18 +44,9 @@
                 </div>
             </div>
             <div class="highlight_main">
-                <HubsSelection
+                <SelectionList
                 :term_data='term_data'
-                ></HubsSelection>
-                <BetweenesCentrality
-                :term_data='term_data'
-                ></BetweenesCentrality>
-                <PadjSelection
-                :term_data='term_data'
-                ></PadjSelection>
-                <PageRank
-                :term_data='term_data'
-                ></PageRank>
+                ></SelectionList>
             </div>
         </div>
 
@@ -80,12 +71,8 @@ import TermConnectedGraph from '@/components/term_graph/TermConnectedGraph.vue'
 import TermSearch from '@/components/term_graph/TermSearch.vue'
 import FDRValue from '@/components/term_graph/FDRValue.vue'
 import SelectionWindow from '@/components/toolbar/SelectionWindow.vue'
-import HubsSelection from '@/components/toolbar/select_options/HubsSelection.vue'
-import PadjSelection from '@/components/term_graph/PadjSelection.vue'
-import BetweenesCentrality from '@/components/toolbar/select_options/BetweenesCentrality.vue'
-// Excluded this statistics since its not needed at the current status
-// import EigenvectorCentrality from '@/components/toolbar/select_options/EigenvectorCentrality.vue'
-import PageRank from '@/components/toolbar/select_options/PageRank.vue'
+import SelectionList from '@/components/toolbar/SelectionList.vue'
+
 
 export default {
     name: 'TermToolBar',
@@ -98,11 +85,7 @@ export default {
         FDRValue,
         NodeLabelSelect,
         SelectionWindow,
-        HubsSelection,
-        BetweenesCentrality,
-        PadjSelection,
-        // EigenvectorCentrality,
-        PageRank
+        SelectionList
 
     },
     data() {
