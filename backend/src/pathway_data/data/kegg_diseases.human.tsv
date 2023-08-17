@@ -1,0 +1,81 @@
+id	name
+H00039	Basal cell carcinoma
+H00020	Colorectal cancer
+H01025	Familial adenomatous polyposis
+H00019	Pancreatic cancer
+H00048	Hepatocellular carcinoma
+H00018	Gastric cancer
+H00042	Glioma
+H00032	Thyroid cancer
+H00003	Acute myeloid leukemia
+H00004	Chronic myeloid leukemia
+H00038	Melanoma
+H00021	Renal cell carcinoma
+H00022	Bladder cancer
+H00024	Prostate cancer
+H00026	Endometrial cancer
+H00031	Breast cancer
+H00013	Small cell lung cancer
+H00014	Non-small cell lung cancer
+H00009	Adult T-cell leukemia
+H00406	Acquired immunodeficiency syndrome (AIDS)
+H01563	HIV infection
+H00412	Hepatitis B
+H00413	Hepatitis C
+H02398	COVID-19
+H00398	Influenza
+H00399	Avian influenza
+H00394	Measles
+H00365	Herpes simplex virus infection
+H00368	Cytomegalovirus infection
+H00041	Kaposi sarcoma
+H00367	Infectious mononucleosis
+H00110	Cholera
+H00320	Helicobacter pylori infection
+H00277	Enterohemorrhagic Escherichia coli (EHEC) infection
+H00278	Enteropathogenic Escherichia coli (EPEC) infection
+H00111	Typhoid fever
+H00299	Shigellosis
+H00298	Yersiniosis
+H00319	Pertussis
+H00311	Legionellosis
+H00330	Methicillin-resistant Staphylococcal aureus (MRSA) infection
+H00331	Vancomycin-resistant Staphylococcal aureus (VRSA) infection
+H01409	Methicillin-sensitive Staphylococcus aureus (MSSA) infection
+H00342	Tuberculosis
+H00360	Amoebiasis
+H00361	Malaria
+H00435	Toxoplasmosis
+H00359	Leishmaniasis
+H00358	Chagas disease
+H00357	African trypanosomiasis
+H00079	Asthma
+H00080	Systemic lupus erythematosus
+H00630	Rheumatoid arthritis
+H00081	Hashimoto thyroiditis
+H00082	Graves disease
+H01227	Inflammatory bowel disease (IBD)
+H00083	Allograft rejection
+H00084	Graft-versus-host disease
+H01725	Primary immunodeficiency disease
+H00056	Alzheimer disease
+H00057	Parkinson disease
+H00058	Amyotrophic lateral sclerosis (ALS)
+H00059	Huntington disease
+H00063	Spinocerebellar ataxia (SCA)
+H01891	Autosomal recessive spinocerebellar ataxias
+H00061	Prion disease
+H01611	Alcohol dependence
+H00159	Tangier disease
+H02505	Atherosclerosis
+H00292	Hypertrophic cardiomyopathy
+H00293	Arrhythmogenic right ventricular cardiomyopathy
+H00294	Dilated cardiomyopathy
+H02498	Diabetic cardiomyopathy
+H00295	Viral myocarditis
+H00409	Type 2 diabetes mellitus
+H00408	Type 1 diabetes mellitus
+H00410	Maturity onset diabetes of the young (MODY)
+H02516	Alcoholic liver disease
+H01333	Non-alcoholic fatty liver disease
+H01431	Cushing syndrome
