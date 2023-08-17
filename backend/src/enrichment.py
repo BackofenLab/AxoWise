@@ -110,7 +110,10 @@ def functional_enrichment(driver: neo4j.Driver, in_proteins, species_id: Any):
     stopwatch.round("pvalue_enrichment")
 
     # calculate Benjamini-Hochberg FDR
+    p_vals = []
     rank_lst = []
+    # Set cutoff value for p_value and fdr_rate
+    cutoff = 1e-318
     prev = 0
     # Loop over p_value column in Dataframe
     for i, val in enumerate(df_terms["p_value"]):
@@ -120,11 +123,12 @@ def functional_enrichment(driver: neo4j.Driver, in_proteins, species_id: Any):
         if prev < p_adj and i != 0:
             p_adj = prev
         prev = p_adj
+        val, p_adj = (cutoff, cutoff) if val <= cutoff or p_adj <= cutoff else (val, p_adj)
+        p_vals += [val]
         rank_lst += [p_adj]
-
     # Update Dataframe
     df_terms["fdr_rate"] = rank_lst
-
+    df_terms["p_value"] = p_vals
     # Remove all entries where FDR >= 0.05
     df_terms = df_terms[df_terms["fdr_rate"] < alpha]
     df_terms = df_terms.reset_index(drop=True)
