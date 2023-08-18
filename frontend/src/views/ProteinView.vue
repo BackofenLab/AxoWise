@@ -33,12 +33,12 @@
       ></PaneSystem>
     </keep-alive>
       <keep-alive>
-      <EnrichmentTool
+      <PathwayMenu
         :gephi_data='gephi_data'
         @active_term_changed = 'active_term = $event'
         @active_termlayers_changed = 'active_termlayers = $event'
         @active_layer_changed = 'active_layer = $event'
-      ></EnrichmentTool>
+      ></PathwayMenu>
     </keep-alive>
       <keep-alive>
       <MainToolBar
@@ -57,14 +57,14 @@
       </div>
     </keep-alive>
       <keep-alive>
-      <ToggleLabel
+      <!-- <ToggleLabel
       :type='type'
       ></ToggleLabel>
       </keep-alive>
       <keep-alive>
       <ConnectedGraph
       :type='type'
-      ></ConnectedGraph>
+      ></ConnectedGraph> -->
     </keep-alive>
   </div>
 </template>
@@ -73,10 +73,10 @@
 // @ is an alias to /src
 import MainVis from '@/components/visualization/MainVis.vue'
 import PaneSystem from '@/components/pane/PaneSystem.vue'
-import EnrichmentTool from '@/components/enrichment/EnrichmentTool.vue'
+import PathwayMenu from '@/components/enrichment/PathwayMenu.vue'
 // import ModularityClass from '../components/interface/ModularityClass.vue'
-import ToggleLabel from '../components/interface/ToggleLabel.vue'
-import ConnectedGraph from '../components/interface/ConnectedGraph.vue'
+// import ToggleLabel from '../components/interface/ToggleLabel.vue'
+// import ConnectedGraph from '../components/interface/ConnectedGraph.vue'
 import MainToolBar from '../components/toolbar/MainToolBar.vue'
 
 export default {
@@ -84,11 +84,11 @@ export default {
   components: {
     MainVis,
     PaneSystem,
-    EnrichmentTool,
+    PathwayMenu,
     // ModularityClass,
     MainToolBar,
-    ToggleLabel,
-    ConnectedGraph
+    // ToggleLabel,
+    // ConnectedGraph
   },
   data() {
     return {
