@@ -23,7 +23,7 @@ export default {
     #pathways-list {
         width: 32.83%;
         height: 96.92%;
-        position: fixed;
+        position: absolute;
         top:50%;
         transform: translateY(-50%);
         margin-left: 0.28%;
@@ -34,14 +34,14 @@ export default {
     #pathway-search {
         width: 37.54%;
         height: 11.16%;
-        position: fixed;
+        position: absolute;
     }
 
     #pathway-filter {
         width: 20.54%;
         left: 35.7%;
         height: 11.16%;
-        position: fixed;
+        position: absolute;
     }
     .list-section {
         width: 100%;
@@ -49,13 +49,13 @@ export default {
         top: 12.35%;
         border-radius: 10px;
         background: #0A0A1A;
-        position: fixed;
+        position: absolute;
     }
     .bookmark-button {
         width: 7.51%;
         height: 11.16%;
         left: 57.35%;
-        position: fixed;
+        position: absolute;
         border-radius: 5px;
         background: #0A0A1A;
     }
@@ -63,7 +63,7 @@ export default {
         width: 17.24%;
         height: 11.16%;
         left: 65.86%;
-        position: fixed;
+        position: absolute;
         border-radius: 5px;
         background: #0A0A1A;
     }
@@ -71,7 +71,7 @@ export default {
         width: 15.8%;
         height: 11.16%;
         left: 84.1%;
-        position: fixed;
+        position: absolute;
         border-radius: 5px;
         background: #0A0A1A;
     }

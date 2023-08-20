@@ -18,7 +18,7 @@ export default {
     #pathways-graphs {
         width: 50.92%;
         height: 96.92%;
-        position: fixed;
+        position: absolute;
         top:50%;
         transform: translateY(-50%);
         margin-left: 48.74%;
@@ -28,7 +28,7 @@ export default {
     #pathways-graphs img {
         width: 24.20%;
         height: 11.16%;
-        position: fixed;
+        position: absolute;
     }
     .graph-section {
         width: 100%;
@@ -36,6 +36,6 @@ export default {
         top: 12.35%;
         border-radius: 10px;
         background: #0A0A1A;
-        position: fixed;
+        position: absolute;
     }
 </style>
