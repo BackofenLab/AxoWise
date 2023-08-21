@@ -71,7 +71,7 @@ def download_data(species):
 
 def read_data(species, file_name):
     """
-    Reads the data from the specified file and returns it as a DataFrame.
+    Reads the data from the specified file.
 
     Arguments:
     file_name: the name of the file to read
@@ -100,7 +100,8 @@ def read_data(species, file_name):
         lis.append(k)
     df = pd.DataFrame(data, columns=["id", "name", "category"])
     df["genes"] = lis
-    return df
+    df.to_csv(f"data/bader_{species}.csv")
+    return
 
 
 def read_kegg_data(specifier):
@@ -158,13 +159,15 @@ def data_formatting(species, folder):
     file_name = os.path.join(folder, f"{species.lower()}_all_pathways.gmt")
 
     # Read the data from Baderlabs
-    df = read_data(species, file_name)
-
+    read_data(species, file_name)
+    df = pd.read_csv(f"data/bader_{species}.csv")
     # Read the KEGG data
     kegg_df = read_kegg_data(species.lower())
 
     merged_df = pd.concat([df, kegg_df], ignore_index=True)
     merged_df = merged_df.drop_duplicates(subset=["name", "category"])
+    merged_df = merged_df.loc[merged_df["genes"].str.len() > 2]
+    merged_df = merged_df.reset_index(drop=True)
     merged_df.to_csv(f"data/AllPathways_{species}.csv", index=False)
 
 
@@ -220,16 +223,16 @@ def main():
     kegg_update, geneset_update, geneset_name, kegg_version = download_necessary(filepath)
     if geneset_update:
         # Download the data from Baderlabs
-        print("Downloading Pathway data for for mouse")
+        print("Downloading Pathway data for mouse")
         if download_data("mouse") == 0:
             print("Mouse file not available on the server yet")
             return
-        print("Geneset download succesfull for mouse")
+        print("Pathway download succesfull for mouse")
         print("Downloading Pathway data for human")
         if download_data("human") == 0:
             print("Human file not available on the server yet")
             return
-        print("Geneset download succesfull for human")
+        print("Pathway download succesfull for human")
         util.update_line(filepath, gene_pattern, geneset_name)
     if kegg_update:
         # Download the KEGG data
