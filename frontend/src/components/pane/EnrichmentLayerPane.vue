@@ -3,6 +3,11 @@
         <div class="headertext">
             <span>Term Visualization</span>
         </div>
+        <button id="hide-btn" class="subset-btn" v-on:click="show_layer()">Hide</button>
+        <div class="change-level-menu">
+            <button id="apply-func-btn" class="subset-btn" v-on:click="apply_func(true)">Apply</button>
+            <button id="revert-func-btn" class="subset-btn" v-on:click="apply_func(false)">Revert</button>
+        </div>
         <div class="nodeattributes">
             <div class="p">
             <span>Layers:</span>
@@ -60,6 +65,7 @@ export default {
     },
     data() {
         return {
+            hide: true,
             layer_item: {
                 value: null,
                 imageSrc: require('@/assets/pane/layer-icon.png')
@@ -189,6 +195,43 @@ export default {
             }
             
 
+        },
+        show_layer(){
+            var com = this;
+
+            var selected_proteins = new Set()
+            for (var checkElement of com.active_termlayers.main){
+                if(!com.hiding_terms.has(checkElement) && com.active_termlayers.main.size >= 1){
+                    selected_proteins = new Set([...selected_proteins, ...checkElement.proteins])
+                }
+                
+            }
+
+            if(com.hide){
+                this.emitter.emit("hideSubset", selected_proteins);
+            }
+            else{
+                this.emitter.emit("hideSubset", null);
+            }
+            com.hide = !com.hide
+        },
+        /**
+        * Calling the procedure in component EnrichmentTool for enriching terms with given set.
+        * @param {boolean} state - functional enrichment gets reverted or applied.
+        */
+        apply_func(state) {
+            var com = this;
+
+            var selected_proteins = new Set()
+            for (var checkElement of com.active_termlayers.main){
+                if(!com.hiding_terms.has(checkElement) && com.active_termlayers.main.size >= 1){
+                    selected_proteins = new Set([...selected_proteins, ...checkElement.proteins])
+                }
+                
+            }
+
+            if (state) com.emitter.emit("enrichSubset", [...selected_proteins]);
+            else com.emitter.emit("enrichSubset", null);
         },
         /**
         * Calling the procedure in component MainVis to highlight a specific node
