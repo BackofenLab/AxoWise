@@ -115,7 +115,7 @@ export default {
             var com = this;
 
             var textToCopy = [];
-            for(var link of com.links) textToCopy.push(link.label);
+            for(var link of com.active_subset) textToCopy.push(link.label);
             navigator.clipboard.writeText(textToCopy.join("\n"));
         },
         show_layer(){
