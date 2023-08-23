@@ -34,6 +34,9 @@
                 <NodeLabelSelect
                 :type="screen_type"
                 ></NodeLabelSelect>
+                <ModuleSelection
+                :type="screen_type"
+                ></ModuleSelection>
                 <ProteinList
                 :protein_list='protein_list'
                 @status_changed = 'status = $event'
@@ -99,6 +102,7 @@ import ExportScreen from '@/components/toolbar/ExportScreen.vue'
 import DEValue from '@/components/toolbar/DEValue.vue'
 import ExportGraph from '@/components/toolbar/ExportGraph.vue'
 import NodeLabelSelect from '@/components/toolbar/NodeLabelSelect.vue'
+import ModuleSelection from '@/components/toolbar/ModuleSelection.vue'
 import ProteinList from '@/components/toolbar/ProteinList.vue'
 import SelectionWindow from '@/components/toolbar/SelectionWindow.vue'
 import SearchBar from '@/components/toolbar/SearchBar.vue'
@@ -118,7 +122,8 @@ export default {
         SearchBar,
         EdgeOpacity,
         SelectionList,
-        NodeLabelSelect
+        NodeLabelSelect,
+        ModuleSelection
 
     },
     data() {

@@ -1,13 +1,14 @@
 <template>
   <div class="visualization">
     <div id="sigma-webgl"></div>
-    <div id="sigma-canvas" :class="{'loading': threeview}" class="sigma-parent" ref="sigmaContainer" @contextmenu.prevent="handleSigmaContextMenu">
-      <div
+    <div id="sigma-canvas" :class="{'loading': threeview}" class="sigma-parent" ref="sigmaContainer" @contextmenu.prevent="handleSigmaContextMenu" @mouseleave="sigmaFocus = false" @mouseenter="sigmaFocus = true">
+      <div 
+      v-show="moduleSelectionActive === true"
       v-for="(circle, index) in moduleSet"
       :key="index"
       :class="{
         'outside': !isMouseInside(circle.data),
-        'inside': isMouseInside(circle.data) && !unconnectedActive(circle.modularity),
+        'inside': isMouseInside(circle.data) && !unconnectedActive(circle.modularity) && !mousedownrightCheck && !(mousedownleftCheck && mousemoveCheck) && sigmaFocus,
       }"
       v-bind:style="getCircleStyle(circle.data)"
     ></div>
@@ -85,7 +86,12 @@ export default {
       sigma_instance: null,
       mouseX: 0,
       mouseY: 0,
-      clusterDict: new Set()
+      clusterDict: new Set(),
+      mousedownrightCheck: false,
+      mousedownleftCheck: false,
+      mousemoveCheck: false,
+      sigmaFocus: true,
+      moduleSelectionActive: true
     }
   },
   watch: {
@@ -549,7 +555,9 @@ export default {
   // Rectangular select
   mousedown: function(e) {
     var com = this;
+    com.mousedownleftCheck = true
     if (e.button == 2) {
+        com.mousedownrightCheck = true
         // var selectedNodes = e.ctrlKey ? NETWORK.getSelectedNodes() : null;
         com.backup_surface();
         var rectangle = com.rectangular_select.rectangle;
@@ -563,6 +571,7 @@ export default {
       var com = this;
       this.mouseX = e.pageX;
       this.mouseY = e.pageY;
+      if(com.mousedownleftCheck || com.mousedownrightCheck) com.mousemoveCheck = true
       if (com.rectangular_select.active) {
           var context = com.rectangular_select.context;
           var rectangle = com.rectangular_select.rectangle;
@@ -583,7 +592,10 @@ export default {
       for (var element in this.moduleSet){
         if(this.isMouseInside(this.moduleSet[element].data)) this.getClusterElements(this.moduleSet[element])
       }
+      com.mousedownleftCheck = false
+      com.mousemoveCheck = false
       if (e.button == 2) {
+        com.mousedownrightCheck = false
           com.restore_surface();
           com.rectangular_select.active = false;
 
@@ -879,13 +891,16 @@ export default {
       const distance = Math.sqrt(
         Math.pow(circle.x - this.mouseX, 2) + Math.pow(circle.y - this.mouseY, 2)
       );
-      return distance < circle.r;
+      return distance < circle.r + 10;
     },
     unconnectedActive(circle) {
       return (this.node_modul_index.has(circle) && this.graph_state)
     },
   getClusterElements(circle) {
     var com = this;
+
+    if(this.unconnectedActive(circle.modularity) || !com.moduleSelectionActive) return
+
     var nodeSet = []
 
     if(this.active_subset) {
@@ -903,9 +918,9 @@ export default {
     if(com.clusterDict.has(circle.modularity)) com.clusterDict.delete(circle.modularity)
     else com.clusterDict.add(circle.modularity)
 
-    this.$emit('active_subset_changed', nodeSet.filter(item => com.clusterDict.has(item.attributes["Modularity Class"])))
+      this.$emit('active_subset_changed', nodeSet.filter(item => com.clusterDict.has(item.attributes["Modularity Class"])))
     
-  }
+  },
 
 },
   mounted() {
@@ -1024,6 +1039,9 @@ export default {
     this.emitter.on("hideLabels", (state) => {
       this.hide_labels(state)
     });
+    this.emitter.on("deactivateModules", () => {
+      com.moduleSelectionActive = !com.moduleSelectionActive
+    });
 
     this.emitter.on("threeView", () => {
       this.three_view()
@@ -1116,7 +1134,7 @@ color: #fff; /* set the font color to white */
 }
 
 .inside {
-  background-color: rgba(255, 255, 255, 0.4);
+  background-color: rgba(255, 255, 255, 0.3);
   border-style: solid;
   border-width: 1px;
   border-color: white;
