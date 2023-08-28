@@ -28,7 +28,7 @@ def create_source(cell_info: pd.DataFrame, driver: Driver):
 
     # Create Cell Node (for Subtype)
     if subtype is not np.NaN:
-        query += f""" MERGE (n2:Celltype{{name: "{subtype}"}})"""
+        query += f""" MERGE (n2:Subtype{{name: "{subtype}"}})"""
         query += f""" MERGE (n1)-[:IS]->(n2)"""
     else:
         query += """ CREATE (n1)-[:HAS]->(o:Source)<-[:HAS]-(s)"""
@@ -37,7 +37,7 @@ def create_source(cell_info: pd.DataFrame, driver: Driver):
     # Create Cell Node (for Subsubtype)
     if flag:
         if subsubtype is not np.NaN:
-            query += f""" MERGE (n3:Celltype{{name: "{subsubtype}"}})"""
+            query += f""" MERGE (n3:Subtype{{name: "{subsubtype}"}})"""
             query += f""" MERGE (n2)-[:IS]->(n3)"""
             query += """ CREATE (n3)-[:HAS]->(o:Source)<-[:HAS]-(s)"""
         else:
