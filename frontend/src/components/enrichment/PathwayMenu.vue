@@ -1,10 +1,12 @@
 <template>
     <div class="pathways" :class="{ show_pathways_menu: pane_hidden === true }">
-        <div class="minimize-bar" v-on:click="print()" >
+        <div class="minimize-bar" v-on:click="pane_hidden = !pane_hidden" >
             <img src="@/assets/pathwaybar/arrows.png" :style="{ transform: pane_hidden ? 'rotate(-90deg)' : 'rotate(90deg)' }">
         </div>
         <div class="pathwaybar">
-            <PathwayList></PathwayList>
+            <PathwayList
+            :gephi_data='gephi_data'
+            ></PathwayList>
             <PathwayGraph></PathwayGraph>
             <img id="pathway-bg" src="@/assets/pathwaybar/background-dna.png">
         </div>
@@ -17,6 +19,7 @@ import PathwayGraph from '@/components/enrichment/PathwayGraph.vue'
 
 export default {
     name: 'PathwayMenu',
+    props: ['gephi_data','active_term'],
     components: {
         PathwayList,
         PathwayGraph
@@ -27,12 +30,7 @@ export default {
         }
     },
     methods: {
-        print() {
-            console.log("hello")
-            this.pane_hidden = !this.pane_hidden
-        }
-        
-      
+         
         }
     }
 </script>
@@ -55,12 +53,13 @@ export default {
         position: fixed;
         flex-shrink: 0;
         border-radius: 10px 10px 0px 0px;
+        backdrop-filter: blur(7.5px);
         background: #D9D9D9;
         text-align: center;
     }
     .minimize-bar img {
-        width: 0.84%;
-        height: 55.56%;
+        width: 0.7vw;
+        height: 0.7vw;
         flex-shrink: 0;
         transition: transform 330ms ease-in-out;
     }
@@ -84,6 +83,9 @@ export default {
     }
     .show_pathways_menu {
         transform: translate(-50%,98%);
+        width: 20%;
+        transition: transform 330ms ease-in-out;
+        transition: width 900ms ease-in-out;
     }
 
 </style>
