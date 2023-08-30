@@ -2,7 +2,9 @@
     <div id="pathways-list">
         <img id="pathway-search" src="@/assets/pathwaybar/pathway-button.png">
         <img id="pathway-filter" src="@/assets/pathwaybar/pathway-button-2.png">
-        <div class="bookmark-button"></div>
+        <div class="bookmark-button" v-on:click="bookmark_off = !bookmark_off">
+            <img class="bookmark-image" src="@/assets/pathwaybar/favorite.png" :class="{recolor_filter: bookmark_off == false}">
+        </div>
         <div class="visualize-button"></div>
         <div class="export-button"></div>
         <div class="list-section">
@@ -16,7 +18,7 @@
             <div class="results" v-if="terms !== null && await_load == false" tabindex="0" @keydown="handleKeyDown" ref="resultsContainer">
                 <table >
                     <tbody>
-                        <tr v-for="(entry, index) in terms" :key="index" class="option" :class="{ selected: selectedIndex === index }" :style="{ display: shouldDisplayOption(entry) && (bookmark_on || checkboxStates[index]) ? '-webkit-flex' : 'none' }">
+                        <tr v-for="(entry, index) in terms" :key="index" class="option" :class="{ selected: selectedIndex === index }" :style="{ display: shouldDisplayOption(entry) && (bookmark_off || favourite_tab.has(entry.id)) ? '-webkit-flex' : 'none' }">
                             <td>
                                 <div class="favourite-symbol">
                                 <label class="custom-checkbox">
@@ -58,7 +60,7 @@ export default {
             terms: [],
             await_load: false,
             search_raw: "",
-            bookmark_on: true,
+            bookmark_off: true,
             selectedIndex: -1,
             sort_order: false,
             category: null,
@@ -235,6 +237,8 @@ export default {
         position: absolute;
         border-radius: 5px;
         background: #0A0A1A;
+        align-content: center;
+        justify-content: center;
     }
     .visualize-button {
         width: 17.24%;
@@ -344,13 +348,24 @@ export default {
     }
 
     .checked {
-        background-color: orange;
+        background-color: #ffa500;
     }
 
     .selected {
         background-color: rgba(255,0,0,0.7);
     }
 
+    .bookmark-image {
+        width: 100%;
+        height: 100%;
+        padding: 5% 23% 5% 23%;
+        -webkit-filter: invert(100%); /* Safari/Chrome */
+        filter: invert(100%);
+    }
+
+    .recolor_filter {
+        filter: invert(71%) sepia(19%) saturate(7427%) hue-rotate(360deg) brightness(104%) contrast(105%);
+    }
 
 
 </style>
