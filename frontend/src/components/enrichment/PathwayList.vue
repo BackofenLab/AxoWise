@@ -14,18 +14,13 @@
 
             <div v-if="await_load == true" class="loading_pane" ></div>
             <div class="results" v-if="terms !== null && await_load == false" tabindex="0" @keydown="handleKeyDown" ref="resultsContainer">
-                <!-- <div v-for="(entry,index) in terms" :key="entry" class="option" :class="{ selected: selectedIndex === index }" :style="{ display: shouldDisplayOption(entry) && (bookmark_on || checkboxStates[index]) ? '-webkit-flex' : 'none' }">
-                <input type="checkbox" class="selectCheck" v-model="checkboxStates[index]" v-on:change="add_enrichment(entry,index)" ref="checkBoxes" >
-                <a href="#" v-on:click="select_term(entry,index)" ref="selectedNodes" >{{entry.name}}</a>
-                </div> -->
                 <table >
                     <tbody>
                         <tr v-for="(entry, index) in terms" :key="index" class="option" :class="{ selected: selectedIndex === index }" :style="{ display: shouldDisplayOption(entry) && (bookmark_on || checkboxStates[index]) ? '-webkit-flex' : 'none' }">
                             <td>
                                 <div class="favourite-symbol">
                                 <label class="custom-checkbox">
-                                    <input type="checkbox" class="selectCheck" v-model="checkboxStates[index]" v-on:change="add_enrichment(entry, index)" ref="checkBoxes">
-                                    <span class="checkbox-image"></span> <!-- This is where your image will be displayed -->
+                                    <div class="checkbox-image" v-on:click="add_enrichment(entry)" :class="{ checked: favourite_tab.has(entry.id)}" ref="checkboxStates"></div>
                                 </label>
                                 </div>
                             </td>
@@ -65,9 +60,9 @@ export default {
             search_raw: "",
             bookmark_on: true,
             selectedIndex: -1,
-            checkboxStates: {},
             sort_order: false,
             category: null,
+            favourite_tab: new Set()
         }
     },
     mounted() {
@@ -183,6 +178,15 @@ export default {
             const selectedNode = this.$refs.selectedNodes[this.selectedIndex];
             if (selectedNode) {
                 selectedNode.click();
+            }
+        },
+        add_enrichment(enrichment) {
+            if (!this.favourite_tab.has(enrichment.id)) {
+                // Checkbox is checked, add its state to the object
+                this.favourite_tab.add(enrichment.id)
+            } else {
+                // Checkbox is unchecked, remove its state from the object
+                this.favourite_tab.delete(enrichment.id)
             }
         },
     },  
@@ -330,23 +334,17 @@ export default {
 
     .checkbox-image {
         display: block;
-        width: 0.8vw;
-        height: 0.8vw;
-        background-image: url('@/assets/pathwaybar/star-solid.svg');
-        background-size: cover;
+        width: 0.9vw;
+        height: 0.9vw;
+        background-color: white;
+        -webkit-mask: url(@/assets/pathwaybar/star-solid.svg) no-repeat center;
+        mask: url(@/assets/pathwaybar/star-solid.svg) no-repeat center;
+        mask-size: 0.9vw;
         background-repeat: no-repeat;
-        color: white;
     }
 
-    .custom-checkbox input[type="checkbox"]:checked + .checkbox-image {
-        background-image: url('@/assets/pathwaybar/star-solid-checked.svg');
-    }
-
-    /* Hide the default checkbox */
-    .selectCheck {
-        position: absolute;
-        opacity: 0;
-        cursor: pointer;
+    .checked {
+        background-color: orange;
     }
 
     .selected {
