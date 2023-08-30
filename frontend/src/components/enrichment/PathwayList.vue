@@ -5,7 +5,12 @@
         <div class="bookmark-button" v-on:click="bookmark_off = !bookmark_off">
             <img class="bookmark-image" src="@/assets/pathwaybar/favorite.png" :class="{recolor_filter: bookmark_off == false}">
         </div>
-        <div class="visualize-button"></div>
+        <div class="visualize-button" v-on:click="visualize_layers()">
+            <div class="visualize-logo">
+                <span class="visualize-text">Layers</span>
+                <img class="bookmark-image" src="@/assets/pathwaybar/favorite.png">
+            </div>
+        </div>
         <div class="export-button"></div>
         <div class="list-section">
             
@@ -18,11 +23,11 @@
             <div class="results" v-if="terms !== null && await_load == false" tabindex="0" @keydown="handleKeyDown" ref="resultsContainer">
                 <table >
                     <tbody>
-                        <tr v-for="(entry, index) in terms" :key="index" class="option" :class="{ selected: selectedIndex === index }" :style="{ display: shouldDisplayOption(entry) && (bookmark_off || favourite_tab.has(entry.id)) ? '-webkit-flex' : 'none' }">
+                        <tr v-for="(entry, index) in terms" :key="index" class="option" :class="{ selected: selectedIndex === index }" :style="{ display: shouldDisplayOption(entry) && (bookmark_off || favourite_tab.has(entry)) ? '-webkit-flex' : 'none' }">
                             <td>
                                 <div class="favourite-symbol">
                                 <label class="custom-checkbox">
-                                    <div class="checkbox-image" v-on:click="add_enrichment(entry)" :class="{ checked: favourite_tab.has(entry.id)}" ref="checkboxStates"></div>
+                                    <div class="checkbox-image" v-on:click="add_enrichment(entry)" :class="{ checked: favourite_tab.has(entry)}" ref="checkboxStates"></div>
                                 </label>
                                 </div>
                             </td>
@@ -51,7 +56,6 @@
 export default {
     name: 'PathwayList',
     props: ['gephi_data','active_term'],
-    emits: ['active_term_changed', 'active_layer_changed', 'active_termlayers_changed'],
     data() {
         return{
             api: {
@@ -183,14 +187,18 @@ export default {
             }
         },
         add_enrichment(enrichment) {
-            if (!this.favourite_tab.has(enrichment.id)) {
+            if (!this.favourite_tab.has(enrichment)) {
                 // Checkbox is checked, add its state to the object
-                this.favourite_tab.add(enrichment.id)
+                this.favourite_tab.add(enrichment)
             } else {
                 // Checkbox is unchecked, remove its state from the object
-                this.favourite_tab.delete(enrichment.id)
+                this.favourite_tab.delete(enrichment)
             }
         },
+        visualize_layers(){
+            var com = this;
+            com.emitter.emit("hideTermLayer", {"main":com.favourite_tab, "hide": new Set()});
+        }
     },  
 }
 </script>
@@ -247,6 +255,8 @@ export default {
         position: absolute;
         border-radius: 5px;
         background: #0A0A1A;
+        text-align: center;
+        cursor:default;
     }
     .export-button {
         width: 15.8%;
@@ -361,6 +371,29 @@ export default {
         padding: 5% 23% 5% 23%;
         -webkit-filter: invert(100%); /* Safari/Chrome */
         filter: invert(100%);
+    }
+
+    .visualize-logo {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        padding-left: 5%;
+
+    }
+    .visualize-logo .bookmark-image {
+        margin-left: 3%;
+        width: 25%;
+        height: 85%;
+        padding: 0%;
+        filter: invert(100%);
+        padding-top:1%;
+    }
+    .visualize-text {
+        padding-bottom: 2%;
+        font-size: 0.9vw;
+        color: white;
+        
     }
 
     .recolor_filter {
