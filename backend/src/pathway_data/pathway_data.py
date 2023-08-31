@@ -74,10 +74,11 @@ def read_data(species, file_name):
     Reads the data from the specified file.
 
     Arguments:
+    species: species of interest
     file_name: the name of the file to read
     """
-    prots = []
-    unique_proteins = []
+    symbol = []
+    unique_symbols = []
     with open(file_name, "r") as file:
         reader = csv.reader(file, delimiter="\t")
         data = []
@@ -86,20 +87,34 @@ def read_data(species, file_name):
             source = name[1]
             ids = name[2]
             descr = row[1]
-            proteins = list(filter(None, row[2:]))
+            symbols = list(filter(None, row[2:]))
             data.append([ids, descr, source])
-            prots.append(proteins)
-            unique_proteins.extend([item for item in proteins if item not in unique_proteins])
-    mapping = symbols_to_ensembl(unique_proteins, f"{species}")
-    lis = []
-    for i in prots:
-        k = []
-        for j in i:
-            if j in mapping:
-                k.append(mapping[j])
-        lis.append(k)
+            symbol.append(symbols)
+            unique_symbols.extend([item for item in symbols if item not in unique_symbols])
+    gene_mapping = symbols_to_ensembl(unique_symbols, f"{species}", "gene")
+    protein_mapping = symbols_to_ensembl(unique_symbols, f"{species}", "protein")
+    gene_lis = []
+    protein_lis = []
+    for i in symbol:
+        genes = []
+        prots = []
+        if isinstance(i, list):
+            for j in i:
+                if j in gene_mapping:
+                    genes.append(gene_mapping[j])
+                if j in protein_mapping:
+                    prots.append(protein_mapping[j])
+        else:
+            if i in gene_mapping:
+                genes.append(gene_mapping[i])
+            if i in protein_mapping:
+                prots.append(protein_mapping[i])
+        gene_lis.append(genes)
+        protein_lis.append(prots)
+
     df = pd.DataFrame(data, columns=["id", "name", "category"])
-    df["genes"] = lis
+    df["genes"] = gene_lis
+    df["proteins"] = protein_lis
     df.to_csv(f"data/bader_{species}.csv")
     return
 
@@ -114,35 +129,36 @@ def read_kegg_data(specifier):
     kegg_df = pd.read_csv(
         f"data/kegg_pathways.{specifier}.tsv",
         delimiter="\t",
-        usecols=["id", "name", "genes_external_ids"],
+        usecols=["id", "name", "genes_external_ids", "proteins_external_ids"],
     )
     kegg_df.insert(loc=2, column="category", value="KEGG")
-    kegg_df = kegg_df.rename(columns={"genes_external_ids": "genes"})
+    kegg_df = kegg_df.rename(columns={"genes_external_ids": "genes", "proteins_external_id": "proteins"})
     return kegg_df
 
 
-def symbols_to_ensembl(symbols, species):
+def symbols_to_ensembl(symbols, species, specifier):
     """
     Maps Symbols to Ensemble_Gene_id
 
     Arguments:
     symbols: list of symbols to be mapped
     species: species that the symbols belong to, eg: "mouse"
+    specifier: specifies if user wants ensembl gene ids or protein ids
 
     returns:
     mapping: a dictionary of symbols where their key is the ensembleT_id
     """
     mapping = {}
     mg = mygene.MyGeneInfo()
-    results = mg.querymany(symbols, scopes="symbol", fields="ensembl.gene", species=f"{species}")
+    results = mg.querymany(symbols, scopes="symbol", fields=f"ensembl.{specifier}", species=f"{species}")
     for result in results:
         if "ensembl" in result:
             res = result["ensembl"]
             old = result["query"]
             if isinstance(res, list):
-                ensembl_id = res[0]["gene"]
+                ensembl_id = res[0][f"{specifier}"]
             else:
-                ensembl_id = res["gene"]
+                ensembl_id = res[f"{specifier}"]
             mapping[old] = ensembl_id
         else:
             print(f"{result['query']} not found")
