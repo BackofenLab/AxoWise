@@ -68,6 +68,32 @@ def download_data(species):
     return 1
 
 
+def genes_to_proteins(genes, species):
+    """
+    Convert ensembl genes to all corresponding proteins
+
+    Arguments:
+    genes: list of ensemble_gene_ids
+    species: species of interest
+
+    returns:
+    gene_mapping: a dict with the keys being gene_ids and values protein_ids
+    """
+    gene_mapping = {}
+    m = mygene.MyGeneInfo()
+    results = m.querymany(genes, fields="ensembl.protein", species=f"{species}")
+    for result in results:
+        if "ensembl" in result:
+            res = result["ensembl"]
+            old = result["query"]
+            if isinstance(res, list):
+                ensembl_id = res[0]["protein"]
+            else:
+                ensembl_id = res["protein"]
+            gene_mapping[old] = ensembl_id
+    return gene_mapping
+
+
 def read_data(species, file_name):
     """
     Reads the data from the specified file.
@@ -94,7 +120,8 @@ def read_data(species, file_name):
     unique_symbols = list(unique_symbols)
     gene_mapping, genes_to_map = symbols_to_ensembl(unique_symbols, f"{species}", "gene")
     protein_mapping, dis = symbols_to_ensembl(unique_symbols, f"{species}", "protein")
-
+    prots = genes_to_proteins(genes_to_map, species)
+    pd.DataFrame(list(prots.items()), columns=["genes", "proteins"]).to_csv(f"data/mapped_genes_proteins_{species}.csv")
     gene_lis = []
     protein_lis = []
     for i in symbol:
