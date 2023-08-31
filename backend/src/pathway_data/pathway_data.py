@@ -2,7 +2,6 @@ import os
 import requests
 import argparse
 import pandas as pd
-import csv
 import kegg
 import sys
 import datetime
@@ -78,37 +77,46 @@ def read_data(species, file_name):
     file_name: the name of the file to read
     """
     symbol = []
-    unique_symbols = []
-    with open(file_name, "r") as file:
-        reader = csv.reader(file, delimiter="\t")
-        data = []
-        for row in reader:
-            name = row[0].split("%")
+    unique_symbols = set()
+    data = []
+    with open(file_name, "r") as f:
+        for line in f:
+            fields = line.strip().split("\t")
+            name = fields[0].split("%")
             source = name[1]
             ids = name[2]
-            descr = row[1]
-            symbols = list(filter(None, row[2:]))
+            descr = fields[1]
+            symbols = fields[2:]
             data.append([ids, descr, source])
             symbol.append(symbols)
-            unique_symbols.extend([item for item in symbols if item not in unique_symbols])
-    gene_mapping = symbols_to_ensembl(unique_symbols, f"{species}", "gene")
-    protein_mapping = symbols_to_ensembl(unique_symbols, f"{species}", "protein")
+            unique_symbols.update(symbols)
+
+    unique_symbols = list(unique_symbols)
+    gene_mapping, genes_to_map = symbols_to_ensembl(unique_symbols, f"{species}", "gene")
+    protein_mapping, dis = symbols_to_ensembl(unique_symbols, f"{species}", "protein")
+
     gene_lis = []
     protein_lis = []
     for i in symbol:
         genes = []
         prots = []
-        if isinstance(i, list):
+        if i:
             for j in i:
                 if j in gene_mapping:
-                    genes.append(gene_mapping[j])
+                    g = gene_mapping[j]
+                    if isinstance(g, list):
+                        for k in g:
+                            genes.append(k)
+                    else:
+                        genes.append(gene_mapping[j])
                 if j in protein_mapping:
-                    prots.append(protein_mapping[j])
-        else:
-            if i in gene_mapping:
-                genes.append(gene_mapping[i])
-            if i in protein_mapping:
-                prots.append(protein_mapping[i])
+                    g = protein_mapping[j]
+                    if isinstance(g, list):
+                        for k in g:
+                            prots.append(k)
+                    else:
+                        prots.append(protein_mapping[j])
+
         gene_lis.append(genes)
         protein_lis.append(prots)
 
@@ -132,7 +140,7 @@ def read_kegg_data(specifier):
         usecols=["id", "name", "genes_external_ids", "proteins_external_ids"],
     )
     kegg_df.insert(loc=2, column="category", value="KEGG")
-    kegg_df = kegg_df.rename(columns={"genes_external_ids": "genes", "proteins_external_id": "proteins"})
+    kegg_df = kegg_df.rename(columns={"genes_external_ids": "genes", "proteins_external_ids": "proteins"})
     return kegg_df
 
 
@@ -149,6 +157,7 @@ def symbols_to_ensembl(symbols, species, specifier):
     mapping: a dictionary of symbols where their key is the ensembleT_id
     """
     mapping = {}
+    gene_lis = []
     mg = mygene.MyGeneInfo()
     results = mg.querymany(symbols, scopes="symbol", fields=f"ensembl.{specifier}", species=f"{species}")
     for result in results:
@@ -160,9 +169,10 @@ def symbols_to_ensembl(symbols, species, specifier):
             else:
                 ensembl_id = res[f"{specifier}"]
             mapping[old] = ensembl_id
+            gene_lis.append(ensembl_id)
         else:
             print(f"{result['query']} not found")
-    return mapping
+    return mapping, gene_lis
 
 
 def data_formatting(species, folder):

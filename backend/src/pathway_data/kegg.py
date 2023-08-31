@@ -99,11 +99,11 @@ def symbols_to_ensemble(symbols, species, specifier):
                 ensembl_id = res[0][f"{specifier}"]
             else:
                 ensembl_id = res[f"{specifier}"]
-                if isinstance(ensembl_id, list):
-                    for i in ensembl_id:
-                        ensembl_list.append(i)
-                else:
-                    ensembl_list.append(ensembl_id)
+            if isinstance(ensembl_id, list):
+                for i in ensembl_id:
+                    ensembl_list.append(i)
+            else:
+                ensembl_list.append(ensembl_id)
         else:
             print(f"{result['query']} not found")
     return ensembl_list
