@@ -1,6 +1,9 @@
 <template>
     <div id="pathways-list">
-        <img id="pathway-search" src="@/assets/pathwaybar/pathway-button.png">
+        <div class="pathway-search">
+            <img class="pathway-search-icon" src="@/assets/toolbar/search.png">
+            <input type="text" v-model="search_raw" class="empty" placeholder="Find your pathways"/>
+        </div>
         <img id="pathway-filter" src="@/assets/pathwaybar/pathway-button-2.png">
         <div class="bookmark-button" v-on:click="bookmark_off = !bookmark_off">
             <img class="bookmark-image" src="@/assets/pathwaybar/favorite.png" :class="{recolor_filter: bookmark_off == false}">
@@ -16,14 +19,14 @@
             
             <div class="sorting">
                 <a class="enrichment_filter">functional enrichment pathways</a>
-                <a class="fdr_filter" v-on:click="sort(sort_order)" >fdr rate</a>
+                <a class="fdr_filter" v-on:click="sort_order = !sort_order" >fdr rate</a>
             </div>
 
             <div v-if="await_load == true" class="loading_pane" ></div>
             <div class="results" v-if="terms !== null && await_load == false" tabindex="0" @keydown="handleKeyDown" ref="resultsContainer">
                 <table >
                     <tbody>
-                        <tr v-for="(entry, index) in terms" :key="index" class="option" :class="{ selected: selectedIndex === index }" :style="{ display: shouldDisplayOption(entry) && (bookmark_off || favourite_tab.has(entry)) ? '-webkit-flex' : 'none' }">
+                        <tr v-for="(entry, index) in filt_terms" :key="index" class="option" :class="{ selected: selectedIndex === index }" :style="{ display: (bookmark_off || favourite_tab.has(entry)) ? '-webkit-flex' : 'none' }">
                             <td>
                                 <div class="favourite-symbol">
                                 <label class="custom-checkbox">
@@ -79,7 +82,7 @@ export default {
     watch: {
         terms() {
             this.filtered_terms = this.terms
-        }
+        },
     },
     computed: {
         regex() {
@@ -105,6 +108,10 @@ export default {
             });
             }
 
+            if (com.sort_order) filtered.sort((t1, t2) => t2.fdr_rate - t1.fdr_rate)
+            else filtered.sort((t1, t2) => t1.fdr_rate - t2.fdr_rate)
+            
+
             return new Set(filtered);
         },
     },
@@ -128,14 +135,6 @@ export default {
                 com.await_load = false
             })
 
-        },
-        shouldDisplayOption(entry) {
-            return this.filt_terms.has(entry);
-        },
-        sort(){
-            this.sort_order = !this.sort_order
-            if(this.sort_order) this.terms.sort((t1, t2) => t2.fdr_rate - t1.fdr_rate)
-            else this.terms.sort((t1, t2) => t1.fdr_rate - t2.fdr_rate)
         },
         select_term(term, index) {
             var com = this;
@@ -217,10 +216,33 @@ export default {
 
     }
 
-    #pathway-search {
+    .pathway-search {
         width: 37.54%;
         height: 11.16%;
+        display: flex;
         position: absolute;
+        align-items: center;
+        background-image: url(@/assets/pathwaybar/pathway-button.png);
+        background-size: 100% 100%;
+    }
+    .pathway-search-icon {
+        margin-left: 3%;
+        position: relative;
+        height: 0.9vw;
+        width: 0.9vw;
+        filter: invert(100%);
+    }
+
+    .pathway-search input[type=text] {
+        margin-left: 2%;
+        font-size: 0.9vw;
+        width: 80%;
+        background: none;
+        color: white;
+    }
+
+    .pathway-search [type="text"]::-webkit-input-placeholder {
+    opacity: 50%; /* Make input background transparent */
     }
 
     #pathway-filter {
