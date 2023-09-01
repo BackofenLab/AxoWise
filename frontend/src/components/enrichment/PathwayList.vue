@@ -26,7 +26,7 @@
             <div class="results" v-if="terms !== null && await_load == false" tabindex="0" @keydown="handleKeyDown" ref="resultsContainer">
                 <table >
                     <tbody>
-                        <tr v-for="(entry, index) in filt_terms" :key="index" class="option" :class="{ selected: selectedIndex === index }" :style="{ display: (bookmark_off || favourite_tab.has(entry)) ? '-webkit-flex' : 'none' }">
+                        <tr v-for="(entry, index) in filt_terms" :key="index" class="option" :class="{ selected: selectedIndex === index }">
                             <td>
                                 <div class="favourite-symbol">
                                 <label class="custom-checkbox">
@@ -110,6 +110,12 @@ export default {
 
             if (com.sort_order) filtered.sort((t1, t2) => t2.fdr_rate - t1.fdr_rate)
             else filtered.sort((t1, t2) => t1.fdr_rate - t2.fdr_rate)
+
+            if (!com.bookmark_off){
+                filtered = filtered.filter(function(term) {
+                    return com.favourite_tab.has(term)
+                });
+            }
             
 
             return new Set(filtered);
@@ -172,7 +178,7 @@ export default {
                 }
             } else if (keyCode === 40) {
                 event.preventDefault();
-                if (this.selectedIndex < this.filtered_terms.length - 1){
+                if (this.selectedIndex < this.filt_terms.size - 1){
                     this.selectedIndex++;
                     this.scrollToSelected(this.$refs.selectedNodes[this.selectedIndex])
                     this.clickNode()
@@ -297,6 +303,10 @@ export default {
     .results {
         height: 90%;
         overflow: scroll;
+    }
+
+    .option {
+        display: -webkit-flex;
     }
 
     .sorting {
