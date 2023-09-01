@@ -14,7 +14,9 @@
                 <img class="bookmark-image" src="@/assets/pathwaybar/favorite.png">
             </div>
         </div>
-        <div class="export-button"></div>
+        <div class="export-button" v-on:click="export_enrichment()">
+            <div class="export-text">Export</div>
+        </div>
         <div class="list-section">
             
             <div class="sorting">
@@ -71,7 +73,7 @@ export default {
             selectedIndex: -1,
             sort_order: false,
             category: null,
-            favourite_tab: new Set()
+            favourite_tab: new Set(),
         }
     },
     mounted() {
@@ -203,7 +205,42 @@ export default {
         visualize_layers(){
             var com = this;
             com.emitter.emit("hideTermLayer", {"main":com.favourite_tab, "hide": new Set()});
-        }
+        },
+        export_enrichment(){
+            var com = this;
+
+            //export terms as csv
+            var csvTermsData = com.filt_terms;
+
+            var terms_csv = 'category\tfdr_rate\tname\tproteins\n';
+            
+            // Create a mapping between Ensembl ID and label
+            const ensemblIdToLabelMap = {};
+            for (const node of com.gephi_data.nodes) {
+            ensemblIdToLabelMap[node.attributes["Ensembl ID"]] = node.label;
+            }
+
+            csvTermsData.forEach(function(row) {
+                var protein_names = []
+                for (const ensemblId of row['proteins']) {
+                    const label = ensemblIdToLabelMap[ensemblId];
+                    if (label) {
+                        protein_names.push(label);
+                    }
+                
+                }
+                terms_csv += row['category'] + '\t' + row['fdr_rate'] + '\t"'  + row['name'] + '"\t"' +protein_names+'"';
+                terms_csv += '\n';   
+            });
+
+
+            //Create html element to hidden download csv file
+            var hiddenElement = document.createElement('a');
+            hiddenElement.target = '_blank';
+            hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(terms_csv);
+            hiddenElement.download = 'Terms.csv';  
+            hiddenElement.click();
+        },
     },  
 }
 </script>
@@ -293,6 +330,19 @@ export default {
         position: absolute;
         border-radius: 5px;
         background: #0A0A1A;
+        cursor: default;
+
+    }
+
+    .export-button .export-text {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-bottom: 2%;
+        color: white;
+        font-size: 0.9vw;
     }
 
     .list-section a {
