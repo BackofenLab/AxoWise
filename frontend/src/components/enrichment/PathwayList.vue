@@ -20,8 +20,8 @@
         <div class="list-section">
             
             <div class="sorting">
-                <a class="enrichment_filter">functional enrichment pathways</a>
-                <a class="fdr_filter" v-on:click="sort_order = !sort_order" >fdr rate</a>
+                <a class="enrichment_filter" v-on:click="sort_alph = (sort_alph === 'asc') ? 'dsc' : 'asc'; sort_fdr = '' " >functional enrichment pathways</a>
+                <a class="fdr_filter" v-on:click="sort_fdr = (sort_fdr === 'asc') ? 'dsc' : 'asc'; sort_alph = '' " >fdr rate</a>
             </div>
 
             <div v-if="await_load == true" class="loading_pane" ></div>
@@ -71,7 +71,8 @@ export default {
             search_raw: "",
             bookmark_off: true,
             selectedIndex: -1,
-            sort_order: false,
+            sort_fdr: "",
+            sort_alph: "",
             category: null,
             favourite_tab: new Set(),
         }
@@ -110,8 +111,20 @@ export default {
             });
             }
 
-            if (com.sort_order) filtered.sort((t1, t2) => t2.fdr_rate - t1.fdr_rate)
-            else filtered.sort((t1, t2) => t1.fdr_rate - t2.fdr_rate)
+            if(com.sort_alph == "asc"){
+                filtered.sort(function(t1, t2) { return (t1.name.toLowerCase() > t2.name.toLowerCase() ? 1 : (t1.name.toLowerCase() === t2.name.toLowerCase() ? 0 : -1)) })
+            }else if(com.sort_alph == "dsc"){
+                filtered.sort(function(t1, t2) { return (t2.name.toLowerCase() > t1.name.toLowerCase() ? 1 : (t1.name.toLowerCase() === t2.name.toLowerCase() ? 0 : -1)) })
+            }
+
+
+
+            if(com.sort_fdr == "asc"){
+                filtered.sort((t1, t2) => t2.fdr_rate - t1.fdr_rate)
+            }else if (com.sort_fdr == "dsc"){
+                filtered.sort((t1, t2) => t1.fdr_rate - t2.fdr_rate)
+            }
+            
 
             if (!com.bookmark_off){
                 filtered = filtered.filter(function(term) {
@@ -241,6 +254,9 @@ export default {
             hiddenElement.download = 'Terms.csv';  
             hiddenElement.click();
         },
+        sorting() {
+            
+        }
     },  
 }
 </script>
