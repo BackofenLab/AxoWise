@@ -4,7 +4,15 @@
             <img class="pathway-search-icon" src="@/assets/toolbar/search.png">
             <input type="text" v-model="search_raw" class="empty" placeholder="Find your pathways"/>
         </div>
-        <img id="pathway-filter" src="@/assets/pathwaybar/pathway-button-2.png">
+        <div class="pathway-filter" v-on:click="category_filtering = !category_filtering">
+            <span>{{ category }}</span>
+            <img  class="remove-filter" src="@/assets/pathwaybar/cross.png" v-on:click.stop="category = 'Filter'" v-if="category !== 'Filter'">
+        </div>
+        <div class="pathway-filter-categories" v-if="category_filtering == true && terms !== null">
+            <div class="element" v-for="(entry, index) in filter_terms" :key="index" v-on:click="category = entry.label; category_filtering = false">
+                <a>{{ entry.label }}</a>
+            </div>
+        </div>
         <div class="bookmark-button" v-on:click="bookmark_off = !bookmark_off">
             <img class="bookmark-image" src="@/assets/pathwaybar/favorite.png" :class="{recolor_filter: bookmark_off == false}">
         </div>
@@ -66,20 +74,24 @@ export default {
             api: {
                 subgraph: "api/subgraph/enrichment",
             },
-            terms: [],
+            terms: null,
             await_load: false,
             search_raw: "",
+            filter_raw: "",
             bookmark_off: true,
             selectedIndex: -1,
             sort_fdr: "",
             sort_alph: "",
-            category: null,
+            category: "Filter",
             favourite_tab: new Set(),
+            category_filtering: false,
+            filter_terms: []
         }
     },
     mounted() {
         var com = this
         com.generatePathways(com.gephi_data.nodes[0].species, com.gephi_data.nodes.map(node => node.id))
+
 
     },
     watch: {
@@ -96,7 +108,7 @@ export default {
             var com = this;
             var filtered = com.terms;
             
-            if (com.category) {
+            if (com.category != "Filter") {
             // If category is set, filter by category
             filtered = filtered.filter(function(term) {
                 return term.category === com.category;
@@ -152,10 +164,18 @@ export default {
                 com.$store.commit('assign_enrichment', response.data.sort((t1, t2) => t1.fdr_rate - t2.fdr_rate))
                 com.terms = com.$store.state.enrichment_terms
                 // com.get_term_data(formData)
-                // com.filter_options()
+                com.filter_options()
                 com.await_load = false
             })
 
+        },
+        filter_options() {
+            var com = this
+            com.filter_terms = []
+            var remove_duplicates = [...new Set(com.terms.map(term => term.category))]
+            remove_duplicates.forEach(term => {
+                com.filter_terms.push({'label': term})
+            })
         },
         select_term(term, index) {
             var com = this;
@@ -254,9 +274,6 @@ export default {
             hiddenElement.download = 'Terms.csv';  
             hiddenElement.click();
         },
-        sorting() {
-            
-        }
     },  
 }
 </script>
@@ -304,12 +321,83 @@ export default {
     opacity: 50%; /* Make input background transparent */
     }
 
-    #pathway-filter {
+    .pathway-filter {
         width: 20.54%;
         left: 35.7%;
         height: 11.16%;
+        display: flex;
         position: absolute;
+        align-items: center;
+        background-image: url(@/assets/pathwaybar/pathway-button-2.png);
+        background-size: 100% 100%;
     }
+
+    .pathway-filter span {
+        display: block;
+        width: 60%;
+        margin-left: 30%;
+        padding-bottom: 2%;
+        font-size: 0.9vw;
+        color: white;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: default;
+    }
+
+    .pathway-filter .remove-filter {
+        width: 10%;
+        padding: 0%;
+        filter: invert(100%);
+        position: absolute;
+        top: 6%;
+        right: 4%;
+        padding-top: 1%;
+        filter: invert(100%);
+    }
+
+    .pathway-filter-categories {
+        display: flex;
+        position: fixed;
+        width: 92.05%;
+        height: 30.32%;
+        left: 20%;
+        top: 15%;
+        padding: 1% 0.5% 1% 0.5%;
+        border-radius: 5px;
+        border: 1px solid #FFF;
+        background: #0A0A1A;
+        z-index: 1;
+        align-items: center;
+        overflow-x: scroll;
+        overflow-y: hidden;
+        cursor: default;
+    }
+
+    .pathway-filter-categories .element {
+        border-radius: 5px;
+        background: rgba(217, 217, 217, 0.17);
+        display: flex;
+        width: 26.88%;
+        height: 100%;
+        margin: 0% 1% 0% 1%;
+        overflow: hidden;
+
+    }
+    .pathway-filter-categories .element:hover {
+        background: rgba(217, 217, 217, 0.47);
+    }
+    .element a {
+        width: 100%;
+        color: white;
+        padding: 5%;
+        font-weight: bold;
+        font-size: 0.4vw;
+        align-self: center;
+        text-align: center;
+    }
+
+
     .list-section {
         width: 100%;
         height: 87.65%;
