@@ -351,7 +351,7 @@ export default {
     }
 
     .pathway-search [type="text"]::-webkit-input-placeholder {
-    opacity: 50%;
+    opacity: 70%;
     }
 
     #pathway-filter {
@@ -498,12 +498,16 @@ export default {
     .sorting {
         margin-top: 1%;
         margin-left: 4.5%;
+        padding-bottom: 0.3%;
         width: 91%;
         font-size: 0.73vw;
         border-bottom: 1px solid;
         border-color: white;
         cursor: default;
 
+    }
+    .sorting a {
+        color: rgba(255, 255, 255, 0.7);
     }
 
     .fdr_filter{
