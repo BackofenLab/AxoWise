@@ -4,12 +4,12 @@
             <img class="pathway-search-icon" src="@/assets/toolbar/search.png">
             <input type="text" v-model="search_raw" class="empty" placeholder="Find your pathways"/>
         </div>
-        <div class="pathway-filter" v-on:click="category_filtering = !category_filtering">
+        <div id="pathway-filter" v-on:click="handling_filter_menu()" >
             <span>{{ category }}</span>
             <img  class="remove-filter" src="@/assets/pathwaybar/cross.png" v-on:click.stop="category = 'Filter'" v-if="category !== 'Filter'">
         </div>
-        <div class="pathway-filter-categories" v-if="category_filtering == true && terms !== null">
-            <div class="element" v-for="(entry, index) in filter_terms" :key="index" v-on:click="category = entry.label; category_filtering = false">
+        <div id="pathway-filter-categories" v-show="category_filtering == true && terms !== null">
+            <div class="element" v-for="(entry, index) in filter_terms" :key="index" v-on:click="category = entry.label; handling_filter_menu()">
                 <a>{{ entry.label }}</a>
             </div>
         </div>
@@ -274,7 +274,33 @@ export default {
             hiddenElement.download = 'Terms.csv';  
             hiddenElement.click();
         },
-    },  
+        handling_filter_menu() {
+            var com = this;
+            if (!com.category_filtering) {
+                com.category_filtering = true;
+
+                // Add the event listener
+                document.addEventListener('mouseup', com.handleMouseUp);
+            }
+            else{
+                com.category_filtering = false;
+                document.removeEventListener('mouseup', com.handleMouseUp);
+            }
+
+        },
+        handleMouseUp(e) {
+            var com = this;
+
+            var container = document.getElementById('pathway-filter-categories');
+            var container_button = document.getElementById('pathway-filter');
+            if (!container.contains(e.target) && !container_button.contains(e.target)) {
+                com.category_filtering = false;
+
+                // Remove the event listener
+                document.removeEventListener('mouseup', com.handleMouseUp);
+            }
+        }
+    }, 
 }
 </script>
 
@@ -298,9 +324,12 @@ export default {
         display: flex;
         position: absolute;
         align-items: center;
-        background-image: url(@/assets/pathwaybar/pathway-button.png);
-        background-size: 100% 100%;
+        border-radius: 5px;
+        background: #0A0A1A;
+        align-content: center;
+        justify-content: center;
     }
+    
     .pathway-search-icon {
         margin-left: 3%;
         position: relative;
@@ -318,24 +347,24 @@ export default {
     }
 
     .pathway-search [type="text"]::-webkit-input-placeholder {
-    opacity: 50%; /* Make input background transparent */
+    opacity: 50%;
     }
 
-    .pathway-filter {
-        width: 20.54%;
-        left: 35.7%;
+    #pathway-filter {
+        width: 17.81%;
+        left: 38.54%;
         height: 11.16%;
         display: flex;
         position: absolute;
+        border-radius: 5px;
+        background: #0A0A1A;
         align-items: center;
-        background-image: url(@/assets/pathwaybar/pathway-button-2.png);
-        background-size: 100% 100%;
+        justify-content: center;
     }
 
-    .pathway-filter span {
+    #pathway-filter span {
         display: block;
-        width: 60%;
-        margin-left: 30%;
+        width: 90%;
         padding-bottom: 2%;
         font-size: 0.9vw;
         color: white;
@@ -343,9 +372,10 @@ export default {
         overflow: hidden;
         text-overflow: ellipsis;
         cursor: default;
+        text-align: center;
     }
 
-    .pathway-filter .remove-filter {
+    #pathway-filter .remove-filter {
         width: 10%;
         padding: 0%;
         filter: invert(100%);
@@ -356,7 +386,7 @@ export default {
         filter: invert(100%);
     }
 
-    .pathway-filter-categories {
+    #pathway-filter-categories {
         display: flex;
         position: fixed;
         width: 92.05%;
@@ -374,7 +404,7 @@ export default {
         cursor: default;
     }
 
-    .pathway-filter-categories .element {
+    #pathway-filter-categories .element {
         border-radius: 5px;
         background: rgba(217, 217, 217, 0.17);
         display: flex;
@@ -384,7 +414,7 @@ export default {
         overflow: hidden;
 
     }
-    .pathway-filter-categories .element:hover {
+    #pathway-filter-categories .element:hover {
         background: rgba(217, 217, 217, 0.47);
     }
     .element a {
