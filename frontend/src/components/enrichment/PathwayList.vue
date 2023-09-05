@@ -36,16 +36,16 @@
             <div class="results" v-if="terms !== null && await_load == false" tabindex="0" @keydown="handleKeyDown" ref="resultsContainer">
                 <table >
                     <tbody>
-                        <tr v-for="(entry, index) in filt_terms" :key="index" class="option" :class="{ selected: selectedIndex === index }">
+                        <tr v-for="(entry, index) in filt_terms" :key="index" class="option" :class="{ selected: selectedIndex === index }" v-on:click="select_term(entry,index)">
                             <td>
                                 <div class="favourite-symbol">
                                 <label class="custom-checkbox">
-                                    <div class="checkbox-image" v-on:click="add_enrichment(entry)" :class="{ checked: favourite_tab.has(entry)}" ref="checkboxStates"></div>
+                                    <div class="checkbox-image" v-on:click.stop="add_enrichment(entry)" :class="{ checked: favourite_tab.has(entry)}" ref="checkboxStates"></div>
                                 </label>
                                 </div>
                             </td>
                             <td>
-                                <div class="pathway-text" v-on:click="select_term(entry,index)">
+                                <div class="pathway-text">
                                     <a href="#" ref="selectedNodes">{{entry.name}}</a>
                                 </div>
                             </td>
@@ -315,6 +315,8 @@ export default {
         margin-left: 0.28%;
         border-radius: 10px;
         z-index: 999;
+        cursor: default;
+        font-family: 'ABeeZee', sans-serif;
 
     }
 
@@ -340,10 +342,12 @@ export default {
 
     .pathway-search input[type=text] {
         margin-left: 2%;
-        font-size: 0.9vw;
+        font-size: 0.85vw;
         width: 80%;
         background: none;
         color: white;
+        cursor: default;
+        font-family: 'ABeeZee', sans-serif;
     }
 
     .pathway-search [type="text"]::-webkit-input-placeholder {
@@ -365,8 +369,7 @@ export default {
     #pathway-filter span {
         display: block;
         width: 90%;
-        padding-bottom: 2%;
-        font-size: 0.9vw;
+        font-size: 0.95vw;
         color: white;
         white-space: nowrap;
         overflow: hidden;
@@ -474,9 +477,8 @@ export default {
         display: flex;
         align-items: center;
         justify-content: center;
-        padding-bottom: 2%;
         color: white;
-        font-size: 0.9vw;
+        font-size: 0.95vw;
     }
 
     .list-section a {
@@ -506,7 +508,7 @@ export default {
 
     .fdr_filter{
         position: fixed;
-        left: 76.5%;
+        left: 78.6%;
     }
 
     .pathway-text{
@@ -515,6 +517,10 @@ export default {
         overflow: hidden;    /* Hide overflow content */
         text-overflow: ellipsis;
         margin-left: 2%;
+    }
+
+    .pathway-text a {
+        cursor: default;
     }
 
     /* bookmark styles */
@@ -536,7 +542,7 @@ export default {
     td:nth-child(2) {
     color: #FFF;
     font-size: 0.9vw;
-    width: 81.55%;
+    width: 91.55%;
     overflow: hidden;
     align-self: center;
     }
@@ -559,7 +565,7 @@ export default {
     .custom-checkbox {
         position: relative;
         display: inline-block;
-        cursor: pointer;
+        cursor: default;
     }
 
     .checkbox-image {
@@ -594,6 +600,7 @@ export default {
         height: 100%;
         display: flex;
         align-items: center;
+        justify-content: center;
         padding-left: 5%;
 
     }
@@ -606,8 +613,7 @@ export default {
         padding-top:1%;
     }
     .visualize-text {
-        padding-bottom: 2%;
-        font-size: 0.9vw;
+        font-size: 0.95vw;
         color: white;
         
     }
