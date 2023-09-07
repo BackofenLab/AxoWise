@@ -5,6 +5,7 @@ from time import time
 import urllib.request
 import neo4j
 import re
+from alive_progress import alive_bar
 
 
 class Reformatter:
@@ -42,15 +43,14 @@ def stop_driver(driver: neo4j.Driver):
 def execute_query(query: str, read: bool, driver: neo4j.Driver) -> pd.DataFrame:
     if os.getenv("_UPDATE_NEO4J") == str(True):
         with driver.session() as session:
-            # TODO Remove if statement?
-            if not read:
-                tmp = session.run(query).values()
-                return tmp
-            else:
-                tmp = session.run(query).values()
-                return tmp
+            tmp = session.run(query).values()
+            return tmp
     else:
-        print(query)
+        with open("queries.txt", "a") as file:
+            file.write(query)
+            file.write("\n")
+            file.write("\n")
+            file.write("\n")
         return [[0]]
 
 
@@ -107,11 +107,13 @@ def get_consistent_entries(comparing_genes: pd.DataFrame, complete: pd.DataFrame
 
 def remove_bidirectionality(df: pd.DataFrame, columns: tuple[str], additional: list[str]) -> pd.DataFrame:
     df_dict = dict()
-    for _, row in df.iterrows():
-        vals = [row[j] for j in additional]
-        key = frozenset([row[columns[0]], row[columns[1]]])
-        if key not in df_dict.keys():
-            df_dict[key] = vals
+    with alive_bar(len(df)) as bar:
+        for _, row in df.iterrows():
+            vals = [row[j] for j in additional]
+            key = frozenset([row[columns[0]], row[columns[1]]])
+            if key not in df_dict.keys():
+                df_dict[key] = vals
+            bar()
     df_list = [[*list(i), *df_dict[i]] for i in df_dict.keys()]
     df_list = pd.DataFrame(df_list, columns=[columns[0], columns[1], *additional])
     df_list.to_csv("../source/misc/test.csv", index=False)
@@ -167,11 +169,18 @@ def check_for_files(mode: int):
         return not (
             os.path.exists("../source/processed/gene_gene_scores.csv")
             and os.path.exists("../source/processed/genes_annotated.csv")
+            and os.path.exists("../source/processed/protein_protein_scores.csv")
+            and os.path.exists("../source/processed/proteins_annotated.csv")
         )
 
     elif mode == 2:
         # ENSEMBL
-        return not (os.path.exists("../source/processed/complete.csv") and os.path.exists("../source/processed/tf.csv"))
+        return not (
+            os.path.exists("../source/processed/complete.csv")
+            and os.path.exists("../source/processed/tf.csv")
+            and os.path.exists("../source/processed/proteins.csv")
+            and os.path.exists("../source/processed/gene_protein_link.csv")
+        )
 
     elif mode == 3:
         # Functional
@@ -189,7 +198,7 @@ def check_for_files(mode: int):
             and os.path.exists("../source/processed/catlas_correlation.csv")
             and os.path.exists("../source/processed/catlas_celltype.csv")
             and os.path.exists("../source/processed/distance_extended.csv")
-            and os.path.exists("../source/processed/motif_extended.csv")
+            and os.path.exists("../source/processed/catlas_motifs.csv")
         )
 
 

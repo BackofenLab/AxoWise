@@ -35,9 +35,10 @@ def parse_experiment(
         2: TF_target_cor
         3: peak_target_cor
         4: TF_motif_peak
+        5: motif_peaks_TF_no_peaks
         If some of the data is not present, the value will be None.
         """
-        dataframes = [None] * 5
+        dataframes = [None] * 6
         for file in os.scandir(dir_path):
             file_name, file_extention = os.path.splitext(file)
             if file_extention == ".tsv":
@@ -144,12 +145,18 @@ def parse_experiment(
         motif = (
             exp[4]
             .merge(tmp_or_id, left_on="peaks", right_on="nearest_index", how="left")
-            .drop(columns=["peaks", "motif_id", "nearest_index"])
+            .drop(columns=["peaks", "nearest_index"])
         )
         motif = (
             motif.merge(symbol_ensembl_dict, left_on="TF", right_on="SYMBOL", how="left")
             .drop(columns=["TF", "SYMBOL"])
             .dropna()
+        )
+
+        motif = (
+            motif.merge(right=exp[5], left_on="motif_id", right_on="motif_id")
+            .rename(columns={"id": "or_id", "motif_id": "id", "log_adj_pvalue": "p", "concentration": "Concentration"})
+            .drop(columns=["TF", "number_of_peaks"])
         )
 
         return (
@@ -174,8 +181,15 @@ def _reformat_experiment_file(df: pd.DataFrame, file_name: str, reformat: bool):
     print_update(update_type="Reformatting", text=file_name, color="orange")
 
     # Filename and function pairs: same index <-> use function for file
-    names = ["exp_DA", "exp_DE_filter", "correlation_pval_TF_target", "corr_peak_target", "TF_motif_peak"]
-    functions = [_reformat_da, _reformat_de, _reformat_tf_tg, _reformat_or_tg, _reformat_motif]
+    names = [
+        "exp_DA",
+        "exp_DE_filter",
+        "correlation_pval_TF_target",
+        "corr_peak_target",
+        "TF_motif_peak",
+        "motif_peaks_TF_no_peaks",
+    ]
+    functions = [_reformat_da, _reformat_de, _reformat_tf_tg, _reformat_or_tg, _reformat_motif, _reformat_motif_info]
     index = names.index(file_name)
 
     if not reformat:
@@ -214,5 +228,9 @@ def _reformat_or_tg(df: pd.DataFrame):
 
 
 def _reformat_motif(df: pd.DataFrame):
-    df = df.rename(columns={"motif_consensus": "Motif"})
+    df = df.rename(columns={"motif_consensus": "Consensus"})
+    return df
+
+
+def _reformat_motif_info(df: pd.DataFrame):
     return df

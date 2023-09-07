@@ -3,14 +3,18 @@ import pandas as pd
 import os
 
 
-def parse_string(complete: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT_STRING_PATH")):
+def parse_string(complete: pd.DataFrame, proteins: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT_STRING_PATH")):
     """
     Reads STRING files and returns a Pandas dataframe
-    [ protein.links.v11.5.tsv, protein.info.v11.5.tsv, string_SYMBOL_ENSEMBL.tsv, difference.csv ]
+    [
+      protein.links.v11.5.tsv,       protein.info.v11.5.tsv,
+      string_SYMBOL_ENSEMBL.tsv,     difference.csv
+      9606.protein.links.v11.5.tsv,  9606.protein.info.v11.5.tsv
+    ]
     """
 
     def read_string():
-        dataframes = [None] * 4
+        dataframes = [None] * 6
 
         for file in os.scandir(dir_path):
             file_name, file_extention = os.path.splitext(file)
@@ -63,7 +67,16 @@ def parse_string(complete: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT_STR
         genes_annotated = string[1].merge(complete, left_on="Protein", right_on="Protein", how="left")
         genes_annotated = genes_annotated.filter(items=["ENSEMBL", "SYMBOL", "annotation", "ENTREZID"])
 
-        # Drop duplicate annotations, keep last entry
+        proteins_annotated = (
+            proteins.merge(right=string[1], left_on="Protein", right_on="Protein", how="left")
+            .drop_duplicates(subset=["Protein"], keep="first")
+            .drop(columns=["ENSEMBL"])
+        )
+        proteins_annotated["Protein"] = proteins_annotated["Protein"].apply(lambda x: x.removeprefix("10090."))
+
+        proteins_annotated = proteins_annotated.rename(columns={"Protein": "ENSEMBL"})
+
+        # Drop duplicate annotations, keep first entry
         genes_annotated = genes_annotated.drop_duplicates(subset=["ENSEMBL"], keep="first", ignore_index=True)
         genes_annotated = genes_annotated.dropna(subset=["ENSEMBL"])
 
@@ -92,6 +105,27 @@ def parse_string(complete: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT_STR
             symbol_protein=symbol_protein, protein_gene_dict=protein_gene_dict, genes_annotated=genes_annotated
         )
 
+        protein_protein_scores = string[0].merge(proteins, left_on="protein1", right_on="Protein")
+        protein_protein_scores = protein_protein_scores.filter(items=["Protein", "protein2", "Score"])
+        protein_protein_scores = protein_protein_scores.rename(columns={"Protein": "Protein1"})
+
+        protein_protein_scores = protein_protein_scores.merge(proteins, left_on="protein2", right_on="Protein")
+        protein_protein_scores = protein_protein_scores.filter(items=["Protein1", "Protein", "Score"])
+        protein_protein_scores = protein_protein_scores.rename(columns={"Protein": "Protein2"})
+
+        protein_protein_scores = remove_bidirectionality(
+            df=protein_protein_scores, columns=("Protein1", "Protein2"), additional=["Score"]
+        )
+
+        protein_protein_scores = protein_protein_scores.drop_duplicates()
+        protein_protein_scores["Protein1"] = protein_protein_scores["Protein1"].apply(
+            lambda x: x.removeprefix("10090.")
+        )
+        protein_protein_scores["Protein2"] = protein_protein_scores["Protein2"].apply(
+            lambda x: x.removeprefix("10090.")
+        )
+        protein_protein_scores.rename(columns={"Protein1": "ENSEMBL1", "Protein2": "ENSEMBL2"})
+
         gene_gene_scores = string[0].merge(protein_gene_dict, left_on="protein1", right_on="Protein")
         gene_gene_scores = gene_gene_scores.filter(items=["ENSEMBL", "protein2", "Score"])
         gene_gene_scores = gene_gene_scores.rename(columns={"ENSEMBL": "ENSEMBL1"})
@@ -105,7 +139,7 @@ def parse_string(complete: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT_STR
         )
 
         gene_gene_scores = gene_gene_scores.drop_duplicates(keep="first")
-        return gene_gene_scores, genes_annotated
+        return gene_gene_scores, genes_annotated, proteins_annotated, protein_protein_scores
 
     string = read_string()
     return post_processing(string=string)
@@ -114,8 +148,22 @@ def parse_string(complete: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT_STR
 def _reformat_string_file(df: pd.DataFrame, file_name: str):
     print_update(update_type="Reformatting", text=file_name, color="orange")
 
-    names = ["protein.links.v11.5", "protein.info.v11.5", "string_SYMBOL_ENSEMBL", "difference"]
-    functions = [_reformat_string_links, _reformat_string_info, _reformat_protein_gene_dict, _reformat_difference]
+    names = [
+        "protein.links.v11.5",
+        "protein.info.v11.5",
+        "string_SYMBOL_ENSEMBL",
+        "difference",
+        "9606.protein.links.v11.5",
+        "9606.protein.info.v11.5",
+    ]
+    functions = [
+        _reformat_string_links,
+        _reformat_string_info,
+        _reformat_protein_gene_dict,
+        _reformat_difference,
+        _reformat_string_links_human,
+        _reformat_string_info_human,
+    ]
     index = names.index(file_name)
 
     return functions[index](df=df), index
@@ -126,7 +174,17 @@ def _reformat_string_links(df: pd.DataFrame):
     return df
 
 
+def _reformat_string_links_human(df: pd.DataFrame):
+    df = df.rename(columns={"combined_score": "Score"})
+    return df
+
+
 def _reformat_string_info(df: pd.DataFrame):
+    df = df.rename(columns={"preferred_name": "SYMBOL", "#string_protein_id": "Protein"})
+    return df
+
+
+def _reformat_string_info_human(df: pd.DataFrame):
     df = df.rename(columns={"preferred_name": "SYMBOL", "#string_protein_id": "Protein"})
     return df
 

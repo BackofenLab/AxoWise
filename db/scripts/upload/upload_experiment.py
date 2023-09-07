@@ -8,7 +8,7 @@ _DEFAULT_STUDY_INFO = {"name": "Bulk ATAC-Seq, RNA-seq", "source": "in-house"}
 
 
 @time_function
-def create_study_cell_source_meancount(driver: Driver):
+def create_study_cell_source_meancount(species: str, driver: Driver):
     """
     Creates Study, Cell, Source, and MeanCount nodes.
     """
@@ -22,9 +22,9 @@ def create_study_cell_source_meancount(driver: Driver):
 
     # Queries to be run (as one) in this function
     create_study_query = "CREATE (s:Study {})".format(study_info_str)
-    create_celltype_query = "MERGE (c:Celltype {})".format(celltype_info_str)
-    create_source_query = "MERGE (s)-[:HAS]->(o:Source)<-[:HAS]-(c) SET o.id = id(o)"
-    create_meancount = "MERGE (m:MeanCount)"
+    create_celltype_query = "MERGE (c:Celltype:{} {})".format(species, celltype_info_str)
+    create_source_query = f"MERGE (s)-[:HAS]->(o:Source:{species})<-[:HAS]-(c) SET o.id = id(o)"
+    create_meancount = f"MERGE (m:MeanCount:{species})"
     create_source_meancount_edge = "MERGE (o)-[:HAS]->(m)"
     return_id = "RETURN id(o) AS id"
 
@@ -46,7 +46,7 @@ def create_study_cell_source_meancount(driver: Driver):
 
 
 @time_function
-def create_tg_meancount(mean_count: pd.DataFrame, source: int, driver: Driver):
+def create_tg_meancount(mean_count: pd.DataFrame, source: int, species: str, driver: Driver):
     """
     Creates Target Gene MEANCOUNT Edges between MeanCount and TG
     """
@@ -66,12 +66,13 @@ def create_tg_meancount(mean_count: pd.DataFrame, source: int, driver: Driver):
         values=values,
         reformat_values=reformat,
         merge=False,
+        species=species,
         driver=driver,
     )
 
 
 @time_function
-def create_tf_meancount(mean_count: pd.DataFrame, source: int, driver: Driver):
+def create_tf_meancount(mean_count: pd.DataFrame, source: int, species: str, driver: Driver):
     """
     Creates Transcription MEANCOUNT Edges between MeanCount and TF, and labels Nodes with TF label
     """
@@ -91,12 +92,13 @@ def create_tf_meancount(mean_count: pd.DataFrame, source: int, driver: Driver):
         node_types=("MeanCount", "TF"),
         values=values,
         reformat_values=reformat,
+        species=species,
         driver=driver,
     )
 
 
 @time_function
-def create_or_meancount(mean_count: pd.DataFrame, source: int, driver: Driver):
+def create_or_meancount(mean_count: pd.DataFrame, source: int, species: str, driver: Driver):
     """
     Creates MEANCOUNT edges between MeanCount and OR
     """
@@ -118,13 +120,14 @@ def create_or_meancount(mean_count: pd.DataFrame, source: int, driver: Driver):
         node_types=("MeanCount", "OR"),
         values=values,
         reformat_values=reformat,
+        species=species,
         driver=driver,
     )
 
 
 @time_function
 def create_context(
-    context: pd.DataFrame, context_type: str, source: int, value_type: int, driver: Driver
+    context: pd.DataFrame, context_type: str, source: int, value_type: int, species: str, driver: Driver
 ):  # value_type: 1 -> TG, 0 -> OR
     """
     Creates Context nodes from Experiment data if not already existent in DB, and DE / DA edges between Context and OR/TG
@@ -143,6 +146,7 @@ def create_context(
         id="Context",
         values=values,
         reformat_values=reformat,
+        species=species,
         driver=driver,
     )
 
@@ -163,6 +167,7 @@ def create_context(
         values=values,
         reformat_values=reformat,
         merge=True,
+        species=species,
         driver=driver,
     )
 
@@ -177,12 +182,6 @@ def create_context(
     # TG Context Edges
     if value_type == 1:
         values, reformat = get_values_reformat(df=edge_df, match=["Context", "ENSEMBL"])
-        # values = list(set(list(edge_df.columns)) - set(["Context", "ENSEMBL"]))
-        # reformat = [
-        #     (i, "toFloat" if edge_df[i].dtype == "float64" else "toInteger")
-        #     for i in values
-        #     if edge_df[i].dtype != "object"
-        # ]
 
         save_df_to_csv(file_name="tg_context.csv", df=edge_df)
         create_relationship(
@@ -193,18 +192,13 @@ def create_context(
             values=values,
             reformat_values=reformat,
             merge=False,
+            species=species,
             driver=driver,
         )
 
     # OR Context Edges
     elif value_type == 0:
         values, reformat = get_values_reformat(df=edge_df, match=["Context", "id"])
-        # values = list(set(list(edge_df.columns)) - set(["Context", "id"]))
-        # reformat = [
-        #     (i, "toFloat" if edge_df[i].dtype == "float64" else "toInteger")
-        #     for i in values
-        #     if edge_df[i].dtype != "object"
-        # ]
 
         save_df_to_csv(file_name="or_context.csv", df=edge_df)
         create_relationship(
@@ -215,13 +209,35 @@ def create_context(
             values=values,
             reformat_values=reformat,
             merge=False,
+            species=species,
             driver=driver,
         )
 
 
 @time_function
+def create_motif(motif: pd.DataFrame, source: int, species: str, driver: Driver):
+    print_update(update_type="Edge Creation", text="MOTIF", color="cyan")
+
+    motif["Source"] = source
+
+    values, reformat = get_values_reformat(df=motif, match=["ENSEMBL", "id"])
+    save_df_to_csv(file_name="motif.csv", df=motif)
+    create_relationship(
+        source_file="motif.csv",
+        type_="MOTIF",
+        between=(("ENSEMBL", "ENSEMBL"), ("id", "or_id")),
+        node_types=("TF", "OR"),
+        values=values,
+        reformat_values=reformat,
+        merge=False,
+        species=species,
+        driver=driver,
+    )
+
+
+@time_function
 def create_correlation(
-    correlation: pd.DataFrame, source: int, value_type: int, driver: Driver
+    correlation: pd.DataFrame, source: int, value_type: int, species: str, driver: Driver
 ):  # value_type: 1 -> TF-TG, 0 -> TG-OR
     """
     Creates CORRELATION Edges between TF / OR and TG from experiment data
@@ -253,6 +269,7 @@ def create_correlation(
             values=values,
             reformat_values=reformat,
             merge=False,
+            species=species,
             driver=driver,
         )
 
@@ -275,6 +292,7 @@ def create_correlation(
             values=values,
             reformat_values=reformat,
             merge=False,
+            species=species,
             driver=driver,
         )
 
@@ -282,6 +300,7 @@ def create_correlation(
 @time_function
 def extend_db_from_experiment(
     driver: Driver,
+    species: str,
     tg_mean_count: pd.DataFrame | None = None,
     tf_mean_count: pd.DataFrame | None = None,
     or_mean_count: pd.DataFrame | None = None,
@@ -289,33 +308,47 @@ def extend_db_from_experiment(
     or_context_values: pd.DataFrame | None = None,
     tf_tg_corr: pd.DataFrame | None = None,
     or_tg_corr: pd.DataFrame | None = None,
+    motif: pd.DataFrame | None = None,
 ):
     """
     Extends Base DB with Data from Experiment
     """
 
-    id_source = create_study_cell_source_meancount(driver=driver)
+    id_source = create_study_cell_source_meancount(species=species, driver=driver)
 
     if tg_mean_count is not None:
-        create_tg_meancount(mean_count=tg_mean_count, source=id_source, driver=driver)
+        create_tg_meancount(mean_count=tg_mean_count, source=id_source, species=species, driver=driver)
     if tf_mean_count is not None:
-        create_tf_meancount(mean_count=tf_mean_count, source=id_source, driver=driver)
+        create_tf_meancount(mean_count=tf_mean_count, source=id_source, species=species, driver=driver)
     if or_mean_count is not None:
-        create_or_meancount(mean_count=or_mean_count, source=id_source, driver=driver)
+        create_or_meancount(mean_count=or_mean_count, source=id_source, species=species, driver=driver)
 
     if tg_context_values is not None:
         create_context(
-            context_type="Timeframe", context=tg_context_values, source=id_source, value_type=1, driver=driver
+            context_type="Timeframe",
+            context=tg_context_values,
+            source=id_source,
+            value_type=1,
+            species=species,
+            driver=driver,
         )
     if or_context_values is not None:
         create_context(
-            context_type="Timeframe", context=or_context_values, source=id_source, value_type=0, driver=driver
+            context_type="Timeframe",
+            context=or_context_values,
+            source=id_source,
+            value_type=0,
+            species=species,
+            driver=driver,
         )
 
     if tf_tg_corr is not None:
-        create_correlation(correlation=tf_tg_corr, source=id_source, value_type=1, driver=driver)
+        create_correlation(correlation=tf_tg_corr, source=id_source, value_type=1, species=species, driver=driver)
     if or_tg_corr is not None:
-        create_correlation(correlation=or_tg_corr, source=id_source, value_type=0, driver=driver)
+        create_correlation(correlation=or_tg_corr, source=id_source, value_type=0, species=species, driver=driver)
+
+    if motif is not None:
+        create_motif(motif=motif, source=id_source, species=species, driver=driver)
 
     print_update(update_type="Done", text="Extending DB from Experimental Data", color="pink")
     return

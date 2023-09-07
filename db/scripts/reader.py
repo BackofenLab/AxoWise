@@ -9,7 +9,13 @@ from read.read_catlas import parse_catlas
 
 
 @time_function
-def read(dir_path: str = None, reformat: bool = True, mode: int = -1, complete: pd.DataFrame = pd.DataFrame([])):
+def read(
+    dir_path: str = None,
+    reformat: bool = True,
+    mode: int = -1,
+    complete: pd.DataFrame = pd.DataFrame([]),
+    proteins: pd.DataFrame = pd.DataFrame([]),
+):
     if mode == 0:
         # Experiment
         if dir_path == None:
@@ -73,30 +79,41 @@ def read(dir_path: str = None, reformat: bool = True, mode: int = -1, complete: 
             dir_path = os.getenv("_DEFAULT_STRING_PATH")
 
         if check_for_files(mode=mode):
-            (gene_gene_scores, genes_annotated) = parse_string(dir_path=dir_path, complete=complete)
+            (gene_gene_scores, genes_annotated, proteins_annotated, protein_protein_scores) = parse_string(
+                dir_path=dir_path, complete=complete, proteins=proteins
+            )
 
             gene_gene_scores.to_csv("../source/processed/gene_gene_scores.csv", index=False)
             genes_annotated.to_csv("../source/processed/genes_annotated.csv", index=False)
+            protein_protein_scores.to_csv("../source/processed/protein_protein_scores.csv", index=False)
+            proteins_annotated.to_csv("../source/processed/proteins_annotated.csv", index=False)
+
         else:
             gene_gene_scores = pd.read_csv("../source/processed/gene_gene_scores.csv")
             genes_annotated = pd.read_csv("../source/processed/genes_annotated.csv")
+            protein_protein_scores = pd.read_csv("../source/processed/protein_protein_scores.csv")
+            proteins_annotated = pd.read_csv("../source/processed/proteins_annotated.csv")
 
-        result = (gene_gene_scores, genes_annotated)
+        result = (gene_gene_scores, genes_annotated, proteins_annotated, protein_protein_scores)
     elif mode == 2:
         # ENSEMBL
         if dir_path == None:
             dir_path = os.getenv("_DEFAULT_ENSEMBL_PATH")
 
         if check_for_files(mode=mode):
-            (complete, tf) = parse_ensembl(dir_path=dir_path)
+            (complete, tf, proteins, gene_protein_link) = parse_ensembl(dir_path=dir_path)
 
             complete.to_csv("../source/processed/complete.csv", index=False)
             tf.to_csv("../source/processed/tf.csv", index=False)
+            proteins.to_csv("../source/processed/proteins.csv", index=False)
+            gene_protein_link.to_csv("../source/processed/gene_protein_link.csv", index=False)
         else:
             complete = pd.read_csv("../source/processed/complete.csv")
             tf = pd.read_csv("../source/processed/tf.csv")
+            proteins = pd.read_csv("../source/processed/proteins.csv")
+            gene_protein_link = pd.read_csv("../source/processed/gene_protein_link.csv")
 
-        result = (complete, tf)
+        result = (complete, tf, proteins, gene_protein_link)
 
     elif mode == 3:
         # Functional
@@ -107,20 +124,24 @@ def read(dir_path: str = None, reformat: bool = True, mode: int = -1, complete: 
             (
                 ft_nodes,
                 ft_gene,
+                ft_protein,
                 ft_ft_overlap,
-            ) = parse_functional(dir_path=dir_path, complete=complete)
+            ) = parse_functional(dir_path=dir_path)
 
             ft_nodes.to_csv("../source/processed/ft_nodes.csv", index=False)
             ft_gene.to_csv("../source/processed/ft_gene.csv", index=False)
+            ft_protein.to_csv("../source/processed/ft_protein.csv", index=False)
             ft_ft_overlap.to_csv("../source/processed/ft_ft_overlap.csv", index=False)
         else:
             ft_nodes = pd.read_csv("../source/processed/ft_nodes.csv")
             ft_gene = pd.read_csv("../source/processed/ft_gene.csv")
+            ft_protein = pd.read_csv("../source/processed/ft_protein.csv")
             ft_ft_overlap = pd.read_csv("../source/processed/ft_ft_overlap.csv")
 
         result = (
             ft_nodes,
             ft_gene,
+            ft_protein,
             ft_ft_overlap,
         )
 
@@ -137,22 +158,22 @@ def read(dir_path: str = None, reformat: bool = True, mode: int = -1, complete: 
                 catlas_correlation,
                 catlas_celltype,
                 distance_extended,
-                motif_extended,
-            ) = parse_catlas(or_nodes=or_nodes, distance=distance, motif=motif)
+                catlas_motifs,
+            ) = parse_catlas(or_nodes=or_nodes, distance=distance)
 
             or_extended.to_csv("../source/processed/or_extended.csv", index=False)
             catlas_or_context.to_csv("../source/processed/catlas_or_context.csv", index=False)
             catlas_correlation.to_csv("../source/processed/catlas_correlation.csv", index=False)
             catlas_celltype.to_csv("../source/processed/catlas_celltype.csv", index=False)
             distance_extended.to_csv("../source/processed/distance_extended.csv", index=False)
-            motif_extended.to_csv("../source/processed/motif_extended.csv", index=False)
+            catlas_motifs.to_csv("../source/processed/catlas_motifs.csv", index=False)
         else:
             or_extended = pd.read_csv("../source/processed/or_extended.csv")
             catlas_or_context = pd.read_csv("../source/processed/catlas_or_context.csv")
             catlas_correlation = pd.read_csv("../source/processed/catlas_correlation.csv")
             catlas_celltype = pd.read_csv("../source/processed/catlas_celltype.csv")
             distance_extended = pd.read_csv("../source/processed/distance_extended.csv")
-            motif_extended = pd.read_csv("../source/processed/motif_extended.csv")
+            catlas_motifs = pd.read_csv("../source/processed/catlas_motifs.csv")
 
         result = (
             or_extended,
@@ -160,7 +181,7 @@ def read(dir_path: str = None, reformat: bool = True, mode: int = -1, complete: 
             catlas_correlation,
             catlas_celltype,
             distance_extended,
-            motif_extended,
+            catlas_motifs,
         )
 
     return result
