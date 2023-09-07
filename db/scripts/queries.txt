@@ -1,0 +1,147 @@
+# BASE
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///genes.csv' AS map RETURN map", "CREATE (t:TG:Mus_Musculus {ENSEMBL: map.ENSEMBL} )  SET t.annotation = map.annotation SET t.SYMBOL = map.SYMBOL SET t.ENTREZID = toFloat(map.ENTREZID)", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///tf.csv' AS map RETURN map", "MATCH (t:TG:Mus_Musculus {ENSEMBL: map.ENSEMBL} ) SET t:TF", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///or.csv' AS map RETURN map", "CREATE (t:OR:Mus_Musculus {id: map.id} )  SET t.annotation = map.annotation SET t.feature = map.feature", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///proteins.csv' AS map RETURN map", "CREATE (t:Protein:Mus_Musculus {ENSEMBL: map.ENSEMBL} )  SET t.annotation = map.annotation SET t.SYMBOL = map.SYMBOL SET t.protein_size = toFloat(map.protein_size)", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///protein_gene_links.csv' AS map RETURN map", "CREATE (r:LINK_temp)  SET r.m_ENSEMBL = map.ENSEMBL SET r.n_ENSEMBL = map.Protein", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("MATCH (r:LINK_temp), (m:TG:Mus_Musculus), (n:Protein:Mus_Musculus) WHERE r.m_ENSEMBL = m.ENSEMBL AND r.n_ENSEMBL = n.ENSEMBL RETURN r, m, n", "CREATE (m)-[e:LINK]->(n)", {batchSize: 500} )
+
+CALL apoc.periodic.iterate("MATCH (r:LINK_temp) RETURN r", "DELETE r", {batchSize: 500, parallel: true})
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///string_scores.csv' AS map RETURN map", "CREATE (r:STRING_temp)  SET r.Score = toInteger(map.Score) SET r.m_ENSEMBL = map.Protein1 SET r.n_ENSEMBL = map.Protein2", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("MATCH (r:STRING_temp), (m:Protein:Mus_Musculus), (n:Protein:Mus_Musculus) WHERE r.m_ENSEMBL = m.ENSEMBL AND r.n_ENSEMBL = n.ENSEMBL RETURN r, m, n", "CREATE (m)-[e:STRING]->(n) SET e.Score = r.Score", {batchSize: 500} )
+
+CALL apoc.periodic.iterate("MATCH (r:STRING_temp) RETURN r", "DELETE r", {batchSize: 500, parallel: true})
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///distance.csv' AS map RETURN map", "CREATE (r:DISTANCE_temp)  SET r.Dummy = map.Dummy SET r.Distance = toInteger(map.Distance) SET r.m_id = map.id SET r.n_ENSEMBL = map.ENSEMBL", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("MATCH (r:DISTANCE_temp), (m:OR:Mus_Musculus), (n:TG:Mus_Musculus) WHERE r.m_id = m.id AND r.n_ENSEMBL = n.ENSEMBL RETURN r, m, n", "CREATE (m)-[e:DISTANCE]->(n) SET e.Distance = r.Distance SET e.Dummy = r.Dummy", {batchSize: 500} )
+
+CALL apoc.periodic.iterate("MATCH (r:DISTANCE_temp) RETURN r", "DELETE r", {batchSize: 500, parallel: true})
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///ft_nodes.csv' AS map RETURN map", "CREATE (t:FT:Mus_Musculus {Term: map.Term} )  SET t.Category = map.Category SET t.Name = map.Name", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///ft_overlap.csv' AS map RETURN map", "CREATE (r:OVERLAP_temp)  SET r.Score = toFloat(map.Score) SET r.m_Term = map.source SET r.n_Term = map.target", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("MATCH (r:OVERLAP_temp), (m:FT:Mus_Musculus), (n:FT:Mus_Musculus) WHERE r.m_Term = m.Term AND r.n_Term = n.Term RETURN r, m, n", "CREATE (m)-[e:OVERLAP]->(n) SET e.Score = r.Score", {batchSize: 500} )
+
+CALL apoc.periodic.iterate("MATCH (r:OVERLAP_temp) RETURN r", "DELETE r", {batchSize: 500, parallel: true})
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///ft_gene.csv' AS map RETURN map", "CREATE (r:LINK_temp)  SET r.m_ENSEMBL = map.ENSEMBL SET r.n_Term = map.Term", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("MATCH (r:LINK_temp), (m:TG:Mus_Musculus), (n:FT:Mus_Musculus) WHERE r.m_ENSEMBL = m.ENSEMBL AND r.n_Term = n.Term RETURN r, m, n", "CREATE (m)-[e:LINK]->(n)", {batchSize: 500} )
+
+CALL apoc.periodic.iterate("MATCH (r:LINK_temp) RETURN r", "DELETE r", {batchSize: 500, parallel: true})
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///ft_protein.csv' AS map RETURN map", "CREATE (r:LINK_temp)  SET r.m_ENSEMBL = map.ENSEMBL SET r.n_Term = map.Term", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("MATCH (r:LINK_temp), (m:Protein:Mus_Musculus), (n:FT:Mus_Musculus) WHERE r.m_ENSEMBL = m.ENSEMBL AND r.n_Term = n.Term RETURN r, m, n", "CREATE (m)-[e:LINK]->(n)", {batchSize: 500} )
+
+CALL apoc.periodic.iterate("MATCH (r:LINK_temp) RETURN r", "DELETE r", {batchSize: 500, parallel: true})
+
+
+# BULK
+
+CREATE (s:Study {name: 'Bulk ATAC-Seq, RNA-seq', source: 'in-house'}) MERGE (c:Celltype:Mus_Musculus {name: 'Microglia'}) MERGE (s)-[:HAS]->(o:Source:Mus_Musculus)<-[:HAS]-(c) SET o.id = id(o) MERGE (m:MeanCount:Mus_Musculus) MERGE (o)-[:HAS]->(m) RETURN id(o) AS id
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///tg_meancount.csv' AS map RETURN map", "CREATE (r:MEANCOUNT_temp)  SET r.Value = toFloat(map.Value) SET r.Source = toInteger(map.Source)  SET r.n_ENSEMBL = map.ENSEMBL", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("MATCH (r:MEANCOUNT_temp), (m:MeanCount:Mus_Musculus), (n:TG:Mus_Musculus) WHERE r.n_ENSEMBL = n.ENSEMBL RETURN r, m, n", "CREATE (m)-[e:MEANCOUNT]->(n) SET e.Value = r.Value SET e.Source = r.Source", {batchSize: 500} )
+
+CALL apoc.periodic.iterate("MATCH (r:MEANCOUNT_temp) RETURN r", "DELETE r", {batchSize: 500, parallel: true})
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///tf_meancount.csv' AS map RETURN map", "CREATE (r:MEANCOUNT_temp)  SET r.Value = toFloat(map.Value) SET r.Source = toInteger(map.Source)  SET r.n_ENSEMBL = map.ENSEMBL", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("MATCH (r:MEANCOUNT_temp), (m:MeanCount:Mus_Musculus), (n:TF:Mus_Musculus) WHERE r.n_ENSEMBL = n.ENSEMBL RETURN r, m, n", "MERGE (m)-[e:MEANCOUNT]->(n) SET e.Value = r.Value SET e.Source = r.Source", {batchSize: 500} )
+
+CALL apoc.periodic.iterate("MATCH (r:MEANCOUNT_temp) RETURN r", "DELETE r", {batchSize: 500, parallel: true})
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///or_meancount.csv' AS map RETURN map", "CREATE (r:MEANCOUNT_temp)  SET r.Value = toFloat(map.Value) SET r.Source = toInteger(map.Source)  SET r.n_id = map.id", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("MATCH (r:MEANCOUNT_temp), (m:MeanCount:Mus_Musculus), (n:OR:Mus_Musculus) WHERE r.n_id = n.id RETURN r, m, n", "MERGE (m)-[e:MEANCOUNT]->(n) SET e.Value = r.Value SET e.Source = r.Source", {batchSize: 500} )
+
+CALL apoc.periodic.iterate("MATCH (r:MEANCOUNT_temp) RETURN r", "DELETE r", {batchSize: 500, parallel: true})
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///context.csv' AS map RETURN map", "MERGE (t:Context:Timeframe:Mus_Musculus {Context: map.Context} ) ", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///source_context.csv' AS map RETURN map", "CREATE (r:HAS_temp)  SET r.m_id = toInteger(map.Source) SET r.n_Context = map.Context", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("MATCH (r:HAS_temp), (m:Source:Mus_Musculus), (n:Context:Mus_Musculus) WHERE r.m_id = m.id AND r.n_Context = n.Context RETURN r, m, n", "MERGE (m)-[e:HAS]->(n)", {batchSize: 500} )
+
+CALL apoc.periodic.iterate("MATCH (r:HAS_temp) RETURN r", "DELETE r", {batchSize: 500, parallel: true})
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///tg_context.csv' AS map RETURN map", "CREATE (r:VALUE_temp)  SET r.Value = toFloat(map.Value) SET r.p = toFloat(map.p) SET r.Source = toInteger(map.Source) SET r.m_Context = map.Context SET r.n_ENSEMBL = map.ENSEMBL", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("MATCH (r:VALUE_temp), (m:Context:Mus_Musculus), (n:TG:Mus_Musculus) WHERE r.m_Context = m.Context AND r.n_ENSEMBL = n.ENSEMBL RETURN r, m, n", "CREATE (m)-[e:VALUE]->(n) SET e.Value = r.Value SET e.Source = r.Source SET e.p = r.p", {batchSize: 500} )
+
+CALL apoc.periodic.iterate("MATCH (r:VALUE_temp) RETURN r", "DELETE r", {batchSize: 500, parallel: true})
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///context.csv' AS map RETURN map", "MERGE (t:Context:Timeframe:Mus_Musculus {Context: map.Context} ) ", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///source_context.csv' AS map RETURN map", "CREATE (r:HAS_temp)  SET r.m_id = toInteger(map.Source) SET r.n_Context = map.Context", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("MATCH (r:HAS_temp), (m:Source:Mus_Musculus), (n:Context:Mus_Musculus) WHERE r.m_id = m.id AND r.n_Context = n.Context RETURN r, m, n", "MERGE (m)-[e:HAS]->(n)", {batchSize: 500} )
+
+CALL apoc.periodic.iterate("MATCH (r:HAS_temp) RETURN r", "DELETE r", {batchSize: 500, parallel: true})
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///or_context.csv' AS map RETURN map", "CREATE (r:VALUE_temp)  SET r.Value = toFloat(map.Value) SET r.p = toFloat(map.p) SET r.summit = toInteger(map.summit) SET r.Source = toInteger(map.Source) SET r.m_Context = map.Context SET r.n_id = map.id", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("MATCH (r:VALUE_temp), (m:Context:Mus_Musculus), (n:OR:Mus_Musculus) WHERE r.m_Context = m.Context AND r.n_id = n.id RETURN r, m, n", "CREATE (m)-[e:VALUE]->(n) SET e.Value = r.Value SET e.summit = r.summit SET e.Source = r.Source SET e.p = r.p", {batchSize: 500} )
+
+CALL apoc.periodic.iterate("MATCH (r:VALUE_temp) RETURN r", "DELETE r", {batchSize: 500, parallel: true})
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///tf_tg_corr.csv' AS map RETURN map", "CREATE (r:CORRELATION_temp)  SET r.Correlation = toFloat(map.Correlation) SET r.p = toFloat(map.p) SET r.Source = toInteger(map.Source) SET r.m_ENSEMBL = map.ENSEMBL_TF SET r.n_ENSEMBL = map.ENSEMBL_TG", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("MATCH (r:CORRELATION_temp), (m:TF:Mus_Musculus), (n:TG:Mus_Musculus) WHERE r.m_ENSEMBL = m.ENSEMBL AND r.n_ENSEMBL = n.ENSEMBL RETURN r, m, n", "CREATE (m)-[e:CORRELATION]->(n) SET e.Correlation = r.Correlation SET e.Source = r.Source SET e.p = r.p", {batchSize: 500} )
+
+CALL apoc.periodic.iterate("MATCH (r:CORRELATION_temp) RETURN r", "DELETE r", {batchSize: 500, parallel: true})
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///or_tg_corr.csv' AS map RETURN map", "CREATE (r:CORRELATION_temp)  SET r.Correlation = toFloat(map.Correlation) SET r.p = toFloat(map.p) SET r.Source = toInteger(map.Source) SET r.m_id = map.id SET r.n_ENSEMBL = map.ENSEMBL", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("MATCH (r:CORRELATION_temp), (m:OR:Mus_Musculus), (n:TG:Mus_Musculus) WHERE r.m_id = m.id AND r.n_ENSEMBL = n.ENSEMBL RETURN r, m, n", "CREATE (m)-[e:CORRELATION]->(n) SET e.Correlation = r.Correlation SET e.Source = r.Source SET e.p = r.p", {batchSize: 500} )
+
+CALL apoc.periodic.iterate("MATCH (r:CORRELATION_temp) RETURN r", "DELETE r", {batchSize: 500, parallel: true})
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///motif.csv' AS map RETURN map", "CREATE (r:MOTIF_temp)  SET r.Consensus = map.Consensus SET r.or_id = map.or_id SET r.motif_consensus = map.motif_consensus SET r.p = toFloat(map.p) SET r.Concentration = toFloat(map.Concentration) SET r.Source = toInteger(map.Source) SET r.m_ENSEMBL = map.ENSEMBL SET r.n_id = map.or_id", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("MATCH (r:MOTIF_temp), (m:TF:Mus_Musculus), (n:OR:Mus_Musculus) WHERE r.m_ENSEMBL = m.ENSEMBL AND r.n_id = n.id RETURN r, m, n", "CREATE (m)-[e:MOTIF]->(n) SET e.Consensus = r.Consensus SET e.or_id = r.or_id SET e.p = r.p SET e.Concentration = r.Concentration SET e.Source = r.Source SET e.motif_consensus = r.motif_consensus", {batchSize: 500} )
+
+CALL apoc.periodic.iterate("MATCH (r:MOTIF_temp) RETURN r", "DELETE r", {batchSize: 500, parallel: true})
+
+
+# CATLAS
+
+MERGE (s:Study {name: "Catlas, Whole Mouse Brain", source: "catlas.org/wholemousebrain/"}) MERGE (n1:Celltype:Mus_Musculus{name: "Neuron"}) MERGE (n2:Subtype:Mus_Musculus{name: "Dopa"}) MERGE (n1)-[:IS]->(n2) MERGE (n3:Subtype:Mus_Musculus{name: "SNc-VTA-RAmb_Foxa1"}) MERGE (n2)-[:IS]->(n3) CREATE (n3)-[:HAS]->(o:Source:Mus_Musculus)<-[:HAS]-(s) SET o.id = id(o) RETURN id(o) as id 
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///context.csv' AS map RETURN map", "MERGE (t:Context:Location:Mus_Musculus {Context: map.Context} ) ", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///source_context.csv' AS map RETURN map", "CREATE (r:HAS_temp)  SET r.m_id = toInteger(map.Source) SET r.n_Context = map.Context", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("MATCH (r:HAS_temp), (m:Source:Mus_Musculus), (n:Context:Mus_Musculus) WHERE r.m_id = m.id AND r.n_Context = n.Context RETURN r, m, n", "MERGE (m)-[e:HAS]->(n)", {batchSize: 500} )
+
+CALL apoc.periodic.iterate("MATCH (r:HAS_temp) RETURN r", "DELETE r", {batchSize: 500, parallel: true})
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///or_context.csv' AS map RETURN map", "CREATE (r:VALUE_temp)  SET r.Source = toInteger(map.Source) SET r.m_Context = map.Context SET r.n_id = map.id", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("MATCH (r:VALUE_temp), (m:Context:Mus_Musculus), (n:OR:Mus_Musculus) WHERE r.m_Context = m.Context AND r.n_id = n.id RETURN r, m, n", "CREATE (m)-[e:VALUE]->(n) SET e.Source = r.Source", {batchSize: 500} )
+
+CALL apoc.periodic.iterate("MATCH (r:VALUE_temp) RETURN r", "DELETE r", {batchSize: 500, parallel: true})
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///or_tg_corr.csv' AS map RETURN map", "CREATE (r:CORRELATION_temp)  SET r.Correlation = toFloat(map.Correlation) SET r.Source = toInteger(map.Source) SET r.m_id = map.id SET r.n_ENSEMBL = map.ENSEMBL", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("MATCH (r:CORRELATION_temp), (m:OR:Mus_Musculus), (n:TG:Mus_Musculus) WHERE r.m_id = m.id AND r.n_ENSEMBL = n.ENSEMBL RETURN r, m, n", "CREATE (m)-[e:CORRELATION]->(n) SET e.Correlation = r.Correlation SET e.Source = r.Source", {batchSize: 500} )
+
+CALL apoc.periodic.iterate("MATCH (r:CORRELATION_temp) RETURN r", "DELETE r", {batchSize: 500, parallel: true})
+
+CALL apoc.periodic.iterate("LOAD CSV WITH HEADERS from 'file:///motif.csv' AS map RETURN map", "CREATE (r:MOTIF_temp)  SET r.Motif = map.Motif SET r.Log p = map.Log p SET r.Motif ID = map.Motif ID SET r.Dummy = map.Dummy SET r.Concentration = map.Concentration SET r.Source = toInteger(map.Source) SET r.m_ENSEMBL = map.ENSEMBL SET r.n_id = map.or_id", {batchSize: 500, parallel: true} )
+
+CALL apoc.periodic.iterate("MATCH (r:MOTIF_temp), (m:TF:Mus_Musculus), (n:OR:Mus_Musculus) WHERE r.m_ENSEMBL = m.ENSEMBL AND r.n_id = n.id RETURN r, m, n", "CREATE (m)-[e:MOTIF]->(n) SET e.Motif = r.Motif SET e.Log p = r.Log p SET e.Motif ID = r.Motif ID SET e.Dummy = r.Dummy SET e.Concentration = r.Concentration SET e.Source = r.Source", {batchSize: 500} )
+
+CALL apoc.periodic.iterate("MATCH (r:MOTIF_temp) RETURN r", "DELETE r", {batchSize: 500, parallel: true})

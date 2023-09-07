@@ -38,7 +38,7 @@ def parse_ensembl(dir_path: str = os.getenv("_DEFAULT_ENSEMBL_PATH")):
         tmp_1 = complete[~complete["Protein"].isna()]
         tmp_2 = complete[complete["Protein"].isna()]
 
-        proteins = complete[~complete["Protein"].isna()].drop_duplicates()
+        proteins = complete[~complete["Protein"].isna()].drop_duplicates()["Protein"]
         gene_protein_link = complete[~complete["Protein"].isna() & ~complete["ENSEMBL"].isna()].drop_duplicates()
         gene_protein_link["Protein"] = gene_protein_link["Protein"].apply(lambda x: x.removeprefix("10090."))
 
@@ -65,7 +65,7 @@ def parse_ensembl(dir_path: str = os.getenv("_DEFAULT_ENSEMBL_PATH")):
             .drop_duplicates(subset=["ENTREZID"], keep="first", ignore_index=True)
         )
         tf = tf.merge(entrez, left_on="ENTREZID", right_on="ENTREZID", how="left")
-        tf = tf.drop(columns=["ENTREZID"])
+        tf = tf.drop(columns=["ENTREZID", "ENTREZID_human"])
         tf = tf.drop_duplicates(subset=["ENSEMBL"], keep="first", ignore_index=True)
 
         return complete, tf, proteins, gene_protein_link

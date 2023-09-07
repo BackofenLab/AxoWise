@@ -155,7 +155,7 @@ def parse_experiment(
 
         motif = (
             motif.merge(right=exp[5], left_on="motif_id", right_on="motif_id")
-            .rename(columns={"id": "or_id", "motif_id": "id", "log_adj_pvalue": "p", "concentration": "Concentration"})
+            .rename(columns={"id": "or_id", "motif_id": "id", "log_adj_pvalue": "p", "concentration": "Concentration", "motif_consensus": "Consensus"})
             .drop(columns=["TF", "number_of_peaks"])
         )
 
