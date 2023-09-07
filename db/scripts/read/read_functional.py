@@ -2,6 +2,7 @@ from utils import print_update
 import pandas as pd
 import os
 import json
+from alive_progress import alive_bar
 
 
 def parse_functional(dir_path: str = os.getenv("_DEFAULT_FUNCTIONAL_PATH")):
@@ -11,7 +12,7 @@ def parse_functional(dir_path: str = os.getenv("_DEFAULT_FUNCTIONAL_PATH")):
     """
 
     def read_functional():
-        dataframes = [None] * 3
+        dataframes = [None] * 4
 
         for file in os.scandir(dir_path):
             file_name, file_extention = os.path.splitext(file)
@@ -32,18 +33,20 @@ def parse_functional(dir_path: str = os.getenv("_DEFAULT_FUNCTIONAL_PATH")):
         ft_protein_df_list = []
         ft_gene_df_list = []
 
-        for _, i in functional[1].iterrows():
-            tmp_df_protein = pd.DataFrame()
-            tmp_df_gene = pd.DataFrame()
+        with alive_bar(len(functional[1])) as bar:
+            for _, i in functional[1].iterrows():
+                tmp_df_protein = pd.DataFrame()
+                tmp_df_gene = pd.DataFrame()
 
-            tmp_df_gene["ENSEMBL"] = json.loads(i["genes"].replace("'", '"'))
-            tmp_df_gene["Term"] = i["id"]
+                tmp_df_gene["ENSEMBL"] = json.loads(i["genes"].replace("'", '"'))
+                tmp_df_gene["Term"] = i["id"]
 
-            tmp_df_protein["ENSEMBL"] = json.loads(i["proteins"].replace("'", '"'))
-            tmp_df_protein["Term"] = i["id"]
+                tmp_df_protein["ENSEMBL"] = json.loads(i["proteins"].replace("'", '"'))
+                tmp_df_protein["Term"] = i["id"]
 
-            ft_protein_df_list.append(tmp_df_protein)
-            ft_gene_df_list.append(tmp_df_gene)
+                ft_protein_df_list.append(tmp_df_protein)
+                ft_gene_df_list.append(tmp_df_gene)
+                bar()
 
         ft_protein = pd.concat(ft_protein_df_list).drop_duplicates()
         ft_gene = pd.concat(ft_gene_df_list).drop_duplicates()
@@ -59,8 +62,8 @@ def parse_functional(dir_path: str = os.getenv("_DEFAULT_FUNCTIONAL_PATH")):
 def _reformat_functional_term_file(df: pd.DataFrame, file_name: str):
     print_update(update_type="Reformatting", text=file_name, color="orange")
 
-    names = ["functional_terms_overlap", "AllPathways_mouse", "AllPathways_human"]
-    functions = [_reformat_ft_overlap, _reformat_terms_mouse, _reformat_terms_human]
+    names = ["functional_terms_overlap_mus_musculus", "AllPathways_mouse", "AllPathways_human", "functional_terms_overlap_homo_sapiens"]
+    functions = [_reformat_ft_overlap, _reformat_terms_mouse, _reformat_terms_human, _reformat_ft_overlap_human]
     index = names.index(file_name)
 
     return functions[index](df=df), index

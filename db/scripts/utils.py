@@ -51,7 +51,6 @@ def execute_query(query: str, read: bool, driver: neo4j.Driver) -> pd.DataFrame:
             file.write(query)
             file.write("\n")
             file.write("\n")
-            file.write("\n")
         return [[0]]
 
 

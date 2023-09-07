@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from utils import print_update
+from alive_progress import alive_bar
 
 
 def parse_catlas(or_nodes: pd.DataFrame, distance: pd.DataFrame):
@@ -24,20 +25,22 @@ def parse_catlas(or_nodes: pd.DataFrame, distance: pd.DataFrame):
         columns=["id", "Motif", "Motif ID", "Log p", "Concentration", "ENSEMBL", "Dummy", "cell_id"]
     )
 
-    for name in catlas_celltype["name"]:
-        df_ccre = pd.read_csv(f"../source/catlas/ccre/{name}.bed", sep="\t", header=None)
-        df_ccre.columns = ["chrom", "chromStart", "chromEnd", "name"]
-        df_ccre["summit"] = round(df_ccre["chromStart"] + ((df_ccre["chromEnd"] - df_ccre["chromStart"]) / 2))
-        df_ccre["summit"] = df_ccre["summit"].astype(int)
-        df_ccre = df_ccre.merge(or_ids, how="left", left_on="name", right_on="name").filter(items=["id"])
-        df_ccre["cell_id"] = name
-        catlas_or_context = pd.concat([catlas_or_context, df_ccre], ignore_index=True)
+    with alive_bar(len(catlas_celltype)) as bar:
+        for name in catlas_celltype["name"]:
+            df_ccre = pd.read_csv(f"../source/catlas/ccre/{name}.bed", sep="\t", header=None)
+            df_ccre.columns = ["chrom", "chromStart", "chromEnd", "name"]
+            df_ccre["summit"] = round(df_ccre["chromStart"] + ((df_ccre["chromEnd"] - df_ccre["chromStart"]) / 2))
+            df_ccre["summit"] = df_ccre["summit"].astype(int)
+            df_ccre = df_ccre.merge(or_ids, how="left", left_on="name", right_on="name").filter(items=["id"])
+            df_ccre["cell_id"] = name
+            catlas_or_context = pd.concat([catlas_or_context, df_ccre], ignore_index=True)
 
-        df_motifs = pd.read_csv(f"../source/catlas/motifs/{name}_motifs.csv").filter(
-            items=["id", "Motif", "Motif ID", "Log p", "Concentration", "ENSEMBL", "Dummy"]
-        )
-        df_motifs["cell_id"] = name
-        catlas_motifs = pd.concat([catlas_motifs, df_motifs])
+            df_motifs = pd.read_csv(f"../source/catlas/motifs/{name}_motifs.csv").filter(
+                items=["id", "Motif", "Motif ID", "Log p", "Concentration", "ENSEMBL", "Dummy"]
+            ).rename(columns={"id": "or_id", "Motif": "Consensus", "Motif ID": "id", "Log p": "p"})
+            df_motifs["cell_id"] = name
+            catlas_motifs = pd.concat([catlas_motifs, df_motifs])
+            bar()
 
     catlas_or_context = catlas_or_context.merge(catlas_celltype, left_on="cell_id", right_on="name", how="left")
     catlas_or_context = catlas_or_context.rename(columns={"region": "Context"}).filter(
