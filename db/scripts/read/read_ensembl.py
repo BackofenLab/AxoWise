@@ -10,13 +10,15 @@ def parse_ensembl(dir_path: str = os.getenv("_DEFAULT_ENSEMBL_PATH")):
     [
       Mus_musculus.GRCm39.109.ena.tsv,    Mus_musculus.GRCm39.109.entrez.tsv,
       Mus_musculus.GRCm39.109.refseq.tsv, Mus_musculus.GRCm39.109.uniprot.tsv,
-      TFCheckpoint_download_180515.tsv,   lost_correlations_symbols
+      TFCheckpoint_download_180515.tsv,   lost_correlations_symbols,
+      Homo_sapiens.GRCh38.110.ena.tsv,    Homo_sapiens.GRCh38.110.entrez.tsv,
+      Homo_sapiens.GRCh38.110.refseq.tsv, Homo_sapiens.GRCh38.110.uniprot.tsv
     ]
 
     """
 
     def read_ensembl():
-        dataframes = [None] * 6
+        dataframes = [None] * 10
 
         for file in os.scandir(dir_path):
             file_name, file_extention = os.path.splitext(file)
@@ -35,6 +37,10 @@ def parse_ensembl(dir_path: str = os.getenv("_DEFAULT_ENSEMBL_PATH")):
 
         tmp_1 = complete[~complete["Protein"].isna()]
         tmp_2 = complete[complete["Protein"].isna()]
+
+        proteins = complete[~complete["Protein"].isna()].drop_duplicates()
+        gene_protein_link = complete[~complete["Protein"].isna() & ~complete["ENSEMBL"].isna()].drop_duplicates()
+        gene_protein_link["Protein"] = gene_protein_link["Protein"].apply(lambda x: x.removeprefix("10090."))
 
         # Remove rows where ENSEMBL has at least one associated Protein in other row, but where its Protein value is NaN
         complete = pd.concat(
@@ -62,7 +68,7 @@ def parse_ensembl(dir_path: str = os.getenv("_DEFAULT_ENSEMBL_PATH")):
         tf = tf.drop(columns=["ENTREZID"])
         tf = tf.drop_duplicates(subset=["ENSEMBL"], keep="first", ignore_index=True)
 
-        return complete, tf
+        return complete, tf, proteins, gene_protein_link
 
     ensembl = read_ensembl()
     return post_processing(ensembl=ensembl)
@@ -78,6 +84,10 @@ def _reformat_ensembl_term_file(df: pd.DataFrame, file_name: str):
         "Mus_musculus.GRCm39.109.uniprot",
         "TFCheckpoint_download_180515",
         "lost_correlations_symbols",
+        "Homo_sapiens.GRCh38.110.ena.tsv",
+        "Homo_sapiens.GRCh38.110.entrez.tsv",
+        "Homo_sapiens.GRCh38.110.refseq.tsv",
+        "Homo_sapiens.GRCh38.110.uniprot.tsv",
     ]
     functions = [
         _reformat_entrez,
@@ -86,6 +96,10 @@ def _reformat_ensembl_term_file(df: pd.DataFrame, file_name: str):
         _reformat_uniprot,
         _reformat_tf,
         _reformat_lost_symbols,
+        _reformat_entrez_human,
+        _reformat_ena_human,
+        _reformat_refseq_human,
+        _reformat_uniprot_human,
     ]
     index = names.index(file_name)
 
@@ -100,11 +114,27 @@ def _reformat_ena(df: pd.DataFrame):
     return df
 
 
+def _reformat_ena_human(df: pd.DataFrame):
+    df = df.filter(items=["gene_stable_id", "protein_stable_id"])
+    df = df.rename(columns={"gene_stable_id": "ENSEMBL", "protein_stable_id": "Protein"})
+    df["Protein"] = "9606." + df["Protein"]
+    df = df.replace("9606.-", np.nan)
+    return df
+
+
 def _reformat_entrez(df: pd.DataFrame):
     df = df.filter(items=["gene_stable_id", "protein_stable_id", "xref"])
     df = df.rename(columns={"gene_stable_id": "ENSEMBL", "protein_stable_id": "Protein", "xref": "ENTREZID"})
     df["Protein"] = "10090." + df["Protein"]
     df = df.replace("10090.-", np.nan)
+    return df
+
+
+def _reformat_entrez_human(df: pd.DataFrame):
+    df = df.filter(items=["gene_stable_id", "protein_stable_id", "xref"])
+    df = df.rename(columns={"gene_stable_id": "ENSEMBL", "protein_stable_id": "Protein", "xref": "ENTREZID"})
+    df["Protein"] = "9606." + df["Protein"]
+    df = df.replace("9606.-", np.nan)
     return df
 
 
@@ -116,6 +146,14 @@ def _reformat_refseq(df: pd.DataFrame):
     return df
 
 
+def _reformat_refseq_human(df: pd.DataFrame):
+    df = df.filter(items=["gene_stable_id", "protein_stable_id"])
+    df = df.rename(columns={"gene_stable_id": "ENSEMBL", "protein_stable_id": "Protein"})
+    df["Protein"] = "9606." + df["Protein"]
+    df = df.replace("9606.-", np.nan)
+    return df
+
+
 def _reformat_uniprot(df: pd.DataFrame):
     df = df.filter(items=["gene_stable_id", "protein_stable_id"])
     df = df.rename(columns={"gene_stable_id": "ENSEMBL", "protein_stable_id": "Protein"})
@@ -124,9 +162,17 @@ def _reformat_uniprot(df: pd.DataFrame):
     return df
 
 
+def _reformat_uniprot_human(df: pd.DataFrame):
+    df = df.filter(items=["gene_stable_id", "protein_stable_id"])
+    df = df.rename(columns={"gene_stable_id": "ENSEMBL", "protein_stable_id": "Protein"})
+    df["Protein"] = "9606." + df["Protein"]
+    df = df.replace("9606.-", np.nan)
+    return df
+
+
 def _reformat_tf(df: pd.DataFrame):
-    df = df.filter(items=["entrez_mouse"])
-    df = df.rename(columns={"entrez_mouse": "ENTREZID"})
+    df = df.filter(items=["entrez_mouse", "entrez_human"])
+    df = df.rename(columns={"entrez_mouse": "ENTREZID", "entrez_human": "ENTREZID_human"})
     return df
 
 

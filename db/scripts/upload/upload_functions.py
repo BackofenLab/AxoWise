@@ -10,6 +10,7 @@ def create_nodes(
     values: list[str],
     reformat_values: list[tuple[str]],
     driver: Driver,
+    species: str,
     merge: bool = True,
 ):
     """
@@ -35,9 +36,9 @@ def create_nodes(
     )
 
     if merge:
-        into_db_query = "MERGE (t:{} {} ) {}".format(type_, id_str, set_values_query)
+        into_db_query = "MERGE (t:{}:{} {} ) {}".format(type_, species, id_str, set_values_query)
     else:
-        into_db_query = "CREATE (t:{} {} ) {}".format(type_, id_str, set_values_query)
+        into_db_query = "CREATE (t:{}:{} {} ) {}".format(type_, species, id_str, set_values_query)
 
     # For large numbers of nodes, using apoc.periodic.iterate
     # For info, see: https://neo4j.com/labs/apoc/4.2/overview/apoc.periodic/apoc.periodic.iterate/
@@ -58,6 +59,7 @@ def update_nodes(
     values: list[str],
     reformat_values: list[tuple[str]],
     additional_label: str,
+    species: str,
     driver: Driver,
 ):
     """
@@ -85,7 +87,7 @@ def update_nodes(
     if additional_label != "":
         set_values_query += "SET t:{}".format(additional_label)
 
-    match_db_query = "MATCH (t:{} {} )".format(type_, id_str)
+    match_db_query = "MATCH (t:{}:{} {} )".format(type_, species, id_str)
 
     per_iter = 'CALL apoc.periodic.iterate("{}", "{}", {{batchSize: 500, parallel: true}} )'.format(
         load_data_query, match_db_query + " " + set_values_query
@@ -103,6 +105,7 @@ def create_relationship(
     node_types: tuple[str],
     values: list[str],
     reformat_values: list[tuple[str]],
+    species: str,
     driver: Driver,
     merge: bool = True,
     bidirectional: bool = False,
@@ -182,10 +185,12 @@ def create_relationship(
         else ""
     )
 
-    match_nodes = "MATCH (r:{}_temp), (m:{}), (n:{}){}{}{}{} RETURN r, m, n".format(
+    match_nodes = "MATCH (r:{}_temp), (m:{}:{}), (n:{}:{}){}{}{}{} RETURN r, m, n".format(
         type_,
         node_types[0],
+        species,
         node_types[1],
+        species,
         " WHERE " if where_query_n != "" or where_query_m != "" else "",
         where_query_m,
         " AND " if where_query_n != "" and where_query_m != "" else "",
