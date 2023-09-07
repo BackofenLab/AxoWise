@@ -153,8 +153,8 @@ def _reformat_string_file(df: pd.DataFrame, file_name: str):
         "protein.info.v11.5",
         "string_SYMBOL_ENSEMBL",
         "difference",
-        "9606.protein.links.v11.5",
-        "9606.protein.info.v11.5",
+        "9606.protein.links.v12.0",
+        "9606.protein.info.v12.0",
     ]
     functions = [
         _reformat_string_links,
