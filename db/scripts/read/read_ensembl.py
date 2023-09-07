@@ -84,10 +84,10 @@ def _reformat_ensembl_term_file(df: pd.DataFrame, file_name: str):
         "Mus_musculus.GRCm39.109.uniprot",
         "TFCheckpoint_download_180515",
         "lost_correlations_symbols",
-        "Homo_sapiens.GRCh38.110.ena.tsv",
-        "Homo_sapiens.GRCh38.110.entrez.tsv",
-        "Homo_sapiens.GRCh38.110.refseq.tsv",
-        "Homo_sapiens.GRCh38.110.uniprot.tsv",
+        "Homo_sapiens.GRCh38.110.ena",
+        "Homo_sapiens.GRCh38.110.entrez",
+        "Homo_sapiens.GRCh38.110.refseq",
+        "Homo_sapiens.GRCh38.110.uniprot",
     ]
     functions = [
         _reformat_entrez,
