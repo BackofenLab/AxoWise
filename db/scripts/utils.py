@@ -169,27 +169,38 @@ def check_for_files(mode: int):
     elif mode == 1:
         # STRING
         return not (
-            os.path.exists("../source/processed/gene_gene_scores.csv")
-            and os.path.exists("../source/processed/genes_annotated.csv")
-            and os.path.exists("../source/processed/protein_protein_scores.csv")
-            and os.path.exists("../source/processed/proteins_annotated.csv")
+            os.path.exists("../source/processed/gene_gene_scores_mouse.csv")
+            and os.path.exists("../source/processed/genes_annotated_mouse.csv")
+            and os.path.exists("../source/processed/protein_protein_scores_mouse.csv")
+            and os.path.exists("../source/processed/proteins_annotated_mouse.csv")
+            and os.path.exists("../source/processed/gene_gene_scores_human.csv")
+            and os.path.exists("../source/processed/genes_annotated_human.csv")
+            and os.path.exists("../source/processed/protein_protein_scores_human.csv")
+            and os.path.exists("../source/processed/proteins_annotated_human.csv")
         )
 
     elif mode == 2:
         # ENSEMBL
         return not (
-            os.path.exists("../source/processed/complete.csv")
-            and os.path.exists("../source/processed/tf.csv")
-            and os.path.exists("../source/processed/proteins.csv")
-            and os.path.exists("../source/processed/gene_protein_link.csv")
+            os.path.exists("../source/processed/complete_mouse.csv")
+            and os.path.exists("../source/processed/tf_mouse.csv")
+            and os.path.exists("../source/processed/proteins_mouse.csv")
+            and os.path.exists("../source/processed/gene_protein_link_mouse.csv")
+            and os.path.exists("../source/processed/complete_human.csv")
+            and os.path.exists("../source/processed/tf_human.csv")
+            and os.path.exists("../source/processed/proteins_human.csv")
+            and os.path.exists("../source/processed/gene_protein_link_human.csv")
         )
 
     elif mode == 3:
         # Functional
         return not (
-            os.path.exists("../source/processed/ft_nodes.csv")
-            and os.path.exists("../source/processed/ft_gene.csv")
-            and os.path.exists("../source/processed/ft_ft_overlap.csv")
+            os.path.exists("../source/processed/ft_nodes_mouse.csv")
+            and os.path.exists("../source/processed/ft_gene_mouse.csv")
+            and os.path.exists("../source/processed/ft_ft_overlap_mouse.csv")
+            and os.path.exists("../source/processed/ft_nodes_human.csv")
+            and os.path.exists("../source/processed/ft_gene_human.csv")
+            and os.path.exists("../source/processed/ft_ft_overlap_human.csv")
         )
 
     elif mode == 4:
@@ -204,7 +215,7 @@ def check_for_files(mode: int):
         )
 
 
-def retrieve_gene_id_by_symbol(symbol: str):
+def retrieve_gene_id_by_symbol(symbol: str, species: bool):
     def parse_from_html(result: str):
         expression = "(id:\s\w+)+"
         matched = re.findall(pattern=expression, string=result)
@@ -212,7 +223,11 @@ def retrieve_gene_id_by_symbol(symbol: str):
             matched = [m.removeprefix("id: ") for m in matched]
         return matched
 
-    url = f"http://rest.ensembl.org/xrefs/symbol/mus_musculus/{symbol}"
+    url = (
+        f"http://rest.ensembl.org/xrefs/symbol/mus_musculus/{symbol}"
+        if species
+        else f"http://rest.ensembl.org/xrefs/symbol/homo_sapiens/{symbol}"
+    )
     result = urllib.request.urlopen(url=url).read()
     return parse_from_html(str(result))
 

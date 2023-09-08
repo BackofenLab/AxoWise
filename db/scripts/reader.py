@@ -13,8 +13,12 @@ def read(
     dir_path: str = None,
     reformat: bool = True,
     mode: int = -1,
-    complete: pd.DataFrame = pd.DataFrame([]),
-    proteins: pd.DataFrame = pd.DataFrame([]),
+    complete_mouse: pd.DataFrame = pd.DataFrame([]),
+    proteins_mouse: pd.DataFrame = pd.DataFrame([]),
+    complete_human: pd.DataFrame = pd.DataFrame([]),
+    proteins_human: pd.DataFrame = pd.DataFrame([]),
+    or_nodes: pd.DataFrame = pd.DataFrame([]),
+    distance: pd.DataFrame = pd.DataFrame([]),
 ):
     if mode == 0:
         # Experiment
@@ -79,41 +83,98 @@ def read(
             dir_path = os.getenv("_DEFAULT_STRING_PATH")
 
         if check_for_files(mode=mode):
-            (gene_gene_scores, genes_annotated, proteins_annotated, protein_protein_scores) = parse_string(
-                dir_path=dir_path, complete=complete, proteins=proteins
+            (
+                gene_gene_scores_mouse,
+                genes_annotated_mouse,
+                proteins_annotated_mouse,
+                protein_protein_scores_mouse,
+                gene_gene_scores_human,
+                genes_annotated_human,
+                proteins_annotated_human,
+                protein_protein_scores_human,
+            ) = parse_string(
+                dir_path=dir_path,
+                complete_mouse=complete_mouse,
+                proteins_mouse=proteins_mouse,
+                complete_human=complete_human,
+                proteins_human=proteins_human,
             )
 
-            gene_gene_scores.to_csv("../source/processed/gene_gene_scores.csv", index=False)
-            genes_annotated.to_csv("../source/processed/genes_annotated.csv", index=False)
-            protein_protein_scores.to_csv("../source/processed/protein_protein_scores.csv", index=False)
-            proteins_annotated.to_csv("../source/processed/proteins_annotated.csv", index=False)
+            gene_gene_scores_mouse.to_csv("../source/processed/gene_gene_scores_mouse.csv", index=False)
+            genes_annotated_mouse.to_csv("../source/processed/genes_annotated_mouse.csv", index=False)
+            protein_protein_scores_mouse.to_csv("../source/processed/protein_protein_scores_mouse.csv", index=False)
+            proteins_annotated_mouse.to_csv("../source/processed/proteins_annotated_mouse.csv", index=False)
+            gene_gene_scores_human.to_csv("../source/processed/gene_gene_scores_human.csv", index=False)
+            genes_annotated_human.to_csv("../source/processed/genes_annotated_human.csv", index=False)
+            protein_protein_scores_human.to_csv("../source/processed/protein_protein_scores_human.csv", index=False)
+            proteins_annotated_human.to_csv("../source/processed/proteins_annotated_human.csv", index=False)
 
         else:
-            gene_gene_scores = pd.read_csv("../source/processed/gene_gene_scores.csv")
-            genes_annotated = pd.read_csv("../source/processed/genes_annotated.csv")
-            protein_protein_scores = pd.read_csv("../source/processed/protein_protein_scores.csv")
-            proteins_annotated = pd.read_csv("../source/processed/proteins_annotated.csv")
+            gene_gene_scores_mouse = pd.read_csv("../source/processed/gene_gene_scores_mouse.csv")
+            genes_annotated_mouse = pd.read_csv("../source/processed/genes_annotated_mouse.csv")
+            proteins_annotated_mouse = pd.read_csv("../source/processed/proteins_annotated_mouse.csv")
+            protein_protein_scores_mouse = pd.read_csv("../source/processed/protein_protein_scores_mouse.csv")
+            gene_gene_scores_human = pd.read_csv("../source/processed/gene_gene_scores_human.csv")
+            genes_annotated_human = pd.read_csv("../source/processed/genes_annotated_human.csv")
+            proteins_annotated_human = pd.read_csv("../source/processed/proteins_annotated_human.csv")
+            protein_protein_scores_human = pd.read_csv("../source/processed/protein_protein_scores_human.csv")
 
-        result = (gene_gene_scores, genes_annotated, proteins_annotated, protein_protein_scores)
+        result = (
+            gene_gene_scores_mouse,
+            genes_annotated_mouse,
+            proteins_annotated_mouse,
+            protein_protein_scores_mouse,
+            gene_gene_scores_human,
+            genes_annotated_human,
+            proteins_annotated_human,
+            protein_protein_scores_human,
+        )
+
     elif mode == 2:
         # ENSEMBL
         if dir_path == None:
             dir_path = os.getenv("_DEFAULT_ENSEMBL_PATH")
 
         if check_for_files(mode=mode):
-            (complete, tf, proteins, gene_protein_link) = parse_ensembl(dir_path=dir_path)
+            (
+                complete_mouse,
+                tf_mouse,
+                proteins_mouse,
+                gene_protein_link_mouse,
+                complete_human,
+                tf_human,
+                proteins_human,
+                gene_protein_link_human,
+            ) = parse_ensembl(dir_path=dir_path)
 
-            complete.to_csv("../source/processed/complete.csv", index=False)
-            tf.to_csv("../source/processed/tf.csv", index=False)
-            proteins.to_csv("../source/processed/proteins.csv", index=False)
-            gene_protein_link.to_csv("../source/processed/gene_protein_link.csv", index=False)
+            complete_mouse.to_csv("../source/processed/complete_mouse.csv", index=False)
+            tf_mouse.to_csv("../source/processed/tf_mouse.csv", index=False)
+            proteins_mouse.to_csv("../source/processed/proteins_mouse.csv", index=False)
+            gene_protein_link_mouse.to_csv("../source/processed/gene_protein_link_mouse.csv", index=False)
+            complete_human.to_csv("../source/processed/complete_human.csv", index=False)
+            tf_human.to_csv("../source/processed/tf_human.csv", index=False)
+            proteins_human.to_csv("../source/processed/proteins_human.csv", index=False)
+            gene_protein_link_human.to_csv("../source/processed/gene_protein_link_human.csv", index=False)
         else:
-            complete = pd.read_csv("../source/processed/complete.csv")
-            tf = pd.read_csv("../source/processed/tf.csv")
-            proteins = pd.read_csv("../source/processed/proteins.csv")
-            gene_protein_link = pd.read_csv("../source/processed/gene_protein_link.csv")
+            complete_mouse = pd.read_csv("../source/processed/complete_mouse.csv")
+            tf_mouse = pd.read_csv("../source/processed/tf_mouse.csv")
+            proteins_mouse = pd.read_csv("../source/processed/proteins_mouse.csv")
+            gene_protein_link_mouse = pd.read_csv("../source/processed/gene_protein_link_mouse.csv")
+            complete_human = pd.read_csv("../source/processed/complete_human.csv")
+            tf_human = pd.read_csv("../source/processed/tf_human.csv")
+            proteins_human = pd.read_csv("../source/processed/proteins_human.csv")
+            gene_protein_link_human = pd.read_csv("../source/processed/gene_protein_link_human.csv")
 
-        result = (complete, tf, proteins, gene_protein_link)
+        result = (
+            complete_mouse,
+            tf_mouse,
+            proteins_mouse,
+            gene_protein_link_mouse,
+            complete_human,
+            tf_human,
+            proteins_human,
+            gene_protein_link_human,
+        )
 
     elif mode == 3:
         # Functional
@@ -122,36 +183,49 @@ def read(
 
         if check_for_files(mode=mode):
             (
-                ft_nodes,
-                ft_gene,
-                ft_protein,
-                ft_ft_overlap,
+                ft_nodes_mouse,
+                ft_gene_mouse,
+                ft_protein_mouse,
+                ft_ft_overlap_mouse,
+                ft_nodes_human,
+                ft_gene_human,
+                ft_protein_human,
+                ft_ft_overlap_human,
             ) = parse_functional(dir_path=dir_path)
 
-            ft_nodes.to_csv("../source/processed/ft_nodes.csv", index=False)
-            ft_gene.to_csv("../source/processed/ft_gene.csv", index=False)
-            ft_protein.to_csv("../source/processed/ft_protein.csv", index=False)
-            ft_ft_overlap.to_csv("../source/processed/ft_ft_overlap.csv", index=False)
+            ft_nodes_mouse.to_csv("../source/processed/ft_nodes_mouse.csv", index=False)
+            ft_gene_mouse.to_csv("../source/processed/ft_gene_mouse.csv", index=False)
+            ft_protein_mouse.to_csv("../source/processed/ft_protein_mouse.csv", index=False)
+            ft_ft_overlap_mouse.to_csv("../source/processed/ft_ft_overlap_mouse.csv", index=False)
+            ft_nodes_human.to_csv("../source/processed/ft_nodes_human.csv", index=False)
+            ft_gene_human.to_csv("../source/processed/ft_gene_human.csv", index=False)
+            ft_protein_human.to_csv("../source/processed/ft_protein_human.csv", index=False)
+            ft_ft_overlap_human.to_csv("../source/processed/ft_ft_overlap_human.csv", index=False)
         else:
-            ft_nodes = pd.read_csv("../source/processed/ft_nodes.csv")
-            ft_gene = pd.read_csv("../source/processed/ft_gene.csv")
-            ft_protein = pd.read_csv("../source/processed/ft_protein.csv")
-            ft_ft_overlap = pd.read_csv("../source/processed/ft_ft_overlap.csv")
+            ft_nodes_mouse = pd.read_csv("../source/processed/ft_nodes_mouse.csv")
+            ft_gene_mouse = pd.read_csv("../source/processed/ft_gene_mouse.csv")
+            ft_protein_mouse = pd.read_csv("../source/processed/ft_protein_mouse.csv")
+            ft_ft_overlap_mouse = pd.read_csv("../source/processed/ft_ft_overlap_mouse.csv")
+            ft_nodes_human = pd.read_csv("../source/processed/ft_nodes_human.csv")
+            ft_gene_human = pd.read_csv("../source/processed/ft_gene_human.csv")
+            ft_protein_human = pd.read_csv("../source/processed/ft_protein_human.csv")
+            ft_ft_overlap_human = pd.read_csv("../source/processed/ft_ft_overlap_human.csv")
 
         result = (
-            ft_nodes,
-            ft_gene,
-            ft_protein,
-            ft_ft_overlap,
+            ft_nodes_mouse,
+            ft_gene_mouse,
+            ft_protein_mouse,
+            ft_ft_overlap_mouse,
+            ft_nodes_human,
+            ft_gene_human,
+            ft_protein_human,
+            ft_ft_overlap_human,
         )
 
     elif mode == 4:
         # Catlas
 
         if check_for_files(mode=mode):
-            or_nodes = pd.read_csv("../source/processed/or_nodes.csv")
-            distance = pd.read_csv("../source/processed/distance.csv")
-            motif = pd.read_csv("../source/processed/motif.csv")
             (
                 or_extended,
                 catlas_or_context,
