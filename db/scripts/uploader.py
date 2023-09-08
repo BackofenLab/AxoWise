@@ -6,19 +6,9 @@ from upload.upload_catlas import extend_db_from_catlas
 
 
 @time_function
-def first_setup(
+def base_setup(
     species: str,
     gene_nodes: pd.DataFrame,
-    tg_mean_count: pd.DataFrame,
-    tf_mean_count: pd.DataFrame,
-    or_mean_count: pd.DataFrame,
-    or_nodes: pd.DataFrame,
-    tg_context_values: pd.DataFrame,
-    or_context_values: pd.DataFrame,
-    tf_tg_corr: pd.DataFrame,
-    or_tg_corr: pd.DataFrame,
-    motif: pd.DataFrame,
-    distance: pd.DataFrame,
     ft_nodes: pd.DataFrame,
     ft_ft_overlap: pd.DataFrame,
     ft_gene: pd.DataFrame,
@@ -27,10 +17,9 @@ def first_setup(
     gene_protein_link: pd.DataFrame,
     proteins_annotated: pd.DataFrame,
     protein_protein_scores: pd.DataFrame,
+    or_nodes: pd.DataFrame | None = None,
+    distance: pd.DataFrame | None = None,
 ):
-    """
-    Initial Setup with Base DB and Experiment data
-    """
     driver = start_driver()
 
     setup_base_db(
@@ -49,6 +38,23 @@ def first_setup(
         driver=driver,
     )
 
+    stop_driver(driver=driver)
+
+
+@time_function
+def bulk_extention(
+    species: str,
+    tg_mean_count: pd.DataFrame,
+    tf_mean_count: pd.DataFrame,
+    or_mean_count: pd.DataFrame,
+    tg_context_values: pd.DataFrame,
+    or_context_values: pd.DataFrame,
+    tf_tg_corr: pd.DataFrame,
+    or_tg_corr: pd.DataFrame,
+    motif: pd.DataFrame,
+):
+    driver = start_driver()
+
     extend_db_from_experiment(
         tg_mean_count=tg_mean_count,
         tf_mean_count=tf_mean_count,
@@ -65,6 +71,7 @@ def first_setup(
     stop_driver(driver=driver)
 
 
+@time_function
 def catlas_extention(
     species: str,
     catlas_or_context: pd.DataFrame,

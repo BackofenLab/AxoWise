@@ -25,7 +25,17 @@ def parse_functional(dir_path: str = os.getenv("_DEFAULT_FUNCTIONAL_PATH")):
             dataframes[index] = df
         return dataframes
 
-    def post_processing(functional: list[pd.DataFrame]):
+    def post_processing(functional: list[pd.DataFrame], species: bool):
+        """
+        Mouse -> species = True,
+        Human -> species = False,
+        """
+
+        if species:
+            functional = functional[:2]
+        else:
+            functional = functional[2:]
+
         print_update(update_type="Post processing", text="Functional files", color="red")
         ft_nodes = functional[1].filter(items=["id", "name", "category"])
         ft_nodes = ft_nodes.rename(columns={"id": "Term", "name": "Name", "category": "Category"})
@@ -56,14 +66,23 @@ def parse_functional(dir_path: str = os.getenv("_DEFAULT_FUNCTIONAL_PATH")):
         return ft_nodes, ft_gene, ft_protein, ft_ft_overlap
 
     functional = read_functional()
-    return post_processing(functional=functional)
+    result = post_processing(functional=functional, species=True) + post_processing(
+        functional=functional, species=False
+    )
+    print(result)
+    return result
 
 
 def _reformat_functional_term_file(df: pd.DataFrame, file_name: str):
     print_update(update_type="Reformatting", text=file_name, color="orange")
 
-    names = ["functional_terms_overlap_mus_musculus", "AllPathways_mouse", "AllPathways_human", "functional_terms_overlap_homo_sapiens"]
-    functions = [_reformat_ft_overlap, _reformat_terms_mouse, _reformat_terms_human, _reformat_ft_overlap_human]
+    names = [
+        "functional_terms_overlap_mus_musculus",
+        "AllPathways_mouse",
+        "functional_terms_overlap_homo_sapiens",
+        "AllPathways_human",
+    ]
+    functions = [_reformat_ft_overlap, _reformat_terms_mouse, _reformat_ft_overlap_human, _reformat_terms_human]
     index = names.index(file_name)
 
     return functions[index](df=df), index

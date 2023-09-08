@@ -220,7 +220,7 @@ def create_motif(motif: pd.DataFrame, source: int, species: str, driver: Driver)
 
     motif["Source"] = source
 
-    values, reformat = get_values_reformat(df=motif, match=["ENSEMBL", "id"])
+    values, reformat = get_values_reformat(df=motif, match=["ENSEMBL", "or_id"])
     save_df_to_csv(file_name="motif.csv", df=motif)
     create_relationship(
         source_file="motif.csv",

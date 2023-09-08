@@ -29,8 +29,23 @@ def parse_ensembl(dir_path: str = os.getenv("_DEFAULT_ENSEMBL_PATH")):
             dataframes[index] = df
         return dataframes
 
-    def post_processing(ensembl: list[pd.DataFrame]):
-        print_update(update_type="Post processing", text="ENSEMBL files", color="red")
+    def post_processing(ensembl: list[pd.DataFrame], species: bool):
+        """
+        Mouse -> species = True,
+        Human -> species = False,
+        """
+        if species:
+            ensembl = ensembl[:6]
+            ensembl[4] = ensembl[4].drop(columns=["ENTREZID_human"]).rename(columns={"ENTREZID_mouse": "ENTREZID"})
+        else:
+            ensembl = ensembl[6:] + ensembl[4:6]
+            ensembl[4] = ensembl[4].drop(columns=["ENTREZID_mouse"]).rename(columns={"ENTREZID_human": "ENTREZID"})
+
+        print_update(
+            update_type="Post processing",
+            text="ENSEMBL files ({})".format("Mouse" if species else "Human"),
+            color="red",
+        )
         complete = pd.concat(ensembl[:4])
         complete = complete.drop(columns=["ENTREZID"])
         complete = complete.drop_duplicates(ignore_index=True)
@@ -40,7 +55,11 @@ def parse_ensembl(dir_path: str = os.getenv("_DEFAULT_ENSEMBL_PATH")):
 
         proteins = complete[~complete["Protein"].isna()].drop_duplicates()["Protein"]
         gene_protein_link = complete[~complete["Protein"].isna() & ~complete["ENSEMBL"].isna()].drop_duplicates()
-        gene_protein_link["Protein"] = gene_protein_link["Protein"].apply(lambda x: x.removeprefix("10090."))
+        gene_protein_link["Protein"] = (
+            gene_protein_link["Protein"].apply(lambda x: x.removeprefix("10090."))
+            if species
+            else gene_protein_link["Protein"].apply(lambda x: x.removeprefix("9606."))
+        )
 
         # Remove rows where ENSEMBL has at least one associated Protein in other row, but where its Protein value is NaN
         complete = pd.concat(
@@ -65,13 +84,14 @@ def parse_ensembl(dir_path: str = os.getenv("_DEFAULT_ENSEMBL_PATH")):
             .drop_duplicates(subset=["ENTREZID"], keep="first", ignore_index=True)
         )
         tf = tf.merge(entrez, left_on="ENTREZID", right_on="ENTREZID", how="left")
-        tf = tf.drop(columns=["ENTREZID", "ENTREZID_human"])
+        tf = tf.drop(columns=["ENTREZID"])
         tf = tf.drop_duplicates(subset=["ENSEMBL"], keep="first", ignore_index=True)
 
         return complete, tf, proteins, gene_protein_link
 
     ensembl = read_ensembl()
-    return post_processing(ensembl=ensembl)
+    result = post_processing(ensembl=ensembl, species=True) + post_processing(ensembl=ensembl, species=False)
+    return result
 
 
 def _reformat_ensembl_term_file(df: pd.DataFrame, file_name: str):
@@ -84,8 +104,8 @@ def _reformat_ensembl_term_file(df: pd.DataFrame, file_name: str):
         "Mus_musculus.GRCm39.109.uniprot",
         "TFCheckpoint_download_180515",
         "lost_correlations_symbols",
-        "Homo_sapiens.GRCh38.110.ena",
         "Homo_sapiens.GRCh38.110.entrez",
+        "Homo_sapiens.GRCh38.110.ena",
         "Homo_sapiens.GRCh38.110.refseq",
         "Homo_sapiens.GRCh38.110.uniprot",
     ]
@@ -172,7 +192,7 @@ def _reformat_uniprot_human(df: pd.DataFrame):
 
 def _reformat_tf(df: pd.DataFrame):
     df = df.filter(items=["entrez_mouse", "entrez_human"])
-    df = df.rename(columns={"entrez_mouse": "ENTREZID", "entrez_human": "ENTREZID_human"})
+    df = df.rename(columns={"entrez_mouse": "ENTREZID_mouse", "entrez_human": "ENTREZID_human"})
     return df
 
 

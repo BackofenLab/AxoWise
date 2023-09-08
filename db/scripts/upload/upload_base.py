@@ -239,8 +239,8 @@ def setup_base_db(
     ft_protein: pd.DataFrame,
     protein_protein_scores: pd.DataFrame,
     gene_nodes: pd.DataFrame,
-    or_nodes: pd.DataFrame,
-    distance: pd.DataFrame,
+    or_nodes: pd.DataFrame | None,
+    distance: pd.DataFrame | None,
     tf: pd.DataFrame,
     proteins: pd.DataFrame,
     gene_protein_link: pd.DataFrame,
@@ -252,13 +252,15 @@ def setup_base_db(
     """
     create_gene_nodes(nodes=gene_nodes, species=species, driver=driver)
     create_tf_label(tf=tf, species=species, driver=driver)
-    create_or_nodes(nodes=or_nodes, species=species, driver=driver)
+    if or_nodes is not None:
+        create_or_nodes(nodes=or_nodes, species=species, driver=driver)
     create_protein_nodes(nodes=proteins, species=species, driver=driver)
     create_gene_protein_edges(links=gene_protein_link, species=species, driver=driver)
 
     create_string(protein_protein_scores=protein_protein_scores, species=species, driver=driver)
 
-    create_distance_edges(distance=distance, species=species, driver=driver)
+    if distance is not None:
+        create_distance_edges(distance=distance, species=species, driver=driver)
 
     create_functional(
         ft_nodes=ft_nodes,

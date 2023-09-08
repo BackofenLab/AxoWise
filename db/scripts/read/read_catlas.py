@@ -35,9 +35,11 @@ def parse_catlas(or_nodes: pd.DataFrame, distance: pd.DataFrame):
             df_ccre["cell_id"] = name
             catlas_or_context = pd.concat([catlas_or_context, df_ccre], ignore_index=True)
 
-            df_motifs = pd.read_csv(f"../source/catlas/motifs/{name}_motifs.csv").filter(
-                items=["id", "Motif", "Motif ID", "Log p", "Concentration", "ENSEMBL", "Dummy"]
-            ).rename(columns={"id": "or_id", "Motif": "Consensus", "Motif ID": "id", "Log p": "p"})
+            df_motifs = (
+                pd.read_csv(f"../source/catlas/motifs/{name}_motifs.csv")
+                .filter(items=["id", "Motif", "Motif ID", "Log p", "Concentration", "ENSEMBL", "Dummy"])
+                .rename(columns={"id": "or_id", "Motif": "Consensus", "Motif ID": "id", "Log p": "p"})
+            )
             df_motifs["cell_id"] = name
             catlas_motifs = pd.concat([catlas_motifs, df_motifs])
             bar()

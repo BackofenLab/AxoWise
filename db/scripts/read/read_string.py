@@ -1,20 +1,28 @@
 from utils import print_update, remove_bidirectionality, retrieve_gene_id_by_symbol
 import pandas as pd
 import os
+from alive_progress import alive_bar
 
 
-def parse_string(complete: pd.DataFrame, proteins: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT_STRING_PATH")):
+def parse_string(
+    complete_mouse: pd.DataFrame,
+    proteins_mouse: pd.DataFrame,
+    complete_human: pd.DataFrame,
+    proteins_human: pd.DataFrame,
+    dir_path: str = os.getenv("_DEFAULT_STRING_PATH"),
+):
     """
     Reads STRING files and returns a Pandas dataframe
     [
       protein.links.v11.5.tsv,       protein.info.v11.5.tsv,
-      string_SYMBOL_ENSEMBL.tsv,     difference.csv
+      string_SYMBOL_ENSEMBL.tsv,     difference_mouse.csv
       9606.protein.links.v11.5.tsv,  9606.protein.info.v11.5.tsv
+      difference_human.csv
     ]
     """
 
     def read_string():
-        dataframes = [None] * 6
+        dataframes = [None] * 7
 
         for file in os.scandir(dir_path):
             file_name, file_extention = os.path.splitext(file)
@@ -27,51 +35,67 @@ def parse_string(complete: pd.DataFrame, proteins: pd.DataFrame, dir_path: str =
             dataframes[index] = df
         return dataframes
 
-    def adding_lost_connections(symbol_protein, protein_gene_dict, genes_annotated):
-        for i in symbol_protein.iterrows():
-            gene_ids = retrieve_gene_id_by_symbol(i[1]["SYMBOL"])
-            insert = True
-            if len(gene_ids) > 0:
-                for g in gene_ids:
-                    match_in_dict = protein_gene_dict[protein_gene_dict["ENSEMBL"] == g]
-                    if len(match_in_dict) > 0:
-                        insert = False
-                        row = pd.DataFrame(
-                            data=[[match_in_dict["ENSEMBL"].iloc[0], i[1]["Protein"]]], columns=["ENSEMBL", "Protein"]
-                        )
+    def adding_lost_connections(symbol_protein, protein_gene_dict, genes_annotated, species):
+        with alive_bar(len(symbol_protein)) as bar:
+            for i in symbol_protein.iterrows():
+                gene_ids = retrieve_gene_id_by_symbol(i[1]["SYMBOL"], species=species)
+                insert = True
+                if len(gene_ids) > 0:
+                    for g in gene_ids:
+                        match_in_dict = protein_gene_dict[protein_gene_dict["ENSEMBL"] == g]
+                        if len(match_in_dict) > 0:
+                            insert = False
+                            row = pd.DataFrame(
+                                data=[[match_in_dict["ENSEMBL"].iloc[0], i[1]["Protein"]]],
+                                columns=["ENSEMBL", "Protein"],
+                            )
+                            protein_gene_dict = pd.concat([protein_gene_dict, row])
+                    if insert:
+                        gene_info = list(i[1][1:])
+                        gene_info.append(gene_ids[0])
+                        row = pd.DataFrame(data=[gene_info], columns=["SYMBOL", "ENTREZID", "annotation", "ENSEMBL"])
+                        genes_annotated = pd.concat([genes_annotated, row], ignore_index=True)
+                        row = pd.DataFrame(data=[[gene_ids[0], i[1]["Protein"]]], columns=["ENSEMBL", "Protein"])
                         protein_gene_dict = pd.concat([protein_gene_dict, row])
-                if insert:
-                    gene_info = list(i[1][1:])
-                    gene_info.append(gene_ids[0])
-                    row = pd.DataFrame(data=[gene_info], columns=["SYMBOL", "ENTREZID", "annotation", "ENSEMBL"])
-                    genes_annotated = pd.concat([genes_annotated, row], ignore_index=True)
-                    row = pd.DataFrame(data=[[gene_ids[0], i[1]["Protein"]]], columns=["ENSEMBL", "Protein"])
-                    protein_gene_dict = pd.concat([protein_gene_dict, row])
-            else:
-                symbol = i[1]["SYMBOL"]
-                if symbol.startswith("ENSMUSG"):
-                    gene_info = list(i[1][1:])
-                    gene_info.append(i[1]["SYMBOL"])
-                    row = pd.DataFrame(data=[gene_info], columns=["SYMBOL", "ENTREZID", "annotation", "ENSEMBL"])
-                    genes_annotated = pd.concat([genes_annotated, row], ignore_index=True)
-                    row = pd.DataFrame(data=[[i[1]["SYMBOL"], i[1]["Protein"]]], columns=["ENSEMBL", "Protein"])
-                    protein_gene_dict = pd.concat([protein_gene_dict, row])
                 else:
-                    with open("../source/misc/lost_proteins.csv", "a") as file:
-                        file.write(symbol)
-                        file.write("\n")
+                    symbol = i[1]["SYMBOL"]
+                    if symbol.startswith("ENSMUSG" if species else "ENSG"):
+                        gene_info = list(i[1][1:])
+                        gene_info.append(i[1]["SYMBOL"])
+                        row = pd.DataFrame(data=[gene_info], columns=["SYMBOL", "ENTREZID", "annotation", "ENSEMBL"])
+                        genes_annotated = pd.concat([genes_annotated, row], ignore_index=True)
+                        row = pd.DataFrame(data=[[i[1]["SYMBOL"], i[1]["Protein"]]], columns=["ENSEMBL", "Protein"])
+                        protein_gene_dict = pd.concat([protein_gene_dict, row])
+                    else:
+                        with open("../source/misc/lost_proteins.csv", "a") as file:
+                            file.write(symbol)
+                            file.write("\n")
+                bar()
         return protein_gene_dict, genes_annotated
 
-    def post_processing(string: list[pd.DataFrame]):
-        print_update(update_type="Post processing", text="STRING files", color="red")
+    def post_processing(string: list[pd.DataFrame], species: bool):
+        """
+        Mouse -> species = True,
+        Human -> species = False
+        """
+        if species:
+            string = string[:4]
+            complete = complete_mouse
+            proteins = proteins_mouse
+        else:
+            string = string[4:6] + [string[2]] + [string[6]]
+            complete = complete_human
+            proteins = proteins_human
+
+        print_update(
+            update_type="Post processing", text="STRING files ({})".format("Mouse" if species else "Human"), color="red"
+        )
         genes_annotated = string[1].merge(complete, left_on="Protein", right_on="Protein", how="left")
         genes_annotated = genes_annotated.filter(items=["ENSEMBL", "SYMBOL", "annotation", "ENTREZID"])
 
-        proteins_annotated = (
-            proteins.merge(right=string[1], left_on="Protein", right_on="Protein", how="left")
-            .drop_duplicates(subset=["Protein"], keep="first")
-            .drop(columns=["ENSEMBL"])
-        )
+        proteins_annotated = proteins.merge(
+            right=string[1], left_on="Protein", right_on="Protein", how="left"
+        ).drop_duplicates(subset=["Protein"], keep="first")
         proteins_annotated["Protein"] = proteins_annotated["Protein"].apply(lambda x: x.removeprefix("10090."))
 
         proteins_annotated = proteins_annotated.rename(columns={"Protein": "ENSEMBL"})
@@ -102,7 +126,10 @@ def parse_string(complete: pd.DataFrame, proteins: pd.DataFrame, dir_path: str =
         symbol_protein = string[3].merge(string[1], left_on="Protein", right_on="Protein")
 
         protein_gene_dict, genes_annotated = adding_lost_connections(
-            symbol_protein=symbol_protein, protein_gene_dict=protein_gene_dict, genes_annotated=genes_annotated
+            symbol_protein=symbol_protein,
+            protein_gene_dict=protein_gene_dict,
+            genes_annotated=genes_annotated,
+            species=species,
         )
 
         protein_protein_scores = string[0].merge(proteins, left_on="protein1", right_on="Protein")
@@ -142,19 +169,21 @@ def parse_string(complete: pd.DataFrame, proteins: pd.DataFrame, dir_path: str =
         return gene_gene_scores, genes_annotated, proteins_annotated, protein_protein_scores
 
     string = read_string()
-    return post_processing(string=string)
+    result = post_processing(string=string, species=True) + post_processing(string=string, species=False)
+    return result
 
 
 def _reformat_string_file(df: pd.DataFrame, file_name: str):
     print_update(update_type="Reformatting", text=file_name, color="orange")
 
     names = [
-        "protein.links.v11.5",
-        "protein.info.v11.5",
+        "10090.protein.links.v12.0",
+        "10090.protein.info.v12.0",
         "string_SYMBOL_ENSEMBL",
-        "difference",
+        "difference_mouse",
         "9606.protein.links.v12.0",
         "9606.protein.info.v12.0",
+        "difference_human",
     ]
     functions = [
         _reformat_string_links,
@@ -163,6 +192,7 @@ def _reformat_string_file(df: pd.DataFrame, file_name: str):
         _reformat_difference,
         _reformat_string_links_human,
         _reformat_string_info_human,
+        _reformat_difference_human,
     ]
     index = names.index(file_name)
 
@@ -196,4 +226,8 @@ def _reformat_protein_gene_dict(df: pd.DataFrame):
 
 
 def _reformat_difference(df: pd.DataFrame):
+    return df
+
+
+def _reformat_difference_human(df: pd.DataFrame):
     return df
