@@ -16,12 +16,14 @@ from util.stopwatch import Stopwatch
 def calc_proteins_pval(curr, alpha, in_pr, bg_proteins, num_in_prot):
     # Lists are read as strings, evaluate to lists using JSON.
     # alternative is using eval() which is slower
+    prot_list = curr.replace("'", '"')
+    prot_list = json.loads(prot_list)
 
     # get the protein length of term
-    num_term_prot = len(curr)
+    num_term_prot = len(prot_list)
 
     # Get intersection of proteins
-    prots_term = list(set(curr) & in_pr)
+    prots_term = list(set(prot_list) & in_pr)
     num_inter = len(prots_term)
 
     if num_inter == 0:
