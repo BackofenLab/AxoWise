@@ -253,12 +253,6 @@ def create_correlation(
     # TF-TG edges
     if value_type == 1:
         values, reformat = get_values_reformat(df=correlation, match=["ENSEMBL_TF", "ENSEMBL_TG"])
-        # values = list(set(list(correlation.columns)) - set(["ENSEMBL_TF", "ENSEMBL_TG"]))
-        # reformat = [
-        #     (i, "toFloat" if correlation[i].dtype == "float64" else "toInteger")
-        #     for i in values
-        #     if correlation[i].dtype != "object"
-        # ]
 
         save_df_to_csv(file_name="tf_tg_corr.csv", df=correlation)
         create_relationship(
@@ -276,12 +270,6 @@ def create_correlation(
     # OR-TG edges
     elif value_type == 0:
         values, reformat = get_values_reformat(df=correlation, match=["id", "ENSEMBL"])
-        # values = list(set(list(correlation.columns)) - set(["id", "ENSEMBL"]))
-        # reformat = [
-        #     (i, "toFloat" if correlation[i].dtype == "float64" else "toInteger")
-        #     for i in values
-        #     if correlation[i].dtype != "object"
-        # ]
 
         save_df_to_csv(file_name="or_tg_corr.csv", df=correlation)
         create_relationship(

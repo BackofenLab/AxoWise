@@ -47,10 +47,7 @@ def execute_query(query: str, read: bool, driver: neo4j.Driver) -> pd.DataFrame:
             tmp = session.run(query).values()
             return tmp
     else:
-        with open("queries.txt", "a") as file:
-            file.write(query)
-            file.write("\n")
-            file.write("\n")
+        print(query)
         return [[0]]
 
 

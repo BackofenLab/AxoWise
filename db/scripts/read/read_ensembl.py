@@ -87,7 +87,12 @@ def parse_ensembl(dir_path: str = os.getenv("_DEFAULT_ENSEMBL_PATH")):
         tf = tf.drop(columns=["ENTREZID"])
         tf = tf.drop_duplicates(subset=["ENSEMBL"], keep="first", ignore_index=True)
 
-        return complete, tf, proteins, gene_protein_link
+        return (
+            complete.drop_duplicates(),
+            tf.drop_duplicates(),
+            proteins.drop_duplicates(),
+            gene_protein_link.drop_duplicates(),
+        )
 
     ensembl = read_ensembl()
     result = post_processing(ensembl=ensembl, species=True) + post_processing(ensembl=ensembl, species=False)

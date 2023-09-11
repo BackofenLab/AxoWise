@@ -35,6 +35,12 @@ def parse_string(
             dataframes[index] = df
         return dataframes
 
+    def _make_symbol_name_correct(symbol: str):
+        if not symbol.startswith("ENS"):
+            return symbol.title()
+        else:
+            return symbol
+
     def adding_lost_connections(symbol_protein, protein_gene_dict, genes_annotated, species):
         with alive_bar(len(symbol_protein)) as bar:
             for i in symbol_protein.iterrows():
@@ -93,12 +99,33 @@ def parse_string(
         genes_annotated = string[1].merge(complete, left_on="Protein", right_on="Protein", how="left")
         genes_annotated = genes_annotated.filter(items=["ENSEMBL", "SYMBOL", "annotation", "ENTREZID"])
 
+        genes_annotated.loc[~genes_annotated["SYMBOL"].isna(), "SYMBOL"] = genes_annotated.loc[
+            ~genes_annotated["SYMBOL"].isna(), "SYMBOL"
+        ].apply(_make_symbol_name_correct)
+
+        proteins_from_connections = pd.concat(
+            [
+                string[0]["protein1"].rename(columns={"protein1": "Protein"}),
+                string[0]["protein2"].rename(columns={"protein2": "Protein"}),
+            ],
+            ignore_index=True,
+        ).drop_duplicates()
+        proteins = pd.concat([proteins, proteins_from_connections]).drop_duplicates()
+
         proteins_annotated = proteins.merge(
             right=string[1], left_on="Protein", right_on="Protein", how="left"
         ).drop_duplicates(subset=["Protein"], keep="first")
-        proteins_annotated["Protein"] = proteins_annotated["Protein"].apply(lambda x: x.removeprefix("10090."))
+        proteins_annotated["Protein"] = (
+            proteins_annotated["Protein"].apply(lambda x: x.removeprefix("10090."))
+            if species
+            else proteins_annotated["Protein"].apply(lambda x: x.removeprefix("9606."))
+        )
 
         proteins_annotated = proteins_annotated.rename(columns={"Protein": "ENSEMBL"})
+
+        proteins_annotated.loc[~proteins_annotated["SYMBOL"].isna(), "SYMBOL"] = proteins_annotated.loc[
+            ~proteins_annotated["SYMBOL"].isna(), "SYMBOL"
+        ].apply(_make_symbol_name_correct)
 
         # Drop duplicate annotations, keep first entry
         genes_annotated = genes_annotated.drop_duplicates(subset=["ENSEMBL"], keep="first", ignore_index=True)
@@ -145,11 +172,15 @@ def parse_string(
         )
 
         protein_protein_scores = protein_protein_scores.drop_duplicates()
-        protein_protein_scores["Protein1"] = protein_protein_scores["Protein1"].apply(
-            lambda x: x.removeprefix("10090.")
+        protein_protein_scores["Protein1"] = (
+            protein_protein_scores["Protein1"].apply(lambda x: x.removeprefix("10090."))
+            if species
+            else protein_protein_scores["Protein1"].apply(lambda x: x.removeprefix("9606."))
         )
-        protein_protein_scores["Protein2"] = protein_protein_scores["Protein2"].apply(
-            lambda x: x.removeprefix("10090.")
+        protein_protein_scores["Protein2"] = (
+            protein_protein_scores["Protein2"].apply(lambda x: x.removeprefix("10090."))
+            if species
+            else protein_protein_scores["Protein2"].apply(lambda x: x.removeprefix("9606."))
         )
         protein_protein_scores.rename(columns={"Protein1": "ENSEMBL1", "Protein2": "ENSEMBL2"})
 
@@ -166,7 +197,12 @@ def parse_string(
         )
 
         gene_gene_scores = gene_gene_scores.drop_duplicates(keep="first")
-        return gene_gene_scores, genes_annotated, proteins_annotated, protein_protein_scores
+        return (
+            gene_gene_scores.drop_duplicates(),
+            genes_annotated.drop_duplicates(),
+            proteins_annotated.drop_duplicates(),
+            protein_protein_scores.drop_duplicates(),
+        )
 
     string = read_string()
     result = post_processing(string=string, species=True) + post_processing(string=string, species=False)

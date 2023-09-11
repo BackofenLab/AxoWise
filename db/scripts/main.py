@@ -17,11 +17,11 @@ os.environ["_FUNCTION_TIME_PATH"] = "../source/misc/function_times.tsv"
 os.environ["_TIME_FUNCTIONS"] = str(False)
 os.environ["_SILENT"] = str(False)
 os.environ["_PRODUCTION"] = str(True)
-os.environ["_UPDATE_NEO4J"] = str(False)
+os.environ["_UPDATE_NEO4J"] = str(True)
 
 
-def read_experiment_files():
-    data = rd.read(reformat=True, mode=0)
+def read_experiment_files(genes_annotated_mouse):
+    data = rd.read(reformat=True, genes_annotated_mouse=genes_annotated_mouse, mode=0)
     return data
 
 
@@ -69,11 +69,11 @@ def upload_workflow():
     ) = read_ensembl_files()
 
     (
-        gene_gene_scores_mouse,
+        _,
         genes_annotated_mouse,
         proteins_annotated_mouse,
         protein_protein_scores_mouse,
-        gene_gene_scores_human,
+        _,
         genes_annotated_human,
         proteins_annotated_human,
         protein_protein_scores_human,
@@ -95,7 +95,7 @@ def upload_workflow():
         or_tg_corr,
         motif,
         distance,
-    ) = read_experiment_files()
+    ) = read_experiment_files(genes_annotated_mouse=genes_annotated_mouse)
 
     (
         ft_nodes_mouse,
