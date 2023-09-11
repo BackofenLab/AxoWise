@@ -16,14 +16,12 @@ from util.stopwatch import Stopwatch
 def calc_proteins_pval(curr, alpha, in_pr, bg_proteins, num_in_prot):
     # Lists are read as strings, evaluate to lists using JSON.
     # alternative is using eval() which is slower
-    prot_list = curr.replace("'", '"')
-    prot_list = json.loads(prot_list)
 
     # get the protein length of term
-    num_term_prot = len(prot_list)
+    num_term_prot = len(curr)
 
     # Get intersection of proteins
-    prots_term = list(set(prot_list) & in_pr)
+    prots_term = list(set(curr) & in_pr)
     num_inter = len(prots_term)
 
     if num_inter == 0:
@@ -76,14 +74,14 @@ def functional_enrichment(driver: neo4j.Driver, in_proteins, species_id: Any):
     stopwatch = Stopwatch()
 
     # Get number of all proteins in the organism (from Cypher)
-    bg_proteins = queries.get_number_of_proteins(driver)
+    bg_proteins = queries.get_number_of_proteins(driver, species_id)
     num_in_prot = len(in_proteins)
     prots = set(in_proteins)
     # pandas DataFrames for nodes and edges
     csv.field_size_limit(sys.maxsize)
 
     # Read Terms and put into Dataframe
-    df_terms = pd.DataFrame(queries.get_enrichment_terms(driver))
+    df_terms = pd.DataFrame(queries.get_enrichment_terms(driver, species_id))
     tot_tests = len(df_terms)
 
     stopwatch.round("setup_enrichment")
@@ -95,6 +93,7 @@ def functional_enrichment(driver: neo4j.Driver, in_proteins, species_id: Any):
     new_prots = []
     new_p = []
     arguments = [(value, alpha, prots, bg_proteins, num_in_prot) for value in df_terms["proteins"]]
+
     with multiprocessing.Pool() as pool:
         # Apply the function to each input value in parallel and collect the results
         for a, b in pool.starmap(calc_proteins_pval, arguments):

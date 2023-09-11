@@ -88,6 +88,7 @@
 
                 var formData = new FormData()
                 formData.append('func-terms', JSON.stringify(com.terms))
+                formData.append('species_id', com.gephi_data.nodes[0].species)
 
                 this.axios
                     .post("/api/subgraph/terms", formData)

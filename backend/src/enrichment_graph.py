@@ -14,7 +14,7 @@ from util.stopwatch import Stopwatch
 _BACKEND_JAR_PATH = "../gephi/target/gephi.backend-1.0-SNAPSHOT.jar"
 
 
-def get_functional_graph(list_enrichment):
+def get_functional_graph(list_enrichment, species_id):
     stopwatch = Stopwatch()
 
     list_term = []
@@ -24,19 +24,19 @@ def get_functional_graph(list_enrichment):
     driver = database.get_driver()
 
     # Execute the query and retrieve the CSV data
-    terms, source, target, score = queries.get_terms_connected_by_overlap(driver, list_term)
+    terms, source, target, score = queries.get_terms_connected_by_overlap(driver, list_term, species_id)
 
     stopwatch.round("Neo4j")
 
-    nodes = pd.DataFrame(terms).drop_duplicates(subset="external_id")
+    nodes = pd.DataFrame(terms).rename(columns={"Term": "external_id"}).drop_duplicates(subset="external_id")
 
     nodesterm = pd.DataFrame(list_enrichment)
 
-    df2 = nodesterm.rename({"id": "external_id"}, axis=1)
+    df2 = nodesterm.rename(columns={"id": "external_id"})
     merged = pd.merge(df2[["external_id", "fdr_rate", "p_value"]], nodes, on="external_id")
 
     # Add the two columns to df2
-    nodes = merged
+    nodes = merged.drop_duplicates()
 
     nodes["fdr_rate"] = nodes["fdr_rate"].fillna(0)
     nodes["p_value"] = nodes["p_value"].fillna(0)
@@ -100,9 +100,9 @@ def get_functional_graph(list_enrichment):
                 node["attributes"]["Betweenness Centrality"] = str(betweenness[mapped_node_id])
                 node["attributes"]["PageRank"] = str(pagerank[mapped_node_id])
             node["attributes"]["Ensembl ID"] = df_node.external_id
-            node["attributes"]["Name"] = df_node.name
-            node["label"] = df_node.name  # Comment this out if you want no node labels displayed
-            node["attributes"]["Category"] = df_node.category
+            node["attributes"]["Name"] = df_node.Name
+            node["label"] = df_node.Name  # Comment this out if you want no node labels displayed
+            node["attributes"]["Category"] = df_node.Category
             node["attributes"]["FDR"] = df_node.fdr_rate
             node["attributes"]["P Value"] = df_node.p_value
 
