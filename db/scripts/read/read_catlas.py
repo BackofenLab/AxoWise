@@ -14,15 +14,13 @@ def parse_catlas(or_nodes: pd.DataFrame, distance: pd.DataFrame):
     print_update(update_type="Reformatting", text="ccre_id_dict", color="orange")
 
     or_extended = pd.concat([or_nodes, tmp_or], ignore_index=True)
-    or_extended = or_extended.drop_duplicates(subset=["id"])
-    or_extended["annotation"] = or_extended["annotation"].astype(str).apply(lambda x: x.strip('"'))
-    or_extended["feature"] = or_extended["feature"].astype(str).apply(lambda x: x.strip('"'))
+    or_extended = or_extended.drop_duplicates(subset=["id"], keep="first")
 
     print_update(update_type="Reformatting", text="Context, Motif files", color="orange")
 
     catlas_or_context = pd.DataFrame(columns=["id", "cell_id"])
     catlas_motifs = pd.DataFrame(
-        columns=["id", "Motif", "Motif ID", "Log p", "Concentration", "ENSEMBL", "Dummy", "cell_id"]
+        columns=["id", "Consensus", "or_id", "p", "Concentration", "ENSEMBL", "Dummy", "cell_id"]
     )
 
     with alive_bar(len(catlas_celltype)) as bar:
@@ -74,4 +72,11 @@ def parse_catlas(or_nodes: pd.DataFrame, distance: pd.DataFrame):
 
     print_update(update_type="Reformatting", text="tf_ccre_motif", color="orange")
 
-    return or_extended, catlas_or_context, catlas_correlation, catlas_celltype, distance_extended, catlas_motifs
+    return (
+        or_extended.drop_duplicates(),
+        catlas_or_context.drop_duplicates(),
+        catlas_correlation.drop_duplicates(),
+        catlas_celltype.drop_duplicates(),
+        distance_extended.drop_duplicates(),
+        catlas_motifs.drop_duplicates(),
+    )

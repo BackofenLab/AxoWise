@@ -49,15 +49,15 @@ def create_protein_nodes(nodes: pd.DataFrame, species: str, driver: Driver):
 @time_function
 def create_gene_protein_edges(links: pd.DataFrame, species: str, driver: Driver):  # TODO
     """
-    Creates LINK Edges between TGs and Proteins
+    Creates PRODUCT Edges between TGs and Proteins
     """
-    print_update(update_type="Edge Creation", text="LINK", color="cyan")
+    print_update(update_type="Edge Creation", text="PRODUCT", color="cyan")
 
     values, reformat = get_values_reformat(df=links, match=["ENSEMBL", "Protein"])
     save_df_to_csv(file_name="protein_gene_links.csv", df=links)
     create_relationship(
         source_file="protein_gene_links.csv",
-        type_="LINK",
+        type_="PRODUCT",
         between=(("ENSEMBL", "ENSEMBL"), ("ENSEMBL", "Protein")),
         node_types=("TG", "Protein"),
         values=values,

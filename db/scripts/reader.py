@@ -19,6 +19,7 @@ def read(
     proteins_human: pd.DataFrame = pd.DataFrame([]),
     or_nodes: pd.DataFrame = pd.DataFrame([]),
     distance: pd.DataFrame = pd.DataFrame([]),
+    genes_annotated_mouse: pd.DataFrame = pd.DataFrame([]),
 ):
     if mode == 0:
         # Experiment
@@ -26,9 +27,7 @@ def read(
             dir_path = os.getenv("_DEFAULT_EXPERIMENT_PATH")
 
         if check_for_files(mode=mode):
-            symbol_ensembl_dict = pd.read_csv("../source/processed/genes_annotated.csv").filter(
-                items=["ENSEMBL", "SYMBOL"]
-            )
+            symbol_ensembl_dict = genes_annotated_mouse.filter(items=["ENSEMBL", "SYMBOL"])
             (
                 tg_mean_count,
                 tf_mean_count,

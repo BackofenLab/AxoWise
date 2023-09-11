@@ -37,8 +37,8 @@ def parse_functional(dir_path: str = os.getenv("_DEFAULT_FUNCTIONAL_PATH")):
             functional = functional[2:]
 
         print_update(update_type="Post processing", text="Functional files", color="red")
-        ft_nodes = functional[1].filter(items=["id", "name", "category"])
-        ft_nodes = ft_nodes.rename(columns={"id": "Term", "name": "Name", "category": "Category"})
+        ft_nodes = functional[1].filter(items=["id", "name", "category", "proteins"])
+        ft_nodes = ft_nodes.rename(columns={"id": "Term", "name": "Name", "category": "Category", "proteins": "Proteins"})
 
         ft_protein_df_list = []
         ft_gene_df_list = []
@@ -63,13 +63,17 @@ def parse_functional(dir_path: str = os.getenv("_DEFAULT_FUNCTIONAL_PATH")):
 
         ft_ft_overlap = functional[0]
 
-        return ft_nodes, ft_gene, ft_protein, ft_ft_overlap
+        return (
+            ft_nodes.drop_duplicates(),
+            ft_gene.drop_duplicates(),
+            ft_protein.drop_duplicates(),
+            ft_ft_overlap.drop_duplicates(),
+        )
 
     functional = read_functional()
     result = post_processing(functional=functional, species=True) + post_processing(
         functional=functional, species=False
     )
-    print(result)
     return result
 
 

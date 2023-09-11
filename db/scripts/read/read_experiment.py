@@ -120,6 +120,8 @@ def parse_experiment(
         )
         relevant_info["id"] = relevant_info["seqnames"] + "_" + relevant_info["summit"].astype(str)
         or_nodes = relevant_info.filter(items=["id", "annotation", "feature"])
+        or_nodes["annotation"] = or_nodes["annotation"].astype(str).apply(lambda x: x.strip('"'))
+        or_nodes["feature"] = or_nodes["annotation"].astype(str)
         or_mean_count = relevant_info.filter(items=["mean_count", "id"])
 
         # Filter for Distance to transcription site
@@ -152,7 +154,6 @@ def parse_experiment(
             .drop(columns=["TF", "SYMBOL"])
             .dropna()
         )
-
         motif = (
             motif.merge(right=exp[5], left_on="motif_id", right_on="motif_id")
             .rename(
@@ -164,20 +165,20 @@ def parse_experiment(
                     "motif_consensus": "Consensus",
                 }
             )
-            .drop(columns=["TF", "number_of_peaks"])
+            .drop(columns=["TF"])
         )
 
         return (
-            tg_mean_count,
-            tf_mean_count,
-            de_values,
-            or_nodes,
-            or_mean_count,
-            da_values,
-            tf_tg_corr,
-            or_tg_corr,
-            motif,
-            distance,
+            tg_mean_count.drop_duplicates(),
+            tf_mean_count.drop_duplicates(),
+            de_values.drop_duplicates(),
+            or_nodes.drop_duplicates(),
+            or_mean_count.drop_duplicates(),
+            da_values.drop_duplicates(),
+            tf_tg_corr.drop_duplicates(),
+            or_tg_corr.drop_duplicates(),
+            motif.drop_duplicates(),
+            distance.drop_duplicates(),
         )
 
     # Read and Rename columns of Experiment data
@@ -236,7 +237,7 @@ def _reformat_or_tg(df: pd.DataFrame):
 
 
 def _reformat_motif(df: pd.DataFrame):
-    df = df.rename(columns={"motif_consensus": "Consensus"})
+    df = df.filter(items=["TF", "motif_id", "peaks"])
     return df
 
 
