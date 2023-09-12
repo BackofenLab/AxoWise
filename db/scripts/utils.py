@@ -1,6 +1,7 @@
 import pandas as pd
 import yaml
 import csv
+import os
 from time import time
 import urllib.request
 import neo4j
@@ -51,22 +52,24 @@ def execute_query(query: str, read: bool, driver: neo4j.Driver) -> pd.DataFrame:
 
 
 def save_df_to_csv(file_name: str, df: pd.DataFrame, override_prod: bool = False):
-    if _PRODUCTION or override_prod:
-        df.to_csv(_NEO4J_IMPORT_PATH + file_name, index=False)
+    if os.getenv("_PRODUCTION") == str(True) or override_prod:
+        df.to_csv(os.getenv("_NEO4J_IMPORT_PATH") + file_name, index=False)
     else:
-        df.iloc[:_DEV_MAX_REL].to_csv(_NEO4J_IMPORT_PATH + file_name, index=False)
+        df.iloc[: int(os.getenv("_DEV_MAX_REL"))].to_csv(os.getenv("_NEO4J_IMPORT_PATH") + file_name, index=False)
 
 
-def time_function(function, variables: dict = {}):
-    start_time = time()
-    result = function(**variables)
-    end_time = time()
+def time_function(function):
+    def timing(**variables):
+        start_time = time()
+        result = function(**variables)
+        end_time = time()
+        if os.getenv("_TIME_FUNCTIONS") == str(True):
+            with open(os.getenv("_FUNCTION_TIME_PATH"), "a", newline="\n") as csvfile:
+                writer = csv.writer(csvfile, delimiter="\t")
+                writer.writerow([function.__name__, end_time - start_time])
+        return result
 
-    with open(_FUNCTION_TIME_PATH, "a", newline="\n") as csvfile:
-        writer = csv.writer(csvfile, delimiter="\t")
-        writer.writerow([function.__name__, end_time - start_time])
-
-    return result
+    return timing
 
 
 def print_update(update_type: str, text: str, color: str):

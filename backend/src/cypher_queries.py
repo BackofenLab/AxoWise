@@ -576,11 +576,6 @@ def create_term_df():
     # Run the cypher query in cypher shell via terminal
     # TODO: change to credentials.yml
 
-    # Run the cypher query in cypher shell via terminal
-    # TODO: change to credentials.yml
-
-    # Run the cypher query in cypher shell via terminal
-    # TODO: change to credentials.yml
     data = subprocess.run(
         [
             "cypher-shell",

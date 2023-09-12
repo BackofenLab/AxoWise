@@ -23,7 +23,9 @@ def get_functional_graph(list_enrichment, species_id):
     if list_enrichment is not None:
         list_term = [i["id"] for i in list_enrichment]
 
-    driver = database.get_driver()
+    # Create a query to find all associations between protein_ids and create a file with all properties
+    def create_query_assoc():
+        # Query for terms based on protein input
 
     # Execute the query and retrieve the CSV data
     terms, source, target, score = queries.get_terms_connected_by_overlap(driver, list_term, species_id)
@@ -115,10 +117,7 @@ def get_functional_graph(list_enrichment, species_id):
             sub_proteins.append(node["attributes"]["Ensembl ID"])
         else:
             node["color"] = "rgb(255,255,153)"
-
-    for edge in sigmajs_data["edges"]:
-        if edge["source"] not in ensembl_sub and edge["target"] not in ensembl_sub:
-            edge["color"] = "rgba(255,255,153,0.2)"
+            node["hidden"] = True
 
     sigmajs_data["subgraph"] = sub_proteins
 
