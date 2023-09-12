@@ -109,7 +109,6 @@ def proteins_subgraph_api():
     # TODO: make better (Vincent)
     nodes = pd.DataFrame(proteins).rename(columns={"ENSEMBL": "external_id"}).drop_duplicates(subset="external_id")
 
-    
     edges = pd.DataFrame({"source": source, "target": target, "score": score})
     edges = edges.drop_duplicates(subset=["source", "target"])
 
