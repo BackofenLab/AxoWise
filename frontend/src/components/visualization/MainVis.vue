@@ -1,9 +1,21 @@
 <template>
   <div class="visualization">
     <div id="sigma-webgl"></div>
-    <div id="sigma-canvas" :class="{'loading': threeview}" class="sigma-parent" ref="sigmaContainer" @contextmenu.prevent="handleSigmaContextMenu">
-        <img class="twoview" v-show="threeview" v-on:click="two_view" src="@/assets/share-2.png" alt="Center Icon">
+    <div id="sigma-canvas" :class="{'loading': threeview}" class="sigma-parent" ref="sigmaContainer" @contextmenu.prevent="handleSigmaContextMenu" @mouseleave="sigmaFocus = false" @mouseenter="sigmaFocus = true">
+      <div 
+      v-show="moduleSelectionActive === true"
+      v-for="(circle, index) in moduleSet"
+      :key="index"
+      :class="{
+        'outside': !isMouseInside(circle.data),
+        'inside': isMouseInside(circle.data) && !unconnectedActive(circle.modularity) && !mousedownrightCheck && !(mousedownleftCheck && mousemoveCheck) && sigmaFocus,
+      }"
+      v-bind:style="getCircleStyle(circle.data)"
+    ></div>
+      
+      <img class="twoview" v-show="threeview" v-on:click="two_view" src="@/assets/share-2.png" alt="Center Icon">
     </div>
+    
   </div>
 </template>
 
@@ -15,10 +27,15 @@ import saveAsPNG from '../../rendering/saveAsPNG';
 import saveAsSVG from '../../rendering/saveAsSVG';
 import customLabelRenderer from '../../rendering/customLabelRenderer';
 import customNodeRenderer from '../../rendering/customNodeRenderer';
+import sigmaRenderer from '../../rendering/sigma_renderer';
 import ForceGraph3D from '3d-force-graph';
+import "@/rendering/astarAlgorithm.js"
+import randomColorRGB from 'random-color-rgb'
+import smallestEnclosingCircle from 'smallest-enclosing-circle';
 
 sigma.canvas.labels.def = customLabelRenderer
 sigma.canvas.nodes.def = customNodeRenderer
+sigma.renderers.canvas.prototype.resize = sigmaRenderer
 
 var sigma_instance = null;
 var three_instance = null;
@@ -39,8 +56,8 @@ sigma.classes.graph.addMethod('ensemblIdToNode', function(ensembl_id) {
 
 export default {
   name: 'MainVis',
-  props: ['gephi_data', 'unconnected_nodes', 'active_node', 'active_term', 'active_subset','subactive_subset', 'active_layer', 'active_decoloumn', 'active_combine','node_color_index','node_size_index', 'edge_color_index', 'export_graph'],
-  emits: ['active_node_changed', 'active_term_changed', 'active_subset_changed', 'active_decoloumn_changed'],
+  props: ['gephi_data', 'unconnected_nodes', 'active_node', 'active_term', 'active_subset','active_termlayers','subactive_subset', 'active_layer', 'active_decoloumn', 'active_combine','node_color_index','node_size_index', 'edge_color_index','node_modul_index', 'export_graph'],
+  emits: ['active_node_changed', 'active_term_changed', 'active_subset_changed', 'active_decoloumn_changed', 'active_termlayers_changed', 'subactive_subset_changed'],
   data() {
     return {
       threeview: false,
@@ -52,7 +69,9 @@ export default {
       rectWidth: 0,
       rectHeight: 0,
       state: null,
-      edge_opacity: 0.3,
+      graph_state:null,
+      highlight_opacity: 0.2,
+      base_opacity: 0.2,
       rectangular_select: {
         canvas: null,
         context: null,
@@ -62,6 +81,17 @@ export default {
       }, 
       label_active_dict: {},
       special_label: false,
+      colorPalette: {},
+      moduleSet: null,
+      sigma_instance: null,
+      mouseX: 0,
+      mouseY: 0,
+      clusterDict: new Set(),
+      mousedownrightCheck: false,
+      mousedownleftCheck: false,
+      mousemoveCheck: false,
+      sigmaFocus: true,
+      moduleSelectionActive: true
     }
   },
   watch: {
@@ -70,7 +100,7 @@ export default {
 
       sigma_instance.clear()
       sigma_instance.read(com.gephi_data)
-      com.edit_opacity()
+      com.edit_opacity('full')
       
       sigma_instance.refresh();
 
@@ -86,6 +116,7 @@ export default {
       else sigma_node = node
 
       const neighbors = new Set();
+      const highlighted_edges = new Set();
       const edges = sigma_instance.graph.edges()
       
       sigma_node.color = "rgb(255, 255, 255)"
@@ -98,12 +129,14 @@ export default {
         const e = edges[i]
         if (e.source === sigma_node.attributes["Ensembl ID"]) {
           neighbors.add(e.target);
-          e.color = "rgb(255, 255, 255)"
+          e.color = "rgb(255, 255, 255," + com.highlight_opacity + ")"
+          highlighted_edges.add(e)
         } else if (e.target === sigma_node.attributes["Ensembl ID"]) {
           neighbors.add(e.source);
-          e.color = "rgb(255, 255, 255)"
-        }else{
-          e.hidden = true
+          highlighted_edges.add(e)
+          e.color = "rgb(255, 255, 255," + com.highlight_opacity + ")"
+        } else {
+          e.color = "rgba(0, 100, 100," + com.base_opacity + ")"
         }
       }
 
@@ -111,9 +144,11 @@ export default {
       for (let i = 0; i < nodes.length; i++) {
         const n = nodes[i]
         if (!neighbors.has(n.attributes["Ensembl ID"]) && n.attributes["Ensembl ID"] !== sigma_node.attributes["Ensembl ID"]) {
-          n.hidden = true
+          n.color = "rgb(0, 100, 100)"
         }
       }
+
+      this.$store.commit('assign_highlightedSet', highlighted_edges)
 
       sigma_instance.refresh();
 
@@ -148,6 +183,7 @@ export default {
       }
 
       const proteins = new Set(term.proteins);
+      const highlighted_edges = new Set()
       const graph = sigma_instance.graph;
 
       graph.nodes().forEach(function (node) {
@@ -156,6 +192,7 @@ export default {
           node.active = true
         } else {
           node.color = "rgb(0, 100, 0)"
+          node.active = false
         }
       });
 
@@ -166,13 +203,17 @@ export default {
         const target_present = proteins.has(target.attributes["Ensembl ID"]);
 
         if (source_present && !target_present || !source_present && target_present) {
-          edge.color = "rgba(220, 255, 220, 0.25)"
+          edge.color = "rgba(220, 255, 220," + com.highlight_opacity + ")"
+          highlighted_edges.add(edge)
         } else if (source_present && target_present) {
-          edge.color = "rgba(255, 255, 255, 0.3)"
+          edge.color = "rgba(255, 255, 255," + com.highlight_opacity + ")"
+          highlighted_edges.add(edge)
         } else {
-          edge.color = "rgba(0, 100, 0, 0.2)"
+          edge.color = "rgba(0, 100, 0," + com.base_opacity + ")"
         }
       });
+
+      this.$store.commit('assign_highlightedSet', highlighted_edges)
 
       if(com.graph_state) {
         com.unconnected_nodes.forEach(function (n) {
@@ -182,6 +223,7 @@ export default {
       }
 
       sigma_instance.refresh()
+
 
     },
     active_subset(subset) {
@@ -193,6 +235,7 @@ export default {
       }
 
       const proteins = new Set(subset.map(node => node.attributes["Ensembl ID"]));
+      const highlighted_edges = new Set()
 
       const graph = sigma_instance.graph;
 
@@ -208,27 +251,32 @@ export default {
         if(sourcePresent) {
           sourceNode.color = "rgb(255,255,255)"
           sourceNode.active = true
+          highlighted_edges.add(edge)
         }
         else{
           sourceNode.color = "rgb(0,100,100)"
+          sourceNode.active = false
         }
 
         // Target
         if(targetPresent) {
           targetNode.color = "rgb(255,255,255)"
           targetNode.active = true
+          highlighted_edges.add(edge)
         }
         else{
           targetNode.color = "rgb(0,100,100)"
+          targetNode.active = false
         }
 
         // Edge
         if (sourcePresent !== targetPresent) {
-          edge.color = sourcePresent && !targetPresent ? "rgba(200, 255, 255, 0.2)" : "rgba(0, 100, 100, 0.2)";
+          edge.color = sourcePresent && !targetPresent ? "rgba(200, 255, 255," + com.highlight_opacity + ")" : "rgba(0, 100, 100," + com.base_opacity + ")";
         } else {
-          edge.color = sourcePresent ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 100, 100, 0.2)";
+          edge.color = sourcePresent ? "rgba(255, 255, 255," + com.highlight_opacity + ")" : "rgba(0, 100, 100, " + com.base_opacity + ")";
         }
       }
+      this.$store.commit('assign_highlightedSet', highlighted_edges)
       this.$store.commit('assign_graph_subset', sigma_instance.graph)
 
       sigma_instance.refresh();
@@ -236,12 +284,20 @@ export default {
     subactive_subset(subset) {
       var com = this
 
+
       if (subset == null) {
         com.reset_size();
         return
       }
 
-      const proteins = new Set(subset.map(node => node.attributes["Ensembl ID"]));
+      var proteins;
+
+      if(subset[0].attributes) {
+        proteins = new Set(subset.map(node => node.attributes["Ensembl ID"]));
+        }
+      else { 
+        proteins = new Set(subset) 
+      }
 
       const graph = sigma_instance.graph;
 
@@ -307,6 +363,54 @@ export default {
         return
       }
 
+      if(com.active_termlayers != null) {
+
+        var proteinsTermLayer = com.active_termlayers.main;
+
+        var proteinList = new Set()
+
+        for (const terms of proteinsTermLayer) {
+          var proteinSet = new Set([...terms.proteins]);
+          proteinList = new Set([...proteinList, ...proteinSet]);
+        }
+
+        const graph = sigma_instance.graph
+
+
+        for (const edge of graph.edges()) {
+
+          const sourceNode = graph.getNodeFromIndex(edge.source);
+          if(proteinList.has(edge.source)) {
+            const source_value = sourceNode.attributes[com.active_decoloumn];
+            
+            sourceNode.color = com.get_normalize(source_value, -1, 1);
+            edge.color = com.get_normalize(source_value, -1, 1).replace(')', ',' + com.base_opacity +')').replace('rgb', 'rgba');
+            
+          }else {
+            sourceNode.hidden = true
+            edge.hidden = true
+          }
+
+          const targetNode = graph.getNodeFromIndex(edge.target);
+          if(proteinList.has(edge.target)) {
+            const target_value = targetNode.attributes[com.active_decoloumn];
+            targetNode.color = com.get_normalize(target_value, -1, 1);
+            edge.color = com.get_normalize(target_value, -1, 1).replace(')', ',' + com.base_opacity +')').replace('rgb', 'rgba');          
+          }else {
+            targetNode.hidden = true
+            edge.hidden = true
+          }
+          
+
+        }
+
+        this.$store.commit('assign_highlightedSet', new Set())
+
+        sigma_instance.refresh();
+        return;
+
+      }
+
       const graph = sigma_instance.graph
 
       for (const edge of graph.edges()) {
@@ -317,18 +421,77 @@ export default {
 
         sourceNode.color = com.get_normalize(source_value, -1, 1);
         targetNode.color = com.get_normalize(target_value, -1, 1);
-        edge.color = com.get_normalize(source_value, -1, 1).replace(')', ', 0.2)').replace('rgb', 'rgba');
+        edge.color = com.get_normalize(source_value, -1, 1).replace(')', ',' + com.base_opacity +')').replace('rgb', 'rgba');
 
       }
 
       sigma_instance.refresh();
 
     },
+    active_termlayers: {
+      handler(newList) {
+
+        if (newList == null) {
+          this.reset();
+          return;
+        }
+
+        var visibleTermlayers = [...newList.main]
+        var hiddenTermLayer = newList.hide
+        
+        const filteredArray = new Set(visibleTermlayers.filter(value => !hiddenTermLayer.has(value)));
+        var highlighted_edges = new Set()
+        
+        var proteinList = new Set()
+
+        for (const terms of filteredArray) {
+          var proteinSet = new Set([...terms.proteins]);
+          proteinList = new Set([...proteinList, ...proteinSet]);
+          if (!this.colorPalette[terms.name])
+            this.colorPalette[terms.name] = randomColorRGB();
+        }
+
+        this.$store.commit('assign_colorpalette', this.colorPalette)
+
+        sigma_instance.graph.nodes().forEach((n) => {
+          let count = 0;
+          n.color = "rgb(0,100,100)";
+          for (const terms of filteredArray) {
+            if (terms.proteins.includes(n.attributes["Ensembl ID"])) {
+              count++;
+              n.color = this.colorPalette[terms.name];
+              if (count === filteredArray.size) {
+                n.color = "rgb(255,255,255)";
+                break;
+              }
+            }
+          }
+        });
+
+        sigma_instance.graph.edges().forEach((e) => {
+          var source = sigma_instance.graph.getNodeFromIndex(e.source);
+          if(proteinList.has(e.source) && proteinList.has(e.target) ) 
+          {
+            e.color = source.color.replace(")", ", " + this.highlight_opacity + ")").replace("rgb", "rgba");
+            highlighted_edges.add(e)
+
+          }
+          else e.color = "rgba(0,100,100," + this.base_opacity + ")";
+        });
+
+        this.$store.commit('assign_highlightedSet', highlighted_edges)
+
+        sigma_instance.refresh();
+      },
+      deep: true,
+    },
+    
     active_combine(val){
       if(val.name == "node") this.$emit('active_node_changed', val.value)
       if(val.name == "term") this.$emit('active_term_changed', val.value)
       if(val.name == "subset") this.$emit('active_subset_changed', val.value)
       if(val.name == "devalue") this.$emit('active_decoloumn_changed', val.value)
+      if(val.name == "layers") this.$emit('active_termlayers_changed', val.value)
     },
   },
   methods: {
@@ -347,14 +510,18 @@ export default {
       t.color = `${com.node_color_index[e.target]}`; t.hidden = false;
       e.color = `${com.edge_color_index[e.id]}`; e.hidden = false;
     });
-
+    
     if(com.graph_state) {
       com.unconnected_nodes.forEach(function (n) {
         var node = sigma_instance.graph.getNodeFromIndex(n.id);
         node.hidden = true
       });
     }
+    this.$store.commit('assign_highlightedSet', new Set())
+    com.edit_opacity('full')
     
+    com.edit_opacity()
+
     sigma_instance.refresh();
   },
   reset_size() {
@@ -388,7 +555,9 @@ export default {
   // Rectangular select
   mousedown: function(e) {
     var com = this;
+    com.mousedownleftCheck = true
     if (e.button == 2) {
+        com.mousedownrightCheck = true
         // var selectedNodes = e.ctrlKey ? NETWORK.getSelectedNodes() : null;
         com.backup_surface();
         var rectangle = com.rectangular_select.rectangle;
@@ -400,6 +569,9 @@ export default {
   },
   mousemove: function(e) {
       var com = this;
+      this.mouseX = e.pageX;
+      this.mouseY = e.pageY;
+      if(com.mousedownleftCheck || com.mousedownrightCheck) com.mousemoveCheck = true
       if (com.rectangular_select.active) {
           var context = com.rectangular_select.context;
           var rectangle = com.rectangular_select.rectangle;
@@ -411,13 +583,19 @@ export default {
           context.strokeStyle = "rgb(82,182,229)";
           context.strokeRect(rectangle.startX - rectBounds.x, rectangle.startY, rectangle.w, rectangle.h);
           context.setLineDash([]);
-          context.fillStyle = "rgba(82,182,229,"+ this.edge_opacity +")";
+          context.fillStyle = "rgba(82,182,229,"+ this.base_opacity +")";
           context.fillRect(rectangle.startX- rectBounds.x, rectangle.startY, rectangle.w, rectangle.h);
       }
   },
   mouseup: function(e) {
       var com = this;
+      for (var element in this.moduleSet){
+        if(this.isMouseInside(this.moduleSet[element].data)) this.getClusterElements(this.moduleSet[element])
+      }
+      com.mousedownleftCheck = false
+      com.mousemoveCheck = false
       if (e.button == 2) {
+        com.mousedownrightCheck = false
           com.restore_surface();
           com.rectangular_select.active = false;
 
@@ -500,11 +678,33 @@ export default {
 
     sigma_instance.refresh();
   },
-  edit_opacity: function() {
+  edit_opacity(state) {
     var com = this;
-    sigma_instance.graph.edges().forEach(function (e) {
-      e.color = e.color.replace(/[\d.]+\)$/g, com.edge_opacity+')');
+
+    var edges = com.$store.state.highlighted_edges
+
+    if(state == "highlight"){
+
+
+      sigma_instance.graph.edges().forEach(function (e) {
+        if(edges.has(e)) e.color = e.color.replace(/[\d.]+\)$/g, com.highlight_opacity+')');
+     });
+      
+    }
+    if(state == "background"){
+      sigma_instance.graph.edges().forEach(function (e) {
+      if(!edges.has(e)) e.color = e.color.replace(/[\d.]+\)$/g, com.base_opacity+')');
+     
     });
+
+    }
+    if(state == "full"){
+      sigma_instance.graph.edges().forEach(function (e) {
+      e.color = e.color.replace(/[\d.]+\)$/g, com.base_opacity+')')
+    });
+
+    }
+
     sigma_instance.refresh();
   },
   hide_labels(state) {
@@ -601,6 +801,7 @@ export default {
     });
   },
   update_boundary: function(data) {
+
     var com = this;
 
     var minBound = -data;
@@ -613,7 +814,7 @@ export default {
 
         source.color = com.get_normalize(source.attributes[com.active_decoloumn], minBound, maxBound);
         target.color = com.get_normalize(target.attributes[com.active_decoloumn], minBound, maxBound);
-        e.color = com.get_normalize(source.attributes[com.active_decoloumn], minBound, maxBound).replace(')', ', 0.2)').replace('rgb', 'rgba');
+        e.color = com.get_normalize(source.attributes[com.active_decoloumn], minBound, maxBound).replace(')', ',' + com.base_opacity + ')').replace('rgb', 'rgba');
 
             
     });
@@ -624,14 +825,112 @@ export default {
     node.active = false
     node.sActive = false
     sigma_instance.refresh()
-  }
+  },
+  visualize_pathway(startID, endID){
+
+    this.reset()
+    const startNode = sigma_instance.graph.getNodeFromIndex(startID);
+    const endNode = sigma_instance.graph.getNodeFromIndex(endID);
+    const paths = new Set(sigma_instance.graph.astar(startNode.id, endNode.id));
+    if(paths.size == 0) this.emitter.emit("emptySet", false);
+    
+    sigma_instance.graph.nodes().forEach(n =>{
+      if(paths.has(n)){
+        n.hidden = false;
+        n.active = true
+      } 
+      else n.hidden = true;
+    });
+
+    sigma_instance.refresh()
+  },
+  highlight_de(value){
+    var com = this;
+
+
+
+    var checkSet = new Set(value.map(n => n.attributes["Ensembl ID"]))
+    var unconnected_nodes = new Set(com.unconnected_nodes.map(n => n.attributes["Ensembl ID"]))
+    sigma_instance.graph.nodes().forEach(n =>{
+      if(checkSet.has(n.attributes["Ensembl ID"]) && !(unconnected_nodes.has(n.attributes["Ensembl ID"]) && com.graph_state)){
+        n.hidden = false;
+      } 
+      else n.hidden = true;
+    });
+    sigma_instance.refresh()
+  },
+  get_module_circles () {
+
+    var moduleSet = {}
+    this.moduleSet = []
+
+    sigma_instance.graph.nodes().forEach(n =>{
+
+      if(moduleSet[n.attributes["Modularity Class"]]) moduleSet[n.attributes["Modularity Class"]].push({x: n["renderer1:x"],y: n["renderer1:y"]});
+      else moduleSet[n.attributes["Modularity Class"]] = [{x: n["renderer1:x"],y: n["renderer1:y"]}];
+    });
+
+    for (const element in moduleSet){
+    
+      this.moduleSet.push({ modularity: element, data: smallestEnclosingCircle(moduleSet[element])})
+
+    }
+    
+
+  },
+  getCircleStyle(circle){
+
+    return {
+        width: `${(circle.r+10) * 2}px`,
+        height: `${(circle.r+10) * 2}px`,
+        borderRadius: "50%", // Set border-radius to 50% to make it a circle
+        position: "absolute", // Position absolute to control x and y coordinates
+        left: `${circle.x - (circle.r+10)}px`,
+        top: `${circle.y - (circle.r+10)}px`,
+      };
+  },
+    isMouseInside(circle) {
+      const distance = Math.sqrt(
+        Math.pow(circle.x - this.mouseX, 2) + Math.pow(circle.y - this.mouseY, 2)
+      );
+      return distance < circle.r + 10;
+    },
+    unconnectedActive(circle) {
+      return (this.node_modul_index.has(circle) && this.graph_state)
+    },
+  getClusterElements(circle) {
+    var com = this;
+
+    if(this.unconnectedActive(circle.modularity) || !com.moduleSelectionActive) return
+
+    var nodeSet = []
+
+    if(this.active_subset) {
+      nodeSet.push(...com.active_subset)
+    }else {
+      com.clusterDict = new Set()
+    }
+
+    sigma_instance.graph.nodes().forEach(function (node) {
+      if (node.attributes["Modularity Class"] == circle.modularity){
+        nodeSet.push(node)
+      }
+    });
+
+    if(com.clusterDict.has(circle.modularity)) com.clusterDict.delete(circle.modularity)
+    else com.clusterDict.add(circle.modularity)
+
+      this.$emit('active_subset_changed', nodeSet.filter(item => com.clusterDict.has(item.attributes["Modularity Class"])))
+    
+  },
+
 },
   mounted() {
     var com = this;
 
     //Initializing the sigma instance to draw graph network
 
-    sigma_instance= new sigma();
+    sigma_instance = new sigma();
     var camera = sigma_instance.addCamera();
 
     sigma_instance.addRenderer({
@@ -649,11 +948,10 @@ export default {
 
     sigma_instance.graph.clear();
     sigma_instance.graph.read(com.gephi_data);
-    
 
-    com.edit_opacity()
+    com.edit_opacity('full')
 
-    
+    this.get_module_circles()
 
     var keyState = {};
 
@@ -698,9 +996,29 @@ export default {
     this.emitter.on("searchNode", state => {
       this.$emit('active_node_changed', sigma_instance.graph.getNodeFromIndex(state.id))
     });
+    this.emitter.on("searchPathway", element => {
+      this.visualize_pathway(element.source, element.target)
+    });
     
     this.emitter.on("searchSubset", state => {
       this.$emit('active_subset_changed', state)
+    });
+
+    this.emitter.on("resizeCircle", () => {
+      this.get_module_circles()
+    });
+
+    this.emitter.on("searchEnrichment", state => {
+      this.$emit('active_term_changed', state)
+    });
+
+    this.emitter.on("highlightProteinList", state => {
+      this.$emit('subactive_subset_changed', state)
+    });
+
+    this.emitter.on("hideTermLayer", state => {
+      this.colorpalette = this.$store.state.colorpalette
+      this.$emit('active_termlayers_changed', state)
     });
 
     this.emitter.on("hideSubset", state => {
@@ -709,6 +1027,7 @@ export default {
     
     this.emitter.on("centerGraph", () => {
       sigma_instance.camera.goTo({ x: 0, y: 0, ratio: 1, angle: sigma_instance.camera.angle });
+      this.get_module_circles()
     });
     
     this.emitter.on("exportGraph", (params) => {
@@ -722,6 +1041,9 @@ export default {
     this.emitter.on("hideLabels", (state) => {
       this.hide_labels(state)
     });
+    this.emitter.on("deactivateModules", () => {
+      com.moduleSelectionActive = !com.moduleSelectionActive
+    });
 
     this.emitter.on("threeView", () => {
       this.three_view()
@@ -729,13 +1051,24 @@ export default {
     this.emitter.on("adjustDE", (value) => {
       this.update_boundary(value)
     });
+    this.emitter.on("selectDE", (value) => {
+      this.highlight_de(value)
+    });
+    this.emitter.on("changeOpacity", (value) => {
+      if(value.layers == "highlight") com.highlight_opacity = value.opacity;
+      else com.base_opacity = value.opacity;
+
+      
+      com.edit_opacity(value.layers)
+    });
     
     sigma_instance.refresh()
+
 
   },
   activated() {
     sigma_instance.refresh()
-  }
+  },
 }
 </script>
 
@@ -801,6 +1134,17 @@ backdrop-filter: blur(10px);
 .sigma-label {
 color: #fff; /* set the font color to white */
 }
+
+.inside {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-style: solid;
+  border-width: 1px;
+  border-color: white;
+}
+.outside {
+  background-color: transparent;
+}
+
 </style>
   
   

@@ -1,5 +1,5 @@
 <template>
-    <div id="attributepane" class="pane" v-show="active_node !== null || active_subset !== null || active_term !== null || active_decoloumn !== null || paneHidden == false">
+    <div id="attributepane" class="pane" v-show="active_node !== null || active_subset !== null || active_term !== null || active_decoloumn !== null || active_termlayers !== null ||paneHidden == false">
         <div class="buttons">
             <button id="panebutton" v-on:click="open_pane()">
                 <img id="collapse-icon" src="@/assets/toolbar/winkel-rechts.png" alt="Collapse Icon">
@@ -38,6 +38,11 @@
             :gephi_data='gephi_data'
             @active_item_changed = 'active_item = $event'
             ></DEValuePane>
+            <EnrichmentLayerPane v-show="active_tab === 'layers'"
+            :active_termlayers='active_termlayers'
+            :gephi_data='gephi_data'
+            @active_item_changed = 'active_item = $event'
+            ></EnrichmentLayerPane>
         </div>
     </div>
 </template>
@@ -48,16 +53,18 @@ import NodePane from '@/components/pane/NodePane.vue'
 import TermPane from '@/components/pane/TermPane.vue'
 import SubsetPane from '@/components/pane/SubsetPane.vue'
 import DEValuePane from '@/components/pane/DEValuePane.vue'
+import EnrichmentLayerPane from '@/components/pane/EnrichmentLayerPane.vue'
 
 export default {
     name:"PaneSystem",
-    props:['gephi_data', 'active_subset', 'active_term', 'active_node', 'active_decoloumn', 'node_color_index'],
-    emits:['active_node_changed','active_term_changed', 'active_subset_changed', 'active_combine_changed', 'active_layer_changed'],
+    props:['gephi_data', 'active_subset', 'active_term', 'active_node', 'active_decoloumn','active_termlayers', 'node_color_index'],
+    emits:['active_node_changed','active_term_changed', 'active_subset_changed', 'active_combine_changed', 'active_layer_changed', 'active_termlayers_changed'],
     components: {
         NodePane,
         TermPane,
         SubsetPane,
-        DEValuePane
+        DEValuePane,
+        EnrichmentLayerPane
     },
     data() {
         return{
@@ -100,6 +107,7 @@ export default {
                 this.$emit('active_subset_changed', null)
                 this.$emit('active_layer_changed', null)
                 this.$emit('active_decoloumn_changed', null)
+                this.$emit('active_termlayers_changed', null)
                 this.emitter.emit('enrichTerms', null)
                 this.emitter.emit('enrichSubset', null)
                 
@@ -124,6 +132,7 @@ export default {
             this.$emit('active_subset_changed', null)
             this.$emit('active_layer_changed', null)
             this.$emit('active_decoloumn_changed', null)
+            this.$emit('active_termlayers_changed', null)
             this.emitter.emit('enrichTerms', null)
             this.emitter.emit('enrichSubset', null)
 
@@ -149,8 +158,19 @@ export default {
                 this.$emit('active_decoloumn_changed', null)
                 this.$emit('active_combine_changed', {value: tab, name: name})
             }
+            if(name == "layers"){
+                this.active_tab = "layers"
+                this.$emit('active_termlayers_changed', null)
+                this.$emit('active_combine_changed', {value: tab, name: name})
+            }
         }
-    }
+    },
+    mounted(){
+        this.emitter.on("reset_protein",(state) => {
+            this.selectTab("node",state)
+        })
+
+        }
 }
 </script>
 

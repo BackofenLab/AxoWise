@@ -97,7 +97,7 @@ export default {
         },
         select_node(value) {
             this.emitter.emit("searchNode", value);
-        }
+        },
     }
 }
 </script>

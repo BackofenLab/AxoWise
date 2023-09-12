@@ -4,9 +4,10 @@
       <MainVis ref="mainVis"
         :active_node='active_node' @active_node_changed = 'active_node = $event'
         :active_term='active_term' @active_term_changed = 'active_term = $event'
+        :active_termlayers='active_termlayers' @active_termlayers_changed = 'active_termlayers = $event'
         :active_layer='active_layer' @active_layer_changed = 'active_layer = $event'
         :active_subset='active_subset' @active_subset_changed = 'active_subset = $event'
-        :subactive_subset='subactive_subset'
+        :subactive_subset='subactive_subset' @subactive_subset_changed = 'subactive_subset = $event'
         :gephi_data='gephi_data'
         :active_decoloumn='active_decoloumn'
         :unconnected_nodes='unconnected_nodes'
@@ -14,6 +15,8 @@
         :node_color_index='node_color_index'
         :node_size_index='node_size_index'
         :edge_color_index='edge_color_index'
+        :node_modul_index='node_modul_index'
+
       ></MainVis>
       </keep-alive>
       <keep-alive>
@@ -22,6 +25,7 @@
         :active_term='active_term' @active_term_changed = 'active_term = $event'
         :active_subset='active_subset' @active_subset_changed = 'active_subset = $event'
         :active_decoloumn='active_decoloumn' @active_decoloumn_changed = 'active_decoloumn = $event'
+        :active_termlayers='active_termlayers' @active_termlayers_changed = 'active_termlayers = $event'
         @active_layer_changed = 'active_layer = $event'
         @active_combine_changed = 'active_combine = $event'
         :gephi_data='gephi_data'
@@ -32,6 +36,7 @@
       <EnrichmentTool
         :gephi_data='gephi_data'
         @active_term_changed = 'active_term = $event'
+        @active_termlayers_changed = 'active_termlayers = $event'
         @active_layer_changed = 'active_layer = $event'
       ></EnrichmentTool>
     </keep-alive>
@@ -43,12 +48,12 @@
     </keep-alive>
       <keep-alive>
       <div class="header-menu">
-        <ModularityClass
+        <!-- <ModularityClass
         :gephi_data='gephi_data'
         :type='type'
         :active_subset='active_subset' @active_subset_changed = 'active_subset = $event'
         :subactive_subset='subactive_subset' @subactive_subset_changed = 'subactive_subset = $event'
-        > </ModularityClass>
+        > </ModularityClass> -->
       </div>
     </keep-alive>
       <keep-alive>
@@ -69,7 +74,7 @@
 import MainVis from '@/components/visualization/MainVis.vue'
 import PaneSystem from '@/components/pane/PaneSystem.vue'
 import EnrichmentTool from '@/components/enrichment/EnrichmentTool.vue'
-import ModularityClass from '../components/interface/ModularityClass.vue'
+// import ModularityClass from '../components/interface/ModularityClass.vue'
 import ToggleLabel from '../components/interface/ToggleLabel.vue'
 import ConnectedGraph from '../components/interface/ConnectedGraph.vue'
 import MainToolBar from '../components/toolbar/MainToolBar.vue'
@@ -80,7 +85,7 @@ export default {
     MainVis,
     PaneSystem,
     EnrichmentTool,
-    ModularityClass,
+    // ModularityClass,
     MainToolBar,
     ToggleLabel,
     ConnectedGraph
@@ -93,12 +98,14 @@ export default {
       active_layer: null,
       active_combine: null,
       active_decoloumn: null,
+      active_termlayers: null,
       node_color_index: null,
       node_size_index: null,
       edge_color_index: null,
       active_subset: null,
       subactive_subset: null,
       unconnected_nodes: null,
+      node_modul_index: null,
       type: 'protein'
     }
   },
@@ -141,6 +148,12 @@ export default {
 
     const maingraph = new Set(com.gephi_data.subgraph)
     com.unconnected_nodes = com.gephi_data.nodes.filter(item => !maingraph.has(item.id));
+    
+    com.node_modul_index = new Set()
+    for (var idm in com.unconnected_nodes) {
+      var node_m = com.unconnected_nodes[idm];
+      com.node_modul_index.add(node_m.attributes["Modularity Class"])
+    }
 
     this.emitter.on("decoloumn", state => {
       com.active_decoloumn = state

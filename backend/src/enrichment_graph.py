@@ -16,150 +16,29 @@ _BACKEND_JAR_PATH = "../gephi/target/gephi.backend-1.0-SNAPSHOT.jar"
 
 
 
-def get_functional_graph(list_enrichment):
+def get_functional_graph(list_enrichment, species_id):
     stopwatch = Stopwatch()
 
     list_term = []
     if list_enrichment is not None:
         list_term = [i["id"] for i in list_enrichment]
 
-    # Create a query to find all associations between protein_ids and create a file with all properties
-    def create_query_assoc():
-        # Query for terms based on protein input
-
-
-    # Create a query to find all associations between protein_ids and create a file with all properties
-    def create_query_assoc():
-
-        # Query for terms based on protein input
+    driver = database.get_driver()
 
     # Execute the query and retrieve the CSV data
-    terms, source, target, score = queries.get_terms_connected_by_overlap(driver, list_term)
+    terms, source, target, score = queries.get_terms_connected_by_overlap(driver, list_term, species_id)
 
-    # Create a query to find all associations between protein_ids and create a file with all properties
-    def create_query_assoc():
-        # Query for terms based on protein input
+    stopwatch.round("Neo4j")
 
-        query = (
-            """
-                WITH "MATCH (source:Terms)-[association:KAPPA]->(target:Terms)
-                WHERE source.external_id IN
-                """
-            + repr(list_term)
-            + " AND target.external_id IN "
-            + repr(list_term)
-            + """
-                RETURN source, target, association.score AS score" AS query
-                CALL apoc.export.csv.query(query, "/tmp/"""
-            + repr(filename)
-            + """.csv", {})
-                YIELD file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data
-                RETURN file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data;
-                """
-        )
-
-        return query
-
-    query = create_query_assoc()
-
-    with open("/tmp/query" + repr(filename) + ".txt", "w") as query_text:
-        query_text.write("%s" % query)
-
-    # Timer to evaluate runtime to setup
-    t_setup = time.time()
-    print("Time Spent (Setup_Terms):", t_setup - t_begin)
-
-    # Run the cypher query in cypher shell via terminal
-    # TODO: change to credentials.yml
-    data = subprocess.run(
-        [
-            "cypher-shell",
-            "-a",
-            "bolt://localhost:7687",
-            "-u",
-            "neo4j",
-            "-p",
-            "pgdb",
-            "-f",
-            "/tmp/query" + repr(filename) + ".txt",
-        ],
-        capture_output=True,
-        encoding="utf-8",
-    )
-    os.remove("/tmp/query" + repr(filename) + ".txt")
-    # Check standard output 'stdout' whether it's empty to control errors
-    if not data.stdout:
-        raise Exception(data.stderr)
-
-    # Timer for Neo4j query
-    t_neo4j = time.time()
-    print("Time Spent (Neo4j):", t_neo4j - t_setup)
-
-        return query
-
-    query = create_query_assoc()
-
-    with open("/tmp/query" + repr(filename) + ".txt", "w") as query_text:
-        query_text.write("%s" % query)
-
-    # Timer to evaluate runtime to setup
-    t_setup = time.time()
-    print("Time Spent (Setup_Terms):", t_setup - t_begin)
-
-    # Run the cypher query in cypher shell via terminal
-    # TODO: change to credentials.yml
-    data = subprocess.run(
-        [
-            "cypher-shell",
-            "-a",
-            "bolt://localhost:7687",
-            "-u",
-            "neo4j",
-            "-p",
-            "pgdb",
-            "-f",
-            "/tmp/query" + repr(filename) + ".txt",
-        ],
-        capture_output=True,
-        encoding="utf-8",
-    )
-    os.remove("/tmp/query" + repr(filename) + ".txt")
-    # Check standard output 'stdout' whether it's empty to control errors
-    if not data.stdout:
-        raise Exception(data.stderr)
-
-    # Timer for Neo4j query
-    t_neo4j = time.time()
-    print("Time Spent (Neo4j):", t_neo4j - t_setup)
-
-    # pandas DataFrames for nodes and edges
-    csv.field_size_limit(sys.maxsize)
-    terms = list()
-    source, target, score, assoc_names = list(), list(), list(), list()
-    with open("/tmp/" + repr(filename) + ".csv", newline="") as f:
-        for row in csv.DictReader(f):
-            source_row_prop = json.loads(row["source"])["properties"]
-            target_row_prop = json.loads(row["target"])["properties"]
-            terms.append(source_row_prop)
-            terms.append(target_row_prop)
-            source.append(source_row_prop.get("external_id"))
-            target.append(target_row_prop.get("external_id"))
-            score.append(float(row["score"]))
-
-    t_parsing = time.time()
-    print("Time Spent (Parsing):", t_parsing - t_neo4j)
-
-    os.remove("/tmp/" + repr(filename) + ".csv")
-
-    nodes = pd.DataFrame(terms).drop_duplicates(subset="external_id")
+    nodes = pd.DataFrame(terms).rename(columns={"Term": "external_id"}).drop_duplicates(subset="external_id")
 
     nodesterm = pd.DataFrame(list_enrichment)
 
-    df2 = nodesterm.rename({"id": "external_id"}, axis=1)
+    df2 = nodesterm.rename(columns={"id": "external_id"})
     merged = pd.merge(df2[["external_id", "fdr_rate", "p_value"]], nodes, on="external_id")
 
     # Add the two columns to df2
-    nodes = merged
+    nodes = merged.drop_duplicates()
 
     nodes["fdr_rate"] = nodes["fdr_rate"].fillna(0)
     nodes["p_value"] = nodes["p_value"].fillna(0)
@@ -171,6 +50,12 @@ def get_functional_graph(list_enrichment):
     edges["score"] = edges["score"].apply(lambda x: round(x, 2))
     edges["score"] = edges["score"].apply(lambda x: int(x * 100))
 
+    # Create nk_graph and needed stats
+    nk_graph, node_mapping = graph.nk_graph(nodes, edges)
+    pagerank = graph.pagerank(nk_graph)
+    betweenness = graph.betweenness(nk_graph)
+    ec = graph.eigenvector_centrality(nk_graph)
+
     # ____________________________________________________________
 
     # no data from database, return from here
@@ -179,7 +64,7 @@ def get_functional_graph(list_enrichment):
         return json.dumps([])
 
     # Creating only the main Graph and exclude not connected subgraphs
-    nodes_sub = graph.create_nodes_subgraph(edges, nodes)
+    nodes_sub = graph.create_nodes_subgraph(nk_graph, nodes)
 
     stopwatch.round("Enrichment")
 
@@ -210,10 +95,16 @@ def get_functional_graph(list_enrichment):
         ensembl_id = node["id"]
         df_node = ensembl_to_node.get(ensembl_id)
         if df_node:
+            if ensembl_id in node_mapping:
+                mapped_node_id = node_mapping[ensembl_id]
+                # Use node mapping to add corresponding values of betweenness and pagerank
+                node["attributes"]["Eigenvector Centrality"] = str(ec[mapped_node_id])
+                node["attributes"]["Betweenness Centrality"] = str(betweenness[mapped_node_id])
+                node["attributes"]["PageRank"] = str(pagerank[mapped_node_id])
             node["attributes"]["Ensembl ID"] = df_node.external_id
-            node["attributes"]["Name"] = df_node.name
-            node["label"] = df_node.name  # Comment this out if you want no node labels displayed
-            node["attributes"]["Category"] = df_node.category
+            node["attributes"]["Name"] = df_node.Name
+            node["label"] = df_node.Name  # Comment this out if you want no node labels displayed
+            node["attributes"]["Category"] = df_node.Category
             node["attributes"]["FDR"] = df_node.fdr_rate
             node["attributes"]["P Value"] = df_node.p_value
 
@@ -224,7 +115,10 @@ def get_functional_graph(list_enrichment):
             sub_proteins.append(node["attributes"]["Ensembl ID"])
         else:
             node["color"] = "rgb(255,255,153)"
-            node["hidden"] = True
+
+    for edge in sigmajs_data["edges"]:
+        if edge["source"] not in ensembl_sub and edge["target"] not in ensembl_sub:
+            edge["color"] = "rgba(255,255,153,0.2)"
 
     sigmajs_data["subgraph"] = sub_proteins
 

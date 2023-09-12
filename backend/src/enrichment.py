@@ -61,7 +61,6 @@ def hypergeo_testing(intersec, total_proteins, term_proteins, in_proteins):
     return float(p_value)
 
 
-
 def functional_enrichment(driver: neo4j.Driver, in_proteins, species_id: Any):
     """inhouse functional enrichment - performs gene set enrichment analysis
     for a given set of proteins. Calculates p-value and Benjamini-Hochberg FDR
@@ -77,21 +76,17 @@ def functional_enrichment(driver: neo4j.Driver, in_proteins, species_id: Any):
     stopwatch = Stopwatch()
 
     # Get number of all proteins in the organism (from Cypher)
-    bg_proteins = queries.get_number_of_proteins(driver)
+    bg_proteins = queries.get_number_of_proteins(driver, species_id)
     num_in_prot = len(in_proteins)
-
-    # TODO: Improve runtime?
-    
+    prots = set(in_proteins)
     # pandas DataFrames for nodes and edges
     csv.field_size_limit(sys.maxsize)
 
     # Read Terms and put into Dataframe
-    df_terms = pd.DataFrame(queries.get_enrichment_terms(driver))
+    df_terms = pd.DataFrame(queries.get_enrichment_terms(driver, species_id))
     tot_tests = len(df_terms)
 
     stopwatch.round("setup_enrichment")
-
-    in_proteins = frozenset(in_proteins)
 
     # set significance level to 0.05
     alpha = 0.05
@@ -100,6 +95,7 @@ def functional_enrichment(driver: neo4j.Driver, in_proteins, species_id: Any):
     new_prots = []
     new_p = []
     arguments = [(value, alpha, prots, bg_proteins, num_in_prot) for value in df_terms["proteins"]]
+
     with multiprocessing.Pool() as pool:
         # Apply the function to each input value in parallel and collect the results
         for a, b in pool.starmap(calc_proteins_pval, arguments):
@@ -115,25 +111,25 @@ def functional_enrichment(driver: neo4j.Driver, in_proteins, species_id: Any):
     stopwatch.round("pvalue_enrichment")
 
     # calculate Benjamini-Hochberg FDR
+    p_vals = []
     rank_lst = []
-    for ind, prop in enumerate(terms):
-        rank = tot_tests - ind
-        p_adj = prop["p_value"] * (tot_tests / rank)  # decimal.Decimal()
+    # Set cutoff value for p_value and fdr_rate
+    cutoff = 1e-318
+    prev = 0
+    # Loop over p_value column in Dataframe
+    for i, val in enumerate(df_terms["p_value"]):
+        rank = tot_tests - i
+        p_adj = val * (tot_tests / rank)
+        # Ensure FDR rates are non-increasing
+        if prev < p_adj and i != 0:
+            p_adj = prev
+        prev = p_adj
+        val, p_adj = (cutoff, cutoff) if val <= cutoff or p_adj <= cutoff else (val, p_adj)
+        p_vals += [val]
         rank_lst += [p_adj]
-
-    rank_lst_fil = []
-    for i in range(len(rank_lst) - 1):
-        if rank_lst[i] < rank_lst[i + 1]:
-            rank_lst[i + 1] = rank_lst[i]
-        if rank_lst[i] < ALPHA:
-            term_temp = terms[i]
-            term_temp["fdr_rate"] = rank_lst[i]
-            rank_lst_fil += [term_temp]
-            if i == (len(rank_lst) - 2):
-                term_temp = terms[i + 1]
-                term_temp["fdr_rate"] = rank_lst[i + 1]
-                rank_lst_fil += [term_temp]
-
+    # Update Dataframe
+    df_terms["fdr_rate"] = rank_lst
+    df_terms["p_value"] = p_vals
     # Remove all entries where FDR >= 0.05
     df_terms = df_terms[df_terms["fdr_rate"] < alpha]
     df_terms = df_terms.reset_index(drop=True)

@@ -34,6 +34,9 @@
                 <NodeLabelSelect
                 :type="screen_type"
                 ></NodeLabelSelect>
+                <ModuleSelection
+                :type="screen_type"
+                ></ModuleSelection>
                 <ProteinList
                 :protein_list='protein_list'
                 @status_changed = 'status = $event'
@@ -41,6 +44,7 @@
                 <SelectionWindow
                 @selection_status_changed = 'selection_status = $event'
                 ></SelectionWindow>
+                <EdgeOpacity></EdgeOpacity>
                 <DEValue></DEValue>
 
             </div>
@@ -82,18 +86,10 @@
                 </div>
             </div>
             <div class="highlight_main">
-                <HubsSelection
+                <SelectionList
                 :gephi_data='gephi_data'
-                ></HubsSelection>
-                <!-- <EigenvectorCentrality
-                :gephi_data='gephi_data'
-                ></EigenvectorCentrality> -->
-                <PageRank
-                :gephi_data='gephi_data'
-                ></PageRank>
-                <BetweenesCentrality
-                :gephi_data='gephi_data'
-                ></BetweenesCentrality>
+                ></SelectionList>
+
             </div>
         </div>
 
@@ -106,14 +102,12 @@ import ExportScreen from '@/components/toolbar/ExportScreen.vue'
 import DEValue from '@/components/toolbar/DEValue.vue'
 import ExportGraph from '@/components/toolbar/ExportGraph.vue'
 import NodeLabelSelect from '@/components/toolbar/NodeLabelSelect.vue'
+import ModuleSelection from '@/components/toolbar/ModuleSelection.vue'
 import ProteinList from '@/components/toolbar/ProteinList.vue'
 import SelectionWindow from '@/components/toolbar/SelectionWindow.vue'
 import SearchBar from '@/components/toolbar/SearchBar.vue'
-import HubsSelection from '@/components/toolbar/select_options/HubsSelection.vue'
-// Excluded this statistics since its not needed at the current status
-// import EigenvectorCentrality from '@/components/toolbar/select_options/EigenvectorCentrality.vue'
-import PageRank from '@/components/toolbar/select_options/PageRank.vue'
-import BetweenesCentrality from '@/components/toolbar/select_options/BetweenesCentrality.vue'
+import EdgeOpacity from '@/components/toolbar/EdgeOpacity.vue'
+import SelectionList from '@/components/toolbar/SelectionList.vue'
 
 export default {
     name: 'MainToolBar',
@@ -126,11 +120,10 @@ export default {
         ProteinList,
         SelectionWindow,
         SearchBar,
-        HubsSelection,
-        // EigenvectorCentrality,
-        PageRank,
-        BetweenesCentrality,
-        NodeLabelSelect
+        EdgeOpacity,
+        SelectionList,
+        NodeLabelSelect,
+        ModuleSelection
 
     },
     data() {

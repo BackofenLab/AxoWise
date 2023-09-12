@@ -51,7 +51,7 @@ def files(path):
 def proteins_enrichment():
     driver = database.get_driver()
     proteins = request.form.get("proteins").split(",")
-    species_id = request.form.get("species_id")
+    species_id = int(request.form.get("species_id"))
 
     # in-house functional enrichment
     list_enrichment = enrichment.functional_enrichment(driver, proteins, species_id)
@@ -100,100 +100,14 @@ def proteins_subgraph_api():
     stopwatch.round("Setup")
 
     if len(protein_ids) > 1:
-        proteins, source, target, score = queries.get_protein_associations(driver, protein_ids, threshold)
+        proteins, source, target, score = queries.get_protein_associations(driver, protein_ids, threshold, species_id)
     else:
-        proteins, source, target, score = queries.get_protein_neighbours(driver, protein_ids, threshold)
+        proteins, source, target, score = queries.get_protein_neighbours(driver, protein_ids, threshold, species_id)
 
-    with open("/tmp/query" + repr(filename) + ".txt", "w") as query_text:
-        query_text.write("%s" % query)
+    stopwatch.round("Neo4j")
 
-    # Timer to evaluate runtime to setup
-    t_setup = time.time()
-    print("Time Spent (Setup):", t_setup - t_begin)
-    print("Time Spent (Setup):", t_setup - t_begin)
-
-    # Run the cypher query in cypher shell via terminal
-    # TODO: change to credentials.yml
-    data = subprocess.run(
-        [
-            "cypher-shell",
-            "-a",
-            "bolt://localhost:7687",
-            "-u",
-            "neo4j",
-            "-p",
-            "pgdb",
-            "-f",
-            "/tmp/query" + repr(filename) + ".txt",
-        ],
-        capture_output=True,
-        encoding="utf-8",
-    )
-    os.remove("/tmp/query" + repr(filename) + ".txt")
-    # Check standard output 'stdout' whether it's empty to control errors
-    if not data.stdout:
-        raise Exception(data.stderr)
-    # Run the cypher query in cypher shell via terminal
-    # TODO: change to credentials.yml
-    data = subprocess.run(
-        [
-            "cypher-shell",
-            "-a",
-            "bolt://localhost:7687",
-            "-u",
-            "neo4j",
-            "-p",
-            "pgdb",
-            "-f",
-            "/tmp/query" + repr(filename) + ".txt",
-        ],
-        capture_output=True,
-        encoding="utf-8",
-    )
-    os.remove("/tmp/query" + repr(filename) + ".txt")
-    # Check standard output 'stdout' whether it's empty to control errors
-    if not data.stdout:
-        raise Exception(data.stderr)
-    # Run the cypher query in cypher shell via terminal
-    # TODO: change to credentials.yml
-    data = subprocess.run(
-        [
-            "cypher-shell",
-            "-a",
-            "bolt://localhost:7687",
-            "-u",
-            "neo4j",
-            "-p",
-            "pgdb",
-            "-f",
-            "/tmp/query" + repr(filename) + ".txt",
-        ],
-        capture_output=True,
-        encoding="utf-8",
-    )
-    os.remove("/tmp/query" + repr(filename) + ".txt")
-    # Check standard output 'stdout' whether it's empty to control errors
-    if not data.stdout:
-        raise Exception(data.stderr)
-
-    # Timer for Neo4j query
-    t_neo4j = time.time()
-    print("Time Spent (Neo4j):", t_neo4j - t_setup)
-
-    # pandas DataFrames for nodes and edges
-
-    proteins, source, target, score = [], [], [], []
-    with open("/tmp/" + repr(filename) + ".csv", newline="") as f:
-        for row in csv.DictReader(f):
-            source_row_prop = json.loads(row["source"])["properties"]
-            target_row_prop = json.loads(row["target"])["properties"]
-            proteins.append(source_row_prop)
-            proteins.append(target_row_prop)
-            source.append(source_row_prop.get("external_id"))
-            target.append(target_row_prop.get("external_id"))
-            score.append(int(row["score"]))
-
-    nodes = pd.DataFrame(proteins).drop_duplicates(subset="external_id")
+    # TODO: make better (Vincent)
+    nodes = pd.DataFrame(proteins).rename(columns={"ENSEMBL": "external_id"}).drop_duplicates(subset="external_id")
 
     edges = pd.DataFrame({"source": source, "target": target, "score": score})
     edges = edges.drop_duplicates(subset=["source", "target"])
@@ -202,49 +116,22 @@ def proteins_subgraph_api():
     if edges.empty:
         return Response(json.dumps([]), mimetype="application/json")
 
-    # networkit
-    # Create an empty graph
-    graph_nk = nk.Graph()
-    # Create a mapping between string node IDs and integer node IDs
-    node_mapping = {}
-    integer_id = 0
-
-    # Add nodes to the graph and update the mapping
-    for node_id in nodes["external_id"]:
-        graph_nk.addNode()
-        node_mapping[node_id] = integer_id
-        integer_id += 1
-
-    # Add edges to the graph using integer node IDs
-    for edge in edges[["source", "target"]].itertuples(index=False):
-        source = node_mapping[edge.source]
-        target = node_mapping[edge.target]
-        graph_nk.addEdge(source, target)
-
-    betweenness = nk.centrality.Betweenness(graph_nk).run().scores()
-    pagerank = nk.centrality.PageRank(graph_nk).run().scores()
-    degree = nk.centrality.DegreeCentrality(graph_nk).run().scores()
-    score_between = []
-    score_page = []
-    score_deg = []
-    for i in betweenness:
-        score_between.append(i)
-    for i in pagerank:
-        score_page.append(i)
-    for i in degree:
-        score_deg.append(i)
+    # Networkit related (graph and parameters)
+    nk_graph, node_mapping = graph.nk_graph(nodes, edges)
+    betweenness = graph.betweenness(nk_graph)
+    pagerank = graph.pagerank(nk_graph)
 
     stopwatch.round("Parsing")
 
     # Creating only the main Graph and exclude not connected subgraphs
-    nodes_sub = graph.create_nodes_subgraph(edges, nodes)
+    nodes_sub = graph.create_nodes_subgraph(nk_graph, nodes)
 
     stopwatch.round("DValue")
 
     # D-Value categorize via percentage
     if not (request.files.get("file") is None):
         panda_file.rename(columns={"SYMBOL": "name"}, inplace=True)
-        panda_file["name"] = panda_file["name"].str.upper()
+        panda_file["name"] = panda_file["name"].str.title()
 
     stopwatch.round("Enrichment")
 
@@ -278,20 +165,17 @@ def proteins_subgraph_api():
         if df_node:
             if ensembl_id in node_mapping:
                 mapped_node_id = node_mapping[ensembl_id]
-                score_betweenness = score_between[mapped_node_id]
-                score_pagerank = score_page[mapped_node_id]
-                score_degree = score_deg[mapped_node_id]
-                node["attributes"]["Betweenness Centrality"] = str(score_betweenness)
-                node["attributes"]["PageRank"] = str(score_pagerank)
-                node["attributes"]["Degree"] = str(int(score_degree))
-            node["attributes"]["Description"] = df_node.description
+                # Use node mapping to add corresponding values of betweenness and pagerank
+                node["attributes"]["Betweenness Centrality"] = str(betweenness[mapped_node_id])
+                node["attributes"]["PageRank"] = str(pagerank[mapped_node_id])
+            node["attributes"]["Description"] = df_node.annotation
             node["attributes"]["Ensembl ID"] = df_node.external_id
-            node["attributes"]["Name"] = df_node.name
+            node["attributes"]["Name"] = df_node.SYMBOL
             if not (request.files.get("file") is None):
                 if selected_d != None:
                     for column in selected_d:
-                        node["attributes"][column] = panda_file.loc[panda_file["name"] == df_node.name, column].item()
-            node["label"] = df_node.name
+                        node["attributes"][column] = panda_file.loc[panda_file["name"] == df_node.SYMBOL, column].item()
+            node["label"] = df_node.SYMBOL
             node["species"] = str(10090)
 
     # Identify subgraph nodes and update their attributes
@@ -330,8 +214,9 @@ def terms_subgraph_api():
 
     # Functional terms
     list_enrichment = ast.literal_eval(request.form.get("func-terms"))
+    species_id = int(request.form.get("species_id"))
 
-    json_str = enrichment_graph.get_functional_graph(list_enrichment=list_enrichment)
+    json_str = enrichment_graph.get_functional_graph(list_enrichment=list_enrichment, species_id=species_id)
 
     stopwatch.total("terms_subgraph_api")
 
