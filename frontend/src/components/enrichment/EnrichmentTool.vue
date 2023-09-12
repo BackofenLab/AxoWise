@@ -368,18 +368,6 @@
         font-family: 'Roboto Mono', monospace;
 
     }
-    #result_select{
-        appearance: none;
-        border-style: none;
-        width: 100%;
-        padding: 10px;
-        background: none;
-        color: white;
-        height: 100%;
-        font-weight: 900;
-        font-family: 'Roboto Mono', monospace;
-
-    }
     .tabsystem-enrichment {
         position: relative;
         display: inline-flex;
@@ -415,7 +403,7 @@
     .selected {
         background-color: rgba(255,0,0,0.7); /* Customize the selected style as desired */
     }
-    
+
     #visualize-favourites {
         margin-left:5px;
         background-color: rgba(0, 0, 0, 0.5);

@@ -78,9 +78,7 @@ def functional_enrichment(driver: neo4j.Driver, in_proteins, species_id: Any):
     # Get number of all proteins in the organism (from Cypher)
     bg_proteins = queries.get_number_of_proteins(driver, species_id)
     num_in_prot = len(in_proteins)
-
-    # TODO: Improve runtime?
-
+    prots = set(in_proteins)
     # pandas DataFrames for nodes and edges
     csv.field_size_limit(sys.maxsize)
 
