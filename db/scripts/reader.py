@@ -8,7 +8,6 @@ from read.read_functional import parse_functional
 from read.read_catlas import parse_catlas
 
 
-@time_function
 def read(
     dir_path: str = None,
     reformat: bool = True,

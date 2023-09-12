@@ -2,11 +2,12 @@ import pandas as pd
 import numpy as np
 from neo4j import Driver
 from upload.upload_experiment import create_correlation, create_context, create_motif
-from utils import execute_query, print_update
+from utils import execute_query, print_update, time_function
 
 __CATLAS__STUDY = {"name": "Catlas, Whole Mouse Brain", "source": "catlas.org/wholemousebrain/"}
 
 
+@time_function
 def create_source(cell_info: pd.DataFrame, species: str, driver: Driver):
     print_update(update_type="Node Creation", text="Study, (Sub-/Subsub-)Celltype and Source", color="blue")
     _, nuclei_counts, celltype, subtype, subsubtype = (
