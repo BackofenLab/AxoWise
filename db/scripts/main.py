@@ -1,6 +1,6 @@
 import reader as rd
 from uploader import catlas_extention, base_setup, bulk_extention
-from utils import print_update
+from utils import print_update, time_function
 from querier import run_queries
 import os
 import pandas as pd
@@ -12,19 +12,21 @@ os.environ["_DEFAULT_ENSEMBL_PATH"] = "../source/ensembl"
 os.environ["_DEFAULT_CREDENTIALS_PATH"] = "../../config.yml"
 os.environ["_DEV_MAX_REL"] = str(10000)
 os.environ["_NEO4J_IMPORT_PATH"] = "/usr/local/bin/neo4j/import/"
-os.environ["_FUNCTION_TIME_PATH"] = "../source/misc/function_times.tsv"
+os.environ["_FUNCTION_TIME_PATH"] = "../source/timing/function_times.tsv"
 
-os.environ["_TIME_FUNCTIONS"] = str(False)
+os.environ["_TIME_FUNCTIONS"] = str(True)
 os.environ["_SILENT"] = str(False)
 os.environ["_PRODUCTION"] = str(True)
 os.environ["_UPDATE_NEO4J"] = str(True)
 
 
+@time_function
 def read_experiment_files(genes_annotated_mouse):
     data = rd.read(reformat=True, genes_annotated_mouse=genes_annotated_mouse, mode=0)
     return data
 
 
+@time_function
 def read_string_files(
     complete_mouse: pd.DataFrame,
     proteins_mouse: pd.DataFrame,
@@ -41,21 +43,25 @@ def read_string_files(
     return data
 
 
+@time_function
 def read_ensembl_files():
     data = rd.read(mode=2)
     return data
 
 
+@time_function
 def read_functional_files():
     data = rd.read(mode=3)
     return data
 
 
+@time_function
 def read_catlas_files(or_nodes: pd.DataFrame, distance: pd.DataFrame):
     data = rd.read(or_nodes=or_nodes, distance=distance, mode=4)
     return data
 
 
+@time_function
 def upload_workflow():
     (
         complete_mouse,

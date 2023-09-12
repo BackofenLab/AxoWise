@@ -103,10 +103,8 @@ def _reformat_ft_overlap_human(df: pd.DataFrame):
 
 
 def _reformat_terms_mouse(df: pd.DataFrame):
-    df = df.drop(columns=["Unnamed: 0"])
     return df
 
 
 def _reformat_terms_human(df: pd.DataFrame):
-    df = df.drop(columns=["Unnamed: 0"])
     return df
