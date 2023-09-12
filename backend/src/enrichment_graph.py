@@ -35,6 +35,7 @@ def get_functional_graph(list_enrichment, species_id):
     df2 = nodesterm.rename(columns={"id": "external_id"})
     merged = pd.merge(df2[["external_id", "fdr_rate", "p_value"]], nodes, on="external_id")
 
+    print(df2[df2.duplicated(subset=["external_id"], keep=False)].sort_values(by="external_id")["external_id"].to_list())
     # Add the two columns to df2
     nodes = merged.drop_duplicates()
 
@@ -65,7 +66,7 @@ def get_functional_graph(list_enrichment, species_id):
     nodes_sub = graph.create_nodes_subgraph(nk_graph, nodes)
 
     stopwatch.round("Enrichment")
-
+    
     if len(nodes.index) == 0:
         sigmajs_data = {"nodes": [], "edges": []}
     else:

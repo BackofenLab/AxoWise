@@ -132,7 +132,7 @@ def proteins_subgraph_api():
     # D-Value categorize via percentage
     if not (request.files.get("file") is None):
         panda_file.rename(columns={"SYMBOL": "name"}, inplace=True)
-        panda_file["name"] = panda_file["name"].str.upper()
+        panda_file["name"] = panda_file["name"].str.title()
 
     stopwatch.round("Enrichment")
 
@@ -175,7 +175,7 @@ def proteins_subgraph_api():
             if not (request.files.get("file") is None):
                 if selected_d != None:
                     for column in selected_d:
-                        node["attributes"][column] = panda_file.loc[panda_file["name"] == df_node.name, column].item()
+                        node["attributes"][column] = panda_file.loc[panda_file["name"] == df_node.SYMBOL, column].item()
             node["label"] = df_node.SYMBOL
             node["species"] = str(10090)
 
