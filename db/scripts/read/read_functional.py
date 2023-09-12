@@ -38,7 +38,9 @@ def parse_functional(dir_path: str = os.getenv("_DEFAULT_FUNCTIONAL_PATH")):
 
         print_update(update_type="Post processing", text="Functional files", color="red")
         ft_nodes = functional[1].filter(items=["id", "name", "category", "proteins"])
-        ft_nodes = ft_nodes.rename(columns={"id": "Term", "name": "Name", "category": "Category", "proteins": "Proteins"})
+        ft_nodes = ft_nodes.rename(
+            columns={"id": "Term", "name": "Name", "category": "Category", "proteins": "Proteins"}
+        )
 
         ft_protein_df_list = []
         ft_gene_df_list = []
