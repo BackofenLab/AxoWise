@@ -14,14 +14,16 @@ export default {
         }
     },
     updated(){
-        console.log(this.$store.state.snapshot_pathways)
-        const targetSnapshot = this.$store.state.snapshot_pathways.find(dictionary => dictionary.id === this.index)
-        if(targetSnapshot) this.initializeSnapshot(targetSnapshot.snapshot)
+        if(this.findSnapshot()) this.initializeSnapshot(this.findSnapshot().snapshot)
     },
     mounted(){
-        this.initializeSnapshot(this.getSnapshot(this.propValue.graph));
+        if(!this.findSnapshot()) this.initializeSnapshot(this.getSnapshot(this.propValue.graph))
+        else this.initializeSnapshot(this.findSnapshot().snapshot)
     },
     methods: {
+        findSnapshot(){
+            return this.$store.state.snapshot_pathways.find(dictionary => dictionary.id === this.index)
+        },
         initializeSnapshot(data) {
             const imageContainer = document.getElementById('graph-visual-' + this.index)
             imageContainer.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(data)}`;

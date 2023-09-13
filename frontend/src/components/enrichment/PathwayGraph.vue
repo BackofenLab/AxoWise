@@ -3,13 +3,16 @@
         <div class="generate-graph">
             <div class="generate-text" v-on:click="get_term_data()">Generate term graph</div>
         </div>
+        <div class="bookmark-button-graph" v-on:click="bookmark_off = !bookmark_off">
+            <img class="bookmark-image" src="@/assets/pathwaybar/favorite.png" :class="{recolor_filter: bookmark_off == false}">
+        </div>
         <div class="graph-section">
             <div class="slider" tabindex="0">
-                <div v-for="(entry, index) in term_graphs" :key="index" class="graph" v-on:click="switch_graph(entry)" @mouseover="activeGraphIndex = index" @mouseout="activeGraphIndex = -1">
+                <div v-for="(entry, index) in filt_graphs" :key="index" class="graph" v-on:click="switch_graph(entry)" @mouseover="activeGraphIndex = index" @mouseout="activeGraphIndex = -1">
                     <SnapshotGraph :propValue="entry" :index="entry.id"/>
                     <div class="graph-options" v-show="activeGraphIndex == index" >
                         <div class="bookmark-graph" v-on:click.stop="add_graph(entry)" :class="{ checked: favourite_graphs.has(entry)}" ref="checkboxStatesGraph"></div>
-                        <img  class="remove-graph" src="@/assets/pathwaybar/cross.png" v-on:click.stop="remove_graph(entry, index)">
+                        <img  class="remove-graph" src="@/assets/pathwaybar/cross.png" v-on:click.stop="remove_graph(entry)">
                         <div class="graph-name">
                             <input type="text" v-model="entry.label" class="empty" @click.stop />
                         </div>
@@ -38,7 +41,8 @@ export default {
             term_graphs: new Set(),
             favourite_graphs: new Set(),
             activeGraphIndex: -1,
-            graph_number: 0
+            graph_number: 0,
+            bookmark_off: true,
         }
     },
     methods: {
@@ -61,13 +65,13 @@ export default {
             this.$store.commit('assign_term_graph', entry.graph)
             this.$router.push("terms")
         },
-        remove_graph(entry, index) {
+        remove_graph(entry) {
             if (!this.favourite_graphs.has(entry)) {
                 // Checkbox is checked, add its state to the object
                 this.favourite_graphs.delete(entry)
             }
             this.term_graphs.delete(entry)
-            this.$store.commit('remove_snapshotPathway', index)
+            this.$store.commit('remove_snapshotPathway', entry.id)
         },
         add_graph(entry){
             if (!this.favourite_graphs.has(entry)) {
@@ -78,6 +82,20 @@ export default {
                 this.favourite_graphs.delete(entry)
             }
         },
+    },
+    computed: {
+        filt_graphs() {
+            var com = this;
+            var filtered = [...com.term_graphs];
+
+            if (!com.bookmark_off){
+                filtered = filtered.filter(function(term) {
+                    return com.favourite_graphs.has(term)
+                });
+            }
+
+            return new Set(filtered);
+        }
     }
 }
 </script>
@@ -136,6 +154,17 @@ export default {
 
     }
 
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .graph-section .slider::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .graph-section .slider {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+
     .graph-section .slider .graph{
         position: relative;
         width: 31.4%;
@@ -156,7 +185,7 @@ export default {
         width: 0.9vw;
         height: 0.9vw;
         margin: 1% 1% 0 0;
-        background-color: white;
+        background-color: rgba(255, 255, 255, 0.62);
         -webkit-mask: url(@/assets/pathwaybar/star-solid.svg) no-repeat center;
         mask: url(@/assets/pathwaybar/star-solid.svg) no-repeat center;
         mask-size: 0.9vw;
@@ -202,5 +231,16 @@ export default {
 
     .checked {
         background-color: #ffa500;
+    }
+
+    .bookmark-button-graph {
+        width: 4.81%;
+        height: 11.16%;
+        left: 24.9%;
+        position: absolute;
+        border-radius: 5px;
+        background: #0A0A1A;
+        align-content: center;
+        justify-content: center;
     }
 </style>
