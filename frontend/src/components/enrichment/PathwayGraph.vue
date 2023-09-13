@@ -5,7 +5,7 @@
         </div>
         <div class="graph-section">
             <div class="slider" tabindex="0">
-                <div v-for="(entry, index) in term_graphs" :key="index" class="graph" v-on:click="switch_graph()" @mouseover="activeGraphIndex = index" @mouseout="activeGraphIndex = -1">
+                <div v-for="(entry, index) in term_graphs" :key="index" class="graph" v-on:click="switch_graph(entry)" @mouseover="activeGraphIndex = index" @mouseout="activeGraphIndex = -1">
                     <SnapshotGraph :propValue="entry" :index="entry.id"/>
                     <div class="graph-options" v-show="activeGraphIndex == index" >
                         <div class="bookmark-graph" v-on:click.stop="add_graph(entry)" :class="{ checked: favourite_graphs.has(entry)}" ref="checkboxStatesGraph"></div>
@@ -51,14 +51,14 @@ export default {
             this.axios
                 .post(com.api.termgraph, formData)
                 .then((response) => {
-                    this.$store.commit('assign_term_graph', response.data)
                     this.graph_number += 1
                     this.$store.commit('assign_new_term_graph', {label: `Graph ${this.graph_number}`, graph: response.data})
                     this.term_graphs.add({ id: this.graph_number, label: `Graph ${this.graph_number}`, graph: response.data});
                 })
 
         },
-        switch_graph() {
+        switch_graph(entry) {
+            this.$store.commit('assign_term_graph', entry.graph)
             this.$router.push("terms")
         },
         remove_graph(entry, index) {
