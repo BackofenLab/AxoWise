@@ -160,8 +160,8 @@ export default function saveAsSVG(renderer, params, mode) {
       params = params || {};
   
       var prefix = self.settings('classPrefix'),
-          w = params.size || params.width || DEFAULTS.size,
-          h = params.size || params.height || DEFAULTS.size;
+          w = params.width || self.width,
+          h = params.height || self.height 
   
       // Creating a dummy container
       var container = document.createElement('div');
@@ -200,7 +200,9 @@ export default function saveAsSVG(renderer, params, mode) {
   
       // Retrieving svg
       var svg = container.querySelector('svg');
-      svg.style.backgroundColor = mode
+      if(mode) svg.style.backgroundColor = mode
+      svg.style.width = '100%'
+      svg.style.height = '100%'
       svg.setAttribute('width', w + 'px');
       svg.setAttribute('height', h + 'px');
       svg.setAttribute('x', '0px');

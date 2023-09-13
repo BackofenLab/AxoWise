@@ -6,8 +6,11 @@
         <div class="pathwaybar">
             <PathwayList
             :gephi_data='gephi_data'
+            :terms='terms'
             ></PathwayList>
-            <PathwayGraph></PathwayGraph>
+            <PathwayGraph
+            :terms='terms'
+            ></PathwayGraph>
             <img id="pathway-bg" src="@/assets/pathwaybar/background-dna.png">
         </div>
     </div>
@@ -26,11 +29,37 @@ export default {
     },
     data() {
         return {
+            api: {
+                subgraph: "api/subgraph/enrichment",
+            },
+            terms: null,
             pane_hidden: false
         }
     },
+    mounted() {
+        var com = this
+        com.generatePathways(com.gephi_data.nodes[0].species, com.gephi_data.nodes.map(node => node.id))
+
+    },
     methods: {
-         
+        generatePathways(species, proteins){
+            var com = this
+
+            //Adding proteins and species to formdata 
+            var formData = new FormData()
+            formData.append('proteins', proteins)
+            formData.append('species_id', species);
+                
+            //POST request for generating pathways
+            com.axios
+            .post(com.api.subgraph, formData)
+            .then((response) => {
+                com.$store.commit('assign_enrichment', response.data.sort((t1, t2) => t1.fdr_rate - t2.fdr_rate))
+                com.terms = com.$store.state.enrichment_terms
+                com.await_load = false
+            })
+
+        },
         }
     }
 </script>

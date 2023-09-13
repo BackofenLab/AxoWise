@@ -32,8 +32,8 @@
                 <a class="fdr_filter" v-on:click="sort_fdr = (sort_fdr === 'asc') ? 'dsc' : 'asc'; sort_alph = '' " >fdr rate</a>
             </div>
 
-            <div v-if="await_load == true" class="loading_pane" ></div>
-            <div class="results" v-if="terms !== null && await_load == false" tabindex="0" @keydown="handleKeyDown" ref="resultsContainer">
+            <!-- <div v-if="await_load == true" class="loading_pane" ></div> -->
+            <div class="results" v-if="terms !== null" tabindex="0" @keydown="handleKeyDown" ref="resultsContainer">
                 <table >
                     <tbody>
                         <tr v-for="(entry, index) in filt_terms" :key="index" class="option" :class="{ selected: selectedIndex === index }" v-on:click="select_term(entry,index)">
@@ -68,36 +68,25 @@
 
 export default {
     name: 'PathwayList',
-    props: ['gephi_data','active_term'],
+    props: ['gephi_data','terms'],
     data() {
         return{
-            api: {
-                subgraph: "api/subgraph/enrichment",
-            },
-            terms: null,
-            await_load: false,
             search_raw: "",
             filter_raw: "",
-            bookmark_off: true,
-            selectedIndex: -1,
             sort_fdr: "",
             sort_alph: "",
             category: "Filter",
-            favourite_tab: new Set(),
             category_filtering: false,
-            filter_terms: []
+            filter_terms: [],
+            bookmark_off: true,
+            favourite_tab: new Set(),
+            selectedIndex: -1,
         }
     },
-    mounted() {
-        var com = this
-        com.generatePathways(com.gephi_data.nodes[0].species, com.gephi_data.nodes.map(node => node.id))
-
-
-    },
-    watch: {
+    watch:{
         terms() {
-            this.filtered_terms = this.terms
-        },
+            this.filter_options(this.terms)
+        }
     },
     computed: {
         regex() {
@@ -129,50 +118,26 @@ export default {
                 filtered.sort(function(t1, t2) { return (t2.name.toLowerCase() > t1.name.toLowerCase() ? 1 : (t1.name.toLowerCase() === t2.name.toLowerCase() ? 0 : -1)) })
             }
 
-
-
             if(com.sort_fdr == "asc"){
                 filtered.sort((t1, t2) => t2.fdr_rate - t1.fdr_rate)
             }else if (com.sort_fdr == "dsc"){
                 filtered.sort((t1, t2) => t1.fdr_rate - t2.fdr_rate)
             }
-            
 
             if (!com.bookmark_off){
                 filtered = filtered.filter(function(term) {
                     return com.favourite_tab.has(term)
                 });
             }
-            
 
             return new Set(filtered);
         },
     },
     methods: {
-        generatePathways(species, proteins){
-            var com = this
-
-            //Adding proteins and species to formdata 
-            var formData = new FormData()
-            formData.append('proteins', proteins)
-            formData.append('species_id', species);
-                
-            //POST request for generating pathways
-            com.axios
-            .post(com.api.subgraph, formData)
-            .then((response) => {
-                com.$store.commit('assign_enrichment', response.data.sort((t1, t2) => t1.fdr_rate - t2.fdr_rate))
-                com.terms = com.$store.state.enrichment_terms
-                // com.get_term_data(formData)
-                com.filter_options()
-                com.await_load = false
-            })
-
-        },
-        filter_options() {
+        filter_options(terms) {
             var com = this
             com.filter_terms = []
-            var remove_duplicates = [...new Set(com.terms.map(term => term.category))]
+            var remove_duplicates = [...new Set(terms.map(term => term.category))]
             remove_duplicates.forEach(term => {
                 com.filter_terms.push({'label': term})
             })
@@ -605,7 +570,6 @@ export default {
         display: flex;
         align-items: center;
         justify-content: center;
-        padding-left: 5%;
 
     }
     .visualize-logo .bookmark-image {
