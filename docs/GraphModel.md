@@ -131,8 +131,8 @@
 | Type | old (Mouse) | new (Mouse)| new (Human) |
 | --- | --- | --- | --- |
 | Terms / (in new DB: FT) | 24.170 | 28.742 | 29.773 |
-| Proteins | 22.048 | 66.953 | 122.614 |
-| Target Genes (TG) | 0 | 22.478 | 23.899 |
+| Proteins | 22.048 | 67.249 | 123.031 |
+| Target Genes (TG) | 0 | 22.478 | 23.900 |
 | Transcription Factors (TF, are also TGs) | 0 | 2.894 | 3.529 |
 | Open Regions (OR) | 0 | 1.431.123 | - |
 | Context | 0 | 23  | - |
@@ -141,31 +141,32 @@
 | MeanCount | 0 | 1 | - |
 | Source | 0 | 216 | - |
 | Study | 0 | 2 | - |
-| Total | 46.218 | 1.549.763 | 176.286 |
+| Total | 46.218 | 1.550.059 | 176.704 |
 
-#### Total Nodes in new DB: 1.726.049
+#### Total Nodes in new DB: 1.726.763
 
 ### Edges:
 | Type | old (Mouse) | new (Mouse) | new (Human) |
 | --- | --- | --- | --- |
-| ASSOCIATION / (in new DB: STRING) | 7.248.179 | 6.255.439 | 6.653.145 |
+| ASSOCIATION / (in new DB: STRING) | 7.248.179 | 6.342.177 | 6.857.702 |
 | CORRELATION (TG, TF) | 0 | 1.739.921 | 0 |
 | CORRELATION (TG, OR) | 0 | 4.066.833 | 0 |
-| VALUE (DA) | 0 | 533.220 | 0 |
-| VALUE (DE) | 0 | 50.135  | 0 |
+| VALUE (OR) | 0 | 29.480.276 | 0 |
+| VALUE (TG) | 0 | 50.135  | 0 |
 | DISTANCE | 0 | 1.286.065 (with Dummies) | 0 |
 | KAPPA | 81.676 | 0 (to be deprecated) | 0 |
-| LINK (Protein, FT) | 0 | 9.371.340 | 18.130.661 |
-| LINK (Gene, FT) | 0 | 2.700.152 | 2.691.163 |
+| LINK (Protein, FT) | 0 | 7.274.921 | 14.174.256 |
+| LINK (Gene, FT) | 0 | 2.100.868 | 2.108.637 |
 | MEANCOUNT (TG) | 0 | 10.027 | 0 |
 | MEANCOUNT (OR) | 0 | 106.644 | 0 |
 | MOTIF | 0 | 34.553.249 (with Dummies) | 0 |
 | OVERLAP | 0 | 6.762.321 | 6.925.609 |
 | PRODUCT | 0 | 66.953 | 122.614 |
 | HAS | 0 | 655 | - |
-| Total | 7.329.855 | 67.502.954 | 34.523.192 |
+| IS | 0 | 209 | - |
+| Total | 7.329.855 | 93.841.254 | 30.188.818 |
 
-#### Total Edges in new DB: 102.026.146
+#### Total Edges in new DB: 124.030.072
 
 ## Notes
 

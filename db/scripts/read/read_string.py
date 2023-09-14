@@ -105,24 +105,28 @@ def parse_string(
 
         proteins_from_connections = pd.concat(
             [
-                string[0]["protein1"].rename(columns={"protein1": "Protein"}),
-                string[0]["protein2"].rename(columns={"protein2": "Protein"}),
+                pd.DataFrame(data={"Protein": string[0]["protein1"]}),
+                pd.DataFrame(data={"Protein": string[0]["protein2"]}),
             ],
             ignore_index=True,
         ).drop_duplicates()
-        proteins = pd.concat([proteins, proteins_from_connections]).drop_duplicates()
+        proteins = pd.concat([proteins, proteins_from_connections]).drop_duplicates(ignore_index=True)
 
-        proteins_annotated = proteins.merge(
-            right=string[1], left_on="Protein", right_on="Protein", how="left"
-        ).drop_duplicates(subset=["Protein"], keep="first")
-        proteins_annotated["Protein"] = (
-            proteins_annotated["Protein"].apply(lambda x: x.removeprefix("10090."))
-            if species
-            else proteins_annotated["Protein"].apply(lambda x: x.removeprefix("9606."))
+        proteins_annotated = (
+            proteins.merge(right=string[1], left_on="Protein", right_on="Protein", how="left")
+            .drop_duplicates(subset=["Protein"], keep="first")
+            .dropna(subset=["Protein"])
         )
-
+        proteins_annotated.loc[~proteins_annotated["Protein"].isna(), "Protein"] = (
+            proteins_annotated.loc[~proteins_annotated["Protein"].isna(), "Protein"].apply(
+                lambda x: x.removeprefix("10090.")
+            )
+            if species
+            else proteins_annotated.loc[~proteins_annotated["Protein"].isna(), "Protein"].apply(
+                lambda x: x.removeprefix("9606.")
+            )
+        )
         proteins_annotated = proteins_annotated.rename(columns={"Protein": "ENSEMBL"})
-
         proteins_annotated.loc[~proteins_annotated["SYMBOL"].isna(), "SYMBOL"] = proteins_annotated.loc[
             ~proteins_annotated["SYMBOL"].isna(), "SYMBOL"
         ].apply(_make_symbol_name_correct)

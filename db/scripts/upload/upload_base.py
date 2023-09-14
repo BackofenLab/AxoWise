@@ -271,5 +271,5 @@ def setup_base_db(
         driver=driver,
     )
 
-    print_update(update_type="Done", text="Setting up Base DB", color="pink")
+    print_update(update_type="Done", text=f"Setting up Base DB ({' '.join(species.split('_'))})", color="pink")
     return
