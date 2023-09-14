@@ -221,6 +221,7 @@ def data_formatting(species, folder):
     merged_df = pd.concat([df, kegg_df], ignore_index=True)
     merged_df = merged_df.drop_duplicates(subset=["name", "category"])
     merged_df = merged_df.loc[merged_df["genes"].str.len() > 2]
+    merged_df["id"] = merged_df.apply(lambda row: f"{row['id']}~{row['category']}", axis=1)
     merged_df = merged_df.reset_index(drop=True)
     merged_df.to_csv(f"data/AllPathways_{species}.csv", index=False)
 
