@@ -151,7 +151,7 @@ def read_data(species, file_name):
     df = pd.DataFrame(data, columns=["id", "name", "category"])
     df["genes"] = gene_lis
     df["proteins"] = protein_lis
-    df.to_csv(f"data/bader_{species}.csv")
+    df.to_csv(f"data/bader_{species}.csv.gz", compression="gzip", index=False)
     return
 
 
@@ -214,7 +214,7 @@ def data_formatting(species, folder):
 
     # Read the data from Baderlabs
     read_data(species, file_name)
-    df = pd.read_csv(f"data/bader_{species}.csv")
+    df = pd.read_csv(f"data/bader_{species}.csv.gz", compression="gzip")
     # Read the KEGG data
     kegg_df = read_kegg_data(species.lower())
 
@@ -223,7 +223,7 @@ def data_formatting(species, folder):
     merged_df = merged_df.loc[merged_df["genes"].str.len() > 2]
     merged_df["id"] = merged_df.apply(lambda row: f"{row['id']}~{row['category']}", axis=1)
     merged_df = merged_df.reset_index(drop=True)
-    merged_df.to_csv(f"data/AllPathways_{species}.csv", index=False)
+    merged_df.to_csv(f"data/AllPathways_{species}.csv.gz", compression="gzip", index=False)
 
 
 def download_necessary(filepath):
