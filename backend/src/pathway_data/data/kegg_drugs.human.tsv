@@ -16,6 +16,7 @@ D12387	Fosgemcitabine palabenamide (USAN/INN)
 D12388	Fosifloxuridine nafalbenamide
 D12465	Doxecitine (USAN/INN)
 D12466	Doxribtimine (USAN/INN)
+D12528	Arfolitixorin sulfate (JAN)
 D00123	Cyanamide (JP18)
 D00131	Disulfiram (JP18/USP/INN)
 D07257	Lonidamine (INN)
@@ -293,7 +294,7 @@ D07581	Aspirin magnesium salt
 D07582	Aspirin sodium
 D07816	Diclofenac (USAN/INN)
 D07817	Diclofenac diethylamine
-D07818	Diclofenac hydroxyethylpyrrolidine
+D07818	Diclofenac epolamine
 D07819	Diclofenac calcium
 D07888	Eltenac (INN)
 D08058	Ibuprofen arginine salt
@@ -3419,6 +3420,7 @@ D11964	Sovatelitide (USAN)
 D11982	Trazpiroben (USAN/INN)
 D12005	Treprostinil palmitil (USAN/INN)
 D12146	Darigabat (USAN)
+D12147	Dersimelagon (USAN/INN)
 D12148	Dersimelagon phosphate (USAN)
 D12149	Plasminogen
 D12214	Esmethadone (USAN)
@@ -3451,6 +3453,17 @@ D12617	Sepetaprost (JAN/INN)
 D12629	Treprostinil phosphate (USAN)
 D12638	Dazucorilant (USAN/INN)
 D12657	Admilparant (USAN)
+D12660	Alphacetylmethadol (INN)
+D12661	Betacetylmethadol (INN)
+D12686	Hydromorphinol (INN)
+D12687	Levophenacylmorphan (INN)
+D12688	Phenomorphan (INN)
+D12689	Methyldihydromorphine (INN)
+D12690	Metopon (BAN)
+D12691	Methyldesorphine (INN)
+D12692	Norlevorphanol (INN)
+D12696	Levomethorphan (INN)
+D12700	Acetorphine (INN)
 D02664	Mirimostim (JAN/INN)
 D02934	Anakinra (USAN/INN)
 D03684	Denosumab (USAN)
