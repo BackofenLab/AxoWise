@@ -90,6 +90,7 @@ def genes_to_proteins(genes, species):
                 ensembl_id = res[0]["protein"]
             else:
                 ensembl_id = res["protein"]
+                ensembl_id = [ensembl_id] if isinstance(ensembl_id, str) else ensembl_id
             gene_mapping[old] = ensembl_id
     return gene_mapping
 
