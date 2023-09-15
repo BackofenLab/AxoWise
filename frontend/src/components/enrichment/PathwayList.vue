@@ -32,8 +32,8 @@
                 <a class="fdr_filter" v-on:click="sort_fdr = (sort_fdr === 'asc') ? 'dsc' : 'asc'; sort_alph = '' " >fdr rate</a>
             </div>
 
-            <!-- <div v-if="await_load == true" class="loading_pane" ></div> -->
-            <div class="results" v-if="terms !== null" tabindex="0" @keydown="handleKeyDown" ref="resultsContainer">
+            <div v-if="await_load == true" class="loading_pane" ></div>
+            <div class="results" v-if="terms !== null && await_load == false" tabindex="0" @keydown="handleKeyDown" ref="resultsContainer">
                 <table >
                     <tbody>
                         <tr v-for="(entry, index) in filt_terms" :key="index" class="option" :class="{ selected: selectedIndex === index }" v-on:click="select_term(entry,index)">
@@ -68,7 +68,7 @@
 
 export default {
     name: 'PathwayList',
-    props: ['gephi_data','terms'],
+    props: ['gephi_data','terms', 'await_load'],
     data() {
         return{
             search_raw: "",

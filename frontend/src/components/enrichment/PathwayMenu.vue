@@ -3,10 +3,11 @@
         <div class="minimize-bar" v-on:click="pane_hidden = !pane_hidden" >
             <img src="@/assets/pathwaybar/arrows.png" :style="{ transform: pane_hidden ? 'rotate(-90deg)' : 'rotate(90deg)' }">
         </div>
-        <div class="pathwaybar">
+        <div class="pathwaybar" v-show="pane_hidden === false">
             <PathwayList
             :gephi_data='gephi_data'
             :terms='terms'
+            :await_load = 'await_load'
             ></PathwayList>
             <PathwayGraph
             :terms='terms'
@@ -33,7 +34,9 @@ export default {
                 subgraph: "api/subgraph/enrichment",
             },
             terms: null,
-            pane_hidden: false
+            pane_hidden: false,
+            await_load: false,
+            terms_list: []
         }
     },
     mounted() {
@@ -50,18 +53,51 @@ export default {
             formData.append('proteins', proteins)
             formData.append('species_id', species);
                 
+            this.await_load = true
+
             //POST request for generating pathways
+            com.sourceToken = this.axios.CancelToken.source();
             com.axios
-            .post(com.api.subgraph, formData)
+            .post(com.api.subgraph, formData, { cancelToken: com.sourceToken.token })
             .then((response) => {
-                com.$store.commit('assign_enrichment', response.data.sort((t1, t2) => t1.fdr_rate - t2.fdr_rate))
-                com.terms = com.$store.state.enrichment_terms
+                com.terms = response.data.sort((t1, t2) => t1.fdr_rate - t2.fdr_rate)
+                com.terms_list.push(com.terms)
                 com.await_load = false
             })
 
         },
-        }
+        apply_layer(subset) {
+            var com = this;
+            com.generatePathways(com.gephi_data.nodes[0].species, subset)
+        },
+        revert_layer() {
+            var com = this;
+
+            if(com.await_load){
+                com.abort_enrichment()
+                return
+            }
+
+            if(com.terms_list.length > 1) {
+                com.terms_list.pop()
+                com.terms = com.terms_list[com.terms_list.length - 1 ];
+            }
+
+        },
+        abort_enrichment() {
+                this.sourceToken.cancel('Request canceled');
+                this.await_load = false 
+            },
+    },
+    created() {
+
+        this.emitter.on("enrichTerms", (subset) => {
+            if(subset != null) this.apply_layer(subset);
+            else this.revert_layer();
+        });
+
     }
+}
 </script>
 
 
