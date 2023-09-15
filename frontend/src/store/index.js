@@ -3,8 +3,6 @@ import { createStore } from 'vuex'
 export const store = createStore({
   state: {
       gephi_json: null,
-      enrichment_terms: null,
-      enrichment_set: [],
       term_graph_data: null,
       term_graph_dict: [],
       filter_terms: [
@@ -30,17 +28,8 @@ export const store = createStore({
     assign(state, value) {
         state.gephi_json = value
     },
-    assign_enrichment(state, value) {
-      state.enrichment_terms = value
-    },
     assign_colorpalette(state, value) {
       state.colorpalette = value
-    },
-    assign_new_enrichment(state, value) {
-      state.enrichment_set.push(value)
-    },
-    pop_old_enrichment(state) {
-      state.enrichment_set.pop()
     },
     assign_term_graph(state, value) {
       state.term_graph_data = value
