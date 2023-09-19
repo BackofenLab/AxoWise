@@ -561,25 +561,6 @@ html,body{
 	margin-top: 100px;
 }
 
-.toolbar-search{
-	display: block;
-	border-radius: 20px;
-
-}
-
-.toolbar-search input[type=text]{
-	font-family: 'Roboto Mono', monospace;
-	background-color: rgba(0, 0, 0, 0.9);
-	border: none;
-	border-radius: 20px;
-	color: #fff;
-	height: 20px;
-	line-height: 20px;
-	border-style: outset;
-	border-width: 1px;
-	text-align: center;
-}
-
 .minimize {	
  display: block;
  position:absolute;
@@ -1063,25 +1044,6 @@ padding: 0px;
 	padding-bottom:15px;
 }
 
-.search-field {
-	z-index: 999;
-	padding: 5px;
-	border-radius: 20px;
-}
-
-#search .results {
-	display: none;
-	background-color: rgba(0, 0, 0, 0.9);
-	color: white;
-	border-radius: 20px;
-	text-align: center;
-	margin: 6px;
-	max-height: 75px;
-	overflow-y: scroll;
-	overflow-x: hidden;
-}
-
-
 .tool-pane .results {
 	height: 200px;
 	display: block;
@@ -1287,18 +1249,6 @@ padding: 0px;
 	  transform: rotate(1turn);
 	}
   }
-
-#search .results b {
-padding-left: 2px;
-}
-
-#search .results a {
-padding: 1px 2px;
-display: block;
-cursor: pointer;
-text-decoration: none;
-color: white;
-}
 
 #attributeselect {
 margin: 20px 0 13px 0 ;

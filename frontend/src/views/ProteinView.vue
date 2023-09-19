@@ -48,12 +48,10 @@
     </keep-alive>
       <keep-alive>
       <div class="header-menu">
-        <!-- <ModularityClass
+        <SearchField
         :gephi_data='gephi_data'
-        :type='type'
-        :active_subset='active_subset' @active_subset_changed = 'active_subset = $event'
-        :subactive_subset='subactive_subset' @subactive_subset_changed = 'subactive_subset = $event'
-        > </ModularityClass> -->
+        :active_node='active_node' @active_node_changed = 'active_node = $event'
+        ></SearchField>
       </div>
     </keep-alive>
       <keep-alive>
@@ -74,7 +72,7 @@
 import MainVis from '@/components/visualization/MainVis.vue'
 import PaneSystem from '@/components/pane/PaneSystem.vue'
 import PathwayMenu from '@/components/enrichment/PathwayMenu.vue'
-// import ModularityClass from '../components/interface/ModularityClass.vue'
+import SearchField from '../components/interface/SearchField.vue'
 // import ToggleLabel from '../components/interface/ToggleLabel.vue'
 // import ConnectedGraph from '../components/interface/ConnectedGraph.vue'
 import MainToolBar from '../components/toolbar/MainToolBar.vue'
@@ -85,7 +83,7 @@ export default {
     MainVis,
     PaneSystem,
     PathwayMenu,
-    // ModularityClass,
+    SearchField,
     MainToolBar,
     // ToggleLabel,
     // ConnectedGraph
