@@ -279,7 +279,7 @@ export default {
         transform: translateY(-50%);
         margin-left: 0.28%;
         border-radius: 10px;
-        z-index: 999;
+        z-index: 997;
         cursor: default;
         font-family: 'ABeeZee', sans-serif;
 
@@ -451,7 +451,7 @@ export default {
         text-decoration:none;
     }
 
-    .results {
+    .list-section .results {
         height: 90%;
         overflow: scroll;
     }
