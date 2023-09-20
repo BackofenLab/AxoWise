@@ -22,7 +22,7 @@
 <script>
 export default {
     name: 'SearchField',
-    props: ['gephi_data'],
+    props: ['gephi_data', 'active_node'],
     emits: ['active_node_changed'],
     data() {
         return {
