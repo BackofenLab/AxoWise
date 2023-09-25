@@ -106,7 +106,6 @@ def proteins_subgraph_api():
 
     stopwatch.round("Neo4j")
 
-    # TODO: make better (Vincent)
     nodes = pd.DataFrame(proteins).rename(columns={"ENSEMBL": "external_id"}).drop_duplicates(subset="external_id")
 
     edges = pd.DataFrame({"source": source, "target": target, "score": score})

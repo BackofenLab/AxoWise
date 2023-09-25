@@ -18,8 +18,6 @@ def get_terms_connected_by_overlap(driver: neo4j.Driver, term_ids: list[str], sp
         MATCH (source:FT:{species})-[association:OVERLAP]->(target:FT:{species})
         WHERE source.Term IN {term_ids}
             AND target.Term IN {term_ids}
-            AND NOT source.Category IN ["GOCC", "GOMF", "GOBP"]
-            AND NOT target.Category IN ["GOCC", "GOMF", "GOBP"]
         RETURN source, target, association.Score AS score;
         """
     with driver.session() as session:
@@ -37,7 +35,8 @@ def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id
 
     query = f"""
         MATCH (protein:Protein:{species})
-        WHERE protein.SYMBOL IN {str([n.title() for n in names])} 
+        WHERE protein.SYMBOL IN {str([n.title() if not n.startswith("ENS") else n.upper() for n in names ])} 
+            OR protein.ENSEMBL IN {str([n.title() if not n.startswith("ENS") else n.upper() for n in names ])}
         WITH collect(protein.ENSEMBL) AS ids
         RETURN ids
     """
