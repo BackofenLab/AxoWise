@@ -130,20 +130,19 @@
 ### Nodes:
 | Type | old (Mouse) | new (Mouse)| new (Human) |
 | --- | --- | --- | --- |
-| Terms / (in new DB: FT) | 24.170 | 28.742 | 29.773 |
+| Terms / (in new DB: FT) | 24.170 | 28.715 | 29.794 |
 | Proteins | 22.048 | 67.249 | 123.031 |
 | Target Genes (TG) | 0 | 22.478 | 23.900 |
 | Transcription Factors (TF, are also TGs) | 0 | 2.894 | 3.529 |
 | Open Regions (OR) | 0 | 1.431.123 | - |
-| Context | 0 | 23  | - |
+| Context | 0 | 24  | - |
 | Celltype | 0 | 16 | - |
 | Subtype | 0 | 209 | - |
-| MeanCount | 0 | 1 | - |
 | Source | 0 | 216 | - |
 | Study | 0 | 2 | - |
-| Total | 46.218 | 1.550.059 | 176.704 |
+| Total | 46.218 | 1.550.032 | 176.725 |
 
-#### Total Nodes in new DB: 1.726.763
+#### Total Nodes in new DB: 1.726.757
 
 ### Edges:
 | Type | old (Mouse) | new (Mouse) | new (Human) |
@@ -151,22 +150,25 @@
 | ASSOCIATION / (in new DB: STRING) | 7.248.179 | 6.342.177 | 6.857.702 |
 | CORRELATION (TG, TF) | 0 | 1.739.921 | 0 |
 | CORRELATION (TG, OR) | 0 | 4.066.833 | 0 |
-| VALUE (OR) | 0 | 29.480.276 | 0 |
-| VALUE (TG) | 0 | 50.135  | 0 |
+| VALUE (Timeframe, OR) | 0 | 533.220 | 0 |
+| VALUE (Location, OR) | 0 | 28.947.056  | 0 |
+| VALUE (MeanCount, OR) | 0 | 106.644 | 0 |
+| VALUE (Timeframe, TG) | 0 | 50.135 | 0 |
+| VALUE (MeanCount, TG) | 0 | 10.027 | 0 |
 | DISTANCE | 0 | 1.286.065 (with Dummies) | 0 |
 | KAPPA | 81.676 | 0 (to be deprecated) | 0 |
-| LINK (Protein, FT) | 0 | 7.274.921 | 14.174.256 |
-| LINK (Gene, FT) | 0 | 2.100.868 | 2.108.637 |
+| LINK (Protein, FT) | 0 | 7.276.727 | 14.253.772 |
+| LINK (Gene, FT) | 0 | 2.104.222 | 2.112.933 |
 | MEANCOUNT (TG) | 0 | 10.027 | 0 |
 | MEANCOUNT (OR) | 0 | 106.644 | 0 |
 | MOTIF | 0 | 34.553.249 (with Dummies) | 0 |
-| OVERLAP | 0 | 6.762.321 | 6.925.609 |
+| OVERLAP | 0 | 4.584.738 | 4.754.455 |
 | PRODUCT | 0 | 66.953 | 122.614 |
 | HAS | 0 | 655 | - |
 | IS | 0 | 209 | - |
-| Total | 7.329.855 | 93.841.254 | 30.188.818 |
+| Total | 7.329.855 | 91.668.831 | 28.101.476 |
 
-#### Total Edges in new DB: 124.030.072
+#### Total Edges in new DB: 119.770.307
 
 ## Notes
 

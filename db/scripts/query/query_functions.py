@@ -1,11 +1,11 @@
 import neo4j
-from utils import execute_query
+from utils import execute_query, time_function
 
 
-def get_tg_ensembl_by_symbol(gene_list: list[str], driver: neo4j.Driver):
+def get_tg_ensembl_by_symbol(list: list[str], type:str, driver: neo4j.Driver):
     query = f""" 
-    MATCH (n:TG)
-        WHERE n.SYMBOL IN {gene_list}
+    MATCH (n:{type})
+        WHERE n.SYMBOL IN {list}
     RETURN n.ENSEMBL
     """
     result = execute_query(query=query, read=True, driver=driver)
@@ -84,6 +84,98 @@ def get_or_by_da_under_contexts(
             AND m.id IN {subset}
             AND d.Value {">" if positive else "<"}= {threshold}
         RETURN n.Context, d.Value, d.p, m.id
+    """
+    result = execute_query(query=query, read=True, driver=driver)
+    # TODO
+    return result
+
+@time_function
+def query_1(list: list[str], threshold: float, driver: neo4j.Driver):
+    query = f"""
+    MATCH (n:TF:Mus_Musculus)-[:MOTIF]->(:OR:Mus_Musculus)-[c:CORRELATION]->(m:TG:Mus_Musculus)
+        WHERE n.ENSEMBL IN {list}
+            AND c.Correlation >= {threshold}
+        RETURN n.ENSEMBL, m.ENSEMBL
+    """
+    result = execute_query(query=query, read=True, driver=driver)
+    return result
+
+@time_function
+def query_2(list: list[str], threshold: float, driver: neo4j.Driver):
+    query = f"""
+    MATCH (n:TF:Mus_Musculus)-[c:CORRELATION]->(m:TG:Mus_Musculus)
+        WHERE n.ENSEMBL IN {list}
+            AND c.Correlation >= {threshold}
+    RETURN n.ENSEMBL, m.ENSEMBL
+    """
+    result = execute_query(query=query, read=True, driver=driver)
+    # TODO
+    return result
+
+@time_function
+def query_3(list: list[str], threshold: float, driver: neo4j.Driver):
+    query = f"""
+    MATCH (n:OR:Mus_Musculus)-[c:CORRELATION]->(m:TG:Mus_Musculus)
+        WHERE n.id IN {list}
+            AND c.Correlation >= {threshold}
+    RETURN n.id, m.ENSEMBL
+    """
+    result = execute_query(query=query, read=True, driver=driver)
+    # TODO
+    return result
+
+@time_function
+def query_4(list: list[str], driver: neo4j.Driver):
+    query = f"""
+    MATCH (s:Source:Mus_Musculus)-[:HAS]->(c:Context:Mus_Musculus)-[v:VALUE]->(m:TG:Mus_Musculus)
+        WHERE s.id IN {list}
+    RETURN s.id, c.Context, v.Value, m.ENSEMBL
+    """
+    result = execute_query(query=query, read=True, driver=driver)
+    # TODO
+    return result
+
+@time_function
+def query_5(list: list[str], driver: neo4j.Driver):
+    query = f"""
+    MATCH (s:Source:Mus_Musculus)-[:HAS]->(c:Context:Mus_Musculus)-[v:VALUE]->(m:OR:Mus_Musculus)
+        WHERE s.id IN {list}
+    RETURN s.id, c.Context, v.Value, m.id
+    """
+    result = execute_query(query=query, read=True, driver=driver)
+    # TODO
+    return result
+
+@time_function
+def query_6(list: list[str], driver: neo4j.Driver):
+    query = f"""
+    MATCH (s:Celltype:Mus_Musculus)-[:1*IS|HAS]->(:Source:Mus_Musculus)-[:Has]->(t:Context:Mus_Musculus)-[v:VALUE]->(m:OR:Mus_Musculus)
+        WHERE s.name IN {list}
+    RETURN t.Context, v.Value, m.id
+    """
+    result = execute_query(query=query, read=True, driver=driver)
+    # TODO
+    return result
+
+@time_function
+def query_7(list: list[str], threshold: float, driver: neo4j.Driver):
+    query = f"""
+    MATCH (n:TF:Mus_Musculus)-[c:CORRELATION]->(m:TG:Mus_Musculus)
+        WHERE m.ENSEMBL IN {list}
+            AND c.Correlation >= {threshold}
+    RETURN n.ENSEMBL, m.ENSEMBL
+    """
+    result = execute_query(query=query, read=True, driver=driver)
+    # TODO
+    return result
+
+@time_function
+def query_8(list: list[str], threshold: float, driver: neo4j.Driver):
+    query = f"""
+    MATCH (n:OR:Mus_Musculus)-[c:CORRELATION]->(m:TG:Mus_Musculus)
+        WHERE m.ENSEMBL IN {list}
+            AND c.Correlation >= {threshold}
+    RETURN n.id, m.ENSEMBL
     """
     result = execute_query(query=query, read=True, driver=driver)
     # TODO

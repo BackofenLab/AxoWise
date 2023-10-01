@@ -24,7 +24,7 @@ def create_study_cell_source_meancount(species: str, driver: Driver):
     create_study_query = "CREATE (s:Study {})".format(study_info_str)
     create_celltype_query = "MERGE (c:Celltype:{} {})".format(species, celltype_info_str)
     create_source_query = f"MERGE (s)-[:HAS]->(o:Source:{species})<-[:HAS]-(c) SET o.id = id(o)"
-    create_meancount = f"MERGE (m:MeanCount:{species})"
+    create_meancount = f"MERGE (m:Context:MeanCount:{species}{{'Context': 'Meancount'}})"
     create_source_meancount_edge = "MERGE (o)-[:HAS]->(m)"
     return_id = "RETURN id(o) AS id"
 

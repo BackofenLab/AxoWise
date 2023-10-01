@@ -42,12 +42,16 @@ def stop_driver(driver: neo4j.Driver):
 
 
 def execute_query(query: str, read: bool, driver: neo4j.Driver) -> pd.DataFrame:
-    if os.getenv("_UPDATE_NEO4J") == str(True):
-        with driver.session() as session:
-            tmp = session.run(query).values()
-            return tmp
+    if os.getenv("_ACCESS_NEO4J") == str(True):
+        if read:
+            with driver.session() as session:
+                result = session.run(query)
+                return result.consume()
+        else:
+            with driver.session() as session:
+                tmp = session.run(query).values()
+                return tmp
     else:
-        print(query)
         return [[0]]
 
 
@@ -59,14 +63,17 @@ def save_df_to_csv(file_name: str, df: pd.DataFrame, override_prod: bool = False
 
 
 def time_function(function):
-    def timing(**variables):
+    def timing(i=None, **variables):
         start_time = time()
         result = function(**variables)
         end_time = time()
         if os.getenv("_TIME_FUNCTIONS") == str(True):
             with open(os.getenv("_FUNCTION_TIME_PATH"), "a", newline="\n") as csvfile:
                 writer = csv.writer(csvfile, delimiter="\t")
-                writer.writerow([function.__name__, end_time - start_time])
+                if i is not None:
+                    writer.writerow([i, function.__name__, end_time - start_time])
+                else:
+                    writer.writerow([function.__name__, end_time - start_time])
         return result
 
     return timing

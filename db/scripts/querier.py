@@ -1,36 +1,48 @@
 import pandas as pd
 from utils import start_driver, stop_driver
 from query.query_functions import (
-    get_tg_ensembl_by_symbol,
-    get_or_by_da_under_contexts,
-    get_or_by_distance_to_tg,
-    get_or_by_motif_to_tf,
-    get_tg_by_correlation_tf,
-    get_tg_by_de_under_contexts,
-    get_tg_by_link_ft,
-    get_tf_correlated_tg,
+    query_1,
+    query_2,
+    query_3, 
+    query_4, 
+    query_5, 
+    query_6,
+    query_7, 
+    query_8
 )
 
 
 def run_queries():
     driver = start_driver()
 
-    genes = list(pd.read_csv("../source/misc/gene_selection_10k.csv")["SYMBOL"])
-
+    open_regions = list(pd.read_csv("../source/processed/or_extended.csv")["id"])
+    target_genes = list(pd.read_csv("../source/processed/tg.csv")["ENSEMBL"])
+    transcription_factor = list(pd.read_csv("../source/processed/tf.csv")["ENSEMBL"])
+    sources = list(pd.read_csv("../source/processed/sources.csv")["id"])
+    celltypes = list(pd.read_csv("../source/processed/celltypes.csv")["name"])
+    
     # Queries
+    for i in range(1, len(transcription_factor), 100):
+        tmp = transcription_factor[:i]
+        query_1(i=i, list=tmp, threshold=0.5, driver=driver)
+        query_2(i=i, list=tmp, threshold=0.5, driver=driver)
 
-    gene_subset = get_tg_ensembl_by_symbol(gene_list=genes, driver=driver)
+    for i in range(1, len(open_regions), 1000):
+        tmp = open_regions[:i]
+        query_3(i=i, list=open_regions, threshold=0.5, driver=driver)
 
-    or_subset = [i[0] for i in get_or_by_distance_to_tg(subset=gene_subset, driver=driver)]
-    get_or_by_da_under_contexts(
-        contexts=["12h-0h", "24h-0h"], subset=or_subset, positive=True, threshold=0.5, driver=driver
-    )
-    get_or_by_motif_to_tf(tf="ENSMUSG00000052684", subset=or_subset, driver=driver)
+    for i in range(1, len(sources)):
+        tmp = sources[:i]
+        query_4(i=i, list=sources, driver=driver)
+        query_5(i=i, list=sources, driver=driver)
 
-    get_tg_by_correlation_tf(tf="ENSMUSG00000052684", subset=gene_subset, positive=True, threshold=0.5, driver=driver)
-    get_tg_by_de_under_contexts(
-        contexts=["6h-0h", "24h-0h"], subset=gene_subset, positive=True, threshold=0.5, driver=driver
-    )
-    get_tg_by_link_ft(ft="GO:0070851", subset=gene_subset, driver=driver)
+    for i in range(1, len(celltypes)):
+        tmp = celltypes[:i]
+        query_6(i=i, list=celltypes, driver=driver)
+
+    for i in range(1, len(target_genes), 100):
+        tmp = target_genes[:i]
+        query_7(i=i, list=target_genes, threshold=0.5, driver=driver)
+        query_8(i=i, list=target_genes, threshold=0.5, driver=driver)
 
     stop_driver(driver=driver)
