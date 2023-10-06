@@ -25,7 +25,7 @@
 
 <script>
 
-import SnapshotGraph from '@/components/enrichment/SnapshotGraph.vue'
+import SnapshotGraph from '@/components/enrichment/graph/SnapshotGraph.vue'
 
 export default {
     name: 'PathwayGraphs',

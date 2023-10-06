@@ -104,6 +104,7 @@ export default {
       subactive_subset: null,
       unconnected_nodes: null,
       node_modul_index: null,
+      node_cluster_index: null,
       type: 'protein'
     }
   },
@@ -142,7 +143,15 @@ export default {
       com.edge_color_index[edge.id] = edge.color;
     }
 
-    
+    com.node_cluster_index = {};
+    for (var idg in com.gephi_data.nodes) {
+      var nodeG = com.gephi_data.nodes[idg];
+      var modularityClass = nodeG.attributes["Modularity Class"];
+      if (!com.node_cluster_index[modularityClass]) com.node_cluster_index[modularityClass] = new Set();
+      com.node_cluster_index[modularityClass].add(nodeG.id);
+    }
+    this.$store.commit('assign_moduleCluster', com.node_cluster_index)
+
 
     const maingraph = new Set(com.gephi_data.subgraph)
     com.unconnected_nodes = com.gephi_data.nodes.filter(item => !maingraph.has(item.id));
@@ -152,6 +161,7 @@ export default {
       var node_m = com.unconnected_nodes[idm];
       com.node_modul_index.add(node_m.attributes["Modularity Class"])
     }
+    this.$store.commit('assign_moduleIndex', com.node_modul_index)
 
     this.emitter.on("decoloumn", state => {
       com.active_decoloumn = state

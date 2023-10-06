@@ -1,5 +1,9 @@
 <template>
   <div class="visualization">
+    <div id="sigma-heatmap"></div>
+    <div id="d3tooltip">
+            <p> <span id="value"> </span></p>
+        </div>
     <div id="sigma-webgl"></div>
     <div id="sigma-canvas" :class="{'loading': threeview}" class="sigma-parent" ref="sigmaContainer" @contextmenu.prevent="handleSigmaContextMenu" @mouseleave="sigmaFocus = false" @mouseenter="sigmaFocus = true">
       <div 

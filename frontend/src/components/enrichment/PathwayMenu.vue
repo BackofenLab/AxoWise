@@ -8,10 +8,14 @@
             :gephi_data='gephi_data'
             :terms='terms'
             :await_load = 'await_load'
+            @favourite_pathways_changed = 'favourite_pathways = $event'
             ></PathwayList>
             <PathwayGraph
             :terms='terms'
             ></PathwayGraph>
+            <PathwayHeatmap
+            :favourite_pathways='favourite_pathways'
+            ></PathwayHeatmap>
             <img id="pathway-bg" src="@/assets/pathwaybar/background-dna.png">
         </div>
     </div>
@@ -19,14 +23,16 @@
 
 <script>
 import PathwayList from '@/components/enrichment/PathwayList.vue'
-import PathwayGraph from '@/components/enrichment/PathwayGraph.vue'
+import PathwayGraph from '@/components/enrichment/graph/PathwayGraph.vue'
+import PathwayHeatmap from '@/components/enrichment/heatmap/PathwayHeatmap.vue'
 
 export default {
     name: 'PathwayMenu',
     props: ['gephi_data','active_term'],
     components: {
         PathwayList,
-        PathwayGraph
+        PathwayGraph,
+        PathwayHeatmap
     },
     data() {
         return {
@@ -36,7 +42,8 @@ export default {
             terms: null,
             pane_hidden: false,
             await_load: false,
-            terms_list: []
+            terms_list: [],
+            favourite_pathways: []
         }
     },
     mounted() {
