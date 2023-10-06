@@ -199,6 +199,7 @@ export default {
                 // Checkbox is unchecked, remove its state from the object
                 this.favourite_tab.delete(enrichment)
             }
+            this.$emit("favourite_pathways_changed", this.favourite_tab);
         },
         visualize_layers(){
             var com = this;
