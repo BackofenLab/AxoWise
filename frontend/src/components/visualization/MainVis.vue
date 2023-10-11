@@ -1,6 +1,8 @@
 <template>
   <div class="visualization">
-    <div id="sigma-heatmap"></div>
+    <div id="sigma-heatmap" v-show="heatmap">
+      <img class="twoview" v-on:click="two_view" src="@/assets/pathwaybar/cross.png" alt="Center Icon">
+    </div>
     <div id="d3tooltip">
             <p> <span id="value"> </span></p>
         </div>
@@ -18,6 +20,7 @@
     ></div>
       
       <img class="twoview" v-show="threeview" v-on:click="two_view" src="@/assets/share-2.png" alt="Center Icon">
+
     </div>
     
   </div>
@@ -96,6 +99,7 @@ export default {
       mousemoveCheck: false,
       sigmaFocus: true,
       moduleSelectionActive: true
+      heatmap: false
     }
   },
   watch: {
@@ -780,13 +784,33 @@ export default {
   async two_view(){
     var com = this;
 
-    var threeGraphmod = document.getElementById('sigma-webgl')
     var twoGraphmod = document.getElementById('sigma-canvas')
-    threeGraphmod.style.display = "none"; twoGraphmod.style.display = "none"
+    twoGraphmod.style.display = "none"
 
-    three_instance.pauseAnimation()
+    if(com.threeview){
+      var threeGraphmod = document.getElementById('sigma-webgl')
+      threeGraphmod.style.display = "none"; 
+      three_instance.pauseAnimation()
+      com.threeview = !com.threeview
+    }
+
+    if(com.heatmap) com.heatmap = false
     
-    com.threeview = !com.threeview
+    await this.wait(1);
+
+    document.getElementById('sigma-canvas').style.display = "flex"
+
+    this.reset()
+
+    sigma_instance.camera.goTo({ x: 0, y: 0, ratio: 1, angle: sigma_instance.camera.angle });
+    sigma_instance.refresh()
+    
+  },
+  async split(){
+    var com = this;
+
+    
+    com.heatmap = true
     await this.wait(1);
 
     document.getElementById('sigma-canvas').style.display = "flex"
@@ -1047,9 +1071,14 @@ export default {
       com.moduleSelectionActive = !com.moduleSelectionActive
     });
 
+    this.emitter.on("heatmapView", () => {
+      this.split()
+    });
+
     this.emitter.on("threeView", () => {
       this.three_view()
     });
+
     this.emitter.on("adjustDE", (value) => {
       this.update_boundary(value)
     });
@@ -1094,7 +1123,7 @@ height: 0;
   position: absolute;
   box-sizing: border-box;
   overflow: hidden;
-  background-color: hsla(0,0%,100%,.05);
+  background-color: #0A0A1A;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -1109,7 +1138,20 @@ left: 0;
 width: 450px;
 height: 350px;
 position: absolute;
-background-color: hsla(0,0%,100%,.05);
+background-color: #0A0A1A;
+backdrop-filter: blur(10px);
+-webkit-backdrop-filter: blur(10px);
+}
+
+#sigma-canvas.split {
+border-style: solid;
+border-color: white;
+top: 8%;
+left: 50%;
+width: 50%;
+height: 90%;
+position: absolute;
+background-color: #0A0A1A;
 backdrop-filter: blur(10px);
 -webkit-backdrop-filter: blur(10px);
 }

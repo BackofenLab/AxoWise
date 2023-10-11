@@ -109,6 +109,7 @@ export default {
             }
         },
         switch_heatmap(entry) {
+            this.emitter.emit("heatmapView");
             heatmapDendro(entry.graph,'#sigma-heatmap', false)
         },
         remove_graph(entry) {
@@ -152,10 +153,15 @@ export default {
 #sigma-heatmap{
 display: block;
 position: absolute;
+top: 8%;
 width: 50%;
-height: 100%;
-z-index: 2;
+height: 90%;
 cursor: default;
+border-style: solid;
+border-color: white;
+background-color: #0A0A1A;
+backdrop-filter: blur(10px);
+-webkit-backdrop-filter: blur(10px);
 }
 
 #d3tooltip {
