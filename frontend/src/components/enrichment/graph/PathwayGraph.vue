@@ -1,22 +1,12 @@
 <template>
-    <div id="pathways-graphs">
-        <div class="generate-graph">
-            <div class="generate-text" v-on:click="get_term_data()">Generate term graph</div>
-        </div>
-        <div class="bookmark-button-graph" v-on:click="bookmark_off = !bookmark_off">
-            <img class="bookmark-image" src="@/assets/pathwaybar/favorite.png" :class="{recolor_filter: bookmark_off == false}">
-        </div>
-        <div class="graph-section">
-            <div class="slider" tabindex="0">
-                <div v-for="(entry, index) in filt_graphs" :key="index" class="graph" v-on:click="switch_graph(entry)" @mouseover="activeGraphIndex = index" @mouseout="activeGraphIndex = -1">
-                    <SnapshotGraph :propValue="entry" :index="entry.id"/>
-                    <div class="graph-options" v-show="activeGraphIndex == index" >
-                        <div class="bookmark-graph" v-on:click.stop="add_graph(entry)" :class="{ checked: favourite_graphs.has(entry)}" ref="checkboxStatesGraph"></div>
-                        <img  class="remove-graph" src="@/assets/pathwaybar/cross.png" v-on:click.stop="remove_graph(entry)">
-                        <div class="graph-name">
-                            <input type="text" v-model="entry.label" class="empty" @click.stop />
-                        </div>
-                    </div>
+    <div class="slider" tabindex="0">
+        <div v-for="(entry, index) in filt_graphs" :key="index" class="graph" v-on:click="switch_graph(entry)" @mouseover="activeGraphIndex = index" @mouseout="activeGraphIndex = -1">
+            <SnapshotGraph :propValue="entry" :index="entry.id"/>
+            <div class="graph-options" v-show="activeGraphIndex == index" >
+                <div class="bookmark-graph" v-on:click.stop="add_graph(entry)" :class="{ checked: favourite_graphs.has(entry)}" ref="checkboxStatesGraph"></div>
+                <img  class="remove-graph" src="@/assets/pathwaybar/cross.png" v-on:click.stop="remove_graph(entry)">
+                <div class="graph-name">
+                    <input type="text" v-model="entry.label" class="empty" @click.stop />
                 </div>
             </div>
         </div>
@@ -29,7 +19,7 @@ import SnapshotGraph from '@/components/enrichment/graph/SnapshotGraph.vue'
 
 export default {
     name: 'PathwayGraphs',
-    props: ['terms'],
+    props: ['terms', 'bookmark_off'],
     components: {
         SnapshotGraph,
     },
@@ -42,8 +32,12 @@ export default {
             favourite_graphs: new Set(),
             activeGraphIndex: -1,
             graph_number: 0,
-            bookmark_off: true,
         }
+    },
+    mounted(){
+        this.emitter.on("generateGraph", () => {
+            this.get_term_data()
+        });
     },
     methods: {
         get_term_data() {
@@ -233,14 +227,4 @@ export default {
         background-color: #ffa500;
     }
 
-    .bookmark-button-graph {
-        width: 4.81%;
-        height: 11.16%;
-        left: 24.9%;
-        position: absolute;
-        border-radius: 5px;
-        background: #0A0A1A;
-        align-content: center;
-        justify-content: center;
-    }
 </style>

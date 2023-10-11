@@ -1,5 +1,15 @@
 <template>
-    <div id="pathways-heatmaps" v-on:click="draw_heatmap()">
+    <div class="slider" tabindex="0">
+        <div v-for="(entry, index) in filt_heatmap" :key="index" class="graph" v-on:click="switch_heatmap(entry)" @mouseover="activeHeatmapIndex = index" @mouseout="activeHeatmapIndex = -1">
+            <SnapshotHeatmap :propValue="entry" :index="entry.id"/>
+            <div class="graph-options" v-show="activeHeatmapIndex == index" >
+                <div class="bookmark-graph" v-on:click.stop="add_graph(entry)" :class="{ checked: favourite_heatmaps.has(entry)}" ref="checkboxStatesHeatmap"></div>
+                <img  class="remove-graph" src="@/assets/pathwaybar/cross.png" v-on:click.stop="remove_graph(entry)">
+                <div class="graph-name">
+                    <input type="text" v-model="entry.label" class="empty" @click.stop />
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -7,17 +17,27 @@
 
 import {agnes} from "ml-hclust"
 import heatmapDendro from './drawHeatmap';
+import SnapshotHeatmap from '@/components/enrichment/heatmap/SnapshotHeatmap.vue'
 
 export default {
     name: 'PathwayHeatmap',
-    props: ['favourite_pathways'],
+    props: ['favourite_pathways','bookmark_off'],
     components: {
+        SnapshotHeatmap
     },
     data() {
         return {
+            favourite_heatmaps: new Set(),
+            activeHeatmapIndex: -1,
+            heatmap_number: 0,
+            heatmap_dict: new Set()
         }
     },
-
+    mounted(){
+        this.emitter.on("generateHeatmap", () => {
+            this.draw_heatmap()
+        });
+    },
     methods: {
         draw_heatmap(){
 
@@ -25,8 +45,9 @@ export default {
             const clusterTree = this.createClusterTree(this.createRowClust(matrix.data),matrix.rowLabels);
 
             var data = {"matrix": matrix.data, "rowJSON": clusterTree, "colJSON": matrix.colLabels, "rowIndex": matrix.rowIndex}
+            this.heatmap_number += 1
+            this.heatmap_dict.add({ id: this.heatmap_number, label: `Heatmap ${this.heatmap_number}`, graph: data});
 
-            heatmapDendro(data, "#sigma-heatmap")
         },
         generateMatrix(terms){
             const { node_cluster_index, node_modul_index } = this.$store.state,
@@ -87,6 +108,40 @@ export default {
                 };
             }
         },
+        switch_heatmap(entry) {
+            heatmapDendro(entry.graph,'#sigma-heatmap', false)
+        },
+        remove_graph(entry) {
+            if (!this.favourite_heatmaps.has(entry)) {
+                // Checkbox is checked, add its state to the object
+                this.favourite_heatmaps.delete(entry)
+            }
+            this.heatmap_dict.delete(entry)
+            this.$store.commit('remove_snapshotHeatmap', entry.id)
+        },
+        add_graph(entry){
+            if (!this.favourite_heatmaps.has(entry)) {
+                // Checkbox is checked, add its state to the object
+                this.favourite_heatmaps.add(entry)
+            } else {
+                // Checkbox is unchecked, remove its state from the object
+                this.favourite_heatmaps.delete(entry)
+            }
+        },
+    },
+    computed: {
+        filt_heatmap() {
+            var com = this;
+            var filtered = [...com.heatmap_dict];
+
+            if (!com.bookmark_off){
+                filtered = filtered.filter(function(heatmap) {
+                    return com.favourite_heatmaps.has(heatmap)
+                });
+            }
+
+            return new Set(filtered);
+        }
     }
 }
 </script>
@@ -95,20 +150,12 @@ export default {
 <style>
 
 #sigma-heatmap{
+display: block;
 position: absolute;
 width: 50%;
-height: 50%;
+height: 100%;
 z-index: 2;
-}
-
-#pathways-heatmaps {
-    position: fixed;
-    top: 0;
-    left: 50%;
-    width: 30px;
-    height: 30px;
-    background: blue;
-    z-index: 999;
+cursor: default;
 }
 
 #d3tooltip {
