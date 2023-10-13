@@ -144,14 +144,15 @@ export default {
             var svg = d3
             .select("#heatdemo")
             .append("svg")
-            .attr("width", svgWidth)
-            .attr("height", svgHeight)
+            .attr("width", "100%")
+            .attr("height", "100%")
+            .attr("viewBox", `0 0 ${svgWidth*2} ${svgHeight}`)
             .append("g")
             .attr("transform", `translate(${svgWidth / 2}, ${svgHeight / 2})`); // Center the SVG content
 
             var xScale = d3.scaleLinear()
             .domain([0, 1])
-            .range([-150, 150]); // Adjust the range to center it
+            .range([0, 300]); // Adjust the range to center it
 
             var xAxis = d3.axisBottom(xScale)
             .tickValues(listB);
@@ -188,18 +189,18 @@ export default {
 
             // Create the legend bar using the linear gradient
             svg.append("rect")
-            .attr("x", -150) // Adjust the x-coordinate to center it
+            .attr("x", 0) // Adjust the x-coordinate to center it
             .attr("y", -10) // Adjust the y-coordinate to center it vertically
             .attr("width", 300)
-            .attr("height", 20)
+            .attr("height", 15)
             .style("fill", "url(#legendGradient");
 
             // Optionally, you can add a border to the legend bar
             svg.append("rect")
-            .attr("x", -150)
+            .attr("x", 0)
             .attr("y", -10)
             .attr("width", 300)
-            .attr("height", 20)
+            .attr("height", 15)
             .attr("stroke", "white")
             .attr("stroke-width", 0.5)
             .attr("fill", "none");
