@@ -146,9 +146,9 @@ export default {
             .append("svg")
             .attr("width", "100%")
             .attr("height", "100%")
-            .attr("viewBox", `0 0 ${svgWidth*2} ${svgHeight}`)
+            .attr("viewBox", `0 0 ${svgWidth*2.2} ${svgHeight}`)
             .append("g")
-            .attr("transform", `translate(${svgWidth / 2}, ${svgHeight / 2})`); // Center the SVG content
+            .attr("transform", `translate(${svgWidth / 1.6}, ${svgHeight / 2})`); // Center the SVG content
 
             var xScale = d3.scaleLinear()
             .domain([0, 1])
