@@ -11,7 +11,7 @@ export default function heatmapDendro(data, parent, snapshot) {
   const labelsFromTree = (nodes, cluster) =>
     nodes.map((node) => node.data.name);
 
-  const clusterSpace = 100;
+  const clusterSpace = 50;
   const cellSize = 12;
   const colNumber = data.matrix[0].length;
   const rowNumber = data.matrix.length;
@@ -100,8 +100,9 @@ function drawHeatmap(
   const colorScale = scaleLinear()
     .domain([0, 30, 100])
     .range(["white", "orange", "red"]);
-
-  svg.selectAll("*").remove();
+  
+    
+    svg.selectAll("*").remove();
 
   if (!snapshot) {
     const rowLabels = svg
@@ -166,7 +167,7 @@ function drawHeatmap(
         .style("top", `${mouseY - 10}px`)
         .select("#value")
         .html(
-          `Cell type: ${colLabel[d.col - 1]}<br>Sample name: ${rowLabel[d.row - 1]}<br>Value: ${d.value}`
+          `Cluster: ${colLabel[d.col - 1]}<br>Pathway: ${rowLabel[d.row - 1]}<br>Value: ${d.value/100}`
         );
       d3.select("#d3tooltip").transition().duration(200).style("opacity", 0.9);
     })
