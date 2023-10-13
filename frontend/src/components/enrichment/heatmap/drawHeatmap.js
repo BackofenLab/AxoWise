@@ -81,11 +81,7 @@ function drawHeatmap(
       .append("svg")
       .attr("width", "100%")
       .attr("height", "100%")
-      .attr("viewBox", `0 0 ${500} ${500}`)
-      .call(d3.zoom().on("zoom", (event) => {
-        svg.attr("transform", event.transform);
-      }))
-      .append("g");
+      .attr("viewBox", `0 0 ${500} ${500}`);
   } else {
     clusterSpace = 0;
     const container = document.createElement("div");
@@ -100,12 +96,17 @@ function drawHeatmap(
   const colorScale = scaleLinear()
     .domain([0, 30, 100])
     .range(["white", "orange", "red"]);
-  
     
     svg.selectAll("*").remove();
 
+    const parentGroup = svg
+    .call(d3.zoom().on("zoom", (event) => {
+      parentGroup.attr("transform", event.transform);
+    }))
+    .append("g");
+
   if (!snapshot) {
-    const rowLabels = svg
+    const rowLabels = parentGroup
       .append("g")
       .selectAll(".rowLabelg")
       .data(rowLabel)
@@ -118,7 +119,7 @@ function drawHeatmap(
       .attr("transform", `translate(${width + cellSize * 1.5},${cellSize / 1.5})`)
       .attr("class", (d, i) => `rowLabel mono r${i}`);
 
-    const colLabels = svg
+    const colLabels = parentGroup
       .append("g")
       .selectAll(".colLabelg")
       .data(colLabel)
@@ -126,12 +127,12 @@ function drawHeatmap(
       .append("text")
       .text((d) => d)
       .attr("x", 0)
-      .attr("y", (d, i) => (i + 1) * cellSize + 1)
+      .attr("y", (d, i) => (i + 1) * cellSize + 4)
       .style("text-anchor", "end")
       .attr("transform", `translate(${cellSize / 2},-6) rotate (-90) translate(-${height + cellSize * 2},${clusterSpace})`)
       .attr("class", (d, i) => `colLabel mono c${i}`);
 
-    const rTree = svg
+    const rTree = parentGroup
       .append("g")
       .attr("class", "rtree")
       .attr("transform", `translate(10, ${clusterSpace + cellSize})`);
@@ -145,7 +146,7 @@ function drawHeatmap(
       .attr("d", elbow);
   }
 
-  const heatMap = svg
+  const heatMap = parentGroup
     .append("g")
     .attr("class", "g3")
     .selectAll(".cellg")

@@ -31,12 +31,16 @@ export default {
             favourite_heatmaps: new Set(),
             activeHeatmapIndex: -1,
             heatmap_number: 0,
-            heatmap_dict: new Set()
+            heatmap_dict: new Set(),
+            export_image: null
         }
     },
     mounted(){
         this.emitter.on("generateHeatmap", () => {
             this.draw_heatmap()
+        });
+        this.emitter.on("exportHeatmap", () => {
+            this.export_svg()
         });
     },
     methods: {
@@ -111,7 +115,7 @@ export default {
         },
         switch_heatmap(entry) {
             this.emitter.emit("heatmapView");
-            heatmapDendro(entry.graph,'#sigma-heatmap', false)
+            this.export_image = heatmapDendro(entry.graph,'#sigma-heatmap', false);
             this.draw_legend()
         },
         remove_graph(entry) {
@@ -130,6 +134,36 @@ export default {
                 // Checkbox is unchecked, remove its state from the object
                 this.favourite_heatmaps.delete(entry)
             }
+        },
+        export_svg() {
+            this.download(this.export_image, "heatmap.svg");
+        },
+        createBlob(data) {
+            return new Blob(
+                [data],
+                {type: 'image/svg+xml;charset=utf-8'}
+            );
+        },
+        download(string, filename) {
+    
+            // Creating blob href
+            var blob = this.createBlob(string);
+        
+            // Anchor
+            var o = {};
+            o.anchor = document.createElement('a');
+            o.anchor.setAttribute('href', URL.createObjectURL(blob));
+            o.anchor.setAttribute('download', filename);
+        
+            // Click event
+            var event = document.createEvent('MouseEvent');
+            event.initMouseEvent('click', true, false, window, 0, 0, 0 ,0, 0,
+                false, false, false, false, 0, null);
+        
+            URL.revokeObjectURL(blob);
+        
+            o.anchor.dispatchEvent(event);
+            delete o.anchor;
         },
         draw_legend() {
             const colorScale = d3.scaleLinear()
@@ -204,6 +238,8 @@ export default {
             .attr("stroke", "white")
             .attr("stroke-width", 0.5)
             .attr("fill", "none");
+
+            return svg
         }
 
     },
