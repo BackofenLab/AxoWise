@@ -2,6 +2,7 @@
   <div class="visualization">
     <div id="sigma-heatmap" v-show="heatmap">
       <img class="twoview" v-on:click="two_view" src="@/assets/pathwaybar/cross.png" alt="Center Icon">
+      <div id="heatdemo"></div>
     </div>
     <div id="d3tooltip">
             <p> <span id="value"> </span></p>
@@ -1146,6 +1147,7 @@ backdrop-filter: blur(10px);
 #sigma-canvas.split {
 border-style: solid;
 border-color: white;
+border-width: 0.5px;
 top: 8%;
 left: 50%;
 width: 50%;

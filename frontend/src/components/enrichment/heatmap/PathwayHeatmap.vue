@@ -15,6 +15,7 @@
 
 <script>
 
+import * as d3 from "d3";
 import {agnes} from "ml-hclust"
 import heatmapDendro from './drawHeatmap';
 import SnapshotHeatmap from '@/components/enrichment/heatmap/SnapshotHeatmap.vue'
@@ -111,6 +112,7 @@ export default {
         switch_heatmap(entry) {
             this.emitter.emit("heatmapView");
             heatmapDendro(entry.graph,'#sigma-heatmap', false)
+            this.draw_legend()
         },
         remove_graph(entry) {
             if (!this.favourite_heatmaps.has(entry)) {
@@ -129,6 +131,80 @@ export default {
                 this.favourite_heatmaps.delete(entry)
             }
         },
+        draw_legend() {
+            const colorScale = d3.scaleLinear()
+            .domain([0, 30, 100])
+            .range(["white", "orange", "red"]);
+
+            var listB = [0, 0.5, 1];
+
+            var svgWidth = 320; // Define the SVG width
+            var svgHeight = 100; // Define the SVG height
+
+            var svg = d3
+            .select("#heatdemo")
+            .append("svg")
+            .attr("width", svgWidth)
+            .attr("height", svgHeight)
+            .append("g")
+            .attr("transform", `translate(${svgWidth / 2}, ${svgHeight / 2})`); // Center the SVG content
+
+            var xScale = d3.scaleLinear()
+            .domain([0, 1])
+            .range([-150, 150]); // Adjust the range to center it
+
+            var xAxis = d3.axisBottom(xScale)
+            .tickValues(listB);
+
+            svg.append("g")
+            .attr("transform", "translate(0, 5)")
+            .call(xAxis);
+
+            svg.selectAll("text")
+            .style("fill", "white");
+
+            // Remove the domain (the line along the x-axis)
+            svg.select(".domain")
+            .remove();
+
+            // Create a linear gradient for the legend bar using the existing colorScale
+            var gradient = svg.append("defs")
+            .append("linearGradient")
+            .attr("id", "legendGradient")
+            .attr("x1", "0%")
+            .attr("x2", "100%");
+
+            gradient.append("stop")
+            .attr("offset", "0%")
+            .attr("stop-color", colorScale(0));
+
+            gradient.append("stop")
+            .attr("offset", "30%")
+            .attr("stop-color", colorScale(30));
+
+            gradient.append("stop")
+            .attr("offset", "100%")
+            .attr("stop-color", colorScale(100));
+
+            // Create the legend bar using the linear gradient
+            svg.append("rect")
+            .attr("x", -150) // Adjust the x-coordinate to center it
+            .attr("y", -10) // Adjust the y-coordinate to center it vertically
+            .attr("width", 300)
+            .attr("height", 20)
+            .style("fill", "url(#legendGradient");
+
+            // Optionally, you can add a border to the legend bar
+            svg.append("rect")
+            .attr("x", -150)
+            .attr("y", -10)
+            .attr("width", 300)
+            .attr("height", 20)
+            .attr("stroke", "white")
+            .attr("stroke-width", 0.5)
+            .attr("fill", "none");
+        }
+
     },
     computed: {
         filt_heatmap() {
@@ -160,6 +236,7 @@ cursor: default;
 border-style: solid;
 border-color: white;
 background-color: #0A0A1A;
+border-width: 0.5px;
 backdrop-filter: blur(10px);
 -webkit-backdrop-filter: blur(10px);
 }
@@ -212,6 +289,22 @@ rect.cell-selected {
 rect.cell-hover {
     stroke: #F00;
     stroke-width:0.3px;   
+}
+
+.legend {
+    position: absolute;
+    bottom: 0;
+    padding: 20px;
+    align-items: center;
+    justify-content: center;
+    display: block;
+}
+
+#heatdemo {
+    position: absolute;
+    bottom: 0;
+    text-align: center;
+    width: 100%;
 }
 
 </style>
