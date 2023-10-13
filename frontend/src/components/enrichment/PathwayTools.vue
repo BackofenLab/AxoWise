@@ -17,6 +17,9 @@
         <div class="bookmark-button-graph" v-on:click="bookmark_off = !bookmark_off">
             <img class="bookmark-image" src="@/assets/pathwaybar/favorite.png" :class="{recolor_filter: bookmark_off == false}">
         </div>
+        <div class="export-heatmap" v-show="tool == 'Heatmap'">
+            <div class="generate-text" v-on:click="get_svg()">Export Snapshot</div>
+        </div>
         <div class="graph-section">
             <PathwayGraph v-show="tool == 'Termgraph'"
             :terms = 'terms'
@@ -57,6 +60,9 @@ export default {
         },
         get_heatmap(){
             this.emitter.emit("generateHeatmap");
+        },
+        get_svg(){
+            this.emitter.emit("exportHeatmap");
         },
         handling_filter_menu() {
             var com = this;
@@ -111,6 +117,26 @@ export default {
         cursor: default;
     }
     .generate .generate-text {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.95vw;
+    }
+
+    .export-heatmap {
+        width: 24.20%;
+        height: 11.16%;
+        left: 48.92%;
+        position: absolute;
+        border-radius: 5px;
+        background: #0A0A1A;
+        cursor: default;
+    }
+
+    .export-heatmap .generate-text {
         width: 100%;
         height: 100%;
         display: flex;
