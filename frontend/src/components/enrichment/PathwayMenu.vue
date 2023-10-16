@@ -9,9 +9,10 @@
             :terms='terms'
             :await_load = 'await_load'
             @favourite_pathways_changed = 'favourite_pathways = $event'
+            @filtered_terms_changed = 'filtered_terms = $event'
             ></PathwayList>
             <PathwayTools
-            :terms='terms'
+            :filtered_terms='filtered_terms'
             :favourite_pathways='favourite_pathways'
             ></PathwayTools>
             <img id="pathway-bg" src="@/assets/pathwaybar/background-dna.png">
@@ -39,7 +40,8 @@ export default {
             pane_hidden: false,
             await_load: false,
             terms_list: [],
-            favourite_pathways: []
+            favourite_pathways: [],
+            filtered_terms: []
         }
     },
     mounted() {

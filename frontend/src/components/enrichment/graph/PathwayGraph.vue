@@ -19,7 +19,7 @@ import SnapshotGraph from '@/components/enrichment/graph/SnapshotGraph.vue'
 
 export default {
     name: 'PathwayGraphs',
-    props: ['terms', 'bookmark_off'],
+    props: ['filtered_terms', 'bookmark_off'],
     components: {
         SnapshotGraph,
     },
@@ -44,14 +44,16 @@ export default {
             var com = this
 
             var formData = new FormData()
-            formData.append('func-terms', JSON.stringify(com.terms))
+            formData.append('func-terms', JSON.stringify(com.filtered_terms))
 
             this.axios
                 .post(com.api.termgraph, formData)
                 .then((response) => {
-                    this.graph_number += 1
-                    this.$store.commit('assign_new_term_graph', {label: `Graph ${this.graph_number}`, graph: response.data})
-                    this.term_graphs.add({ id: this.graph_number, label: `Graph ${this.graph_number}`, graph: response.data});
+                    if(response.data){
+                        this.graph_number += 1
+                        this.$store.commit('assign_new_term_graph', {label: `Graph ${this.graph_number}`, graph: response.data})
+                        this.term_graphs.add({ id: this.graph_number, label: `Graph ${this.graph_number}`, graph: response.data});
+                    }
                 })
 
         },

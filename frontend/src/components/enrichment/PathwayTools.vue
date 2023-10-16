@@ -22,7 +22,7 @@
         </div>
         <div class="graph-section">
             <PathwayGraph v-show="tool == 'Termgraph'"
-            :terms = 'terms'
+            :filtered_terms = 'filtered_terms'
             :bookmark_off = 'bookmark_off'
             ></PathwayGraph>
             <PathwayHeatmap v-show="tool == 'Heatmap'"
@@ -40,7 +40,7 @@ import PathwayHeatmap from '@/components/enrichment/heatmap/PathwayHeatmap.vue'
 
 export default {
     name: 'PathwayTools',
-    props: ['terms', 'favourite_pathways'],
+    props: ['filtered_terms', 'favourite_pathways'],
     components: {
         PathwayGraph,
         PathwayHeatmap
