@@ -68,7 +68,7 @@
 
 export default {
     name: 'PathwayList',
-    props: ['gephi_data','terms', 'await_load'],
+    props: ['gephi_data','terms', 'await_load', 'filtered_terms'],
     data() {
         return{
             search_raw: "",
@@ -80,7 +80,7 @@ export default {
             filter_terms: [],
             bookmark_off: true,
             favourite_tab: new Set(),
-            selectedIndex: -1,
+            selectedIndex: -1
         }
     },
     watch:{
@@ -130,6 +130,7 @@ export default {
                 });
             }
 
+            this.$emit('filtered_terms_changed', filtered)
             return new Set(filtered);
         },
     },
