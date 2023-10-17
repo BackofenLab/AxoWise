@@ -1,6 +1,6 @@
 <template>
     <div class="tool-item">
-        <li v-on:click="export_graph">Save Network... </li>
+        <span v-on:click="export_graph">Export graph as .js </span>
     </div>
 </template>
 

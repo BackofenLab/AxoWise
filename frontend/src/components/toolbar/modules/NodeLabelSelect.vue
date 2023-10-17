@@ -1,6 +1,6 @@
 <template>
     <div class="tool-item">
-        <li v-on:click="reset_labels">Reset Label...</li>
+        <span v-on:click="reset_labels">Reset Label...</span>
     </div>
 </template>
 

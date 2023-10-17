@@ -1756,19 +1756,6 @@ display: none;
 	margin: 40px 0 0 0;
 }
 
-.tool-item {
-	padding: 5px;
-}
-.tool-item li {
-	list-style-type: none;
-}
-.tool-item li:hover {
-	background-color: white;
-	color: black;
-	border-radius: 20px;
-	cursor: pointer;
-}
-
 .boundary {
 	border-radius: 20px;
 	background: rgba(255, 255, 255, 0.5);
