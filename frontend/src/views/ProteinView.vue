@@ -41,13 +41,11 @@
       ></PathwayMenu>
     </keep-alive>
       <keep-alive>
-      <MainToolBar
-        :gephi_data='gephi_data'
-        @active_subset_changed = 'active_subset = $event'
-      ></MainToolBar>
-    </keep-alive>
-      <keep-alive>
-      <div class="header-menu">
+        <div class="header-menu">
+        <MainToolBar
+          :gephi_data='gephi_data'
+          @active_subset_changed = 'active_subset = $event'
+        ></MainToolBar>
         <SearchField
         :gephi_data='gephi_data'
         :active_node='active_node' @active_node_changed = 'active_node = $event'

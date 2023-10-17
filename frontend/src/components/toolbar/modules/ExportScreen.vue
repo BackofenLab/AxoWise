@@ -1,9 +1,9 @@
 <template>
     <div class="tool-item">
-        <li v-on:click="take_screen('white', 'png')">Save PNG (White)</li>
-        <li v-on:click="take_screen('black', 'png')">Save PNG (Black)</li>
-        <li v-on:click="take_screen('white', 'svg')">Save SVG (White)</li>
-        <li v-on:click="take_screen('black', 'svg')">Save SVG (Black)</li>
+        <span v-on:click="take_screen('white', 'png')">Save graph as</span>
+        <!-- <span v-on:click="take_screen('black', 'png')">Save PNG (Black)</span>
+        <span v-on:click="take_screen('white', 'svg')">Save SVG (White)</span>
+        <span v-on:click="take_screen('black', 'svg')">Save SVG (Black)</span> -->
     </div>
 </template>
 

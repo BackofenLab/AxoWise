@@ -65,13 +65,13 @@
 
 <script>
 
-import ExportScreen from '@/components/toolbar/ExportScreen.vue'
-import NodeLabelSelect from '@/components/toolbar/NodeLabelSelect.vue'
+import ExportScreen from '@/components/toolbar/modules/ExportScreen.vue'
+import NodeLabelSelect from '@/components/toolbar/modules/NodeLabelSelect.vue'
 import TermConnectedGraph from '@/components/term_graph/TermConnectedGraph.vue'
 import TermSearch from '@/components/term_graph/TermSearch.vue'
 import FDRValue from '@/components/term_graph/FDRValue.vue'
-import SelectionWindow from '@/components/toolbar/SelectionWindow.vue'
-import SelectionList from '@/components/toolbar/SelectionList.vue'
+import SelectionWindow from '@/components/toolbar/modules/SelectionWindow.vue'
+import SelectionList from '@/components/toolbar/modules/SelectionList.vue'
 
 
 export default {

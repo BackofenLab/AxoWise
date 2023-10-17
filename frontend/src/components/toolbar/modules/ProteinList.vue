@@ -1,6 +1,19 @@
 <template>
     <div class="tool-item">
-        <li v-on:click="visible_list()">Protein List... </li>
+        <div id="protein_highlight"  class="highlight_list">
+                <div id="protein_highlight_header">
+                    <div class="text">
+                        <div class="headertext">
+                            <span>Highlight Proteins</span>
+                            <button v-on:click="unactive_proteinlist()" id="highlight-btn-min"></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="highlight_main">
+                    <textarea v-model="raw_text" rows="10" cols="30" autofocus></textarea>
+                    <button v-on:click="highlight(raw_text)" id="highlight_protein">Go</button>
+                </div>
+        </div>
     </div>
 </template>
 
@@ -9,7 +22,7 @@
 export default {
     name: 'ProteinList',
     props: [''],
-    emits: ['status_changed'],
+    emits: ['protein_active_changed'],
     data() {
         return {
         }
@@ -56,8 +69,8 @@ export default {
                 document.onmousemove = null;
             }
         },
-        visible_list(){
-            this.$emit("status_changed", true);
+        unactive_proteinlist(){
+            this.$emit("protein_active_changed", false);
         }
     },
     mounted(){
