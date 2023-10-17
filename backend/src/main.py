@@ -95,22 +95,25 @@ def proteins_subgraph_api():
     selected_d = request.form.get("selected_d").split(",") if request.form.get("selected_d") else None
     threshold = int(float(request.form.get("threshold")) * 1000)
 
-    protein_ids = queries.get_protein_ids_for_names(driver, protein_names, species_id)
+    proteins, protein_ids = queries.get_protein_ids_for_names(driver, protein_names, species_id)
 
     stopwatch.round("Setup")
 
     if len(protein_ids) > 1:
-        proteins, source, target, score = queries.get_protein_associations(driver, protein_ids, threshold, species_id)
+        _, source, target, score = queries.get_protein_associations(driver, protein_ids, threshold, species_id)
     else:
-        proteins, source, target, score = queries.get_protein_neighbours(driver, protein_ids, threshold, species_id)
+        _, source, target, score = queries.get_protein_neighbours(driver, protein_ids, threshold, species_id)
 
     stopwatch.round("Neo4j")
 
     # TODO: make better (Vincent)
-    nodes = pd.DataFrame(proteins).rename(columns={"ENSEMBL": "external_id"}).drop_duplicates(subset="external_id")
+    nodes = pd.DataFrame(proteins).rename(columns={"ENSEMBL": "external_id"})
+    nodes = nodes.drop_duplicates(subset="external_id")
+    # nodes.to_csv("./string_nodes.csv", index=False, sep="\t")
 
     edges = pd.DataFrame({"source": source, "target": target, "score": score})
     edges = edges.drop_duplicates(subset=["source", "target"])
+    # edges.to_csv("./string_edges.csv", index=False, sep="\t")
 
     # Check if there is no data from database, return from here
     if edges.empty:

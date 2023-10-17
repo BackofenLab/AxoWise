@@ -2,7 +2,7 @@ import neo4j
 from utils import execute_query, time_function
 
 
-def get_tg_ensembl_by_symbol(list: list[str], type:str, driver: neo4j.Driver):
+def get_tg_ensembl_by_symbol(list: list[str], type: str, driver: neo4j.Driver):
     query = f""" 
     MATCH (n:{type})
         WHERE n.SYMBOL IN {list}
@@ -89,6 +89,7 @@ def get_or_by_da_under_contexts(
     # TODO
     return result
 
+
 @time_function
 def query_1(list: list[str], threshold: float, driver: neo4j.Driver):
     query = f"""
@@ -99,6 +100,7 @@ def query_1(list: list[str], threshold: float, driver: neo4j.Driver):
     """
     result = execute_query(query=query, read=True, driver=driver)
     return result
+
 
 @time_function
 def query_2(list: list[str], threshold: float, driver: neo4j.Driver):
@@ -112,6 +114,7 @@ def query_2(list: list[str], threshold: float, driver: neo4j.Driver):
     # TODO
     return result
 
+
 @time_function
 def query_3(list: list[str], threshold: float, driver: neo4j.Driver):
     query = f"""
@@ -124,6 +127,7 @@ def query_3(list: list[str], threshold: float, driver: neo4j.Driver):
     # TODO
     return result
 
+
 @time_function
 def query_4(list: list[str], driver: neo4j.Driver):
     query = f"""
@@ -134,6 +138,7 @@ def query_4(list: list[str], driver: neo4j.Driver):
     result = execute_query(query=query, read=True, driver=driver)
     # TODO
     return result
+
 
 @time_function
 def query_5(list: list[str], driver: neo4j.Driver):
@@ -146,16 +151,18 @@ def query_5(list: list[str], driver: neo4j.Driver):
     # TODO
     return result
 
+
 @time_function
 def query_6(list: list[str], driver: neo4j.Driver):
     query = f"""
-    MATCH (s:Celltype:Mus_Musculus)-[:1*IS|HAS]->(:Source:Mus_Musculus)-[:Has]->(t:Context:Mus_Musculus)-[v:VALUE]->(m:OR:Mus_Musculus)
+    MATCH (s:Celltype:Mus_Musculus)-[:HAS|IS*]->(:Source:Mus_Musculus)-[:HAS]->(t:Context:Mus_Musculus)-[v:VALUE]->(m:OR:Mus_Musculus)
         WHERE s.name IN {list}
-    RETURN t.Context, v.Value, m.id
+    RETURN s.name, t.Context, v.Value, m.id
     """
     result = execute_query(query=query, read=True, driver=driver)
     # TODO
     return result
+
 
 @time_function
 def query_7(list: list[str], threshold: float, driver: neo4j.Driver):
@@ -168,6 +175,7 @@ def query_7(list: list[str], threshold: float, driver: neo4j.Driver):
     result = execute_query(query=query, read=True, driver=driver)
     # TODO
     return result
+
 
 @time_function
 def query_8(list: list[str], threshold: float, driver: neo4j.Driver):

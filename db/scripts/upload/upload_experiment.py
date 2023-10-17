@@ -50,7 +50,7 @@ def create_tg_meancount(mean_count: pd.DataFrame, source: int, species: str, dri
     """
     Creates Target Gene MEANCOUNT Edges between MeanCount and TG
     """
-    print_update(update_type="Edge Creation", text="MEANCOUNT for Target Genes", color="cyan")
+    print_update(update_type="Edge Creation", text="VALUE for Meancount, Target Genes", color="cyan")
 
     mean_count["Source"] = source
     mean_count = mean_count.rename(columns={"mean_count": "Value"})
@@ -60,7 +60,7 @@ def create_tg_meancount(mean_count: pd.DataFrame, source: int, species: str, dri
     save_df_to_csv(file_name="tg_meancount.csv", df=mean_count)
     create_relationship(
         source_file="tg_meancount.csv",
-        type_="MEANCOUNT",
+        type_="VALUE",
         between=((), ("ENSEMBL", "ENSEMBL")),
         node_types=("MeanCount", "TG"),
         values=values,
@@ -77,7 +77,7 @@ def create_tf_meancount(mean_count: pd.DataFrame, source: int, species: str, dri
     Creates Transcription MEANCOUNT Edges between MeanCount and TF, and labels Nodes with TF label
     """
 
-    print_update(update_type="Edge Creation", text="MEANCOUNT for Transcription Factors", color="cyan")
+    print_update(update_type="Edge Creation", text="VALUE for Meancount, Transcription Factors", color="cyan")
 
     mean_count["Source"] = source
     mean_count = mean_count.rename(columns={"mean_count": "Value"})
@@ -87,7 +87,7 @@ def create_tf_meancount(mean_count: pd.DataFrame, source: int, species: str, dri
     save_df_to_csv(file_name="tf_meancount.csv", df=mean_count)
     create_relationship(
         source_file="tf_meancount.csv",
-        type_="MEANCOUNT",
+        type_="VALUE",
         between=((), ("ENSEMBL", "ENSEMBL")),
         node_types=("MeanCount", "TF"),
         values=values,
@@ -108,14 +108,14 @@ def create_or_meancount(mean_count: pd.DataFrame, source: int, species: str, dri
     mean_count["Source"] = source
     mean_count = mean_count.rename(columns={"mean_count": "Value"})
 
-    print_update(update_type="Edge Creation", text="MEANCOUNT for Open Regions", color="cyan")
+    print_update(update_type="Edge Creation", text="VALUE for Meancount, Open Regions", color="cyan")
 
     # create MeanCount edges for ORs
     values, reformat = get_values_reformat(df=mean_count, match=["id"])
     save_df_to_csv(file_name="or_meancount.csv", df=mean_count)
     create_relationship(
         source_file="or_meancount.csv",
-        type_="MEANCOUNT",
+        type_="VALUE",
         between=((), ("id", "id")),
         node_types=("MeanCount", "OR"),
         values=values,

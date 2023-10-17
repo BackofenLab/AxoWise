@@ -101,7 +101,7 @@ def update_nodes(
 def create_relationship(
     source_file: str,
     type_: str,
-    between: tuple[str],
+    between: tuple[tuple[str]],
     node_types: tuple[str],
     values: list[str],
     reformat_values: list[tuple[str]],

@@ -14,15 +14,15 @@ os.environ["_DEV_MAX_REL"] = str(10000)
 os.environ["_NEO4J_IMPORT_PATH"] = "/usr/local/bin/neo4j/import/"
 os.environ["_FUNCTION_TIME_PATH"] = "../source/timing/function_times.tsv"
 
-os.environ["_TIME_FUNCTIONS"] = str(True)
+os.environ["_TIME_FUNCTIONS"] = str(False)
 os.environ["_SILENT"] = str(False)
-os.environ["_PRODUCTION"] = str(False)
+os.environ["_PRODUCTION"] = str(True)
 os.environ["_ACCESS_NEO4J"] = str(True)
 
 
 @time_function
 def read_experiment_files(genes_annotated_mouse):
-    data = rd.read(reformat=True, genes_annotated_mouse=genes_annotated_mouse, mode=0)
+    data = rd.reading(reformat=True, genes_annotated_mouse=genes_annotated_mouse, mode=0)
     return data
 
 
@@ -33,7 +33,7 @@ def read_string_files(
     complete_human: pd.DataFrame,
     proteins_human: pd.DataFrame,
 ):
-    data = rd.read(
+    data = rd.reading(
         complete_mouse=complete_mouse,
         proteins_mouse=proteins_mouse,
         complete_human=complete_human,
@@ -45,19 +45,19 @@ def read_string_files(
 
 @time_function
 def read_ensembl_files():
-    data = rd.read(mode=2)
+    data = rd.reading(mode=2)
     return data
 
 
 @time_function
 def read_functional_files():
-    data = rd.read(mode=3)
+    data = rd.reading(mode=3)
     return data
 
 
 @time_function
 def read_catlas_files(or_nodes: pd.DataFrame, distance: pd.DataFrame):
-    data = rd.read(or_nodes=or_nodes, distance=distance, mode=4)
+    data = rd.reading(or_nodes=or_nodes, distance=distance, mode=4)
     return data
 
 
@@ -177,4 +177,5 @@ def upload_workflow():
 
 if __name__ == "__main__":
     # upload_workflow()
-    run_queries()
+    # run_queries()
+    pass

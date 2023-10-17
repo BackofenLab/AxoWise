@@ -41,17 +41,18 @@ def stop_driver(driver: neo4j.Driver):
     driver.close()
 
 
-def execute_query(query: str, read: bool, driver: neo4j.Driver) -> pd.DataFrame:
+def execute_query(query: str, driver: neo4j.Driver, read: bool = False) -> pd.DataFrame:
     if os.getenv("_ACCESS_NEO4J") == str(True):
         if read:
             with driver.session() as session:
-                result = session.run(query)
-                return result.consume()
+                result = session.run(query).values()
+                return len(result)
         else:
             with driver.session() as session:
-                tmp = session.run(query).values()
-                return tmp
+                result = session.run(query).values()
+                return result
     else:
+        print(query)
         return [[0]]
 
 
@@ -70,8 +71,8 @@ def time_function(function):
         if os.getenv("_TIME_FUNCTIONS") == str(True):
             with open(os.getenv("_FUNCTION_TIME_PATH"), "a", newline="\n") as csvfile:
                 writer = csv.writer(csvfile, delimiter="\t")
-                if i is not None:
-                    writer.writerow([i, function.__name__, end_time - start_time])
+                if i is not None and type(result) == int:
+                    writer.writerow([i, function.__name__, end_time - start_time, result])
                 else:
                     writer.writerow([function.__name__, end_time - start_time])
         return result

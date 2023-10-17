@@ -8,7 +8,7 @@ from read.read_functional import parse_functional
 from read.read_catlas import parse_catlas
 
 
-def read(
+def reading(
     dir_path: str = None,
     reformat: bool = True,
     mode: int = -1,
