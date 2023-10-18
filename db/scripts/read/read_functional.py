@@ -7,13 +7,26 @@ from alive_progress import alive_bar
 
 def parse_functional(dir_path: str = os.getenv("_DEFAULT_FUNCTIONAL_PATH")):
     """
-    Reads Functional Terms files and returns a Pandas dataframe
-    [
-        "functional_terms_overlap_mus_musculus",
-        "AllPathways_mouse",
-        "functional_terms_overlap_homo_sapiens",
-        "AllPathways_human",
-    ]
+    Parses Functional term files and reformats them to fit the structure needed for uploading.
+
+    Source directory
+    - Can be set with _DEFAULT_FUNCTIONAL_PATH
+
+    Needed Files:
+    - functional_terms_overlap_mus_musculus.csv
+    - AllPathways_mouse.csv
+    - functional_terms_overlap_homo_sapiens.csv
+    - AllPathways_human.csv
+
+    Return
+    - ft_nodes_mouse (pandas DataFrame): Functional Term nodes for Mouse of form (Term, Name, Category, Proteins)
+    - ft_gene_mouse (pandas DataFrame): Links between Functional Terms and Target Genes for Mouse of form (ENSEMBL, Term)
+    - ft_protein_mouse (pandas DataFrame): Links between Functional Terms and Proteins for Mouse of form (ENSEMBL, Term)
+    - ft_ft_overlap_mouse (pandas DataFrame): Overlap between Functional Terms for Mouse of form (source, target, Score)
+    - ft_nodes_human (pandas DataFrame): Functional Term nodes for Human of form (Term, Name, Category, Proteins)
+    - ft_gene_human (pandas DataFrame): Links between Functional Terms and Target Genes for Human of form (ENSEMBL, Term)
+    - ft_protein_human (pandas DataFrame): Links between Functional Terms and Proteins for Human of form (ENSEMBL, Term)
+    - ft_ft_overlap_human (pandas DataFrame): Overlap between Functional Terms for Human of form (source, target, Score)
     """
 
     def read_functional():

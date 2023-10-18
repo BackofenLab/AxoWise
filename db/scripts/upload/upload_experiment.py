@@ -130,7 +130,15 @@ def create_context(
     context: pd.DataFrame, context_type: str, source: int, value_type: int, species: str, driver: Driver
 ):  # value_type: 1 -> TG, 0 -> OR
     """
-    Creates Context nodes from Experiment data if not already existent in DB, and DE / DA edges between Context and OR/TG
+    Creates Context nodes, HAS edges from Source to Context, and VALUE edges from Context to either TG or OR nodes. Uses create_nodes(), create_relationship(), get_values_reformat(), save_df_to_csv()
+
+    Input
+    - context (pandas DataFrame): Dataframe with Contexts, Values, and entities (TG or OR) of form (ENSEMBL, Context, **Values) for TGs, (id, Context, **Values) for ORs
+    - context_type (String): Context Type (e.g. "Timeframe", "MeanCount", "Location")
+    - source (Integer): ID of Source node
+    - value_type (Integer): Indicator which entity this data is linked to (0 -> Open Region, 1 -> Target Gene)
+    - species (String): Species Identifier (i.e. "Mus_Musculus", "Homo_Sapiens")
+    - driver (neo4j Driver): Started Neo4j driver (can be done with start_driver())
     """
     print_update(update_type="Node Creation", text="Context", color="blue")
 
@@ -216,6 +224,15 @@ def create_context(
 
 @time_function
 def create_motif(motif: pd.DataFrame, source: int, species: str, driver: Driver):
+    """
+    Creates MOTIF edges between TF and OR nodes. Uses create_relationship(), get_values_reformat(), save_df_to_csv()
+
+    Input
+    - motif (pandas DataFrame): DataFrame with Motif information of form (or_id, ENSEMBL, Consensus, id, **Additional Values)
+    - source (Integer): ID of Source node
+    - species (String): Species Identifier (i.e. "Mus_Musculus", "Homo_Sapiens")
+    - driver (neo4j Driver): Started Neo4j driver (can be done with start_driver())
+    """
     print_update(update_type="Edge Creation", text="MOTIF", color="cyan")
 
     motif["Source"] = source
@@ -240,7 +257,14 @@ def create_correlation(
     correlation: pd.DataFrame, source: int, value_type: int, species: str, driver: Driver
 ):  # value_type: 1 -> TF-TG, 0 -> TG-OR
     """
-    Creates CORRELATION Edges between TF / OR and TG from experiment data
+    Creates CORRELATION edges between entities Uses create_relationship(), get_values_reformat(), save_df_to_csv()
+
+    Input
+    - correlation (pandas DataFrame): Dataframe with Correlation (+ additional) values and entities of form (ENSEMBL, id, Correlation, p) for OR-TG, (ENSEMBL_TG, ENSEMBL_TF, Correlation, p) for TF-TG
+    - source (Integer): ID of Source node
+    - value_type (Integer): Indicator which entitis are to be linked linked to (0 -> TG-OR, 1 -> TF-TG)
+    - species (String): Species Identifier (i.e. "Mus_Musculus", "Homo_Sapiens")
+    - driver (neo4j Driver): Started Neo4j driver (can be done with start_driver())
     """
     print_update(
         update_type="Edge Creation",

@@ -20,8 +20,33 @@ DA_CONTEXT = [
 
 def parse_experiment(symbol_ensembl_dict: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT_EXPERIMENT_PATH")):
     """
-    Parses experiment files and returns list of Pandas DataFrames s.t.
-    [ tg_nodes, tf_nodes, de_values, or_nodes, da_values, tf_tg_corr, tf_or_corr ]
+    Parses bulk sequencing experiment files and reformats them to fit the structure needed for uploading.
+
+    Source directory
+    - Can be set with _DEFAULT_EXPERIMENT_PATH
+
+    Needed Files:
+    - exp_DA.tsv
+    - exp_DE_filter.tsv
+    - correlation_pval_TF_target.csv
+    - corr_peak_target.csv
+    - TF_motif_peak.tsv
+    - motif_peaks_TF_no_peaks.tsv
+
+    Input
+    - genes_annotated_mouse (pandas Dataframe): Annotated Genes of form (ENSEMBL, ENTREZID, SYMBOL, annotation)
+
+    Return
+    - tg_mean_count (pandas DataFrame): Target Gene Meancount values of form (mean_count, ENSEMBL)
+    - tf_mean_count (pandas DataFrame): Transcription Factor Meancount values of form (mean_count, ENSEMBL)
+    - de_values (pandas DataFrame): Differential Expression Values from Experiment of form (ENSEMBL, Context, Value, p)
+    - or_nodes (pandas DataFrame): Open region nodes of form (id, annotation, feature)
+    - or_mean_count (pandas DataFrame): Open Region Meancount values of form (id, mean_count)
+    - da_values (pandas DataFrame): Differential Accesibility Values from Experiment of form (id, Context, Value, p, summit)
+    - tf_tg_corr (pandas DataFrame): Correlation between TG and TF of form (ENSEMBL_TG, ENSEMBL_TF, Correlation, p)
+    - or_tg_corr (pandas DataFrame): Correlation between TG and OR of form (ENSEMBL, Correlation, p, id)
+    - motif (pandas DataFrame): Motif information of form (id, or_id,ENSEMBL, Consensus, p, number_of_peaks, Concentration)
+    - distance (pandas DataFrame): Distance Information for Open Regions of form (id, Distance, ENSEMBL)
     """
 
     def read_experiment():

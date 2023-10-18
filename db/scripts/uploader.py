@@ -20,6 +20,23 @@ def base_setup(
     or_nodes: pd.DataFrame | None = None,
     distance: pd.DataFrame | None = None,
 ):
+    """
+    This Function Sets up the base network (Protein, Gene nodes, TF labels, Protein-Gene Links, STRING associations, Functional Terms, Overlap, TG-FT und Protein-FT links, Distance between OR and TG). Uses start_driver(), stop_driver(), setup_base_db()
+
+    Input
+    - species (String): Representing Species (i.e. "Mus_Musculus", "Homo_Sapiens")
+    - gene_nodes (pandas DataFrame): Target Gene nodes of form (ENSEMBL, ENTREZID, SYMBOL, annotation)
+    - ft_nodes (pandas DataFrame): Functional Term nodes of form (Term, Name, Category, Proteins)
+    - ft_ft_overlap (pandas DataFrame): Overlap between Functional Terms of form (source, target, Score)
+    - ft_gene (pandas DataFrame): Links between Functional Terms and Target Genes of form (ENSEMBL, Term)
+    - tf (pandas DataFrame): List of Transcription factors (subset of TGs, must be still included in gene_nodes) of form (ENSEMBL)
+    - ft_protein (pandas DataFrame): Links between Functional Terms and Proteins of form (ENSEMBL, Term)
+    - gene_protein_link (pandas Dataframe): Links between genes and proteins of form (ENSEMBL, Protein)
+    - proteins_annotated (pandas DataFrame): Protein nodes of form (ENSEMBL, SYMBOL, protein_size, annotation)
+    - protein_protein_scores (pandas DataFrame): Scores between Proteins (STRING) of form (Protein1, Protein2, Score)
+    - or_nodes (pandas DataFrame): Open chromatin region nodes of form (id, annotation, feature)
+    - distance (pandas DataFrame): Distance between OR and TG of form (id, Distance, ENSEMBL, Dummy)
+    """
     driver = start_driver()
 
     setup_base_db(
@@ -53,6 +70,20 @@ def bulk_extention(
     or_tg_corr: pd.DataFrame,
     motif: pd.DataFrame,
 ):
+    """
+    Extends Database with Data from bulk sequencing experiment. Uses start_driver(), stop_driver(), extend_db_from_experiment()
+
+    Input
+    - species (String): Representing Species (i.e. "Mus_Musculus", "Homo_Sapiens")
+    - tg_mean_count (pandas DataFrame): Target Gene Meancount values of form (mean_count, ENSEMBL)
+    - tf_mean_count (pandas DataFrame): Transcription Factor Meancount values of form (mean_count, ENSEMBL)
+    - or_mean_count (pandas DataFrame): Open Region Meancount values of form (id, mean_count)
+    - tf_tg_corr (pandas DataFrame): Correlation between TG and TF of form (ENSEMBL_TG, ENSEMBL_TF, Correlation, p)
+    - or_tg_corr (pandas DataFrame): Correlation between TG and OR of form (ENSEMBL, Correlation, p, id)
+    - motif (pandas DataFrame): Motif information of form (id, or_id,ENSEMBL, Consensus, p, number_of_peaks, Concentration)
+    - tg_context_values (pandas DataFrame): Differential Expression Values from Experiment of form (ENSEMBL, Context, Value, p)
+    - or_context_values (pandas DataFrame): Differential Accesibility Values from Experiment of form (id, Context, Value, p, summit)
+    """
     driver = start_driver()
 
     extend_db_from_experiment(
@@ -79,6 +110,16 @@ def catlas_extention(
     catlas_celltype: pd.DataFrame,
     catlas_motifs: pd.DataFrame,
 ):
+    """
+    Extends Database with Data from Catlas Whole Mouse Brain experiment. Uses start_driver(), stop_driver(), extend_db_from_catlas()
+
+    Input
+    - species (String): Representing Species (i.e. "Mus_Musculus", "Homo_Sapiens")
+    - catlas_or_context (pandas DataFrame): Open Region Context Information in form (Context, id, cell_id)
+    - catlas_correlation (pandas DataFrame): OR-TG Correlation of form (id, ENSEMBL, Correlation, cell_id)
+    - catlas_celltype (pandas DataFrame): Celltype and Subtype info of form (name, region, nuclei_counts, celltype, subtype, sub-subtype)
+    - catlas_motifs (pandas DataFrame): Motif information of form (id, or_id, ENSEMBL, Consensus, p, number_of_peaks, Concentration, cell_id)
+    """
     driver = start_driver()
 
     extend_db_from_catlas(

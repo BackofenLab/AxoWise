@@ -31,6 +31,12 @@ def read_creds(credentials_path: str):
 
 
 def start_driver():
+    """
+    Starts and returns Neo4j driver.
+
+    Return
+    - driver (neo4j Driver): Started Neo4j driver
+    """
     uri, auth = read_creds(credentials_path=os.getenv("_DEFAULT_CREDENTIALS_PATH"))
     driver = neo4j.GraphDatabase.driver(uri, auth=auth)
     driver.verify_connectivity()
@@ -38,10 +44,24 @@ def start_driver():
 
 
 def stop_driver(driver: neo4j.Driver):
+    """
+    Stops Neo4j driver
+
+    Input
+    - driver (neo4j Driver): Started Neo4j driver
+    """
     driver.close()
 
 
 def execute_query(query: str, driver: neo4j.Driver, read: bool = False) -> pd.DataFrame:
+    """
+    Executes given query
+
+    Input
+    - query (String): Cypher Query as a String
+    - read (bool): If True, query is read-only (Default: False)
+    - driver (neo4j Driver): Started Neo4j driver (can be done with start_driver())
+    """
     if os.getenv("_ACCESS_NEO4J") == str(True):
         if read:
             with driver.session() as session:
@@ -57,6 +77,14 @@ def execute_query(query: str, driver: neo4j.Driver, read: bool = False) -> pd.Da
 
 
 def save_df_to_csv(file_name: str, df: pd.DataFrame, override_prod: bool = False):
+    """
+    Saves the Dataframe to a csv in the Neo4j import directory (as defined in _NEO4J_IMPORT_PATH)
+
+    Input
+    - file_name (String): File name of the file to be created (used later by create_nodes() and create_relationship())
+    - df (pandas DataFrame): Dataframe to be saved
+    - override_prod (bool): If True, overrides _PRODUCTION, if _PRODUCTION and override_prod are False, df of length _DEV_MAX_REL is saved (Default: False)
+    """
     if os.getenv("_PRODUCTION") == str(True) or override_prod:
         df.to_csv(os.getenv("_NEO4J_IMPORT_PATH") + file_name, index=False)
     else:
@@ -156,6 +184,15 @@ def generate_props(source: dict[str, list[tuple[str]]], item: str, reformat_valu
 
 
 def check_for_files(mode: int):
+    """
+    Checks if files are in the source/processed/ directory.
+
+    Input
+    - mode (Integer): Same as in reading()
+
+    Return
+    - True if one or more files don't exist, otherwise False
+    """
     if mode == 0:
         # Experiment
         return not (
@@ -238,6 +275,15 @@ def retrieve_gene_id_by_symbol(symbol: str, species: bool):
 
 
 def get_values_reformat(df: pd.DataFrame, match: list):
+    """
+    Input
+    - df (pandas DataFrame): Dataframe of Values
+    - match (List[String]): Unique IDs as a subset of columns
+
+    Return
+    - values (List[String]): All Values apart from Values in match
+    - reformat (List[Tuple[String]]): Values for be formatted from String to Integer/Float using Cypher (e.g. [("Correlation", "toFloat")])
+    """
     values = list(set(list(df.columns)) - set(match))
     reformat = [
         (i, "toFloat" if df[i].dtype == "float64" else "toInteger") for i in list(df.columns) if df[i].dtype != "object"

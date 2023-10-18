@@ -19,6 +19,16 @@ def reading(
     distance: pd.DataFrame = pd.DataFrame([]),
     genes_annotated_mouse: pd.DataFrame = pd.DataFrame([]),
 ):
+    """
+    Reads Files based on Mode. It brings them into the Right format if not already existend and saves them to the source/processed/ directory. Otherwise, reads them from the source/processed/ directory. Uses check_for_files() and files in read/ directory.
+
+    Function Calls based on Modes
+    - mode = 0: parse_experiment()
+    - mode = 1: parse_string()
+    - mode = 2: parse_ensembl()
+    - mode = 3: parse_functional()
+    - mode = 4: parse_catlas()
+    """
     if mode == 0:
         # Experiment
         if dir_path == None:

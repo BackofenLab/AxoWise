@@ -12,16 +12,33 @@ def parse_string(
     dir_path: str = os.getenv("_DEFAULT_STRING_PATH"),
 ):
     """
-    Reads STRING files and returns a Pandas dataframe
-    [
-        "10090.protein.links.v12.0",
-        "10090.protein.info.v12.0",
-        "string_SYMBOL_ENSEMBL",
-        "difference_mouse",
-        "9606.protein.links.v12.0",
-        "9606.protein.info.v12.0",
-        "difference_human",
-    ]
+    Parses STRING files and reformats them to fit the structure needed for uploading.
+
+    Source directory
+    - Can be set with _DEFAULT_STRING_PATH
+
+    Needed Files:
+    - 10090.protein.links.v12.0.txt
+    - 10090.protein.info.v12.0.tsv
+    - string_SYMBOL_ENSEMBL.tsv
+    - difference_mouse.csv
+    - 9606.protein.links.v12.0.txt
+    - 9606.protein.info.v12.0.tsv
+    - difference_human.csv
+
+    Input
+    - complete_mouse (pandas Dataframe): Set of Genes for Mouse from ENSEMBL of form (ENSEMBL, Protein, ENTREZID)
+    - proteins_mouse (pandas Dataframe): Set of Proteins for Mouse from ENSEMBL of form (Protein)
+    - complete_human (pandas Dataframe): Set of Genes for Humans from ENSEMBL of form (ENSEMBL, Protein, ENTREZID)
+    - proteins_human (pandas Dataframe): Set of Proteins for Humans from ENSEMBL of form (Protein)
+
+    Return
+    - genes_annotated_mouse (pandas Dataframe): Target Gene nodes for Mouse of form (ENSEMBL, ENTREZID, SYMBOL, annotation)
+    - proteins_annotated_mouse (pandas Dataframe): Protein nodes for Mouse of form (ENSEMBL, SYMBOL, protein_size, annotation)
+    - protein_protein_scores_mouse (pandas Dataframe): Scores between Proteins (STRING) for Mouse of form (Protein1, Protein2, Score)
+    - genes_annotated_human (pandas Dataframe): Target Gene nodes for Human of form (ENSEMBL, ENTREZID, SYMBOL, annotation)
+    - proteins_annotated_human (pandas Dataframe): Protein nodes for Human of form (ENSEMBL, SYMBOL, protein_size, annotation)
+    - protein_protein_scores_human (pandas Dataframe): Scores between Proteins (STRING) for Human of form (Protein1, Protein2, Score)
     """
 
     def read_string():

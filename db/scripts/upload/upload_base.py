@@ -7,10 +7,12 @@ from neo4j import Driver
 @time_function
 def create_gene_nodes(nodes: pd.DataFrame, species: str, driver: Driver):
     """
-    Creates Gene Nodes based on ENSEMBL Data (with annotations from STRING)
+    Creates Gene Nodes based on ENSEMBL Data (with annotations from STRING). Uses create_nodes(), get_values_reformat(), save_df_to_csv()
 
-    Variables:
-        nodes -> Dataframe with Node info (ENSEMBL, ENTREZID, SYMBOL, annotation)
+    Input
+    - nodes (pandas Dataframe): Node info of form (ENSEMBL, ENTREZID, SYMBOL, annotation)
+    - species (String): Species Identifier (i.e. "Mus_Musculus", "Homo_Sapiens")
+    - driver (neo4j Driver): Started Neo4j driver (can be done with start_driver())
     """
     print_update(update_type="Node Creation", text="Genes from ENSEMBL", color="blue")
 
@@ -30,6 +32,14 @@ def create_gene_nodes(nodes: pd.DataFrame, species: str, driver: Driver):
 
 @time_function
 def create_protein_nodes(nodes: pd.DataFrame, species: str, driver: Driver):
+    """
+    Creates Protein Nodes based on ENSEMBL Data (with annotations from STRING). Uses create_nodes(), get_values_reformat(), save_df_to_csv()
+
+    Input
+    - nodes (pandas Dataframe): Protein info of form (ENSEMBL, SYMBOL, protein_size, annotation)
+    - species (String): Species Identifier (i.e. "Mus_Musculus", "Homo_Sapiens")
+    - driver (neo4j Driver): Started Neo4j driver (can be done with start_driver())
+    """
     print_update(update_type="Node Creation", text="Proteins from ENSEMBL", color="blue")
 
     values, reformat = get_values_reformat(df=nodes, match=["ENSEMBL"])
@@ -49,7 +59,12 @@ def create_protein_nodes(nodes: pd.DataFrame, species: str, driver: Driver):
 @time_function
 def create_gene_protein_edges(links: pd.DataFrame, species: str, driver: Driver):  # TODO
     """
-    Creates PRODUCT Edges between TGs and Proteins
+    Creates PRODUCT edges between TG and Protein nodes. Uses create_relationship(), get_values_reformat(), save_df_to_csv()
+
+    Input
+    - links (pandas DataFrame): Links between Genes and Proteins as given from ENSEMBL of form (ENSEMBL, Protein)
+    - species (String): Species Identifier (i.e. "Mus_Musculus", "Homo_Sapiens")
+    - driver (neo4j Driver): Started Neo4j driver (can be done with start_driver())
     """
     print_update(update_type="Edge Creation", text="PRODUCT", color="cyan")
 
@@ -70,6 +85,14 @@ def create_gene_protein_edges(links: pd.DataFrame, species: str, driver: Driver)
 
 @time_function
 def create_tf_label(tf: pd.DataFrame, species: str, driver: Driver):
+    """
+    Sets TF label to TG nodes Uses update_nodes(), get_values_reformat(), save_df_to_csv()
+
+    Input
+    - tf (pandas DataFrame): List of Transcription Factors of form (ENSEMBL)
+    - species (String): Species Identifier (i.e. "Mus_Musculus", "Homo_Sapiens")
+    - driver (neo4j Driver): Started Neo4j driver (can be done with start_driver())
+    """
     print_update(update_type="Node Update", text="Transcription Factor", color="orange")
 
     values, reformat = get_values_reformat(df=tf, match=["ENSEMBL"])
@@ -89,7 +112,12 @@ def create_tf_label(tf: pd.DataFrame, species: str, driver: Driver):
 @time_function
 def create_or_nodes(nodes: pd.DataFrame, species: str, driver: Driver):
     """
-    Creates Open Region Nodes with <Chomosome>_<summit> as id
+    Creates OR nodes from Dataframe. Uses create_nodes(), get_values_reformat(), save_df_to_csv()
+
+    Input
+    - nodes (pandas DataFrame): List of Open regions to be added of form (id, annotation, feature)
+    - species (String): Species Identifier (i.e. "Mus_Musculus", "Homo_Sapiens")
+    - driver (neo4j Driver): Started Neo4j driver (can be done with start_driver())
     """
     print_update(update_type="Node Creation", text="Open Region", color="blue")
 
@@ -110,7 +138,12 @@ def create_or_nodes(nodes: pd.DataFrame, species: str, driver: Driver):
 @time_function
 def create_distance_edges(distance: pd.DataFrame, species: str, driver: Driver):
     """
-    Creates DISTANCE edges between OR and TG
+    Creates DISTANCE edges between OR and TG. Uses create_relationship(), get_values_reformat(), save_df_to_csv()
+
+    Input
+    - distance (pandas DataFrame): Distance information of form (id, Distance, ENSEMBL, Dummy)
+    - species (String): Species Identifier (i.e. "Mus_Musculus", "Homo_Sapiens")
+    - driver (neo4j Driver): Started Neo4j driver (can be done with start_driver())
     """
     print_update(update_type="Edge Creation", text="DISTANCE", color="cyan")
 
@@ -132,7 +165,12 @@ def create_distance_edges(distance: pd.DataFrame, species: str, driver: Driver):
 @time_function
 def create_string(protein_protein_scores: pd.DataFrame, species: str, driver: Driver):
     """
-    Creates STRING edges between Protein and Protein with STRING Association Score
+    Creates STRING edges from STRING association scores. Uses create_relationship(), get_values_reformat(), save_df_to_csv()
+
+    Input
+    - protein_protein_scores (pandas DataFrame): Edge information of form (Protein1, Protein2, Score)
+    - species (String): Species Identifier (i.e. "Mus_Musculus", "Homo_Sapiens")
+    - driver (neo4j Driver): Started Neo4j driver (can be done with start_driver())
     """
     print_update(update_type="Edge Creation", text="STRING", color="cyan")
 
@@ -163,7 +201,15 @@ def create_functional(
     driver: Driver,
 ):
     """
-    Creates Functional Term nodes, OVERLAP egdes between FT and FT, and LINK edges between TG and FT
+    Creates functional term nodes, OVERLAP edges, and LINKs to TG and Protein nodes. Uses create_nodes(), create_relationship(), get_values_reformat(), save_df_to_csv()
+
+    Input
+    - ft_nodes (pandas DataFrame): Functional Term nodes of form (Term, Name, Category, Proteins)
+    - ft_ft_overlap (pandas DataFrame): Overlap edges of form (source, target, Score)
+    - ft_gene (pandas DataFrame): FT-Gene edges of form (ENSEMBL, Term)
+    - ft_protein (pandas DataFrame): FT-Protein edges of form (ENSEMBL, Term)
+    - species (String): Species Identifier (i.e. "Mus_Musculus", "Homo_Sapiens")
+    - driver (neo4j Driver): Started Neo4j driver (can be done with start_driver())
     """
     print_update(update_type="Node Creation", text="Functional Term", color="blue")
 
@@ -248,7 +294,7 @@ def setup_base_db(
     driver: Driver,
 ):
     """
-    Sets up Base DB with Functional Terms, ENSEMBL Genes and STRING Associations
+    Sets up the database without experiments. Uses create_gene_nodes(), create_protein_nodes(), create_gene_protein_edges(), create_tf_label(), create_or_nodes(), create_distance_edges(), create_string(), create_functional()
     """
     create_gene_nodes(nodes=gene_nodes, species=species, driver=driver)
     create_tf_label(tf=tf, species=species, driver=driver)

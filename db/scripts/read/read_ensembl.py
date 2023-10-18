@@ -6,20 +6,32 @@ import numpy as np
 
 def parse_ensembl(dir_path: str = os.getenv("_DEFAULT_ENSEMBL_PATH")):
     """
-    Reads ENSEMBL files and returns a Pandas dataframe
-    [
-        "Mus_musculus.GRCm39.109.entrez",
-        "Mus_musculus.GRCm39.109.ena",
-        "Mus_musculus.GRCm39.109.refseq",
-        "Mus_musculus.GRCm39.109.uniprot",
-        "TFCheckpoint_download_180515",
-        "lost_correlations_symbols",
-        "Homo_sapiens.GRCh38.110.entrez",
-        "Homo_sapiens.GRCh38.110.ena",
-        "Homo_sapiens.GRCh38.110.refseq",
-        "Homo_sapiens.GRCh38.110.uniprot",
-    ]
+    Parses ENSEMBL files and reformats them to fit the structure needed for uploading.
 
+    Source directory
+    Can be set with _DEFAULT_ENSEMBL_PATH
+
+    Needed Files:
+    - Mus_musculus.GRCm39.109.entrez.tsv
+    - Mus_musculus.GRCm39.109.ena.tsv
+    - Mus_musculus.GRCm39.109.refseq.tsv
+    - Mus_musculus.GRCm39.109.uniprot.tsv
+    - TFCheckpoint_download_180515.tsv
+    - lost_correlations_symbols
+    - Homo_sapiens.GRCh38.110.entrez.tsv
+    - Homo_sapiens.GRCh38.110.ena.tsv
+    - Homo_sapiens.GRCh38.110.refseq.tsv
+    - Homo_sapiens.GRCh38.110.uniprot.tsv
+
+    Return
+    - complete_mouse (pandas Dataframe): Set of Genes for Mouse from ENSEMBL of form (ENSEMBL, Protein, ENTREZID)
+    - tf_mouse (pandas Dataframe): List of Transcription factors for Mouse of form (ENSEMBL)
+    - proteins_mouse (pandas Dataframe): Set of Proteins for Mouse from ENSEMBL of form (Protein)
+    - gene_protein_link_mouse (pandas Dataframe): Links between genes and proteins for Mouse of form (ENSEMBL, Protein)
+    - complete_human (pandas Dataframe): Set of Genes for Human from ENSEMBL of form (ENSEMBL, Protein, ENTREZID)
+    - tf_human (pandas Dataframe): List of Transcription factors for Human of form (ENSEMBL)
+    - proteins_human (pandas Dataframe): Set of Proteins for Human from ENSEMBL of form (Protein)
+    - gene_protein_link_human (pandas Dataframe): Links between genes and proteins for Human of form (ENSEMBL, Protein)
     """
 
     def read_ensembl():

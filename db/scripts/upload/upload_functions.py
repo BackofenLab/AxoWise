@@ -14,13 +14,17 @@ def create_nodes(
     merge: bool = True,
 ):
     """
-    Common function to create nodes in the Neo4j Database (MERGE not CREATE)
+    Generates and runs Query to upload nodes to the DB. Uses execute_query()
 
-    Variables:
-        source_file -> Name of file in neo4j import directory
-        type_ -> Type of node (e.g. TG, Context, ...)
-        id -> Identifier of node (TG / TF is ENSEMBL, OR is nearest_index)
-        reformat_values -> List of Tuples, where 0 -> Name of Value, 1 -> Function to reformat
+    Input
+    - source_file (String): Filename where data is (same as in save_df_to_csv())
+    - type_ (String): Type of node (e.g. "TG", "TG:TF", etc.)
+    - id (String): unique identifier of node (e.g. "ENSEMBL" for TG nodes)
+    - values (List[String]): include all properties without node identifier (e.g. ["SYMBOL", "annotation"])
+    - reformat_values (List[Tuple[String]]): Values for be formatted from String to Integer/Float using Cypher functions (computed by get_values_reformat()) e.g. [("Correlation", "toFloat")]
+    - species (String): Species Identifier (i.e. "Mus_Musculus", "Homo_Sapiens")
+    - driver (neo4j Driver): Started Neo4j driver (can be done with start_driver())
+    - merge (bool): If True "MERGE" is used, else "CREATE" is used (Default: True)
     """
     # TODO: Use upload functions instead of hardcoding query
 
@@ -111,16 +115,20 @@ def create_relationship(
     bidirectional: bool = False,
 ):
     """
-    Common function to create edges in Neo4j Database (both MERGE and CREATE possible, see merge flag)
+    Generates and runs Query to upload edges to the DB. Uses execute_query()
 
-    Variables:
-        source_file -> Name of file in neo4j import directory
-        type_ -> Type of relationship (e.g. HAS, DE, ...)
-        between -> Comparing value names (0 -> Origin of relationship, 1 -> Destination of relationship; x.0 -> Value in DB, x.1 Value in CSV
-        node_types -> Nodetypes (0 -> Origin of relationship, 1 -> Destination of relationship)
-        values -> Column names in csv that need to be added as properties
-        reformat_values -> List of Tuples, where 0 -> Name of Value, 1 -> Function to reformat
-        merge -> Use CREATE or MERGE
+    Input
+    - source_file (String): Filename where data is (same as in save_df_to_csv())
+    - type_ (String): Edge type (e.g. "CORRELATION")
+    - between (Tuple[Tuple[String]]): Node identifiers of nodes between which the edge is to be created Form is ((<Database ID for Node 1>, <Column name in csv for Database ID for Node 1>), (<Database ID for Node 2>, <Column name in csv for Database ID for Node 2>)) (e.g. (("ENSEMBL", "ENSEMBL_TF"), ("ENSEMBL", "ENSEMBL_TG")) from create_correlation())
+    - node_types (Tuple[String]): Node types between which the edge is to be created
+    - values (List[String]): Values include all properties without node identifiers
+    - reformat_values: (List[Tuple[String]]): Values for be formatted from String to Integer/Float using Cypher
+    - species (String): Species Identifier (i.e. "Mus_Musculus", "Homo_Sapiens")
+    - driver (neo4j Driver): Started Neo4j driver (can be done with start_driver())
+    - merge (bool): If True "MERGE" is used, else "CREATE" is used (Default: True)
+    - bidirectional (bool): If True Query is of form -[]-, else -[]->. Not unidirectionality is highly recommended (Default: False)
+
     """
 
     comparing_reformat_values = [v[0] for v in reformat_values]

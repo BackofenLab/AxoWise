@@ -5,6 +5,9 @@ import random
 
 
 def run_queries():
+    """
+    Runs queries from query/query_functions.py. Uses start_driver(), stop_driver().
+    """
     driver = start_driver()
 
     open_regions = list(pd.read_csv("../source/processed/or_extended.csv")["id"])

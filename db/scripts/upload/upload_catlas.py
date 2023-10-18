@@ -60,6 +60,9 @@ def extend_db_from_catlas(
     species: str,
     driver: Driver,
 ):
+    """
+    Extends the Database with the Catlas Whole Mouse Brain experiment data. This function is specific to the experiment. Uses create_source(), create_context(), create_correlation(), create_motif()
+    """
     for _, i in catlas_celltype.iterrows():
         print_update(update_type="Uploading", text=i["name"], color="pink")
         source = create_source(cell_info=i, driver=driver, species=species)

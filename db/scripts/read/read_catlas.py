@@ -6,6 +6,32 @@ from alive_progress import alive_bar
 
 
 def parse_catlas(or_nodes: pd.DataFrame, distance: pd.DataFrame):
+    """
+    Parses Catlas files and reformats them to fit the structure needed for uploading.
+
+    Source directory
+    - Can be set with _DEFAULT_CATLAS_PATH
+
+    Needed Files:
+    - ccre/: cCRE files from Catlas
+    - motifs/: Motif files for each Cell- and Subtype _motifs.csv of forms (id, Motif, Motif ID, Log p, Concentration, ENSEMBL)
+    - ccre_id_dict.csv
+    - cell_infos.csv
+    - cell_specific_correlation.csv
+    - gene_ccre_distance.csv
+
+    Input
+    - or_nodes (pandas DataFrame): Existing Open region nodes of form (id, annotation, feature)
+    - distance (pandas DataFrame): Existing Distance edges of form (id, Distance, ENSEMBL)
+
+    Return
+    - or_extended (pandas DataFrame): Extended Open region nodes of form (id, annotation, feature)
+    - catlas_or_context (pandas DataFrame): Open Region Context Information in form (Context, id, cell_id)
+    - catlas_correlation (pandas DataFrame): OR-TG Correlation of form (id, ENSEMBL, Correlation, cell_id)
+    - catlas_celltype (pandas DataFrame): Celltype and Subtype info of form (name, region, nuclei_counts, celltype, subtype, sub-subtype)
+    - distance_extended (pandas DataFrame): Extended Distance edges of form (id, Distance, ENSEMBL)
+    - catlas_motifs (pandas DataFrame): Motif information of form (id, or_id, ENSEMBL, Consensus, p, number_of_peaks, Concentration, cell_id)
+    """
     catlas_celltype = pd.read_csv(os.getenv("_DEFAULT_CATLAS_PATH") + "/cell_infos.csv")
     or_ids = pd.read_csv(os.getenv("_DEFAULT_CATLAS_PATH") + "/ccre_id_dict.csv")
     tmp_or = or_ids.filter(items=["id"])
