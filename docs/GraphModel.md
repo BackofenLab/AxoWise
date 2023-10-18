@@ -1,129 +1,189 @@
 # Graph Model
 
-![Graph](./figs/model/graph_v5.4_presentation.png)
+![Graph](./figs/model/complete_graph_v6.3_transparent.png)
 
-## Node Types
-1. Celltype
-    * Properties:
-        - Name (String): Celltype Name
+**Networks:** 
+1. [Protein Network](#protein-network)
+2. [Regulatory Network]()
+3. [Functional Network]()
 
-2. Study
-    * Properties:
-        - Source (String): Source of the study (e.g. in-house)
+## Protein Network
+![Protein Network](./figs/model/protein_network_v6.3_transparent.png)
 
-3. Context
-    * Properties:
-        - Context (String): Specified context (e.g. 6h-0h, RC12h-12h etc.)
+### Node Types
+#### Protein
+Protein Node for every Protein in ENSEMBL and STRING
 
-4. FT (Functional Term)
-    * Properties:
-        - Term (String): Term of entity (e.g. GO:0007275)
-        - Category (String): Category of FT (e.g. Biological Process (Gene Ontology))
-        - Name (String): Name of FT (e.g. Multicellular organism development)
+###### Properties
+- ENSEMBL
+- SYMBOL
+- annotation
+- protein_size
 
-5. MeanCount (Placeholder node)
-    * Properties: None
+#### TG
+Gene node for every Gene in ENSEMBL
+##### TF
+Label indicates whether TG encodes transcription factor
 
-6. OR (Open Region)
-    * Properties:
-        - Annotation (String):
-        - Feature (String):
+###### Properties
+- ENSEMBL
+- SYMBOL
+- ENTREZID
+- annotation
 
-7. Source (Placeholder / Aggregation Node)
-    * Properties: None
-    
-8. TF (Transcription Factor) / TG (Target Gene)
-    * Properties:
-        - ENSEMBL (String): The ENSEMBL ID of the Entity
-        - ENTREZID (Integer): The Entez Gene ID
-        - SYMBOL (String): Symbol(s) of the Gene
-        - Annotation (String): Annotation / More info on the Gene
-    * Note: Transcription Factors have both TF and TG labels
+### Edge Types
+#### STRING
+STRING Association Score between [Protein](#protein) nodes
 
-## Relationships
+###### Properties
+- Score
 
-### Source-specific
+#### PRODUCT
+Links [TG](#tg) and [Protein](#protein) nodes, found in ENSEMBL files
 
-![DE Values](./figs/model/graph_v5.3_DE.png)
-![DA Values](./figs/model/graph_v5.3_DA.png)
-![Overview](./figs/model/graph_v5.3_overview.png)
+## Regulatory Network
+![Regulatory Network](./figs/model/regulatory_network_v6.3_transparent.png)
 
-1. HAS 
-    * Between:
-        - Celltype -> Source
-        - Study -> Source
-        - Source -> Context
-        - Source -> MeanCount
-    * Properties: None
+### Node Types
+#### Celltype
+High level Celltype (e.g. Microglia, Neuron, etc.)
 
-2. MEANCOUNT
-    * Between:
-        - MeanCount -> TG
-        - MeanCount -> OR
-    * Properties:
-        - Source (Integer): ID of Source node in DB
-        - Value (Float): Mean count value found in experiment
+###### Properties
+- name
 
-3. DE
-    * Between:
-        - Context -> TG
-    * Properties:
-        - Source (Integer): ID of Source node in DB
-        - Value (Float): DE Value found in experiment under specified Context
-        - p (Float): p value associated with the DE value
+#### Subtype
+Cell sub- and subsubtype (e.g. Gabaergic Neurons, Glutamatergic Neurons with specific characteristics)
 
-4. DA
-    * Between:
-        - Context -> OR
-    * Properties:
-        - Source (Integer): ID of Source node in DB
-        - Value (Float): DA Value found in experiment under specified Context
-        - p (Float): p value associated with the DA value
+###### Properties
+- name
 
-5. CORRELATION
-    * Between:
-        - TF -> TG
-        - OR -> TG
-    * Properties:
-        - Source (Integer): ID of Source node in DB
-        - Correlation (Float): Correlation Value found in experiment between two entities
+#### Source
+Source node to indicate Linking between Study and Celltype
 
+#### Study
+Representation of Study in Database. Can include Meta Information.
 
-### Source unspecific
+###### Properties
+- name
+- source
 
-![FT-TG](./figs/model/graph_v5.3_ft_tg.png)
-![FT-FT](./figs/model/graph_v5.3_ft_ft.png)
+#### Context
+Represents context under which experiment data on entities was found
 
-1. LINK
-    * Between:
-        - TG -> FT
-    * Properties: None
+##### Timeframe
+Label for DE / DA Values
 
-2. OVERLAP
-    * Between:
-        - FT -> FT
-    * Properties:
-        - Score (Float): Overlap score as previously computed by Victor (?)
+##### Location
+Label for Location based information
 
-3. STRING
-    * Between:
-        - TG -> TG
-    * Properties:
-        - Score (Integer): STRING Association Score between two Genes
+##### MeanCount
+Label for Mean count information
 
-4. MOTIF
-    * Between:
-        - TF -> OR
-    * Properties:
-        - Motif (String): Motif of OR that TF binds to
-    * Note: This information is not specific to the experiment
+###### Properties
+- Context
 
-5. DISTANCE
-    * Between:
-        - OR -> TG
-    * Properties:
-        - Distance (Integer): Distance between OR and TG
-    * Note: This information is not specific to the experiment
+#### TG
+Gene node for every Gene in ENSEMBL
+##### TF
+Label indicates whether TG encodes transcription factor
+
+###### Properties
+- ENSEMBL
+- SYMBOL
+- ENTREZID
+- annotation
+
+#### OR
+Open chromatin region nodes for ORs found in experiments
+
+###### Properties
+- id
+- annotation
+- feature
+
+### Edge Types
+#### HAS
+Connects [Celltype](#celltype)/[Subtype](#subtype) and [Study](#study) nodes with [Source](#source) nodes, and [Source](#source) nodes with [Context](#context) nodes
+
+#### IS
+Indicates hierarchical structure of Type of Cells (Parent is always the higher level [Cell-](#celltype)/[Subtype](#subtype))
+
+#### VALUE
+Includes Experiment Values, between [Context](#context) and Entity ([OR](#or) / [TG](#tg-1))
+
+###### Properties
+- Source
+- Value
+- p
+
+#### MOTIF
+Transcription factor Motif information, Connects TF and OR nodes
+
+###### Properties
+- Source
+- Concentration
+- Consensus
+- id
+- p
+- Dummy
+
+#### CORRELATION
+Correlation information found in experiments, Connects OR and TG, or TF and TG nodes
+
+###### Properties
+- Source
+- Correlation
+- p
+
+#### DISTANCE
+Distance between OR to nearest TG
+
+###### Properties
+- Distance
+- Dummy
+
+## Functional Network
+![Functional Network](./figs/model/functional_network_v6.3_transparent.png)
+
+### Node Types
+#### FT
+Functional Term nodes
+
+###### Properties
+- Category
+- Name
+- Proteins
+- Term
+
+#### TG
+Gene node for every Gene in ENSEMBL
+##### TF
+Label indicates whether TG encodes transcription factor
+
+###### Properties
+- ENSEMBL
+- SYMBOL
+- ENTREZID
+- annotation
+
+#### Protein
+Protein Node for every Protein in ENSEMBL and STRING
+
+###### Properties
+- ENSEMBL
+- SYMBOL
+- annotation
+- protein_size
+
+### Edge Types
+#### OVERLAP
+Connects FT nodes, with overlap score
+
+###### Properties
+- Score
+
+#### LINK
+Connects FT and TG or Protein nodes, represents association
 
 ## Statistics
 
@@ -172,4 +232,3 @@
 
 ## Notes
 
-Since some ENSEMBL Gene IDs are mapped to multiple ENSEMBL Protein IDs, and duplicate associations between traget genes were removed, the resulting number of STRING edges is smaller than that of the ASSOCIATION edges in the previous database. Additionally, for 66 Proteins in STRING no equivalent ENSEMBL Gene IDs were found.
