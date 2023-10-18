@@ -14,10 +14,13 @@ def parse_string(
     """
     Reads STRING files and returns a Pandas dataframe
     [
-      protein.links.v11.5.tsv,       protein.info.v11.5.tsv,
-      string_SYMBOL_ENSEMBL.tsv,     difference_mouse.csv
-      9606.protein.links.v11.5.tsv,  9606.protein.info.v11.5.tsv
-      difference_human.csv
+        "10090.protein.links.v12.0",
+        "10090.protein.info.v12.0",
+        "string_SYMBOL_ENSEMBL",
+        "difference_mouse",
+        "9606.protein.links.v12.0",
+        "9606.protein.info.v12.0",
+        "difference_human",
     ]
     """
 
@@ -202,7 +205,6 @@ def parse_string(
 
         gene_gene_scores = gene_gene_scores.drop_duplicates(keep="first")
         return (
-            gene_gene_scores.drop_duplicates(),
             genes_annotated.drop_duplicates(),
             proteins_annotated.drop_duplicates(),
             protein_protein_scores.drop_duplicates(),

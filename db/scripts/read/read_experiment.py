@@ -18,9 +18,7 @@ DA_CONTEXT = [
 ]
 
 
-def parse_experiment(
-    symbol_ensembl_dict: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT_EXPERIMENT_PATH"), reformat: bool = True
-):
+def parse_experiment(symbol_ensembl_dict: pd.DataFrame, dir_path: str = os.getenv("_DEFAULT_EXPERIMENT_PATH")):
     """
     Parses experiment files and returns list of Pandas DataFrames s.t.
     [ tg_nodes, tf_nodes, de_values, or_nodes, da_values, tf_tg_corr, tf_or_corr ]
@@ -43,13 +41,11 @@ def parse_experiment(
             file_name, file_extention = os.path.splitext(file)
             if file_extention == ".tsv":
                 df, index = _reformat_experiment_file(
-                    df=pd.read_csv(file, sep="\t"), file_name=file_name.split("/")[-1], reformat=reformat
+                    df=pd.read_csv(file, sep="\t"), file_name=file_name.split("/")[-1]
                 )
                 dataframes[index] = df
             elif file_extention == ".csv":
-                df, index = _reformat_experiment_file(
-                    df=pd.read_csv(file, sep=","), file_name=file_name.split("/")[-1], reformat=reformat
-                )
+                df, index = _reformat_experiment_file(df=pd.read_csv(file, sep=","), file_name=file_name.split("/")[-1])
                 dataframes[index] = df
         return dataframes
 
@@ -186,7 +182,7 @@ def parse_experiment(
     return post_processing(exp=exp)
 
 
-def _reformat_experiment_file(df: pd.DataFrame, file_name: str, reformat: bool):
+def _reformat_experiment_file(df: pd.DataFrame, file_name: str):
     print_update(update_type="Reformatting", text=file_name, color="orange")
 
     # Filename and function pairs: same index <-> use function for file
@@ -201,8 +197,6 @@ def _reformat_experiment_file(df: pd.DataFrame, file_name: str, reformat: bool):
     functions = [_reformat_da, _reformat_de, _reformat_tf_tg, _reformat_or_tg, _reformat_motif, _reformat_motif_info]
     index = names.index(file_name)
 
-    if not reformat:
-        return df, index
     return functions[index](df=df), index
 
 

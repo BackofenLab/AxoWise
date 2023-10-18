@@ -9,6 +9,7 @@ os.environ["_DEFAULT_EXPERIMENT_PATH"] = "../source/experiment"
 os.environ["_DEFAULT_STRING_PATH"] = "../source/string"
 os.environ["_DEFAULT_FUNCTIONAL_PATH"] = "../source/functional"
 os.environ["_DEFAULT_ENSEMBL_PATH"] = "../source/ensembl"
+os.environ["_DEFAULT_CATLAS_PATH"] = "../source/catlas"
 os.environ["_DEFAULT_CREDENTIALS_PATH"] = "../../config.yml"
 os.environ["_DEV_MAX_REL"] = str(10000)
 os.environ["_NEO4J_IMPORT_PATH"] = "/usr/local/bin/neo4j/import/"
@@ -22,7 +23,7 @@ os.environ["_ACCESS_NEO4J"] = str(True)
 
 @time_function
 def read_experiment_files(genes_annotated_mouse):
-    data = rd.reading(reformat=True, genes_annotated_mouse=genes_annotated_mouse, mode=0)
+    data = rd.reading(genes_annotated_mouse=genes_annotated_mouse, mode=0)
     return data
 
 
@@ -75,11 +76,9 @@ def upload_workflow():
     ) = read_ensembl_files()
 
     (
-        _,
         genes_annotated_mouse,
         proteins_annotated_mouse,
         protein_protein_scores_mouse,
-        _,
         genes_annotated_human,
         proteins_annotated_human,
         protein_protein_scores_human,

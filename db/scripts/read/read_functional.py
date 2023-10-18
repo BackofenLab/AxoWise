@@ -8,7 +8,12 @@ from alive_progress import alive_bar
 def parse_functional(dir_path: str = os.getenv("_DEFAULT_FUNCTIONAL_PATH")):
     """
     Reads Functional Terms files and returns a Pandas dataframe
-    [ functional_terms_overlap_mus_musculus.csv, AllPathways_mouse.csv, AllPathways_human.csv, functional_terms_overlap_homo_sapiens.csv]
+    [
+        "functional_terms_overlap_mus_musculus",
+        "AllPathways_mouse",
+        "functional_terms_overlap_homo_sapiens",
+        "AllPathways_human",
+    ]
     """
 
     def read_functional():

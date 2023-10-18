@@ -8,11 +8,16 @@ def parse_ensembl(dir_path: str = os.getenv("_DEFAULT_ENSEMBL_PATH")):
     """
     Reads ENSEMBL files and returns a Pandas dataframe
     [
-      Mus_musculus.GRCm39.109.ena.tsv,    Mus_musculus.GRCm39.109.entrez.tsv,
-      Mus_musculus.GRCm39.109.refseq.tsv, Mus_musculus.GRCm39.109.uniprot.tsv,
-      TFCheckpoint_download_180515.tsv,   lost_correlations_symbols,
-      Homo_sapiens.GRCh38.110.ena.tsv,    Homo_sapiens.GRCh38.110.entrez.tsv,
-      Homo_sapiens.GRCh38.110.refseq.tsv, Homo_sapiens.GRCh38.110.uniprot.tsv
+        "Mus_musculus.GRCm39.109.entrez",
+        "Mus_musculus.GRCm39.109.ena",
+        "Mus_musculus.GRCm39.109.refseq",
+        "Mus_musculus.GRCm39.109.uniprot",
+        "TFCheckpoint_download_180515",
+        "lost_correlations_symbols",
+        "Homo_sapiens.GRCh38.110.entrez",
+        "Homo_sapiens.GRCh38.110.ena",
+        "Homo_sapiens.GRCh38.110.refseq",
+        "Homo_sapiens.GRCh38.110.uniprot",
     ]
 
     """

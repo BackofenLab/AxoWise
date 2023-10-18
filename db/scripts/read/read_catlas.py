@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import numpy as np
 from utils import print_update
@@ -5,8 +6,8 @@ from alive_progress import alive_bar
 
 
 def parse_catlas(or_nodes: pd.DataFrame, distance: pd.DataFrame):
-    catlas_celltype = pd.read_csv("../source/catlas/cell_infos.csv")
-    or_ids = pd.read_csv("../source/catlas/ccre_id_dict.csv")
+    catlas_celltype = pd.read_csv(os.getenv("_DEFAULT_CATLAS_PATH") + "/cell_infos.csv")
+    or_ids = pd.read_csv(os.getenv("_DEFAULT_CATLAS_PATH") + "/ccre_id_dict.csv")
     tmp_or = or_ids.filter(items=["id"])
     tmp_or["annotation"] = np.NaN
     tmp_or["feature"] = np.NaN
@@ -25,7 +26,7 @@ def parse_catlas(or_nodes: pd.DataFrame, distance: pd.DataFrame):
 
     with alive_bar(len(catlas_celltype)) as bar:
         for name in catlas_celltype["name"]:
-            df_ccre = pd.read_csv(f"../source/catlas/ccre/{name}.bed", sep="\t", header=None)
+            df_ccre = pd.read_csv(os.getenv("_DEFAULT_CATLAS_PATH") + f"/ccre/{name}.bed", sep="\t", header=None)
             df_ccre.columns = ["chrom", "chromStart", "chromEnd", "name"]
             df_ccre["summit"] = round(df_ccre["chromStart"] + ((df_ccre["chromEnd"] - df_ccre["chromStart"]) / 2))
             df_ccre["summit"] = df_ccre["summit"].astype(int)
@@ -34,7 +35,7 @@ def parse_catlas(or_nodes: pd.DataFrame, distance: pd.DataFrame):
             catlas_or_context = pd.concat([catlas_or_context, df_ccre], ignore_index=True)
 
             df_motifs = (
-                pd.read_csv(f"../source/catlas/motifs/{name}_motifs.csv")
+                pd.read_csv(os.getenv("_DEFAULT_CATLAS_PATH") + f"/motifs/{name}_motifs.csv")
                 .filter(items=["id", "Motif", "Motif ID", "Log p", "Concentration", "ENSEMBL", "Dummy"])
                 .rename(columns={"id": "or_id", "Motif": "Consensus", "Motif ID": "id", "Log p": "p"})
             )
@@ -49,7 +50,7 @@ def parse_catlas(or_nodes: pd.DataFrame, distance: pd.DataFrame):
 
     print_update(update_type="Reformatting", text="cell_specific_correlation", color="orange")
 
-    catlas_correlation = pd.read_csv("../source/catlas/cell_specific_correlation.csv", sep="\t")
+    catlas_correlation = pd.read_csv(os.getenv("_DEFAULT_CATLAS_PATH") + "/cell_specific_correlation.csv", sep="\t")
     catlas_correlation = catlas_correlation.merge(or_ids, how="left", left_on="cCRE", right_on="name")
     catlas_correlation = catlas_correlation.filter(["id", "ENSEMBL", "Correlation", "Cell"]).rename(
         columns={"Cell": "cell_id"}
@@ -58,7 +59,7 @@ def parse_catlas(or_nodes: pd.DataFrame, distance: pd.DataFrame):
     print_update(update_type="Reformatting", text="gene_ccre_distance", color="orange")
 
     catlas_distance = (
-        pd.read_csv("../source/catlas/gene_ccre_distance.csv")
+        pd.read_csv(os.getenv("_DEFAULT_CATLAS_PATH") + "/gene_ccre_distance.csv")
         .merge(or_ids, left_on="cCRE", right_on="name", how="left")
         .filter(items=["id", "Distance", "ENSEMBL", "Dummy"])
         .dropna()
@@ -69,8 +70,6 @@ def parse_catlas(or_nodes: pd.DataFrame, distance: pd.DataFrame):
         .drop_duplicates(subset=["id", "ENSEMBL"], keep="first")
         .sort_values(by=["ENSEMBL"])
     )
-
-    print_update(update_type="Reformatting", text="tf_ccre_motif", color="orange")
 
     return (
         or_extended.drop_duplicates(),

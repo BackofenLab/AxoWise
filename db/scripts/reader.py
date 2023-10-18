@@ -10,7 +10,6 @@ from read.read_catlas import parse_catlas
 
 def reading(
     dir_path: str = None,
-    reformat: bool = True,
     mode: int = -1,
     complete_mouse: pd.DataFrame = pd.DataFrame([]),
     proteins_mouse: pd.DataFrame = pd.DataFrame([]),
@@ -38,7 +37,7 @@ def reading(
                 or_tg_corr,
                 motif,
                 distance,
-            ) = parse_experiment(symbol_ensembl_dict=symbol_ensembl_dict, dir_path=dir_path, reformat=reformat)
+            ) = parse_experiment(symbol_ensembl_dict=symbol_ensembl_dict, dir_path=dir_path)
 
             tg_mean_count.to_csv("../source/processed/tg_mean_count.csv", index=False)
             tf_mean_count.to_csv("../source/processed/tf_mean_count.csv", index=False)
@@ -82,11 +81,9 @@ def reading(
 
         if check_for_files(mode=mode):
             (
-                gene_gene_scores_mouse,
                 genes_annotated_mouse,
                 proteins_annotated_mouse,
                 protein_protein_scores_mouse,
-                gene_gene_scores_human,
                 genes_annotated_human,
                 proteins_annotated_human,
                 protein_protein_scores_human,
@@ -98,31 +95,25 @@ def reading(
                 proteins_human=proteins_human,
             )
 
-            gene_gene_scores_mouse.to_csv("../source/processed/gene_gene_scores_mouse.csv", index=False)
             genes_annotated_mouse.to_csv("../source/processed/genes_annotated_mouse.csv", index=False)
             protein_protein_scores_mouse.to_csv("../source/processed/protein_protein_scores_mouse.csv", index=False)
             proteins_annotated_mouse.to_csv("../source/processed/proteins_annotated_mouse.csv", index=False)
-            gene_gene_scores_human.to_csv("../source/processed/gene_gene_scores_human.csv", index=False)
             genes_annotated_human.to_csv("../source/processed/genes_annotated_human.csv", index=False)
             protein_protein_scores_human.to_csv("../source/processed/protein_protein_scores_human.csv", index=False)
             proteins_annotated_human.to_csv("../source/processed/proteins_annotated_human.csv", index=False)
 
         else:
-            gene_gene_scores_mouse = pd.read_csv("../source/processed/gene_gene_scores_mouse.csv")
             genes_annotated_mouse = pd.read_csv("../source/processed/genes_annotated_mouse.csv")
             proteins_annotated_mouse = pd.read_csv("../source/processed/proteins_annotated_mouse.csv")
             protein_protein_scores_mouse = pd.read_csv("../source/processed/protein_protein_scores_mouse.csv")
-            gene_gene_scores_human = pd.read_csv("../source/processed/gene_gene_scores_human.csv")
             genes_annotated_human = pd.read_csv("../source/processed/genes_annotated_human.csv")
             proteins_annotated_human = pd.read_csv("../source/processed/proteins_annotated_human.csv")
             protein_protein_scores_human = pd.read_csv("../source/processed/protein_protein_scores_human.csv")
 
         result = (
-            gene_gene_scores_mouse,
             genes_annotated_mouse,
             proteins_annotated_mouse,
             protein_protein_scores_mouse,
-            gene_gene_scores_human,
             genes_annotated_human,
             proteins_annotated_human,
             protein_protein_scores_human,
