@@ -2,6 +2,8 @@
 
 ![Graph](./figs/model/complete_graph_v6.3_transparent.png)
 
+[**Statistics**](#statistics)
+
 **Networks:** 
 1. [Protein Network](#protein-network)
 2. [Regulatory Network]()
@@ -117,7 +119,7 @@ Includes Experiment Values, between [Context](#context) and Entity ([OR](#or) / 
 - p
 
 #### MOTIF
-Transcription factor Motif information, Connects TF and OR nodes
+Transcription factor Motif information, Connects [TF](#tf-1) and [OR](#or) nodes
 
 ###### Properties
 - Source
@@ -128,7 +130,7 @@ Transcription factor Motif information, Connects TF and OR nodes
 - Dummy
 
 #### CORRELATION
-Correlation information found in experiments, Connects OR and TG, or TF and TG nodes
+Correlation information found in experiments, Connects [OR](#or) and [TG](#tg-1), or [TF](#tf-1) and [TG](#tg-1) nodes
 
 ###### Properties
 - Source
@@ -136,7 +138,7 @@ Correlation information found in experiments, Connects OR and TG, or TF and TG n
 - p
 
 #### DISTANCE
-Distance between OR to nearest TG
+Distance between [OR](#or) to nearest [TG](#tg-1)
 
 ###### Properties
 - Distance
@@ -177,29 +179,29 @@ Protein Node for every Protein in ENSEMBL and STRING
 
 ### Edge Types
 #### OVERLAP
-Connects FT nodes, with overlap score
+Connects [FT](#ft) nodes, with overlap score
 
 ###### Properties
 - Score
 
 #### LINK
-Connects FT and TG or Protein nodes, represents association
+Connects [FT](#ft) and [TG](#tg-2) or [Protein](#protein-1) nodes, represents association
 
 ## Statistics
 
 ### Nodes:
 | Type | old (Mouse) | new (Mouse)| new (Human) |
 | --- | --- | --- | --- |
-| Terms / (in new DB: FT) | 24.170 | 28.715 | 29.794 |
-| Proteins | 22.048 | 67.249 | 123.031 |
-| Target Genes (TG) | 0 | 22.478 | 23.900 |
-| Transcription Factors (TF, are also TGs) | 0 | 2.894 | 3.529 |
-| Open Regions (OR) | 0 | 1.431.123 | - |
-| Context | 0 | 24  | - |
-| Celltype | 0 | 16 | - |
-| Subtype | 0 | 209 | - |
-| Source | 0 | 216 | - |
-| Study | 0 | 2 | - |
+| Terms / (in new DB: [FT](#ft)) | 24.170 | 28.715 | 29.794 |
+| [Proteins](#protein) | 22.048 | 67.249 | 123.031 |
+| Target Genes ([TG](#tg)) | 0 | 22.478 | 23.900 |
+| Transcription Factors ([TF](#tf), are also TGs) | 0 | 2.894 | 3.529 |
+| Open Regions ([OR](#or)) | 0 | 1.431.123 | - |
+| [Context](#context) | 0 | 24  | - |
+| [Celltype](#celltype) | 0 | 16 | - |
+| [Subtype](#subtype) | 0 | 209 | - |
+| [Source](#source) | 0 | 216 | - |
+| [Study](#study) | 0 | 2 | - |
 | Total | 46.218 | 1.550.032 | 176.725 |
 
 #### Total Nodes in new DB: 1.726.757
@@ -207,25 +209,23 @@ Connects FT and TG or Protein nodes, represents association
 ### Edges:
 | Type | old (Mouse) | new (Mouse) | new (Human) |
 | --- | --- | --- | --- |
-| ASSOCIATION / (in new DB: STRING) | 7.248.179 | 6.342.177 | 6.857.702 |
-| CORRELATION (TG, TF) | 0 | 1.739.921 | 0 |
-| CORRELATION (TG, OR) | 0 | 4.066.833 | 0 |
-| VALUE (Timeframe, OR) | 0 | 533.220 | 0 |
-| VALUE (Location, OR) | 0 | 28.947.056  | 0 |
-| VALUE (MeanCount, OR) | 0 | 106.644 | 0 |
-| VALUE (Timeframe, TG) | 0 | 50.135 | 0 |
-| VALUE (MeanCount, TG) | 0 | 10.027 | 0 |
-| DISTANCE | 0 | 1.286.065 (with Dummies) | 0 |
+| ASSOCIATION / (in new DB: [STRING](#string)) | 7.248.179 | 6.342.177 | 6.857.702 |
+| [CORRELATION](#correlation) (TG, TF) | 0 | 1.739.921 | 0 |
+| [CORRELATION](#correlation) (TG, OR) | 0 | 4.066.833 | 0 |
+| [VALUE](#value) (Timeframe, OR) | 0 | 533.220 | 0 |
+| [VALUE](#value) (Location, OR) | 0 | 28.947.056  | 0 |
+| [VALUE](#value) (MeanCount, OR) | 0 | 106.644 | 0 |
+| [VALUE](#value) (Timeframe, TG) | 0 | 50.135 | 0 |
+| [VALUE](#value) (MeanCount, TG) | 0 | 10.027 | 0 |
+| [DISTANCE](#distance) | 0 | 1.286.065 (with Dummies) | 0 |
 | KAPPA | 81.676 | 0 (to be deprecated) | 0 |
-| LINK (Protein, FT) | 0 | 7.276.727 | 14.253.772 |
-| LINK (Gene, FT) | 0 | 2.104.222 | 2.112.933 |
-| MEANCOUNT (TG) | 0 | 10.027 | 0 |
-| MEANCOUNT (OR) | 0 | 106.644 | 0 |
-| MOTIF | 0 | 34.553.249 (with Dummies) | 0 |
-| OVERLAP | 0 | 4.584.738 | 4.754.455 |
-| PRODUCT | 0 | 66.953 | 122.614 |
-| HAS | 0 | 655 | - |
-| IS | 0 | 209 | - |
+| [LINK](#link) (Protein, FT) | 0 | 7.276.727 | 14.253.772 |
+| [LINK](#link) (Gene, FT) | 0 | 2.104.222 | 2.112.933 |
+| [MOTIF](#motif) | 0 | 34.553.249 (with Dummies) | 0 |
+| [OVERLAP](#overlap) | 0 | 4.584.738 | 4.754.455 |
+| [PRODUCT](#product) | 0 | 66.953 | 122.614 |
+| [HAS](#has) | 0 | 655 | - |
+| [IS](#is) | 0 | 209 | - |
 | Total | 7.329.855 | 91.668.831 | 28.101.476 |
 
 #### Total Edges in new DB: 119.770.307
