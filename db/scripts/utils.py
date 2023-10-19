@@ -104,7 +104,6 @@ def time_function(function):
                 else:
                     writer.writerow([function.__name__, end_time - start_time])
         return result
-
     return timing
 
 
@@ -211,11 +210,9 @@ def check_for_files(mode: int):
     elif mode == 1:
         # STRING
         return not (
-            os.path.exists("../source/processed/gene_gene_scores_mouse.csv")
-            and os.path.exists("../source/processed/genes_annotated_mouse.csv")
+            os.path.exists("../source/processed/genes_annotated_mouse.csv")
             and os.path.exists("../source/processed/protein_protein_scores_mouse.csv")
             and os.path.exists("../source/processed/proteins_annotated_mouse.csv")
-            and os.path.exists("../source/processed/gene_gene_scores_human.csv")
             and os.path.exists("../source/processed/genes_annotated_human.csv")
             and os.path.exists("../source/processed/protein_protein_scores_human.csv")
             and os.path.exists("../source/processed/proteins_annotated_human.csv")

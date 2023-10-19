@@ -247,7 +247,7 @@ Checks if files are in the ```source/processed/``` directory.
 **Important Functions:** [base_setup()](#base_setup), [catlas_extention()](#catlas_extention), [bulk_extention()](#bulk_extention)
 
 #### base_setup()
-This Function Sets up the base network (Protein, Gene nodes, TF labels, Protein-Gene Links, STRING associations, Functional Terms, Overlap, TG-FT und Protein-FT links, Distance between OR and TG). Uses [start_driver()](#start_driver), [stop_driver()](#stop_driver), [setup_base_db()](#setup_base_db)
+This Function Sets up the base network (Protein, Gene nodes, TF labels, Protein-Gene Links, STRING associations, Functional Terms, Overlap, TG-FT und Protein-FT links, Distance between OR and TG) from [ENSEMBL Mouse](https://ftp.ensembl.org/pub/current_tsv/mus_musculus/), [ENSEMBL Human](https://ftp.ensembl.org/pub/current_tsv/homo_sapiens/), [STRING Mouse](https://string-db.org/cgi/download?sessionId=bl9fRiGU0Q4X&species_text=Mus+musculus), [STRING Human](https://string-db.org/cgi/download?sessionId=bl9fRiGU0Q4X&species_text=Homo+sapiens), Baderlabs([Mouse](http://download.baderlab.org/EM_Genesets/current_release/Mouse/symbol/Mouse_GO_AllPathways_with_GO_iea_October_01_2023_symbol.gmt), [Human](http://download.baderlab.org/EM_Genesets/current_release/Human/symbol/Human_GO_AllPathways_with_GO_iea_October_01_2023_symbol.gmt)) and [KEGG](https://www.genome.jp/kegg/). Uses [start_driver()](#start_driver), [stop_driver()](#stop_driver), [setup_base_db()](#setup_base_db)
 
 ##### Input
 - species (String): Representing Species (i.e. "Mus_Musculus", "Homo_Sapiens")
