@@ -105,7 +105,7 @@ export default {
         top:50%;
         transform: translateY(-50%);
         margin-left: 48.74%;
-        border-radius: 10px;
+        border-radius: 5px;
         z-index: 999;
         font-family: 'ABeeZee', sans-serif;
     }
@@ -132,7 +132,7 @@ export default {
         height: 87.65%;
         top: 12.35%;
         display: flex;
-        border-radius: 10px;
+        border-radius: 5px;
         background: #0A0A1A;
         position: absolute;
         justify-content: center;

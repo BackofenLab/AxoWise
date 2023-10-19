@@ -122,7 +122,7 @@ export default {
         height: 9.41%;
         position: fixed;
         flex-shrink: 0;
-        border-radius: 10px 10px 0px 0px;
+        border-radius: 5px 5px 0px 0px;
         backdrop-filter: blur(7.5px);
         background: #D9D9D9;
         text-align: center;
@@ -139,7 +139,7 @@ export default {
         position: fixed;
         top: 9.41%;
         flex-shrink: 0;
-        border-radius: 0px 0px 10px 10px;
+        border-radius: 0px 0px 5px 5px;
         background: rgba(222, 222, 222, 0.61);
         backdrop-filter: blur(7.5px);
     }
