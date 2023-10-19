@@ -6,10 +6,10 @@
             <div class="menu-items">
                 <ToggleLabel></ToggleLabel>
                 <ConnectedGraph></ConnectedGraph>
+                <EdgeOpacity></EdgeOpacity>
                 <NodeLabelSelect
                 :type="screen_type"
                 ></NodeLabelSelect>
-                <!-- <EdgeOpacity></EdgeOpacity> -->
             </div>
             <div class="window-label">visualize de-value</div>
             <div class="menu-items">
@@ -34,7 +34,7 @@ import ExportGraph from '@/components/toolbar/modules/ExportGraph.vue'
 import NodeLabelSelect from '@/components/toolbar/modules/NodeLabelSelect.vue'
 import ConnectedGraph from '@/components/toolbar/modules/ConnectedGraph.vue'
 import ToggleLabel from '@/components/toolbar/modules/ToggleLabel.vue'
-// import EdgeOpacity from '@/components/toolbar/EdgeOpacity.vue'
+import EdgeOpacity from '@/components/toolbar/modules/EdgeOpacity.vue'
 
 export default {
     name: 'MenuWindow',
@@ -44,7 +44,7 @@ export default {
         ExportScreen,
         // DEValue,
         ExportGraph,
-        // EdgeOpacity,
+        EdgeOpacity,
         NodeLabelSelect,
         ConnectedGraph,
         ToggleLabel
