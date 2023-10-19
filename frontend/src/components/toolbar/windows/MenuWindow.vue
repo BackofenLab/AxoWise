@@ -1,11 +1,11 @@
 <template >
     <div>
-        <div class="menu-window" 
-            v-on:mouseleave="active_window(false);"
-            v-on:mouseover="active_window(true);">
+        <div class="menu-window">
 
             <div class="window-label">graph settings</div>
             <div class="menu-items">
+                <ToggleLabel></ToggleLabel>
+                <ConnectedGraph></ConnectedGraph>
                 <NodeLabelSelect
                 :type="screen_type"
                 ></NodeLabelSelect>
@@ -32,6 +32,8 @@ import ExportScreen from '@/components/toolbar/modules/ExportScreen.vue'
 // import DEValue from '@/components/toolbar/DEValue.vue'
 import ExportGraph from '@/components/toolbar/modules/ExportGraph.vue'
 import NodeLabelSelect from '@/components/toolbar/modules/NodeLabelSelect.vue'
+import ConnectedGraph from '@/components/toolbar/modules/ConnectedGraph.vue'
+import ToggleLabel from '@/components/toolbar/modules/ToggleLabel.vue'
 // import EdgeOpacity from '@/components/toolbar/EdgeOpacity.vue'
 
 export default {
@@ -43,18 +45,15 @@ export default {
         // DEValue,
         ExportGraph,
         // EdgeOpacity,
-        NodeLabelSelect
+        NodeLabelSelect,
+        ConnectedGraph,
+        ToggleLabel
 
     },
     data() {
         return {
         }
     },
-    methods: {
-        active_window(state) {
-            this.$emit("tools_active_changed", state);
-        }
-    }
 }
 </script>
 
@@ -98,6 +97,7 @@ export default {
 .tool-item {
     font-family: 'ABeeZee', sans-serif;
     font-size: 1vw;
+    display: flex;
 
 }
 

@@ -52,8 +52,8 @@ import TermVis from '@/components/visualization/TermVis.vue'
 import TermPaneSystem from '@/components/term_graph/TermPaneSystem.vue'
 import GraphSelection from '@/components/term_graph/GraphSelection.vue'
 import TermToolBar from '@/components/term_graph/TermToolBar.vue'
-import ToggleLabel from '../components/interface/ToggleLabel.vue'
-import ConnectedGraph from '../components/interface/ConnectedGraph.vue'
+import ToggleLabel from '../components/toolbar/modules/ToggleLabel.vue'
+import ConnectedGraph from '../components/toolbar/modules/ConnectedGraph.vue'
 import ModularityClass from '../components/interface/ModularityClass.vue'
 
 export default {

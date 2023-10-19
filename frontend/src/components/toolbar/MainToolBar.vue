@@ -24,7 +24,7 @@
         </ul>
         <MenuWindow v-if="tools_active"
         v-on:mouseover="tools_active=true"
-        v-on:mouseleave="tools_active=false"
+        v-on:mouseleave="tools_active=true"
         :tools_active = 'tools_active'
         @tools_active_changed = 'tools_active = $event'
         ></MenuWindow>
