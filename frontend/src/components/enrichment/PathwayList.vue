@@ -280,7 +280,7 @@ export default {
         top:50%;
         transform: translateY(-50%);
         margin-left: 0.28%;
-        border-radius: 10px;
+        border-radius: 5px;
         z-index: 997;
         cursor: default;
         font-family: 'ABeeZee', sans-serif;
@@ -402,7 +402,7 @@ export default {
         width: 100%;
         height: 87.65%;
         top: 12.35%;
-        border-radius: 10px;
+        border-radius: 5px;
         background: #0A0A1A;
         position: absolute;
         padding: 0% 2% 2% 2%;

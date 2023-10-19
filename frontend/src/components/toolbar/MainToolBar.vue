@@ -4,7 +4,7 @@
             <li v-on:click="switch_home()">
                 <img src="@/assets/toolbar/home.png" alt="Home Icon">
             </li>
-            <li v-on:click="protein_active=true">
+            <li v-on:click="protein_active=!protein_active">
                 <img src="@/assets/toolbar/proteinselect.png" alt="Search Icon">
             </li>
             <li v-on:mouseover="tools_active=true"
@@ -23,6 +23,8 @@
             </li>
         </ul>
         <MenuWindow v-if="tools_active"
+        v-on:mouseover="tools_active=true"
+        v-on:mouseleave="tools_active=false"
         :tools_active = 'tools_active'
         @tools_active_changed = 'tools_active = $event'
         ></MenuWindow>
@@ -36,7 +38,6 @@
 <script>
 
 import MenuWindow from '@/components/toolbar/windows/MenuWindow.vue'
-// import ProteinList from '@/components/toolbar/ProteinList.vue'
 import ProteinList from '@/components/toolbar/modules/ProteinList.vue'
 
 export default {
@@ -51,37 +52,13 @@ export default {
         return {
             tools_active: false,
             protein_active: false,
-            screen_type: "protein",
-            snapshot: null,
-            status: false,
-            raw_text: "",
-            selection_status: false,
-            protein_list: null,
         }
     },
     methods: {
-        switch_terms() {
-            if(this.$store.state.term_graph_data != null){
-                this.$router.push("terms")
-            }
-        },
         switch_home() {
             this.$router.push('/').then(() => {
                 window.location.reload();
             });
-        },
-        highlight(proteins) {
-            var com = this
-
-            const protein_names = new Set(proteins.toUpperCase().split("\n"))
-            const subset = []
-            com.gephi_data.nodes.forEach(node => {
-                if(protein_names.has(node.attributes['Name'].toUpperCase())){
-                    subset.push(node)
-                }
-            });
-
-            com.$emit("active_subset_changed", subset);
         },
         center() {
             this.emitter.emit("centerGraph", true);
@@ -89,9 +66,6 @@ export default {
         threeview() {
             this.emitter.emit("threeView");
         },
-        open_proteinlist() {
-
-        }
     }
 }
 </script>
