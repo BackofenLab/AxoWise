@@ -18,7 +18,7 @@ os.environ["_FUNCTION_TIME_PATH"] = "../source/timing/function_times.tsv"
 os.environ["_TIME_FUNCTIONS"] = str(False)
 os.environ["_SILENT"] = str(False)
 os.environ["_PRODUCTION"] = str(True)
-os.environ["_ACCESS_NEO4J"] = str(True)
+os.environ["_ACCESS_NEO4J"] = str(False)
 
 
 @time_function
@@ -257,6 +257,6 @@ def upload_workflow():
 
 
 if __name__ == "__main__":
-    # upload_workflow()
+    upload_workflow()
     # run_queries()
     pass

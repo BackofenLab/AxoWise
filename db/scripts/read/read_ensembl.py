@@ -17,7 +17,7 @@ def parse_ensembl(dir_path: str = os.getenv("_DEFAULT_ENSEMBL_PATH")):
     - Mus_musculus.GRCm39.109.refseq.tsv
     - Mus_musculus.GRCm39.109.uniprot.tsv
     - TFCheckpoint_download_180515.tsv
-    - lost_correlations_symbols
+    - lost_correlations_symbols.csv
     - Homo_sapiens.GRCh38.110.entrez.tsv
     - Homo_sapiens.GRCh38.110.ena.tsv
     - Homo_sapiens.GRCh38.110.refseq.tsv
@@ -42,6 +42,10 @@ def parse_ensembl(dir_path: str = os.getenv("_DEFAULT_ENSEMBL_PATH")):
             if file_extention == ".tsv":
                 df, index = _reformat_ensembl_term_file(
                     df=pd.read_csv(file, sep="\t"), file_name=file_name.split("/")[-1]
+                )
+            elif file_extention == ".csv":
+                df, index = _reformat_ensembl_term_file(
+                    df=pd.read_csv(file, sep=","), file_name=file_name.split("/")[-1]
                 )
             dataframes[index] = df
         return dataframes
