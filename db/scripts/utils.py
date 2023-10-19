@@ -104,6 +104,7 @@ def time_function(function):
                 else:
                     writer.writerow([function.__name__, end_time - start_time])
         return result
+
     return timing
 
 
