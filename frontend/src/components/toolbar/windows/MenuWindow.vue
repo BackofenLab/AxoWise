@@ -13,7 +13,7 @@
             </div>
             <div class="window-label">visualize de-value</div>
             <div class="menu-items">
-                <!-- <DEValue></DEValue> -->
+                <DEValue></DEValue>
             </div>
             <div class="window-label">export graph</div>
             <div class="menu-items">
@@ -29,7 +29,7 @@
 <script>
 
 import ExportScreen from '@/components/toolbar/modules/ExportScreen.vue'
-// import DEValue from '@/components/toolbar/DEValue.vue'
+import DEValue from '@/components/toolbar/modules/DEValue.vue'
 import ExportGraph from '@/components/toolbar/modules/ExportGraph.vue'
 import NodeLabelSelect from '@/components/toolbar/modules/NodeLabelSelect.vue'
 import ConnectedGraph from '@/components/toolbar/modules/ConnectedGraph.vue'
@@ -42,7 +42,7 @@ export default {
     emits:['tools_active_changed'],
     components: {
         ExportScreen,
-        // DEValue,
+        DEValue,
         ExportGraph,
         EdgeOpacity,
         NodeLabelSelect,

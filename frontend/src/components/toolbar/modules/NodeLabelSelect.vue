@@ -30,7 +30,7 @@ export default {
 
 #reset-labels {
 	width: 9%;
-    height: 7%;
+    height: 6%;
 	position: absolute;
     right:6.3%;
 	margin-top: 0.1vw;
