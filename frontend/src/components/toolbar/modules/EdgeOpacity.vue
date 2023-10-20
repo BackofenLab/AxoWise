@@ -63,7 +63,7 @@ input[type=number] {
     width: 9%;
     border-radius: 5px;
     border: none;
-    height: 7%;
+    height: 6%;
     font-family: 'ABeeZee', sans-serif;
     font-size: 0.7vw;
     color:  #0A0A1A;
