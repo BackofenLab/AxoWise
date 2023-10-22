@@ -8,7 +8,6 @@
                 <ConnectedGraph></ConnectedGraph>
                 <EdgeOpacity></EdgeOpacity>
                 <NodeLabelSelect
-                :type="screen_type"
                 ></NodeLabelSelect>
             </div>
             <div class="window-label">visualize de-value</div>
@@ -18,7 +17,6 @@
             <div class="window-label">export graph</div>
             <div class="menu-items">
                 <ExportScreen
-                :type="screen_type"
                 ></ExportScreen>
                 <ExportGraph></ExportGraph>
             </div>
@@ -75,6 +73,7 @@ export default {
     border-top-color: rgba(255, 255, 255, 30%);
     border-top-width: 1px;
     border-top-style: solid;
+    cursor: default;
 }
 
 .menu-items {

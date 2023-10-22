@@ -22,9 +22,9 @@
                 <img src="@/assets/toolbar/3d-icon.png" alt="3D Icon">
             </li>
         </ul>
-        <MenuWindow v-if="tools_active"
+        <MenuWindow v-show="tools_active"
         v-on:mouseover="tools_active=true"
-        v-on:mouseleave="tools_active=true"
+        v-on:mouseleave="tools_active=false"
         :tools_active = 'tools_active'
         @tools_active_changed = 'tools_active = $event'
         ></MenuWindow>

@@ -136,7 +136,7 @@ export default {
 #protein_highlight_header .headertext span{
     height: 100%;
     display: flex;
-    font-size: 12px;
+    font-size: 0.9vw;
     align-items: center;
 }
 
@@ -151,7 +151,7 @@ export default {
 .highlight_list textarea {
     margin-top: 5%;
 	border-radius: 5px;
-	font-size: 12px;
+	font-size: 0.9vw;
     width: 90%;
 	color: white;
 	background-color:  rgba(10, 10, 26, 0.5);
