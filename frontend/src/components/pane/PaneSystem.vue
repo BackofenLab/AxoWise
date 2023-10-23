@@ -1,25 +1,21 @@
 <template>
-    <div id="attributepane" class="pane" v-show="active_node !== null || active_subset !== null || active_term !== null || active_decoloumn !== null || active_termlayers !== null ||paneHidden == false">
-        <div class="buttons">
-            <button id="panebutton" v-on:click="open_pane()">
-                <img id="collapse-icon" src="@/assets/toolbar/winkel-rechts.png" alt="Collapse Icon">
-            </button>
-            <button id="paneclosebutton" v-on:click="close_pane()">
-                <img src="@/assets/toolbar/cross.png" alt="Close Icon">
-            </button>
-            <div class="tabs">
-                <button v-for="(tab, name) in active_dict" :key="name" @click="selectTab(name,tab.value)">
-                    <img :src="tab.imageSrc" class="tab_button">
-                </button>
-            </div>
+    <div v-show="active_node !== null || active_subset !== null || active_term !== null || active_decoloumn !== null || active_termlayers !== null ||paneHidden == false">
+    <div id="attributepane" class="pane">
+        <div class="headertext">
+            <span>{{active_tab}}</span>
+            <img  class="pane_close" src="@/assets/pathwaybar/cross.png" v-on:click="close_pane()">
         </div>
-        <div class="main-section">
-            <NodePane v-show="active_tab === 'node'"
+    </div>
+    <div class="pane-window">
+        <NodePane v-show="active_tab === 'Protein'"
             :active_node='active_node' 
             :node_color_index='node_color_index'
             :gephi_data='gephi_data'
             @active_item_changed = 'active_item = $event'
-            ></NodePane>
+        ></NodePane>
+    </div>
+        <!-- <div class="main-section">
+
             <TermPane v-show="active_tab === 'term'" 
             :active_term='active_term' 
             :gephi_data='gephi_data'
@@ -43,17 +39,17 @@
             :gephi_data='gephi_data'
             @active_item_changed = 'active_item = $event'
             ></EnrichmentLayerPane>
-        </div>
+        </div> -->
     </div>
 </template>
 
 <script>
 
-import NodePane from '@/components/pane/NodePane.vue'
-import TermPane from '@/components/pane/TermPane.vue'
-import SubsetPane from '@/components/pane/SubsetPane.vue'
-import DEValuePane from '@/components/pane/DEValuePane.vue'
-import EnrichmentLayerPane from '@/components/pane/EnrichmentLayerPane.vue'
+import NodePane from '@/components/pane/modules/NodePane.vue'
+// import TermPane from '@/components/pane/modules/TermPane.vue'
+// import SubsetPane from '@/components/pane/modules/SubsetPane.vue'
+// import DEValuePane from '@/components/pane/modules/DEValuePane.vue'
+// import EnrichmentLayerPane from '@/components/pane/modules/EnrichmentLayerPane.vue'
 
 export default {
     name:"PaneSystem",
@@ -61,16 +57,16 @@ export default {
     emits:['active_node_changed','active_term_changed', 'active_subset_changed', 'active_combine_changed', 'active_layer_changed', 'active_termlayers_changed'],
     components: {
         NodePane,
-        TermPane,
-        SubsetPane,
-        DEValuePane,
-        EnrichmentLayerPane
+        // TermPane,
+        // SubsetPane,
+        // DEValuePane,
+        // EnrichmentLayerPane
     },
     data() {
         return{
             active_item: null,
             active_dict: {},
-            active_tab: "node",
+            active_tab: "Protein",
             highlight_subset: null,
             paneHidden: true
         }
@@ -176,18 +172,62 @@ export default {
 </script>
 
 <style>
-.buttons button img {
-    width: 10px;
-    filter: invert(1);
-}
-.rotate {
-  transform: rotate(180deg);
-}
-.tabs button {
-    margin-top: 10px;
+
+.pane {
+    position: absolute;
+    right: 3.515%;
+    border-radius: 5px 5px 0 0;
+    height: 3.98%;
+    width: 17.9%;
+    display: block;
+    background: #D9D9D9;
+    backdrop-filter: blur(7.5px);
+    -webkit-backdrop-filter: blur(7.5px);
+    align-items: center;
+    padding: 0 10px;
+    z-index: 99;
 }
 
-.buttons .tabs button img{
-    width: 20px;
+.pane-window {
+    position: absolute;
+    right: 3.515%;
+    height: 61%;
+    width: 17.9%;
+    top: 5.78%;
+    padding: 0.3% 0 0.3% 0;
+    border-radius: 0 0 5px 5px;
+    background: rgba(222, 222, 222, 0.61);
+    backdrop-filter: blur(7.5px);
+	overflow-y: scroll;
+	overflow-x: hidden;
+	color: white;
+    border-top-color: rgba(255, 255, 255, 30%);
+    border-top-width: 1px;
+    border-top-style: solid;
+    cursor: default;
 }
+
+.pane .headertext{
+	color:  #0A0A1A;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.pane .headertext span{
+    height: 100%;
+    display: flex;
+    font-size: 0.9vw;
+    font-family: 'ABeeZee', sans-serif;
+    align-items: center;
+}
+
+.pane .pane_close{
+    right: 3%;
+    width: 0.9vw;
+    height: 0.9vw;
+    filter: invert(100%);
+    position: absolute;
+}
+
 </style>

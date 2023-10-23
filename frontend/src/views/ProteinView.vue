@@ -20,19 +20,6 @@
       ></MainVis>
       </keep-alive>
       <keep-alive>
-      <PaneSystem
-        :active_node='active_node' @active_node_changed = 'active_node = $event'
-        :active_term='active_term' @active_term_changed = 'active_term = $event'
-        :active_subset='active_subset' @active_subset_changed = 'active_subset = $event'
-        :active_decoloumn='active_decoloumn' @active_decoloumn_changed = 'active_decoloumn = $event'
-        :active_termlayers='active_termlayers' @active_termlayers_changed = 'active_termlayers = $event'
-        @active_layer_changed = 'active_layer = $event'
-        @active_combine_changed = 'active_combine = $event'
-        :gephi_data='gephi_data'
-        :node_color_index='node_color_index'
-      ></PaneSystem>
-    </keep-alive>
-      <keep-alive>
       <PathwayMenu
         :gephi_data='gephi_data'
         @active_term_changed = 'active_term = $event'
@@ -50,6 +37,17 @@
         :gephi_data='gephi_data'
         :active_node='active_node' @active_node_changed = 'active_node = $event'
         ></SearchField>
+        <PaneSystem
+        :active_node='active_node' @active_node_changed = 'active_node = $event'
+        :active_term='active_term' @active_term_changed = 'active_term = $event'
+        :active_subset='active_subset' @active_subset_changed = 'active_subset = $event'
+        :active_decoloumn='active_decoloumn' @active_decoloumn_changed = 'active_decoloumn = $event'
+        :active_termlayers='active_termlayers' @active_termlayers_changed = 'active_termlayers = $event'
+        @active_layer_changed = 'active_layer = $event'
+        @active_combine_changed = 'active_combine = $event'
+        :gephi_data='gephi_data'
+        :node_color_index='node_color_index'
+        ></PaneSystem>
       </div>
     </keep-alive>
       <keep-alive>
