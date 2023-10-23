@@ -773,7 +773,7 @@ export default {
       .nodeLabel(node => `${node.label}`)
       .enableNodeDrag(false)
       .nodeAutoColorBy('group')
-      .backgroundColor('rgb(0,0,0)')
+      .backgroundColor('#0A0A1A')
       .linkWidth(2)
       .showNavInfo(false)
       .onNodeClick(node => this.activeNode(node));
