@@ -620,154 +620,6 @@ html,body{
 }
 
 
-.pane .text {
-	overflow:hidden;
-	height:101.5%;
-	padding: 5px;
-	text-align: center;
-}
-
-.pane .headertext {
-	color: white;
-	background-color: rgba(0, 0, 0, 0.5);
-	border-radius: 20px;
-	padding: 10px;
-	font-size:16px;
-	margin-bottom: 20px;
-	text-align: center;
-	font-weight:bold;
-}
-
-.pane .nodeattributes {
-	display:block;
-	height:90.5%;
-	padding: 5px;
-	border-radius: 20px;
-	background-color: rgba(0, 0, 0, 0.2);
-	overflow-y: scroll;
-	overflow-x: hidden;
-}
-
-.pane .name {
-	font-size: 14px;
-	cursor: default;
-	padding:5px;
-	width: 50%;
-	text-align: center;
-	border-radius: 20px;
-	background-color: rgba(0, 0, 0, 0.5);
-	font-weight:bold;
-	margin-left: 25%;
-}
-
-.pane .name_term {
-	font-size: 14px;
-	cursor: default;
-	padding:5px;
-	width: 90%;
-	text-align: center;
-	border-radius: 20px;
-	background-color: rgba(0, 0, 0, 0.5);
-	font-weight:bold;
-	margin-left: 5%;
-}
-
-.pane .data {
-	padding-top: 10px;
-	text-align: center;
-	display: block;
-	margin-bottom: 10px;
-}
-
-.pane .link {
-	text-align: center;
-	padding: 0 0 0 4px;
-}
-
-.pane .link li {
-	padding-top: 2px;
-	cursor:pointer;
-}
-
-.pane .link a {
-	color: white;
-	text-decoration: none;
-}
-
-.pane .statistics {
-	text-align: center;
-	padding: 0 0 0 4px;
-	font-size: 12px;
-}
-
-.pane .statistics li {
-	padding-top: 2px;
-	cursor:pointer;
-}
-
-.pane .statistics a {
-	color: white;
-	text-decoration: none;
-}
-
-.pane #edges a {
-	color: white;
-	font-size: 9px;
-	text-decoration: none;
-	display: block;
-	border-radius: 20px;
-	text-align: center;
-	padding: 7px;
-}
-.pane #edges .edge {
-	color: white;
-	text-decoration: none;
-	background-color: rgba(0, 0, 0, 0.2);
-	border-radius: 20px;
-	text-align: center;
-	padding: 5px;
-}
-
-.pane .p {
-	color: white;
-	background-color: rgba(0, 0, 0, 0.5);
-	border-radius: 20px;
-	padding: 5px;
-	font-size:14px;
-	margin-bottom: 5px;
-	display: inline-block;
-	width: 100%;
-}
-.pane .p2 {
-	color: white;
-	background-color: rgba(0, 0, 0, 0.5);
-	border-radius: 20px;
-	padding: 5px;
-	font-size:14px;
-	top: 50%;
-	margin-bottom: 5px;
-	margin-top:20px;
-}
-
-.pane select {
-	font-family: 'Roboto Mono', monospace;
-	text-align: center;
-	width: 50%;
-	color: white;
-	margin-left: 25%;
-	margin-top: 20px;
-	border: none;
-	padding: 3px;
-	cursor: pointer;
-	font-size: 10px;
-	appearance: none;
-	border-radius: 20px;
-	background-color: rgba(255,255,255,.2);
-	transition: 0.5s;
-}
-
-
-
 #export-all-btn{
 	background-color: rgba(0, 0, 0, 0.5) ;
 	margin-top: 5px;
@@ -1547,23 +1399,6 @@ display: none;
 	overflow: hidden;
 }
 
-/* Information panes for information display */
-.pane {
-	position: absolute;
-	display: flex;
-    bottom:0;
-    top:0;
-    right: 10px;
-	height: 80%;
-	width: 350px;
-	overflow: hidden;
-	margin-top: 50px;
-	border-radius: 20px;
-	word-wrap: break-word;
-	padding: 2px;
-	z-index: 1;
-	color: white;
-}
 
 .p button, .p2 button {
 	background-color: rgba(255, 255, 255, 0.1);
@@ -1575,11 +1410,6 @@ display: none;
 	padding: 3px;
 }
 
-.pane .buttons {
-	display: block;
-	margin: 10px 5px 10px 0;
-
-}
 
 #paneclosebutton, #termpaneclosebutton, #subsetpaneclosebutton {
 

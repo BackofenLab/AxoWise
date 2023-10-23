@@ -34,7 +34,7 @@
                         v-on:change="searchSubset()"
                     />
                 </div>
-                <div class="window-label">page rank value</div>
+                <div class="window-label">padj value</div>
                 <div class="menu-items">
                     <input 
                         type="range"
@@ -50,7 +50,7 @@
                         v-on:change="searchSubset()"
                     />
                 </div>
-                <div class="window-label">padj value</div>
+                <div class="window-label">page rank value</div>
                 <div class="menu-items">
                     <input
                         type="range"
