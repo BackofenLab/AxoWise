@@ -1,11 +1,11 @@
 <template>
     <div class="tool-item">
-        <div id="protein_highlight">
+        <div id="protein_highlight" class="window-menu">
             <div class="highlight_list">
                     <textarea v-model="raw_text" rows="10" cols="30" autofocus></textarea>
                     <button v-on:click="highlight(raw_text)" id="highlight_protein">search</button>
             </div>  
-            <div id="protein_highlight_header">
+            <div id="protein_highlight_header" class="window-header">
                 <div class="headertext">
                     <span>highlight proteins</span>
                     <img  class="protein_close" src="@/assets/pathwaybar/cross.png" v-on:click="unactive_proteinlist()">
@@ -19,11 +19,11 @@
 
 export default {
     name: 'ProteinList',
+    props: ['gephi_data'],
     emits: ['protein_active_changed'],
     data() {
         return {
             raw_text: "",
-            protein_data: this.$store.state.gephi_json.data,
         }
     },
     methods: {
@@ -76,7 +76,7 @@ export default {
 
             const protein_names = new Set(proteins.toUpperCase().split("\n"))
             const subset = []
-            com.protein_data.nodes.forEach(node => {
+            com.gephi_data.nodes.forEach(node => {
                 if(protein_names.has(node.attributes['Name'])){
                     subset.push(node)
                 }
@@ -95,7 +95,7 @@ export default {
 
 <style>
 
-#protein_highlight {
+.window-menu {
     position: fixed;
     top: 30%;
     left: 42%;
@@ -115,7 +115,7 @@ export default {
     text-align: center;
 }
 
-#protein_highlight_header {
+.window-header {
     width: 100%;
     height: 9.41%;
     position: absolute;
@@ -126,21 +126,21 @@ export default {
     text-align: center;
 }
 
-#protein_highlight_header .headertext{
+.window-header .headertext{
 	color:  #0A0A1A;
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-#protein_highlight_header .headertext span{
+.window-header .headertext span{
     height: 100%;
     display: flex;
     font-size: 0.9vw;
     align-items: center;
 }
 
-#protein_highlight_header .protein_close{
+.window-header .protein_close{
     right: 3%;
     width: 0.9vw;
     height: 0.9vw;

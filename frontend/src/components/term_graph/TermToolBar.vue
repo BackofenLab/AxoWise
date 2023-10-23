@@ -23,9 +23,9 @@
             <div class="menu-items">
                 <ExportScreen :type="screen_type"></ExportScreen>
                 <NodeLabelSelect :type="screen_type"></NodeLabelSelect>
-                <SelectionWindow
+                <!-- <SelectionWindow
                 @selection_status_changed = 'selection_status = $event'
-                ></SelectionWindow>
+                ></SelectionWindow> -->
                 <FDRValue></FDRValue>
                 <TermConnectedGraph></TermConnectedGraph>
             </div>
@@ -70,7 +70,7 @@ import NodeLabelSelect from '@/components/toolbar/modules/NodeLabelSelect.vue'
 import TermConnectedGraph from '@/components/term_graph/TermConnectedGraph.vue'
 import TermSearch from '@/components/term_graph/TermSearch.vue'
 import FDRValue from '@/components/term_graph/FDRValue.vue'
-import SelectionWindow from '@/components/toolbar/modules/SelectionWindow.vue'
+// import SelectionWindow from '@/components/toolbar/modules/SelectionWindow.vue'
 import SelectionList from '@/components/toolbar/modules/SelectionList.vue'
 
 
@@ -84,7 +84,7 @@ export default {
         TermSearch,
         FDRValue,
         NodeLabelSelect,
-        SelectionWindow,
+        // SelectionWindow,
         SelectionList
 
     },
