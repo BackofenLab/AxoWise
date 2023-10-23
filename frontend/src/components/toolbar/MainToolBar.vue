@@ -11,8 +11,7 @@
                 v-on:mouseleave="tools_active=false">
                 <img src="@/assets/toolbar/menu-burger.png" alt="Tool Icon">
             </li>
-            <li v-on:mouseover="tools_active=true"
-                v-on:mouseleave="tools_active=false">
+            <li v-on:click="selection_active=!selection_active">
                 <img src="@/assets/toolbar/settings-sliders.png" alt="Graph Icon">
             </li>
             <li v-on:click="center()">
@@ -28,7 +27,12 @@
         :tools_active = 'tools_active'
         @tools_active_changed = 'tools_active = $event'
         ></MenuWindow>
-        <ProteinList v-if="protein_active"
+        <SelectionList v-show="selection_active"
+        :gephi_data = 'gephi_data'
+        @selection_active_changed = 'selection_active = $event'>
+        </SelectionList>
+        <ProteinList v-show="protein_active"
+        :gephi_data = 'gephi_data'
         @protein_active_changed = 'protein_active = $event'>
         </ProteinList>
 
@@ -39,6 +43,7 @@
 
 import MenuWindow from '@/components/toolbar/windows/MenuWindow.vue'
 import ProteinList from '@/components/toolbar/modules/ProteinList.vue'
+import SelectionList from '@/components/toolbar/modules/SelectionList.vue'
 
 export default {
     name: 'MainToolBar',
@@ -47,11 +52,13 @@ export default {
     components: {
         MenuWindow,
         ProteinList,
+        SelectionList
     },
     data() {
         return {
             tools_active: false,
             protein_active: false,
+            selection_active: false,
         }
     },
     methods: {

@@ -1,6 +1,7 @@
 <template>
     <div>
         <div class="tool-item">
+            <div class="opacity">
                 <span>Background edge opacity</span>
                 <input class="opacity-input"
                     type="number"
@@ -10,17 +11,20 @@
                     v-model="opacityBackground.value"
                     v-on:change="change_opacity('background')"
                 />
+            </div>
         </div>
         <div class="tool-item">
-            <span>Highlighted edge opacity</span>
-            <input class="opacity-input"
-                type="number"
-                v-bind:min="opacityHighlight.min"
-                v-bind:max="opacityHighlight.max"
-                v-bind:step="opacityHighlight.step"
-                v-model="opacityHighlight.value"
-                v-on:change="change_opacity('highlight')"
-            />
+            <div class="opacity">
+                <span>Highlighted edge opacity</span>
+                <input class="opacity-input"
+                    type="number"
+                    v-bind:min="opacityHighlight.min"
+                    v-bind:max="opacityHighlight.max"
+                    v-bind:step="opacityHighlight.step"
+                    v-model="opacityHighlight.value"
+                    v-on:change="change_opacity('highlight')"
+                />
+            </div>
         </div>
     </div>
 </template>
@@ -56,7 +60,7 @@ export default {
 </script>
 
 <style>
-input[type=number] { 
+.opacity input[type=number] { 
     position: absolute;
     margin-top:0.1vw;
     right: 6.3%;
