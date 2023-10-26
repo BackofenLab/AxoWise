@@ -194,12 +194,9 @@ export default {
     height: 61%;
     width: 17.9%;
     top: 5.78%;
-    padding: 0.3% 0 0.3% 0;
     border-radius: 0 0 5px 5px;
     background: rgba(222, 222, 222, 0.61);
     backdrop-filter: blur(7.5px);
-	overflow-y: scroll;
-	overflow-x: hidden;
 	color: white;
     border-top-color: rgba(255, 255, 255, 30%);
     border-top-width: 1px;

@@ -1,39 +1,34 @@
 <template>
     <div class="text" v-if="active_node !== null">
-        <div class="headertext">
-            <span>{{active_node.attributes['Name']}}</span>
-        </div>
+        <div id="colorbar" :style="{ backgroundColor: colornode }">{{active_node.attributes['Name']}}</div>
         <div class="nodeattributes">
-            <div id="colorbar" :style="{ backgroundColor: colornode }">{{active_node.attributes['Modularity Class']}}</div>
-            <v-select id="pathway-protein" v-model="selected_protein" :options="nodes" :clearable="true" :model-value="selected_protein" @update:model-value="retrieve_path()"></v-select>
-            <div v-if="path == false">
-                <i class="signal">No path found.</i>
+            <div id="informations" class="subsection">
+                <div class="subsection-header">
+                    <span>informations</span>
+                </div>
+                <div class="subsection-main">
+                </div>
             </div>
-            <div class="data">
-                <span><i>{{active_node.attributes["Description"]}}</i></span><br/><br/>
+            <div id="network" class="subsection">
+                <div class="subsection-header">
+                    <span>network statistics</span>
+                </div>
+                <div class="subsection-main">
+                </div>
             </div>
-            <div class="p">
-            <span>Statistics:</span>
-            <button v-on:click="expand_stats = !expand_stats" id="expand-btn">Expand</button>
+            <div id="connections" class="subsection">
+                <div class="subsection-header">
+                    <span>connections</span>
+                </div>
+                <div class="subsection-main">
+                </div>
             </div>
-            <div class="statistics" id="statistics" v-show="expand_stats === true">
-                <ul>
-                    <li class="membership" v-for="(value, key) in statistics" :key="key" >
-                        <span><strong>{{key}}: </strong>{{value}}</span>
-                    </li>
-                </ul>
-            </div>
-            <div class="p">
-            <span>Connections:</span>
-            <button v-on:click="copyclipboard()" id="copy-btn">Copy</button>
-            <button v-on:click="expand_neighbor = !expand_neighbor" id="expand-btn">Expand</button>
-            </div>
-            <div class="link" id="link" v-show="expand_neighbor === true">
-                <ul>
-                    <li class="membership" v-for="link in links" :key="link" >
-                        <a href="#" v-on:click="select_node(link)">{{link.label}}</a>
-                    </li>
-                </ul>
+            <div id="routing" class="subsection">
+                <div class="subsection-header">
+                    <span>routing</span>
+                </div>
+                <div class="subsection-main">
+                </div>
             </div>
         </div>
     </div>
@@ -71,7 +66,7 @@ export default {
 
             com.node_item.value = com.active_node
             
-            com.$emit('active_item_changed',{ "node": com.node_item})
+            com.$emit('active_item_changed',{ "Protein": com.node_item})
             
             com.colornode = com.node_color_index[com.active_node.attributes["Ensembl ID"]]
             const { Degree, "Ensembl ID": EnsemblID } = com.active_node.attributes;
@@ -136,50 +131,70 @@ export default {
         transform: translateX(326px);
     }
     #colorbar {
-        display: block;
-        border-radius: 20px;
-        width: 50%;
-        height: 20px;
-        color: white;
-        text-align: center;
-        transform: translate(50%);
-    }
-    #pathway-protein .vs__dropdown-toggle {
-        border-radius: 0px;
-        margin-top: 10px;
-        width: 100px;
-        height: 20px;
-
-    }
-    #pathway-protein .vs__selected {
-        display: block;
-        margin: 0;
-    }
-
-    #pathway-protein .vs__search{
-        display: block;
-        align-items: center;
-        border-radius: var(--vs-border-radius);
-        font-size: 14px;
-        color: var(--vs-selected-color);
-        line-height: var(--vs-line-height);
-        margin: 0;
-        padding: 0 .25em;
-        z-index: 0;
-    }
-
-    #pathway-protein.v-select {
-        justify-content: center;
+        position: relative;
         display: flex;
+        border-radius: 5px;
+        margin-top: 5%;
+        width: 50%;
+        color: white;
+        align-items: center;
+        justify-content: center;
+        transform: translate(50%);
+        font-family: 'ABeeZee', sans-serif;
+        font-size: 0.9vw;
+    }
+    .nodeattributes{
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        margin-top: 10%;
+        align-items: center;
+    }
+    .nodeattributes .subsection {
+        margin-bottom: 4%;
+        position: relative;
+        width: 90%;
     }
 
-    #pathway-protein.vs--single.vs--open .vs__selected {
-        opacity: 0;
+    .subsection .subsection-header {
+        position: absolute;
+        height: 1vw;
+        width: 100%;
+        background-color: rgba(255, 255, 255, 0.4);
+        border-radius: 5px 5px 0 0;
+        display: flex;
+        justify-content: left;
+        align-items: center;
+        font-family: 'ABeeZee', sans-serif;
+        font-size: 0.7vw;
+        padding-left: 3%;
+        z-index: 999;
     }
 
-    .signal {
-        margin-top: 10px;
-        background-color: red;
+    .subsection .subsection-main {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        background: #0A0A1A;
+        border-radius: 5px;
+    }
+
+    #informations {
+        height: 25.78%;
+    }
+
+    #routing {
+        height: 18%;
+    }
+
+    #network {
+        height: 16%;
+    }
+
+    #connections {
+        height: 18%;
     }
 
 
