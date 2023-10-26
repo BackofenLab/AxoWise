@@ -77,28 +77,33 @@ def write_compounds(pathway_compounds, compounds_file, written_compounds):
     return compound_ids
 
 
-def symbols_to_ensemble(symbols, species):
+def symbols_to_ensemble(symbols, species, specifier):
     """
     Convert a list of symbols to ensemble_ids
 
     Arguments:
     symbols: a list containing symbols to convert
     species: species which the symbols belong to
+    specifier: specifies if user wants ensembl gene ids or protein ids
 
     Returns:
     ensemble_list: A list of ensemble_ids
     """
     mg = mygene.MyGeneInfo()
     ensembl_list = []
-    results = mg.querymany(symbols, scopes="symbol", fields="ensembl.gene", species=f"{species}")
+    results = mg.querymany(symbols, scopes="symbol", fields=f"ensembl.{specifier}", species=f"{species}")
     for result in results:
         if "ensembl" in result:
             res = result["ensembl"]
             if isinstance(res, list):
-                ensembl_id = res[0]["gene"]
+                ensembl_id = res[0][f"{specifier}"]
             else:
-                ensembl_id = res["gene"]
-            ensembl_list.append(ensembl_id)
+                ensembl_id = res[f"{specifier}"]
+            if isinstance(ensembl_id, list):
+                for i in ensembl_id:
+                    ensembl_list.append(i)
+            else:
+                ensembl_list.append(ensembl_id)
         else:
             print(f"{result['query']} not found")
     return ensembl_list
@@ -132,7 +137,17 @@ def scrapping(path, species):
     compounds_file.write("\t".join(["id", "name"]) + "\n")
     pathways_file.write(
         "\t".join(
-            ["id", "name", "description", "classes", "genes_external_ids", "diseases_ids", "drugs_ids", "compounds_ids"]
+            [
+                "id",
+                "name",
+                "description",
+                "classes",
+                "genes_external_ids",
+                "proteins_external_ids",
+                "diseases_ids",
+                "drugs_ids",
+                "compounds_ids",
+            ]
         )
         + "\n"
     )
@@ -162,13 +177,14 @@ def scrapping(path, species):
         # Classes
         has_classes = pathway_classes is not None
 
-        # Genes
+        # Genes and proteins
         has_genes = pathway_genes is not None
         if has_genes:
             pathway_gene_symbols = []
             for i in pathway_genes:
                 pathway_gene_symbols.append(i[1])
-            kegg2external = symbols_to_ensemble(pathway_gene_symbols, species)
+            kegg2external_genes = symbols_to_ensemble(pathway_gene_symbols, species, "gene")
+            kegg2external_proteins = symbols_to_ensemble(pathway_gene_symbols, species, "protein")
 
         # Diseases
         has_diseases = pathway_diseases is not None
@@ -187,18 +203,20 @@ def scrapping(path, species):
 
         # Save the pathway
         description_column = pathway_description if has_description else ""
-        genes_column = kegg2external if has_genes else ""
+        genes_column = kegg2external_genes if has_genes else ""
+        protein_column = kegg2external_proteins if has_genes else ""
         classes_column = ",".join(pathway_classes) if has_classes else ""
         diseases_column = ",".join(disease_ids) if has_diseases else ""
         drugs_column = ",".join(drug_ids) if has_drugs else ""
         compounds_column = ",".join(compound_ids) if has_compounds else ""
         pathways_file.write(
-            "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(
+            "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(
                 pathway_id,
                 pathway_title,
                 description_column,
                 classes_column,
                 genes_column,
+                protein_column,
                 diseases_column,
                 drugs_column,
                 compounds_column,

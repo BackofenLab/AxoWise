@@ -2,7 +2,6 @@ import os
 import requests
 import argparse
 import pandas as pd
-import csv
 import kegg
 import sys
 import datetime
@@ -69,38 +68,91 @@ def download_data(species):
     return 1
 
 
-def read_data(species, file_name):
+def genes_to_proteins(genes, species):
     """
-    Reads the data from the specified file and returns it as a DataFrame.
+    Convert ensembl genes to all corresponding proteins
 
     Arguments:
+    genes: list of ensemble_gene_ids
+    species: species of interest
+
+    returns:
+    gene_mapping: a dict with the keys being gene_ids and values protein_ids
+    """
+    gene_mapping = {}
+    m = mygene.MyGeneInfo()
+    results = m.querymany(genes, fields="ensembl.protein", species=f"{species}")
+    for result in results:
+        if "ensembl" in result:
+            res = result["ensembl"]
+            old = result["query"]
+            if isinstance(res, list):
+                ensembl_id = res[0]["protein"]
+            else:
+                ensembl_id = res["protein"]
+                ensembl_id = [ensembl_id] if isinstance(ensembl_id, str) else ensembl_id
+            gene_mapping[old] = ensembl_id
+    return gene_mapping
+
+
+def read_data(species, file_name):
+    """
+    Reads the data from the specified file.
+
+    Arguments:
+    species: species of interest
     file_name: the name of the file to read
     """
-    prots = []
-    unique_proteins = []
-    with open(file_name, "r") as file:
-        reader = csv.reader(file, delimiter="\t")
-        data = []
-        for row in reader:
-            name = row[0].split("%")
+    symbol = []
+    unique_symbols = set()
+    data = []
+    with open(file_name, "r") as f:
+        for line in f:
+            fields = line.strip().split("\t")
+            name = fields[0].split("%")
             source = name[1]
             ids = name[2]
-            descr = row[1]
-            proteins = list(filter(None, row[2:]))
+            descr = fields[1]
+            symbols = fields[2:]
             data.append([ids, descr, source])
-            prots.append(proteins)
-            unique_proteins.extend([item for item in proteins if item not in unique_proteins])
-    mapping = symbols_to_ensembl(unique_proteins, f"{species}")
-    lis = []
-    for i in prots:
-        k = []
-        for j in i:
-            if j in mapping:
-                k.append(mapping[j])
-        lis.append(k)
+            symbol.append(symbols)
+            unique_symbols.update(symbols)
+
+    unique_symbols = list(unique_symbols)
+    gene_mapping, genes_to_map = symbols_to_ensembl(unique_symbols, f"{species}", "gene")
+    protein_mapping, dis = symbols_to_ensembl(unique_symbols, f"{species}", "protein")
+    prots = genes_to_proteins(genes_to_map, species)
+    pd.DataFrame(list(prots.items()), columns=["genes", "proteins"]).to_csv(f"data/mapped_genes_proteins_{species}.csv")
+    gene_lis = []
+    protein_lis = []
+    for i in symbol:
+        genes = []
+        prots = []
+        if i:
+            for j in i:
+                if j in gene_mapping:
+                    g = gene_mapping[j]
+                    if isinstance(g, list):
+                        for k in g:
+                            genes.append(k)
+                    else:
+                        genes.append(gene_mapping[j])
+                if j in protein_mapping:
+                    g = protein_mapping[j]
+                    if isinstance(g, list):
+                        for k in g:
+                            prots.append(k)
+                    else:
+                        prots.append(protein_mapping[j])
+
+        gene_lis.append(genes)
+        protein_lis.append(prots)
+
     df = pd.DataFrame(data, columns=["id", "name", "category"])
-    df["genes"] = lis
-    return df
+    df["genes"] = gene_lis
+    df["proteins"] = protein_lis
+    df.to_csv(f"data/bader_{species}.csv.gz", compression="gzip", index=False)
+    return
 
 
 def read_kegg_data(specifier):
@@ -113,39 +165,42 @@ def read_kegg_data(specifier):
     kegg_df = pd.read_csv(
         f"data/kegg_pathways.{specifier}.tsv",
         delimiter="\t",
-        usecols=["id", "name", "genes_external_ids"],
+        usecols=["id", "name", "genes_external_ids", "proteins_external_ids"],
     )
     kegg_df.insert(loc=2, column="category", value="KEGG")
-    kegg_df = kegg_df.rename(columns={"genes_external_ids": "genes"})
+    kegg_df = kegg_df.rename(columns={"genes_external_ids": "genes", "proteins_external_ids": "proteins"})
     return kegg_df
 
 
-def symbols_to_ensembl(symbols, species):
+def symbols_to_ensembl(symbols, species, specifier):
     """
     Maps Symbols to Ensemble_Gene_id
 
     Arguments:
     symbols: list of symbols to be mapped
     species: species that the symbols belong to, eg: "mouse"
+    specifier: specifies if user wants ensembl gene ids or protein ids
 
     returns:
     mapping: a dictionary of symbols where their key is the ensembleT_id
     """
     mapping = {}
+    gene_lis = []
     mg = mygene.MyGeneInfo()
-    results = mg.querymany(symbols, scopes="symbol", fields="ensembl.gene", species=f"{species}")
+    results = mg.querymany(symbols, scopes="symbol", fields=f"ensembl.{specifier}", species=f"{species}")
     for result in results:
         if "ensembl" in result:
             res = result["ensembl"]
             old = result["query"]
             if isinstance(res, list):
-                ensembl_id = res[0]["gene"]
+                ensembl_id = res[0][f"{specifier}"]
             else:
-                ensembl_id = res["gene"]
+                ensembl_id = res[f"{specifier}"]
             mapping[old] = ensembl_id
+            gene_lis.append(ensembl_id)
         else:
             print(f"{result['query']} not found")
-    return mapping
+    return mapping, gene_lis
 
 
 def data_formatting(species, folder):
@@ -158,14 +213,17 @@ def data_formatting(species, folder):
     file_name = os.path.join(folder, f"{species.lower()}_all_pathways.gmt")
 
     # Read the data from Baderlabs
-    df = read_data(species, file_name)
-
+    read_data(species, file_name)
+    df = pd.read_csv(f"data/bader_{species}.csv.gz", compression="gzip")
     # Read the KEGG data
     kegg_df = read_kegg_data(species.lower())
 
     merged_df = pd.concat([df, kegg_df], ignore_index=True)
     merged_df = merged_df.drop_duplicates(subset=["name", "category"])
-    merged_df.to_csv(f"data/AllPathways_{species}.csv", index=False)
+    merged_df = merged_df.loc[merged_df["genes"].str.len() > 2]
+    merged_df["id"] = merged_df.apply(lambda row: f"{row['id']}~{row['category']}", axis=1)
+    merged_df = merged_df.reset_index(drop=True)
+    merged_df.to_csv(f"data/AllPathways_{species}.csv.gz", compression="gzip", index=False)
 
 
 def download_necessary(filepath):
@@ -220,16 +278,16 @@ def main():
     kegg_update, geneset_update, geneset_name, kegg_version = download_necessary(filepath)
     if geneset_update:
         # Download the data from Baderlabs
-        print("Downloading Pathway data for for mouse")
+        print("Downloading Pathway data for mouse")
         if download_data("mouse") == 0:
             print("Mouse file not available on the server yet")
             return
-        print("Geneset download succesfull for mouse")
+        print("Pathway download succesfull for mouse")
         print("Downloading Pathway data for human")
         if download_data("human") == 0:
             print("Human file not available on the server yet")
             return
-        print("Geneset download succesfull for human")
+        print("Pathway download succesfull for human")
         util.update_line(filepath, gene_pattern, geneset_name)
     if kegg_update:
         # Download the KEGG data

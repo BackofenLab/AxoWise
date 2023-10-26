@@ -966,8 +966,14 @@ C01747	Psychosine
 C02686	Galactosylceramide
 C02934	3-Dehydrosphinganine
 C02960	Ceramide 1-phosphate
+C03108	D-Glucosylsphingosine
+C03272	Globoside
 C03405	Lactosylceramide sulfate
 C03640	Sphingosyl-phosphocholine
+C04730	GM3
+C04737	alpha-D-Galactosyl-(1->4)-beta-D-galactosyl-(1->4)-beta-D-glucosyl-(1<->1)-ceramide
+C04884	N-Acetyl-D-galactosaminyl-(N-acetylneuraminyl)-D-galactosyl-D-glucosylceramide
+C04911	D-Galactosyl-N-acetyl-D-galactosaminyl-(N-acetylneuraminyl)-D-galactosyl-D-glucosylceramide
 C05681	Ceramide 2-aminoethylphosphonate
 C06062	Ceramide phosphoethanolamine
 C06124	Sphingosine 1-phosphate
@@ -975,6 +981,8 @@ C06125	Sulfatide
 C06126	Digalactosylceramide
 C06127	Digalactosylceramide sulfate
 C06128	GM4
+C06135	GA2
+C06136	GA1
 C12126	Dihydroceramide
 C12144	Phytosphingosine
 C12145	Phytoceramide
