@@ -51,7 +51,7 @@ def files(path):
 def proteins_enrichment():
     driver = database.get_driver()
     proteins = request.form.get("proteins").split(",")
-    species_id = request.form.get("species_id")
+    species_id = int(request.form.get("species_id"))
 
     # in-house functional enrichment
     list_enrichment = enrichment.functional_enrichment(driver, proteins, species_id)
@@ -95,18 +95,18 @@ def proteins_subgraph_api():
     selected_d = request.form.get("selected_d").split(",") if request.form.get("selected_d") else None
     threshold = int(float(request.form.get("threshold")) * 1000)
 
-    protein_ids = queries.get_protein_ids_for_names(driver, protein_names, species_id)
+    proteins, protein_ids = queries.get_protein_ids_for_names(driver, protein_names, species_id)
 
     stopwatch.round("Setup")
 
     if len(protein_ids) > 1:
-        proteins, source, target, score = queries.get_protein_associations(driver, protein_ids, threshold)
+        _, source, target, score = queries.get_protein_associations(driver, protein_ids, threshold, species_id)
     else:
-        proteins, source, target, score = queries.get_protein_neighbours(driver, protein_ids, threshold)
+        _, source, target, score = queries.get_protein_neighbours(driver, protein_ids, threshold, species_id)
 
     stopwatch.round("Neo4j")
 
-    nodes = pd.DataFrame(proteins).drop_duplicates(subset="external_id")
+    nodes = pd.DataFrame(proteins).rename(columns={"ENSEMBL": "external_id"}).drop_duplicates(subset="external_id")
 
     edges = pd.DataFrame({"source": source, "target": target, "score": score})
     edges = edges.drop_duplicates(subset=["source", "target"])
@@ -130,7 +130,7 @@ def proteins_subgraph_api():
     # D-Value categorize via percentage
     if not (request.files.get("file") is None):
         panda_file.rename(columns={"SYMBOL": "name"}, inplace=True)
-        panda_file["name"] = panda_file["name"].str.upper()
+        panda_file["name"] = panda_file["name"].str.title()
 
     stopwatch.round("Enrichment")
 
@@ -167,14 +167,14 @@ def proteins_subgraph_api():
                 # Use node mapping to add corresponding values of betweenness and pagerank
                 node["attributes"]["Betweenness Centrality"] = str(betweenness[mapped_node_id])
                 node["attributes"]["PageRank"] = str(pagerank[mapped_node_id])
-            node["attributes"]["Description"] = df_node.description
+            node["attributes"]["Description"] = df_node.annotation
             node["attributes"]["Ensembl ID"] = df_node.external_id
-            node["attributes"]["Name"] = df_node.name
+            node["attributes"]["Name"] = df_node.SYMBOL
             if not (request.files.get("file") is None):
                 if selected_d != None:
                     for column in selected_d:
-                        node["attributes"][column] = panda_file.loc[panda_file["name"] == df_node.name, column].item()
-            node["label"] = df_node.name
+                        node["attributes"][column] = panda_file.loc[panda_file["name"] == df_node.SYMBOL, column].item()
+            node["label"] = df_node.SYMBOL
             node["species"] = str(10090)
 
     # Identify subgraph nodes and update their attributes
@@ -213,8 +213,9 @@ def terms_subgraph_api():
 
     # Functional terms
     list_enrichment = ast.literal_eval(request.form.get("func-terms"))
+    species_id = int(request.form.get("species_id"))
 
-    json_str = enrichment_graph.get_functional_graph(list_enrichment=list_enrichment)
+    json_str = enrichment_graph.get_functional_graph(list_enrichment=list_enrichment, species_id=species_id)
 
     stopwatch.total("terms_subgraph_api")
 

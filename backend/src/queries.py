@@ -7,78 +7,101 @@ from typing import Any
 import neo4j
 
 
-def get_terms_connected_by_overlap(driver: neo4j.Driver, term_ids: list[str]):
+def get_terms_connected_by_overlap(driver: neo4j.Driver, term_ids: list[str], species_id: int):
     """:returns: terms, source, target, score"""
+    if species_id == 10090:
+        species = "Mus_Musculus"
+    elif species_id == 9606:
+        species = "Homo_Sapiens"
+
     query = f"""
-        MATCH (source:Terms)-[association:OVERLAP]->(target:Terms)
-        WHERE source.external_id IN {term_ids}
-            AND target.external_id IN {term_ids}
-            AND source.category IN ["KEGG", "Reactome Pathways"]
-            AND target.category IN ["KEGG", "Reactome Pathways"]
+        MATCH (source:FT:{species})-[association:OVERLAP]->(target:FT:{species})
+        WHERE source.Term IN {term_ids}
+            AND target.Term IN {term_ids}
         RETURN source, target, association.Score AS score;
         """
     with driver.session() as session:
         result = session.run(query)
         # custom conversion is needed because otherwise it takes 10s with neo4j (for unknown reasons)
-        return _convert_to_connection_info_score(result=result, _int=False)
+        return _convert_to_connection_info_score(result=result, _int=False, protein=False)
 
 
-def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id: int) -> list[str]:
+def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id: int) -> (list, list[str]):
     # unsafe parameters because otherwise this query takes 10s with neo4j for unknown reasons
+    if species_id == 10090:
+        species = "Mus_Musculus"
+    elif species_id == 9606:
+        species = "Homo_Sapiens"
+
     query = f"""
-        MATCH (protein:Protein)
-        WHERE protein.species_id = {species_id}
-            AND protein.name IN {str([n.upper() for n in names])} 
-        WITH collect(protein.external_id) AS ids
-        RETURN ids
+        MATCH (protein:Protein:{species})
+        WHERE protein.SYMBOL IN {str([n.title() for n in names])} 
+            OR protein.ENSEMBL IN {str([n.title() for n in names])} 
+        RETURN protein, protein.ENSEMBL AS id
     """
     with driver.session() as session:
-        return session.run(query).single(strict=True).value()
+        result = session.run(query)
+        return _convert_to_protein_id(result)
 
 
 def get_protein_neighbours(
-    driver: neo4j.Driver, protein_ids: list[str], threshold: int
+    driver: neo4j.Driver, protein_ids: list[str], threshold: int, species_id: int
 ) -> (list[str], list[str], list[str], list[int]):
     """
     :returns: proteins, source_ids, target_ids, scores
     """
+    if species_id == 10090:
+        species = "Mus_Musculus"
+    elif species_id == 9606:
+        species = "Homo_Sapiens"
+
     # unsafe parameters because otherwise this query takes 10s with neo4j for unknown reasons
     query = f"""
-        MATCH (source:Protein)-[association:ASSOCIATION]->(target:Protein)
-        WHERE source.external_id IN {protein_ids}
-            AND target.external_id IN {protein_ids}
+        MATCH (source:Protein:{species})-[association:STRING]->(target:Protein:{species})
+        WHERE source.ENSEMBL IN {protein_ids}
+            AND target.ENSEMBL IN {protein_ids}
             AND association.combined >= {threshold}
         RETURN source, target, association.combined AS score
     """
 
     with driver.session() as session:
-        result = session.run(query).single(strict=True).value()
-        return _convert_to_connection_info_score(result=result, _int=True)
+        result = session.run(query)
+        return _convert_to_connection_info_score(result=result, _int=True, protein=True)
 
 
 def get_protein_associations(
-    driver: neo4j.Driver, protein_ids: list[str], threshold: int
+    driver: neo4j.Driver, protein_ids: list[str], threshold: int, species_id: int
 ) -> (list[str], list[str], list[str], list[int]):
     """
     :returns: proteins (nodes), source_ids, target_ids, score
     """
+    if species_id == 10090:
+        species = "Mus_Musculus"
+    elif species_id == 9606:
+        species = "Homo_Sapiens"
+
     # unsafe parameters are needed because otherwise this query takes 10s with neo4j for unknown reasons
     query = f"""
-        MATCH (source:Protein)-[association:ASSOCIATION]->(target:Protein)
-        WHERE source.external_id IN {protein_ids}
-            AND target.external_id IN {protein_ids}
-            AND association.combined >= {threshold}
-        RETURN source, target, association.combined AS score
+        MATCH (source:Protein:{species})-[association:STRING]->(target:Protein:{species})
+        WHERE source.ENSEMBL IN {protein_ids}
+            AND target.ENSEMBL IN {protein_ids}
+            AND association.Score >= {threshold}
+        RETURN source, target, association.Score AS score
     """
     with driver.session() as session:
         result = session.run(query)
-        return _convert_to_connection_info_score(result=result, _int=True)
+        return _convert_to_connection_info_score(result=result, _int=True, protein=True)
 
 
-def get_enrichment_terms(driver: neo4j.Driver) -> list[dict[str, Any]]:
-    query = """
-        MATCH (term:Terms)
-        RETURN term.external_id AS id, term.name AS name, term.category AS category, term.proteins AS proteins
+def get_enrichment_terms(driver: neo4j.Driver, species_id: int) -> list[dict[str, Any]]:
+    if species_id == 10090:
+        species = "Mus_Musculus"
+    elif species_id == 9606:
+        species = "Homo_Sapiens"
+
+    query = f"""
+        MATCH (term:FT:{species})
+        RETURN term.Term AS id, term.Name AS name, term.Category AS category, term.Proteins AS proteins
     """
 
     with driver.session() as session:
@@ -86,9 +109,14 @@ def get_enrichment_terms(driver: neo4j.Driver) -> list[dict[str, Any]]:
         return result.data()
 
 
-def get_number_of_proteins(driver: neo4j.Driver) -> int:
-    query = """
-        MATCH (n:Protein)
+def get_number_of_proteins(driver: neo4j.Driver, species_id: int) -> int:
+    if species_id == 10090:
+        species = "Mus_Musculus"
+    elif species_id == 9606:
+        species = "Homo_Sapiens"
+
+    query = f"""
+        MATCH (n:Protein:{species})
         RETURN count(n) AS num_proteins
     """
     with driver.session() as session:
@@ -97,14 +125,28 @@ def get_number_of_proteins(driver: neo4j.Driver) -> int:
         return int(num_proteins)
 
 
-def _convert_to_connection_info_score(result: neo4j.Result, _int: bool) -> (list[str], list[str], list[str], list[int]):
+def _convert_to_protein_id(result: neo4j.Result) -> (list, list[str]):
+    proteins, ids = list(), list()
+    for row in result:
+        proteins.append(row["protein"])
+        ids.append(row["id"])
+    return proteins, ids
+
+
+def _convert_to_connection_info_score(
+    result: neo4j.Result, _int: bool, protein: bool
+) -> (list[str], list[str], list[str], list[int]):
     nodes, source, target, score = list(), list(), list(), list()
 
     for row in result:
         nodes.append(row["source"])
         nodes.append(row["target"])
-        source.append(row["source"].get("external_id"))
-        target.append(row["target"].get("external_id"))
+        if protein:
+            source.append(row["source"].get("ENSEMBL"))
+            target.append(row["target"].get("ENSEMBL"))
+        else:
+            source.append(row["source"].get("Term"))
+            target.append(row["target"].get("Term"))
         if _int:
             score.append(int(row["score"]))
         else:
