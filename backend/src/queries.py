@@ -26,7 +26,7 @@ def get_terms_connected_by_overlap(driver: neo4j.Driver, term_ids: list[str], sp
         return _convert_to_connection_info_score(result=result, _int=False, protein=False)
 
 
-def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id: int) -> list[str]:
+def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id: int) -> (list, list[str]):
     # unsafe parameters because otherwise this query takes 10s with neo4j for unknown reasons
     if species_id == 10090:
         species = "Mus_Musculus"
@@ -35,13 +35,13 @@ def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id
 
     query = f"""
         MATCH (protein:Protein:{species})
-        WHERE protein.SYMBOL IN {str([n.title() if not n.startswith("ENS") else n.upper() for n in names ])} 
-            OR protein.ENSEMBL IN {str([n.title() if not n.startswith("ENS") else n.upper() for n in names ])}
-        WITH collect(protein.ENSEMBL) AS ids
-        RETURN ids
+        WHERE protein.SYMBOL IN {str([n.title() for n in names])} 
+            OR protein.ENSEMBL IN {str([n.title() for n in names])} 
+        RETURN protein, protein.ENSEMBL AS id
     """
     with driver.session() as session:
-        return session.run(query).single(strict=True).value()
+        result = session.run(query)
+        return _convert_to_protein_id(result)
 
 
 def get_protein_neighbours(
@@ -65,8 +65,8 @@ def get_protein_neighbours(
     """
 
     with driver.session() as session:
-        result = session.run(query).single(strict=True).value()
-        return _convert_to_connection_info_score(result=result, _int=True, protein=False)
+        result = session.run(query)
+        return _convert_to_connection_info_score(result=result, _int=True, protein=True)
 
 
 def get_protein_associations(
@@ -123,6 +123,14 @@ def get_number_of_proteins(driver: neo4j.Driver, species_id: int) -> int:
         result = session.run(query)
         num_proteins = result.single(strict=True)["num_proteins"]
         return int(num_proteins)
+
+
+def _convert_to_protein_id(result: neo4j.Result) -> (list, list[str]):
+    proteins, ids = list(), list()
+    for row in result:
+        proteins.append(row["protein"])
+        ids.append(row["id"])
+    return proteins, ids
 
 
 def _convert_to_connection_info_score(
