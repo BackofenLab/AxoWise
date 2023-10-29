@@ -17,3 +17,6 @@ dependencies:
   - bs4
   - seaborn 
   - networkit=10.1.*
+  - pip
+  - pip:
+    - mygene

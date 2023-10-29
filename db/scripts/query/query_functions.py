@@ -190,6 +190,19 @@ def query_8(list: list[str], threshold: float, driver: neo4j.Driver):
     return result
 
 
+@time_function
+def query_9(list: list[str], threshold: float, driver: neo4j.Driver):
+    query = f"""
+    MATCH (n:Protein:Mus_Musculus)-[c:STRING]->(m:Protein:Mus_Musculus)
+        WHERE m.ENSEMBL IN {list}
+            AND c.Score >= {threshold}
+    RETURN n, m
+    """
+    result = execute_query(query=query, read=True, driver=driver)
+    # TODO
+    return result
+
+
 # ---------------------- NOT FOR PRODUCTION ----------------------
 # Used by Christina to get TGs correlated with list of TFs
 def get_tf_correlated_tg(tf: str, subset: list[str], driver: neo4j.Driver):

@@ -1,4 +1,4 @@
-from utils import print_update, remove_bidirectionality, retrieve_gene_id_by_symbol
+from utils import print_update, remove_bidirectionality, retrieve_gene_id_by_symbol, symbols_to_ensembl
 import pandas as pd
 import os
 from alive_progress import alive_bar
@@ -151,6 +151,16 @@ def parse_string(
             ~proteins_annotated["SYMBOL"].isna(), "SYMBOL"
         ].apply(_make_symbol_name_correct)
 
+        # Get ENSEMBL Gene IDs for proteins
+        symbols = list(proteins_annotated.dropna(subset=["SYMBOL"])["SYMBOL"])
+        mapping = symbols_to_ensembl(symbols=symbols, species="mouse" if species else "human", specifier="gene")[0]
+        tuples = [(k, mapping[k]) for k in mapping.keys()]
+        df = pd.DataFrame(tuples, columns=["SYMBOL", "Gene"])
+
+        proteins_annotated = pd.merge(
+            left=proteins_annotated, right=df, left_on="SYMBOL", right_on="SYMBOL", how="left"
+        )
+
         # Drop duplicate annotations, keep first entry
         genes_annotated = genes_annotated.drop_duplicates(subset=["ENSEMBL"], keep="first", ignore_index=True)
         genes_annotated = genes_annotated.dropna(subset=["ENSEMBL"])
@@ -208,19 +218,6 @@ def parse_string(
         )
         protein_protein_scores.rename(columns={"Protein1": "ENSEMBL1", "Protein2": "ENSEMBL2"})
 
-        gene_gene_scores = string[0].merge(protein_gene_dict, left_on="protein1", right_on="Protein")
-        gene_gene_scores = gene_gene_scores.filter(items=["ENSEMBL", "protein2", "Score"])
-        gene_gene_scores = gene_gene_scores.rename(columns={"ENSEMBL": "ENSEMBL1"})
-
-        gene_gene_scores = gene_gene_scores.merge(protein_gene_dict, left_on="protein2", right_on="Protein")
-        gene_gene_scores = gene_gene_scores.filter(items=["ENSEMBL1", "ENSEMBL", "Score"])
-        gene_gene_scores = gene_gene_scores.rename(columns={"ENSEMBL": "ENSEMBL2"})
-
-        gene_gene_scores = remove_bidirectionality(
-            df=gene_gene_scores, columns=("ENSEMBL1", "ENSEMBL2"), additional=["Score"]
-        )
-
-        gene_gene_scores = gene_gene_scores.drop_duplicates(keep="first")
         return (
             genes_annotated.drop_duplicates(),
             proteins_annotated.drop_duplicates(),

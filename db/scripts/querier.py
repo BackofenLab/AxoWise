@@ -1,6 +1,6 @@
 import pandas as pd
 from utils import start_driver, stop_driver
-from query.query_functions import query_1, query_2, query_3, query_4, query_5, query_6, query_7, query_8
+from query.query_functions import query_1, query_2, query_3, query_4, query_5, query_6, query_7, query_8, query_9
 import random
 
 
@@ -10,6 +10,7 @@ def run_queries():
     """
     driver = start_driver()
 
+    proteins = list(pd.read_csv("../source/processed/proteins_annotated_mouse.csv")["ENSEMBL"])
     open_regions = list(pd.read_csv("../source/processed/or_extended.csv")["id"])
     target_genes = list(pd.read_csv("../source/processed/tg.csv")["ENSEMBL"])
     transcription_factor = list(pd.read_csv("../source/processed/tf.csv")["ENSEMBL"])
@@ -40,11 +41,11 @@ def run_queries():
     #     query_4(i=index, list=tmp, driver=driver)
     #     query_5(i=index, list=tmp, driver=driver)
 
-    for i in range(1, len(celltypes) + 1):
-        index = i if i < len(celltypes) else len(celltypes)
-        tmp = celltypes[index]
+    # for i in range(1, len(celltypes) + 1):
+    #     index = i if i < len(celltypes) else len(celltypes)
+    #     tmp = celltypes[index]
 
-        query_6(i=celltypes[index], list=tmp, driver=driver)
+    #     query_6(i=celltypes[index], list=tmp, driver=driver)
 
     # for i in range(1, len(target_genes) + 100, 100):
     #     random.shuffle(target_genes)
@@ -54,5 +55,11 @@ def run_queries():
 
     #     query_7(i=index, list=tmp, threshold=0.5, driver=driver)
     #     query_8(i=index, list=tmp, threshold=0.5, driver=driver)
+
+    for i in range(1, len(proteins) + 100, 100):
+        random.shuffle(proteins)
+        index = i if i < len(proteins) else len(proteins)
+        tmp = proteins[:index]
+        query_9(i=index, list=tmp, threshold=600, driver=driver)
 
     stop_driver(driver=driver)

@@ -6,6 +6,7 @@ from time import time
 import urllib.request
 import neo4j
 import re
+import mygene
 from alive_progress import alive_bar
 
 
@@ -287,3 +288,35 @@ def get_values_reformat(df: pd.DataFrame, match: list):
         (i, "toFloat" if df[i].dtype == "float64" else "toInteger") for i in list(df.columns) if df[i].dtype != "object"
     ]
     return values, reformat
+
+
+# From WorkMalek
+def symbols_to_ensembl(symbols, species, specifier):
+    """
+    Maps Symbols to Ensemble_Gene_id
+
+    Arguments:
+    symbols: list of symbols to be mapped
+    species: species that the symbols belong to, eg: "mouse"
+    specifier: specifies if user wants ensembl gene ids or protein ids
+
+    returns:
+    mapping: a dictionary of symbols where their key is the ensembleT_id
+    """
+    mapping = {}
+    gene_lis = []
+    mg = mygene.MyGeneInfo()
+    results = mg.querymany(symbols, scopes="symbol", fields=f"ensembl.{specifier}", species=f"{species}")
+    for result in results:
+        if "ensembl" in result:
+            res = result["ensembl"]
+            old = result["query"]
+            if isinstance(res, list):
+                ensembl_id = res[0][f"{specifier}"]
+            else:
+                ensembl_id = res[f"{specifier}"]
+            mapping[old] = ensembl_id
+            gene_lis.append(ensembl_id)
+        else:
+            print(f"{result['query']} not found")
+    return mapping, gene_lis

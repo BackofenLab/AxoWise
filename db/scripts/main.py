@@ -15,10 +15,10 @@ os.environ["_DEV_MAX_REL"] = str(10000)
 os.environ["_NEO4J_IMPORT_PATH"] = "/usr/local/bin/neo4j/import/"
 os.environ["_FUNCTION_TIME_PATH"] = "../source/timing/function_times.tsv"
 
-os.environ["_TIME_FUNCTIONS"] = str(False)
+os.environ["_TIME_FUNCTIONS"] = str(True)
 os.environ["_SILENT"] = str(False)
 os.environ["_PRODUCTION"] = str(True)
-os.environ["_ACCESS_NEO4J"] = str(False)
+os.environ["_ACCESS_NEO4J"] = str(True)
 
 
 @time_function
