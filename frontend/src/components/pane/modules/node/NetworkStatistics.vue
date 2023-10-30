@@ -1,23 +1,23 @@
 <template>
     <div id="statistics">
         <div class="pane-sorting">
-            <a class="pane_attributes" >attributes</a>
-            <a class="pane_values">values</a>
+            <a class="pane_attributes" >values</a>
+            <a class="pane_values">attributes</a>
         </div>
 
         <div class="network-results" tabindex="0" @keydown="handleKeyDown">
             <table >
                 <tbody>
-                    <!-- <tr v-for="(entry, index) in active_node.attributes" :key="index" class="option">
+                    <tr v-for="(key, entry, index) in statistics" :key="index" class="option">
                         <td>
                             <div class="statistics-attr">
-                                <a href="#">{{entry}}</a>
+                                <a href="#">{{key}}</a>
                             </div>
                         </td>
                         <td>
-                            <a class="statistics-val">{{ entry}}</a>
+                            <a class="statistics-val">{{entry}}</a>
                         </td>
-                    </tr> -->
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -31,8 +31,27 @@ export default {
     props: ['active_node'],
     data() {
         return {
+            statistics: {}
         }
     },
+    watch: {
+        active_node(){
+            var com = this;
+
+            if (com.active_node == null) {
+                return;
+            }
+
+            const { Degree, "Ensembl ID": EnsemblID } = com.active_node.attributes;
+            com.statistics = { Degree, EnsemblID }
+            if(com.$store.state.dcoloumns != null) {
+                com.$store.state.dcoloumns.forEach(dcoloumn => {
+                    com.statistics[dcoloumn] = com.active_node.attributes[dcoloumn]
+                });
+            }
+            console.log(com.statistics)
+        }
+    }
 }
 </script>
 
@@ -84,7 +103,7 @@ export default {
 }
 
 #statistics .network-results {
-    height: 50%;
+    height: 69%;
     overflow: scroll;
 }
 
@@ -115,5 +134,8 @@ export default {
     color: white;
     width:  30%;
     align-self: center;
+    white-space: nowrap;
+    overflow: hidden;    /* Hide overflow content */
+    text-overflow: ellipsis;
 }
 </style>

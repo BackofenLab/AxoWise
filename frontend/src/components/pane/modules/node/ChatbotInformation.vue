@@ -30,6 +30,11 @@ export default {
     },
     watch:{
         active_node(){
+
+            if (this.active_node == null) {
+                return;
+            }
+            
             this.protein_name = this.active_node.attributes["Name"]
             this.protein_information = ""
             this.generate_informations(`What is Gene/Protein ${this.protein_name} in 2 Sentences?`, false)

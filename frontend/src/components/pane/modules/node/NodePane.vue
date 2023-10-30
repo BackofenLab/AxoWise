@@ -63,7 +63,6 @@ export default {
         return {
             links: null,
             colornode: null,
-            statistics: {},
             expand_neighbor: false,
             expand_stats: false,
             node_item: {
@@ -89,13 +88,6 @@ export default {
             com.$emit('active_item_changed',{ "Protein": com.node_item})
             
             com.colornode = com.node_color_index[com.active_node.attributes["Ensembl ID"]]
-            const { Degree, "Ensembl ID": EnsemblID } = com.active_node.attributes;
-            com.statistics = { Degree, EnsemblID }
-            if(com.$store.state.dcoloumns != null) {
-                com.$store.state.dcoloumns.forEach(dcoloumn => {
-                    com.statistics[dcoloumn] = com.active_node.attributes[dcoloumn]
-                });
-            }
 
 
             const neighbors = {};
