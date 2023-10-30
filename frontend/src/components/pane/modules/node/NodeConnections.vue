@@ -33,11 +33,6 @@ export default {
         return {
         }
     },
-    watch: {
-        links(){
-            console.log(this.links)
-        }
-    }
 }
 </script>
 
