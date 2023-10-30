@@ -45,7 +45,7 @@
 
 <script>
 
-import NodePane from '@/components/pane/modules/NodePane.vue'
+import NodePane from '@/components/pane/modules/node/NodePane.vue'
 // import TermPane from '@/components/pane/modules/TermPane.vue'
 // import SubsetPane from '@/components/pane/modules/SubsetPane.vue'
 // import DEValuePane from '@/components/pane/modules/DEValuePane.vue'

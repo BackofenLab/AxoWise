@@ -1,11 +1,11 @@
 <template>
     <div id="search-menu">
-        <div id="search" class="search-field" :class="{ full: search_raw.length >= 3 }">
+        <div id="search" class="search-field" :class="{ full: search_raw.length >= 2 }">
             <img class="search-field-icon" src="@/assets/toolbar/search.png">
             <input type="text" v-model="search_raw" class="empty" placeholder="Find your protein" @keyup.enter="select_node(filt_search[0])"/>
         </div>
-        <div class="check-active" v-if="search_raw.length >= 3 && filt_search.length > 0" v-on:click="search_raw=''"></div>
-        <div class="results" v-if="search_raw.length >= 3 && filt_search.length > 0" >
+        <div class="check-active" v-if="search_raw.length >= 2 && filt_search.length > 0" v-on:click="search_raw=''"></div>
+        <div class="results" v-if="search_raw.length >= 2 && filt_search.length > 0" >
             <div class="result-label">proteins in network</div>
             <div v-for="(entry, index) in filt_search" :key="index" class="network-search">
                 <a href="#" v-on:click="select_node(entry)">{{entry.attributes['Name']}}</a>
@@ -48,7 +48,7 @@ export default {
             var com = this;
             var matches = [];
 
-            if (com.search_raw.length >= 3) {
+            if (com.search_raw.length >= 2) {
                 var regex = new RegExp(com.regex, 'i');
                 matches = com.gephi_data.nodes.filter(function(node) {
                     return regex.test(node.label);

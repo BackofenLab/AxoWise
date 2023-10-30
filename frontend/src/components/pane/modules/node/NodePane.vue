@@ -1,12 +1,15 @@
 <template>
-    <div class="text" v-if="active_node !== null">
-        <div id="colorbar" :style="{ backgroundColor: colornode }">{{active_node.attributes['Name']}}</div>
+    <div class="text" v-show="active_node !== null">
+        <div id="colorbar" v-if="active_node !== null" :style="{ backgroundColor: colornode }">{{active_node.attributes['Name']}}</div>
         <div class="nodeattributes">
             <div id="informations" class="subsection">
                 <div class="subsection-header">
                     <span>informations</span>
                 </div>
                 <div class="subsection-main">
+                    <ChatbotInformation
+                    :protein_name='protein_name' 
+                    ></ChatbotInformation>
                 </div>
             </div>
             <div id="network" class="subsection">
@@ -14,6 +17,9 @@
                     <span>network statistics</span>
                 </div>
                 <div class="subsection-main">
+                    <NetworkStatistics
+                    :active_node='active_node' 
+                    ></NetworkStatistics>
                 </div>
             </div>
             <div id="connections" class="subsection">
@@ -21,6 +27,9 @@
                     <span>connections</span>
                 </div>
                 <div class="subsection-main">
+                    <NodeConnections
+                    :active_node='active_node'
+                    ></NodeConnections>
                 </div>
             </div>
             <div id="routing" class="subsection">
@@ -35,11 +44,20 @@
 </template>
 
 <script>
+import NetworkStatistics from '@/components/pane/modules/node/NetworkStatistics.vue'
+import NodeConnections from '@/components/pane/modules/node/NodeConnections.vue'
+import ChatbotInformation from '@/components/pane/modules/node/ChatbotInformation.vue'
 
 export default {
     name: 'NodePane',
     props: ['active_node','gephi_data','node_color_index',],
     emits: ['active_item_changed'],
+    components: {
+        NetworkStatistics,
+        ChatbotInformation,
+        NodeConnections
+
+    },
     data() {
         return {
             links: null,
@@ -53,7 +71,8 @@ export default {
             },
             nodes: this.gephi_data.nodes,
             selected_protein: null,
-            path: true
+            path: true,
+            protein_name:""
         }
     },
     watch: {
@@ -90,12 +109,11 @@ export default {
             });
 
             com.links = com.gephi_data.nodes.filter(obj => neighbors[obj.id]);
-            
+            this.protein_name = com.active_node.attributes["Name"]
 
         }
     },
     methods: {
-        
         copyclipboard(){
             var com = this;
 
