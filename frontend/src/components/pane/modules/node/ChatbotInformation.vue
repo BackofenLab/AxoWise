@@ -19,16 +19,18 @@
 
 export default {
     name: 'ChatbotInformation',
-    props: ['protein_name'],
+    props: ['active_node'],
     data() {
         return {
             protein_information: "",
             protein_questions:"",
-            await_answer:false
+            await_answer:false,
+            protein_name:''
         }
     },
     watch:{
-        protein_name(){
+        active_node(){
+            this.protein_name = this.active_node.attributes["Name"]
             this.protein_information = ""
             this.generate_informations(`What is Gene/Protein ${this.protein_name} in 2 Sentences?`, false)
             this.generate_informations(`Give me 2 common corrolated questions to Gene ${this.protein_name} with maximum 7 Words!`, true)
@@ -88,6 +90,11 @@ export default {
     position: absolute;
     padding: 0 5% 0 2%;
 }
+
+.text::-webkit-scrollbar {
+  display: none;
+}
+
 
 #chatbot #search-1 {
     position: absolute;

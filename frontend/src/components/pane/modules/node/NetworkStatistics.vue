@@ -40,15 +40,18 @@ export default {
 
 #statistics {
     width: 100%;
+    height: 100%;
     top: 16.35%;
     position: absolute;
+    font-family: 'ABeeZee', sans-serif;
     padding: 0% 2% 2% 2%;
 }
 
 .pane-sorting{
     margin-top: 1%;
+    margin-left: 1.5%;
     padding-bottom: 0.3%;
-    width: 99%;
+    width: 96.5%;
     font-size: 0.5vw;
     border-bottom: 1px solid;
     border-color: white;
@@ -60,11 +63,57 @@ export default {
 
 .pane_values{
     position: fixed;
+    left: 90.5%;
+}
+
+.statistics-attr{
+    display: flex;
+    height: 1vw;
+    width: 92%;
+    white-space: nowrap;
+    overflow: hidden;    /* Hide overflow content */
+    text-overflow: ellipsis;
+    margin-left: 2%;
+}
+
+.statistics-attr a {
+    cursor: default;
+    font-size: 0.7vw;
+    color: white;
+    text-decoration:none;
+}
+
+#statistics .network-results {
+    height: 50%;
+    overflow: scroll;
+}
+
+.network-results::-webkit-scrollbar {
+  display: none;
+}
+
+.statistics-val{
     left: 90.6%;
 }
 
-.list-section .results {
-    height: 90%;
-    overflow: scroll;
+.network-results table {
+    display: flex;
+    width: 100%;
+}
+
+:focus {outline:0 !important;}
+
+.network-results table tbody{
+    width: 100%;
+}
+.network-results td:first-child {
+    width: 70%;
+    align-self: center;
+}
+.network-results td:last-child {
+    font-size: 0.7vw;
+    color: white;
+    width:  30%;
+    align-self: center;
 }
 </style>
