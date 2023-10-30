@@ -8,7 +8,7 @@
                 </div>
                 <div class="subsection-main">
                     <ChatbotInformation
-                    :protein_name='protein_name' 
+                    :active_node='active_node'
                     ></ChatbotInformation>
                 </div>
             </div>
@@ -29,6 +29,7 @@
                 <div class="subsection-main">
                     <NodeConnections
                     :active_node='active_node'
+                    :links='links'
                     ></NodeConnections>
                 </div>
             </div>
@@ -109,7 +110,6 @@ export default {
             });
 
             com.links = com.gephi_data.nodes.filter(obj => neighbors[obj.id]);
-            this.protein_name = com.active_node.attributes["Name"]
 
         }
     },
