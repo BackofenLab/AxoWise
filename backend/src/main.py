@@ -100,9 +100,9 @@ def proteins_subgraph_api():
     stopwatch.round("Setup")
 
     if len(protein_ids) > 1:
-        _, source, target, score = queries.get_protein_associations(driver, protein_ids, threshold, species_id)
+        proteins, source, target, score = queries.get_protein_associations(driver, protein_ids, threshold, species_id)
     else:
-        _, source, target, score = queries.get_protein_neighbours(driver, protein_ids, threshold, species_id)
+        proteins, source, target, score = queries.get_protein_neighbours(driver, protein_ids, threshold, species_id)
 
     stopwatch.round("Neo4j")
 
