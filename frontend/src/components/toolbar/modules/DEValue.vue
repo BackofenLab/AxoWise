@@ -6,7 +6,7 @@
         <span class="selected-de" v-if="selected_func !== null">({{ selected_func }})</span>
         <div id="select-de">></div>
         <div class="subform-de-values" v-if="show_subselection && dcoloumns">
-            <div class="de-coloumn-values" v-for="(entry, index) in dcoloumns" :key="index" v-on:click="show_whole(entry)" :class="{selected: selected_func == entry}">
+            <div class="de-coloumn-values" v-for="(entry, index) in dcoloumns" :key="index" v-on:click="show_whole(entry)" :class="{selectedde: selected_func == entry}">
                 <a>{{ entry }}</a>
             </div>
         </div>
@@ -75,7 +75,7 @@ export default {
     padding: 0.1vw;
 }
 
-.selected {
+.selectedde {
     background-color: #0A0A1A;
     border-radius: 5px;
 }

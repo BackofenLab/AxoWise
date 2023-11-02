@@ -51,6 +51,7 @@ export default {
                 .then((response) => {
                     if(response.data){
                         this.graph_number += 1
+                        if(this.term_graphs.size < 1) this.$store.commit('assign_term_graph', response.data)
                         this.$store.commit('assign_new_term_graph', {label: `Graph ${this.graph_number}`, graph: response.data})
                         this.term_graphs.add({ id: this.graph_number, label: `Graph ${this.graph_number}`, graph: response.data});
                     }
