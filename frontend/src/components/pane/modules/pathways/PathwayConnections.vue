@@ -1,5 +1,5 @@
 <template>
-    <div id="connect">
+    <div id="pathway-connect">
         <div class="pane-sorting">
             <a class="pane_attributes" >nodes</a>
             <a class="pane_values">cluster</a>
@@ -27,28 +27,36 @@
 <script>
 
 export default {
-    name: 'NodeConnections',
-    props: ['active_node','links'],
+    name: 'PathwayConnections',
+    props: ['active_term','gephi_data'],
     data() {
         return {
+            links: []
         }
     },
+    watch: {
+        active_term(){
+            var com = this
+            const activeTermProteins = new Set(com.active_term.proteins);
+            com.links = com.gephi_data.nodes.filter(node => activeTermProteins.has(node.id));
+        }
+    }
 }
 </script>
 
 <style>
-#connect {
+#pathway-connect {
     width: 100%;
     height: 100%;
-    top: 18.35%;
+    top: 8.35%;
     position: absolute;
     font-family: 'ABeeZee', sans-serif;
     padding: 0% 2% 2% 2%;
 }
 
-#connect .network-results {
+#pathway-connect .network-results {
     margin-top: 2%;
-    height: 62%;
+    height: 82%;
     overflow: scroll;
 }
 </style>

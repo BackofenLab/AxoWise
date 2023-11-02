@@ -13,15 +13,17 @@
             :gephi_data='gephi_data'
             @active_item_changed = 'active_item = $event'
         ></NodePane>
-    </div>
-        <!-- <div class="main-section">
-
-            <TermPane v-show="active_tab === 'term'" 
+        <TermPane v-show="active_tab === 'Pathway'" 
             :active_term='active_term' 
             :gephi_data='gephi_data'
             @active_item_changed = 'active_item = $event'
             @highlight_subset_changed = 'highlight_subset = $event'
-            ></TermPane>
+        ></TermPane>
+
+    </div>
+        <!-- <div class="main-section">
+
+            
             <SubsetPane v-show="active_tab === 'subset'"
             :active_subset='active_subset'
             :gephi_data='gephi_data'
@@ -46,7 +48,7 @@
 <script>
 
 import NodePane from '@/components/pane/modules/node/NodePane.vue'
-// import TermPane from '@/components/pane/modules/TermPane.vue'
+import TermPane from '@/components/pane/modules/pathways/TermPane.vue'
 // import SubsetPane from '@/components/pane/modules/SubsetPane.vue'
 // import DEValuePane from '@/components/pane/modules/DEValuePane.vue'
 // import EnrichmentLayerPane from '@/components/pane/modules/EnrichmentLayerPane.vue'
@@ -57,7 +59,7 @@ export default {
     emits:['active_node_changed','active_term_changed', 'active_subset_changed', 'active_combine_changed', 'active_layer_changed', 'active_termlayers_changed'],
     components: {
         NodePane,
-        // TermPane,
+        TermPane,
         // SubsetPane,
         // DEValuePane,
         // EnrichmentLayerPane

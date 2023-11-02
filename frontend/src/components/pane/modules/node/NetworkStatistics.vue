@@ -103,7 +103,8 @@ export default {
 }
 
 #statistics .network-results {
-    height: 67%;
+    margin-top: 2%;
+    height: 58%;
     overflow: scroll;
 }
 
@@ -131,6 +132,7 @@ export default {
 }
 .network-results td:last-child {
     font-size: 0.7vw;
+    margin-bottom: 1%;
     color: white;
     width:  30%;
     align-self: center;
