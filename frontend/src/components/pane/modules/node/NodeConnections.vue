@@ -40,14 +40,14 @@ export default {
 #connect {
     width: 100%;
     height: 100%;
-    top: 16.35%;
+    top: 18.35%;
     position: absolute;
     font-family: 'ABeeZee', sans-serif;
     padding: 0% 2% 2% 2%;
 }
 
 #connect .network-results {
-    height: 70%;
+    height: 68%;
     overflow: scroll;
 }
 </style>

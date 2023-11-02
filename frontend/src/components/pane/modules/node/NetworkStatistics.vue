@@ -60,7 +60,7 @@ export default {
 #statistics {
     width: 100%;
     height: 100%;
-    top: 16.35%;
+    top: 20.35%;
     position: absolute;
     font-family: 'ABeeZee', sans-serif;
     padding: 0% 2% 2% 2%;
@@ -103,7 +103,7 @@ export default {
 }
 
 #statistics .network-results {
-    height: 69%;
+    height: 67%;
     overflow: scroll;
 }
 
