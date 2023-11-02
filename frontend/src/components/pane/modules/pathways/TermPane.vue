@@ -61,7 +61,6 @@ export default {
         active_term() {
             var com = this
             if (com.active_term == null) {
-
                 return;
             }
 

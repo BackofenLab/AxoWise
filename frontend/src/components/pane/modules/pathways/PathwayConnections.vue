@@ -37,6 +37,10 @@ export default {
     watch: {
         active_term(){
             var com = this
+
+            if (com.active_term == null) {
+                return;
+            }
             const activeTermProteins = new Set(com.active_term.proteins);
             com.links = com.gephi_data.nodes.filter(node => activeTermProteins.has(node.id));
         }
