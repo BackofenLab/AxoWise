@@ -285,7 +285,9 @@ def get_values_reformat(df: pd.DataFrame, match: list):
     """
     values = list(set(list(df.columns)) - set(match))
     reformat = [
-        (i, "toFloat" if df[i].dtype == "float64" else "toInteger") for i in list(df.columns) if df[i].dtype != "object"
+        (i, "toFloat" if df[i].dtype == "float64" else "toInteger")
+        for i in list(df.columns)
+        if df[i].dtype != "object" and df[i].dtype != "bool"
     ]
     return values, reformat
 
