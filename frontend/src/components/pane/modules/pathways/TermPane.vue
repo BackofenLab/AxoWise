@@ -122,7 +122,7 @@ export default {
         position: fixed;
         display: -webkit-flex;
         align-items: center;
-        background-color: black;
+        background-color: #0A0A1A;
         padding: 1%;
         border-radius: 0 5px 5px 0;
     }
