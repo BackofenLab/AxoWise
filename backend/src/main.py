@@ -74,24 +74,6 @@ def proteins_enrichment():
     json_str = json.dumps(list_enrichment.to_dict("records"), ensure_ascii=False, separators=(",", ":"))
     return Response(json_str, mimetype="application/json")
 
-@app.route("/api/subgraph/chatbot", methods=["POST"])
-def proteins_chatbot():
-    message = request.form.get("message")
-    
-    g4f.debug.logging = True # enable logging
-    g4f.check_version = False # Disable automatic version checking
-    print(g4f.version) # check version
-    print(g4f.Provider.Ails.params)  # supported args
-
-    # normal response
-    response = g4f.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        provider=g4f.Provider.Yqcloud,
-        messages=[{"role": "user", "content": message}]
-    )  # alternative model setting#
-    if response != None:
-        return Response(str(response), mimetype="application/json")
-
 # ====================== Subgraph API ======================
 # request comes from home.js
 # TODO Refactor this

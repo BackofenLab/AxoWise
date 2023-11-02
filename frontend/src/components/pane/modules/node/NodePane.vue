@@ -38,6 +38,10 @@
                     <span>routing</span>
                 </div>
                 <div class="subsection-main">
+                    <RoutingNode 
+                    :active_node='active_node'
+                    :gephi_data='gephi_data'
+                    ></RoutingNode>
                 </div>
             </div>
         </div>
@@ -48,6 +52,7 @@
 import NetworkStatistics from '@/components/pane/modules/node/NetworkStatistics.vue'
 import NodeConnections from '@/components/pane/modules/node/NodeConnections.vue'
 import ChatbotInformation from '@/components/pane/modules/node/ChatbotInformation.vue'
+import RoutingNode from '@/components/pane/modules/node/RoutingNode.vue'
 
 export default {
     name: 'NodePane',
@@ -56,7 +61,8 @@ export default {
     components: {
         NetworkStatistics,
         ChatbotInformation,
-        NodeConnections
+        NodeConnections,
+        RoutingNode
 
     },
     data() {
@@ -70,9 +76,6 @@ export default {
                 imageSrc: require('@/assets/pane/protein-icon.png')
             },
             nodes: this.gephi_data.nodes,
-            selected_protein: null,
-            path: true,
-            protein_name:""
         }
     },
     watch: {
@@ -116,22 +119,8 @@ export default {
         select_node(value) {
             this.emitter.emit("searchNode", value);
         },
-        retrieve_path() {
-            this.path = true
-            if(this.selected_protein == null) {
-                this.emitter.emit("reset_protein", this.active_node)
-                return
-            }
-            this.emitter.emit("searchPathway", {"source":this.active_node.id ,"target": this.selected_protein.id});
-        },
         
     },
-    mounted(){
-        this.emitter.on("emptySet", (state) => {
-            this.path = state
-        });
-
-    }
 }
 </script>
 
@@ -196,7 +185,7 @@ export default {
     }
 
     #routing {
-        height: 18%;
+        height: 20%;
     }
 
     #network {

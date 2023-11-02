@@ -860,6 +860,7 @@ export default {
     const endNode = sigma_instance.graph.getNodeFromIndex(endID);
     const paths = new Set(sigma_instance.graph.astar(startNode.id, endNode.id));
     if(paths.size == 0) this.emitter.emit("emptySet", false);
+    else this.emitter.emit("emptySet", true);
     
     sigma_instance.graph.nodes().forEach(n =>{
       if(paths.has(n)){
