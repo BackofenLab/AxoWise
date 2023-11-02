@@ -114,6 +114,7 @@ export default {
     .colorbar-text {
         width: 100%;
         background-color: darkgreen;
+        border-radius: 5px 0 0 5px;
     }
     .colorbar-img {
         width: 15%;
@@ -124,6 +125,7 @@ export default {
         align-items: center;
         background-color: black;
         padding: 1%;
+        border-radius: 0 5px 5px 0;
     }
 
     .colorbar-img img {
