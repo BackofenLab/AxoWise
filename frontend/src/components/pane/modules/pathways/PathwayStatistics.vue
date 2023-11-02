@@ -36,10 +36,8 @@ export default {
     },
     watch: {
         active_term(){
-            console.log(this.active_term)
             var com = this
             if (com.active_term == null) {
-
                 return;
             }
             const { category, id, fdr_rate, p_value } = com.active_term;
