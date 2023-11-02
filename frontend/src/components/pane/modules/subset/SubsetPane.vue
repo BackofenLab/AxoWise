@@ -1,57 +1,54 @@
 <template>
-    <div class="text" v-if="active_subset !== null">
-        <div class="headertext">
-            <span>Subset</span>
-        </div>
-        <button id="hide-btn" class="subset-btn" v-on:click="show_layer()">Hide</button>
-        <div class="change-level-menu">
-            <button id="apply-func-btn" class="subset-btn" v-on:click="apply_func(true)">Apply</button>
-            <button id="revert-func-btn" class="subset-btn" v-on:click="apply_func(false)">Revert</button>
-        </div>
-        <div class="data">
-                <span><strong>Number of Proteins: </strong>{{number_prot}}</span><br/><br/>
-                <span><strong>Number of Links: </strong>{{number_asc}}</span><br/><br/>
+    <div class="text" v-show="active_subset !== null">
+        <div id="colorbar-subset">
+            <div class='colorbar-text' v-if="active_subset !== null">
+               No° Proteins: {{number_prot}}
+            </div>
+            <div class='colorbar-img' v-on:click="show_layer()">
+                <img src="@/assets/pane/invisible.png" v-if="!hide">
+                <img src="@/assets/pane/visible.png" v-if="hide">
+            </div>
         </div>
         <div class="nodeattributes">
-            <div class="p">
-                <span>Connections:</span>
-                <button v-on:click="copyclipboard()" id="copy-btn">Copy</button>
-                <button v-on:click="expand_proteins=!expand_proteins" id="expand-btn">Expand</button>
-            </div>
-            <div class="link" id="link" v-show="expand_proteins === true">
-                <ul>
-                    <li class="membership" v-for="link in active_subset" :key="link" >
-                        <a href="#" v-on:click="select_node(link)">{{link.label}}</a>
-                    </li>
-                </ul>
-            </div>
-            <div class="p2">
-                <b>Links:</b>
-                <button v-on:click="expand_links=!expand_links" id="expand-btn">Expand</button>
+            <div id="subset-connections" class="subsection">
+                <div class="subsection-header">
+                    <span>contained proteins</span>
                 </div>
-                    <div class="link" id="edges" v-show="expand_links === true">
-                        <ul>
-                            <li v-for="edge in contained_edges" :key="edge">
-                                <div class="edge">
-                                <a href="#" v-on:click="select_node(edge.source[0])">{{edge.source[1]}}</a>
-                                <a href="#" v-on:click="select_node(edge.target[0])">{{edge.target[1]}}</a>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
+                <div class="subsection-main">
+                    <SubsetConnections
+                    :active_subset='active_subset' 
+                    ></SubsetConnections>
+                </div>
+            </div>
+            <div id="network" class="subsection">
+                <div class="subsection-header">
+                    <span>contained edges ({{number_asc}})</span>
+                </div>
+                <div class="subsection-main">
+                    <SubsetLinks
+                    :contained_edges='contained_edges' 
+                    ></SubsetLinks>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
+import SubsetConnections from '@/components/pane/modules/subset/SubsetConnections.vue'
+import SubsetLinks from '@/components/pane/modules/subset/SubsetLinks.vue'
 
 export default {
     name: 'SubsetPane',
     props: ['active_subset','gephi_data'],
     emits: ['active_item_changed', 'highlight_subset_changed'],
+    components: {
+        SubsetConnections,
+        SubsetLinks
+    },
     data() {
         return {
-            hide: true,
+            hide: false,
             expand_proteins: false,
             subset_item: {
                 value: null,
@@ -106,7 +103,7 @@ export default {
             com.number_asc = com.export_edges.length.toString()
             com.number_prot = com.subset_ids.length.toString()
 
-            com.$emit('active_item_changed',{ "subset": com.subset_item })
+            com.$emit('active_item_changed',{ "Subset": com.subset_item })
             
         }
     },
@@ -131,15 +128,6 @@ export default {
         },
 
         /**
-        * Calling the procedure in component EnrichmentTool for enriching terms with given set.
-        * @param {boolean} state - functional enrichment gets reverted or applied.
-        */
-        apply_func(state) {
-            if (state) this.emitter.emit("enrichSubset", this.active_subset.map(node => node.attributes["Name"]));
-            else this.emitter.emit("enrichSubset", null);
-        },
-
-        /**
         * Calling the procedure in component MainVis to highlight a specific node
         * @param {dict} value - A dictionary of a single node
         */
@@ -151,23 +139,25 @@ export default {
 </script>
 
 <style>
-    #subsetpane {
-        visibility: hidden;
-    }
-    .pane-show {
-        transform: translateX(326px);
-    }
-
-    .subset-btn {
+    #colorbar-subset{
         position: relative;
-        color: #fff;
-        border-style: outset;
-        border-width: 1px;
-        border-radius: 20px;
-        padding: 3px;
-        background-color: rgba(0, 0, 0, 0.7);
-        margin-bottom: 5px;
+        display: flex;
+        border-radius: 5px;
+        margin-top: 5%;
+        width: 70%;
+        color: white;
+        align-items: center;
+        text-align: center;
         justify-content: center;
+        transform: translate(13.5%);
+        font-family: 'ABeeZee', sans-serif;
+        font-size: 0.9vw;
+    }
+    #colorbar-subset .colorbar-text{
+        background-color: rgb(0,100,100);
     }
 
+    #subset-connections {
+        height: 40%;
+    }
 </style>
