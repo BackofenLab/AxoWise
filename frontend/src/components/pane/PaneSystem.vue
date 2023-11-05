@@ -26,16 +26,17 @@
             @highlight_subset_changed = 'highlight_subset = $event'
             @active_layer_changed = 'active_layer = $event'
         ></SubsetPane>
+        <DEValuePane v-show="active_tab === 'Differential expression'"
+            :active_decoloumn='active_decoloumn'
+            :gephi_data='gephi_data'
+            @active_item_changed = 'active_item = $event'
+        ></DEValuePane>
     </div>
         <!-- <div class="main-section">
 
             
 
-            <DEValuePane v-show="active_tab === 'devalue'"
-            :active_decoloumn='active_decoloumn'
-            :gephi_data='gephi_data'
-            @active_item_changed = 'active_item = $event'
-            ></DEValuePane>
+
             <EnrichmentLayerPane v-show="active_tab === 'layers'"
             :active_termlayers='active_termlayers'
             :gephi_data='gephi_data'
@@ -50,7 +51,7 @@
 import NodePane from '@/components/pane/modules/node/NodePane.vue'
 import TermPane from '@/components/pane/modules/pathways/TermPane.vue'
 import SubsetPane from '@/components/pane/modules/subset/SubsetPane.vue'
-// import DEValuePane from '@/components/pane/modules/DEValuePane.vue'
+import DEValuePane from '@/components/pane/modules/difexp/DEValuePane.vue'
 // import EnrichmentLayerPane from '@/components/pane/modules/EnrichmentLayerPane.vue'
 
 export default {
@@ -61,7 +62,7 @@ export default {
         NodePane,
         TermPane,
         SubsetPane,
-        // DEValuePane,
+        DEValuePane,
         // EnrichmentLayerPane
     },
     data() {
