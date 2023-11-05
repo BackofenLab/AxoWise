@@ -1111,15 +1111,6 @@ padding-top: 1em;
 	-webkit-appearance: none;
   }
 
-  .nodeattributes input[type=number]{
-	-webkit-appearance: none;
-	border-radius: 20px;
-	width: 30px;
-	background-color: rgba(0, 0, 0, 0.6);
-	color: white;
-	text-align: center;
-  }
-
   .toolbar-theme .boundary{
 	position: relative;
 	display: flex;
