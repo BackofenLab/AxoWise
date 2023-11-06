@@ -191,6 +191,12 @@ export default {
         font-family: 'ABeeZee', sans-serif;
         font-size: 0.9vw;
     }
+    #colorbar-difexp .colorbar-text{
+        width: 100%;
+        background: rgb(74,45,255);
+        background: linear-gradient(90deg, rgba(74,45,255,1) 0%, rgba(255,0,0,1) 100%);
+        border-radius: 5px;
+    }
 
     #legend {
         height: 25%;
