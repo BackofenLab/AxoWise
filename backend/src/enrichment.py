@@ -13,18 +13,18 @@ import queries
 from util.stopwatch import Stopwatch
 
 
-def calc_proteins_pval(curr, alpha, in_pr, bg_proteins, num_in_prot):
+def calc_genes_pval(curr, alpha, in_gene, bg_genes, num_in_genes):
     # Lists are read as strings, evaluate to lists using JSON.
     # alternative is using eval() which is slower
-    prot_list = curr.replace("'", '"')
-    prot_list = json.loads(prot_list)
+    gene_list = curr.replace("'", '"')
+    gene_list = json.loads(gene_list)
 
     # get the protein length of term
-    num_term_prot = len(prot_list)
+    num_term_prot = len(gene_list)
 
     # Get intersection of proteins
-    prots_term = list(set(prot_list) & in_pr)
-    num_inter = len(prots_term)
+    gene_term = list(set(gene_list) & in_gene)
+    num_inter = len(gene_term)
 
     if num_inter == 0:
         # Condition reduces runtime by 60%, needs to be tested carefully!
@@ -32,13 +32,13 @@ def calc_proteins_pval(curr, alpha, in_pr, bg_proteins, num_in_prot):
         # more or less the same
         p_value = alpha
     else:
-        p_value = hypergeo_testing(num_inter, bg_proteins, num_term_prot, num_in_prot)
+        p_value = hypergeo_testing(num_inter, bg_genes, num_term_prot, num_in_genes)
 
-    return (p_value, prots_term)
+    return (p_value, gene_term)
 
 
 @lru_cache(maxsize=None)
-def hypergeo_testing(intersec, total_proteins, term_proteins, in_proteins):
+def hypergeo_testing(intersec, total_genes, term_genes, in_genes):
     """Perfoms hypergeometric testing and returns a p_value
     Args:
         intersec(int): number of intersections between input and
@@ -52,16 +52,16 @@ def hypergeo_testing(intersec, total_proteins, term_proteins, in_proteins):
     mpmath.mp.dps = 64
 
     # Do the relevant calculations for the hypergeometric testing
-    term_one = mpmath.binomial(term_proteins, intersec)
-    term_two = mpmath.binomial(total_proteins - term_proteins, in_proteins - intersec)
-    term_three = mpmath.binomial(total_proteins, in_proteins)
+    term_one = mpmath.binomial(term_genes, intersec)
+    term_two = mpmath.binomial(total_genes - term_genes, in_genes - intersec)
+    term_three = mpmath.binomial(total_genes, in_genes)
 
     # Calculate final p_value
     p_value = (term_one * term_two) / term_three
     return float(p_value)
 
 
-def functional_enrichment(driver: neo4j.Driver, in_proteins, species_id: Any):
+def functional_enrichment(driver: neo4j.Driver, in_genes, species_id: Any):
     """inhouse functional enrichment - performs gene set enrichment analysis
     for a given set of proteins. Calculates p-value and Benjamini-Hochberg FDR
     for every functional term
@@ -76,9 +76,9 @@ def functional_enrichment(driver: neo4j.Driver, in_proteins, species_id: Any):
     stopwatch = Stopwatch()
 
     # Get number of all proteins in the organism (from Cypher)
-    bg_proteins = queries.get_number_of_proteins(driver, species_id)
-    num_in_prot = len(in_proteins)
-    prots = set(in_proteins)
+    bg_proteins = queries.get_number_of_genes(driver, species_id)
+    num_in_gene = len(in_genes)
+    genes = set(in_genes)
     # pandas DataFrames for nodes and edges
     csv.field_size_limit(sys.maxsize)
 
@@ -92,18 +92,18 @@ def functional_enrichment(driver: neo4j.Driver, in_proteins, species_id: Any):
     alpha = 0.05
 
     # calculate p_value for all terms
-    new_prots = []
+    new_genes = []
     new_p = []
-    arguments = [(value, alpha, prots, bg_proteins, num_in_prot) for value in df_terms["proteins"]]
+    arguments = [(value, alpha, genes, bg_proteins, num_in_gene) for value in df_terms["symbols"]]
 
     with multiprocessing.Pool() as pool:
         # Apply the function to each input value in parallel and collect the results
-        for a, b in pool.starmap(calc_proteins_pval, arguments):
+        for a, b in pool.starmap(calc_genes_pval, arguments):
             new_p.append(a)
-            new_prots.append(b)
+            new_genes.append(b)
 
     # Update Dataframe and sort by p_value (descending)
-    df_terms["proteins"] = new_prots
+    df_terms["genes"] = new_genes
     df_terms["p_value"] = new_p
     df_terms.sort_values(by="p_value", ascending=False, inplace=True)
     df_terms = df_terms.reset_index(drop=True)

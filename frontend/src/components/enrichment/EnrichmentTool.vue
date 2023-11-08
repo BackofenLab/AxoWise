@@ -268,6 +268,7 @@
 
 
             formData.append('proteins', com.gephi_data.nodes.map(node => node.id))
+            formData.append('genes', com.gephi_data.nodes.map(node => node.attributes["Name"]))
             formData.append('species_id', com.gephi_data.nodes[0].species)
                 
 

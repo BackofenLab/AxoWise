@@ -154,7 +154,7 @@ def read_kegg_data(specifier):
     kegg_df = pd.read_csv(
         f"data/kegg_pathways.{specifier}.tsv",
         delimiter="\t",
-        usecols=["id", "name", "symbols","genes_external_ids"],
+        usecols=["id", "name", "symbols", "genes_external_ids"],
     )
     kegg_df.insert(loc=2, column="category", value="KEGG")
     kegg_df = kegg_df.rename(columns={"genes_external_ids": "genes"})

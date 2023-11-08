@@ -224,4 +224,3 @@ def scrapping(path, species):
     diseases_file.close()
     drugs_file.close()
     compounds_file.close()
-
