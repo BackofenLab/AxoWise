@@ -50,11 +50,11 @@ def files(path):
 @app.route("/api/subgraph/enrichment", methods=["POST"])
 def proteins_enrichment():
     driver = database.get_driver()
-    proteins = request.form.get("proteins").split(",")
+    genes = request.form.get("genes").split(",")
     species_id = int(request.form.get("species_id"))
 
     # in-house functional enrichment
-    list_enrichment = enrichment.functional_enrichment(driver, proteins, species_id)
+    list_enrichment = enrichment.functional_enrichment(driver, genes, species_id)
 
     # STRING API functional enrichment
     """df_enrichment = stringdb.functional_enrichment(proteins, species_id)
@@ -106,7 +106,9 @@ def proteins_subgraph_api():
 
     stopwatch.round("Neo4j")
 
-    nodes = pd.DataFrame(proteins).rename(columns={"ENSEMBL": "external_id"}).drop_duplicates(subset="external_id")
+    nodes = (
+        pd.DataFrame(proteins).rename(columns={"ENSEMBL_PROTEIN": "external_id"}).drop_duplicates(subset="external_id")
+    )
 
     edges = pd.DataFrame({"source": source, "target": target, "score": score})
     edges = edges.drop_duplicates(subset=["source", "target"])

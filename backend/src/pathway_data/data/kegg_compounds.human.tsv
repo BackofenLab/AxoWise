@@ -7,6 +7,7 @@ C00036	Oxaloacetate
 C00068	Thiamin diphosphate
 C00074	Phosphoenolpyruvate
 C00084	Acetaldehyde
+C00085	D-Fructose 6-phosphate
 C00103	D-Glucose 1-phosphate
 C00111	Glycerone phosphate
 C00118	D-Glyceraldehyde 3-phosphate
@@ -15,6 +16,7 @@ C00197	3-Phospho-D-glycerate
 C00221	beta-D-Glucose
 C00236	3-Phospho-D-glyceroyl phosphate
 C00267	alpha-D-Glucose
+C00354	D-Fructose 1,6-bisphosphate
 C00469	Ethanol
 C00631	2-Phospho-D-glycerate
 C00668	alpha-D-Glucose 6-phosphate
@@ -22,8 +24,6 @@ C01159	2,3-Bisphospho-D-glycerate
 C01172	beta-D-Glucose 6-phosphate
 C01451	Salicin
 C05125	2-(alpha-Hydroxyethyl)thiamine diphosphate
-C05345	beta-D-Fructose 6-phosphate
-C05378	beta-D-Fructose 1,6-bisphosphate
 C06186	Arbutin
 C06187	Arbutin 6-phosphate
 C06188	Salicin 6-phosphate
@@ -61,6 +61,7 @@ C01182	D-Ribulose 1,5-bisphosphate
 C01218	6-Phospho-2-dehydro-D-gluconate
 C01236	D-Glucono-1,5-lactone 6-phosphate
 C01801	Deoxyribose
+C02076	Sedoheptulose
 C03752	2-Amino-2-deoxy-D-gluconate
 C04442	2-Dehydro-3-deoxy-6-phospho-D-gluconate
 C05382	Sedoheptulose 7-phosphate
@@ -118,6 +119,7 @@ C14899	3-Dehydro-L-gulonate 6-phosphate
 C15930	L-Galactonate
 C20680	2-Dehydro-3-deoxy-L-galactonate
 C22337	D-Ribulose 1-phosphate
+C22712	4-Deoxy-L-erythro-hex-4-enopyranuronate
 C00095	D-Fructose
 C00096	GDP-mannose
 C00159	D-Mannose
@@ -167,7 +169,6 @@ C18096	D-Allulose 6-phosphate
 C20781	2,4-Diketo-3-deoxy-L-fuconate
 C20836	beta-L-Fucopyranose
 C00052	UDP-alpha-D-galactose
-C00085	D-Fructose 6-phosphate
 C00089	Sucrose
 C00124	D-Galactose
 C00137	myo-Inositol
@@ -285,7 +286,6 @@ C01623	UDP-apiose
 C01674	Chitobiose
 C01788	CDP-abequose
 C02199	UDP-L-rhamnose
-C02336	beta-D-Fructose
 C02352	1,4-beta-D-Xylan
 C02474	Arabinan
 C02713	N-Acetylmuramate
@@ -1798,7 +1798,6 @@ C00230	3,4-Dihydroxybenzoate
 C00251	Chorismate
 C00254	Prephenate
 C00296	Quinate
-C00354	D-Fructose 1,6-bisphosphate
 C00493	Shikimate
 C00587	3-Hydroxybenzoate
 C00826	L-Arogenate
@@ -3175,6 +3174,7 @@ C15891	Endomorphin-2
 C15995	Bombesin
 C16511	L-Homocysteic acid
 C16512	Palmitoylethanolamide
+C18178	Resolvin D1
 C11378	Ubiquinone-10
 C16844	Hydroxyl radical
 C21478	Erastin

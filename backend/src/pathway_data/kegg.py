@@ -142,8 +142,8 @@ def scrapping(path, species):
                 "name",
                 "description",
                 "classes",
+                "symbols",
                 "genes_external_ids",
-                "proteins_external_ids",
                 "diseases_ids",
                 "drugs_ids",
                 "compounds_ids",
@@ -184,8 +184,6 @@ def scrapping(path, species):
             for i in pathway_genes:
                 pathway_gene_symbols.append(i[1])
             kegg2external_genes = symbols_to_ensemble(pathway_gene_symbols, species, "gene")
-            kegg2external_proteins = symbols_to_ensemble(pathway_gene_symbols, species, "protein")
-
         # Diseases
         has_diseases = pathway_diseases is not None
         if has_diseases:
@@ -203,8 +201,8 @@ def scrapping(path, species):
 
         # Save the pathway
         description_column = pathway_description if has_description else ""
+        symbol_column = pathway_gene_symbols if has_genes else ""
         genes_column = kegg2external_genes if has_genes else ""
-        protein_column = kegg2external_proteins if has_genes else ""
         classes_column = ",".join(pathway_classes) if has_classes else ""
         diseases_column = ",".join(disease_ids) if has_diseases else ""
         drugs_column = ",".join(drug_ids) if has_drugs else ""
@@ -215,8 +213,8 @@ def scrapping(path, species):
                 pathway_title,
                 description_column,
                 classes_column,
+                symbol_column,
                 genes_column,
-                protein_column,
                 diseases_column,
                 drugs_column,
                 compounds_column,
