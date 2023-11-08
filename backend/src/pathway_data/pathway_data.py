@@ -114,17 +114,15 @@ def read_data(species, file_name):
             ids = name[2]
             descr = fields[1]
             symbols = fields[2:]
-            data.append([ids, descr, source])
+            data.append([ids, descr, source, symbols])
             symbol.append(symbols)
             unique_symbols.update(symbols)
 
     unique_symbols = list(unique_symbols)
     gene_mapping, genes_to_map = symbols_to_ensembl(unique_symbols, f"{species}", "gene")
-    protein_mapping, dis = symbols_to_ensembl(unique_symbols, f"{species}", "protein")
     prots = genes_to_proteins(genes_to_map, species)
     pd.DataFrame(list(prots.items()), columns=["genes", "proteins"]).to_csv(f"data/mapped_genes_proteins_{species}.csv")
     gene_lis = []
-    protein_lis = []
     for i in symbol:
         genes = []
         prots = []
@@ -137,20 +135,11 @@ def read_data(species, file_name):
                             genes.append(k)
                     else:
                         genes.append(gene_mapping[j])
-                if j in protein_mapping:
-                    g = protein_mapping[j]
-                    if isinstance(g, list):
-                        for k in g:
-                            prots.append(k)
-                    else:
-                        prots.append(protein_mapping[j])
 
         gene_lis.append(genes)
-        protein_lis.append(prots)
 
-    df = pd.DataFrame(data, columns=["id", "name", "category"])
+    df = pd.DataFrame(data, columns=["id", "name", "category", "symbols"])
     df["genes"] = gene_lis
-    df["proteins"] = protein_lis
     df.to_csv(f"data/bader_{species}.csv.gz", compression="gzip", index=False)
     return
 
@@ -165,10 +154,10 @@ def read_kegg_data(specifier):
     kegg_df = pd.read_csv(
         f"data/kegg_pathways.{specifier}.tsv",
         delimiter="\t",
-        usecols=["id", "name", "genes_external_ids", "proteins_external_ids"],
+        usecols=["id", "name", "symbols","genes_external_ids"],
     )
     kegg_df.insert(loc=2, column="category", value="KEGG")
-    kegg_df = kegg_df.rename(columns={"genes_external_ids": "genes", "proteins_external_ids": "proteins"})
+    kegg_df = kegg_df.rename(columns={"genes_external_ids": "genes"})
     return kegg_df
 
 
