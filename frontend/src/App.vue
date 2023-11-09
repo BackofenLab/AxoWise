@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" id="container">
     <router-view v-slot="{ Component }">
     <keep-alive exclude="HomeView">
       <component :is="Component" />

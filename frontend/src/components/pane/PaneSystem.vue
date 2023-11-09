@@ -31,18 +31,12 @@
             :gephi_data='gephi_data'
             @active_item_changed = 'active_item = $event'
         ></DEValuePane>
-    </div>
-        <!-- <div class="main-section">
-
-            
-
-
-            <EnrichmentLayerPane v-show="active_tab === 'layers'"
+        <EnrichmentLayerPane v-show="active_tab === 'Pathway layers'"
             :active_termlayers='active_termlayers'
             :gephi_data='gephi_data'
             @active_item_changed = 'active_item = $event'
-            ></EnrichmentLayerPane>
-        </div> -->
+        ></EnrichmentLayerPane>
+    </div>
     </div>
 </template>
 
@@ -52,7 +46,7 @@ import NodePane from '@/components/pane/modules/node/NodePane.vue'
 import TermPane from '@/components/pane/modules/pathways/TermPane.vue'
 import SubsetPane from '@/components/pane/modules/subset/SubsetPane.vue'
 import DEValuePane from '@/components/pane/modules/difexp/DEValuePane.vue'
-// import EnrichmentLayerPane from '@/components/pane/modules/EnrichmentLayerPane.vue'
+import EnrichmentLayerPane from '@/components/pane/modules/layer/EnrichmentLayerPane.vue'
 
 export default {
     name:"PaneSystem",
@@ -63,7 +57,7 @@ export default {
         TermPane,
         SubsetPane,
         DEValuePane,
-        // EnrichmentLayerPane
+        EnrichmentLayerPane
     },
     data() {
         return{
