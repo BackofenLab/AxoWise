@@ -106,7 +106,7 @@ export default {
 
             for (var checkElement of com.active_termlayers.main){
                 if(!com.hiding_terms.has(checkElement) && com.active_termlayers.main.size >= 1){
-                    intersectionSet= new Set(checkElement.proteins);
+                    intersectionSet= new Set(checkElement.symbols);
                     break
                 }
 
@@ -114,14 +114,14 @@ export default {
                 
             for (var element of com.active_termlayers.main){
                 if(!com.hiding_terms.has(element)){
-                    intersectionSet = new Set(element.proteins.filter((value) => intersectionSet.has(value)));
+                    intersectionSet = new Set(element.symbols.filter((value) => intersectionSet.has(value)));
                 }
 
             }
 
 
             for (var proteins of this.gephi_data.nodes){
-                if(intersectionSet.has(proteins.attributes["Ensembl ID"])){
+                if(intersectionSet.has(proteins.attributes["Name"])){
                     com.intersectionSet.add(proteins)
                 }
             }
@@ -129,9 +129,6 @@ export default {
 
             // Find intersecting dictionaries
             com.intersectingDicts = this.findIntersectingDictionaries(com.active_termlayers.main);
-        
-
-            
 
             com.$emit('active_item_changed',{ "layers": com.layer_item})
             
@@ -202,7 +199,7 @@ export default {
             var selected_proteins = new Set()
             for (var checkElement of com.active_termlayers.main){
                 if(!com.hiding_terms.has(checkElement) && com.active_termlayers.main.size >= 1){
-                    selected_proteins = new Set([...selected_proteins, ...checkElement.proteins])
+                    selected_proteins = new Set([...selected_proteins, ...checkElement.symbols])
                 }
                 
             }
@@ -254,7 +251,7 @@ export default {
                 for (let j = i + 1; j < arr.length; j++) {
                 const dict1 = arr[i];
                 const dict2 = arr[j];
-                if (this.intersectingElements(dict1.proteins, dict2.proteins)) {
+                if (this.intersectingElements(dict1.symbols, dict2.symbols)) {
                     result.push([dict1, dict2]);
                 }
                 }

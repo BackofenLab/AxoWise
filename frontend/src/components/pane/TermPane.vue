@@ -67,8 +67,8 @@ export default {
             com.term_item.value = com.active_term
             com.$emit('active_item_changed',{ "term": com.term_item })
 
-            const activeTermProteins = new Set(com.active_term.proteins);
-            com.links = com.gephi_data.nodes.filter(node => activeTermProteins.has(node.id));
+            const activeTermProteins = new Set(com.active_term.symbols);
+            com.links = com.gephi_data.nodes.filter(node => activeTermProteins.has(node.attributes['Name']));
 
         }
     },
@@ -83,7 +83,7 @@ export default {
         change_level() {
             var com = this;
 
-            this.emitter.emit("enrichTerms", com.active_term.proteins);
+            this.emitter.emit("enrichTerms", com.active_term.symbols);
         },
         revert_level() {
 

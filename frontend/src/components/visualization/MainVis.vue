@@ -182,12 +182,12 @@ export default {
         return
       }
 
-      const proteins = new Set(term.proteins);
+      const proteins = new Set(term.symbols);
       const highlighted_edges = new Set()
       const graph = sigma_instance.graph;
 
       graph.nodes().forEach(function (node) {
-        if (proteins.has(node.id)) {
+        if (proteins.has(node.attributes["Name"])) {
           node.color = "rgb(255, 255, 255)"
           node.active = true
         } else {
@@ -199,8 +199,8 @@ export default {
       graph.edges().forEach(function (edge) {
         const source = graph.getNodeFromIndex(edge.source);
         const target = graph.getNodeFromIndex(edge.target);
-        const source_present = proteins.has(source.attributes["Ensembl ID"]);
-        const target_present = proteins.has(target.attributes["Ensembl ID"]);
+        const source_present = proteins.has(source.attributes["Name"]);
+        const target_present = proteins.has(target.attributes["Name"]);
 
         if (source_present && !target_present || !source_present && target_present) {
           edge.color = "rgba(220, 255, 220," + com.highlight_opacity + ")"
@@ -338,7 +338,7 @@ export default {
       var proteins = new Set(layer);
 
       graph.nodes().forEach(function (node) {
-        if (proteins.has(node.id)) {
+        if (proteins.has(node.attributes['Name'])) {
           node.hidden = false;
         } else {
           node.hidden = true;
@@ -370,7 +370,7 @@ export default {
         var proteinList = new Set()
 
         for (const terms of proteinsTermLayer) {
-          var proteinSet = new Set([...terms.proteins]);
+          var proteinSet = new Set([...terms.symbols]);
           proteinList = new Set([...proteinList, ...proteinSet]);
         }
 
@@ -445,7 +445,7 @@ export default {
         var proteinList = new Set()
 
         for (const terms of filteredArray) {
-          var proteinSet = new Set([...terms.proteins]);
+          var proteinSet = new Set([...terms.symbols]);
           proteinList = new Set([...proteinList, ...proteinSet]);
           if (!this.colorPalette[terms.name])
             this.colorPalette[terms.name] = randomColorRGB();
@@ -457,7 +457,7 @@ export default {
           let count = 0;
           n.color = "rgb(0,100,100)";
           for (const terms of filteredArray) {
-            if (terms.proteins.includes(n.attributes["Ensembl ID"])) {
+            if (terms.symbols.includes(n.attributes["Name"])) {
               count++;
               n.color = this.colorPalette[terms.name];
               if (count === filteredArray.size) {

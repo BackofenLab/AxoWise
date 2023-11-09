@@ -155,7 +155,7 @@ export default {
             const protein_names = new Set(proteins.toUpperCase().split("\n"))
             const subset = []
             com.gephi_data.nodes.forEach(node => {
-                if(protein_names.has(node.attributes['Name'])){
+                if(protein_names.has(node.attributes['Name'].toUpperCase())){
                     subset.push(node)
                 }
             });

@@ -105,27 +105,12 @@
                 //export terms as csv
                 var csvTermsData = com.filtered_terms;
 
-                var terms_csv = 'category,fdr_rate,name,proteins\n';
-                
-                // Create a mapping between Ensembl ID and label
-                const ensemblIdToLabelMap = {};
-                for (const node of com.gephi_data.nodes) {
-                ensemblIdToLabelMap[node.attributes["Ensembl ID"]] = node.label;
-                }
-
+                var terms_csv = 'category,fdr_rate,name,symbols\n';
+            
                 csvTermsData.forEach(function(row) {
-                    var protein_names = []
-                    for (const ensemblId of row['proteins']) {
-                        const label = ensemblIdToLabelMap[ensemblId];
-                        if (label) {
-                            protein_names.push(label);
-                        }
-                    
-                    }
-                    terms_csv += row['category'] + ',' + row['fdr_rate'] + ',"'  + row['name'] + '","' +protein_names+'"';
+                    terms_csv += row['category'] + ',' + row['fdr_rate'] + ',"'  + row['name'] + '","' +row['symbols']+'"';
                     terms_csv += '\n';   
                 });
-
 
                 //Create html element to hidden download csv file
                 var hiddenElement = document.createElement('a');
@@ -141,12 +126,11 @@
             apply_layer(subset, hide) {
                 var com = this;
 
-                
                 if (hide) com.$emit("active_layer_changed", subset);
 
                 var formData = new FormData()
                 
-                formData.append('proteins', subset)
+                formData.append('genes', subset)
                 formData.append('species_id', com.gephi_data.nodes[0].species)
                 
                 com.await_load = true
@@ -266,8 +250,6 @@
 
             var formData = new FormData()
 
-
-            formData.append('proteins', com.gephi_data.nodes.map(node => node.id))
             formData.append('genes', com.gephi_data.nodes.map(node => node.attributes["Name"]))
             formData.append('species_id', com.gephi_data.nodes[0].species)
                 

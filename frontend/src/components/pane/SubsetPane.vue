@@ -122,7 +122,7 @@ export default {
             var com = this;
 
             if(com.hide){
-                this.emitter.emit("hideSubset", com.active_subset.map(node => node.attributes["Ensembl ID"]));
+                this.emitter.emit("hideSubset", com.active_subset.map(node => node.attributes["Name"]));
             }
             else{
                 this.emitter.emit("hideSubset", null);
@@ -135,7 +135,7 @@ export default {
         * @param {boolean} state - functional enrichment gets reverted or applied.
         */
         apply_func(state) {
-            if (state) this.emitter.emit("enrichSubset", this.active_subset.map(node => node.attributes["Ensembl ID"]));
+            if (state) this.emitter.emit("enrichSubset", this.active_subset.map(node => node.attributes["Name"]));
             else this.emitter.emit("enrichSubset", null);
         },
 

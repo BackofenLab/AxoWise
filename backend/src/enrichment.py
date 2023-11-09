@@ -103,11 +103,10 @@ def functional_enrichment(driver: neo4j.Driver, in_genes, species_id: Any):
             new_genes.append(b)
 
     # Update Dataframe and sort by p_value (descending)
-    df_terms["genes"] = new_genes
+    df_terms["symbols"] = new_genes
     df_terms["p_value"] = new_p
     df_terms.sort_values(by="p_value", ascending=False, inplace=True)
     df_terms = df_terms.reset_index(drop=True)
-
     stopwatch.round("pvalue_enrichment")
 
     # calculate Benjamini-Hochberg FDR
