@@ -160,7 +160,7 @@ export default {
 #pathway-layer-show {
     width: 100%;
     height: 100%;
-    top: 8.35%;
+    top: 9.35%;
     position: absolute;
     font-family: 'ABeeZee', sans-serif;
     padding: 0% 2% 2% 2%;
