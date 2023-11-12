@@ -48,7 +48,7 @@ export default {
 
             for (var checkElement of com.active_termlayers.main){
                 if(!com.hiding_terms.has(checkElement) && com.active_termlayers.main.size >= 1){
-                    intersectionSet= new Set(checkElement.proteins);
+                    intersectionSet= new Set(checkElement.symbols);
                     break
                 }
 
@@ -56,13 +56,13 @@ export default {
                 
             for (var element of com.active_termlayers.main){
                 if(!com.hiding_terms.has(element)){
-                    intersectionSet = new Set(element.proteins.filter((value) => intersectionSet.has(value)));
+                    intersectionSet = new Set(element.symbols.filter((value) => intersectionSet.has(value)));
                 }
 
             }
 
             for (var proteins of this.gephi_data.nodes){
-                if(intersectionSet.has(proteins.attributes["Ensembl ID"])){
+                if(intersectionSet.has(proteins.attributes["Name"])){
                     com.intersectionSet.add(proteins)
                 }
             }

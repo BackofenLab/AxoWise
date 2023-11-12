@@ -144,7 +144,7 @@ export default {
       var nodeG = com.gephi_data.nodes[idg];
       var modularityClass = nodeG.attributes["Modularity Class"];
       if (!com.node_cluster_index[modularityClass]) com.node_cluster_index[modularityClass] = new Set();
-      com.node_cluster_index[modularityClass].add(nodeG.id);
+      com.node_cluster_index[modularityClass].add(nodeG.attributes["Name"]);
     }
     this.$store.commit('assign_moduleCluster', com.node_cluster_index)
 

@@ -41,8 +41,8 @@ export default {
             if (com.active_term == null) {
                 return;
             }
-            const activeTermProteins = new Set(com.active_term.proteins);
-            com.links = com.gephi_data.nodes.filter(node => activeTermProteins.has(node.id));
+            const activeTermProteins = new Set(com.active_term.symbols);
+            com.links = com.gephi_data.nodes.filter(node => activeTermProteins.has(node.attributes['Name']));
         }
     }
 }
@@ -60,7 +60,7 @@ export default {
 
 #pathway-connect .network-results {
     margin-top: 2%;
-    height: 82%;
+    height: 81%;
     overflow: scroll;
 }
 </style>

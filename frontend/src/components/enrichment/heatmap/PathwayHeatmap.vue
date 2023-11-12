@@ -58,6 +58,8 @@ export default {
             const { node_cluster_index, node_modul_index } = this.$store.state,
                 matrix = [], rowLabelToIndex = {};
 
+            console.log(node_cluster_index, node_modul_index)
+
             for (const term of terms) {
                 const matrixRow = [];
                 for (const clusterKey of Object.keys(node_cluster_index)) {
@@ -91,10 +93,10 @@ export default {
 
         calcPercentageHeatmap(term, cluster) {
             var includedProteins = 0
-            for (var protein of term.proteins){
+            for (var protein of term.symbols){
                 if(cluster.has(protein)) includedProteins += 1
             }
-            return (includedProteins / term.proteins.length)*100
+            return (includedProteins / term.symbols.length)*100
         },
 
         createClusterTree(linkage, rowLabels) {

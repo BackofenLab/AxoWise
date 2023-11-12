@@ -932,7 +932,6 @@ export default {
     if(this.unconnectedActive(circle.modularity) || !com.moduleSelectionActive) return
 
     var nodeSet = []
-
     if(this.active_subset) {
       nodeSet.push(...com.active_subset)
     }else {
@@ -1069,9 +1068,6 @@ export default {
     this.emitter.on("hideLabels", (state) => {
       this.hide_labels(state)
     });
-    this.emitter.on("deactivateModules", () => {
-      com.moduleSelectionActive = !com.moduleSelectionActive
-    });
 
     this.emitter.on("heatmapView", () => {
       this.split()
@@ -1086,6 +1082,9 @@ export default {
     });
     this.emitter.on("selectDE", (value) => {
       this.highlight_de(value)
+    });
+    this.emitter.on("deactivateModules", () => {
+      com.moduleSelectionActive = !com.moduleSelectionActive
     });
     this.emitter.on("changeOpacity", (value) => {
       if(value.layers == "highlight") com.highlight_opacity = value.opacity;
