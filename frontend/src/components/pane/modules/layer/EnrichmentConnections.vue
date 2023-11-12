@@ -63,7 +63,7 @@ export default {
                 for (let j = i + 1; j < arr.length; j++) {
                 const dict1 = arr[i];
                 const dict2 = arr[j];
-                if (this.intersectingElements(dict1.proteins, dict2.proteins)) {
+                if (this.intersectingElements(dict1.symbols, dict2.symbols)) {
                     result.push([dict1, dict2]);
                 }
                 }

@@ -6,6 +6,7 @@
             <div class="menu-items">
                 <ToggleLabel></ToggleLabel>
                 <ConnectedGraph></ConnectedGraph>
+                <ModuleSelection></ModuleSelection>
                 <EdgeOpacity></EdgeOpacity>
                 <NodeLabelSelect
                 ></NodeLabelSelect>
@@ -33,6 +34,7 @@ import NodeLabelSelect from '@/components/toolbar/modules/NodeLabelSelect.vue'
 import ConnectedGraph from '@/components/toolbar/modules/ConnectedGraph.vue'
 import ToggleLabel from '@/components/toolbar/modules/ToggleLabel.vue'
 import EdgeOpacity from '@/components/toolbar/modules/EdgeOpacity.vue'
+import ModuleSelection from '@/components/toolbar/modules/ModuleSelection.vue'
 
 export default {
     name: 'MenuWindow',
@@ -45,7 +47,8 @@ export default {
         EdgeOpacity,
         NodeLabelSelect,
         ConnectedGraph,
-        ToggleLabel
+        ToggleLabel,
+        ModuleSelection
 
     },
     data() {

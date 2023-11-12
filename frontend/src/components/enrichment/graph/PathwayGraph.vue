@@ -19,7 +19,7 @@ import SnapshotGraph from '@/components/enrichment/graph/SnapshotGraph.vue'
 
 export default {
     name: 'PathwayGraphs',
-    props: ['filtered_terms', 'bookmark_off'],
+    props: ['gephi_data','filtered_terms', 'bookmark_off'],
     components: {
         SnapshotGraph,
     },
@@ -45,6 +45,7 @@ export default {
 
             var formData = new FormData()
             formData.append('func-terms', JSON.stringify(com.filtered_terms))
+            formData.append('species_id', com.gephi_data.nodes[0].species);
 
             this.axios
                 .post(com.api.termgraph, formData)

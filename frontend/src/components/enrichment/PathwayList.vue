@@ -212,24 +212,10 @@ export default {
             //export terms as csv
             var csvTermsData = com.filt_terms;
 
-            var terms_csv = 'category\tfdr_rate\tname\tproteins\n';
-            
-            // Create a mapping between Ensembl ID and label
-            const ensemblIdToLabelMap = {};
-            for (const node of com.gephi_data.nodes) {
-            ensemblIdToLabelMap[node.attributes["Ensembl ID"]] = node.label;
-            }
+            var terms_csv = 'category\tfdr_rate\tname\tgenes\n';
 
             csvTermsData.forEach(function(row) {
-                var protein_names = []
-                for (const ensemblId of row['proteins']) {
-                    const label = ensemblIdToLabelMap[ensemblId];
-                    if (label) {
-                        protein_names.push(label);
-                    }
-                
-                }
-                terms_csv += row['category'] + '\t' + row['fdr_rate'] + '\t"'  + row['name'] + '"\t"' +protein_names+'"';
+                terms_csv += row['category'] + '\t' + row['fdr_rate'] + '\t"'  + row['name'] + '"\t"' + row['symbols'] +'"';
                 terms_csv += '\n';   
             });
 

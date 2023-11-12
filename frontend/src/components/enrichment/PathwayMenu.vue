@@ -12,6 +12,7 @@
             @filtered_terms_changed = 'filtered_terms = $event'
             ></PathwayList>
             <PathwayTools
+            :gephi_data='gephi_data'
             :filtered_terms='filtered_terms'
             :favourite_pathways='favourite_pathways'
             ></PathwayTools>
@@ -46,16 +47,16 @@ export default {
     },
     mounted() {
         var com = this
-        com.generatePathways(com.gephi_data.nodes[0].species, com.gephi_data.nodes.map(node => node.id))
+        com.generatePathways(com.gephi_data.nodes[0].species, com.gephi_data.nodes.map(node => node.attributes["Name"]))
 
     },
     methods: {
-        generatePathways(species, proteins){
+        generatePathways(species, genes){
             var com = this
 
             //Adding proteins and species to formdata 
             var formData = new FormData()
-            formData.append('proteins', proteins)
+            formData.append('genes', genes)
             formData.append('species_id', species);
                 
             this.await_load = true

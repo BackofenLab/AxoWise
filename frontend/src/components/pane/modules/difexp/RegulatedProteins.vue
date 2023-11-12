@@ -26,22 +26,6 @@
                     </tr>
                 </tbody>
             </table>
-            <!-- <div class="statistics-attr">
-                <span>min</span>
-                <span>max</span>    
-            </div>
-
-            <div class="statistics-val">
-
-                <input
-                type="number"
-                v-bind:min="maxSelect.min"
-                v-bind:max="maxSelect.max"
-                v-bind:step="maxSelect.step"
-                v-model="maxSelect.value"
-                v-on:change="select_proteins()"
-                />
-            </div> -->
         </div>
 
         <div class="pane-sorting">
@@ -130,13 +114,13 @@ export default {
 
 #de-connect .network-results {
     margin-top: 2%;
-    height: 58%;
+    height: 49%;
     overflow: scroll;
 }
 
 .selection-results{
     margin-top: 2%;
-    height: 15%;
+    height: 20%;
     overflow: scroll;
 }
 
