@@ -13,9 +13,6 @@ export default {
         return {
         }
     },
-    mounted() {
-        console.log(this.gephi_data.nodes.length,this.gephi_data.edges.length )
-    },
 }
 </script>
 

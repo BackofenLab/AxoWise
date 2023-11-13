@@ -75,6 +75,7 @@ export default {
                 com.terms = response.data.sort((t1, t2) => t1.fdr_rate - t2.fdr_rate)
                 com.terms_list.push(com.terms)
                 com.await_load = false
+                this.emitter.emit("generateGraph", com.terms);
             })
 
         },
