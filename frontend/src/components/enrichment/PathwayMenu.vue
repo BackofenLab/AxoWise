@@ -11,6 +11,10 @@
             @favourite_pathways_changed = 'favourite_pathways = $event'
             @filtered_terms_changed = 'filtered_terms = $event'
             ></PathwayList>
+            <PathwaySet
+            :gephi_data='gephi_data'
+            :api='api'
+            ></PathwaySet>
             <PathwayTools
             :gephi_data='gephi_data'
             :filtered_terms='filtered_terms'
@@ -24,6 +28,7 @@
 <script>
 import PathwayList from '@/components/enrichment/PathwayList.vue'
 import PathwayTools from '@/components/enrichment/PathwayTools.vue'
+import PathwaySet from '@/components/enrichment/PathwaySet.vue'
 
 export default {
     name: 'PathwayMenu',
@@ -31,6 +36,7 @@ export default {
     components: {
         PathwayList,
         PathwayTools,
+        PathwaySet
     },
     data() {
         return {
@@ -72,24 +78,6 @@ export default {
             })
 
         },
-        apply_layer(subset) {
-            var com = this;
-            com.generatePathways(com.gephi_data.nodes[0].species, subset)
-        },
-        revert_layer() {
-            var com = this;
-
-            if(com.await_load){
-                com.abort_enrichment()
-                return
-            }
-
-            if(com.terms_list.length > 1) {
-                com.terms_list.pop()
-                com.terms = com.terms_list[com.terms_list.length - 1 ];
-            }
-
-        },
         abort_enrichment() {
                 this.sourceToken.cancel('Request canceled');
                 this.await_load = false 
@@ -97,9 +85,9 @@ export default {
     },
     created() {
 
-        this.emitter.on("enrichTerms", (subset) => {
-            if(subset != null) this.apply_layer(subset);
-            else this.revert_layer();
+        this.emitter.on("enrichTerms", (terms) => {
+            if(terms != null) this.terms = terms;
+            else this.terms = this.terms_list[0];
         });
 
     }
