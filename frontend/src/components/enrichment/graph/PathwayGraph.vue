@@ -35,16 +35,17 @@ export default {
         }
     },
     mounted(){
-        this.emitter.on("generateGraph", () => {
-            this.get_term_data()
+        this.emitter.on("generateGraph", (set) => {
+            this.get_term_data(set)
         });
     },
     methods: {
-        get_term_data() {
+        get_term_data(set) {
             var com = this
 
             var formData = new FormData()
-            formData.append('func-terms', JSON.stringify(com.filtered_terms))
+            if(!set)formData.append('func-terms', JSON.stringify(com.filtered_terms))
+            else formData.append('func-terms', JSON.stringify(set))
             formData.append('species_id', com.gephi_data.nodes[0].species);
 
             this.axios
