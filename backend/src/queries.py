@@ -34,11 +34,24 @@ def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id
         species = "Mus_Musculus"
     elif species_id == 9606:
         species = "Homo_Sapiens"
-
+    query = f"""
+        MATCH (n:TG:Mus_Musculus) WHERE n.ALIAS IS NOT NULL
+        WITH n, apoc.convert.fromJsonList(n.ALIAS) AS alias_list
+        WITH n, [x IN alias_list WHERE x IN {[x.upper() for x in names]}] AS matches
+        UNWIND matches AS match
+        RETURN n.SYMBOL AS symbol, match AS found_alias
+    """
+    # Retrieve all the symbols that correspond to aliases found in names
+    with driver.session() as session:
+        result = session.run(query)
+        symbols_set, aliases_set = _convert_to_symbol_alias(result)
+    # To make less calls to the database, remove the aliases and add their corresponding symbol
+    genes_set = set(names)
+    result_names = list(genes_set - aliases_set) + list(symbols_set - genes_set)
     query = f"""
         MATCH (protein:Protein:{species})
-        WHERE protein.SYMBOL IN {str([n.title() for n in names])} 
-            OR protein.ENSEMBL_PROTEIN IN {str([n.title() for n in names])} 
+        WHERE protein.SYMBOL IN {str([n.title() for n in result_names])} 
+            OR protein.ENSEMBL_PROTEIN IN {str([n.title() for n in result_names])} 
         RETURN protein, protein.ENSEMBL_PROTEIN AS id
     """
     with driver.session() as session:
@@ -133,6 +146,15 @@ def _convert_to_protein_id(result: neo4j.Result) -> (list, list[str]):
         proteins.append(row["protein"])
         ids.append(row["id"])
     return proteins, ids
+
+
+def _convert_to_symbol_alias(result: neo4j.Result) -> (set[str], set[str]):
+    symbols = set()
+    aliases = set()
+    for row in result:
+        symbols.add(row["symbol"])
+        aliases.add(row["found_alias"])
+    return symbols, aliases
 
 
 def _convert_to_connection_info_score(
