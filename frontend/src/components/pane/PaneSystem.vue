@@ -126,8 +126,6 @@ export default {
             this.$emit('active_layer_changed', null)
             this.$emit('active_decoloumn_changed', null)
             this.$emit('active_termlayers_changed', null)
-            this.emitter.emit('enrichTerms', null)
-            this.emitter.emit('enrichSubset', null)
             this.emitter.emit('reset_decoloumn')
 
         },
