@@ -101,7 +101,7 @@ export default {
         transform: translateY(-50%);
         margin-left: 35%;
         border-radius: 10px;
-        z-index: 999;
+        z-index: 1;
         font-family: 'ABeeZee', sans-serif;
 
     }
