@@ -186,6 +186,8 @@ export default {
     active_term(term) {
       const com = this;
 
+      this.$store.commit('assign_active_subset', term ? term.symbols : null)
+      
       if(term == null) {
         com.reset()
         return
@@ -237,13 +239,19 @@ export default {
     },
     active_subset(subset) {
       var com = this
+      var proteins = null;
 
       if (subset == null) {
         com.reset();
+        this.$store.commit('assign_active_subset', null)
         return
+      }else {
+        proteins = new Set(subset.map(node => node.attributes["Ensembl ID"]));
+        this.$store.commit('assign_active_subset', subset.map(node => node.attributes["Name"]))
       }
+      
 
-      const proteins = new Set(subset.map(node => node.attributes["Ensembl ID"]));
+
       const highlighted_edges = new Set()
 
       const graph = sigma_instance.graph;

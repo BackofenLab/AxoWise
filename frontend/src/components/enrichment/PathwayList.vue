@@ -449,9 +449,9 @@ export default {
     }
 
     .sorting {
-        margin-top: 1%;
-        margin-left: 4.5%;
-        padding-bottom: 0.3%;
+        margin-top: 0.1vw;
+        margin-left: 1.35vw;
+        padding-bottom: 0.1vw;
         width: 91%;
         font-size: 0.73vw;
         border-bottom: 1px solid;

@@ -17,7 +17,8 @@ export const store = createStore({
       snapshot_pathways: [],
       snapshot_heatmaps: [],
       node_cluster_index: {},
-      node_modul_index: new Set()
+      node_modul_index: new Set(),
+      active_subset: null
 
 
     },
@@ -27,6 +28,9 @@ export const store = createStore({
     },
     assign_colorpalette(state, value) {
       state.colorpalette = value
+    },
+    assign_active_subset(state, value) {
+      state.active_subset = value
     },
     assign_term_graph(state, value) {
       state.term_graph_data = value
