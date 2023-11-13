@@ -33,6 +33,9 @@
           :gephi_data='gephi_data'
           @active_subset_changed = 'active_subset = $event'
         ></MainToolBar>
+        <NetworkValues
+          :gephi_data='gephi_data'
+        ></NetworkValues>
         <SearchField
         :gephi_data='gephi_data'
         :active_node='active_node' @active_node_changed = 'active_node = $event'
@@ -69,8 +72,7 @@ import MainVis from '@/components/visualization/MainVis.vue'
 import PaneSystem from '@/components/pane/PaneSystem.vue'
 import PathwayMenu from '@/components/enrichment/PathwayMenu.vue'
 import SearchField from '../components/interface/SearchField.vue'
-// import ToggleLabel from '../components/interface/ToggleLabel.vue'
-// import ConnectedGraph from '../components/interface/ConnectedGraph.vue'
+import NetworkValues from '../components/interface/NetworkValues.vue'
 import MainToolBar from '../components/toolbar/MainToolBar.vue'
 
 export default {
@@ -81,8 +83,7 @@ export default {
     PathwayMenu,
     SearchField,
     MainToolBar,
-    // ToggleLabel,
-    // ConnectedGraph
+    NetworkValues
   },
   data() {
     return {
