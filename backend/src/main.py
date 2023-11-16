@@ -95,7 +95,7 @@ def proteins_subgraph_api():
     selected_d = request.form.get("selected_d").split(",") if request.form.get("selected_d") else None
     threshold = int(float(request.form.get("threshold")) * 1000)
 
-    proteins, protein_ids = queries.get_protein_ids_for_names(driver, protein_names, species_id)
+    proteins, protein_ids, symbol_alias_mapping = queries.get_protein_ids_for_names(driver, protein_names, species_id)
 
     stopwatch.round("Setup")
 
@@ -164,6 +164,7 @@ def proteins_subgraph_api():
         ensembl_id = node["id"]
         df_node = ensembl_to_node.get(ensembl_id)
         if df_node:
+            symbol_value = df_node.SYMBOL
             if ensembl_id in node_mapping:
                 mapped_node_id = node_mapping[ensembl_id]
                 # Use node mapping to add corresponding values of betweenness and pagerank
@@ -171,11 +172,16 @@ def proteins_subgraph_api():
                 node["attributes"]["PageRank"] = str(pagerank[mapped_node_id])
             node["attributes"]["Description"] = df_node.annotation
             node["attributes"]["Ensembl ID"] = df_node.external_id
-            node["attributes"]["Name"] = df_node.SYMBOL
+            node["attributes"]["Name"] = symbol_value
             if not (request.files.get("file") is None):
                 if selected_d != None:
                     for column in selected_d:
-                        node["attributes"][column] = panda_file.loc[panda_file["name"] == df_node.SYMBOL, column].item()
+                        if symbol_value in symbol_alias_mapping:
+                            # If a symbol was found through its alias we have
+                            # to keep the alias name so the value can be taken
+                            # from the input file correctly
+                            symbol_value = symbol_alias_mapping[symbol_value]
+                        node["attributes"][column] = panda_file.loc[panda_file["name"] == symbol_value, column].item()
             node["label"] = df_node.SYMBOL
             node["species"] = str(10090)
 
