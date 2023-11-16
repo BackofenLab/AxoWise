@@ -28,7 +28,10 @@ def get_terms_connected_by_overlap(driver: neo4j.Driver, term_ids: list[str], sp
         return _convert_to_connection_info_score(result=result, _int=False, protein=False)
 
 
-def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id: int) -> (list, list[str]):
+def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id: int) -> (list, list[str], dict):
+    """
+    Returns: protein, protein_id and a dictionary of format (Symbol: Alias) of all the symbols found from aliases
+    """
     # unsafe parameters because otherwise this query takes 10s with neo4j for unknown reasons
     if species_id == 10090:
         species = "Mus_Musculus"
@@ -44,7 +47,7 @@ def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id
     # Retrieve all the symbols that correspond to aliases found in names
     with driver.session() as session:
         result = session.run(query)
-        symbols_set, aliases_set = _convert_to_symbol_alias(result)
+        symbols_set, aliases_set, mapping = _convert_to_symbol_alias(result)
     # To make less calls to the database, remove the aliases and add their corresponding symbol
     genes_set = set(names)
     result_names = list(genes_set - aliases_set) + list(symbols_set - genes_set)
@@ -56,7 +59,8 @@ def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id
     """
     with driver.session() as session:
         result = session.run(query)
-        return _convert_to_protein_id(result)
+        protein, id = _convert_to_protein_id(result)
+        return protein, id, mapping
 
 
 def get_protein_neighbours(
@@ -151,10 +155,16 @@ def _convert_to_protein_id(result: neo4j.Result) -> (list, list[str]):
 def _convert_to_symbol_alias(result: neo4j.Result) -> (set[str], set[str]):
     symbols = set()
     aliases = set()
+    mapping = {}
     for row in result:
-        symbols.add(row["symbol"])
-        aliases.add(row["found_alias"])
-    return symbols, aliases
+        symbol = row["symbol"]
+        alias = row["found_alias"]
+        symbols.add(symbol)
+        aliases.add(alias)
+        # Only add the (symbol: alias) if the symbol isnt there already
+        if row["symbol"] not in mapping:
+            mapping[symbol.title()] = alias.title()
+    return symbols, aliases, mapping
 
 
 def _convert_to_connection_info_score(
