@@ -2,7 +2,7 @@
     <div class="text" v-show="active_subset !== null">
         <div id="colorbar-subset">
             <div class='colorbar-text' v-if="active_subset !== null">
-               No° Proteins: {{number_prot}}
+               No° nodes: {{number_prot}}
             </div>
             <div class='colorbar-img' v-on:click="show_layer()">
                 <img src="@/assets/pane/invisible.png" v-if="!hide">
@@ -40,7 +40,7 @@ import SubsetLinks from '@/components/pane/modules/subset/SubsetLinks.vue'
 
 export default {
     name: 'SubsetPane',
-    props: ['active_subset','gephi_data'],
+    props: ['active_subset','gephi_data', 'mode'],
     emits: ['active_item_changed', 'highlight_subset_changed'],
     components: {
         SubsetConnections,
@@ -69,7 +69,6 @@ export default {
             var com = this;
             
             if (com.active_subset == null) {
-
                 return;
             }
 
@@ -122,7 +121,7 @@ export default {
                 this.emitter.emit("hideSubset", com.active_subset.map(node => node.attributes["Name"]));
             }
             else{
-                this.emitter.emit("hideSubset", null);
+                this.emitter.emit("hideSubset", {subset: null, mode: this.mode});
             }
             com.hide = !com.hide
         },
@@ -132,7 +131,7 @@ export default {
         * @param {dict} value - A dictionary of a single node
         */
         select_node(value) {
-            this.emitter.emit("searchNode", value);
+            this.emitter.emit("searchNode", {node: value, mode: this.mode});
         }
     },
 }

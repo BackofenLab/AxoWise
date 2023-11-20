@@ -1,23 +1,22 @@
 <template>
     <div class="tool-item">
-        <span>Reset labels</span>
-        <button v-on:click="reset_labels()" id="reset-labels">yes</button>
+        <span>Visualize fdr-rate</span>
+        <button v-on:click="activate_fdr(check);check=!check" id="activate-fdr">yes</button>
     </div>
 </template>
 
 <script>
 
 export default {
-    name: 'NodeLabelSelect',
-    props: ['mode'],
+    name: 'FDRValue',
     data() {
         return {
+            check: true,
         }
     },
     methods: {
-        reset_labels(){
-            console.log(this.mode)
-            this.emitter.emit("resetSelect", {mode: this.mode});
+        activate_fdr(){
+            this.emitter.emit("activateFDR", this.check);
         }
     }
 }
@@ -25,7 +24,7 @@ export default {
 
 <style>
 
-#reset-labels {
+#activate-fdr {
 	width: 9%;
     height: 6%;
 	position: absolute;

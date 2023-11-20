@@ -1,14 +1,14 @@
 <template>
     <div id="network-values">
-        <div class="value-text">nodes: {{ gephi_data.nodes.length }}</div>
-        <div class="value-text">edges: {{ gephi_data.edges.length }}</div>
+        <div class="value-text">nodes: {{ data.nodes.length }}</div>
+        <div class="value-text">edges: {{ data.edges.length }}</div>
     </div>
 </template>
 
 <script>
 export default {
     name: 'NetworkValues',
-    props: ['gephi_data'],
+    props: ['data'],
     data() {
         return {
         }

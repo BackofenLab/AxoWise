@@ -31,13 +31,12 @@
         <div class="header-menu">
         <MainToolBar
           :gephi_data='gephi_data'
-          @active_subset_changed = 'active_subset = $event'
         ></MainToolBar>
         <NetworkValues
-          :gephi_data='gephi_data'
+          :data='gephi_data'
         ></NetworkValues>
         <SearchField
-        :gephi_data='gephi_data'
+        :data='gephi_data'
         :active_node='active_node' @active_node_changed = 'active_node = $event'
         ></SearchField>
         <PaneSystem
@@ -54,14 +53,6 @@
       </div>
     </keep-alive>
       <keep-alive>
-      <!-- <ToggleLabel
-      :type='type'
-      ></ToggleLabel>
-      </keep-alive>
-      <keep-alive>
-      <ConnectedGraph
-      :type='type'
-      ></ConnectedGraph> -->
     </keep-alive>
   </div>
 </template>
@@ -102,13 +93,14 @@ export default {
       unconnected_nodes: null,
       node_modul_index: null,
       node_cluster_index: null,
-      type: 'protein'
     }
   },
   activated() {
+    console.log("in")
 
     const term = this.$store.state.enrichment
-    const all_terms = this.$store.state.enrichment_terms
+    const all_terms = this.$store.state.current_enrichment_terms
+    console.log(all_terms)
     if(term != null){
       for (var idx in all_terms) {
         var node = all_terms[idx];

@@ -19,7 +19,7 @@
 
 export default {
     name: 'ProteinList',
-    props: ['gephi_data'],
+    props: ['gephi_data','mode'],
     emits: ['protein_active_changed'],
     data() {
         return {
@@ -77,12 +77,12 @@ export default {
             const protein_names = new Set(proteins.toUpperCase().split("\n"))
             const subset = []
             com.gephi_data.nodes.forEach(node => {
-                if(protein_names.has(node.attributes['Name'])){
+                if(protein_names.has(node.attributes['Name'].toUpperCase() )){
                     subset.push(node)
                 }
             });
 
-            com.emitter.emit("searchSubset", subset);
+            com.emitter.emit("searchSubset", {subset: subset,mode: this.mode});
         },
     },
     mounted(){

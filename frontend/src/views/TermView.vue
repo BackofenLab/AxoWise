@@ -1,6 +1,6 @@
 <template>
   <keep-alive>
-    <div class="term-view">
+    <div class="protein-view">
       <TermVis ref="termVis"
         :active_node='active_node' @active_node_changed='active_node = $event'
         :active_fdr='active_fdr' @active_fdr_changed='active_fdr = $event'
@@ -12,60 +12,53 @@
         :node_color_index='node_color_index'
         :edge_color_index='edge_color_index'
         :node_size_index='node_size_index'
+        :node_modul_index='node_modul_index'
         :unconnected_nodes='unconnected_nodes'
       ></TermVis>
-      <TermPaneSystem
-        :active_node='active_node' @active_node_changed = 'active_node = $event'
-        :active_fdr='active_fdr' @active_fdr_changed='active_fdr = $event'
-        :active_subset='active_subset' @active_subset_changed='active_subset = $event'
-        :term_data='term_data'
-        :node_color_index='node_color_index'
-        @active_combine_changed = 'active_combine = $event'
-      ></TermPaneSystem>
-      <TermToolBar
-      :term_data='term_data'
-      ></TermToolBar>
       <div class="header-menu">
-        <ModularityClass
-        :term_data='term_data'
-        :active_subset='active_subset' @active_subset_changed = 'active_subset = $event'
-        :subactive_subset='subactive_subset' @subactive_subset_changed = 'subactive_subset = $event'
-        :type='type'
-        > </ModularityClass>
+        <TermToolBar
+        :data='term_data'
+        ></TermToolBar>
+        <NetworkValues
+        :data='term_data'
+        ></NetworkValues>
+        <SearchField
+        :data='term_data'
+        :active_node='active_node' @active_node_changed = 'active_node = $event'
+        ></SearchField>
+        <TermPaneSystem
+          :gephi_data='term_data'
+          :active_node='active_node' @active_node_changed = 'active_node = $event'
+          :active_subset='active_subset' @active_subset_changed = 'active_subset = $event'
+          @active_layer_changed = 'active_layer = $event'
+          @active_combine_changed = 'active_combine = $event'
+          :node_color_index='node_color_index'
+          ></TermPaneSystem>
       </div>
-      <GraphSelection
+      <!-- <GraphSelection
       :term_data='term_data' @term_data_changed = 'term_data = $event'
       >  
-      </GraphSelection>
-      <ToggleLabel
-      :type='type'
-      ></ToggleLabel>
-      <ConnectedGraph
-      :type='type'
-      ></ConnectedGraph>
+      </GraphSelection> -->
     </div>
   </keep-alive>
 </template>
 
 <script>
 import TermVis from '@/components/visualization/TermVis.vue'
-import TermPaneSystem from '@/components/term_graph/TermPaneSystem.vue'
-import GraphSelection from '@/components/term_graph/GraphSelection.vue'
-import TermToolBar from '@/components/term_graph/TermToolBar.vue'
-import ToggleLabel from '../components/toolbar/modules/ToggleLabel.vue'
-import ConnectedGraph from '../components/toolbar/modules/ConnectedGraph.vue'
-import ModularityClass from '../components/interface/ModularityClass.vue'
+import TermPaneSystem from '@/components/pane/TermPaneSystem.vue'
+import SearchField from '../components/interface/SearchField.vue'
+import NetworkValues from '../components/interface/NetworkValues.vue'
+import TermToolBar from '../components/toolbar/TermToolBar.vue'
 
 export default {
   name: 'TermView',
   components: {
     TermVis,
-    TermPaneSystem,
+    NetworkValues,
     TermToolBar,
-    ToggleLabel,
-    ConnectedGraph,
-    ModularityClass,
-    GraphSelection
+    SearchField,
+    TermPaneSystem,
+    // GraphSelection
     
   },
   data() {
@@ -81,7 +74,6 @@ export default {
       node_size_index: null,
       centering_active: null,
       unconnected_nodes: null,
-      type: 'term'
     }
   },
   watch: {
@@ -106,6 +98,22 @@ export default {
         com.edge_color_index[edge.id] = edge.color;
       }
 
+      com.node_cluster_index = {};
+      for (var idg in com.term_data.nodes) {
+        var nodeG = com.term_data.nodes[idg];
+        var modularityClass = nodeG.attributes["Modularity Class"];
+        if (!com.node_cluster_index[modularityClass]) com.node_cluster_index[modularityClass] = new Set();
+        com.node_cluster_index[modularityClass].add(nodeG.attributes["Name"]);
+      }
+      this.$store.commit('assign_moduleCluster_term', com.node_cluster_index)
+
+      com.node_modul_index = new Set()
+      for (var idm in com.unconnected_nodes) {
+        var node_m = com.unconnected_nodes[idm];
+        com.node_modul_index.add(node_m.attributes["Modularity Class"])
+      }
+      this.$store.commit('assign_moduleIndex_term', com.node_modul_index)
+
       const maingraph = new Set(com.term_data.subgraph)
       com.unconnected_nodes = com.term_data.nodes.filter(item => !maingraph.has(item.id));
     }
@@ -117,10 +125,11 @@ export default {
     
     const term_node = this.$store.state.active_node_enrichment
     if(term_node != null){
+      console.log(this.term_data)
       for (var idx in this.term_data.nodes) {
         var node = this.term_data.nodes[idx];
         if(node.attributes["Ensembl ID"] == term_node.id){
-          this.active_node = {node:this.term_data.nodes[idx], graph:this.term_data}
+          this.active_node = this.term_data.nodes[idx]
         }
       }
       this.$store.commit('assign_active_enrichment_node', null)
@@ -146,6 +155,22 @@ export default {
       var edge = com.term_data.edges[idy];
       com.edge_color_index[edge.id] = edge.color;
     }
+
+    com.node_cluster_index = {};
+    for (var idg in com.term_data.nodes) {
+      var nodeG = com.term_data.nodes[idg];
+      var modularityClass = nodeG.attributes["Modularity Class"];
+      if (!com.node_cluster_index[modularityClass]) com.node_cluster_index[modularityClass] = new Set();
+      com.node_cluster_index[modularityClass].add(nodeG.attributes["Name"]);
+    }
+    this.$store.commit('assign_moduleCluster_term', com.node_cluster_index)
+
+    com.node_modul_index = new Set()
+    for (var idm in com.unconnected_nodes) {
+      var node_m = com.unconnected_nodes[idm];
+      com.node_modul_index.add(node_m.attributes["Modularity Class"])
+    }
+    this.$store.commit('assign_moduleIndex_term', com.node_modul_index)
 
     const maingraph = new Set(com.term_data.subgraph)
     com.unconnected_nodes = com.term_data.nodes.filter(item => !maingraph.has(item.id));

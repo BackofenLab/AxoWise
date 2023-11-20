@@ -49,7 +49,6 @@ export default {
                     com.statistics[dcoloumn] = com.active_node.attributes[dcoloumn]
                 });
             }
-            console.log(com.statistics)
         }
     }
 }

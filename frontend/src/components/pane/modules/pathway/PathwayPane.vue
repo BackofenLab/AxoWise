@@ -1,15 +1,19 @@
 <template>
     <div class="text" v-show="active_node !== null">
-        <div id="colorbar" v-if="active_node !== null" :style="{ backgroundColor: colornode }">{{active_node.attributes['Name']}}</div>
+        <div id="colorbar-pathway">
+            <div class='colorbar-text' :style="{ backgroundColor: colornode }" v-if="active_node !== null">
+                {{active_node.attributes["Name"]}}
+            </div>
+            <div class='colorbar-img' v-on:click="to_proteins()">
+                <img src="@/assets/pane/follow.png">
+            </div>
+        </div>
         <div class="nodeattributes">
             <div id="informations" class="subsection">
                 <div class="subsection-header">
                     <span>informations</span>
                 </div>
                 <div class="subsection-main">
-                    <ChatbotInformation
-                    :active_node='active_node'
-                    ></ChatbotInformation>
                 </div>
             </div>
             <div id="network" class="subsection">
@@ -33,17 +37,6 @@
                     ></NodeConnections>
                 </div>
             </div>
-            <div id="routing" class="subsection">
-                <div class="subsection-header">
-                    <span>routing</span>
-                </div>
-                <div class="subsection-main">
-                    <RoutingNode 
-                    :active_node='active_node'
-                    :gephi_data='gephi_data'
-                    ></RoutingNode>
-                </div>
-            </div>
         </div>
     </div>
 </template>
@@ -51,26 +44,20 @@
 <script>
 import NetworkStatistics from '@/components/pane/modules/node/NetworkStatistics.vue'
 import NodeConnections from '@/components/pane/modules/node/NodeConnections.vue'
-import ChatbotInformation from '@/components/pane/modules/node/ChatbotInformation.vue'
-import RoutingNode from '@/components/pane/modules/node/RoutingNode.vue'
 
 export default {
-    name: 'NodePane',
+    name: 'PathwayPane',
     props: ['active_node','gephi_data','node_color_index','mode'],
     emits: ['active_item_changed'],
     components: {
         NetworkStatistics,
-        ChatbotInformation,
         NodeConnections,
-        RoutingNode
 
     },
     data() {
         return {
             links: null,
             colornode: null,
-            expand_neighbor: false,
-            expand_stats: false,
             node_item: {
                 value: null,
                 imageSrc: require('@/assets/pane/protein-icon.png')
@@ -119,6 +106,11 @@ export default {
         select_node(value) {
             this.emitter.emit("searchNode", {node: value, mode: this.mode});
         },
+        to_proteins(){
+            var com = this;
+            this.$store.commit('assign_active_enrichment', com.active_node.attributes["Ensembl ID"])
+            this.$router.push("protein")
+        }
         
     },
 }
