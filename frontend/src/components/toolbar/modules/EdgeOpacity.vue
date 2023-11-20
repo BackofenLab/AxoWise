@@ -32,6 +32,7 @@
 <script>
 export default {
     name: 'EdgeOpacity',
+    props: ['mode'],
     data() {
         return {
 			opacityBackground: {
@@ -52,8 +53,7 @@ export default {
 		change_opacity(layer) {
 			var com = this;
             var edgeOpacity = layer === 'highlight' ? com.opacityHighlight.value : com.opacityBackground.value;
-            
-            this.emitter.emit("changeOpacity", {'opacity': edgeOpacity, 'layers': layer});
+            this.emitter.emit("changeOpacity", {value: {'opacity': edgeOpacity, 'layers': layer}, mode: this.mode});
 		},
 	},
 }

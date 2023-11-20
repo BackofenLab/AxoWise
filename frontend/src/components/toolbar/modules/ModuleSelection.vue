@@ -8,14 +8,14 @@
 <script>
 export default {
     name: 'ModuleSelection',
+    props: ['mode'],
     data() {
         return {
-          type: 'protein'
         }
     },
     methods: {
       check() {
-        if(this.type == 'protein') this.emitter.emit("deactivateModules");
+        this.emitter.emit("deactivateModules", {mode: this.mode});
       }
 
     }

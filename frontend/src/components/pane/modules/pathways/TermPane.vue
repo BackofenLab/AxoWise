@@ -40,7 +40,7 @@ import PathwayConnections from '@/components/pane/modules/pathways/PathwayConnec
 
 export default {
     name: 'TermPane',
-    props: ['active_term','gephi_data'],
+    props: ['active_term','gephi_data','mode'],
     emits: ['active_item_changed', 'highlight_subset_changed'],
     components:{
         PathwayStatistics,
@@ -64,7 +64,6 @@ export default {
                 return;
             }
 
-            console.log(com.active_term)
             com.term_item.value = com.active_term
             com.$emit('active_item_changed',{ "Pathway": com.term_item })
 
@@ -89,7 +88,7 @@ export default {
             this.$router.push("terms")
         },
         select_node(value) {
-            this.emitter.emit("searchNode", value);
+            this.emitter.emit("searchNode", {node: value, mode: this.mode});
         },
     }
 }

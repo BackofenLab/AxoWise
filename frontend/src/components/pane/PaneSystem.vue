@@ -8,18 +8,21 @@
     </div>
     <div class="pane-window">
         <NodePane v-show="active_tab === 'Protein'"
+            :mode = 'mode'
             :active_node='active_node' 
             :node_color_index='node_color_index'
             :gephi_data='gephi_data'
             @active_item_changed = 'active_item = $event'
         ></NodePane>
-        <TermPane v-show="active_tab === 'Pathway'" 
+        <TermPane v-show="active_tab === 'Pathway'"
+            :mode = 'mode'
             :active_term='active_term' 
             :gephi_data='gephi_data'
             @active_item_changed = 'active_item = $event'
             @highlight_subset_changed = 'highlight_subset = $event'
         ></TermPane>
         <SubsetPane v-show="active_tab === 'Subset'"
+            :mode = 'mode'
             :active_subset='active_subset'
             :gephi_data='gephi_data'
             @active_item_changed = 'active_item = $event'
@@ -27,11 +30,13 @@
             @active_layer_changed = 'active_layer = $event'
         ></SubsetPane>
         <DEValuePane v-show="active_tab === 'Differential expression'"
+            :mode = 'mode'
             :active_decoloumn='active_decoloumn'
             :gephi_data='gephi_data'
             @active_item_changed = 'active_item = $event'
         ></DEValuePane>
         <EnrichmentLayerPane v-show="active_tab === 'Pathway layers'"
+            :mode = 'mode'
             :active_termlayers='active_termlayers'
             :gephi_data='gephi_data'
             @active_item_changed = 'active_item = $event'
@@ -65,7 +70,8 @@ export default {
             active_dict: {},
             active_tab: "Protein",
             highlight_subset: null,
-            paneHidden: true
+            paneHidden: true,
+            mode: "protein"
         }
     },
     watch: {

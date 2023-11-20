@@ -17,8 +17,8 @@
             <li v-on:click="center()">
                 <img src="@/assets/toolbar/expand.png" alt="Center Icon">
             </li>
-            <li v-on:click="threeview()">
-                <img src="@/assets/toolbar/3d-icon.png" alt="3D Icon">
+            <li v-on:click="switch_graph()">
+                <img src="@/assets/toolbar/logout.png" alt="3D Icon">
             </li>
         </ul>
         <MenuWindow v-show="tools_active"
@@ -29,12 +29,12 @@
         @tools_active_changed = 'tools_active = $event'
         ></MenuWindow>
         <SelectionList v-show="selection_active"
-        :data = 'gephi_data'
+        :data = 'data'
         :mode = 'mode'
         @selection_active_changed = 'selection_active = $event'>
         </SelectionList>
         <ProteinList v-show="protein_active"
-        :gephi_data = 'gephi_data'
+        :gephi_data = 'data'
         :mode = 'mode'
         @protein_active_changed = 'protein_active = $event'>
         </ProteinList>
@@ -49,8 +49,8 @@ import ProteinList from '@/components/toolbar/modules/ProteinList.vue'
 import SelectionList from '@/components/toolbar/modules/SelectionList.vue'
 
 export default {
-    name: 'MainToolBar',
-    props: ['gephi_data', 'term_data'],
+    name: 'TermToolBar',
+    props: ['data'],
     components: {
         MenuWindow,
         ProteinList,
@@ -61,7 +61,7 @@ export default {
             tools_active: false,
             protein_active: false,
             selection_active: false,
-            mode: "protein"
+            mode: 'term'
         }
     },
     methods: {
@@ -70,77 +70,16 @@ export default {
                 window.location.reload();
             });
         },
+        switch_graph() {
+            this.$router.push("protein")
+        },
         center() {
             this.emitter.emit("centerGraph", {check: true, mode: this.mode});
-        },
-        threeview() {
-            this.emitter.emit("threeView");
         },
     }
 }
 </script>
 
 <style>
-.menu-bar {
-    position: absolute;
-    left: 3.515%;
-    border-radius: 5px;
-    height: 3.98%;
-    width: 22%;
-    display: inline-flex;
-    background: #D9D9D9;
-    backdrop-filter: blur(7.5px);
-    -webkit-backdrop-filter: blur(7.5px);
-    align-items: center;
-    padding: 0 10px;
-    z-index: 99;
-}
-
-.full {
-    border-radius: 5px 5px 0 0;
-}
-
-.menu-bar li {
-    list-style: none;
-    color:  #0A0A1A;
-    font-family: sans-serif;
-    font-weight: bold;
-    padding: 10px;
-    margin: 0 8px;
-    position: relative;
-    cursor: pointer;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-}
-.menu-bar li::before {
-	content: " ";
-	position: absolute;
-	top: 0;
-	left:0;
-	height:100%;
-	width: 100%;
-	z-index:-1;
-	transition: .2s;
-	border-radius: 5px;
-}
-.menu-bar li:hover::before {
-	background: linear-gradient(to bottom, #e8edec, #d2d1d3);
-	box-shadow: 0px 3px 20px 0px black;
-	transform: scale(1.2);
-}
-.menu-bar li:hover {
-	color: black;
-}
-/* Use ::v-deep to apply styles to nested child components */
-::v-deep .menu-bar li {
-	color: white;
-}
-::v-deep .menu-bar li:hover {
-	color: black;
-}
 
 </style>

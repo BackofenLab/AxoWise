@@ -164,9 +164,6 @@ export default {
             com.draw_legend();
             com.emitter.emit("adjustDE", this.dboundary.value);
         },
-        select_node(value) {
-            this.emitter.emit("searchNode", value);
-        },
     },
     updated() {
         if(this.active_decoloumn != null){

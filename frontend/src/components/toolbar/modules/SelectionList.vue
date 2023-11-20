@@ -5,65 +5,75 @@
                 <div class="window-label">degree value</div>
                 <div class="menu-items">
                     <input
+                        id="degree"
                         type="range"
                         v-bind:min="degree_boundary.min" v-bind:max="degree_boundary.max" v-bind:step="degree_boundary.step"
                         v-model="degree_boundary.value"
                         v-on:change="searchSubset()"
-                        v-on:input="valueChanged"	
+                        v-on:input="valueChanged('degree')"
                     />
                     <input
                         type="number"
                         v-bind:min="degree_boundary.min" v-bind:max="degree_boundary.max" v-bind:step="degree_boundary.step"
                         v-model="degree_boundary.value"
                         v-on:change="searchSubset()"
+                        v-on:input="valueChanged('degree')"
                     />
                 </div>
                 <div class="window-label">betweenness centrality value</div>
                 <div class="menu-items">
                     <input
+                        id="bcentrality"
                         type="range"
                         v-bind:min="bc_boundary.min" v-bind:max="bc_boundary.max" v-bind:step="bc_boundary.step"
                         v-model="bc_boundary.value"
                         v-on:change="searchSubset()"
-                        v-on:input="valueChanged"	
+                        v-on:input="valueChanged('bcentrality')"
                     />
                     <input
                         type="number"
                         v-bind:min="bc_boundary.min" v-bind:max="bc_boundary.max" v-bind:step="bc_boundary.step"
                         v-model="bc_boundary.value"
                         v-on:change="searchSubset()"
+                        v-on:input="valueChanged('bcentrality')"
                     />
                 </div>
-                <div class="window-label">padj value</div>
-                <div class="menu-items">
-                    <input 
-                        type="range"
-                        v-bind:min="padj_boundary.min" v-bind:max="padj_boundary.max" v-bind:step="padj_boundary.step"
-                        v-model="padj_boundary.value"
-                        v-on:change="searchSubset()"
-                        v-on:input="valueChanged"	
-                    />
-                    <input 
-                        type="number"
-                        v-bind:min="padj_boundary.min" v-bind:max="padj_boundary.max" v-bind:step="padj_boundary.step"
-                        v-model="padj_boundary.value"
-                        v-on:change="searchSubset()"
-                    />
+                <div v-if="mode=='term'">
+                    <div class="window-label">padj value</div>
+                    <div class="menu-items">
+                        <input 
+                            id="padj"
+                            type="range"
+                            v-bind:min="padj_boundary.min" v-bind:max="padj_boundary.max" v-bind:step="padj_boundary.step"
+                            v-model="padj_boundary.value"
+                            v-on:change="searchSubset()"
+                            v-on:input="valueChanged('padj')"
+                        />
+                        <input 
+                            type="number"
+                            v-bind:min="padj_boundary.min" v-bind:max="padj_boundary.max" v-bind:step="padj_boundary.step"
+                            v-model="padj_boundary.value"
+                            v-on:change="searchSubset()"
+                            v-on:input="valueChanged('padj')"
+                        />
+                    </div>
                 </div>
                 <div class="window-label">page rank value</div>
                 <div class="menu-items">
                     <input
+                        id="pagerank"
                         type="range"
                         v-bind:min="pr_boundary.min" v-bind:max="pr_boundary.max" v-bind:step="pr_boundary.step"
                         v-model="pr_boundary.value"
                         v-on:change="searchSubset()"
-                        v-on:input="valueChanged"	
+                        v-on:input="valueChanged('pagerank')"
                     />
                     <input 
                         type="number"
                         v-bind:min="pr_boundary.min" v-bind:max="pr_boundary.max" v-bind:step="pr_boundary.step"
                         v-model="pr_boundary.value"
                         v-on:change="searchSubset()"
+                        v-on:input="valueChanged('pagerank')"
                     />
                 </div>
             </div>  
@@ -80,7 +90,7 @@
 <script>
 export default {
     name: 'SelectionList',
-    props: ['gephi_data','term_data'],
+    props: ['data','mode'],
     emits: ['selection_active_changed'],
     data() {
         return {
@@ -94,7 +104,7 @@ export default {
             pr_boundary: {
                 value: 0,
 				min: 0,
-				max: 0.02,
+				max: Number,
 				step: 0.0001
             },
             bc_boundary: {
@@ -156,7 +166,7 @@ export default {
 		initialize_dg: function() {
 			var com = this;
 
-			var dataForm = com.gephi_data || com.term_data;
+			var dataForm = com.data;
 
 			// initialize values of slider
             // let mean = 0;
@@ -194,7 +204,7 @@ export default {
         initialize_bc() {
             var com = this;
 
-            var dataForm = com.gephi_data || com.term_data;
+            var dataForm = com.data;
 
             // _____ this calculation has only to be done once _______
             var subset_bc
@@ -211,21 +221,41 @@ export default {
             this.bc_boundary.max = maxDeg;
 
         },
+        initialize_pagerank() {
+            var com = this;
+
+            var dataForm = com.data;
+
+            // _____ this calculation has only to be done once _______
+            var subset_pr
+            subset_pr = dataForm.nodes.map(arrayItem => {
+                return arrayItem.attributes["PageRank"]
+            });
+
+            // Convert String values to Integers
+            var result = subset_pr.map(function (x) { 
+                return parseFloat(x);
+            });
+            var maxDeg = Math.max(...result);       // Need to use spread operator!
+
+            this.pr_boundary.max = maxDeg;
+
+        },
         searchSubset() {
             var com = this
 
-            var dataForm = com.gephi_data || com.term_data;
-            var searchSubset = (dataForm === com.gephi_data) ? "searchSubset" : "searchTermSubset";
+            var dataForm = com.data;
             // filter hubs
 			var finalNodes = [];
 			var nodes = [];
 			// degree filtering
 			for (var idz in dataForm.nodes){
+                console.log(dataForm.nodes[idz])
 				if(parseInt(dataForm.nodes[idz].attributes["Degree"]) >= this.degree_boundary.value &&
                    parseFloat(dataForm.nodes[idz].attributes["PageRank"]) >= this.pr_boundary.value &&
                    parseFloat(dataForm.nodes[idz].attributes["Betweenness Centrality"]) >= this.bc_boundary.value
                    ){
-                    if(com.term_data){
+                    if(com.mode=='term'){
                         if(Math.abs(Math.log10(dataForm.nodes[idz].attributes["FDR"])) >= com.padj_boundary.value) nodes.push(dataForm.nodes[idz])
                     }
                     else{
@@ -234,14 +264,15 @@ export default {
 				}
 			}
 			finalNodes = nodes;
-			this.emitter.emit(searchSubset, finalNodes);
+			this.emitter.emit("searchSubset", {subset:finalNodes, mode:this.mode});
         },
         unactive_proteinlist(){
             this.$emit("selection_active_changed", false);
         },
-        valueChanged(event){
-            let a = (event.target.value / event.target.max)* 100;
-            event.target.style.background = `linear-gradient(to right,#0A0A1A,#0A0A1A ${a}%,#ccc ${a}%)`;
+        valueChanged(id){
+            var target = document.getElementById(id)
+            let a = (target.value / target.max)* 100;
+            target.style.background = `linear-gradient(to right,#0A0A1A,#0A0A1A ${a}%,#ccc ${a}%)`;
         }
 	},
     mounted(){
@@ -249,7 +280,9 @@ export default {
         
     },
     created() {
-        this.initialize_dg(), this.initialize_bc()   
+        this.initialize_dg()
+        this.initialize_bc()
+        this.initialize_pagerank()
     }
 }
 </script>

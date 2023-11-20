@@ -73,6 +73,7 @@ export default {
             .post(com.api.subgraph, formData, { cancelToken: com.sourceToken.token })
             .then((response) => {
                 com.terms = response.data.sort((t1, t2) => t1.fdr_rate - t2.fdr_rate)
+                if (com.terms_list.length == 0) this.$store.commit('assign_current_enrichment_terms', com.terms)
                 com.terms_list.push(com.terms)
                 com.await_load = false
                 this.emitter.emit("generateGraph", com.terms);
@@ -89,6 +90,7 @@ export default {
         this.emitter.on("enrichTerms", (terms) => {
             if(terms != null) this.terms = terms;
             else this.terms = this.terms_list[0];
+            this.$store.commit('assign_current_enrichment_terms', this.terms)
         });
 
     }

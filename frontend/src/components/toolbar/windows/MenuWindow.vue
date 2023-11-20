@@ -4,22 +4,41 @@
 
             <div class="window-label">graph settings</div>
             <div class="menu-items">
-                <ToggleLabel></ToggleLabel>
-                <ConnectedGraph></ConnectedGraph>
-                <ModuleSelection></ModuleSelection>
-                <EdgeOpacity></EdgeOpacity>
+                <ToggleLabel
+                :mode = 'mode'
+                ></ToggleLabel>
+                <ConnectedGraph
+                :mode = 'mode'
+                ></ConnectedGraph>
+                <ModuleSelection
+                :mode = 'mode'
+                ></ModuleSelection>
+                <EdgeOpacity
+                :mode = 'mode'
+                ></EdgeOpacity>
                 <NodeLabelSelect
+                :mode = 'mode'
                 ></NodeLabelSelect>
             </div>
-            <div class="window-label">visualize de-value</div>
-            <div class="menu-items">
-                <DEValue></DEValue>
+            <div v-if="mode=='protein'">
+                <div class="window-label">visualize de-value</div>
+                <div class="menu-items">
+                    <DEValue></DEValue>
+                </div>
+            </div>
+            <div v-if="mode=='term'">
+                <div class="window-label">visualize fdr-rate</div>
+                <div class="menu-items">
+                    <FDRValue></FDRValue>
+                </div>
             </div>
             <div class="window-label">export graph</div>
             <div class="menu-items">
                 <ExportScreen
+                :mode = 'mode'
                 ></ExportScreen>
-                <ExportGraph></ExportGraph>
+                <ExportGraph v-if="mode=='protein'"
+                ></ExportGraph>
             </div>
         </div>
     </div>
@@ -29,6 +48,7 @@
 
 import ExportScreen from '@/components/toolbar/modules/ExportScreen.vue'
 import DEValue from '@/components/toolbar/modules/DEValue.vue'
+import FDRValue from '@/components/toolbar/modules/FDRValue.vue'
 import ExportGraph from '@/components/toolbar/modules/ExportGraph.vue'
 import NodeLabelSelect from '@/components/toolbar/modules/NodeLabelSelect.vue'
 import ConnectedGraph from '@/components/toolbar/modules/ConnectedGraph.vue'
@@ -38,7 +58,7 @@ import ModuleSelection from '@/components/toolbar/modules/ModuleSelection.vue'
 
 export default {
     name: 'MenuWindow',
-    props: ['tools_active'],
+    props: ['tools_active','mode'],
     emits:['tools_active_changed'],
     components: {
         ExportScreen,
@@ -48,7 +68,8 @@ export default {
         NodeLabelSelect,
         ConnectedGraph,
         ToggleLabel,
-        ModuleSelection
+        ModuleSelection,
+        FDRValue
 
     },
     data() {

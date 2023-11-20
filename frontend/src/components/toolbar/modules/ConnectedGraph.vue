@@ -9,16 +9,14 @@
 
 export default {
     name: 'ConnectedGraph',
-    props: [],
+    props: ['mode'],
     data() {
         return {
-          type: 'protein'
         }
     },
     methods: {
         show_whole() {
-            if(this.type == 'protein') this.emitter.emit("unconnectedGraph", document.getElementById('switch').checked);
-            else this.emitter.emit("unconnectedTermGraph", document.getElementById('switch').checked)
+          this.emitter.emit("unconnectedGraph", {check: document.getElementById('switch').checked,mode: this.mode});
                 
         }
     }

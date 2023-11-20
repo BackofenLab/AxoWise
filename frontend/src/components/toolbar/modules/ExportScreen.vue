@@ -19,19 +19,15 @@
 
 export default {
     name: 'ExportScreen',
+    props: ['mode'],
     data() {
         return {
             show_export: false,
-            type: 'protein'
         }
     },
     methods: {
         take_screen(mode, format){
-            if(this.type == "protein"){
-                this.emitter.emit("exportGraph", {mode, format});
-            }else {
-                this.emitter.emit("exportTermGraph", {mode, format});
-            }
+            this.emitter.emit("exportGraph", {params: {mode, format}, mode: this.mode});
         },
     }
 }

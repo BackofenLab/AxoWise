@@ -663,8 +663,6 @@ export default {
   exportGraphAsImage(params) {
     if(params.format=="svg") saveAsSVG(sigma_instance, {download: true}, params.mode);
     else saveAsPNG(sigma_instance, {download: true}, params.mode);
-    
-    
   },
   show_unconnectedGraph(state){
     var com = this;
@@ -699,7 +697,6 @@ export default {
     var edges = com.$store.state.highlighted_edges
 
     if(state == "highlight"){
-
 
       sigma_instance.graph.edges().forEach(function (e) {
         if(edges.has(e)) e.color = e.color.replace(/[\d.]+\)$/g, com.highlight_opacity+')');
@@ -1024,19 +1021,19 @@ export default {
     com.rectangular_select.context = com.rectangular_select.canvas.getContext("2d");
 
     
-    this.emitter.on("unconnectedGraph", state => {
-      this.show_unconnectedGraph(state)
+    this.emitter.on("unconnectedGraph", (state) => {
+      if(state.mode=="protein") this.show_unconnectedGraph(state.check)
     });
     
-    this.emitter.on("searchNode", state => {
-      this.$emit('active_node_changed', sigma_instance.graph.getNodeFromIndex(state.id))
+    this.emitter.on("searchNode", (state) => {
+      if(state.mode=="protein") this.$emit('active_node_changed', sigma_instance.graph.getNodeFromIndex(state.node.id))
     });
     this.emitter.on("searchPathway", element => {
       this.visualize_pathway(element.source, element.target)
     });
     
-    this.emitter.on("searchSubset", state => {
-      this.$emit('active_subset_changed', state)
+    this.emitter.on("searchSubset", (state) => {
+      if(state.mode=="protein") this.$emit('active_subset_changed', state.subset)
     });
 
     this.emitter.on("resizeCircle", () => {
@@ -1047,8 +1044,8 @@ export default {
       this.$emit('active_term_changed', state)
     });
 
-    this.emitter.on("highlightProteinList", state => {
-      this.$emit('subactive_subset_changed', state)
+    this.emitter.on("highlightProteinList", (state) => {
+      if(state.mode=="protein") this.$emit('subactive_subset_changed', state.subset)
     });
 
     this.emitter.on("hideTermLayer", state => {
@@ -1056,25 +1053,28 @@ export default {
       this.$emit('active_termlayers_changed', state)
     });
 
-    this.emitter.on("hideSubset", state => {
-      this.$emit('active_layer_changed', state)
+    this.emitter.on("hideSubset", (state) => {
+      console.log(state)
+      if(state.mode=="protein") this.$emit('active_layer_changed', state.subset)
     });
     
-    this.emitter.on("centerGraph", () => {
-      sigma_instance.camera.goTo({ x: 0, y: 0, ratio: 1, angle: sigma_instance.camera.angle });
-      this.get_module_circles()
+    this.emitter.on("centerGraph", (state) => {
+      if(state.mode=="protein") {
+        sigma_instance.camera.goTo({ x: 0, y: 0, ratio: 1, angle: sigma_instance.camera.angle });
+        this.get_module_circles()
+      }
     });
     
-    this.emitter.on("exportGraph", (params) => {
-      this.exportGraphAsImage(params)
+    this.emitter.on("exportGraph", (state) => {
+      if(state.mode=="protein") this.exportGraphAsImage(state.params)
     });
 
-    this.emitter.on("resetSelect", () => {
-      this.reset_label_select()
+    this.emitter.on("resetSelect", (state) => {
+      if(state.mode=="protein") this.reset_label_select()
     });
 
     this.emitter.on("hideLabels", (state) => {
-      this.hide_labels(state)
+      if(state.mode=="protein") this.hide_labels(state.check)
     });
 
     this.emitter.on("heatmapView", () => {
@@ -1091,15 +1091,15 @@ export default {
     this.emitter.on("selectDE", (value) => {
       this.highlight_de(value)
     });
-    this.emitter.on("deactivateModules", () => {
-      com.moduleSelectionActive = !com.moduleSelectionActive
+    this.emitter.on("deactivateModules", (state) => {
+      if(state.mode=="protein") com.moduleSelectionActive = !com.moduleSelectionActive
     });
-    this.emitter.on("changeOpacity", (value) => {
-      if(value.layers == "highlight") com.highlight_opacity = value.opacity;
-      else com.base_opacity = value.opacity;
-
-      
-      com.edit_opacity(value.layers)
+    this.emitter.on("changeOpacity", (state) => {
+      if(state.mode=="protein") {
+        if(state.value.layers == "highlight") com.highlight_opacity = state.value.opacity;
+        else com.base_opacity = state.value.opacity;
+        com.edit_opacity(state.value.layers)
+      }
     });
     
     sigma_instance.refresh()
