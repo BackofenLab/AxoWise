@@ -96,7 +96,6 @@ export default {
     }
   },
   activated() {
-    console.log("in")
 
     const term = this.$store.state.enrichment
     const all_terms = this.$store.state.current_enrichment_terms

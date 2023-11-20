@@ -35,8 +35,8 @@ var sigma_instance = null;
 
 export default {
   name: 'TermVis',
-  props: ['term_data', 'active_node', 'node_color_index','node_size_index', 'edge_color_index', 'unconnected_nodes', 'active_fdr', 'active_combine', 'active_subset', 'subactive_subset','node_modul_index'],
-  emits: ['active_node_changed', 'active_fdr_changed', 'active_subset_changed'],
+  props: ['term_data', 'active_node', 'node_color_index','node_size_index', 'edge_color_index', 'unconnected_nodes', 'active_fdr', 'active_combine', 'active_subset','active_layer', 'subactive_subset','node_modul_index'],
+  emits: ['active_node_changed', 'active_fdr_changed', 'active_subset_changed', 'active_layer_changed'],
   data() {
     return {
       highlight_opacity: 0.2,
@@ -71,9 +71,9 @@ export default {
 
       if(com.graph_state) this.show_unconnectedGraph(com.graph_state);
 
-      com.edit_opacity()
+      com.edit_opacity('full')
 
-      if(com.active_node) this.$emit('active_node_changed', sigma_instance.graph.getNodeFromIndex(com.active_node.node.id));
+      if(com.active_node) this.$emit('active_node_changed', sigma_instance.graph.getNodeFromIndex(com.active_node.id));
 
       sigma_instance.refresh()
 
@@ -210,6 +210,45 @@ export default {
       this.$store.commit('assign_highlightedSet', highlighted_edges)
 
       sigma_instance.refresh();
+    },
+    active_layer(layer) {
+      var com = this;
+
+      const graph = sigma_instance.graph;
+
+      if(layer == null){
+        graph.nodes().forEach(function (node) {
+          node.hidden = false;
+        });
+        if(com.graph_state ) {
+          com.unconnected_nodes.forEach(function (n) {
+            var node = graph.getNodeFromIndex(n.id);
+            node.hidden = true
+          });
+        }
+        sigma_instance.refresh()
+        return
+      }
+
+      var proteins = new Set(layer);
+
+      graph.nodes().forEach(function (node) {
+        if (proteins.has(node.attributes['Name'])) {
+          node.hidden = false;
+        } else {
+          node.hidden = true;
+        }
+      });
+
+      if(com.graph_state) {
+        com.unconnected_nodes.forEach(function (n) {
+          var node = graph.getNodeFromIndex(n.id);
+          node.hidden = true
+        });
+      }
+    
+    sigma_instance.refresh();
+
     },
     subactive_subset(subset) {
       var com = this
@@ -568,9 +607,9 @@ getCircleStyle(circle){
       this.get_module_circles()
     });
 
-    // this.emitter.on("hideSubset", (state) => {
-    //   if(state.mode=="term") this.$emit('active_layer_changed', state.subset)
-    // });
+    this.emitter.on("hideSubset", (state) => {
+      if(state.mode=="term") this.$emit('active_layer_changed', state.subset)
+    });
 
     this.emitter.on("activateFDR", state => {
       this.$emit('active_fdr_changed', state)
