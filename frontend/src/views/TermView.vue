@@ -5,6 +5,7 @@
         :active_node='active_node' @active_node_changed='active_node = $event'
         :active_fdr='active_fdr' @active_fdr_changed='active_fdr = $event'
         :active_subset='active_subset' @active_subset_changed='active_subset = $event'
+        :active_layer='active_layer' @active_layer_changed = 'active_layer = $event'
         :subactive_subset='subactive_subset'
         :term_data='term_data'
         :active_combine='active_combine'
@@ -65,6 +66,7 @@ export default {
     return {
       term_data: this.$store.state.term_graph_data,
       active_node: null,
+      active_layer: null,
       active_fdr: null,
       active_subset: null,
       subactive_subset: null,
