@@ -16,6 +16,9 @@
         :node_modul_index='node_modul_index'
         :unconnected_nodes='unconnected_nodes'
       ></TermVis>
+      <PathwayGraphMenu
+        :term_data='term_data'
+      ></PathwayGraphMenu>
       <div class="header-menu">
         <TermToolBar
         :data='term_data'
@@ -50,6 +53,7 @@ import TermPaneSystem from '@/components/pane/TermPaneSystem.vue'
 import SearchField from '../components/interface/SearchField.vue'
 import NetworkValues from '../components/interface/NetworkValues.vue'
 import TermToolBar from '../components/toolbar/TermToolBar.vue'
+import PathwayGraphMenu from '../components/pathwaytools/PathwayGraphMenu.vue'
 
 export default {
   name: 'TermView',
@@ -59,6 +63,7 @@ export default {
     TermToolBar,
     SearchField,
     TermPaneSystem,
+    PathwayGraphMenu
     // GraphSelection
     
   },
