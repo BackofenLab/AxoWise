@@ -45,7 +45,9 @@
             filtered_terms() {
                 var com = this;
                 var filtered = com.term_data.nodes;
-                
+
+                console.log(filtered)
+
                 if (com.category) {
                 // If category is set, filter by category
                 filtered = filtered.filter(function(term) {
