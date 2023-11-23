@@ -38,9 +38,6 @@ export default {
             filtered_terms: []
         }
     },
-    mounted() {
-        console.log(this.term_data)
-    },
     methods: {
         generatePathways(species, genes){
             var com = this
