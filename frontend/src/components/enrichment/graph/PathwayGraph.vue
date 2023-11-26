@@ -3,7 +3,7 @@
         <div v-for="(entry, index) in filt_graphs" :key="index" class="graph" v-on:click="switch_graph(entry)" @mouseover="activeGraphIndex = index" @mouseout="activeGraphIndex = -1">
             <SnapshotGraph :propValue="entry" :index="entry.id"/>
             <div class="graph-options" v-show="activeGraphIndex == index" >
-                <div class="bookmark-graph" v-on:click.stop="add_graph(entry)" :class="{ checked: favourite_graphs.has(entry)}" ref="checkboxStatesGraph"></div>
+                <div class="bookmark-graph" v-on:click.stop="add_graph(entry)" :class="{ checked: favourite_graphs.has(entry.id)}" ref="checkboxStatesGraph"></div>
                 <img  class="remove-graph" src="@/assets/pathwaybar/cross.png" v-on:click.stop="remove_graph(entry)">
                 <div class="graph-name">
                     <input type="text" v-model="entry.label" class="empty" @click.stop />
@@ -19,7 +19,7 @@ import SnapshotGraph from '@/components/enrichment/graph/SnapshotGraph.vue'
 
 export default {
     name: 'PathwayGraphs',
-    props: ['gephi_data','filtered_terms', 'bookmark_off'],
+    props: ['gephi_data','filtered_terms', 'bookmark_off','mode'],
     components: {
         SnapshotGraph,
     },
@@ -31,13 +31,20 @@ export default {
             term_graphs: new Set(),
             favourite_graphs: new Set(),
             activeGraphIndex: -1,
-            graph_number: 0,
+            graph_number: -1,
+            species: null
         }
     },
     mounted(){
-        this.emitter.on("generateGraph", (set) => {
-            this.get_term_data(set)
-        });
+        if(this.mode !='term') {
+            this.emitter.on("generateGraph", (set) => {
+                this.get_term_data(set)
+            });
+        }
+    },
+    activated(){
+            this.term_graphs = new Set(this.$store.state.term_graph_dict)
+            this.favourite_graphs = this.$store.state.favourite_graph_dict
     },
     methods: {
         get_term_data(set) {
@@ -54,7 +61,7 @@ export default {
                     if(response.data){
                         this.graph_number += 1
                         if(this.term_graphs.size < 1) this.$store.commit('assign_term_graph', response.data)
-                        this.$store.commit('assign_new_term_graph', {label: `Graph ${this.graph_number}`, graph: response.data})
+                        this.$store.commit('assign_new_term_graph', {id: this.graph_number, label: `Graph ${this.graph_number}`, graph: response.data})
                         this.term_graphs.add({ id: this.graph_number, label: `Graph ${this.graph_number}`, graph: response.data});
                     }
                 })
@@ -62,24 +69,27 @@ export default {
         },
         switch_graph(entry) {
             this.$store.commit('assign_term_graph', entry.graph)
-            this.$router.push("terms")
+            if(this.mode == 'term') this.emitter.emit('graphChanged')
+            else this.$router.push("terms")
+
         },
         remove_graph(entry) {
-            if (!this.favourite_graphs.has(entry)) {
+            if (!this.favourite_graphs.has(entry.id)) {
                 // Checkbox is checked, add its state to the object
-                this.favourite_graphs.delete(entry)
+                this.favourite_graphs.delete(entry.id)
+                this.$store.commit('assign_favourite_graph', this.favourite_graphs)
             }
             this.term_graphs.delete(entry)
             this.$store.commit('remove_snapshotPathway', entry.id)
+            this.$store.commit('remove_term_graph', entry)
         },
         add_graph(entry){
-            if (!this.favourite_graphs.has(entry)) {
-                // Checkbox is checked, add its state to the object
-                this.favourite_graphs.add(entry)
+            if (!this.favourite_graphs.has(entry.id)) {
+                this.favourite_graphs.add(entry.id)
             } else {
-                // Checkbox is unchecked, remove its state from the object
-                this.favourite_graphs.delete(entry)
+                this.favourite_graphs.delete(entry.id)
             }
+            this.$store.commit('assign_favourite_graph', this.favourite_graphs)
         },
     },
     computed: {
@@ -89,7 +99,7 @@ export default {
 
             if (!com.bookmark_off){
                 filtered = filtered.filter(function(term) {
-                    return com.favourite_graphs.has(term)
+                    return com.favourite_graphs.has(term.id)
                 });
             }
 

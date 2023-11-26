@@ -127,20 +127,7 @@ export default {
 
   },
   activated() {
-
-    this.term_data = this.$store.state.term_graph_data
-    
-    const term_node = this.$store.state.active_node_enrichment
-    if(term_node != null){
-      console.log(this.term_data)
-      for (var idx in this.term_data.nodes) {
-        var node = this.term_data.nodes[idx];
-        if(node.attributes["Ensembl ID"] == term_node.id){
-          this.active_node = this.term_data.nodes[idx]
-        }
-      }
-      this.$store.commit('assign_active_enrichment_node', null)
-      }
+    this.change_graph()
   },
   mounted() {
     const com = this;
@@ -181,6 +168,27 @@ export default {
 
     const maingraph = new Set(com.term_data.subgraph)
     com.unconnected_nodes = com.term_data.nodes.filter(item => !maingraph.has(item.id));
+    
+    this.emitter.on("graphChanged", () => {
+      this.change_graph()
+    });
+
+  },
+  methods:{
+    change_graph(){
+      this.term_data = this.$store.state.term_graph_data
+    
+      const term_node = this.$store.state.active_node_enrichment
+      if(term_node != null){
+        for (var idx in this.term_data.nodes) {
+          var node = this.term_data.nodes[idx];
+          if(node.attributes["Ensembl ID"] == term_node.id){
+            this.active_node = this.term_data.nodes[idx]
+          }
+        }
+        this.$store.commit('assign_active_enrichment_node', null)
+        }
+    }
   }
 }
 </script>

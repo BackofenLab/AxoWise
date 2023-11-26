@@ -99,7 +99,6 @@ export default {
 
     const term = this.$store.state.enrichment
     const all_terms = this.$store.state.current_enrichment_terms
-    console.log(all_terms)
     if(term != null){
       for (var idx in all_terms) {
         var node = all_terms[idx];

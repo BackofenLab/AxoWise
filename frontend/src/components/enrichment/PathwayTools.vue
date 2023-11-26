@@ -22,6 +22,7 @@
         </div>
         <div class="graph-section">
             <PathwayGraph v-show="tool == 'Termgraph'"
+            :mode = 'mode'
             :gephi_data='gephi_data'
             :filtered_terms = 'filtered_terms'
             :bookmark_off = 'bookmark_off'
@@ -52,6 +53,7 @@ export default {
             favourite_graphs: new Set(),
             bookmark_off: true,
             tool_selecting: false,
+            mode: 'protein',
             tools: [{id: 'Termgraph'}, {id: 'Heatmap'}]
         }
     },
