@@ -166,4 +166,8 @@ export default {
   width: 100%;
   justify-content: center;
 }
+
+.protein-view{
+  background-color: #0A0A1A;
+}
 </style>

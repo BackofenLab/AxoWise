@@ -1132,7 +1132,6 @@ height: 0;
   position: absolute;
   box-sizing: border-box;
   overflow: hidden;
-  background-color: #0A0A1A;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
