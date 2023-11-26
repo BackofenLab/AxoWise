@@ -1,6 +1,6 @@
 <template>
   <keep-alive>
-    <div class="protein-view">
+    <div class="term-view">
       <TermVis ref="termVis"
         :active_node='active_node' @active_node_changed='active_node = $event'
         :active_fdr='active_fdr' @active_fdr_changed='active_fdr = $event'
@@ -194,5 +194,7 @@ export default {
 </script>
 
 <style>
-
+.term-view{
+  background-color: #0a1a0b;
+}
 </style>
