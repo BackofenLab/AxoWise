@@ -462,6 +462,47 @@ mouseup: function(e) {
         com.select_nodes_rectangular();
     }
 },
+backup_surface: function() {
+      var com = this;
+      var canvas = com.rectangular_select.canvas;
+      var context = com.rectangular_select.context;
+      com.rectangular_select.surface_backup = context.getImageData(0, 0, canvas.width, canvas.height);
+  },
+  restore_surface: function() {
+      var com = this;
+      var context = com.rectangular_select.context;
+      var surface = com.rectangular_select.surface_backup;
+      context.putImageData(surface, 0, 0);
+  },
+  select_nodes_rectangular: function() {
+      var com = this;
+      const render_id = sigma_instance.renderers[0].conradId
+      var rectangle = com.rectangular_select.rectangle;
+      var rectBounds = com.container.getBoundingClientRect();
+
+      var selected_nodes = [];
+      var x_range = com.get_select_range(rectangle.startX - rectBounds.x, rectangle.w);
+      var y_range = com.get_select_range(rectangle.startY - rectBounds.y, rectangle.h);
+
+      var nodes = sigma_instance.graph.nodes();
+      for (var i in nodes) {
+          var node = nodes[i];
+          if (node.hidden) continue;
+
+          var node_XY = {
+              x: node[`renderer${render_id}:x`],
+              y: node[`renderer${render_id}:y`]
+          };
+
+          if (x_range.start <= node_XY.x && node_XY.x <= x_range.end && y_range.start <= node_XY.y && node_XY.y <= y_range.end) {
+              selected_nodes.push(node);
+          }
+      }
+      if (selected_nodes.length > 0) com.$emit("active_subset_changed", selected_nodes);
+  },
+  get_select_range: function(start, length) {
+      return length > 0 ? {start: start, end: start + length} : {start: start + length, end: start};
+  },
   get_module_circles () {
   
     var moduleSet = {}
