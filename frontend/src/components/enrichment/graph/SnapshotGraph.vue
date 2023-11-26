@@ -16,6 +16,9 @@ export default {
     updated(){
         if(this.findSnapshot()) this.initializeSnapshot(this.findSnapshot().snapshot)
     },
+    activated(){
+        if(this.findSnapshot()) this.initializeSnapshot(this.findSnapshot().snapshot)
+    },
     mounted(){
         if(!this.findSnapshot()) this.initializeSnapshot(this.getSnapshot(this.propValue.graph))
         else this.initializeSnapshot(this.findSnapshot().snapshot)
