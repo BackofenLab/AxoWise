@@ -1,7 +1,8 @@
 <template>
     <div id="pathways-set">
         <div class="generate-set-button">
-            <div class="export-text" v-on:click="apply_enrichment()">Generate pathway set</div>
+            <div v-if="await_load == true" class="loading_pane" ></div>
+            <div v-if="await_load == false" class="export-text" v-on:click="apply_enrichment()">Generate pathway set</div>
         </div>
         <div class="pathway-apply-section">
 
@@ -51,7 +52,8 @@ export default {
     data() {
         return{
             set_dict: new Set(),
-            layer: 0
+            layer: 0,
+            await_load: false
         }
     },
     methods: {
@@ -66,6 +68,7 @@ export default {
             formData.append('genes', genes)
             formData.append('species_id', com.gephi_data.nodes[0].species);
 
+            this.await_load = true
             //POST request for generating pathways
             com.sourceToken = this.axios.CancelToken.source();
             com.axios
@@ -73,6 +76,7 @@ export default {
             .then((response) => {
                 com.set_dict.add({"name": `layer ${com.layer}`, "genes": genes, "terms": response.data.sort((t1, t2) => t1.fdr_rate - t2.fdr_rate), "status": false})
                 com.layer += 1
+                this.await_load = false
             })
         },
         remove_set(entry){
