@@ -39,10 +39,6 @@
           :node_color_index='node_color_index'
           ></TermPaneSystem>
       </div>
-      <!-- <GraphSelection
-      :term_data='term_data' @term_data_changed = 'term_data = $event'
-      >  
-      </GraphSelection> -->
     </div>
   </keep-alive>
 </template>
@@ -64,7 +60,6 @@ export default {
     SearchField,
     TermPaneSystem,
     PathwayGraphMenu
-    // GraphSelection
     
   },
   data() {
@@ -196,5 +191,9 @@ export default {
 <style>
 .term-view{
   background-color: #0a1a0b;
+}
+
+.term-view .colortype{
+  background: #0a1a0b;
 }
 </style>

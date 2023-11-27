@@ -3,11 +3,11 @@
         <div id="protein_highlight" class="window-menu">
             <div class="highlight_list">
                     <textarea v-model="raw_text" rows="10" cols="30" autofocus></textarea>
-                    <button v-on:click="highlight(raw_text)" id="highlight_protein">search</button>
+                    <button v-on:click="highlight(raw_text)" id="highlight_protein" class="colortype">search</button>
             </div>  
             <div id="protein_highlight_header" class="window-header">
                 <div class="headertext">
-                    <span>highlight proteins</span>
+                    <span>highlight nodes</span>
                     <img  class="protein_close" src="@/assets/pathwaybar/cross.png" v-on:click="unactive_proteinlist()">
                 </div>
             </div>
@@ -166,7 +166,6 @@ export default {
 #highlight_protein {
 	position: absolute;
 	display: block;
-	background-color:#0A0A1A;
 	cursor: pointer;
     border: none;
 	color: white;

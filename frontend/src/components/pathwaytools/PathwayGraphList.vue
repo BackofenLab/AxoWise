@@ -1,19 +1,19 @@
 <template>
     <div id="pathways-list">
-        <div class="pathway-search">
+        <div class="pathway-search colortype">
             <img class="pathway-search-icon" src="@/assets/toolbar/search.png">
             <input type="text" v-model="search_raw" class="empty" placeholder="Find your pathways"/>
         </div>
-        <div id="pathway-filter" v-on:click="handling_filter_menu()" >
+        <div id="pathway-filter" class="colortype" v-on:click="handling_filter_menu()" >
             <span>{{ category }}</span>
             <img  class="remove-filter" src="@/assets/pathwaybar/cross.png" v-on:click.stop="category = 'Filter'" v-if="category !== 'Filter'">
         </div>
-        <div id="pathway-filter-categories" v-show="category_filtering == true && term_data !== null">
+        <div id="pathway-filter-categories" class="colortype" v-show="category_filtering == true && term_data !== null">
             <div class="element" v-for="(entry, index) in filter_terms" :key="index" v-on:click="category = entry.label; handling_filter_menu()">
                 <a>{{ entry.label }}</a>
             </div>
         </div>
-        <div class="list-section">
+        <div class="list-section colortype">
             
             <div class="sorting">
                 <a class="enrichment_filter" v-on:click="sort_alph = (sort_alph === 'asc') ? 'dsc' : 'asc'; sort_fdr = '' " >functional enrichment pathways ({{ filt_terms.size }})</a>

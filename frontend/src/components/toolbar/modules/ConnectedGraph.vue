@@ -67,8 +67,11 @@ export default {
   margin: 0.1vw 0 0 0.1vw;
   z-index: 10;
 }
-[type="checkbox"]:checked + label:before {
+.protein-view [type="checkbox"]:checked + label:before {
   background-color: #0A0A1A;
+}
+.term-view [type="checkbox"]:checked + label:before {
+  background-color: #0a1a0b;
 }
 [type="checkbox"]:checked + label:after {
   margin: 0.1vw 0 0 1vw;

@@ -4,7 +4,7 @@
             <div class='colorbar-text' v-if="active_subset !== null">
                No° nodes: {{number_prot}}
             </div>
-            <div class='colorbar-img' v-on:click="show_layer()">
+            <div class='colorbar-img colortype' v-on:click="show_layer()">
                 <img src="@/assets/pane/invisible.png" v-if="!hide">
                 <img src="@/assets/pane/visible.png" v-if="hide">
             </div>
@@ -14,7 +14,7 @@
                 <div class="subsection-header">
                     <span>contained proteins</span>
                 </div>
-                <div class="subsection-main">
+                <div class="subsection-main colortype">
                     <SubsetConnections
                     :active_subset='active_subset' 
                     ></SubsetConnections>
@@ -24,7 +24,7 @@
                 <div class="subsection-header">
                     <span>contained edges ({{number_asc}})</span>
                 </div>
-                <div class="subsection-main">
+                <div class="subsection-main colortype">
                     <SubsetLinks
                     :contained_edges='contained_edges' 
                     ></SubsetLinks>

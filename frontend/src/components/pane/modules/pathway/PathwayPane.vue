@@ -4,7 +4,7 @@
             <div class='colorbar-text' :style="{ backgroundColor: colornode }" v-if="active_node !== null">
                 {{active_node.attributes["Name"]}}
             </div>
-            <div class='colorbar-img' v-on:click="to_proteins()">
+            <div class='colorbar-img colortype' v-on:click="to_proteins()">
                 <img src="@/assets/pane/follow.png">
             </div>
         </div>
@@ -13,14 +13,14 @@
                 <div class="subsection-header">
                     <span>informations</span>
                 </div>
-                <div class="subsection-main">
+                <div class="subsection-main colortype">
                 </div>
             </div>
             <div id="network" class="subsection">
                 <div class="subsection-header">
                     <span>network statistics</span>
                 </div>
-                <div class="subsection-main">
+                <div class="subsection-main colortype">
                     <NetworkStatistics
                     :active_node='active_node' 
                     ></NetworkStatistics>
@@ -30,7 +30,7 @@
                 <div class="subsection-header">
                     <span>connections</span>
                 </div>
-                <div class="subsection-main">
+                <div class="subsection-main colortype">
                     <NodeConnections
                     :active_node='active_node'
                     :links='links'
@@ -117,76 +117,4 @@ export default {
 </script>
 
 <style>
-
-    .pane-show {
-        transform: translateX(326px);
-    }
-    #colorbar {
-        position: relative;
-        display: flex;
-        border-radius: 5px;
-        margin-top: 5%;
-        width: 50%;
-        color: white;
-        align-items: center;
-        justify-content: center;
-        transform: translate(50%);
-        font-family: 'ABeeZee', sans-serif;
-        font-size: 0.9vw;
-    }
-    .nodeattributes{
-        position: absolute;
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        height: 100%;
-        margin-top: 10%;
-        align-items: center;
-    }
-    .nodeattributes .subsection {
-        margin-bottom: 4%;
-        position: relative;
-        width: 90%;
-    }
-
-    .subsection .subsection-header {
-        position: absolute;
-        height: 1vw;
-        width: 100%;
-        background-color: rgba(255, 255, 255, 0.4);
-        border-radius: 5px 5px 0 0;
-        display: flex;
-        justify-content: left;
-        align-items: center;
-        font-family: 'ABeeZee', sans-serif;
-        font-size: 0.7vw;
-        padding-left: 3%;
-        z-index: 999;
-    }
-
-    .subsection .subsection-main {
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        background: #0A0A1A;
-        border-radius: 5px;
-    }
-
-    #informations {
-        height: 25.78%;
-    }
-
-    #routing {
-        height: 20%;
-    }
-
-    #network {
-        height: 16%;
-    }
-
-    #connections {
-        height: 18%;
-    }
-
-
 </style>

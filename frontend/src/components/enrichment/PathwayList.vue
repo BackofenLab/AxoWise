@@ -1,33 +1,33 @@
 <template>
     <div id="pathways-list">
-        <div class="pathway-search">
+        <div class="pathway-search colortype">
             <img class="pathway-search-icon" src="@/assets/toolbar/search.png">
             <input type="text" v-model="search_raw" class="empty" placeholder="Find your pathways"/>
         </div>
-        <div id="pathway-filter" v-on:click="handling_filter_menu()" >
+        <div id="pathway-filter" class="colortype" v-on:click="handling_filter_menu()" >
             <span>{{ category }}</span>
             <img  class="remove-filter" src="@/assets/pathwaybar/cross.png" v-on:click.stop="active_categories(null)" v-if="category !== 'Filter'">
         </div>
-        <div id="pathway-filter-categories" v-show="category_filtering == true && terms !== null">
+        <div id="pathway-filter-categories" class="colortype" v-show="category_filtering == true && terms !== null">
             <div class="slider">
                 <div class="element" v-for="(entry, index) in filter_terms" :key="index" v-on:click="active_categories(entry.label);" :class="{ active_cat: active_categories_set.has(entry.label)}">
                     <a>{{ entry.label }}</a>
                 </div>
             </div>
         </div>
-        <div class="bookmark-button" v-on:click="bookmark_off = !bookmark_off">
+        <div class="bookmark-button colortype" v-on:click="bookmark_off = !bookmark_off">
             <img class="bookmark-image" src="@/assets/pathwaybar/favorite.png" :class="{recolor_filter: bookmark_off == false}">
         </div>
-        <div class="visualize-button" v-on:click="visualize_layers()">
+        <div class="visualize-button colortype" v-on:click="visualize_layers()">
             <div class="visualize-logo">
                 <span class="visualize-text">Layers</span>
                 <img class="bookmark-image" src="@/assets/pathwaybar/favorite.png">
             </div>
         </div>
-        <div class="export-button" v-on:click="export_enrichment()">
+        <div class="export-button colortype" v-on:click="export_enrichment()">
             <div class="export-text">Export</div>
         </div>
-        <div class="list-section">
+        <div class="list-section colortype">
             
             <div class="sorting">
                 <a class="enrichment_filter" v-on:click="sort_alph = (sort_alph === 'asc') ? 'dsc' : 'asc'; sort_fdr = '' " >functional enrichment pathways ({{ filt_terms.size }})</a>
@@ -304,7 +304,6 @@ export default {
         position: absolute;
         align-items: center;
         border-radius: 5px;
-        background: #0A0A1A;
         align-content: center;
         justify-content: center;
     }
@@ -338,7 +337,6 @@ export default {
         display: flex;
         position: absolute;
         border-radius: 5px;
-        background: #0A0A1A;
         align-items: center;
         justify-content: center;
     }
@@ -376,7 +374,6 @@ export default {
         padding: 1% 0.5% 1% 0.5%;
         border-radius: 5px;
         border: 1px solid #FFF;
-        background: #0A0A1A;
         z-index: 1;
         justify-content: center;
         align-items: center;
@@ -388,7 +385,6 @@ export default {
         height: 87.65%;
         top: 12.35%;
         border-radius: 5px;
-        background: #0A0A1A;
         position: absolute;
         padding: 0% 2% 2% 2%;
     }
@@ -398,7 +394,6 @@ export default {
         left: 57.35%;
         position: absolute;
         border-radius: 5px;
-        background: #0A0A1A;
         align-content: center;
         justify-content: center;
     }
@@ -408,7 +403,6 @@ export default {
         left: 65.86%;
         position: absolute;
         border-radius: 5px;
-        background: #0A0A1A;
         text-align: center;
         cursor:default;
     }
@@ -418,7 +412,6 @@ export default {
         left: 84.1%;
         position: absolute;
         border-radius: 5px;
-        background: #0A0A1A;
         cursor: default;
 
     }

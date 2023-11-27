@@ -1,26 +1,26 @@
 <template>
     <div id="pathways-graphs">
-        <div id="pathway-tools-filter" v-on:click="handling_filter_menu()" >
-            <span>{{ tool }}</span>s
+        <div id="pathway-tools-filter" class="colortype" v-on:click="handling_filter_menu()" >
+            <span>{{ tool }}</span>
         </div>
-        <div id="pathway-tools-filter-categories" v-show="tool_selecting== true">
+        <div id="pathway-tools-filter-categories" class="colortype" v-show="tool_selecting== true">
             <div class="element" v-for="(entry, index) in tools" :key="index" v-on:click="tool = entry.id; handling_filter_menu()">
                 <a>{{ entry.id }}</a>
             </div>
         </div>
-        <div class="generate" v-show="tool == 'Termgraph'">
+        <div class="generate colortype" v-show="tool == 'Termgraph'">
             <div class="generate-text" v-on:click="get_term_graph()">Generate term graph</div>
         </div>
-        <div class="generate" v-show="tool == 'Heatmap'">
+        <div class="generate colortype" v-show="tool == 'Heatmap'">
             <div class="generate-text" v-on:click="get_heatmap()">Generate heatmap</div>
         </div>
-        <div class="bookmark-button-graph" v-on:click="bookmark_off = !bookmark_off">
+        <div class="bookmark-button-graph colortype" v-on:click="bookmark_off = !bookmark_off">
             <img class="bookmark-image" src="@/assets/pathwaybar/favorite.png" :class="{recolor_filter: bookmark_off == false}">
         </div>
-        <div class="export-heatmap" v-show="tool == 'Heatmap'">
+        <div class="export-heatmap colortype" v-show="tool == 'Heatmap'">
             <div class="generate-text" v-on:click="get_svg()">Export Snapshot</div>
         </div>
-        <div class="graph-section">
+        <div class="graph-section colortype">
             <PathwayGraph v-show="tool == 'Termgraph'"
             :mode = 'mode'
             :gephi_data='gephi_data'
@@ -116,7 +116,6 @@ export default {
         left: 18.51%;
         position: absolute;
         border-radius: 5px;
-        background: #0A0A1A;
         cursor: default;
     }
     .generate .generate-text {
@@ -135,7 +134,6 @@ export default {
         left: 48.92%;
         position: absolute;
         border-radius: 5px;
-        background: #0A0A1A;
         cursor: default;
     }
 
@@ -155,7 +153,6 @@ export default {
         left: 43.41%;
         position: absolute;
         border-radius: 5px;
-        background: #0A0A1A;
         align-content: center;
         justify-content: center;
     }
@@ -166,7 +163,6 @@ export default {
         display: flex;
         position: absolute;
         border-radius: 5px;
-        background: #0A0A1A;
         align-items: center;
         justify-content: center;
     }
@@ -193,7 +189,6 @@ export default {
         padding: 1% 0% 1% 0%;
         border-radius: 5px;
         border: 1px solid #FFF;
-        background: #0A0A1A;
         z-index: 1;
         justify-content: center;
         overflow-x: scroll;
@@ -214,4 +209,5 @@ export default {
     #pathway-tools-filter-categories .element:hover {
         background: rgba(217, 217, 217, 0.47);
     }
+
 </style>

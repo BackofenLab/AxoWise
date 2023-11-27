@@ -5,7 +5,7 @@
                 <div class="subsection-header">
                     <span>selected pathways</span>
                 </div>
-                <div class="subsection-main">
+                <div class="subsection-main colortype">
                     <PathwayLayers
                     :active_termlayers='active_termlayers'
                     :hiding_terms='hiding_terms'
@@ -18,7 +18,7 @@
                 <div class="subsection-header">
                     <span>contained proteins</span>
                 </div>
-                <div class="subsection-main">
+                <div class="subsection-main colortype">
                     <LayerProteins
                     :active_termlayers='active_termlayers'
                     :hiding_terms='hiding_terms'
@@ -30,7 +30,7 @@
                 <div class="subsection-header">
                     <span>intersected pathways</span>
                 </div>
-                <div class="subsection-main">
+                <div class="subsection-main colortype">
                     <EnrichmentConnections
                     :active_termlayers='active_termlayers'
                     ></EnrichmentConnections>
