@@ -5,7 +5,7 @@
             <div class="graph-options" v-show="activeGraphIndex == index" >
                 <div class="bookmark-graph" v-on:click.stop="add_graph(entry)" :class="{ checked: favourite_graphs.has(entry.id)}" ref="checkboxStatesGraph"></div>
                 <img  class="remove-graph" src="@/assets/pathwaybar/cross.png" v-on:click.stop="remove_graph(entry)">
-                <div class="graph-name">
+                <div class="graph-name colortype">
                     <input type="text" v-model="entry.label" class="empty" @click.stop />
                 </div>
             </div>
@@ -127,7 +127,6 @@ export default {
         height: 11.16%;
         position: absolute;
         border-radius: 5px;
-        background: #0A0A1A;
         cursor: default;
     }
     .generate-graph .generate-text {
@@ -146,7 +145,6 @@ export default {
         top: 12.35%;
         display: flex;
         border-radius: 5px;
-        background: #0A0A1A;
         position: absolute;
         justify-content: center;
     }
@@ -224,7 +222,6 @@ export default {
         width: 100%;
         height: 20%;
         border-radius: 0 0 5px 5px;
-        background-color: #0A0A1A;
         text-align-last: center;
         justify-content: center;
     }

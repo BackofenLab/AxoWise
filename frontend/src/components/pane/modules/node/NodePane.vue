@@ -6,7 +6,7 @@
                 <div class="subsection-header">
                     <span>informations</span>
                 </div>
-                <div class="subsection-main">
+                <div class="subsection-main colortype">
                     <ChatbotInformation
                     :active_node='active_node'
                     ></ChatbotInformation>
@@ -16,7 +16,7 @@
                 <div class="subsection-header">
                     <span>network statistics</span>
                 </div>
-                <div class="subsection-main">
+                <div class="subsection-main colortype">
                     <NetworkStatistics
                     :active_node='active_node' 
                     ></NetworkStatistics>
@@ -26,7 +26,7 @@
                 <div class="subsection-header">
                     <span>connections</span>
                 </div>
-                <div class="subsection-main">
+                <div class="subsection-main colortype">
                     <NodeConnections
                     :active_node='active_node'
                     :links='links'
@@ -37,7 +37,7 @@
                 <div class="subsection-header">
                     <span>routing</span>
                 </div>
-                <div class="subsection-main">
+                <div class="subsection-main colortype">
                     <RoutingNode 
                     :active_node='active_node'
                     :gephi_data='gephi_data'
@@ -176,7 +176,6 @@ export default {
         position: absolute;
         height: 100%;
         width: 100%;
-        background: #0A0A1A;
         border-radius: 5px;
     }
 

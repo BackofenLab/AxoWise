@@ -4,7 +4,7 @@
             <div class='colorbar-text' v-if="active_term !== null">
                 {{active_term.name}}
             </div>
-            <div class='colorbar-img' v-on:click="to_term()">
+            <div class='colorbar-img colortype' v-on:click="to_term()">
                 <img src="@/assets/pane/follow.png">
             </div>
         </div>
@@ -13,7 +13,7 @@
                 <div class="subsection-header">
                     <span>pathway statistics</span>
                 </div>
-                <div class="subsection-main">
+                <div class="subsection-main colortype">
                     <PathwayStatistics
                     :active_term='active_term' 
                     ></PathwayStatistics>
@@ -23,7 +23,7 @@
                 <div class="subsection-header">
                     <span>connections</span>
                 </div>
-                <div class="subsection-main">
+                <div class="subsection-main colortype">
                     <PathwayConnections
                     :active_term='active_term'
                     :gephi_data='gephi_data'
@@ -121,7 +121,6 @@ export default {
         position: fixed;
         display: -webkit-flex;
         align-items: center;
-        background-color: #0A0A1A;
         padding: 1%;
         border-radius: 0 5px 5px 0;
     }

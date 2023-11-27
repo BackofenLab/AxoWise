@@ -170,4 +170,8 @@ export default {
 .protein-view{
   background-color: #0A0A1A;
 }
+
+.protein-view .colortype{
+  background: #0A0A1A;
+}
 </style>

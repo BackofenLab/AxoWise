@@ -10,7 +10,7 @@
                 <div class="subsection-header">
                     <span>legend</span>
                 </div>
-                <div class="subsection-main">
+                <div class="subsection-main colortype">
                     <svg id="demo1" width="250" height="120"></svg>
                     <input
                     type="range"
@@ -26,7 +26,7 @@
                 <div class="subsection-header">
                     <span>contained proteins</span>
                 </div>
-                <div class="subsection-main">
+                <div class="subsection-main colortype">
                     <RegulatedProteins
                     :active_decoloumn='active_decoloumn'
                     :gephi_data='gephi_data'
