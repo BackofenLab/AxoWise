@@ -5,7 +5,7 @@
             <div class="graph-options" v-show="activeHeatmapIndex == index" >
                 <div class="bookmark-graph" v-on:click.stop="add_graph(entry)" :class="{ checked: favourite_heatmaps.has(entry)}" ref="checkboxStatesHeatmap"></div>
                 <img  class="remove-graph" src="@/assets/pathwaybar/cross.png" v-on:click.stop="remove_graph(entry)">
-                <div class="graph-name">
+                <div class="graph-name colortype">
                     <input type="text" v-model="entry.label" class="empty" @click.stop />
                 </div>
             </div>

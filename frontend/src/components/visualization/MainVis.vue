@@ -8,17 +8,15 @@
             <p> <span id="value"> </span></p>
         </div>
     <div id="sigma-webgl"></div>
-    <div id="sigma-canvas" :class="{'loading': threeview}" class="sigma-parent" ref="sigmaContainer" @contextmenu.prevent="handleSigmaContextMenu" @mouseleave="sigmaFocus = false" @mouseenter="sigmaFocus = true">
-      <div 
-      v-show="moduleSelectionActive === true"
-      v-for="(circle, index) in moduleSet"
-      :key="index"
-      :class="{
-        'outside': !isMouseInside(circle.data),
-        'inside': isMouseInside(circle.data) && !unconnectedActive(circle.modularity) && !mousedownrightCheck && !(mousedownleftCheck && mousemoveCheck) && sigmaFocus,
-      }"
-      v-bind:style="getCircleStyle(circle.data)"
-    ></div>
+    <div id="sigma-canvas" :class="{'loading': threeview, 'split': heatmap }" class="sigma-parent" ref="sigmaContainer" 
+         @contextmenu.prevent="handleSigmaContextMenu" @mouseleave="sigmaFocus = false" @mouseenter="sigmaFocus = true">
+      <div v-show="moduleSelectionActive === true" v-for="(circle, index) in moduleSet" :key="index">
+        <div class="modules" v-if="isMouseInside(circle.data) && !unconnectedActive(circle.modularity) && !mousedownrightCheck && !(mousedownleftCheck && mousemoveCheck) && sigmaFocus">
+          <div class="inside" v-bind:style="getCircleStyle(circle.data)">
+            <div class="modularity-class">{{ circle.modularity }}</div>
+          </div>
+        </div>
+      </div>
       
       <img class="twoview" v-show="threeview" v-on:click="two_view" src="@/assets/share-2.png" alt="Center Icon">
 
@@ -1194,8 +1192,17 @@ color: #fff; /* set the font color to white */
   border-width: 1px;
   border-color: white;
 }
-.outside {
-  background-color: transparent;
+
+.modularity-class {
+  font-size: 4vw;
+  color: white;
+  font-weight:bolder;
+  opacity: 40%;
+  font-family: 'ABeeZee', sans-serif;
+}
+
+.modules {
+  position: absolute;
 }
 
 </style>

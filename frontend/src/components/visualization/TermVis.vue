@@ -2,15 +2,13 @@
     <div class="visualization">
       <div id="sigma-canvas" class="sigma-parent" ref="sigmaContainer" 
            @contextmenu.prevent="handleSigmaContextMenu" @mouseleave="sigmaFocus = false" @mouseenter="sigmaFocus = true">
-        <div v-show="moduleSelectionActive === true"
-        v-for="(circle, index) in moduleSet"
-        :key="index"
-        :class="{
-          'outside': !isMouseInside(circle.data),
-          'inside': isMouseInside(circle.data) && !unconnectedActive(circle.modularity) && !mousedownrightCheck && !(mousedownleftCheck && mousemoveCheck) && sigmaFocus,
-        }"
-        v-bind:style="getCircleStyle(circle.data)"
-      ></div>
+           <div v-show="moduleSelectionActive === true" v-for="(circle, index) in moduleSet" :key="index">
+            <div class="modules" v-if="isMouseInside(circle.data) && !unconnectedActive(circle.modularity) && !mousedownrightCheck && !(mousedownleftCheck && mousemoveCheck) && sigmaFocus">
+              <div class="inside" v-bind:style="getCircleStyle(circle.data)">
+                <div class="modularity-class">{{ circle.modularity }}</div>
+              </div>
+            </div>
+          </div>
       </div>
     </div>
   </template>
