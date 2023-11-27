@@ -105,17 +105,22 @@ export default {
     color:  #0A0A1A;
     font-family: sans-serif;
     font-weight: bold;
-    padding: 10px;
-    margin: 0 8px;
+    padding: 2%;
+    margin: 0 2%;
     position: relative;
     cursor: pointer;
     white-space: nowrap;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    height: 100%;
 }
+
+.menu-bar li img {
+    max-width: none;
+    width: 60%;
+}
+
 .menu-bar li::before {
 	content: " ";
 	position: absolute;
