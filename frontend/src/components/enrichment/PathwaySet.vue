@@ -165,7 +165,6 @@ export default {
 
     .pathway-text{
         width: 92%;
-        display: flex;
         align-items: center;
         white-space: nowrap;
         overflow: hidden;    /* Hide overflow content */
