@@ -6,11 +6,13 @@
         </div>
         <div id="pathway-filter" v-on:click="handling_filter_menu()" >
             <span>{{ category }}</span>
-            <img  class="remove-filter" src="@/assets/pathwaybar/cross.png" v-on:click.stop="category = 'Filter'" v-if="category !== 'Filter'">
+            <img  class="remove-filter" src="@/assets/pathwaybar/cross.png" v-on:click.stop="active_categories(null)" v-if="category !== 'Filter'">
         </div>
         <div id="pathway-filter-categories" v-show="category_filtering == true && terms !== null">
-            <div class="element" v-for="(entry, index) in filter_terms" :key="index" v-on:click="category = entry.label; handling_filter_menu()">
-                <a>{{ entry.label }}</a>
+            <div class="slider">
+                <div class="element" v-for="(entry, index) in filter_terms" :key="index" v-on:click="active_categories(entry.label);" :class="{ active_cat: active_categories_set.has(entry.label)}">
+                    <a>{{ entry.label }}</a>
+                </div>
             </div>
         </div>
         <div class="bookmark-button" v-on:click="bookmark_off = !bookmark_off">
@@ -76,6 +78,7 @@ export default {
             sort_fdr: "",
             sort_alph: "",
             category: "Filter",
+            active_categories_set: new Set(),
             category_filtering: false,
             filter_terms: [],
             bookmark_off: true,
@@ -100,7 +103,7 @@ export default {
             if (com.category != "Filter") {
             // If category is set, filter by category
             filtered = filtered.filter(function(term) {
-                return term.category === com.category;
+                return  com.active_categories_set.has(term.category);
             });
             }
 
@@ -135,6 +138,27 @@ export default {
         },
     },
     methods: {
+        active_categories(category){
+
+            if (!category) {
+                this.reset_categories()
+                return
+            }
+            if (this.active_categories_set.has(category)){
+                if(this.active_categories_set.size == 1) {
+                    this.reset_categories()
+                    return
+                }
+                this.active_categories_set.delete(category)
+            }else{
+                this.active_categories_set.add(category)
+            }
+            this.category = [...this.active_categories_set].join(', ');
+        },
+        reset_categories() {
+            this.category = "Filter";
+            this.active_categories_set = new Set()
+        },
         filter_options(terms) {
             var com = this
             com.filter_terms = []
@@ -344,7 +368,7 @@ export default {
 
     #pathway-filter-categories {
         display: flex;
-        position: fixed;
+        position: absolute;
         width: 92.05%;
         height: 30.32%;
         left: 20%;
@@ -354,35 +378,10 @@ export default {
         border: 1px solid #FFF;
         background: #0A0A1A;
         z-index: 1;
+        justify-content: center;
         align-items: center;
-        overflow-x: scroll;
-        overflow-y: hidden;
         cursor: default;
     }
-
-    #pathway-filter-categories .element {
-        border-radius: 5px;
-        background: rgba(217, 217, 217, 0.17);
-        display: flex;
-        width: 26.88%;
-        height: 100%;
-        margin: 0% 1% 0% 1%;
-        overflow: hidden;
-
-    }
-    #pathway-filter-categories .element:hover {
-        background: rgba(217, 217, 217, 0.47);
-    }
-    .element a {
-        width: 100%;
-        color: white;
-        padding: 5%;
-        font-weight: bold;
-        font-size: 0.4vw;
-        align-self: center;
-        text-align: center;
-    }
-
 
     .list-section {
         width: 100%;
@@ -576,6 +575,57 @@ export default {
 
     .recolor_filter {
         filter: invert(71%) sepia(19%) saturate(7427%) hue-rotate(360deg) brightness(104%) contrast(105%);
+    }
+
+    #pathway-filter-categories .slider {
+        position: absolute;
+        width: 95.78%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        overflow-x: scroll;
+        scroll-behavior: smooth;
+        scroll-snap-type: x mandatory;
+
+    }
+
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    #pathway-filter-categories .slider::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    #pathway-filter-categories .slider {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+
+    #pathway-filter-categories .slider .element{
+        position: relative;
+        width: 31.4%;
+        height: 71.71%;
+        flex-shrink: 0;
+        margin: 0% 1% 0% 1%;
+        border-radius: 5px;
+        border: 1px solid #FFF;
+        background: rgba(217, 217, 217, 0.12);
+        transform-origin: center center;
+        transform: scale(1);
+        scroll-snap-align: center;
+        display: flex;
+    }
+
+    .element a {
+        width: 100%;
+        color: white;
+        padding: 5%;
+        font-size: 0.6vw;
+        align-self: center;
+        text-align: center;
+    }
+
+    #pathway-filter-categories .slider .active_cat {
+        background: #ffa500;
     }
 
 
