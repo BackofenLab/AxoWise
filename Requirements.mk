@@ -9,7 +9,7 @@ help:
 
 .NOTPARALLEL:
 
-all: prepare conda node java maven neo4j apoc
+all: prepare conda node java maven neo4j apoc dummydata
 
 prepare:
 	@echo -n "Are you sure? [y/N] " && read ans && [ $${ans:-N} = y ]
@@ -66,6 +66,6 @@ dummydata:
 # explanation: https://stackoverflow.com/questions/25010369/wget-curl-large-file-from-google-drive
 # docs: https://pypi.org/project/gdown/
 	pip install gdown
-	cd $$HOME/Downloads && gdown 1BfpXGdwcdmt8zh6K8MjrQf360ZaOpY_A
-	sudo neo4j-admin load --from=$$HOME/Downloads/newmouse2db.dump --database=neo4j --force
-	rm $$HOME/Downloads/newmouse2db.dump
+	cd $$HOME/Downloads && gdown 15yt-hNmCI1WODWvslrXwOdeSGUAT-e9F -O latest.dump
+	sudo neo4j-admin load --from=$$HOME/Downloads/latest.dump --database=neo4j --force
+	rm $$HOME/Downloads/latest.dump
