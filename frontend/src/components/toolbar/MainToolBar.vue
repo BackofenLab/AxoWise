@@ -24,6 +24,7 @@
         <MenuWindow v-show="tools_active"
         v-on:mouseover="tools_active=true"
         v-on:mouseleave="tools_active=false"
+        :gephi_data = 'gephi_data'
         :tools_active = 'tools_active'
         :mode = 'mode'
         @tools_active_changed = 'tools_active = $event'
