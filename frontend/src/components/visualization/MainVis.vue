@@ -1,19 +1,25 @@
 <template>
   <div class="visualization">
+    <div id="sigma-heatmap" v-show="heatmap">
+      <img class="twoview" v-on:click="two_view" src="@/assets/pathwaybar/cross.png" alt="Center Icon">
+      <div id="heatdemo"></div>
+    </div>
+    <div id="d3tooltip">
+            <p> <span id="value"> </span></p>
+        </div>
     <div id="sigma-webgl"></div>
-    <div id="sigma-canvas" :class="{'loading': threeview}" class="sigma-parent" ref="sigmaContainer" @contextmenu.prevent="handleSigmaContextMenu" @mouseleave="sigmaFocus = false" @mouseenter="sigmaFocus = true">
-      <div 
-      v-show="moduleSelectionActive === true"
-      v-for="(circle, index) in moduleSet"
-      :key="index"
-      :class="{
-        'outside': !isMouseInside(circle.data),
-        'inside': isMouseInside(circle.data) && !unconnectedActive(circle.modularity) && !mousedownrightCheck && !(mousedownleftCheck && mousemoveCheck) && sigmaFocus,
-      }"
-      v-bind:style="getCircleStyle(circle.data)"
-    ></div>
+    <div id="sigma-canvas" :class="{'loading': threeview, 'split': heatmap }" class="sigma-parent" ref="sigmaContainer" 
+         @contextmenu.prevent="handleSigmaContextMenu" @mouseleave="sigmaFocus = false" @mouseenter="sigmaFocus = true">
+      <div v-show="moduleSelectionActive === true" v-for="(circle, index) in moduleSet" :key="index">
+        <div class="modules" v-if="isMouseInside(circle.data) && !unconnectedActive(circle.modularity) && !mousedownrightCheck && !(mousedownleftCheck && mousemoveCheck) && sigmaFocus">
+          <div class="inside" v-bind:style="getCircleStyle(circle.data)">
+            <div class="modularity-class">{{ circle.modularity }}</div>
+          </div>
+        </div>
+      </div>
       
       <img class="twoview" v-show="threeview" v-on:click="two_view" src="@/assets/share-2.png" alt="Center Icon">
+
     </div>
     
   </div>
@@ -91,7 +97,8 @@ export default {
       mousedownleftCheck: false,
       mousemoveCheck: false,
       sigmaFocus: true,
-      moduleSelectionActive: true
+      moduleSelectionActive: true,
+      heatmap: false
     }
   },
   watch: {
@@ -177,6 +184,8 @@ export default {
     active_term(term) {
       const com = this;
 
+      this.$store.commit('assign_active_subset', term ? term.symbols : null)
+      
       if(term == null) {
         com.reset()
         return
@@ -228,13 +237,19 @@ export default {
     },
     active_subset(subset) {
       var com = this
+      var proteins = null;
 
       if (subset == null) {
         com.reset();
+        this.$store.commit('assign_active_subset', null)
         return
+      }else {
+        proteins = new Set(subset.map(node => node.attributes["Ensembl ID"]));
+        this.$store.commit('assign_active_subset', subset.map(node => node.attributes["Name"]))
       }
+      
 
-      const proteins = new Set(subset.map(node => node.attributes["Ensembl ID"]));
+
       const highlighted_edges = new Set()
 
       const graph = sigma_instance.graph;
@@ -646,8 +661,6 @@ export default {
   exportGraphAsImage(params) {
     if(params.format=="svg") saveAsSVG(sigma_instance, {download: true}, params.mode);
     else saveAsPNG(sigma_instance, {download: true}, params.mode);
-    
-    
   },
   show_unconnectedGraph(state){
     var com = this;
@@ -682,7 +695,6 @@ export default {
     var edges = com.$store.state.highlighted_edges
 
     if(state == "highlight"){
-
 
       sigma_instance.graph.edges().forEach(function (e) {
         if(edges.has(e)) e.color = e.color.replace(/[\d.]+\)$/g, com.highlight_opacity+')');
@@ -764,7 +776,7 @@ export default {
       .nodeLabel(node => `${node.label}`)
       .enableNodeDrag(false)
       .nodeAutoColorBy('group')
-      .backgroundColor('rgb(0,0,0)')
+      .backgroundColor('#0A0A1A')
       .linkWidth(2)
       .showNavInfo(false)
       .onNodeClick(node => this.activeNode(node));
@@ -776,13 +788,33 @@ export default {
   async two_view(){
     var com = this;
 
-    var threeGraphmod = document.getElementById('sigma-webgl')
     var twoGraphmod = document.getElementById('sigma-canvas')
-    threeGraphmod.style.display = "none"; twoGraphmod.style.display = "none"
+    twoGraphmod.style.display = "none"
 
-    three_instance.pauseAnimation()
+    if(com.threeview){
+      var threeGraphmod = document.getElementById('sigma-webgl')
+      threeGraphmod.style.display = "none"; 
+      three_instance.pauseAnimation()
+      com.threeview = !com.threeview
+    }
+
+    if(com.heatmap) com.heatmap = false
     
-    com.threeview = !com.threeview
+    await this.wait(1);
+
+    document.getElementById('sigma-canvas').style.display = "flex"
+
+    this.reset()
+
+    sigma_instance.camera.goTo({ x: 0, y: 0, ratio: 1, angle: sigma_instance.camera.angle });
+    sigma_instance.refresh()
+    
+  },
+  async split(){
+    var com = this;
+
+    
+    com.heatmap = true
     await this.wait(1);
 
     document.getElementById('sigma-canvas').style.display = "flex"
@@ -831,6 +863,7 @@ export default {
     const endNode = sigma_instance.graph.getNodeFromIndex(endID);
     const paths = new Set(sigma_instance.graph.astar(startNode.id, endNode.id));
     if(paths.size == 0) this.emitter.emit("emptySet", false);
+    else this.emitter.emit("emptySet", true);
     
     sigma_instance.graph.nodes().forEach(n =>{
       if(paths.has(n)){
@@ -902,7 +935,6 @@ export default {
     if(this.unconnectedActive(circle.modularity) || !com.moduleSelectionActive) return
 
     var nodeSet = []
-
     if(this.active_subset) {
       nodeSet.push(...com.active_subset)
     }else {
@@ -987,19 +1019,19 @@ export default {
     com.rectangular_select.context = com.rectangular_select.canvas.getContext("2d");
 
     
-    this.emitter.on("unconnectedGraph", state => {
-      this.show_unconnectedGraph(state)
+    this.emitter.on("unconnectedGraph", (state) => {
+      if(state.mode=="protein") this.show_unconnectedGraph(state.check)
     });
     
-    this.emitter.on("searchNode", state => {
-      this.$emit('active_node_changed', sigma_instance.graph.getNodeFromIndex(state.id))
+    this.emitter.on("searchNode", (state) => {
+      if(state.mode=="protein") this.$emit('active_node_changed', sigma_instance.graph.getNodeFromIndex(state.node.id))
     });
     this.emitter.on("searchPathway", element => {
       this.visualize_pathway(element.source, element.target)
     });
     
-    this.emitter.on("searchSubset", state => {
-      this.$emit('active_subset_changed', state)
+    this.emitter.on("searchSubset", (state) => {
+      if(state.mode=="protein") this.$emit('active_subset_changed', state.subset)
     });
 
     this.emitter.on("resizeCircle", () => {
@@ -1010,8 +1042,8 @@ export default {
       this.$emit('active_term_changed', state)
     });
 
-    this.emitter.on("highlightProteinList", state => {
-      this.$emit('subactive_subset_changed', state)
+    this.emitter.on("highlightProteinList", (state) => {
+      if(state.mode=="protein") this.$emit('subactive_subset_changed', state.subset)
     });
 
     this.emitter.on("hideTermLayer", state => {
@@ -1019,45 +1051,53 @@ export default {
       this.$emit('active_termlayers_changed', state)
     });
 
-    this.emitter.on("hideSubset", state => {
-      this.$emit('active_layer_changed', state)
+    this.emitter.on("hideSubset", (state) => {
+      console.log(state)
+      if(state.mode=="protein") this.$emit('active_layer_changed', state.subset)
     });
     
-    this.emitter.on("centerGraph", () => {
-      sigma_instance.camera.goTo({ x: 0, y: 0, ratio: 1, angle: sigma_instance.camera.angle });
-      this.get_module_circles()
+    this.emitter.on("centerGraph", (state) => {
+      if(state.mode=="protein") {
+        sigma_instance.camera.goTo({ x: 0, y: 0, ratio: 1, angle: sigma_instance.camera.angle });
+        this.get_module_circles()
+      }
     });
     
-    this.emitter.on("exportGraph", (params) => {
-      this.exportGraphAsImage(params)
+    this.emitter.on("exportGraph", (state) => {
+      if(state.mode=="protein") this.exportGraphAsImage(state.params)
     });
 
-    this.emitter.on("resetSelect", () => {
-      this.reset_label_select()
+    this.emitter.on("resetSelect", (state) => {
+      if(state.mode=="protein") this.reset_label_select()
     });
 
     this.emitter.on("hideLabels", (state) => {
-      this.hide_labels(state)
+      if(state.mode=="protein") this.hide_labels(state.check)
     });
-    this.emitter.on("deactivateModules", () => {
-      com.moduleSelectionActive = !com.moduleSelectionActive
+
+    this.emitter.on("heatmapView", () => {
+      this.split()
     });
 
     this.emitter.on("threeView", () => {
       this.three_view()
     });
+
     this.emitter.on("adjustDE", (value) => {
       this.update_boundary(value)
     });
     this.emitter.on("selectDE", (value) => {
       this.highlight_de(value)
     });
-    this.emitter.on("changeOpacity", (value) => {
-      if(value.layers == "highlight") com.highlight_opacity = value.opacity;
-      else com.base_opacity = value.opacity;
-
-      
-      com.edit_opacity(value.layers)
+    this.emitter.on("deactivateModules", (state) => {
+      if(state.mode=="protein") com.moduleSelectionActive = !com.moduleSelectionActive
+    });
+    this.emitter.on("changeOpacity", (state) => {
+      if(state.mode=="protein") {
+        if(state.value.layers == "highlight") com.highlight_opacity = state.value.opacity;
+        else com.base_opacity = state.value.opacity;
+        com.edit_opacity(state.value.layers)
+      }
     });
     
     sigma_instance.refresh()
@@ -1090,7 +1130,6 @@ height: 0;
   position: absolute;
   box-sizing: border-box;
   overflow: hidden;
-  background-color: hsla(0,0%,100%,.05);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -1105,7 +1144,21 @@ left: 0;
 width: 450px;
 height: 350px;
 position: absolute;
-background-color: hsla(0,0%,100%,.05);
+background-color: #0A0A1A;
+backdrop-filter: blur(10px);
+-webkit-backdrop-filter: blur(10px);
+}
+
+#sigma-canvas.split {
+border-style: solid;
+border-color: white;
+border-width: 0.5px;
+top: 8%;
+left: 50%;
+width: 50%;
+height: 90%;
+position: absolute;
+background-color: #0A0A1A;
 backdrop-filter: blur(10px);
 -webkit-backdrop-filter: blur(10px);
 }
@@ -1139,8 +1192,17 @@ color: #fff; /* set the font color to white */
   border-width: 1px;
   border-color: white;
 }
-.outside {
-  background-color: transparent;
+
+.modularity-class {
+  font-size: 4vw;
+  color: white;
+  font-weight:bolder;
+  opacity: 40%;
+  font-family: 'ABeeZee', sans-serif;
+}
+
+.modules {
+  position: absolute;
 }
 
 </style>

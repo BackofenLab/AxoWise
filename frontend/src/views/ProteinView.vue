@@ -20,7 +20,26 @@
       ></MainVis>
       </keep-alive>
       <keep-alive>
-      <PaneSystem
+      <PathwayMenu
+        :gephi_data='gephi_data'
+        @active_term_changed = 'active_term = $event'
+        @active_termlayers_changed = 'active_termlayers = $event'
+        @active_layer_changed = 'active_layer = $event'
+      ></PathwayMenu>
+    </keep-alive>
+      <keep-alive>
+        <div class="header-menu">
+        <MainToolBar
+          :gephi_data='gephi_data'
+        ></MainToolBar>
+        <NetworkValues
+          :data='gephi_data'
+        ></NetworkValues>
+        <SearchField
+        :data='gephi_data'
+        :active_node='active_node' @active_node_changed = 'active_node = $event'
+        ></SearchField>
+        <PaneSystem
         :active_node='active_node' @active_node_changed = 'active_node = $event'
         :active_term='active_term' @active_term_changed = 'active_term = $event'
         :active_subset='active_subset' @active_subset_changed = 'active_subset = $event'
@@ -30,41 +49,10 @@
         @active_combine_changed = 'active_combine = $event'
         :gephi_data='gephi_data'
         :node_color_index='node_color_index'
-      ></PaneSystem>
-    </keep-alive>
-      <keep-alive>
-      <EnrichmentTool
-        :gephi_data='gephi_data'
-        @active_term_changed = 'active_term = $event'
-        @active_termlayers_changed = 'active_termlayers = $event'
-        @active_layer_changed = 'active_layer = $event'
-      ></EnrichmentTool>
-    </keep-alive>
-      <keep-alive>
-      <MainToolBar
-        :gephi_data='gephi_data'
-        @active_subset_changed = 'active_subset = $event'
-      ></MainToolBar>
-    </keep-alive>
-      <keep-alive>
-      <div class="header-menu">
-        <!-- <ModularityClass
-        :gephi_data='gephi_data'
-        :type='type'
-        :active_subset='active_subset' @active_subset_changed = 'active_subset = $event'
-        :subactive_subset='subactive_subset' @subactive_subset_changed = 'subactive_subset = $event'
-        > </ModularityClass> -->
+        ></PaneSystem>
       </div>
     </keep-alive>
       <keep-alive>
-      <ToggleLabel
-      :type='type'
-      ></ToggleLabel>
-      </keep-alive>
-      <keep-alive>
-      <ConnectedGraph
-      :type='type'
-      ></ConnectedGraph>
     </keep-alive>
   </div>
 </template>
@@ -73,10 +61,9 @@
 // @ is an alias to /src
 import MainVis from '@/components/visualization/MainVis.vue'
 import PaneSystem from '@/components/pane/PaneSystem.vue'
-import EnrichmentTool from '@/components/enrichment/EnrichmentTool.vue'
-// import ModularityClass from '../components/interface/ModularityClass.vue'
-import ToggleLabel from '../components/interface/ToggleLabel.vue'
-import ConnectedGraph from '../components/interface/ConnectedGraph.vue'
+import PathwayMenu from '@/components/enrichment/PathwayMenu.vue'
+import SearchField from '../components/interface/SearchField.vue'
+import NetworkValues from '../components/interface/NetworkValues.vue'
 import MainToolBar from '../components/toolbar/MainToolBar.vue'
 
 export default {
@@ -84,11 +71,10 @@ export default {
   components: {
     MainVis,
     PaneSystem,
-    EnrichmentTool,
-    // ModularityClass,
+    PathwayMenu,
+    SearchField,
     MainToolBar,
-    ToggleLabel,
-    ConnectedGraph
+    NetworkValues
   },
   data() {
     return {
@@ -106,13 +92,13 @@ export default {
       subactive_subset: null,
       unconnected_nodes: null,
       node_modul_index: null,
-      type: 'protein'
+      node_cluster_index: null,
     }
   },
   activated() {
 
     const term = this.$store.state.enrichment
-    const all_terms = this.$store.state.enrichment_terms
+    const all_terms = this.$store.state.current_enrichment_terms
     if(term != null){
       for (var idx in all_terms) {
         var node = all_terms[idx];
@@ -144,7 +130,15 @@ export default {
       com.edge_color_index[edge.id] = edge.color;
     }
 
-    
+    com.node_cluster_index = {};
+    for (var idg in com.gephi_data.nodes) {
+      var nodeG = com.gephi_data.nodes[idg];
+      var modularityClass = nodeG.attributes["Modularity Class"];
+      if (!com.node_cluster_index[modularityClass]) com.node_cluster_index[modularityClass] = new Set();
+      com.node_cluster_index[modularityClass].add(nodeG.attributes["Name"]);
+    }
+    this.$store.commit('assign_moduleCluster', com.node_cluster_index)
+
 
     const maingraph = new Set(com.gephi_data.subgraph)
     com.unconnected_nodes = com.gephi_data.nodes.filter(item => !maingraph.has(item.id));
@@ -154,6 +148,7 @@ export default {
       var node_m = com.unconnected_nodes[idm];
       com.node_modul_index.add(node_m.attributes["Modularity Class"])
     }
+    this.$store.commit('assign_moduleIndex', com.node_modul_index)
 
     this.emitter.on("decoloumn", state => {
       com.active_decoloumn = state
@@ -170,5 +165,13 @@ export default {
   margin: 15px 0 0 0;
   width: 100%;
   justify-content: center;
+}
+
+.protein-view{
+  background-color: #0A0A1A;
+}
+
+.protein-view .colortype{
+  background: #0A0A1A;
 }
 </style>

@@ -1,5 +1,7 @@
 @import url('reset.css');
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=ABeeZee&display=swap');
+
 
 * {
 padding: 0px;
@@ -63,7 +65,7 @@ transform: translate(-28%,0);
 html,body{
 	width: 100%;
 	height: 100%;
-	background-color: #000;
+	background: #0A0A1A;
 }
 
 #pgdb-app {
@@ -559,25 +561,6 @@ html,body{
 	margin-top: 100px;
 }
 
-.toolbar-search{
-	display: block;
-	border-radius: 20px;
-
-}
-
-.toolbar-search input[type=text]{
-	font-family: 'Roboto Mono', monospace;
-	background-color: rgba(0, 0, 0, 0.9);
-	border: none;
-	border-radius: 20px;
-	color: #fff;
-	height: 20px;
-	line-height: 20px;
-	border-style: outset;
-	border-width: 1px;
-	text-align: center;
-}
-
 .minimize {	
  display: block;
  position:absolute;
@@ -637,154 +620,6 @@ html,body{
 }
 
 
-.pane .text {
-	overflow:hidden;
-	height:101.5%;
-	padding: 5px;
-	text-align: center;
-}
-
-.pane .headertext {
-	color: white;
-	background-color: rgba(0, 0, 0, 0.5);
-	border-radius: 20px;
-	padding: 10px;
-	font-size:16px;
-	margin-bottom: 20px;
-	text-align: center;
-	font-weight:bold;
-}
-
-.pane .nodeattributes {
-	display:block;
-	height:90.5%;
-	padding: 5px;
-	border-radius: 20px;
-	background-color: rgba(0, 0, 0, 0.2);
-	overflow-y: scroll;
-	overflow-x: hidden;
-}
-
-.pane .name {
-	font-size: 14px;
-	cursor: default;
-	padding:5px;
-	width: 50%;
-	text-align: center;
-	border-radius: 20px;
-	background-color: rgba(0, 0, 0, 0.5);
-	font-weight:bold;
-	margin-left: 25%;
-}
-
-.pane .name_term {
-	font-size: 14px;
-	cursor: default;
-	padding:5px;
-	width: 90%;
-	text-align: center;
-	border-radius: 20px;
-	background-color: rgba(0, 0, 0, 0.5);
-	font-weight:bold;
-	margin-left: 5%;
-}
-
-.pane .data {
-	padding-top: 10px;
-	text-align: center;
-	display: block;
-	margin-bottom: 10px;
-}
-
-.pane .link {
-	text-align: center;
-	padding: 0 0 0 4px;
-}
-
-.pane .link li {
-	padding-top: 2px;
-	cursor:pointer;
-}
-
-.pane .link a {
-	color: white;
-	text-decoration: none;
-}
-
-.pane .statistics {
-	text-align: center;
-	padding: 0 0 0 4px;
-	font-size: 12px;
-}
-
-.pane .statistics li {
-	padding-top: 2px;
-	cursor:pointer;
-}
-
-.pane .statistics a {
-	color: white;
-	text-decoration: none;
-}
-
-.pane #edges a {
-	color: white;
-	font-size: 9px;
-	text-decoration: none;
-	display: block;
-	border-radius: 20px;
-	text-align: center;
-	padding: 7px;
-}
-.pane #edges .edge {
-	color: white;
-	text-decoration: none;
-	background-color: rgba(0, 0, 0, 0.2);
-	border-radius: 20px;
-	text-align: center;
-	padding: 5px;
-}
-
-.pane .p {
-	color: white;
-	background-color: rgba(0, 0, 0, 0.5);
-	border-radius: 20px;
-	padding: 5px;
-	font-size:14px;
-	margin-bottom: 5px;
-	display: inline-block;
-	width: 100%;
-}
-.pane .p2 {
-	color: white;
-	background-color: rgba(0, 0, 0, 0.5);
-	border-radius: 20px;
-	padding: 5px;
-	font-size:14px;
-	top: 50%;
-	margin-bottom: 5px;
-	margin-top:20px;
-}
-
-.pane select {
-	font-family: 'Roboto Mono', monospace;
-	text-align: center;
-	width: 50%;
-	color: white;
-	margin-left: 25%;
-	margin-top: 20px;
-	border: none;
-	padding: 3px;
-	cursor: pointer;
-	font-size: 10px;
-	appearance: none;
-	border-radius: 20px;
-	background-color: rgba(255,255,255,.2);
-	transition: 0.5s;
-}
-
-
-
 #export-all-btn{
 	background-color: rgba(0, 0, 0, 0.5) ;
 	margin-top: 5px;
@@ -836,111 +671,6 @@ margin-bottom:25px;
 font-weight: bold;
 font-size:14px;
 }
-
-.highlight_list {
-
-	position: absolute;
-	display: block;
-	top:50%;
-	left: 50%;
-	height: auto;
-	width: 300px;
-	border-radius: 20px;
-	background-color:rgba(255,255,255,0.15);
-	transform: translate(-150px,-150px);
-	z-index: 1;
-	color: white;
-
-}
-
-.highlight_list:hover {
-
-	background-color:rgba(255,255,255,0.5);
-}
-#protein_highlight_header {
-	cursor: move;
-	z-index: 999;
-
-}
-
-#protein_highlight_header .headertext,
-#selection_highlight_header .headertext{
-
-	color: white;
-	background-color: rgba(0, 0, 0, 0.9);
-	border-radius: 20px;
-	border-style: outset;
-	border-width: 1px;
-	padding: 5px 5px 5px 20%;
-	font-size: 14px;
-	margin: 5px;
-	text-align: center;
-	font-weight: bold;
-	display: flex;
-	align-items: center;
-}
-
-.highlight_list .highlight_main {
-
-	position: relative;
-	margin: 5px 5px 5px 5px;
-	border-radius: 20px;
-	height: auto;
-	background-color: rgba(0,0,0,0.9);
-	text-align: center;
-
-}
-
-.highlight_main textarea {
-
-	font-family: 'Roboto Mono', monospace;
-	border-radius: 10px;
-	font-size: 12px;
-	color: white;
-	background-color: rgba(255,255,255,0.15);
-	text-align: center;
-	border: none;
-	margin-top: 30px;
-	padding-top: 10px;
-	resize: none;
-	outline: none;
-	height: 150px;
-}
-
-#highlight_protein {
-	position: absolute;
-	display: block;
-	background-color: rgba(0, 0, 0, 0.5);
-	cursor: pointer;
-	color: white;
-	border-radius: 20px;
-	padding: 3px;
-	width: 70%;
-	text-transform: uppercase;
-	letter-spacing: 1px;
-	margin-left: 50%;
-	margin-top: 20px;
-	transform: translate(-50%,0);
-}
-
-.highlight_list button{
-
-	background-color:rgba(0,0,0,0.5);
-	width: 20px;
-	height: 20px;
-	border-radius: 50%;
-	cursor: pointer;
-	border:1px solid #ccc;
-	margin: 0 0px 0 30px;
-}
-
-#highlight-btn-min::after {
-	font-size: 12px;
-	content:"X" ;
-	color: white;
-	z-index: 100;
-}
-
 
 #developercontainer {
 	margin-left:25px;
@@ -1060,25 +790,6 @@ padding: 0px;
 #info {
 	padding-bottom:15px;
 }
-
-.search-field {
-	z-index: 999;
-	padding: 5px;
-	border-radius: 20px;
-}
-
-#search .results {
-	display: none;
-	background-color: rgba(0, 0, 0, 0.9);
-	color: white;
-	border-radius: 20px;
-	text-align: center;
-	margin: 6px;
-	max-height: 75px;
-	overflow-y: scroll;
-	overflow-x: hidden;
-}
-
 
 .tool-pane .results {
 	height: 200px;
@@ -1286,18 +997,6 @@ padding: 0px;
 	}
   }
 
-#search .results b {
-padding-left: 2px;
-}
-
-#search .results a {
-padding: 1px 2px;
-display: block;
-cursor: pointer;
-text-decoration: none;
-color: white;
-}
-
 #attributeselect {
 margin: 20px 0 13px 0 ;
 -webkit-touch-callout: none;
@@ -1410,15 +1109,6 @@ padding-top: 1em;
 
   .nodeattributes input[type=number]::-webkit-inner-spin-button{
 	-webkit-appearance: none;
-  }
-
-  .nodeattributes input[type=number]{
-	-webkit-appearance: none;
-	border-radius: 20px;
-	width: 30px;
-	background-color: rgba(0, 0, 0, 0.6);
-	color: white;
-	text-align: center;
   }
 
   .toolbar-theme .boundary{
@@ -1700,23 +1390,6 @@ display: none;
 	overflow: hidden;
 }
 
-/* Information panes for information display */
-.pane {
-	position: absolute;
-	display: flex;
-    bottom:0;
-    top:0;
-    right: 10px;
-	height: 80%;
-	width: 350px;
-	overflow: hidden;
-	margin-top: 50px;
-	border-radius: 20px;
-	word-wrap: break-word;
-	padding: 2px;
-	z-index: 1;
-	color: white;
-}
 
 .p button, .p2 button {
 	background-color: rgba(255, 255, 255, 0.1);
@@ -1728,11 +1401,6 @@ display: none;
 	padding: 3px;
 }
 
-.pane .buttons {
-	display: block;
-	margin: 10px 5px 10px 0;
-
-}
 
 #paneclosebutton, #termpaneclosebutton, #subsetpaneclosebutton {
 
@@ -1802,19 +1470,6 @@ display: none;
 .tabs {
 	display: table-caption;
 	margin: 40px 0 0 0;
-}
-
-.tool-item {
-	padding: 5px;
-}
-.tool-item li {
-	list-style-type: none;
-}
-.tool-item li:hover {
-	background-color: white;
-	color: black;
-	border-radius: 20px;
-	cursor: pointer;
 }
 
 .boundary {

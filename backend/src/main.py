@@ -19,6 +19,7 @@ import jar
 import queries
 import signal
 from util.stopwatch import Stopwatch
+import g4f, asyncio
 
 app = Flask(__name__)
 
@@ -73,7 +74,6 @@ def proteins_enrichment():
     json_str = json.dumps(list_enrichment.to_dict("records"), ensure_ascii=False, separators=(",", ":"))
     return Response(json_str, mimetype="application/json")
 
-
 # ====================== Subgraph API ======================
 # request comes from home.js
 # TODO Refactor this
@@ -110,6 +110,7 @@ def proteins_subgraph_api():
         pd.DataFrame(proteins).rename(columns={"ENSEMBL_PROTEIN": "external_id"}).drop_duplicates(subset="external_id")
     )
 
+    
     edges = pd.DataFrame({"source": source, "target": target, "score": score})
     edges = edges.drop_duplicates(subset=["source", "target"])
 
