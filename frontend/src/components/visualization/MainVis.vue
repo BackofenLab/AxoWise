@@ -97,7 +97,7 @@ export default {
       mousedownleftCheck: false,
       mousemoveCheck: false,
       sigmaFocus: true,
-      moduleSelectionActive: true
+      moduleSelectionActive: true,
       heatmap: false
     }
   },
