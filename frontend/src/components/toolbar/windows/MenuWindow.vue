@@ -39,6 +39,9 @@
                 ></ExportScreen>
                 <ExportGraph v-if="mode=='protein'"
                 ></ExportGraph>
+                <ExportProteins v-if="mode=='protein'"
+                :gephi_data = 'gephi_data'
+                ></ExportProteins>
             </div>
         </div>
     </div>
@@ -46,6 +49,7 @@
 
 <script>
 
+import ExportProteins from '@/components/toolbar/modules/ExportProteins.vue'
 import ExportScreen from '@/components/toolbar/modules/ExportScreen.vue'
 import DEValue from '@/components/toolbar/modules/DEValue.vue'
 import FDRValue from '@/components/toolbar/modules/FDRValue.vue'
@@ -58,7 +62,7 @@ import ModuleSelection from '@/components/toolbar/modules/ModuleSelection.vue'
 
 export default {
     name: 'MenuWindow',
-    props: ['tools_active','mode'],
+    props: ['tools_active','mode','gephi_data'],
     emits:['tools_active_changed'],
     components: {
         ExportScreen,
@@ -69,7 +73,8 @@ export default {
         ConnectedGraph,
         ToggleLabel,
         ModuleSelection,
-        FDRValue
+        FDRValue,
+        ExportProteins
 
     },
     data() {
