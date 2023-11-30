@@ -83,6 +83,7 @@ def functional_enrichment(driver: neo4j.Driver, in_genes, species_id: Any):
     csv.field_size_limit(sys.maxsize)
 
     # Read Terms and put into Dataframe
+    df_terms = pd.DataFrame(queries.get_enrichment_terms(driver, species_id))
     tot_tests = len(df_terms)
 
     stopwatch.round("setup_enrichment")

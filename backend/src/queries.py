@@ -111,6 +111,7 @@ def get_protein_associations(
         result = session.run(query)
         return _convert_to_connection_info_score(result=result, _int=True, protein=True)
 
+
 def get_enrichment_terms(driver: neo4j.Driver, species_id: int) -> list[dict[str, Any]]:
     if species_id == 10090:
         species = "Mus_Musculus"
