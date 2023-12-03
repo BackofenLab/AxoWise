@@ -64,7 +64,7 @@ export default {
   },
   data() {
     return {
-      term_data: this.$store.state.term_graph_data,
+      term_data: this.$store.state.term_graph_data.graph,
       active_node: null,
       active_layer: null,
       active_fdr: null,
@@ -171,7 +171,7 @@ export default {
   },
   methods:{
     change_graph(){
-      this.term_data = this.$store.state.term_graph_data
+      this.term_data = this.$store.state.term_graph_data.graph
     
       const term_node = this.$store.state.active_node_enrichment
       if(term_node != null){
