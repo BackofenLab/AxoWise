@@ -60,7 +60,9 @@ export default {
                 .then((response) => {
                     if(response.data){
                         this.graph_number += 1
-                        if(this.term_graphs.size < 1) this.$store.commit('assign_term_graph', response.data)
+                        if(this.term_graphs.size < 1) {
+                            this.$store.commit('assign_term_graph', {id: this.graph_number, graph: response.data})
+                        }
                         this.$store.commit('assign_new_term_graph', {id: this.graph_number, label: `Graph ${this.graph_number}`, graph: response.data})
                         this.term_graphs.add({ id: this.graph_number, label: `Graph ${this.graph_number}`, graph: response.data});
                     }
@@ -68,7 +70,7 @@ export default {
 
         },
         switch_graph(entry) {
-            this.$store.commit('assign_term_graph', entry.graph)
+            this.$store.commit('assign_term_graph', {id: entry.id, graph: entry.graph})
             if(this.mode == 'term') this.emitter.emit('graphChanged')
             else this.$router.push("terms")
 
@@ -82,6 +84,9 @@ export default {
             this.term_graphs.delete(entry)
             this.$store.commit('remove_snapshotPathway', entry.id)
             this.$store.commit('remove_term_graph', entry)
+            if(![...this.term_graphs].some(e => e.id == this.$store.state.term_graph_data.id)) {
+                this.$store.commit('assign_term_graph', null)
+            }
         },
         add_graph(entry){
             if (!this.favourite_graphs.has(entry.id)) {
