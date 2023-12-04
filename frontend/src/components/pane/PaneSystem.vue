@@ -194,7 +194,7 @@ export default {
     right: 3.515%;
     height: 61%;
     width: 17.9%;
-    top: 5.78%;
+    top: 4.98%;
     border-radius: 0 0 5px 5px;
     background: rgba(222, 222, 222, 0.61);
     backdrop-filter: blur(7.5px);
