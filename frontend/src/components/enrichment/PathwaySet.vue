@@ -23,7 +23,7 @@
                             </td>
                             <td>
                                 <div class="pathway-text">
-                                    <a href="#">{{entry.name}}</a>
+                                    <input type="text" v-model="entry.name" class="empty"/>
                                     <span>({{entry.terms.length}})</span>
                                 </div>
                             </td>
@@ -163,21 +163,31 @@ export default {
         display: -webkit-flex;
     }
 
-    .pathway-text{
-        width: 92%;
+    #pathways-set .pathway-text{
+        width: 80%;
+        display: flex;
         align-items: center;
         white-space: nowrap;
         overflow: hidden;    /* Hide overflow content */
         text-overflow: ellipsis;
         margin-left: 2%;
     }
-    .pathway-text span{
+    #pathways-set .pathway-text input[type=text] {
+        width: 100%;
+        font-size: 0.85vw;
+        background: none;
+        color: white;
+        cursor: default;
+        font-family: 'ABeeZee', sans-serif;
+        border: none;
+    }
+    #pathways-set .pathway-text span{
         font-size: 0.7vw;
         margin-left: 4%;
         color: rgba(255, 255, 255, 0.7);
     }
 
-    .pathway-text a {
+    #pathways-set .pathway-text a {
         cursor: default;
     }
 
