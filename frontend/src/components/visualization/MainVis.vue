@@ -1052,7 +1052,6 @@ export default {
     });
 
     this.emitter.on("hideSubset", (state) => {
-      console.log(state)
       if(state.mode=="protein") this.$emit('active_layer_changed', state.subset)
     });
     
