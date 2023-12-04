@@ -48,7 +48,7 @@ export default {
     },
     data() {
         return {
-            hide: false,
+            hide: true,
             expand_proteins: false,
             subset_item: {
                 value: null,
@@ -117,12 +117,8 @@ export default {
         show_layer(){
             var com = this;
 
-            if(com.hide){
-                this.emitter.emit("hideSubset", com.active_subset.map(node => node.attributes["Name"]));
-            }
-            else{
-                this.emitter.emit("hideSubset", {subset: null, mode: this.mode});
-            }
+            var subset_check = this.hide ? com.active_subset.map(node => node.attributes["Name"]) : null
+            this.emitter.emit("hideSubset", {subset: subset_check, mode: this.mode});
             com.hide = !com.hide
         },
 
