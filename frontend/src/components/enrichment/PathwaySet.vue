@@ -53,7 +53,7 @@ export default {
         return{
             set_dict: new Set(),
             layer: 0,
-            await_load: false
+            await_load: false,
         }
     },
     methods: {
@@ -84,12 +84,33 @@ export default {
             this.set_dict.delete(entry)
         },
         set_active(entry){
+
             for (var layer of this.set_dict) { 
                 if (layer != entry) layer.status = false;
             }
-            if(!entry.status) this.emitter.emit('enrichTerms', entry.terms)
-            else this.emitter.emit('enrichTerms', null)
+            
+            if(!entry.status) {
+                this.emitter.emit("searchSubset", {subset: this.activate_genes(entry.genes), mode: "protein"});
+                this.emitter.emit('enrichTerms', entry.terms)
+            }
+            else {
+                this.emitter.emit("searchSubset", {subset: null, mode: "protein"});
+                this.emitter.emit('enrichTerms', null)
+            }
             entry.status = !entry.status
+        },
+        activate_genes(genes){
+            var com = this;
+            var subset = []
+            var genes_set = new Set(genes)
+
+            com.gephi_data.nodes.forEach(node => {
+                if(genes_set.has(node.attributes['Name'] )){
+                    subset.push(node)
+                }
+            });
+
+            return subset
         }
     }, 
 }

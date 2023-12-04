@@ -1043,6 +1043,7 @@ export default {
     });
 
     this.emitter.on("highlightProteinList", (state) => {
+      console.log(state)
       if(state.mode=="protein") this.$emit('subactive_subset_changed', state.subset)
     });
 
