@@ -161,8 +161,8 @@ export default {
 <style>
 
 .header-menu {
-  display: inline-flex;
-  margin: 15px 0 0 0;
+  display: -webkit-flex;
+  margin: 1% 0 0 0;
   width: 100%;
   justify-content: center;
 }
