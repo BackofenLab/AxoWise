@@ -76,7 +76,6 @@ export default {
                 if (com.terms_list.length == 0) this.$store.commit('assign_current_enrichment_terms', com.terms)
                 com.terms_list.push(com.terms)
                 com.await_load = false
-                this.emitter.emit("generateGraph", com.terms);
             })
 
         },

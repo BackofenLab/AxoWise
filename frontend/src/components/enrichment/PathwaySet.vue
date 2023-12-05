@@ -23,7 +23,7 @@
                             </td>
                             <td>
                                 <div class="pathway-text">
-                                    <a href="#">{{entry.name}}</a>
+                                    <input type="text" v-model="entry.name" class="empty"/>
                                     <span>({{entry.terms.length}})</span>
                                 </div>
                             </td>
@@ -53,7 +53,7 @@ export default {
         return{
             set_dict: new Set(),
             layer: 0,
-            await_load: false
+            await_load: false,
         }
     },
     methods: {
@@ -84,12 +84,33 @@ export default {
             this.set_dict.delete(entry)
         },
         set_active(entry){
+
             for (var layer of this.set_dict) { 
                 if (layer != entry) layer.status = false;
             }
-            if(!entry.status) this.emitter.emit('enrichTerms', entry.terms)
-            else this.emitter.emit('enrichTerms', null)
+            
+            if(!entry.status) {
+                this.emitter.emit("searchSubset", {subset: this.activate_genes(entry.genes), mode: "protein"});
+                this.emitter.emit('enrichTerms', entry.terms)
+            }
+            else {
+                this.emitter.emit("searchSubset", {subset: null, mode: "protein"});
+                this.emitter.emit('enrichTerms', null)
+            }
             entry.status = !entry.status
+        },
+        activate_genes(genes){
+            var com = this;
+            var subset = []
+            var genes_set = new Set(genes)
+
+            com.gephi_data.nodes.forEach(node => {
+                if(genes_set.has(node.attributes['Name'] )){
+                    subset.push(node)
+                }
+            });
+
+            return subset
         }
     }, 
 }
@@ -163,21 +184,31 @@ export default {
         display: -webkit-flex;
     }
 
-    .pathway-text{
-        width: 92%;
+    #pathways-set .pathway-text{
+        width: 80%;
+        display: flex;
         align-items: center;
         white-space: nowrap;
         overflow: hidden;    /* Hide overflow content */
         text-overflow: ellipsis;
         margin-left: 2%;
     }
-    .pathway-text span{
+    #pathways-set .pathway-text input[type=text] {
+        width: 100%;
+        font-size: 0.85vw;
+        background: none;
+        color: white;
+        cursor: default;
+        font-family: 'ABeeZee', sans-serif;
+        border: none;
+    }
+    #pathways-set .pathway-text span{
         font-size: 0.7vw;
         margin-left: 4%;
         color: rgba(255, 255, 255, 0.7);
     }
 
-    .pathway-text a {
+    #pathways-set .pathway-text a {
         cursor: default;
     }
 

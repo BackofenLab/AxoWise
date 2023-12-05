@@ -29,6 +29,7 @@
             <div id="connections" class="subsection">
                 <div class="subsection-header">
                     <span>connections</span>
+                    <img src="@/assets/pane/copy.png" v-on:click="copyclipboard()">
                 </div>
                 <div class="subsection-main colortype">
                     <NodeConnections
