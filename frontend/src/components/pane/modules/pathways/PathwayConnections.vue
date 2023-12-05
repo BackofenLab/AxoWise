@@ -44,6 +44,20 @@ export default {
             const activeTermProteins = new Set(com.active_term.symbols);
             com.links = com.gephi_data.nodes.filter(node => activeTermProteins.has(node.attributes['Name']));
         }
+    },
+    mounted() {
+        this.emitter.on("copyConnections", () => {
+            this.copyclipboard()
+        });
+    },
+    methods: {
+        copyclipboard(){
+            var com = this;
+
+            var textToCopy = [];
+            for(var link of com.links) textToCopy.push(link.label); 
+            navigator.clipboard.writeText(textToCopy.join("\n"));
+        },
     }
 }
 </script>

@@ -25,6 +25,7 @@
             <div id="connections" class="subsection">
                 <div class="subsection-header">
                     <span>connections</span>
+                    <img src="@/assets/pane/copy.png" v-on:click="copyclipboard()">
                 </div>
                 <div class="subsection-main colortype">
                     <NodeConnections
@@ -170,6 +171,18 @@ export default {
         font-size: 0.7vw;
         padding-left: 3%;
         z-index: 999;
+    }
+
+    .subsection .subsection-header img{
+        position: absolute;
+        width: 50%;
+        right: -15%;
+        display: -webkit-flex;
+        padding: 1%;
+        border-radius: 0 5px 5px 0;
+        padding: 5% 23% 5% 23%;
+        filter: invert(100%);
+
     }
 
     .subsection .subsection-main {
