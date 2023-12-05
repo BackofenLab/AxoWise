@@ -13,6 +13,7 @@
             <div id="subset-connections" class="subsection">
                 <div class="subsection-header">
                     <span>contained proteins</span>
+                    <img src="@/assets/pane/copy.png" v-on:click="copyclipboard()">
                 </div>
                 <div class="subsection-main colortype">
                     <SubsetConnections

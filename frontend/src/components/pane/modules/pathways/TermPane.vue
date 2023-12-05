@@ -22,6 +22,7 @@
             <div id="pathway-connections" class="subsection">
                 <div class="subsection-header">
                     <span>connections</span>
+                    <img src="@/assets/pane/copy.png" v-on:click="copyclipboard()">
                 </div>
                 <div class="subsection-main colortype">
                     <PathwayConnections
@@ -71,11 +72,7 @@ export default {
     },
     methods: {
         copyclipboard(){
-            var com = this;
-
-            var textToCopy = [];
-            for(var link of com.links) textToCopy.push(link.label); 
-            navigator.clipboard.writeText(textToCopy.join("\n"));
+            this.emitter.emit("copyConnections");
         },
         to_term(){
             var com = this;
