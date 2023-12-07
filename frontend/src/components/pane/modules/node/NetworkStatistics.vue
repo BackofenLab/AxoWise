@@ -80,8 +80,8 @@ export default {
 }
 
 .pane_values{
-    position: fixed;
-    left: 90.5%;
+    position: absolute;
+    left: 68.5%;
 }
 
 .statistics-attr{
