@@ -91,11 +91,10 @@ export default {
     left: 3.515%;
     height: fit-content;
     width: 22%;
-    top: 5.78%;
+    top: 4.98%;
     padding: 0.3% 0 0.3% 0;
     border-radius: 0 0 5px 5px;
     background: rgba(222, 222, 222, 0.61);
-    backdrop-filter: blur(7.5px);
 	overflow-y: scroll;
 	overflow-x: hidden;
 	color: white;
@@ -103,6 +102,18 @@ export default {
     border-top-width: 1px;
     border-top-style: solid;
     cursor: default;
+    z-index: 1;
+}
+
+.menu-window:after {
+    content:"";
+    position:absolute;
+    z-index: -1;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    backdrop-filter: blur(7.5px);
 }
 
 .menu-items {

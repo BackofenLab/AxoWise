@@ -66,9 +66,19 @@ export default {
     height: 3.98%;
     display: flex;
     position: absolute;
-    backdrop-filter: blur(7.5px);
     align-content: center;
     justify-content: center;
+}
+
+#search-menu:after {
+    content:"";
+    position:absolute;
+    z-index: 1;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    backdrop-filter: blur(7.5px);
 }
 
 .search-field{
@@ -113,10 +123,10 @@ opacity: 70%;
 }
 
 #search-menu .results {
-    position: fixed;
-    width: 19.84%;
-    max-height: 20%;
-    top: 5.78%;
+    position: absolute;
+    width: 100%;
+    left: 0%;
+    top: 100%;
     padding: 0.3% 0 0.3% 0;
     border-radius: 0 0 5px 5px;
     background: rgba(222, 222, 222, 0.3);
