@@ -156,11 +156,12 @@ export default {
 
     .graph-section .slider {
         position: absolute;
-        width: 90.78%;
+        width: 100%;
         height: 100%;
         display: flex;
-        align-items: center;
-        overflow-x: scroll;
+        padding: 1%;
+        flex-wrap: wrap;
+        overflow-y: scroll;
         scroll-behavior: smooth;
         scroll-snap-type: x mandatory;
 
@@ -179,11 +180,9 @@ export default {
 
     .graph-section .slider .graph{
         position: relative;
-        width: 31.4%;
-        height: 71.71%;
+        width: 20%;
+        height: 50%;
         flex-shrink: 0;
-        margin: 0% 1% 0% 1%;
-        border-radius: 5px;
         border: 1px solid #FFF;
         background: rgba(217, 217, 217, 0.12);
         transform-origin: center center;
