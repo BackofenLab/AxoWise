@@ -69,5 +69,6 @@ export default {
     width: 100%;
     position: absolute;
     overflow: scroll;
+    object-fit: scale-down;
 }
 </style>
