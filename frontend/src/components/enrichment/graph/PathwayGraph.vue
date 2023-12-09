@@ -2,9 +2,9 @@
     <div class="slider" tabindex="0">
         <div v-for="(entry, index) in filt_graphs" :key="index" class="graph" v-on:click="switch_graph(entry)" @mouseover="activeGraphIndex = index" @mouseout="activeGraphIndex = -1">
             <SnapshotGraph :propValue="entry" :index="entry.id"/>
-            <div class="graph-options" v-show="activeGraphIndex == index" >
-                <div class="bookmark-graph" v-on:click.stop="add_graph(entry)" :class="{ checked: favourite_graphs.has(entry.id)}" ref="checkboxStatesGraph"></div>
-                <img  class="remove-graph" src="@/assets/pathwaybar/cross.png" v-on:click.stop="remove_graph(entry)">
+            <div class="graph-options" >
+                <div class="bookmark-graph"  v-show="activeGraphIndex == index"  v-on:click.stop="add_graph(entry)" :class="{ checked: favourite_graphs.has(entry.id)}" ref="checkboxStatesGraph"></div>
+                <img  class="remove-graph" v-show="activeGraphIndex == index" src="@/assets/pathwaybar/cross.png" v-on:click.stop="remove_graph(entry)">
                 <div class="graph-name colortype">
                     <input type="text" v-model="entry.label" class="empty" @click.stop />
                 </div>
@@ -156,11 +156,12 @@ export default {
 
     .graph-section .slider {
         position: absolute;
-        width: 90.78%;
+        width: 100%;
         height: 100%;
         display: flex;
-        align-items: center;
-        overflow-x: scroll;
+        padding: 1%;
+        flex-wrap: wrap;
+        overflow-y: scroll;
         scroll-behavior: smooth;
         scroll-snap-type: x mandatory;
 
@@ -179,11 +180,9 @@ export default {
 
     .graph-section .slider .graph{
         position: relative;
-        width: 31.4%;
-        height: 71.71%;
+        width: 20%;
+        height: 50%;
         flex-shrink: 0;
-        margin: 0% 1% 0% 1%;
-        border-radius: 5px;
         border: 1px solid #FFF;
         background: rgba(217, 217, 217, 0.12);
         transform-origin: center center;

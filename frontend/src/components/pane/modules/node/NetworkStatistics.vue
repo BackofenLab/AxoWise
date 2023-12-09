@@ -28,7 +28,7 @@
 
 export default {
     name: 'NetworkStatistics',
-    props: ['active_node'],
+    props: ['active_node','mode'],
     data() {
         return {
             statistics: {}
@@ -42,8 +42,9 @@ export default {
                 return;
             }
 
-            const { Degree, "Ensembl ID": EnsemblID } = com.active_node.attributes;
-            com.statistics = { Degree, EnsemblID }
+            const { Degree, "Ensembl ID": EnsemblID, "Betweenness Centrality": BetweenesCentrality, "Modularity Class": Cluster, PageRank, Category, FDR} = com.active_node.attributes;
+            if (this.mode == "protein") com.statistics = {  Cluster, Degree, EnsemblID, BetweenesCentrality, PageRank }
+            else com.statistics = {  Cluster, Degree, EnsemblID,Category, BetweenesCentrality, PageRank, FDR }
             if(com.$store.state.dcoloumns != null) {
                 com.$store.state.dcoloumns.forEach(dcoloumn => {
                     com.statistics[dcoloumn] = com.active_node.attributes[dcoloumn]
@@ -80,8 +81,8 @@ export default {
 }
 
 .pane_values{
-    position: fixed;
-    left: 90.5%;
+    position: absolute;
+    left: 68.5%;
 }
 
 .statistics-attr{

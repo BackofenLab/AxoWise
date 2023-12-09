@@ -23,6 +23,7 @@
                 <div class="subsection-main colortype">
                     <NetworkStatistics
                     :active_node='active_node' 
+                    :mode='mode' 
                     ></NetworkStatistics>
                 </div>
             </div>
