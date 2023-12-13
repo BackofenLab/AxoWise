@@ -182,7 +182,8 @@ def scrapping(path, species):
         if has_genes:
             pathway_gene_symbols = []
             for i in pathway_genes:
-                pathway_gene_symbols.append(i[1])
+                if i:
+                    pathway_gene_symbols.append(i[1])
             kegg2external_genes = symbols_to_ensemble(pathway_gene_symbols, species, "gene")
         # Diseases
         has_diseases = pathway_diseases is not None
