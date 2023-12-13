@@ -183,15 +183,18 @@ def read_data(species, file_name):
         for line in f:
             fields = line.strip().split("\t")
             name = fields[0].split("%")
-            source = name[1]
-            ids = name[2]
-            descr = fields[1]
-            symbols = fields[2:]
-            # Exclude lines where source starts with "REACTOME"
-            if not source.startswith("REACTOME"):
-                data.append([ids, descr, source, symbols])
-                symbol.append(symbols)
-                unique_symbols.update(symbols)
+            if len(name) >= 2:
+                source = name[1]
+                ids = name[2]
+                descr = fields[1]
+                symbols = fields[2:]
+                # Exclude lines where source starts with "REACTOME"
+                if not source.startswith("REACTOME"):
+                    data.append([ids, descr, source, symbols])
+                    symbol.append(symbols)
+                    unique_symbols.update(symbols)
+            else:
+                pass
 
     unique_symbols = list(unique_symbols)
     gene_mapping, genes_to_map = symbols_to_ensembl(unique_symbols, f"{species}", "gene")
