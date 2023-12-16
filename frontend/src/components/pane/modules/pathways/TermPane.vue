@@ -1,6 +1,11 @@
 <template>
     <div class="text" v-show="active_term !== null">
         <div id="colorbar-pathway">
+            <div class="favourite-pane-symbol">
+                <label class="custom-checkbox">
+                    <div class="checkbox-image" v-if="favourite_pathways != null" v-on:click="bookmark_pathway()" :class="{ checked: favourite_pathways.has(active_term)}" ></div>
+                </label>
+            </div>
             <div class='colorbar-text' v-if="active_term !== null">
                 {{active_term.name}}
             </div>
@@ -55,7 +60,8 @@ export default {
             term_item: {
                 value: null,
                 imageSrc: require('@/assets/pane/enrichment-icon.png')
-            }
+            },
+            favourite_pathways: this.$store.state.favourite_enrichments
         }
     },
     watch: {
@@ -64,6 +70,11 @@ export default {
             if (com.active_term == null) {
                 return;
             }
+
+
+            this.favourite_pathways = this.$store.state.favourite_enrichments
+
+            console.log(this.favourite_pathways)
 
             com.term_item.value = com.active_term
             com.$emit('active_item_changed',{ "Pathway": com.term_item })
@@ -87,6 +98,10 @@ export default {
         select_node(value) {
             this.emitter.emit("searchNode", {node: value, mode: this.mode});
         },
+        bookmark_pathway(){
+            this.emitter.emit("bookmarkPathway", this.active_term);
+            this.favourite_pathways = this.$store.state.favourite_enrichments
+        }
     }
 }
 </script>
@@ -105,10 +120,13 @@ export default {
         transform: translate(13.5%);
         font-family: 'ABeeZee', sans-serif;
         font-size: 0.9vw;
+        background-color: darkgreen;
+        border-radius: 5px 0 0 5px;
     }
     .colorbar-text {
         width: 100%;
         background-color: darkgreen;
+        padding: 2%;
         border-radius: 5px 0 0 5px;
     }
     .colorbar-img {
@@ -129,6 +147,26 @@ export default {
 
     #pathway-connections {
         height: 40%;
+    }
+
+    .favourite-pane-symbol{
+        height: 100%;
+        width: 10%;
+        left: 2%;
+        justify-content: center;
+        text-align: center;
+        position: relative;
+        display: flex;
+        
+    }
+    .favourite-pane-symbol .custom-checkbox {
+        position: relative;
+        display: inline-block;
+        cursor: default;
+    }
+
+    .checked {
+        background-color: #ffa500;
     }
 
 </style>

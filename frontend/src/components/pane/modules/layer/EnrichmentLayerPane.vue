@@ -16,7 +16,8 @@
             </div>
             <div id="layer-connections" class="subsection">
                 <div class="subsection-header">
-                    <span>contained proteins</span>
+                    <span>contained nodes</span>
+                    <img src="@/assets/pane/copy.png" v-on:click="copyclipboard()">
                 </div>
                 <div class="subsection-main colortype">
                     <LayerProteins
@@ -83,6 +84,11 @@ export default {
         },
         deep: true,
     },
+    methods: {
+        copyclipboard(){
+            this.emitter.emit("copyLayerConnections");
+        },
+    }
 
     },
     

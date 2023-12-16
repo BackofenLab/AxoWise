@@ -81,6 +81,11 @@ export default {
             for(var link of com.intersectionSet) textToCopy.push(link.label);
             navigator.clipboard.writeText(textToCopy.join("\n"));
         },
+    },
+    mounted(){
+        this.emitter.on("copyLayerConnections", () => {
+            this.copyclipboard()
+        });
     }
 }
 

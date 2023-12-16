@@ -17,6 +17,7 @@ export const store = createStore({
       highlighted_edges: new Set(),
       snapshot_pathways: [],
       favourite_graph_dict: new Set(),
+      favourite_enrichments: null,
       snapshot_heatmaps: [],
       node_cluster_index: {},
       node_modul_index: new Set(),
@@ -69,6 +70,9 @@ export const store = createStore({
     },
     assign_favourite_graph(state, value) {
       state.favourite_graph_dict = value
+    },
+    assign_favourite_enrichment(state, value) {
+      state.favourite_enrichments = value
     },
     assign_highlightedSet(state, value) {
       state.highlighted_edges = value

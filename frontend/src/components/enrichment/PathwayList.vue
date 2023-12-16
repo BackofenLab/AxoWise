@@ -86,6 +86,11 @@ export default {
             selectedIndex: -1
         }
     },
+    mounted(){
+        this.emitter.on("bookmarkPathway", (value) => {
+            this.add_enrichment(value)
+        });
+    },
     watch:{
         terms() {
             this.filter_options(this.terms)

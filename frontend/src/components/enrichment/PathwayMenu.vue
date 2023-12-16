@@ -51,6 +51,14 @@ export default {
             filtered_terms: []
         }
     },
+    watch:{
+        favourite_pathways: {
+            handler(newList){
+                this.$store.commit('assign_favourite_enrichment', newList)
+            },
+            deep: true
+        },
+    },
     mounted() {
         var com = this
         com.generatePathways(com.gephi_data.nodes[0].species, com.gephi_data.nodes.map(node => node.attributes["Name"]))
