@@ -3,7 +3,7 @@
         <div id="colorbar-pathway">
             <div class="favourite-pane-symbol">
                 <label class="custom-checkbox">
-                    <div class="checkbox-image" v-if="favourite_pathways != null" v-on:click="bookmark_pathway()" :class="{ checked: favourite_pathways.has(active_term)}" ></div>
+                    <div class="checkbox-image" v-on:click="bookmark_pathway()" :class="{ checked: favourite_pathways.has(active_term)}" ></div>
                 </label>
             </div>
             <div class='colorbar-text' v-if="active_term !== null">
@@ -61,7 +61,7 @@ export default {
                 value: null,
                 imageSrc: require('@/assets/pane/enrichment-icon.png')
             },
-            favourite_pathways: this.$store.state.favourite_enrichments
+            favourite_pathways: new Set()
         }
     },
     watch: {
@@ -70,11 +70,6 @@ export default {
             if (com.active_term == null) {
                 return;
             }
-
-
-            this.favourite_pathways = this.$store.state.favourite_enrichments
-
-            console.log(this.favourite_pathways)
 
             com.term_item.value = com.active_term
             com.$emit('active_item_changed',{ "Pathway": com.term_item })
@@ -102,6 +97,12 @@ export default {
             this.emitter.emit("bookmarkPathway", this.active_term);
             this.favourite_pathways = this.$store.state.favourite_enrichments
         }
+    },
+    mounted(){
+        this.emitter.on("updateFavouriteList", (value) => {
+            this.favourite_pathways = value
+        });
+
     }
 }
 </script>

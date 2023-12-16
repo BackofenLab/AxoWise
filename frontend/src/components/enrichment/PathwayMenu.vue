@@ -54,7 +54,7 @@ export default {
     watch:{
         favourite_pathways: {
             handler(newList){
-                this.$store.commit('assign_favourite_enrichment', newList)
+                this.emitter.emit('updateFavouriteList', newList)
             },
             deep: true
         },
