@@ -3,9 +3,9 @@
       <div id="sigma-canvas" class="sigma-parent" ref="sigmaContainer" 
            @contextmenu.prevent="handleSigmaContextMenu" @mouseleave="sigmaFocus = false" @mouseenter="sigmaFocus = true">
            <div v-show="moduleSelectionActive === true" v-for="(circle, index) in moduleSet" :key="index">
-            <div class="modules" v-if="isMouseInside(circle.data) && !unconnectedActive(circle.modularity) && !mousedownrightCheck && !(mousedownleftCheck && mousemoveCheck) && sigmaFocus">
+            <div class="modules" v-if="(isMouseInside(circle.data) && !unconnectedActive(circle.modularity) && !mousedownrightCheck && !(mousedownleftCheck && mousemoveCheck) && sigmaFocus) || showCluster ">
               <div class="inside" v-bind:style="getCircleStyle(circle.data)">
-                <div class="modularity-class">{{ circle.modularity }}</div>
+                <div class="modularity-class" v-bind:style="getTextStyle(circle.data)" >{{ circle.modularity }}</div>
               </div>
             </div>
           </div>
@@ -58,6 +58,7 @@ export default {
       mousemoveCheck: false,
       sigmaFocus: true,
       moduleSelectionActive: true,
+      showCluster: false
     }
   },
   watch: {
@@ -531,6 +532,15 @@ getCircleStyle(circle){
       top: `${circle.y - (circle.r+10)}px`,
     };
 },
+  getTextStyle(circle){
+    return {
+        "font-size": `${(circle.r+10)}px`,
+        position: "absolute", // Position absolute to control x and y coordinates
+        left: `${(circle.r)}px`,
+        top: `${(circle.r)}px`,
+      };
+  },
+
   isMouseInside(circle) {
     const distance = Math.sqrt(
       Math.pow(circle.x - this.mouseX, 2) + Math.pow(circle.y - this.mouseY, 2)
@@ -671,6 +681,10 @@ getCircleStyle(circle){
 
     this.emitter.on("hideLabels", (state) => {
       if(state.mode=="term") this.hide_labels(state.check)
+    });
+
+    this.emitter.on("showCluster", (state) => {
+      if(state.mode=="term")  this.showCluster = state.check
     });
 
     this.emitter.on("deactivateModules", (state) => {
