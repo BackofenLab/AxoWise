@@ -4,13 +4,15 @@
             <img class="pathway-search-icon" src="@/assets/toolbar/search.png">
             <input type="text" v-model="search_raw" class="empty" placeholder="Find your pathways"/>
         </div>
-        <div id="pathway-filter" class="colortype" v-on:click="handling_filter_menu()" >
-            <span>{{ category }}</span>
-            <img  class="remove-filter" src="@/assets/pathwaybar/cross.png" v-on:click.stop="category = 'Filter'" v-if="category !== 'Filter'">
-        </div>
-        <div id="pathway-filter-categories" class="colortype" v-show="category_filtering == true && term_data !== null">
-            <div class="element" v-for="(entry, index) in filter_terms" :key="index" v-on:click="category = entry.label; handling_filter_menu()">
-                <a>{{ entry.label }}</a>
+        <div class="filter-section">
+            <div id="pathway-filter" class="pre-full colortype" v-on:click="handling_filter_menu()" :class="{ full: category_filtering == true }">
+                <span>{{ category }}</span>
+                <img  class="remove-filter" src="@/assets/pathwaybar/cross.png" v-on:click.stop="active_categories(null)" v-if="category !== 'Filter'">
+            </div>
+            <div id="pathway-filter-categories" class="colortype" v-show="category_filtering == true && terms !== null">
+                <div class="element" v-for="(entry, index) in filter_terms" :key="index" v-on:click="active_categories(entry.label);" :class="{ active_cat: active_categories_set.has(entry.label)}">
+                    <a>{{ entry.label }}</a>
+                </div>
             </div>
         </div>
         <div class="list-section colortype">
@@ -55,6 +57,7 @@ export default {
             sort_alph: "",
             category: "Filter",
             category_filtering: false,
+            active_categories_set: new Set(),
             filter_terms: [],
             bookmark_off: true,
             favourite_tab: new Set(),
@@ -77,7 +80,7 @@ export default {
             if (com.category != "Filter") {
             // If category is set, filter by category
             filtered = filtered.filter(function(term) {
-                return term.attributes["Category"] === com.category;
+                return  com.active_categories_set.has(term.attributes['Category']);
             });
             }
 
@@ -114,6 +117,26 @@ export default {
         },
     },
     methods: {
+        active_categories(category){
+            if (!category) {
+                this.reset_categories()
+                return
+            }
+            if (this.active_categories_set.has(category)){
+                if(this.active_categories_set.size == 1) {
+                    this.reset_categories()
+                    return
+                }
+                this.active_categories_set.delete(category)
+            }else{
+                this.active_categories_set.add(category)
+            }
+            this.category = [...this.active_categories_set].join(', ');
+            },
+            reset_categories() {
+            this.category = "Filter";
+            this.active_categories_set = new Set()
+        },
         filter_options(terms) {
             var com = this
             com.filter_terms = []

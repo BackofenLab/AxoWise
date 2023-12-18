@@ -4,15 +4,15 @@
             <img class="pathway-search-icon" src="@/assets/toolbar/search.png">
             <input type="text" v-model="search_raw" class="empty" placeholder="Find your pathways"/>
         </div>
-        <div id="pathway-filter" class="colortype" v-on:click="handling_filter_menu()" >
-            <span>{{ category }}</span>
-            <img  class="remove-filter" src="@/assets/pathwaybar/cross.png" v-on:click.stop="active_categories(null)" v-if="category !== 'Filter'">
-        </div>
-        <div id="pathway-filter-categories" class="colortype" v-show="category_filtering == true && terms !== null">
-            <div class="slider">
-                <div class="element" v-for="(entry, index) in filter_terms" :key="index" v-on:click="active_categories(entry.label);" :class="{ active_cat: active_categories_set.has(entry.label)}">
-                    <a>{{ entry.label }}</a>
-                </div>
+        <div class="filter-section">
+            <div id="pathway-filter" class="pre-full colortype" v-on:click="handling_filter_menu()" :class="{ full: category_filtering == true }">
+                <span>{{ category }}</span>
+                <img  class="remove-filter" src="@/assets/pathwaybar/cross.png" v-on:click.stop="active_categories(null)" v-if="category !== 'Filter'">
+            </div>
+            <div id="pathway-filter-categories" class="colortype" v-show="category_filtering == true && terms !== null">
+                    <div class="element" v-for="(entry, index) in filter_terms" :key="index" v-on:click="active_categories(entry.label);" :class="{ active_cat: active_categories_set.has(entry.label)}">
+                        <a>{{ entry.label }}</a>
+                    </div>
             </div>
         </div>
         <div class="bookmark-button colortype" v-on:click="bookmark_off = !bookmark_off">
@@ -348,16 +348,28 @@ export default {
     .pathway-search [type="text"]::-webkit-input-placeholder {
     opacity: 70%;
     }
-
-    #pathway-filter {
+    
+    .filter-section {
         width: 17.81%;
         left: 38.54%;
         height: 11.16%;
         display: flex;
         position: absolute;
         border-radius: 5px;
+    }
+
+    #pathway-filter {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        position: absolute;
         align-items: center;
         justify-content: center;
+
+    }
+
+    .pre-full{
+        border-radius: 5px;
     }
 
     #pathway-filter span {
@@ -370,6 +382,7 @@ export default {
         text-overflow: ellipsis;
         cursor: default;
         text-align: center;
+        
     }
 
     #pathway-filter .remove-filter {
@@ -384,19 +397,23 @@ export default {
     }
 
     #pathway-filter-categories {
-        display: flex;
         position: absolute;
-        width: 92.05%;
-        height: 30.32%;
-        left: 20%;
-        top: 15%;
-        padding: 1% 0.5% 1% 0.5%;
-        border-radius: 5px;
-        border: 1px solid #FFF;
-        z-index: 1;
-        justify-content: center;
-        align-items: center;
-        cursor: default;
+        max-height: 600%;
+        width: 100%;
+        left: 0%;
+        top: 100%;
+        padding: 0.3% 0 0.3% 0;
+        border-radius: 0 0 5px 5px;
+        -webkit-backdrop-filter: blur(7.5px);
+        backdrop-filter: blur(7.5px);
+        overflow-y: scroll;
+        overflow-x: hidden;
+        color: white;
+        border-color: rgba(255, 255, 255, 30%);
+        border-width: 1px;
+        border-style: solid;
+        z-index: 999;
+    
     }
 
     .list-section {
@@ -589,38 +606,24 @@ export default {
         filter: invert(71%) sepia(19%) saturate(7427%) hue-rotate(360deg) brightness(104%) contrast(105%);
     }
 
-    #pathway-filter-categories .slider {
-        position: absolute;
-        width: 95.78%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        overflow-x: scroll;
-        scroll-behavior: smooth;
-        scroll-snap-type: x mandatory;
-
-    }
-
     /* Hide scrollbar for Chrome, Safari and Opera */
-    #pathway-filter-categories .slider::-webkit-scrollbar {
+    #pathway-filter-categories::-webkit-scrollbar {
         display: none;
     }
 
     /* Hide scrollbar for IE, Edge and Firefox */
-    #pathway-filter-categories .slider {
+    #pathway-filter-categories {
         -ms-overflow-style: none;  /* IE and Edge */
         scrollbar-width: none;  /* Firefox */
     }
 
-    #pathway-filter-categories .slider .element{
+    #pathway-filter-categories .element{
         position: relative;
-        width: 31.4%;
-        height: 71.71%;
+        padding: 5%;
         flex-shrink: 0;
-        margin: 0% 1% 0% 1%;
-        border-radius: 5px;
-        border: 1px solid #FFF;
-        background: rgba(217, 217, 217, 0.12);
+        border-top-color: rgba(255, 255, 255, 30%);
+        border-top-width: 1px;
+        border-top-style: solid;
         transform-origin: center center;
         transform: scale(1);
         scroll-snap-align: center;
@@ -636,7 +639,7 @@ export default {
         text-align: center;
     }
 
-    #pathway-filter-categories .slider .active_cat {
+    #pathway-filter-categories .active_cat {
         background: #ffa500;
     }
 
