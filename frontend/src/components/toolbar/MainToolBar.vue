@@ -30,8 +30,10 @@
         :mode = 'mode'
         @tools_active_changed = 'tools_active = $event'
         ></MenuWindow>
-        <SelectionList v-show="selection_active"
+        <SelectionList v-if="selection_active"
         :data = 'gephi_data'
+        :active_subset = 'active_subset'
+        :active_term = 'active_term'
         :mode = 'mode'
         @selection_active_changed = 'selection_active = $event'>
         </SelectionList>
@@ -52,7 +54,7 @@ import SelectionList from '@/components/toolbar/modules/SelectionList.vue'
 
 export default {
     name: 'MainToolBar',
-    props: ['gephi_data', 'term_data','ensembl_name_index'],
+    props: ['gephi_data', 'term_data','active_subset', 'active_term', 'ensembl_name_index'],
     components: {
         MenuWindow,
         ProteinList,

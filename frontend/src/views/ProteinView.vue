@@ -31,6 +31,8 @@
         <div class="header-menu">
         <MainToolBar
           :gephi_data='gephi_data'
+          :active_subset='active_subset'
+          :active_term='active_term'
           :ensembl_name_index='ensembl_name_index'
         ></MainToolBar>
         <NetworkValues
