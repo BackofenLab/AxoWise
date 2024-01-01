@@ -19,11 +19,10 @@ export default {
 
             // export proteins as csv
             var csvTermsData = com.gephi_data.nodes;
-
-            var terms_csv = 'name\tensembl\tcluster\tdescription\n';
+            var terms_csv = 'name\tensembl\tcluster\tdescription\tBetweenness Centrality\tPageRank\n';
 
             csvTermsData.forEach(function(row) {
-                terms_csv += row.attributes['Name'] + '\t' + row.attributes['Ensembl ID'] + '\t"'  + row.attributes['Modularity Class'] + '"\t"' + row.attributes['Description'] +'"';
+                terms_csv += row.attributes['Name'] + '\t' + row.attributes['Ensembl ID'] + '\t"'  + row.attributes['Modularity Class'] + '"\t"' + row.attributes['Description'] + '"\t"' + row.attributes['Betweenness Centrality'] + '"\t"' + row.attributes['PageRank'] + '"';
                 terms_csv += '\n';   
             });
 
