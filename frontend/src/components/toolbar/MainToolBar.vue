@@ -25,6 +25,7 @@
         v-on:mouseover="tools_active=true"
         v-on:mouseleave="tools_active=false"
         :gephi_data = 'gephi_data'
+        :ensembl_name_index = 'ensembl_name_index'
         :tools_active = 'tools_active'
         :mode = 'mode'
         @tools_active_changed = 'tools_active = $event'
@@ -51,7 +52,7 @@ import SelectionList from '@/components/toolbar/modules/SelectionList.vue'
 
 export default {
     name: 'MainToolBar',
-    props: ['gephi_data', 'term_data'],
+    props: ['gephi_data', 'term_data','ensembl_name_index'],
     components: {
         MenuWindow,
         ProteinList,

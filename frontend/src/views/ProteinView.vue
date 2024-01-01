@@ -31,6 +31,7 @@
         <div class="header-menu">
         <MainToolBar
           :gephi_data='gephi_data'
+          :ensembl_name_index='ensembl_name_index'
         ></MainToolBar>
         <NetworkValues
           :data='gephi_data'
@@ -93,6 +94,7 @@ export default {
       unconnected_nodes: null,
       node_modul_index: null,
       node_cluster_index: null,
+      ensembl_name_index: null,
     }
   },
   activated() {
@@ -111,6 +113,11 @@ export default {
   },
   mounted() {
     var com = this;
+
+    com.ensembl_name_index = {};
+    for (var ele of com.gephi_data.nodes) {
+      com.ensembl_name_index[ele.attributes["Ensembl ID"]] = ele.attributes["Name"]
+    }
 
     com.node_color_index = {};
     for (var idx in com.gephi_data.nodes) {
