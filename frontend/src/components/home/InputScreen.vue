@@ -25,6 +25,20 @@
                   <textarea ref="protein_list_input" id="protein-list" v-model="raw_text" rows="10" cols="30" autofocus>
                   </textarea>
                 </div>
+                <h4>Edge score:</h4>
+                    <input
+                        id="scoregraph"
+                        type="range"
+                        v-bind:min="threshold.min" v-bind:max="threshold.max" v-bind:step="threshold.step"
+                        v-model="threshold.value"
+                        v-on:input="valueChanged('scoregraph')"
+                    />
+                    <input
+                        type="number"
+                        v-bind:min="threshold.min" v-bind:max="threshold.max" v-bind:step="threshold.step"
+                        v-model="threshold.value"
+                        v-on:input="valueChanged('scoregraph')"
+                    />
                 <button id="submit-btn" @click="submit()" :class="{'loading': isAddClass}">
                   <span class="button__text" onClick="this.disabled=true;">Submit</span>
                 </button>
@@ -49,16 +63,13 @@ export default {
         subgraph: "api/subgraph/proteins",
       },
       threshold: {
-        value: 0.7,
-        min: 0.4,
-        max: 1.0,
-        step: 0.001,
+        value: 0,
+        min: 0,
+        max: 0.9999,
+        step: 0.1,
       },
       edge_thick: {
         value: 0.2,
-        min: 0,
-        max: 1.0,
-        step: 0.1,
       },
       raw_text: null,
       selected_species: "",
@@ -131,7 +142,12 @@ export default {
       }
 
       return randomElements;
-    }
+    },
+    valueChanged(id){
+            var target = document.getElementById(id)
+            let a = (target.value / target.max)* 100;
+            target.style.background = `linear-gradient(to right,#0A0A1A,#0A0A1A ${a}%,#ccc ${a}%)`;
+        }
   }
 }
 
@@ -154,6 +170,35 @@ export default {
   width: 50px;
   font-size: 9px;
 
+}
+
+
+.input-form-data input[type=number] { 
+border: none;
+border-radius: 5px;
+text-align: center;
+font-family: 'ABeeZee', sans-serif;
+background: none;
+-moz-appearance: textfield;
+-webkit-appearance: textfield;
+appearance: textfield;
+}
+
+.input-form-data input[type=range]{
+	appearance: none;
+	outline: none;
+    width: 10vw;
+    height: 0.3vw;
+	border-radius: 5px;
+	background-color: #ccc;
+}
+.input-form-data input[type=range]::-webkit-slider-thumb {
+    background: #fafafa;
+    appearance: none;
+    box-shadow: 1px 2px 26px 1px #bdbdbd;
+    width: 0.8vw;
+    height: 0.8vw;
+    border-radius: 50%;
 }
 
 </style>
