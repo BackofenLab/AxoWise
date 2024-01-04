@@ -66,7 +66,7 @@ export default {
         value: 0,
         min: 0,
         max: 0.9999,
-        step: 0.1,
+        step: 0.01,
       },
       edge_thick: {
         value: 0.2,
