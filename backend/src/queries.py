@@ -51,8 +51,8 @@ def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id
     result_names = list(genes_set - aliases_set) + list(symbols_set - genes_set)
     query = f"""
         MATCH (protein:Protein:{species})
-        WHERE protein.SYMBOL IN {str([n.title() for n in result_names])} 
-            OR protein.ENSEMBL_PROTEIN IN {str([n.title() for n in result_names])} 
+        WHERE protein.SYMBOL IN {str([n.capitalize() for n in result_names])} 
+            OR protein.ENSEMBL_PROTEIN IN {str([n.capitalize() for n in result_names])} 
         RETURN protein, protein.ENSEMBL_PROTEIN AS id
     """
     with driver.session() as session:
@@ -161,7 +161,7 @@ def _convert_to_symbol_alias(result: neo4j.Result) -> (set[str], set[str]):
         aliases.add(alias)
         # Only add the (symbol: alias) if the symbol isnt there already
         if row["symbol"] not in mapping:
-            mapping[symbol.title()] = alias.title()
+            mapping[symbol.capitalize()] = alias.capitalize()
     return symbols, aliases, mapping
 
 
