@@ -288,13 +288,27 @@ export default {
 
 
 <style>
-    #pathways-list {
+    .pathways #pathways-list {
         width: 32.83%;
         height: 96.92%;
         position: absolute;
         top:50%;
         transform: translateY(-50%);
         margin-left: 0.28%;
+        border-radius: 5px;
+        z-index: 997;
+        cursor: default;
+        font-family: 'ABeeZee', sans-serif;
+
+    }
+
+    .pathwaybar-small #pathways-list {
+        width: 99%;
+        height: 96.92%;
+        position: absolute;
+        top:50%;
+        transform: translateY(-50%);
+        margin-left: 0.5%;
         border-radius: 5px;
         z-index: 997;
         cursor: default;

@@ -1,9 +1,9 @@
 <template>
-    <div class="pathways" :class="{ show_pathways_menu: pane_hidden === true }">
+    <div :class="{ 'pathwaybar-small': pane_hidden === true, 'pathways': pane_hidden === false }">
         <div class="minimize-bar" v-on:click="pane_hidden = !pane_hidden" >
-            <img src="@/assets/pathwaybar/arrows.png" :style="{ transform: pane_hidden ? 'rotate(-90deg)' : 'rotate(90deg)' }">
+            <img src="@/assets/pathwaybar/fullscreen.png">
         </div>
-        <div class="pathwaybar" v-show="pane_hidden === false">
+        <div class="pathwaybar">
             <PathwayList
             :gephi_data='gephi_data'
             :terms='terms'
@@ -11,16 +11,16 @@
             @favourite_pathways_changed = 'favourite_pathways = $event'
             @filtered_terms_changed = 'filtered_terms = $event'
             ></PathwayList>
-            <PathwaySet
+            <PathwaySet v-show="pane_hidden === false"
             :gephi_data='gephi_data'
             :api='api'
             ></PathwaySet>
-            <PathwayTools
+            <PathwayTools v-show="pane_hidden === false"
             :gephi_data='gephi_data'
             :filtered_terms='filtered_terms'
             :favourite_pathways='favourite_pathways'
             ></PathwayTools>
-            <img id="pathway-bg" src="@/assets/pathwaybar/background-dna.png">
+            <img v-show="pane_hidden === false" id="pathway-bg" src="@/assets/pathwaybar/background-dna.png">
         </div>
     </div>
 </template>
@@ -119,14 +119,18 @@ export default {
     .minimize-bar {
         width: 100%;
         height: 9.41%;
-        position: fixed;
+        position: absolute;
         flex-shrink: 0;
         border-radius: 5px 5px 0px 0px;
         backdrop-filter: blur(7.5px);
         background: #D9D9D9;
-        text-align: center;
+        transition: transform 330ms ease-in-out;
     }
-    .minimize-bar img {
+
+    .minimize-bar img{
+        position: absolute;
+        top: 35%;
+        right: 0.7vw;
         width: 0.7vw;
         height: 0.7vw;
         flex-shrink: 0;
@@ -135,12 +139,21 @@ export default {
     .pathwaybar {
         width: 100%;
         height: 90.59%;
-        position: fixed;
+        position: absolute;
         top: 9.41%;
         flex-shrink: 0;
         border-radius: 0px 0px 5px 5px;
         background: rgba(222, 222, 222, 0.61);
         backdrop-filter: blur(7.5px);
+    }
+    .pathwaybar-small{
+        z-index: 999;
+        position: absolute;
+        width: 32.83%;
+        height: 27.2%;
+        top: 70.7%;
+        left: 3.515%;
+        transition: transform 330ms ease-in-out;
     }
     .pathwaybar #pathway-bg {
         width: 20%;
@@ -149,12 +162,6 @@ export default {
         position: absolute;
         top:50%;
         transform: translateY(-50%);
-    }
-    .show_pathways_menu {
-        transform: translate(-50%,98%);
-        width: 20%;
-        transition: transform 330ms ease-in-out;
-        transition: width 900ms ease-in-out;
     }
 
 </style>
