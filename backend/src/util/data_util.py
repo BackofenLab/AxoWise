@@ -31,7 +31,11 @@ def parse_flat_file(pathway):
         return drug_id, drug_name
 
     def parse_gene_line(line):
-        gene_id, gene_names = line.strip().split("  ")
+        parts = line.strip().split("  ")
+        if len(parts) >= 2:
+            gene_id, gene_names = parts
+        else:
+            return
         if ";" in gene_names:  # Mutliple names
             names = list(map(lambda string: string.strip(), gene_names.split(";")))
             short_name, long_name = names[0], "; ".join(names[1:])

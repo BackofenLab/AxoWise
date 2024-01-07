@@ -30,18 +30,31 @@ def get_url(species):
 
     Arguments:
     species: the species which data we want to download
+    string: whether to download from string or not
     """
-    url = f"http://download.baderlab.org/EM_Genesets/current_release/{species.capitalize()}/symbol/"
-    response = requests.get(url)
-    if response.status_code == 404:
-        print(f"The URL {url} returned a 404 error")
+    if species == "mouse":
+        string_species = "mus+musculus"
+    else:
+        string_species = "homo+sapiens"
+    url_string = f"https://string-db.org/cgi/download?sessionId=bthCAcyLVvFS&species_text={string_species}"
+    url_bader = f"http://download.baderlab.org/EM_Genesets/current_release/{species.capitalize()}/symbol/"
+    response_string = requests.get(url_string)
+    response_bader = requests.get(url_bader)
+    if response_bader.status_code == 404:
+        print(f"The URL {url_bader} returned a 404 error")
         return 0
+    pattern_proteins = r"(\S+\.protein\.info\.[\w.]+)"
+    pattern_pathway = r"(\S+\.protein\.enrichment.terms\.[\w.]+)"
+    match_proteins = re.findall(pattern_proteins, response_string.text)
+    match_pathway = re.findall(pattern_pathway, response_string.text)
+    result_protein = match_proteins[0].split("href=")[1].replace('"', "")
+    result_pathway = match_pathway[0].split("href=")[1].replace('"', "")
     match = re.search(
         rf'{species.capitalize()}_GO_AllPathways_with_GO_iea_[A-Z][a-z]+_\d{{2}}_\d{{4}}_symbol\.gmt(?=">)',
-        response.text,
+        response_bader.text,
     )
     result = match.group()
-    return url + result
+    return [url_bader + result, result_protein, result_pathway]
 
 
 def download_data(species):
@@ -51,14 +64,22 @@ def download_data(species):
     Arguments:
     species: the species which data we want to download
     """
-    url = get_url(species)
-    if url == 0:
+    urls = get_url(species)
+    url_bader = urls[0]
+    string = [urls[1], urls[2]]
+    if url_bader == 0:
         return 0
-
-    response = requests.get(url)
+    # For string download
+    response_protein = requests.get(string[0])
+    response_pathway = requests.get(string[1])
+    with open(f"data/proteins_string_{species}.txt.gz", "wb") as file:
+        file.write(response_protein.content)
+    with open(f"data/pathways_string_{species}.txt.gz", "wb") as file:
+        file.write(response_pathway.content)
+    response = requests.get(url_bader)
     # Handle 404 error (Case: database updated for human but mouse not yet available)
     if response.status_code == 404:
-        print(f"The URL {url} returned a 404 error")
+        print(f"The URL {url_bader} returned a 404 error")
         return 0
     if len(response.text) == 0:
         print("Empty gmt file, come back later")
@@ -95,6 +116,58 @@ def genes_to_proteins(genes, species):
     return gene_mapping
 
 
+def format_string_data(species):
+    """
+    Format the data acquired from String to the correct format
+
+    Argument:
+    species: species of interest
+    """
+    df_proteins = pd.read_csv(f"data/proteins_string_{species}.txt.gz", compression="gzip", sep="\t")
+    df_pathways = pd.read_csv(f"data/pathways_string_{species}.txt.gz", compression="gzip", sep="\t")
+    df_pathways = df_pathways[df_pathways["category"] == "Reactome Pathways"]
+    df_pathways = (
+        df_pathways.groupby("term")
+        .agg(
+            {
+                "#string_protein_id": list,  # convert string_protein_id to list
+                "category": "first",  # keep the first category encountered
+                "term": "first",
+                "description": "first",  # keep the first description encountered
+            }
+        )
+        .reset_index(drop=True)
+    )
+    protein_dict = df_proteins.set_index("#string_protein_id")["preferred_name"].to_dict()
+    df_pathways["#string_protein_id"] = df_pathways["#string_protein_id"].apply(
+        lambda ids: [protein_dict.get(id, id) for id in ids]
+    )
+    all_symbols = set()
+    for symbol_list in df_pathways["#string_protein_id"]:
+        all_symbols.update(symbol_list)
+    unique_symbols_list = list(all_symbols)
+    gene_mapping, genes_to_map = symbols_to_ensembl(unique_symbols_list, f"{species}", "gene")
+    gene_lis = []
+    for i in df_pathways["#string_protein_id"]:
+        genes = []
+        if i:
+            for j in i:
+                if j in gene_mapping:
+                    g = gene_mapping[j]
+                    if isinstance(g, list):
+                        for k in g:
+                            genes.append(k)
+                    else:
+                        genes.append(gene_mapping[j])
+        gene_lis.append(genes)
+    df_pathways["genes"] = gene_lis
+    df_pathways = df_pathways.rename(columns={"term": "id", "#string_protein_id": "symbols", "description": "name"})
+    df_pathways = df_pathways[["id", "name", "category", "symbols", "genes"]]
+    df_pathways.to_csv(f"data/reactome_pathways_{species}.csv", index=False)
+    df_proteins.to_csv(f"data/string_proteins_{species}.csv", index=False)
+    return
+
+
 def read_data(species, file_name):
     """
     Reads the data from the specified file.
@@ -110,13 +183,18 @@ def read_data(species, file_name):
         for line in f:
             fields = line.strip().split("\t")
             name = fields[0].split("%")
-            source = name[1]
-            ids = name[2]
-            descr = fields[1]
-            symbols = fields[2:]
-            data.append([ids, descr, source, symbols])
-            symbol.append(symbols)
-            unique_symbols.update(symbols)
+            if len(name) >= 2:
+                source = name[1]
+                ids = name[2]
+                descr = fields[1]
+                symbols = fields[2:]
+                # Exclude lines where source starts with "REACTOME"
+                if not source.startswith("REACTOME"):
+                    data.append([ids, descr, source, symbols])
+                    symbol.append(symbols)
+                    unique_symbols.update(symbols)
+            else:
+                pass
 
     unique_symbols = list(unique_symbols)
     gene_mapping, genes_to_map = symbols_to_ensembl(unique_symbols, f"{species}", "gene")
@@ -206,8 +284,8 @@ def data_formatting(species, folder):
     df = pd.read_csv(f"data/bader_{species}.csv.gz", compression="gzip")
     # Read the KEGG data
     kegg_df = read_kegg_data(species.lower())
-
-    merged_df = pd.concat([df, kegg_df], ignore_index=True)
+    reactome = pd.read_csv(f"data/reactome_pathways_{species}.csv")
+    merged_df = pd.concat([df, kegg_df, reactome], ignore_index=True)
     merged_df = merged_df.drop_duplicates(subset=["name", "category"])
     merged_df = merged_df.loc[merged_df["genes"].str.len() > 2]
     merged_df["id"] = merged_df.apply(lambda row: f"{row['id']}~{row['category']}", axis=1)
@@ -271,11 +349,15 @@ def main():
         if download_data("mouse") == 0:
             print("Mouse file not available on the server yet")
             return
+        download_data("mouse")
+        format_string_data("mouse")
         print("Pathway download succesfull for mouse")
         print("Downloading Pathway data for human")
         if download_data("human") == 0:
             print("Human file not available on the server yet")
             return
+        download_data("human")
+        format_string_data("human")
         print("Pathway download succesfull for human")
         util.update_line(filepath, gene_pattern, geneset_name)
     if kegg_update:

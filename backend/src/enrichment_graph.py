@@ -27,8 +27,9 @@ def get_functional_graph(list_enrichment, species_id):
     terms, source, target, score = queries.get_terms_connected_by_overlap(driver, list_term, species_id)
 
     stopwatch.round("Neo4j")
-    
-    if len(terms) == 0: return
+
+    if len(terms) == 0:
+        return
 
     nodes = pd.DataFrame(terms).rename(columns={"Term": "external_id"}).drop_duplicates(subset="external_id")
 
