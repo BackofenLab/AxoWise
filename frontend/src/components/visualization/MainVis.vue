@@ -266,7 +266,7 @@ export default {
         if(sourcePresent) {
           sourceNode.color = "rgb(255,255,255)"
           sourceNode.active = true
-          highlighted_edges.add(edge)
+          if(targetPresent) highlighted_edges.add(edge)
         }
         else{
           sourceNode.color = "rgb(0,100,100)"
@@ -277,7 +277,7 @@ export default {
         if(targetPresent) {
           targetNode.color = "rgb(255,255,255)"
           targetNode.active = true
-          highlighted_edges.add(edge)
+          if(sourcePresent) highlighted_edges.add(edge)
         }
         else{
           targetNode.color = "rgb(0,100,100)"
@@ -285,10 +285,10 @@ export default {
         }
 
         // Edge
-        if (sourcePresent !== targetPresent) {
-          edge.color = sourcePresent && !targetPresent ? "rgba(200, 255, 255," + com.highlight_opacity + ")" : "rgba(0, 100, 100," + com.base_opacity + ")";
+        if (sourcePresent && targetPresent) {
+          edge.color = "rgba(255, 255, 255," + com.highlight_opacity + ")";
         } else {
-          edge.color = sourcePresent ? "rgba(255, 255, 255," + com.highlight_opacity + ")" : "rgba(0, 100, 100, " + com.base_opacity + ")";
+          edge.color = "rgba(0, 100, 100, " + com.base_opacity + ")";
         }
       }
       this.$store.commit('assign_highlightedSet', highlighted_edges)
