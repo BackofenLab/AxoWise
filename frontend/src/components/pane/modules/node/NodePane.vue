@@ -143,6 +143,7 @@ export default {
         transform: translate(50%);
         font-family: 'ABeeZee', sans-serif;
         font-size: 0.9vw;
+        padding: 1%;
     }
     .nodeattributes{
         position: absolute;

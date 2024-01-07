@@ -1,28 +1,28 @@
 <template>
     <div class="tool-item">
-        <span v-on:click="export_proteins">Export proteins as .csv</span>
+        <span v-on:click="export_edges">Export edges as .csv</span>
     </div>
 </template>
 
 <script>
 
 export default {
-    name: 'ExportProteins',
-    props:['gephi_data'],
+    name: 'ExportEdges',
+    props:['gephi_data','ensembl_name_index'],
     data() {
         return {
         }
     },
     methods: {
-        export_proteins() {
+        export_edges() {
             var com = this;
 
             // export proteins as csv
-            var csvTermsData = com.gephi_data.nodes;
-            var terms_csv = 'name\tensembl\tcluster\tdescription\tBetweenness Centrality\tPageRank\n';
+            var csvTermsData = com.gephi_data.edges;
+            var terms_csv = 'source\tsrc_ensembl\ttarget\ttrg_ensembl\tscore\n';
 
             csvTermsData.forEach(function(row) {
-                terms_csv += row.attributes['Name'] + '\t' + row.attributes['Ensembl ID'] + '\t"'  + row.attributes['Modularity Class'] + '"\t"' + row.attributes['Description'] + '"\t"' + row.attributes['Betweenness Centrality'] + '"\t"' + row.attributes['PageRank'] + '"';
+                terms_csv += com.ensembl_name_index[row.source] + '\t' + row.source + '\t"'  + com.ensembl_name_index[row.target] + '"\t"' + row.target + '"\t"' + row.attributes["score"] + '"';
                 terms_csv += '\n';   
             });
 

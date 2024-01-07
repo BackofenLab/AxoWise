@@ -42,6 +42,10 @@
                 <ExportProteins v-if="mode=='protein'"
                 :gephi_data = 'gephi_data'
                 ></ExportProteins>
+                <ExportEdges v-if="mode=='protein'"
+                :gephi_data = 'gephi_data'
+                :ensembl_name_index = 'ensembl_name_index'
+                ></ExportEdges>
             </div>
         </div>
     </div>
@@ -50,6 +54,7 @@
 <script>
 
 import ExportProteins from '@/components/toolbar/modules/ExportProteins.vue'
+import ExportEdges from '@/components/toolbar/modules/ExportEdges.vue'
 import ExportScreen from '@/components/toolbar/modules/ExportScreen.vue'
 import DEValue from '@/components/toolbar/modules/DEValue.vue'
 import FDRValue from '@/components/toolbar/modules/FDRValue.vue'
@@ -62,7 +67,7 @@ import ModuleSelection from '@/components/toolbar/modules/ModuleSelection.vue'
 
 export default {
     name: 'MenuWindow',
-    props: ['tools_active','mode','gephi_data'],
+    props: ['tools_active','mode','gephi_data','ensembl_name_index'],
     emits:['tools_active_changed'],
     components: {
         ExportScreen,
@@ -74,7 +79,8 @@ export default {
         ToggleLabel,
         ModuleSelection,
         FDRValue,
-        ExportProteins
+        ExportProteins,
+        ExportEdges
 
     },
     data() {
