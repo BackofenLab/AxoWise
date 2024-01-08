@@ -62,10 +62,10 @@ apoc:
 	sudo echo -e 'dbms.security.procedures.whitelist=apoc.export.* \napoc.import.file.use_neo4j_config=false \napoc.export.file.enabled=true' | sudo tee -a /etc/neo4j/neo4j.conf
 
 dummydata:
-# file: https://drive.google.com/file/d/1S8_O2HCeMKwukwnTHlFmf1KLQnbfcXAN/view
+# file: https://drive.google.com/file/d/1YwFlqFRxTKDTjFOiUkB7T2Aeb5mVfpEr/view
 # explanation: https://stackoverflow.com/questions/25010369/wget-curl-large-file-from-google-drive
 # docs: https://pypi.org/project/gdown/
 	pip install gdown
-	cd $$HOME/Downloads && gdown 15yt-hNmCI1WODWvslrXwOdeSGUAT-e9F -O latest.dump
+	cd $$HOME/Downloads && gdown 1YwFlqFRxTKDTjFOiUkB7T2Aeb5mVfpEr -O latest.dump
 	sudo neo4j-admin load --from=$$HOME/Downloads/latest.dump --database=neo4j --force
 	rm $$HOME/Downloads/latest.dump
