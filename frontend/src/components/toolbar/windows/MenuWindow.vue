@@ -84,7 +84,7 @@ export default {
         ModuleSelection,
         FDRValue,
         ExportProteins,
-        ExportEdges
+        ExportEdges,
         ShowModules
 
     },
