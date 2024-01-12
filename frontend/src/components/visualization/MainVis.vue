@@ -11,9 +11,9 @@
     <div id="sigma-canvas" :class="{'loading': threeview, 'split': heatmap }" class="sigma-parent" ref="sigmaContainer" 
          @contextmenu.prevent="handleSigmaContextMenu" @mouseleave="sigmaFocus = false" @mouseenter="sigmaFocus = true">
       <div v-show="moduleSelectionActive === true" v-for="(circle, index) in moduleSet" :key="index">
-        <div class="modules" v-if="isMouseInside(circle.data) && !unconnectedActive(circle.modularity) && !mousedownrightCheck && !(mousedownleftCheck && mousemoveCheck) && sigmaFocus">
+        <div class="modules" v-if="(isMouseInside(circle.data) && !unconnectedActive(circle.modularity) && !mousedownrightCheck && !(mousedownleftCheck && mousemoveCheck) && sigmaFocus) || (showCluster && !unconnectedActive(circle.modularity))">
           <div class="inside" v-bind:style="getCircleStyle(circle.data)">
-            <div class="modularity-class">{{ circle.modularity }}</div>
+            <div class="modularity-class" v-bind:style="getTextStyle(circle.data)" >{{ circle.modularity }}</div>
           </div>
         </div>
       </div>
@@ -98,7 +98,8 @@ export default {
       mousemoveCheck: false,
       sigmaFocus: true,
       moduleSelectionActive: true,
-      heatmap: false
+      heatmap: false,
+      showCluster: false
     }
   },
   watch: {
@@ -239,16 +240,16 @@ export default {
       var com = this
       var proteins = null;
 
+      
       if (subset == null) {
         com.reset();
         this.$store.commit('assign_active_subset', null)
         return
       }else {
+        if(subset.selection) subset = subset.genes
         proteins = new Set(subset.map(node => node.attributes["Ensembl ID"]));
         this.$store.commit('assign_active_subset', subset.map(node => node.attributes["Name"]))
       }
-      
-
 
       const highlighted_edges = new Set()
 
@@ -910,7 +911,6 @@ export default {
 
   },
   getCircleStyle(circle){
-
     return {
         width: `${(circle.r+10) * 2}px`,
         height: `${(circle.r+10) * 2}px`,
@@ -918,6 +918,15 @@ export default {
         position: "absolute", // Position absolute to control x and y coordinates
         left: `${circle.x - (circle.r+10)}px`,
         top: `${circle.y - (circle.r+10)}px`,
+      };
+  },
+
+  getTextStyle(circle){
+    return {
+        "font-size": `${(circle.r+10)}px`,
+        position: "absolute", // Position absolute to control x and y coordinates
+        left: `${(circle.r)}px`,
+        top: `${(circle.r)}px`,
       };
   },
     isMouseInside(circle) {
@@ -936,7 +945,8 @@ export default {
 
     var nodeSet = []
     if(this.active_subset) {
-      nodeSet.push(...com.active_subset)
+      if(this.active_subset.selection) nodeSet.push(...com.active_subset.genes)
+      else nodeSet.push(...com.active_subset)
     }else {
       com.clusterDict = new Set()
     }
@@ -1089,6 +1099,9 @@ export default {
     this.emitter.on("selectDE", (value) => {
       this.highlight_de(value)
     });
+    this.emitter.on("showCluster", (state) => {
+      if(state.mode=="protein")  this.showCluster = state.check
+    });
     this.emitter.on("deactivateModules", (state) => {
       if(state.mode=="protein") com.moduleSelectionActive = !com.moduleSelectionActive
     });
@@ -1194,7 +1207,6 @@ color: #fff; /* set the font color to white */
 }
 
 .modularity-class {
-  font-size: 4vw;
   color: white;
   font-weight:bolder;
   opacity: 40%;

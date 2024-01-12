@@ -10,6 +10,9 @@
                 <ConnectedGraph
                 :mode = 'mode'
                 ></ConnectedGraph>
+                <ShowModules
+                :mode = 'mode'
+                ></ShowModules>
                 <ModuleSelection
                 :mode = 'mode'
                 ></ModuleSelection>
@@ -61,6 +64,7 @@ import FDRValue from '@/components/toolbar/modules/FDRValue.vue'
 import ExportGraph from '@/components/toolbar/modules/ExportGraph.vue'
 import NodeLabelSelect from '@/components/toolbar/modules/NodeLabelSelect.vue'
 import ConnectedGraph from '@/components/toolbar/modules/ConnectedGraph.vue'
+import ShowModules from '@/components/toolbar/modules/ShowModules.vue'
 import ToggleLabel from '@/components/toolbar/modules/ToggleLabel.vue'
 import EdgeOpacity from '@/components/toolbar/modules/EdgeOpacity.vue'
 import ModuleSelection from '@/components/toolbar/modules/ModuleSelection.vue'
@@ -80,7 +84,8 @@ export default {
         ModuleSelection,
         FDRValue,
         ExportProteins,
-        ExportEdges
+        ExportEdges,
+        ShowModules
 
     },
     data() {

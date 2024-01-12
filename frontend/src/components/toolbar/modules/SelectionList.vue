@@ -90,11 +90,12 @@
 <script>
 export default {
     name: 'SelectionList',
-    props: ['data','mode'],
+    props: ['data','mode','active_subset', 'active_term'],
     emits: ['selection_active_changed'],
     data() {
         return {
             once: true,
+            search_data: null,
 			degree_boundary: {
 				value: 0,
 				min: 0,
@@ -119,6 +120,18 @@ export default {
 				max: 1000,
 				step: 1
 			},
+        }
+    },
+    watch: {
+        active_subset(){
+            if(!this.active_subset) {
+                this.unactive_proteinlist()
+                return
+            }
+            if(!this.active_subset.selection) this.unactive_proteinlist()
+        },
+        active_term(){
+            this.unactive_proteinlist()
         }
     },
     methods: {
@@ -244,38 +257,44 @@ export default {
         searchSubset() {
             var com = this
 
-            var dataForm = com.data;
+            var dataForm = com.search_data;
             // filter hubs
 			var finalNodes = [];
 			var nodes = [];
 			// degree filtering
-			for (var idz in dataForm.nodes){
-                console.log(dataForm.nodes[idz])
-				if(parseInt(dataForm.nodes[idz].attributes["Degree"]) >= this.degree_boundary.value &&
-                   parseFloat(dataForm.nodes[idz].attributes["PageRank"]) >= this.pr_boundary.value &&
-                   parseFloat(dataForm.nodes[idz].attributes["Betweenness Centrality"]) >= this.bc_boundary.value
+			for (var element of dataForm){
+				if(parseInt(element.attributes["Degree"]) >= this.degree_boundary.value &&
+                   parseFloat(element.attributes["PageRank"]) >= this.pr_boundary.value &&
+                   parseFloat(element.attributes["Betweenness Centrality"]) >= this.bc_boundary.value
                    ){
                     if(com.mode=='term'){
-                        if(Math.abs(Math.log10(dataForm.nodes[idz].attributes["FDR"])) >= com.padj_boundary.value) nodes.push(dataForm.nodes[idz])
+                        if(Math.abs(Math.log10(element.attributes["FDR"])) >= com.padj_boundary.value) nodes.push(element)
                     }
                     else{
-                        nodes.push(dataForm.nodes[idz])
+                        nodes.push(element)
                     }
 				}
 			}
 			finalNodes = nodes;
-			this.emitter.emit("searchSubset", {subset:finalNodes, mode:this.mode});
+			this.emitter.emit("searchSubset", {subset:{selection: true, genes:finalNodes}, mode:this.mode});
         },
         unactive_proteinlist(){
             this.$emit("selection_active_changed", false);
+            // if(this.active_subset) this.emitter.emit("searchSubset", {subset:this.search_data, mode:this.mode});
         },
         valueChanged(id){
             var target = document.getElementById(id)
             let a = (target.value / target.max)* 100;
             target.style.background = `linear-gradient(to right,#0A0A1A,#0A0A1A ${a}%,#ccc ${a}%)`;
+        },
+        term_genes(list){
+            var term_genes = new Set(list)
+            var termlist = this.data.nodes.filter(element => term_genes.has(element.attributes["Name"]))
+            return termlist
         }
 	},
     mounted(){
+        this.search_data = this.active_term ? this.term_genes(this.active_term.symbols) : (this.active_subset ? this.active_subset : this.data.nodes);
         this.dragElement(document.getElementById("selection_highlight"));
         
     },

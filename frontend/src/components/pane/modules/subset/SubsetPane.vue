@@ -14,10 +14,11 @@
                 <div class="subsection-header">
                     <span>contained proteins</span>
                     <img src="@/assets/pane/copy.png" v-on:click="copyclipboard()">
+                    <img id="subset" src="@/assets/toolbar/expand.png" v-on:click="select_subset(subset)">
                 </div>
                 <div class="subsection-main colortype">
                     <SubsetConnections
-                    :active_subset='active_subset' 
+                    :active_subset='subset' 
                     ></SubsetConnections>
                 </div>
             </div>
@@ -49,6 +50,7 @@ export default {
     },
     data() {
         return {
+            subset: null,
             hide: true,
             expand_proteins: false,
             subset_item: {
@@ -73,16 +75,18 @@ export default {
                 return;
             }
 
-            com.subset_item.value = com.active_subset
+            com.subset = com.active_subset.selection ? com.active_subset.genes: com.active_subset
+
+            com.subset_item.value = com.subset
 
             com.contained_edges = [];
             com.export_edges = [];
             com.subset_ids = [];
 
             var id_dict = {};
-            for (var idX in com.active_subset){
-                id_dict[com.active_subset[idX].id] = com.active_subset[idX].label;
-                com.subset_ids.push(com.active_subset[idX].id);
+            for (var idX in com.subset){
+                id_dict[com.subset[idX].id] = com.subset[idX].label;
+                com.subset_ids.push(com.subset[idX].id);
             }
             var subset_proteins = new Set(com.subset_ids);
             for (var idx in com.gephi_data.edges) {
@@ -112,13 +116,13 @@ export default {
             var com = this;
 
             var textToCopy = [];
-            for(var link of com.active_subset) textToCopy.push(link.label);
+            for(var link of com.subset) textToCopy.push(link.label);
             navigator.clipboard.writeText(textToCopy.join("\n"));
         },
         show_layer(){
             var com = this;
 
-            var subset_check = this.hide ? com.active_subset.map(node => node.attributes["Name"]) : null
+            var subset_check = this.hide ? com.subset.map(node => node.attributes["Name"]) : null
             this.emitter.emit("hideSubset", {subset: subset_check, mode: this.mode});
             com.hide = !com.hide
         },
@@ -129,6 +133,10 @@ export default {
         */
         select_node(value) {
             this.emitter.emit("searchNode", {node: value, mode: this.mode});
+        },
+
+        select_subset (nodes){
+            this.emitter.emit("searchSubset", {subset:nodes, mode:this.mode});
         }
     },
 }
@@ -156,4 +164,9 @@ export default {
     #subset-connections {
         height: 40%;
     }
+
+    #subset {
+       right:-10%;
+    }
+
 </style>
