@@ -14,6 +14,7 @@
                 <div class="subsection-header">
                     <span>contained proteins</span>
                     <img src="@/assets/pane/copy.png" v-on:click="copyclipboard()">
+                    <img id="subset" src="@/assets/toolbar/expand.png" v-on:click="select_subset(subset)">
                 </div>
                 <div class="subsection-main colortype">
                     <SubsetConnections
@@ -75,8 +76,6 @@ export default {
             }
 
             com.subset = com.active_subset.selection ? com.active_subset.genes: com.active_subset
-            // if (com.active_subset.selection) com.subset = com.active_subset.genes
-            // else com.subset = com.active_subset
 
             com.subset_item.value = com.subset
 
@@ -134,6 +133,10 @@ export default {
         */
         select_node(value) {
             this.emitter.emit("searchNode", {node: value, mode: this.mode});
+        },
+
+        select_subset (nodes){
+            this.emitter.emit("searchSubset", {subset:nodes, mode:this.mode});
         }
     },
 }
@@ -161,4 +164,9 @@ export default {
     #subset-connections {
         height: 40%;
     }
+
+    #subset {
+       right:-10%;
+    }
+
 </style>

@@ -124,6 +124,10 @@ export default {
     },
     watch: {
         active_subset(){
+            if(!this.active_subset) {
+                this.unactive_proteinlist()
+                return
+            }
             if(!this.active_subset.selection) this.unactive_proteinlist()
         },
         active_term(){
@@ -254,7 +258,6 @@ export default {
             var com = this
 
             var dataForm = com.search_data;
-            console.log(dataForm)
             // filter hubs
 			var finalNodes = [];
 			var nodes = [];
@@ -277,7 +280,7 @@ export default {
         },
         unactive_proteinlist(){
             this.$emit("selection_active_changed", false);
-            this.emitter.emit("searchSubset", {subset:this.search_data, mode:this.mode});
+            // if(this.active_subset) this.emitter.emit("searchSubset", {subset:this.search_data, mode:this.mode});
         },
         valueChanged(id){
             var target = document.getElementById(id)
