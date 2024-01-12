@@ -144,10 +144,10 @@ export default {
       return randomElements;
     },
     valueChanged(id){
-            var target = document.getElementById(id)
-            let a = (target.value / target.max)* 100;
-            target.style.background = `linear-gradient(to right,#0A0A1A,#0A0A1A ${a}%,#ccc ${a}%)`;
-        }
+      var target = document.getElementById(id)
+      let a = (target.value / target.max)* 100;
+      target.style.background = `linear-gradient(to right,#0A0A1A,#0A0A1A ${a}%,#ccc ${a}%)`;
+    }
   }
 }
 

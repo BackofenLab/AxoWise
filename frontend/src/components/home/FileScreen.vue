@@ -27,6 +27,20 @@
                     <h4>D Coloumns:</h4>
                     <v-select multiple v-model="selected_d" :options="dcoloumns" :close-on-select="false"></v-select>
                   </div>
+                  <h4>Edge score:</h4>
+                    <input
+                        id="scoregraph"
+                        type="range"
+                        v-bind:min="threshold.min" v-bind:max="threshold.max" v-bind:step="threshold.step"
+                        v-model="threshold.value"
+                        v-on:input="valueChanged('scoregraph')"
+                    />
+                    <input
+                        type="number"
+                        v-bind:min="threshold.min" v-bind:max="threshold.max" v-bind:step="threshold.step"
+                        v-model="threshold.value"
+                        v-on:input="valueChanged('scoregraph')"
+                    />
                   <button id="submit-btn" @click="submit()" :class="{'loading': isAddClass}">
                     <span class="button__text" onClick="this.disabled=true;">Submit</span>
                   </button>
@@ -48,10 +62,10 @@ export default {
         subgraph: "api/subgraph/proteins",
       },
       threshold: {
-        value: 0.7,
-        min: 0.4,
-        max: 1.0,
-        step: 0.001,
+        value: 0,
+        min: 0,
+        max: 0.9999,
+        step: 0.01,
       },
       fileuploadText: 'Select your file',
       dcoloumns: null,
@@ -123,6 +137,11 @@ export default {
           com.$store.commit('assign', response)
           com.$router.push("protein")
         })
+    },
+    valueChanged(id){
+      var target = document.getElementById(id)
+      let a = (target.value / target.max)* 100;
+      target.style.background = `linear-gradient(to right,#0A0A1A,#0A0A1A ${a}%,#ccc ${a}%)`;
     }
   }
 }
