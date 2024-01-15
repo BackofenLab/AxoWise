@@ -95,8 +95,9 @@ def proteins_subgraph_api():
     selected_d = request.form.get("selected_d").split(",") if request.form.get("selected_d") else None
     threshold = int(float(request.form.get("threshold")) * 1000)
 
-    proteins, protein_ids, symbol_alias_mapping = queries.get_protein_ids_for_names(driver, protein_names, species_id)
-
+    proteins, protein_ids, symbol_alias_mapping, all_symbols = queries.get_protein_ids_for_names(
+        driver, protein_names, species_id
+    )
     stopwatch.round("Setup")
 
     if len(protein_ids) > 1:
@@ -173,6 +174,10 @@ def proteins_subgraph_api():
             node["attributes"]["Description"] = df_node.annotation
             node["attributes"]["Ensembl ID"] = df_node.external_id
             node["attributes"]["Name"] = symbol_value
+            if symbol_value in all_symbols:
+                node["attributes"]["Alias"] = all_symbols[symbol_value]
+            else:
+                node["attributes"]["Alias"] = ["No alias"]
             if not (request.files.get("file") is None):
                 if selected_d != None:
                     for column in selected_d:
