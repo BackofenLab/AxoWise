@@ -294,7 +294,7 @@ export default {
         }
 	},
     mounted(){
-        this.search_data = this.active_term ? this.term_genes(this.active_term.symbols) : (this.active_subset ? this.active_subset : this.data.nodes);
+        this.search_data = this.term_genes(this.$store.state.active_subset)
         this.dragElement(document.getElementById("selection_highlight"));
         
     },
