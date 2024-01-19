@@ -27,7 +27,11 @@
             <div id="pathway-connections" class="subsection">
                 <div class="subsection-header">
                     <span>connections</span>
-                    <img src="@/assets/pane/copy.png" v-on:click="copyclipboard()">
+                    <div id='vis-button'>
+                        <img src="@/assets/pane/invisible.png" v-if="!hide" v-on:click="show_layer()">
+                        <img src="@/assets/pane/visible.png" v-if="hide" v-on:click="show_layer()">
+                        <img src="@/assets/pane/copy.png" v-on:click="copyclipboard()">
+                    </div>
                 </div>
                 <div class="subsection-main colortype">
                     <PathwayConnections
@@ -54,6 +58,7 @@ export default {
     },
     data() {
         return {
+            hide: false,
             term_history: [],
             expand_stats: false,
             expand_proteins: false,
@@ -96,7 +101,14 @@ export default {
         bookmark_pathway(){
             this.emitter.emit("bookmarkPathway", this.active_term);
             this.favourite_pathways = this.$store.state.favourite_enrichments
-        }
+        },
+        show_layer(){
+            var com = this;
+
+            var subset_check = !this.hide ? com.active_term.symbols : null
+            this.emitter.emit("hideSubset", {subset: subset_check, mode: this.mode});
+            com.hide = !com.hide
+        },
     },
     mounted(){
         this.emitter.on("updateFavouriteList", (value) => {
@@ -170,4 +182,20 @@ export default {
         background-color: #ffa500;
     }
 
+    #vis-button {
+        position: absolute;
+        width: 50%;
+        right: -15%;
+        display: -webkit-flex;
+        padding: 1%;
+        border-radius: 0 5px 5px 0;
+        padding: 5% 23% 5% 23%;
+    }
+    #vis-button img{
+        filter: invert(100%);
+        position: relative;
+        width: unset;
+        right: unset;
+        padding: 0%;
+    }
 </style>
