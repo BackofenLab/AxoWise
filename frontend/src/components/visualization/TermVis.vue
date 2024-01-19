@@ -157,12 +157,16 @@ export default {
       var com = this
       var proteins = null;
 
-      if (subset == null) {
-        com.reset()
-        return;
-      }
       
-      proteins = new Set(subset.map(node => node.attributes["Ensembl ID"]));
+      if (subset == null) {
+        com.reset();
+        this.$store.commit('assign_active_pgraph_subset', null)
+        return
+      }else {
+        if(subset.selection) subset = subset.genes
+        proteins = new Set(subset.map(node => node.attributes["Ensembl ID"]));
+        this.$store.commit('assign_active_pgraph_subset', subset.map(node => node.attributes["Name"]))
+      }
 
 
       const highlighted_edges = new Set()
@@ -557,7 +561,8 @@ getCircleStyle(circle){
 
     var nodeSet = []
     if(this.active_subset) {
-      nodeSet.push(...com.active_subset)
+      if(this.active_subset.selection) nodeSet.push(...com.active_subset.genes)
+      else nodeSet.push(...com.active_subset)
     }else {
       com.clusterDict = new Set()
     }

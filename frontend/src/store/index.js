@@ -22,7 +22,8 @@ export const store = createStore({
       node_modul_index: new Set(),
       node_cluster_index_term: {},
       node_modul_index_term: new Set(),
-      active_subset: null
+      active_subset: null,
+      p_active_subset: null
 
 
     },
@@ -35,6 +36,9 @@ export const store = createStore({
     },
     assign_active_subset(state, value) {
       state.active_subset = value
+    },
+    assign_active_pgraph_subset(state, value) {
+      state.p_active_subset = value
     },
     assign_term_graph(state, value) {
       state.term_graph_data = value

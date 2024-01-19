@@ -294,7 +294,12 @@ export default {
         }
 	},
     mounted(){
-        this.search_data = this.$store.state.active_subset ? this.term_genes(this.$store.state.active_subset): this.data.nodes
+    
+        if(this.mode=="protein"){
+            this.search_data = this.$store.state.active_subset ? this.term_genes(this.$store.state.active_subset): this.data.nodes
+        }else {
+            this.search_data = this.$store.state.p_active_subset ? this.term_genes(this.$store.state.p_active_subset): this.data.nodes
+        }
         this.dragElement(document.getElementById("selection_highlight"));
         
     },

@@ -22,6 +22,7 @@
       <div class="header-menu">
         <TermToolBar
         :data='term_data'
+        :active_subset='active_subset'
         ></TermToolBar>
         <NetworkValues
         :data='term_data'

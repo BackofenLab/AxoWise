@@ -28,9 +28,10 @@
         :mode = 'mode'
         @tools_active_changed = 'tools_active = $event'
         ></MenuWindow>
-        <SelectionList v-show="selection_active"
+        <SelectionList v-if="selection_active"
         :data = 'data'
         :mode = 'mode'
+        :active_subset = 'active_subset'
         @selection_active_changed = 'selection_active = $event'>
         </SelectionList>
         <ProteinList v-show="protein_active"
@@ -50,7 +51,7 @@ import SelectionList from '@/components/toolbar/modules/SelectionList.vue'
 
 export default {
     name: 'TermToolBar',
-    props: ['data'],
+    props: ['data', 'active_subset'],
     components: {
         MenuWindow,
         ProteinList,
