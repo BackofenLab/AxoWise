@@ -294,7 +294,7 @@ export default {
         }
 	},
     mounted(){
-        this.search_data = this.term_genes(this.$store.state.active_subset)
+        this.search_data = this.$store.state.active_subset ? this.term_genes(this.$store.state.active_subset): this.data.nodes
         this.dragElement(document.getElementById("selection_highlight"));
         
     },
