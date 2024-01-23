@@ -49,7 +49,9 @@ def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id
     # To make less calls to the database, remove the aliases and add their corresponding symbol
     genes_set = set(names)
     result_names = list(genes_set - aliases_set) + list(symbols_set - genes_set)
-    query = f"""
+
+    # For alias attribute in frontend
+    '''query = f"""
         MATCH (gene:TG:{species})
         WHERE gene.SYMBOL IN {str([n.upper() for n in result_names])} 
             OR gene.ENSEMBL IN {str([n.upper() for n in result_names])} 
@@ -59,7 +61,8 @@ def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id
     with driver.session() as session:
         result = session.run(query)
         for row in result:
-            symbol_alias[row["symbol"].capitalize()] = row["alias"]
+            symbol_alias[row["symbol"].capitalize()] = row["alias"]'''
+
     query = f"""
         MATCH (protein:Protein:{species})
         WHERE protein.SYMBOL IN {str([n.capitalize() for n in result_names])} 
@@ -69,7 +72,7 @@ def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id
     with driver.session() as session:
         result = session.run(query)
         protein, id = _convert_to_protein_id(result)
-        return protein, id, mapping, symbol_alias
+        return protein, id, mapping  # , symbol_alias
 
 
 def get_protein_neighbours(
