@@ -1,4 +1,3 @@
-""" docstring"""
 import json
 import time
 import meilisearch
@@ -24,10 +23,16 @@ def add_data(client):
 
     if number_files > 1:
         print(
-            "Please make sure you files are named correct - same name, ascending numbers at the end starting with 0: \
-              \n test1.json, test2.json, test3.json ..."
+            "\nPlease make sure you files are named correct -"
+            "Same name, ascending numbers at the end starting with 0:"
+            "\ntest1.json, test2.json, test3.json ... \n"
         )
-        input_file = str(input("Please only give the name without .json ending and number 'test': "))
+        input_file = str(
+            input(
+                "Please only give the name without .json ending and number \
+                               \nlike this: 'test' for test0.json: "
+            )
+        )
         multiple_files = True
     elif number_files == 1:
         input_file = str(input("Please give the input file you would like to upload: "))
@@ -75,8 +80,10 @@ def delete_index(client):
 
 def main():
     """docstring"""
-    # setup the client connection to the database using the master key to identify us
-    client = meilisearch.Client("http://localhost:7700", "aSampleMasterKey")
+    # setup the client connection to the database using the master API key to identify us
+    client = meilisearch.Client(
+        "http://localhost:7700", "bc2e2409ae665d70de262e0b5b437116fa1733b1213f1e306adff187534e5c03"
+    )
 
     add_data(client)
 

@@ -21,8 +21,10 @@ def main():
     failed_file = "failed_synonyms.json"
     error_file = "error_synonyms.json"
 
-    client = meilisearch.Client("http://localhost:7700", "aSampleMasterKey")
-    # index = str(input("Which index do you want to update? "))
+    client = meilisearch.Client(
+        "http://localhost:7700", "bc2e2409ae665d70de262e0b5b437116fa1733b1213f1e306adff187534e5c03"
+    )
+    index = str(input("Which index do you want to update? "))
 
     # upload = set_synonyms(input_file, output_file, failed_file)
     # if upload:
