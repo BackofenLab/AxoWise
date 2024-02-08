@@ -13,10 +13,16 @@ def build_query():
     Build 2 queries if one of the symbols has a full name
 
     """
+
+    # TODO:
+    # Remove writing result to file
+    # connect sort_by to frontend
+
     # setup the client connection to the database using an API key search only key
     client = meilisearch.Client("http://localhost:7700", Api_key.SEARCH_KEY)
 
-    index = "pubmed_mouse_v4"
+    index = "pubmed_mouse_v5"
+    sort_by = ["Cited number:desc", "Published:desc"]  # needs to be either asc or desc
 
     with open("Dict_full_name.json", "r", encoding="utf-8") as json_file:
         full_name = json.load(json_file)
@@ -26,7 +32,7 @@ def build_query():
     # remove '-' in the input, workaround il-10 --> il10 to avoid results  containing only 10 or il
     # with il10 we still get il-10 as result, but with query il-10 we also get il-9, il-8,.....
     user_input = user_input.replace("-", "")
-    user_input = user_input.replace(",", "")
+    user_input = user_input.replace(",", " ")
     input_words = user_input.split()
     symbol_query = ""
     full_name_query = ""
@@ -44,12 +50,12 @@ def build_query():
         else:
             full_name_query += " " + x + " "
 
-    result_symbol = search(client, index, symbol_query)
+    result_symbol = search(client, index, symbol_query, sort_by)
     filename = "results/" + str(symbol_query) + ".json"
     save_results(result_symbol, filename)
 
     if found_full_name:
-        result_full_name = search(client, index, full_name_query)
+        result_full_name = search(client, index, full_name_query, sort_by)
         filename = "results/" + str(full_name_query) + ".json"
         save_results(result_full_name, filename)
 
@@ -60,7 +66,7 @@ def build_query():
         save_results(result_symbol, filename)
 
 
-def search(client, index, query):
+def search(client, index, query, sort_by):
     """
     Sends the query to meilisearch
 
@@ -73,8 +79,9 @@ def search(client, index, query):
     result = client.index(index).search(
         query,
         {
-            "limit": 100000,  # returns a maximum of limit results - make sure limit < = max variable
+            "limit": 10000,  # returns a maximum of limit results - make sure limit < = max variable
             "matchingStrategy": "all",  # results have to match all words in query or their synonyms
+            "sort": sort_by,
         },
     )
 

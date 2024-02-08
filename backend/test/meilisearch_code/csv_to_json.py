@@ -1,4 +1,5 @@
 import json
+from ast import literal_eval
 import pandas as pd
 
 
@@ -40,6 +41,7 @@ def csv_to_json():
         title = df.iloc[x, 1]
         abstract = df.iloc[x, 2]
         cited_by = df.iloc[x, 3]
+        cited_number = len(literal_eval(cited_by))
         published_year = str(df.iloc[x, 4])
 
         dictionary = {
@@ -47,6 +49,7 @@ def csv_to_json():
             "Title": title,
             "Abstract": abstract,
             "Cited by": cited_by,
+            "Cited number": cited_number,
             "Published": published_year,
         }
 
