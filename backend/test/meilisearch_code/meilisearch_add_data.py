@@ -1,5 +1,6 @@
 import json
 import time
+import Api_key
 import meilisearch
 
 
@@ -81,14 +82,12 @@ def delete_index(client):
 def main():
     """docstring"""
     # setup the client connection to the database using the master API key to identify us
-    client = meilisearch.Client(
-        "http://localhost:7700", "bc2e2409ae665d70de262e0b5b437116fa1733b1213f1e306adff187534e5c03"
-    )
+    client = meilisearch.Client("http://localhost:7700", Api_key.ADMIN_API_KEY)
 
-    add_data(client)
+    # add_data(client)
 
     # Uncomment this to delte an index
-    # delete_index(client)
+    delete_index(client)
 
 
 if __name__ == "__main__":

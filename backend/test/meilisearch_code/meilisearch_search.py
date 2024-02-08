@@ -1,50 +1,95 @@
 import meilisearch
 import json
+import Api_key
 import pandas as pd
 
-# TODO:
-# discuss how we can modify the search in such a way that we know where one word ends and the next one starts
-# for example lung cancer, do we want results that only have "lung cancer" or do we also accept terms having
-# cancer and lung in it, but possibly not related
 
-
-def search():
+def build_query():
     """
     Function to search meilisearch, returns results.json file
 
     User/frontend supplies the query and index - hardcoded index atm
 
-    Returning a json file with hits (only up to limit)
+    Build 2 queries if one of the symbols has a full name
 
     """
     # setup the client connection to the database using an API key search only key
-    client = meilisearch.Client(
-        "http://localhost:7700", "f00df5d69e3bdb7739ae2349daef370db7902710ce741fbed03ab629450ed9f7"
-    )
+    client = meilisearch.Client("http://localhost:7700", Api_key.SEARCH_KEY)
+
+    index = "pubmed_mouse_v4"
+
+    with open("Dict_full_name.json", "r", encoding="utf-8") as json_file:
+        full_name = json.load(json_file)
 
     user_input = str(input("What are you searching for: "))
 
     # remove '-' in the input, workaround il-10 --> il10 to avoid results  containing only 10 or il
     # with il10 we still get il-10 as result, but with query il-10 we also get il-9, il-8,.....
     user_input = user_input.replace("-", "")
+    user_input = user_input.replace(",", "")
     input_words = user_input.split()
-    query_input = ""
-    for x in input_words:
-        query_input += " " + x + " "  # weird behaviour, withous this the query doesnt work as expected
-        # ("il10 cancer stroke") != ("il10 stroke cancer")
+    symbol_query = ""
+    full_name_query = ""
 
-    result = client.index("pubmed_mouse_v4").search(
-        query_input,
+    found_full_name = False
+
+    for x in input_words:
+        # weird behaviour, withous this the query doesnt work as expected
+        # ("il10 cancer stroke") != ("il10 stroke cancer")
+        symbol_query += " " + x + " "
+
+        if x.lower() in full_name:
+            full_name_query += ' "' + full_name[x.lower()] + '" '
+            found_full_name = True
+        else:
+            full_name_query += " " + x + " "
+
+    result_symbol = search(client, index, symbol_query)
+    filename = "results/" + str(symbol_query) + ".json"
+    save_results(result_symbol, filename)
+
+    if found_full_name:
+        result_full_name = search(client, index, full_name_query)
+        filename = "results/" + str(full_name_query) + ".json"
+        save_results(result_full_name, filename)
+
+        result_symbol["hits"].extend(result_full_name["hits"])
+        result_symbol["processingTimeMs"] += result_full_name["processingTimeMs"]
+
+        filename = "results/" + str(symbol_query) + "TOTAL.json"
+        save_results(result_symbol, filename)
+
+
+def search(client, index, query):
+    """
+    Sends the query to meilisearch
+
+    Parameters:
+        client: established connection to meilisearch
+        index: index to be searched
+        query: Query to be searched
+    """
+
+    result = client.index(index).search(
+        query,
         {
-            "limit": 1000,  # returns a maximum of 1000 results - make sure limit < = max variable
+            "limit": 100000,  # returns a maximum of limit results - make sure limit < = max variable
             "matchingStrategy": "all",  # results have to match all words in query or their synonyms
         },
     )
 
-    with open("result.json", "w", encoding="utf-8") as outfile:
-        json.dump(result, outfile, indent=2)
-    print("Find results in result.json")
+    return result
+
+
+def save_results(data, filename):
+    """
+    Saves data to file
+    """
+
+    with open(filename, "w", encoding="utf-8") as outfile:
+        json.dump(data, outfile, indent=2)
+    print(f"Find results in {filename}")
 
 
 if __name__ == "__main__":
-    search()
+    build_query()
