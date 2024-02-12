@@ -23,9 +23,20 @@
                   <div class="file-upload-wrapper" :data-text="fileuploadText">
                     <input type="file" id="protein-file" accept=".csv" v-on:change="load_file">                  
                   </div>
-                  <div v-if="dcoloumns != null">
+                  <div id="coloumn-selection" v-if="dcoloumns != null">
                     <h4>D Coloumns:</h4>
-                    <v-select multiple v-model="selected_d" :options="dcoloumns" :close-on-select="false"></v-select>
+                    <!-- <v-select multiple v-model="selected_d" :options="dcoloumns" :close-on-select="false"></v-select> -->
+                    <div class="filter-section">
+                      <div id="pathway-filter" class="pre-full colortype" v-on:click="handling_filter_menu()" :class="{ full: dcoloumn_filtering == true }">
+                          <span>{{ coloumn }}</span>
+                          <img  class="remove-filter" src="@/assets/pathwaybar/cross.png" v-on:click.stop="active_categories(null)" v-if="coloumn !== 'Filter'">
+                      </div>
+                      <div id="pathway-filter-categories" class="colortype" v-show="dcoloumn_filtering == true">
+                              <div class="element" v-for="(entry, index) in dcoloumns" :key="index" v-on:click="active_categories(entry);" :class="{ active_cat: active_categories_set.has(entry)}">
+                                  <a>{{ entry }}</a>
+                              </div>
+                      </div>
+                    </div>
                   </div>
                   <h4>Edge score:</h4>
                     <input
@@ -71,10 +82,59 @@ export default {
       dcoloumns: null,
       selected_d: [],
       selected_species: null,
-      isAddClass: false
+      isAddClass: false,
+      dcoloumn_filtering: false,
+      coloumn: 'Filter',
+      active_categories_set: new Set()
     }
   },
   methods: {
+    active_categories(coloumn){
+      if (!coloumn) {
+          this.reset_categories()
+          return
+      }
+      if (this.active_categories_set.has(coloumn)){
+          if(this.active_categories_set.size == 1) {
+              this.reset_categories()
+              return
+          }
+          this.active_categories_set.delete(coloumn)
+      }else{
+          this.active_categories_set.add(coloumn)
+      }
+      this.coloumn = [...this.active_categories_set].join(', ');
+  },
+  reset_categories() {
+    this.coloumn = "Filter";
+    this.active_categories_set = new Set()
+  },
+  handling_filter_menu() {
+    var com = this;
+    if (!com.dcoloumn_filtering) {
+        com.dcoloumn_filtering = true;
+
+        // Add the event listener
+        document.addEventListener('mouseup', com.handleMouseUp);
+    }
+    else{
+        com.category_filtering = false;
+        document.removeEventListener('mouseup', com.handleMouseUp);
+    }
+
+  },
+  handleMouseUp(e) {
+      var com = this;
+
+      var container = document.getElementById('pathway-filter-categories');
+      var container_button = document.getElementById('pathway-filter');
+      if (!container.contains(e.target) && !container_button.contains(e.target)) {
+          com.dcoloumn_filtering = false;
+
+          // Remove the event listener
+          document.removeEventListener('mouseup', com.handleMouseUp);
+      }
+  },
     load_file(e) {
       var com = this;
 
@@ -124,9 +184,9 @@ export default {
       formData.append("threshold", com.threshold.value);
       formData.append("species_id", com.selected_species.code);
       formData.append("file", protein_file.files[0]);
-      formData.append("selected_d", com.selected_d);
+      formData.append("selected_d", [...com.active_categories_set]);
       
-      this.$store.commit('assign_dcoloumn', com.selected_d)
+      this.$store.commit('assign_dcoloumn', [...this.active_categories_set])
       
       com.isAddClass=true;
       this.axios
@@ -142,9 +202,22 @@ export default {
       var target = document.getElementById(id)
       let a = (target.value / target.max)* 100;
       target.style.background = `linear-gradient(to right,#0A0A1A,#0A0A1A ${a}%,#ccc ${a}%)`;
-    }
+    },
+    
   }
 }
 </script>
+<style>
 
+#coloumn-selection .filter-section{
+  width: 100%;
+  height: 3vw;
+  display: flex;
+  position: relative;
+  left: 0;
+  background: rgba(0, 0, 0, 0.7);
+
+}
+
+</style>
   

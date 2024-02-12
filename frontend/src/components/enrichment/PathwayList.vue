@@ -386,7 +386,7 @@ export default {
     }
 
     #pathway-filter .remove-filter {
-        width: 10%;
+        width: 1.1vw;;
         padding: 0%;
         filter: invert(100%);
         position: absolute;

@@ -116,6 +116,11 @@ export default {
     z-index: 1;
 }
 
+/* Hide scrollbar for Chrome, Safari and Opera */
+.menu-window::-webkit-scrollbar {
+    display: none;
+}
+
 .menu-window:after {
     content:"";
     position:absolute;
