@@ -131,7 +131,7 @@ def proteins_subgraph_api():
     # D-Value categorize via percentage
     if not (request.files.get("file") is None):
         panda_file.rename(columns={"SYMBOL": "name"}, inplace=True)
-        panda_file["name"] = panda_file["name"].str.title()
+        panda_file["name"] = panda_file["name"].str.upper()
 
     stopwatch.round("Enrichment")
 
@@ -163,7 +163,7 @@ def proteins_subgraph_api():
         ensembl_id = node["id"]
         df_node = ensembl_to_node.get(ensembl_id)
         if df_node:
-            symbol_value = df_node.SYMBOL
+            symbol_value = df_node.SYMBOL.upper()
             if ensembl_id in node_mapping:
                 mapped_node_id = node_mapping[ensembl_id]
                 # Use node mapping to add corresponding values of betweenness and pagerank

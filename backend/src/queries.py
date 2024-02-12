@@ -175,7 +175,7 @@ def _convert_to_symbol_alias(result: neo4j.Result) -> (set[str], set[str]):
         aliases.add(alias)
         # Only add the (symbol: alias) if the symbol isnt there already
         if row["symbol"] not in mapping:
-            mapping[symbol.capitalize()] = alias.capitalize()
+            mapping[symbol] = alias
     return symbols, aliases, mapping
 
 
