@@ -44,6 +44,8 @@ def build_query():
         # ("il10 cancer stroke") != ("il10 stroke cancer")
         symbol_query += " " + x + " "
 
+        # check if the word x is an symbol / alias, if yes save full name in second query
+        # if not just save the normal symbol to the query
         if x.lower() in full_name:
             full_name_query += ' "' + full_name[x.lower()] + '" '
             found_full_name = True

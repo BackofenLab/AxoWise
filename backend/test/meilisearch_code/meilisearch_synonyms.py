@@ -69,13 +69,13 @@ def set_synonyms(input_file):
         if symbol.lower() == "no symbol":
             continue
 
-        # saving the combination of symbol and full name that are available
-        if full_name.lower() != "not available":
-            full_name_dict[symbol.lower()] = full_name.lower()
-
         # add symbol all its aliases and ensemble ID to one list
         synonyms_list.append(symbol)
         synonyms_list.append(ensembl_id)
+
+        # saving the combination of symbol and full name that are available
+        if full_name.lower() != "not available":
+            full_name_dict = add_full_name(full_name, synonyms_list, full_name_dict)
 
         # need to add len == 0 bc not all no aliases are labled correct, some are empty lists
         if not synonyms_list or synonyms_list == ["no alias"]:
@@ -172,6 +172,23 @@ def save_to_file(data, filename):
     with open(filename, "w", encoding="utf-8") as outfile:
         json_object = json.dumps(data, indent=4)
         outfile.write(json_object)
+
+
+def add_full_name(full_name, synonyms_list, full_name_dict):
+    """
+    Takes a full name and a list of aliases and adds them to the symbol -> full_name dict
+
+    Parameters:
+        full_name : a full name of a protein
+        synonyms_list : a list the corresponding symbol and all its aliases + ensembl ID
+        full_name_dict : A dict holding all translations from synonym to full_name
+
+    returns the full_name_dict
+
+    """
+    for synonym in synonyms_list:
+        full_name_dict[synonym.lower()] = full_name.lower()
+    return full_name_dict
 
 
 def upload_synonyms(client, index, input_file=output_file):
