@@ -184,7 +184,7 @@ export default {
                 var maxDe = Math.max(...result);
                 var minDe = Math.min(...result);
     
-                this.dboundaries[coloumn] = {value:0, min: minDe, max: maxDe, step:0.01}
+                this.dboundaries[coloumn] = {value:minDe, min: minDe, max: maxDe, step:0.01}
 
             }
 
