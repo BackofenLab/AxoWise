@@ -76,7 +76,32 @@
                         v-on:input="valueChanged('pagerank')"
                     />
                 </div>
-            </div>  
+                <div class="dcoloumn-window"  v-if="dcoloumns">
+                <div class="class-section" v-on:click="coloumnsCheck = !coloumnsCheck">
+                    <span>coloumn section</span>
+                    <img src="@/assets/pane/invisible.png" v-if="!coloumnsCheck">
+                    <img src="@/assets/pane/visible.png" v-if="coloumnsCheck">
+                </div>
+                <div class="d-section-slider" v-show="coloumnsCheck" v-for="(entry, index) in dcoloumns" :key="index">
+                <div class="window-label">{{ entry }}</div>
+                    <div class="menu-items">
+                        <input
+                            :id="entry"
+                            type="range"
+                            v-bind:min="dboundaries[entry].min" v-bind:max="dboundaries[entry].max" v-bind:step="dboundaries[entry].step"
+                            v-model="dboundaries[entry].value"
+                            v-on:change="searchSubset()"
+                        />
+                        <input 
+                            type="number"
+                            v-bind:min="dboundaries[entry].min" v-bind:max="dboundaries[entry].max" v-bind:step="dboundaries[entry].step"
+                            v-model="dboundaries[entry].value"
+                            v-on:change="searchSubset()"
+                        />
+                    </div>
+                </div>  
+            </div>
+            </div>
             <div id="selection_highlight_header" class="window-header">
                 <div class="headertext">
                     <span>graph parameter</span>
@@ -88,6 +113,7 @@
 </template>
 
 <script>
+
 export default {
     name: 'SelectionList',
     props: ['data','mode','active_subset', 'active_term'],
@@ -96,6 +122,7 @@ export default {
         return {
             once: true,
             search_data: null,
+            coloumnsCheck:false,
 			degree_boundary: {
 				value: 0,
 				min: 0,
@@ -120,6 +147,9 @@ export default {
 				max: 1000,
 				step: 1
 			},
+            dcoloumns: this.$store.state.dcoloumns,
+            dboundaries: {},
+            nodeCheck: false
         }
     },
     watch: {
@@ -135,6 +165,30 @@ export default {
         }
     },
     methods: {
+        initialize_de(){
+            var com = this;
+            var dataForm = com.data;
+
+            for (var coloumn of this.dcoloumns){
+
+                // _____ this calculation has only to be done once _______
+                var subset_de
+                subset_de = dataForm.nodes.map(arrayItem => {
+                    return arrayItem.attributes[coloumn]
+                });
+    
+                // Convert String values to Integers
+                var result = subset_de.map(function (x) { 
+                    return parseFloat(x);
+                });
+                var maxDe = Math.max(...result);
+                var minDe = Math.min(...result);
+    
+                this.dboundaries[coloumn] = {value:0, min: minDe, max: maxDe, step:0.01}
+
+            }
+
+        },
         dragElement(elmnt) {
 
             var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
@@ -270,6 +324,17 @@ export default {
                     if(com.mode=='term'){
                         if(Math.abs(Math.log10(element.attributes["FDR"])) >= com.padj_boundary.value) nodes.push(element)
                     }
+                    else if (this.dcoloumns) {
+                        this.nodeCheck = true
+                        for (var coloumn of com.dcoloumns){
+                            if(parseFloat(element.attributes[coloumn]) < com.dboundaries[coloumn].value){
+                                this.nodeCheck = false
+                                break;
+                            }
+                        }
+                        if(this.nodeCheck) nodes.push(element)
+                        
+                    }
                     else{
                         nodes.push(element)
                     }
@@ -307,6 +372,7 @@ export default {
         this.initialize_dg()
         this.initialize_bc()
         this.initialize_pagerank()
+        if (this.dcoloumns) this.initialize_de()
     }
 }
 </script>
@@ -322,10 +388,19 @@ export default {
     border-radius: 0px 0px 5px 5px;
     background: rgba(222, 222, 222, 0.61);
     backdrop-filter: blur(7.5px);
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+/* Hide scrollbar for Chrome, Safari and Opera */
+.selection_list::-webkit-scrollbar {
+    display: none;
 }
 
 .selection_list .window-label {
     color: white;
+    white-space: nowrap;
+    overflow-x: hidden;    /* Hide overflow content */
+    text-overflow: ellipsis;
 }
 
 .selection_list input[type=number] { 
@@ -361,4 +436,34 @@ export default {
     border-radius: 50%;
 }
 
+.dcoloumn-window {
+    width: 100%;
+    height: 100%;
+}
+
+.class-section{
+    margin-top: 0.5vw;
+    height: 1vw;
+    width: 100%;
+    display: flex;
+    font-size: 0.7vw;
+    background: #D9D9D9;
+}
+
+.class-section img {
+    width: 0.7vw;
+    position: absolute;
+    justify-content: center;
+    align-self: center;
+    right: 1.1vw;
+}
+
+.class-section span {
+    width: 100%;
+    text-align-last: center;
+}
+
+.d-section-slider {
+    padding: 4% 5% 0 5%;
+}
 </style>

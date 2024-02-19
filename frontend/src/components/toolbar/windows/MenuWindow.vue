@@ -143,7 +143,7 @@ export default {
     width: 93%;
     font-family: 'ABeeZee', sans-serif;
     color: rgba(255, 255, 255, 50%);
-    font-size: 0.9vw;
+    font-size: 0.7vw;
     border-bottom: 1px solid;
     border-color: rgba(255, 255, 255, 50%);
     cursor: default;
