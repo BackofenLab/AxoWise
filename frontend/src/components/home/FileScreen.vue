@@ -25,7 +25,7 @@
                   </div>
                   <div id="coloumn-selection" v-if="dcoloumns != null">
                     <h4>D Coloumns:</h4>
-                    <!-- <v-select multiple v-model="selected_d" :options="dcoloumns" :close-on-select="false"></v-select> -->
+                    <button id="test-btn" @click="select_all" >select all</button>
                     <div class="filter-section">
                       <div id="pathway-filter" class="pre-full colortype" v-on:click="handling_filter_menu()" :class="{ full: dcoloumn_filtering == true }">
                           <span>{{ coloumn }}</span>
@@ -89,6 +89,10 @@ export default {
     }
   },
   methods: {
+    select_all() {
+      this.active_categories_set = new Set(this.dcoloumns)
+      this.coloumn = [...this.active_categories_set].join(', ');
+    },
     active_categories(coloumn){
       if (!coloumn) {
           this.reset_categories()

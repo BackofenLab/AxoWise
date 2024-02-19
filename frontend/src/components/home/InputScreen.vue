@@ -165,9 +165,7 @@ export default {
 
   margin: 0 0 6px 0;
   text-transform: lowercase;
-  padding: 0px;
-  height: 15px;
-  width: 50px;
+  padding: 3px;
   font-size: 9px;
 
 }
