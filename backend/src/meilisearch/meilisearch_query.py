@@ -105,4 +105,4 @@ def get_results(
     client = meilisearch.Client("http://localhost:7700", Api_key.SEARCH_KEY)
     index = "pubmed_mouse_v5"
     sort_by = ["Cited number:desc", "Published:desc"]
-    return(build_query(client, index, query, sort_by, limit))
+    return build_query(client, index, query, sort_by, limit)
