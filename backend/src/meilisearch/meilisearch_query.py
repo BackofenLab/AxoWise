@@ -14,15 +14,6 @@ def build_query(client, index, user_input, sort_by, limit=20000):
 
     """
 
-    # TODO:
-    # This needs to be moved to the main function when connecting to the frontend
-    # import Api_key
-    client = meilisearch.Client("http://localhost:7700", Api_key.SEARCH_KEY)
-    index = "pubmed_mouse_v5"
-    sort_by = ["Cited number:desc", "Published:desc"]  # needs to be either asc or desc
-    limit = 20000
-    user_input = str(input("What are you searching for: "))
-
     # Dict full name links symbols to their full names
     with open("Dict_full_name.json", "r", encoding="utf-8") as json_file:
         full_name = json.load(json_file)
@@ -105,8 +96,13 @@ def get_results(
     limit,
     query,
 ):
+    """
+    This function is just here until the connection to front end it established
+    """
+    # TODO:
+    # This needs to be moved to the main function when connecting to the frontend
+    # import Api_key
     client = meilisearch.Client("http://localhost:7700", Api_key.SEARCH_KEY)
     index = "pubmed_mouse_v5"
     sort_by = ["Cited number:desc", "Published:desc"]
-
-    return build_query(client, index, query, sort_by, limit)
+    return(build_query(client, index, query, sort_by, limit))
