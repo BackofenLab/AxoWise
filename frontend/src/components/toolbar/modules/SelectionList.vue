@@ -4,38 +4,40 @@
             <div class="selection_list">
                 <div class="window-label">degree value</div>
                 <div class="menu-items">
-                    <input
-                        id="degree"
-                        type="range"
-                        v-bind:min="degree_boundary.min" v-bind:max="degree_boundary.max" v-bind:step="degree_boundary.step"
-                        v-model="degree_boundary.value"
-                        v-on:change="searchSubset()"
-                        v-on:input="valueChanged('degree')"
-                    />
+                    <div id="degree"></div>
                     <input
                         type="number"
                         v-bind:min="degree_boundary.min" v-bind:max="degree_boundary.max" v-bind:step="degree_boundary.step"
-                        v-model="degree_boundary.value"
+                        v-model="degree_boundary.minValue"
                         v-on:change="searchSubset()"
-                        v-on:input="valueChanged('degree')"
+                        v-on:input="valueChanged('degree', [degree_boundary.minValue,degree_boundary.maxValue])"
+                    />
+                    <span class="seperator">-</span>
+                    <input
+                        type="number"
+                        v-bind:min="degree_boundary.min" v-bind:max="degree_boundary.max" v-bind:step="degree_boundary.step"
+                        v-model="degree_boundary.maxValue"
+                        v-on:change="searchSubset()"
+                        v-on:input="valueChanged('degree', [degree_boundary.minValue,degree_boundary.maxValue])"
                     />
                 </div>
                 <div class="window-label">betweenness centrality value</div>
                 <div class="menu-items">
-                    <input
-                        id="bcentrality"
-                        type="range"
-                        v-bind:min="bc_boundary.min" v-bind:max="bc_boundary.max" v-bind:step="bc_boundary.step"
-                        v-model="bc_boundary.value"
-                        v-on:change="searchSubset()"
-                        v-on:input="valueChanged('bcentrality')"
-                    />
+                    <div id="betweenes"></div>
                     <input
                         type="number"
                         v-bind:min="bc_boundary.min" v-bind:max="bc_boundary.max" v-bind:step="bc_boundary.step"
-                        v-model="bc_boundary.value"
+                        v-model="bc_boundary.minValue"
                         v-on:change="searchSubset()"
-                        v-on:input="valueChanged('bcentrality')"
+                        v-on:input="valueChanged('betweenes',[bc_boundary.minValue, bc_boundary.maxValue])"
+                    />
+                    <span class="seperator">-</span>
+                    <input
+                        type="number"
+                        v-bind:min="bc_boundary.min" v-bind:max="bc_boundary.max" v-bind:step="bc_boundary.step"
+                        v-model="bc_boundary.maxValue"
+                        v-on:change="searchSubset()"
+                        v-on:input="valueChanged('betweenes',[bc_boundary.minValue, bc_boundary.maxValue])"
                     />
                 </div>
                 <div v-if="mode=='term'">
@@ -49,31 +51,32 @@
                             v-on:change="searchSubset()"
                             v-on:input="valueChanged('padj')"
                         />
-                        <input 
+                        <!-- <input 
                             type="number"
                             v-bind:min="padj_boundary.min" v-bind:max="padj_boundary.max" v-bind:step="padj_boundary.step"
                             v-model="padj_boundary.value"
                             v-on:change="searchSubset()"
                             v-on:input="valueChanged('padj')"
-                        />
+                        /> -->
                     </div>
                 </div>
                 <div class="window-label">page rank value</div>
                 <div class="menu-items">
-                    <input
-                        id="pagerank"
-                        type="range"
-                        v-bind:min="pr_boundary.min" v-bind:max="pr_boundary.max" v-bind:step="pr_boundary.step"
-                        v-model="pr_boundary.value"
-                        v-on:change="searchSubset()"
-                        v-on:input="valueChanged('pagerank')"
-                    />
+                    <div id="pagerank"></div>
                     <input 
                         type="number"
                         v-bind:min="pr_boundary.min" v-bind:max="pr_boundary.max" v-bind:step="pr_boundary.step"
-                        v-model="pr_boundary.value"
+                        v-model="pr_boundary.minValue"
                         v-on:change="searchSubset()"
-                        v-on:input="valueChanged('pagerank')"
+                        v-on:input="valueChanged('pagerank',[pr_boundary.minValue, pr_boundary.maxValue])"
+                    />
+                    <span class="seperator">-</span>
+                    <input 
+                        type="number"
+                        v-bind:min="pr_boundary.min" v-bind:max="pr_boundary.max" v-bind:step="pr_boundary.step"
+                        v-model="pr_boundary.maxValue"
+                        v-on:change="searchSubset()"
+                        v-on:input="valueChanged('pagerank',[pr_boundary.minValue, pr_boundary.maxValue])"
                     />
                 </div>
                 <div class="dcoloumn-window"  v-if="dcoloumns">
@@ -85,18 +88,21 @@
                 <div class="d-section-slider" v-show="coloumnsCheck" v-for="(entry, index) in dcoloumns" :key="index">
                 <div class="window-label">{{ entry }}</div>
                     <div class="menu-items">
-                        <input
-                            :id="entry"
-                            type="range"
-                            v-bind:min="dboundaries[entry].min" v-bind:max="dboundaries[entry].max" v-bind:step="dboundaries[entry].step"
-                            v-model="dboundaries[entry].value"
-                            v-on:change="searchSubset()"
+                        <div :id="'deval-slider-' + index"></div>
+                        <input 
+                        type="number"
+                        v-bind:min="dboundaries[entry].min" v-bind:max="dboundaries[entry].max" v-bind:step="dboundaries[entry].step"
+                        v-model="dboundaries[entry].minValue"
+                        v-on:change="searchSubset()"
+                        v-on:input="valueChanged('deval-slider-' + index,[dboundaries[entry].minValue, dboundaries[entry].maxValue])"
                         />
+                        <span class="seperator">-</span>
                         <input 
                             type="number"
                             v-bind:min="dboundaries[entry].min" v-bind:max="dboundaries[entry].max" v-bind:step="dboundaries[entry].step"
-                            v-model="dboundaries[entry].value"
+                            v-model="dboundaries[entry].maxValue"
                             v-on:change="searchSubset()"
+                            v-on:input="valueChanged('deval-slider-' + index,[dboundaries[entry].minValue, dboundaries[entry].maxValue])"
                         />
                     </div>
                 </div>  
@@ -113,6 +119,8 @@
 </template>
 
 <script>
+import * as noUiSlider from 'nouislider';
+import '@/slider.css';
 
 export default {
     name: 'SelectionList',
@@ -123,33 +131,14 @@ export default {
             once: true,
             search_data: null,
             coloumnsCheck:false,
-			degree_boundary: {
-				value: 0,
-				min: 0,
-				max: Number,
-				step: 1
-			},
-            pr_boundary: {
-                value: 0,
-				min: 0,
-				max: Number,
-				step: 0.0001
-            },
-            bc_boundary: {
-				value: 0,
-				min: 0,
-				max: Number,
-				step: 1
-			},
-            padj_boundary: {
-				value: 0,
-				min: 0,
-				max: 1000,
-				step: 1
-			},
+			degree_boundary: { minValue: 0, maxValue: 0, min: 0, max: Number, step: 1},
+            pr_boundary: { minValue: 0, maxValue: 0, min: 0, max: Number, step: 0.01},
+            bc_boundary: { minValue: 0, maxValue: 0, min: 0, max: Number, step: 1},
+            padj_boundary: { value: 0, min: 0, max: 1000, step: 1},
             dcoloumns: this.$store.state.dcoloumns,
             dboundaries: {},
-            nodeCheck: false
+            nodeCheck: false,
+            formatType: null
         }
     },
     watch: {
@@ -184,10 +173,36 @@ export default {
                 var maxDe = Math.max(...result);
                 var minDe = Math.min(...result);
     
-                this.dboundaries[coloumn] = {value:minDe, min: minDe, max: maxDe, step:0.01}
+                this.dboundaries[coloumn] = {minValue:minDe, maxValue:maxDe, min: minDe, max: maxDe, step:0.01}
 
             }
 
+        },
+        create_de(){
+            var com = this;
+
+            Object.entries(com.dcoloumns).forEach(([index, coloumn]) => {
+
+                var slider = document.getElementById('deval-slider-' + index);
+                noUiSlider.create(slider, {
+                    start: [com.dboundaries[coloumn].min, com.dboundaries[coloumn].max],
+                    connect: true,
+                    range: {
+                        'min': com.dboundaries[coloumn].min,
+                        'max': com.dboundaries[coloumn].max
+                    },
+                    step: 0.01
+                });
+    
+                slider.noUiSlider.on('update', function (values, handle) {
+                    com.dboundaries[coloumn][(handle ? "maxValue" : "minValue")] = values[handle];
+                    com.searchSubset()
+                    
+                });
+
+            });
+
+            
         },
         dragElement(elmnt) {
 
@@ -236,37 +251,36 @@ export default {
 			var dataForm = com.data;
 
 			// initialize values of slider
-            // let mean = 0;
             var subset_degree;
 
             subset_degree = dataForm.nodes.map(arrayItem => {
                 return arrayItem.attributes["Degree"]
             });
 
-            // ---mean calculation---
-
             // Convert String values to Integers
             var result = subset_degree.map(function (x) { 
                 return parseInt(x, 10);
             });
 
-            // let sum = result.reduce((accumulator, value) => {
-            //     return accumulator + value;
-            // });
+            var maxDeg = Math.max(...result);        // Need to use spread operator!
 
-            // mean = sum/subset_degree.length;
+            var slider = document.getElementById('degree');
+            noUiSlider.create(slider, {
+                start: [0, maxDeg],
+                connect: true,
+                range: {
+                    'min': 0,
+                    'max': maxDeg
+                },
+                format: this.formatType,
+                step: 1
+            });
 
-            // ---empirical standard deviation---
-
-            // let stdDev = 0;
-            // stdDev = Math.sqrt(result.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / (subset_degree.length - 1));
-
-            // set init degree and max value
-            // var init_degree = Math.ceil(mean + (2*stdDev));
-            var maxDeg = Math.max(...result);       // Need to use spread operator!
-
-            // this.degree_boundary.value = init_degree;
-            this.degree_boundary.max = maxDeg;
+            slider.noUiSlider.on('update', function (values, handle) {
+                com.degree_boundary[(handle ? "maxValue" : "minValue")] = values[handle];
+                com.searchSubset()
+                
+            });
 		},
         initialize_bc() {
             var com = this;
@@ -281,11 +295,27 @@ export default {
 
             // Convert String values to Integers
             var result = subset_bc.map(function (x) { 
-                return parseInt(x, 10);
+                return parseFloat(x, 10);
             });
-            var maxDeg = Math.max(...result);       // Need to use spread operator!
+            var maxDeg = Math.max(...result) + 10;       // Need to use spread operator!
 
-            this.bc_boundary.max = maxDeg;
+            var slider = document.getElementById('betweenes');
+            noUiSlider.create(slider, {
+                start: [0, maxDeg],
+                connect: true,
+                range: {
+                    'min': 0,
+                    'max': maxDeg
+                },
+                format: this.formatType,
+                step: 1
+            });
+
+            slider.noUiSlider.on('update', function (values, handle) {
+                com.bc_boundary[(handle ? "maxValue" : "minValue")] = values[handle];
+                com.searchSubset()
+                
+            });
 
         },
         initialize_pagerank() {
@@ -303,9 +333,26 @@ export default {
             var result = subset_pr.map(function (x) { 
                 return parseFloat(x);
             });
-            var maxDeg = Math.max(...result);       // Need to use spread operator!
+            var maxDeg = Math.abs(Math.log10(Math.min(...result)))+1;   // Need to use spread operator!
+
 
             this.pr_boundary.max = maxDeg;
+            var slider = document.getElementById('pagerank');
+            noUiSlider.create(slider, {
+                start: [0, maxDeg],
+                connect: true,
+                range: {
+                    'min': 0,
+                    'max': maxDeg
+                },
+                step: 0.01
+            });
+
+            slider.noUiSlider.on('update', function (values, handle) {
+                com.pr_boundary[(handle ? "maxValue" : "minValue")] = values[handle];
+                com.searchSubset()
+                
+            });
 
         },
         searchSubset() {
@@ -317,9 +364,12 @@ export default {
 			var nodes = [];
 			// degree filtering
 			for (var element of dataForm){
-				if(parseInt(element.attributes["Degree"]) >= this.degree_boundary.value &&
-                   parseFloat(element.attributes["PageRank"]) >= this.pr_boundary.value &&
-                   parseFloat(element.attributes["Betweenness Centrality"]) >= this.bc_boundary.value
+				if(parseInt(element.attributes["Degree"]) >= this.degree_boundary.minValue &&
+                   parseInt(element.attributes["Degree"]) <= this.degree_boundary.maxValue &&
+                   Math.abs(Math.log10(parseFloat(element.attributes["PageRank"]))) >= this.pr_boundary.minValue &&
+                   Math.abs(Math.log10(parseFloat(element.attributes["PageRank"]))) <= this.pr_boundary.maxValue &&
+                   parseFloat(element.attributes["Betweenness Centrality"]) >= this.bc_boundary.minValue &&
+                   parseFloat(element.attributes["Betweenness Centrality"]) <= this.bc_boundary.maxValue
                    ){
                     if(com.mode=='term'){
                         if(Math.abs(Math.log10(element.attributes["FDR"])) >= com.padj_boundary.value) nodes.push(element)
@@ -327,7 +377,8 @@ export default {
                     else if (this.dcoloumns) {
                         this.nodeCheck = true
                         for (var coloumn of com.dcoloumns){
-                            if(parseFloat(element.attributes[coloumn]) < com.dboundaries[coloumn].value){
+                            if(parseFloat(element.attributes[coloumn]) < com.dboundaries[coloumn].minValue || 
+                               parseFloat(element.attributes[coloumn]) > com.dboundaries[coloumn].maxValue){
                                 this.nodeCheck = false
                                 break;
                             }
@@ -347,10 +398,9 @@ export default {
             this.$emit("selection_active_changed", false);
             // if(this.active_subset) this.emitter.emit("searchSubset", {subset:this.search_data, mode:this.mode});
         },
-        valueChanged(id){
-            var target = document.getElementById(id)
-            let a = (target.value / target.max)* 100;
-            target.style.background = `linear-gradient(to right,#0A0A1A,#0A0A1A ${a}%,#ccc ${a}%)`;
+        valueChanged(id, value){
+            var slider = document.getElementById(id)
+            slider.noUiSlider.set(value);
         },
         term_genes(list){
             var term_genes = new Set(list)
@@ -359,6 +409,15 @@ export default {
         }
 	},
     mounted(){
+
+        this.formatType = {
+            from: function(value) {
+                return parseInt(value);
+            },
+            to: function(value) {
+                return parseInt(value);
+            }
+        }
     
         if(this.mode=="protein"){
             this.search_data = this.$store.state.active_subset ? this.term_genes(this.$store.state.active_subset): this.data.nodes
@@ -366,12 +425,15 @@ export default {
             this.search_data = this.$store.state.p_active_subset ? this.term_genes(this.$store.state.p_active_subset): this.data.nodes
         }
         this.dragElement(document.getElementById("selection_highlight"));
-        
-    },
-    created() {
+
         this.initialize_dg()
         this.initialize_bc()
         this.initialize_pagerank()
+        if (this.dcoloumns) this.create_de()
+
+        
+    },
+    created() {
         if (this.dcoloumns) this.initialize_de()
     }
 }
@@ -391,6 +453,9 @@ export default {
     overflow-y: scroll;
     overflow-x: hidden;
 }
+.selection_list .menu-items{
+    display: flex;
+}
 /* Hide scrollbar for Chrome, Safari and Opera */
 .selection_list::-webkit-scrollbar {
     display: none;
@@ -402,21 +467,33 @@ export default {
     overflow-x: hidden;    /* Hide overflow content */
     text-overflow: ellipsis;
 }
+#degree {
+    margin:0.5vw 0.5vw 0.5vw 0;
+}
+
+#betweenes {
+    margin:0.5vw 0.5vw 0.5vw 0;
+}
+
+#pagerank {
+    margin:0.5vw 0.5vw 0.5vw 0;
+}
+
+[id^="deval-slider-"]{
+    margin:0.5vw 0.5vw 0.5vw 0;
+}
 
 .selection_list input[type=number] { 
-    position: absolute;
-    margin-top:0.2vw;
-    right: 5%;
-    width: 20%;
+    width: 10%;
     border: none;
-    height: 6%;
     font-family: 'ABeeZee', sans-serif;
-    font-size: 0.7vw;
-    color:  white;
+    font-size: 0.5vw;
+    color: white;
     background: none;
     -moz-appearance: textfield;
+    -webkit-appearance: textfield;
     appearance: textfield;
-    text-align: right;
+    text-align: center;
 }
 
 .selection_list input[type=range]{
@@ -434,6 +511,13 @@ export default {
     width: 0.8vw;
     height: 0.8vw;
     border-radius: 50%;
+}
+
+.seperator {
+    font-size: 0.5vw;
+    margin: 0 0.1vw 0 0.1vw;
+    align-self: center;
+    justify-content: center;
 }
 
 .dcoloumn-window {
