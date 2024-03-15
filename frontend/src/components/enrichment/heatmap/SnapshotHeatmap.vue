@@ -26,6 +26,7 @@ export default {
         initializeSnapshot(data) {
             const imageContainer = document.getElementById('heatmap-visual-' + this.index)
             imageContainer.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(data)}`;
+
         },
         getSnapshot(data) {
 

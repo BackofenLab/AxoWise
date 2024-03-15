@@ -5,7 +5,7 @@
             <div class="graph-options" v-show="activeHeatmapIndex == index" >
                 <div class="bookmark-graph" v-on:click.stop="add_graph(entry)" :class="{ checked: favourite_heatmaps.has(entry)}" ref="checkboxStatesHeatmap"></div>
                 <img  class="remove-graph" src="@/assets/pathwaybar/cross.png" v-on:click.stop="remove_graph(entry)">
-                <div class="graph-name colortype">
+                <div class="graph-name">
                     <input type="text" v-model="entry.label" class="empty" @click.stop />
                 </div>
             </div>
@@ -17,12 +17,12 @@
 
 import * as d3 from "d3";
 import {agnes} from "ml-hclust"
-import heatmapDendro from './drawHeatmap';
+import heatmapDendro from '@/components/enrichment/heatmap/drawHeatmap.js';
 import SnapshotHeatmap from '@/components/enrichment/heatmap/SnapshotHeatmap.vue'
 
 export default {
     name: 'PathwayHeatmap',
-    props: ['favourite_pathways','bookmark_off'],
+    props: ['bookmark_off'],
     components: {
         SnapshotHeatmap
     },
@@ -31,34 +31,48 @@ export default {
             favourite_heatmaps: new Set(),
             activeHeatmapIndex: -1,
             heatmap_number: 0,
-            heatmap_dict: new Set(),
+            heatmap_dict: [],
+            heatmap_dict_array: [],
             export_image: null
         }
     },
     mounted(){
-        this.emitter.on("generateHeatmap", () => {
-            this.draw_heatmap()
+
+        this.emitter.on("generateHeatmap", (pathway_data) => {
+            this.draw_heatmap(pathway_data)
         });
         this.emitter.on("exportHeatmap", () => {
             this.export_svg()
         });
+
+        this.heatmap_dict_array = this.$store.state.term_heatmap_dict
+        if(this.heatmap_dict_array.length != 0) {
+            this.heatmap_number = Math.max.apply(Math, this.heatmap_dict_array.map(item => item.id))
+            this.heatmap_dict = new Set(this.heatmap_dict_array)
+        }
+        else{
+            this.heatmap_dict = new Set()
+        }
+    },
+    beforeUnmount () {
+        this.emitter.off('generateHeatmap')
+        this.emitter.off('exportHeatmap')
     },
     methods: {
-        draw_heatmap(){
+        draw_heatmap(pathway_data){
 
-            var matrix = this.generateMatrix([...this.favourite_pathways])
+            var matrix = this.generateMatrix([...pathway_data])
             const clusterTree = this.createClusterTree(this.createRowClust(matrix.data),matrix.rowLabels);
 
             var data = {"matrix": matrix.data, "rowJSON": clusterTree, "colJSON": matrix.colLabels, "rowIndex": matrix.rowIndex}
             this.heatmap_number += 1
+            this.$store.commit('assign_new_heatmap_graph', { id: this.heatmap_number, label: `Heatmap ${this.heatmap_number}`, graph: data})
             this.heatmap_dict.add({ id: this.heatmap_number, label: `Heatmap ${this.heatmap_number}`, graph: data});
 
         },
         generateMatrix(terms){
             const { node_cluster_index, node_modul_index } = this.$store.state,
                 matrix = [], rowLabelToIndex = {};
-
-            console.log(node_cluster_index, node_modul_index)
 
             for (const term of terms) {
                 const matrixRow = [];
@@ -124,9 +138,10 @@ export default {
             if (!this.favourite_heatmaps.has(entry)) {
                 // Checkbox is checked, add its state to the object
                 this.favourite_heatmaps.delete(entry)
+                
             }
             this.heatmap_dict.delete(entry)
-            this.$store.commit('remove_snapshotHeatmap', entry.id)
+            // this.$store.commit('assign_heatmap_dict', this.heatmap_dict )
         },
         add_graph(entry){
             if (!this.favourite_heatmaps.has(entry)) {
@@ -268,14 +283,13 @@ export default {
 #sigma-heatmap{
 display: block;
 position: absolute;
-top: 8%;
-width: 50%;
-height: 90%;
 cursor: default;
-border-style: solid;
-border-color: white;
-background-color: #0A0A1A;
-border-width: 0.5px;
+position: absolute;
+height: 100%;
+width: 75%;
+left: 25%;
+box-sizing: border-box;
+overflow: hidden;
 backdrop-filter: blur(10px);
 -webkit-backdrop-filter: blur(10px);
 }

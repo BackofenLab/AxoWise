@@ -1,8 +1,13 @@
 <template>
     <div id="pathways-set">
-        <div class="generate-set-button">
+        <div class="tool-section-term">
             <div v-if="await_load == true" class="loading_pane" ></div>
-            <div v-if="await_load == false" class="export-text" v-on:click="apply_enrichment()">Generate pathway set</div>
+            <div class="generate" v-on:click="apply_enrichment()">
+                <div class="generate-text">generate set</div>
+            </div>
+            <div class="generate">
+                <div class="generate-text" >bookmarks</div>
+            </div>
         </div>
         <div class="pathway-apply-section">
 
@@ -119,14 +124,9 @@ export default {
 
 <style>
     #pathways-set {
-        width: 11.8%;
-        height: 96.92%;
-        position: absolute;
-        top:50%;
-        transform: translateY(-50%);
-        margin-left: 35%;
-        border-radius: 10px;
-        z-index: 1;
+        width: 100%;
+        height: 100%;
+        cursor: default;
         font-family: 'ABeeZee', sans-serif;
 
     }
@@ -134,23 +134,16 @@ export default {
     .pathway-apply-section {
         width: 100%;
         height: 87.65%;
-        top: 12.35%;
         border-radius: 5px;
-        background: #0A0A1A;
         position: absolute;
-        padding: 0% 2% 2% 2%;
     }
 
     .generate-set-button {
+        display: inline-flex;
+        margin: 1vw 0 1vw 0;
+        height: 1vw;
         width: 100%;
-        height: 10.00%;
-        left: 0%;
-        bottom: 0;
-        position: absolute;
-        border-radius: 0 0 5px 5px;
-        background: #D9D9D9;
-        cursor: default;
-        z-index: 100;
+        padding: 0 2vw 0 2vw;
 
     }
 
@@ -170,11 +163,8 @@ export default {
     }
 
     .pathway-apply-section .results {
-        height: 9.5vw;
+        height: 100%;
         overflow: scroll;
-    }
-    .pathway-apply-section .sorting {
-        width: 7.9vw;
     }
     .pathway-apply-section .sorting a{
         color: rgba(255, 255, 255, 0.7);

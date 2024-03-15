@@ -1,9 +1,11 @@
 <template>
     <div id="pathways-graphs">
-        <div id="pathway-tools-filter" class="colortype">
-            <span>{{ tool }}</span>
+        <div class="tool-section-term">
+            <div class="generate" :class="{recolor_filter: bookmark_off == false}" v-on:click="bookmark_off = !bookmark_off">
+                <div class="generate-text" >bookmarks</div>
+            </div>
         </div>
-        <div class="graph-section colortype">
+        <div class="graph-section">
             <PathwayGraph v-show="tool == 'Termgraph'"
             :term_data='term_data'
             :mode = 'mode'
@@ -41,7 +43,7 @@ export default {
 
 
 <style>
-    #pathways-graphs {
+    #pathways-graphs-term {
         width: 50.92%;
         height: 96.92%;
         position: absolute;

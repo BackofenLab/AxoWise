@@ -1,21 +1,23 @@
 <template>
     <div id="pathways-list">
-        <div class="pathway-search colortype">
-            <img class="pathway-search-icon" src="@/assets/toolbar/search.png">
-            <input type="text" v-model="search_raw" class="empty" placeholder="Find your pathways"/>
-        </div>
-        <div class="filter-section">
-            <div id="pathway-filter" class="pre-full colortype" v-on:click="handling_filter_menu()" :class="{ full: category_filtering == true }">
-                <span>{{ category }}</span>
-                <img  class="remove-filter" src="@/assets/pathwaybar/cross.png" v-on:click.stop="active_categories(null)" v-if="category !== 'Filter'">
+        <div class="tool-section-term">
+            <div class="pathway-search">
+                <img class="pathway-search-icon" src="@/assets/toolbar/search.png">
+                <input type="text" v-model="search_raw" class="empty" placeholder="Find your pathways"/>
             </div>
-            <div id="pathway-filter-categories" class="colortype" v-show="category_filtering == true && terms !== null">
-                <div class="element" v-for="(entry, index) in filter_terms" :key="index" v-on:click="active_categories(entry.label);" :class="{ active_cat: active_categories_set.has(entry.label)}">
-                    <a>{{ entry.label }}</a>
+            <div class="filter-section">
+                <div id="pathway-filter" class="pre-full" v-on:click="handling_filter_menu()" :class="{ full: category_filtering == true }">
+                    <span>{{ category }}</span>
+                    <img  class="remove-filter" src="@/assets/pathwaybar/cross.png" v-on:click.stop="active_categories(null)" v-if="category !== 'Filter'">
+                </div>
+                <div id="pathway-filter-categories" v-show="category_filtering == true && terms !== null">
+                    <div class="element" v-for="(entry, index) in filter_terms" :key="index" v-on:click="active_categories(entry.label);" :class="{ active_cat: active_categories_set.has(entry.label)}">
+                        <a>{{ entry.label }}</a>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="list-section colortype">
+        <div class="list-section">
             
             <div class="sorting">
                 <a class="enrichment_filter" v-on:click="sort_alph = (sort_alph === 'asc') ? 'dsc' : 'asc'; sort_fdr = '' " >functional enrichment pathways ({{ filt_terms.size }})</a>
@@ -66,6 +68,7 @@ export default {
         }
     },
     mounted(){
+        console.log(this.term_data)
         this.filter_options(this.term_data.nodes)
     },
     computed: {

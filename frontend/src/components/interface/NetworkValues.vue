@@ -20,13 +20,14 @@ export default {
 #network-values {
     width: 5%;
     height: 3.98%;
-    left: 26%;
+    left: 25vw;
+    bottom: 1vw;
     display: flex;
-    flex-direction: column; /* Display items in a column */
-    justify-content: center; /* Center vertically */
+    flex-direction: column;
+    justify-content: center;
     position: absolute;
-    border-radius: 5px;
-    backdrop-filter: blur(7.5px);
+    /* border-radius: 5px; */
+    -webkit-backdrop-filter: blur(7.5px);
 }
 
 #network-values .value-text {

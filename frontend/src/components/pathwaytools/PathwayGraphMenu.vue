@@ -1,18 +1,14 @@
 <template>
     <div id="menu-tools" :class="{ 'pathwaybar-small': pane_hidden === true, 'pathways': pane_hidden === false }">
-        <div id="menu-tools_header">
-            <img src="@/assets/pathwaybar/fullscreen.png" v-on:click="pane_hidden = !pane_hidden">
-        </div>
         <div class="pathwaybar">
-            <PathwayGraphList
+            <PathwayGraphList v-if="sorted=='top'" v-show="active_function === 'list'"
             :term_data='term_data'
             ></PathwayGraphList>
-            <PathwayGraphGraphs v-show="pane_hidden === false"
+            <PathwayGraphGraphs v-if="active_function === 'graph'"
             :gephi_data='gephi_data'
             :filtered_terms='filtered_terms'
             :favourite_pathways='favourite_pathways'
             ></PathwayGraphGraphs>
-            <img v-show="pane_hidden === false" id="pathway-bg" src="@/assets/pathwaybar/background-dna.png">
         </div>
     </div>
 </template>
@@ -22,8 +18,8 @@ import PathwayGraphList from '@/components/pathwaytools/PathwayGraphList.vue'
 import PathwayGraphGraphs from '@/components/pathwaytools/PathwayGraphGraphs.vue'
 
 export default {
-    name: 'PathwayMenu',
-    props: ['term_data','active_term'],
+    name: 'PathwayGraphMenu',
+    props: ['term_data','active_term','active_function','sorted'],
     components: {
         PathwayGraphList,
         PathwayGraphGraphs
@@ -31,14 +27,6 @@ export default {
     data() {
         return {
             pane_hidden: false,
-        }
-    },
-    watch:{
-        pane_hidden(val) {
-            if (val) this.dragElement(document.getElementById("menu-tools"),val);
-            else {
-                this.resetElement(document.getElementById("menu-tools"));
-            }
         }
     },
     methods: {

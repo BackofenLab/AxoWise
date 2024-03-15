@@ -1,28 +1,32 @@
 <template>
     <div v-show="active_node !== null || active_subset !== null ||paneHidden == false">
-    <div id="attributepane" class="pane">
-        <div class="headertext">
-            <span>{{active_tab}}</span>
-            <img  class="pane_close" src="@/assets/pathwaybar/cross.png" v-on:click="close_pane()">
+        <div class="pane" id="pane" :class="{'active': tool_active}">
+            <div class="pane_header"  id="pane_header">
+                <span>{{active_tab}}</span>
+                <img  class="pane_close" src="@/assets/toolbar/cross.png" v-on:click="close_pane()">
+            </div>
+            <div class="pane-window">
+                <PathwayPane v-show="active_tab === 'Protein'"
+                    :mode = 'mode'
+                    :tool_active = 'tool_active'
+                    @tool_active_changed = 'tool_active = $event'
+                    :active_node='active_node' 
+                    :node_color_index='node_color_index'
+                    :gephi_data='gephi_data'
+                    @active_item_changed = 'active_item = $event'
+                ></PathwayPane>
+                <SubsetPane v-show="active_tab === 'Subset'"
+                    :mode = 'mode'
+                    :tool_active = 'tool_active'
+                    @tool_active_changed = 'tool_active = $event'
+                    :active_subset='active_subset'
+                    :gephi_data='gephi_data'
+                    @active_item_changed = 'active_item = $event'
+                    @highlight_subset_changed = 'highlight_subset = $event'
+                    @active_layer_changed = 'active_layer = $event'
+                ></SubsetPane>
+            </div>
         </div>
-    </div>
-    <div class="pane-window">
-        <PathwayPane v-show="active_tab === 'Protein'"
-            :mode = 'mode'
-            :active_node='active_node' 
-            :node_color_index='node_color_index'
-            :gephi_data='gephi_data'
-            @active_item_changed = 'active_item = $event'
-        ></PathwayPane>
-        <SubsetPane v-show="active_tab === 'Subset'"
-            :mode = 'mode'
-            :active_subset='active_subset'
-            :gephi_data='gephi_data'
-            @active_item_changed = 'active_item = $event'
-            @highlight_subset_changed = 'highlight_subset = $event'
-            @active_layer_changed = 'active_layer = $event'
-        ></SubsetPane>
-    </div>
     </div>
 </template>
 
@@ -46,11 +50,13 @@ export default {
             active_tab: "Protein",
             highlight_subset: null,
             paneHidden: true,
-            mode: "term"
+            mode: "term",
+            tool_active: false
         }
     },
     watch: {
         active_item(val){
+            if(this.active_tab != Object.keys(val)[0]) this.tool_active = false;
             this.active_tab = Object.keys(val)[0]
             if(val == null){
                 delete this.active_dict.val;

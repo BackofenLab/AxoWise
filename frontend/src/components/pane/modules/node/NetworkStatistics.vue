@@ -1,21 +1,16 @@
 <template>
     <div id="statistics">
-        <div class="pane-sorting">
-            <a class="pane_attributes" >values</a>
-            <a class="pane_values">attributes</a>
-        </div>
-
         <div class="network-results" tabindex="0" @keydown="handleKeyDown">
             <table >
                 <tbody>
                     <tr v-for="(key, entry, index) in statistics" :key="index" class="option">
                         <td>
                             <div class="statistics-attr">
-                                <a href="#">{{key}}</a>
+                                <a href="#">{{entry}}</a>
                             </div>
                         </td>
                         <td>
-                            <a class="statistics-val">{{entry}}</a>
+                            <a class="statistics-val">{{key}}</a>
                         </td>
                     </tr>
                 </tbody>
@@ -60,24 +55,8 @@ export default {
 #statistics {
     width: 100%;
     height: 100%;
-    top: 20.35%;
-    position: absolute;
     font-family: 'ABeeZee', sans-serif;
-    padding: 0% 2% 2% 2%;
-}
-
-.pane-sorting{
-    margin-top: 1%;
-    margin-left: 1.5%;
-    padding-bottom: 0.3%;
-    width: 96.5%;
-    font-size: 0.5vw;
-    border-bottom: 1px solid;
-    border-color: white;
-    cursor: default;
-}
-.pane-sorting a {
-    color: rgba(255, 255, 255, 0.7);
+    padding: 1.3vw;
 }
 
 .pane_values{
@@ -88,7 +67,7 @@ export default {
 .statistics-attr{
     display: flex;
     height: 1vw;
-    width: 92%;
+    width: 80%;
     white-space: nowrap;
     overflow: hidden;    /* Hide overflow content */
     text-overflow: ellipsis;
@@ -97,14 +76,14 @@ export default {
 
 .statistics-attr a {
     cursor: default;
-    font-size: 0.7vw;
     color: white;
     text-decoration:none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #statistics .network-results {
-    margin-top: 2%;
-    height: 58%;
     overflow: scroll;
 }
 
@@ -127,14 +106,18 @@ export default {
     width: 100%;
 }
 .network-results td:first-child {
-    width: 70%;
+    width: 50%;
+    font-size: 0.6vw;
     align-self: center;
+    white-space: nowrap;
+    overflow: hidden;    /* Hide overflow content */
+    text-overflow: ellipsis;
 }
 .network-results td:last-child {
-    font-size: 0.7vw;
+    font-size: 0.5vw;
     margin-bottom: 1%;
     color: white;
-    width:  30%;
+    width:  50%;
     align-self: center;
     white-space: nowrap;
     overflow: hidden;    /* Hide overflow content */

@@ -31,7 +31,7 @@
                           <span>{{ coloumn }}</span>
                           <img  class="remove-filter" src="@/assets/pathwaybar/cross.png" v-on:click.stop="active_categories(null)" v-if="coloumn !== 'Filter'">
                       </div>
-                      <div id="pathway-filter-categories" class="colortype" v-show="dcoloumn_filtering == true">
+                      <div id="home-filter-categories" class="colortype" v-show="dcoloumn_filtering == true">
                               <div class="element" v-for="(entry, index) in dcoloumns" :key="index" v-on:click="active_categories(entry);" :class="{ active_cat: active_categories_set.has(entry)}">
                                   <a>{{ entry }}</a>
                               </div>
@@ -130,7 +130,7 @@ export default {
   handleMouseUp(e) {
       var com = this;
 
-      var container = document.getElementById('pathway-filter-categories');
+      var container = document.getElementById('home-filter-categories');
       var container_button = document.getElementById('pathway-filter');
       if (!container.contains(e.target) && !container_button.contains(e.target)) {
           com.dcoloumn_filtering = false;
@@ -212,6 +212,25 @@ export default {
 }
 </script>
 <style>
+
+#home-filter-categories{
+  position: absolute;
+  max-height: 600%;
+  width: 100%;
+  left: 0;
+  top: 100%;
+  padding: .3% 0 .3% 0;
+  border-radius: 0 0 5px 5px;
+  -webkit-backdrop-filter: blur(7.5px);
+  backdrop-filter: blur(7.5px);
+  overflow-y: scroll;
+  overflow-x: hidden;
+  color: #fff;
+  border-color: hsla(0,0%,100%,.3);
+  border-width: 1px;
+  border-style: solid;
+  z-index: 999;
+}
 
 #coloumn-selection .filter-section{
   width: 100%;

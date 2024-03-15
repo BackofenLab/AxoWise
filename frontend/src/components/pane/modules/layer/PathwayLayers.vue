@@ -1,22 +1,23 @@
 <template>
     <div id="pathway-layer-show">
-        <div class="pane-sorting">
-            <a class="pane_values">term</a>
+        <div class="tool-section-term">
+            <div class="generate">
+                <div class="generate-text" v-on:click="call_layers()">generate layer visualization</div>
+            </div>
         </div>
-
         <div class="network-results" tabindex="0" @keydown="handleKeyDown">
             <table >
                 <tbody>
                     <tr v-for="(entry) in terms" :key="entry" class="option">
                         <td>
                             <div class="statistics-attr">
-                                <div class="color-rect" id="color_rect" @click="open_picker($event,entry);" :style="{ backgroundColor: colorpalette[entry.name] }"></div>
+                                <div class="color-rect" id="color_rect" v-on:click="open_picker($event,entry);" :style="{ backgroundColor: colorpalette[entry.name] }"></div>
                             </div>
                         </td>
                         <td>
                             <div class="statistics-hide">
-                                <img src="@/assets/pane/invisible.png" @click="hide_termlayer(entry)" v-if="hiding_terms.has(entry)">
-                                <img src="@/assets/pane/visible.png" @click="hide_termlayer(entry)" v-if="!hiding_terms.has(entry)">
+                                <img src="@/assets/pane/invisible.png" v-on:click="hide_termlayer(entry)" v-if="hiding_terms.has(entry)">
+                                <img src="@/assets/pane/visible.png" v-on:click="hide_termlayer(entry)" v-if="!hiding_terms.has(entry)">
                             </div>
                         </td>
                         <td>
@@ -45,7 +46,7 @@ import { Sketch } from '@ckpack/vue-color';
 
 export default {
     name: 'PathwayLayers',
-    props: ['active_termlayers','gephi_data','hiding_terms_changed'],
+    props: ['active_termlayers','gephi_data'],
     components: {
         Sketch
     },
@@ -53,7 +54,7 @@ export default {
         return {
             terms: null,
             colorpalette: null,
-            hiding_terms: new Set(),
+            hiding_terms: this.$store.state.hiding_pathways,
             color_picker: false,
             colors: 'rgba(0,0,0,1)',
             mouseX: 0,
@@ -70,13 +71,18 @@ export default {
                 return;
             }
 
-            this.colorpalette = this.$store.state.colorpalette
+            com.colorpalette = com.$store.state.colorpalette
             com.terms  = newList.main
+            com.hiding_terms = com.$store.state.hiding_pathways
             },
         deep: true,
         },
     },
     methods: {
+        call_layers(){
+            var com = this;
+            com.emitter.emit("visualizeLayer");
+        },
         handleColorChange(term) {
             var com = this;
 
@@ -91,7 +97,7 @@ export default {
         open_picker(event,term){
             var com = this;
 
-            
+            console.log("in")
             com.color_picker = true
             if(com.color_picker) this.dragElement(document.getElementById("pathway_color"));
             com.term = term
@@ -100,11 +106,12 @@ export default {
         },
         hide_termlayer(term){
             var com = this;
+            console.log("in2")
 
             if(com.hiding_terms.has(term)) com.hiding_terms.delete(term);
             else com.hiding_terms.add(term)
 
-            com.$emit('hiding_terms_changed',com.hiding_terms)
+            this.$store.commit('assign_hiding_pathways', com.hiding_terms)
             this.emitter.emit("hideTermLayer", {"main": com.terms, "hide": com.hiding_terms});
 
         },
@@ -160,14 +167,12 @@ export default {
 #pathway-layer-show {
     width: 100%;
     height: 100%;
-    top: 9.35%;
     position: absolute;
     font-family: 'ABeeZee', sans-serif;
     padding: 0% 2% 2% 2%;
+    z-index: 999;
 }
 #pathway-layer-show .network-results {
-    margin-top: 2%;
-    height: 82%;
     overflow: scroll;
 }
 #pathway-layer-show .color-rect {
@@ -176,7 +181,6 @@ export default {
     margin-right: 5px;
     position: relative;
     display: inline-flex;   
-    border-radius: 5px;
     border-style: solid;
     border-width: 1px;
     border-color: white;

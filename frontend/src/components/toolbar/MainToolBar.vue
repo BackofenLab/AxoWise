@@ -17,9 +17,9 @@
             <li v-on:click="center()">
                 <img src="@/assets/toolbar/expand.png" alt="Center Icon">
             </li>
-            <li v-on:click="threeview()">
+            <!-- <li v-on:click="threeview()">
                 <img src="@/assets/toolbar/3d-icon.png" alt="3D Icon">
-            </li>
+            </li> -->
         </ul>
         <MenuWindow v-show="tools_active"
         v-on:mouseover="tools_active=true"
@@ -86,22 +86,16 @@ export default {
 
 <style>
 .menu-bar {
-    position: absolute;
-    left: 3.515%;
+    position: relative;
     border-radius: 5px;
-    height: 3.98%;
-    width: 22%;
-    display: inline-flex;
-    background: #D9D9D9;
+    width: 3vw;
+    display: inline-block;
     backdrop-filter: blur(7.5px);
     -webkit-backdrop-filter: blur(7.5px);
     align-items: center;
-    padding: 0 10px;
+    padding: 5% 0;
     z-index: 99;
-}
-
-.full {
-    border-radius: 5px 5px 0 0;
+    margin: 0.5vw 0 0 0;
 }
 
 .menu-bar li {
@@ -109,7 +103,7 @@ export default {
     color:  #0A0A1A;
     font-family: sans-serif;
     font-weight: bold;
-    padding: 2%;
+    padding: 0.5vw;
     margin: 0 2%;
     position: relative;
     cursor: pointer;
@@ -123,6 +117,7 @@ export default {
 .menu-bar li img {
     max-width: none;
     width: 60%;
+    filter: invert(100%);
 }
 
 .menu-bar li::before {
@@ -143,6 +138,10 @@ export default {
 }
 .menu-bar li:hover {
 	color: black;
+}
+.menu-bar li:hover img{
+	color: black;
+    filter: none;
 }
 /* Use ::v-deep to apply styles to nested child components */
 ::v-deep .menu-bar li {

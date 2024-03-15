@@ -8,7 +8,7 @@
             <p> <span id="value"> </span></p>
         </div>
     <div id="sigma-webgl"></div>
-    <div id="sigma-canvas" :class="{'loading': threeview, 'split': heatmap }" class="sigma-parent" ref="sigmaContainer" 
+    <div id="sigma-canvas" :class="{'loading': threeview, 'split': heatmap, 'normal': !heatmap}" class="sigma-parent" ref="sigmaContainer" 
          @contextmenu.prevent="handleSigmaContextMenu" @mouseleave="sigmaFocus = false" @mouseenter="sigmaFocus = true">
       <div v-show="moduleSelectionActive === true" v-for="(circle, index) in moduleSet" :key="index">
         <div class="modules" v-if="(isMouseInside(circle.data) && !unconnectedActive(circle.modularity) && !mousedownrightCheck && !(mousedownleftCheck && mousemoveCheck) && sigmaFocus) || (showCluster && !unconnectedActive(circle.modularity))">
@@ -239,7 +239,6 @@ export default {
     active_subset(subset) {
       var com = this
       var proteins = null;
-
       
       if (subset == null) {
         com.reset();
@@ -269,7 +268,7 @@ export default {
           sourceNode.active = true
           if(targetPresent) highlighted_edges.add(edge)
         }
-        else{
+        else if (!targetPresent){
           sourceNode.color = "rgb(0,100,100)"
           sourceNode.active = false
         }
@@ -280,13 +279,13 @@ export default {
           targetNode.active = true
           if(sourcePresent) highlighted_edges.add(edge)
         }
-        else{
+        else if (!sourcePresent){
           targetNode.color = "rgb(0,100,100)"
           targetNode.active = false
         }
 
         // Edge
-        if (sourcePresent && targetPresent) {
+        if (sourcePresent || targetPresent) {
           edge.color = "rgba(255, 255, 255," + com.highlight_opacity + ")";
         } else {
           edge.color = "rgba(0, 100, 100, " + com.base_opacity + ")";
@@ -577,23 +576,23 @@ export default {
         // var selectedNodes = e.ctrlKey ? NETWORK.getSelectedNodes() : null;
         com.backup_surface();
         var rectangle = com.rectangular_select.rectangle;
-        rectangle.startX = e.pageX - com.container.offsetLeft;
-        rectangle.startY = e.pageY - com.container.offsetTop;
+        rectangle.startX = e.layerX - com.container.offsetLeft;
+        rectangle.startY = e.layerY - com.container.offsetTop;
         com.rectangular_select.active = true;
         com.container.style.cursor = "crosshair";
     }
   },
   mousemove: function(e) {
       var com = this;
-      this.mouseX = e.pageX;
-      this.mouseY = e.pageY;
+      this.mouseX = e.layerX;
+      this.mouseY = e.layerY;
       if(com.mousedownleftCheck || com.mousedownrightCheck) com.mousemoveCheck = true
       if (com.rectangular_select.active) {
           var context = com.rectangular_select.context;
           var rectangle = com.rectangular_select.rectangle;
           com.restore_surface();
-          rectangle.w = (e.pageX - com.container.offsetLeft) - rectangle.startX;
-          rectangle.h = (e.pageY - com.container.offsetTop) - rectangle.startY ;
+          rectangle.w = (e.layerX - com.container.offsetLeft) - rectangle.startX;
+          rectangle.h = (e.layerY - com.container.offsetTop) - rectangle.startY ;
           var rectBounds = com.container.getBoundingClientRect();
           context.setLineDash([5]);
           context.strokeStyle = "rgb(82,182,229)";
@@ -789,9 +788,6 @@ export default {
   async two_view(){
     var com = this;
 
-    var twoGraphmod = document.getElementById('sigma-canvas')
-    twoGraphmod.style.display = "none"
-
     if(com.threeview){
       var threeGraphmod = document.getElementById('sigma-webgl')
       threeGraphmod.style.display = "none"; 
@@ -802,8 +798,6 @@ export default {
     if(com.heatmap) com.heatmap = false
     
     await this.wait(1);
-
-    document.getElementById('sigma-canvas').style.display = "flex"
 
     this.reset()
 
@@ -817,8 +811,6 @@ export default {
     
     com.heatmap = true
     await this.wait(1);
-
-    document.getElementById('sigma-canvas').style.display = "flex"
 
     this.reset()
 
@@ -978,7 +970,7 @@ export default {
       type: "canvas",
       camera: camera,
       settings: {
-        defaultLabelColor: "#FFF",
+        defaultLabelColor: "#FFFF",
         hideEdgesOnMove: true,
         minNodeSize: 1,
         maxNodeSize: 20,
@@ -1053,7 +1045,6 @@ export default {
     });
 
     this.emitter.on("highlightProteinList", (state) => {
-      console.log(state)
       if(state.mode=="protein") this.$emit('subactive_subset_changed', state.subset)
     });
 
@@ -1125,11 +1116,6 @@ export default {
 
 <style>
 
-.visualization {
-  display: flex;
-  width: 100%;
-
-}
 #sigma-webgl{
 position: absolute;
 display: none;
@@ -1141,6 +1127,9 @@ height: 0;
 #sigma-canvas {
 
   position: absolute;
+  height: 100%;
+  width: 75%;
+  left: 25%;
   box-sizing: border-box;
   overflow: hidden;
   backdrop-filter: blur(10px);
@@ -1163,17 +1152,10 @@ backdrop-filter: blur(10px);
 }
 
 #sigma-canvas.split {
-border-style: solid;
-border-color: white;
-border-width: 0.5px;
-top: 8%;
-left: 50%;
-width: 50%;
-height: 90%;
-position: absolute;
-background-color: #0A0A1A;
-backdrop-filter: blur(10px);
--webkit-backdrop-filter: blur(10px);
+display: none;
+}
+#sigma-canvas.normal {
+display: flex;
 }
 
 #threeview {

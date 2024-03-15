@@ -1,20 +1,35 @@
 <template>
     <div class="text" v-show="active_subset !== null">
-        <div id="colorbar-subset">
-            <div class='colorbar-text' v-if="active_subset !== null">
-               No° nodes: {{number_prot}}
-            </div>
-            <div class='colorbar-img colortype' v-on:click="show_layer()">
+        <div class="gene_attribute" v-if="active_subset !== null">
+            <div id="colorbar" :style="{ backgroundColor: '#0A0A1A' }"></div>
+            <div class="gene_attr" >Nodes:{{number_prot}}</div>
+            <div class="gene_attr" >Edges:{{number_asc}}</div>
+            <div class='colorbar-img' v-on:click="show_layer()">
                 <img src="@/assets/pane/invisible.png" v-if="!hide">
                 <img src="@/assets/pane/visible.png" v-if="hide">
             </div>
         </div>
-        <div class="nodeattributes">
-            <div id="subset-connections" class="subsection">
+        <div :class="{'tool-section': !tool_active, 'tool-section-active': tool_active }">
+            <div id="informations" class="subsection" v-show="tool_active && active_section == 'information'">
                 <div class="subsection-header">
-                    <span>contained proteins</span>
+                    <span>informations</span>
+                </div>
+                <div class="subsection-main colortype">
+                </div>
+            </div>
+            <!-- <div id="network" class="subsection" v-show="tool_active && active_section == 'statistics'">
+                <div class="subsection-header">
+                </div>
+                <div class="subsection-main colortype">
+                    <SubsetLinks
+                    :contained_edges='contained_edges' 
+                    ></SubsetLinks>
+                </div>
+            </div> -->
+            <div id="connections" class="subsection" v-show="tool_active && active_section == 'connections'">
+                <div class="subsection-header">
+                    <span>connections</span>
                     <img src="@/assets/pane/copy.png" v-on:click="copyclipboard()">
-                    <!-- <img id="subset" src="@/assets/toolbar/expand.png" v-on:click="select_subset(subset)"> -->
                 </div>
                 <div class="subsection-main colortype">
                     <SubsetConnections
@@ -22,34 +37,32 @@
                     ></SubsetConnections>
                 </div>
             </div>
-            <div id="network" class="subsection">
-                <div class="subsection-header">
-                    <span>contained edges ({{number_asc}})</span>
-                </div>
-                <div class="subsection-main colortype">
-                    <SubsetLinks
-                    :contained_edges='contained_edges' 
-                    ></SubsetLinks>
-                </div>
-            </div>
+        </div>
+        <div class="nodeattributes">
+            <img  class="icons" src="@/assets/toolbar/menu-burger.png" v-on:click="change_section( 'information')">
+            <!-- <img  class="icons" src="@/assets/toolbar/settings-sliders.png" v-on:click="change_section('statistics')"> -->
+            <img  class="icons" src="@/assets/toolbar/proteinselect.png" v-on:click="change_section('connections')">
+            <!-- <img  class="icons" src="@/assets/toolbar/logout.png" v-on:click="change_section(!tool_active,'routing')"> -->
+
         </div>
     </div>
 </template>
 
 <script>
 import SubsetConnections from '@/components/pane/modules/subset/SubsetConnections.vue'
-import SubsetLinks from '@/components/pane/modules/subset/SubsetLinks.vue'
+// import SubsetLinks from '@/components/pane/modules/subset/SubsetLinks.vue'
 
 export default {
     name: 'SubsetPane',
-    props: ['active_subset','gephi_data', 'mode'],
-    emits: ['active_item_changed', 'highlight_subset_changed'],
+    props: ['active_subset','gephi_data', 'mode','tool_active'],
+    emits: ['active_item_changed', 'highlight_subset_changed','tool_active_changed'],
     components: {
         SubsetConnections,
-        SubsetLinks
+        // SubsetLinks
     },
     data() {
         return {
+            active_section: '',
             subset: null,
             hide: true,
             expand_proteins: false,
@@ -109,9 +122,28 @@ export default {
 
             com.$emit('active_item_changed',{ "Subset": com.subset_item })
             
-        }
+        },
     },
     methods: {
+        change_section(val){
+            var com = this;
+
+            if(com.tool_active && com.active_section == val) {
+                com.active_section = ''
+                com.$emit('tool_active_changed', false)
+            }else
+            {
+                if(!com.tool_active) {
+                    com.active_section = val
+                    com.$emit('tool_active_changed',true)
+                }
+                
+                if(com.tool_active && com.active_section != val) {
+                    com.active_section = val
+                    com.$emit('tool_active_changed', true)
+                }
+            } 
+        },
         copyclipboard(){
             var com = this;
 
@@ -167,6 +199,16 @@ export default {
 
     #subset {
        right:-10%;
+    }
+
+    .colorbar-img{
+        position: absolute;
+        display: flex;
+        width: 0.9vw;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        right: 3%;
     }
 
 </style>

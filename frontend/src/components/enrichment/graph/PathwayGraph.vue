@@ -1,11 +1,12 @@
 <template>
     <div class="slider" tabindex="0">
+        <span v-if="term_graphs.size == 0">There is no generated pathway graph.</span>
         <div v-for="(entry, index) in filt_graphs" :key="index" class="graph" v-on:click="switch_graph(entry)" @mouseover="activeGraphIndex = index" @mouseout="activeGraphIndex = -1">
             <SnapshotGraph :propValue="entry" :index="entry.id"/>
             <div class="graph-options" >
                 <div class="bookmark-graph"  v-show="activeGraphIndex == index"  v-on:click.stop="add_graph(entry)" :class="{ checked: favourite_graphs.has(entry.id)}" ref="checkboxStatesGraph"></div>
                 <img  class="remove-graph" v-show="activeGraphIndex == index" src="@/assets/pathwaybar/cross.png" v-on:click.stop="remove_graph(entry)">
-                <div class="graph-name colortype">
+                <div class="graph-name">
                     <input type="text" v-model="entry.label" class="empty" @click.stop />
                 </div>
             </div>
@@ -28,7 +29,8 @@ export default {
             api: {
                 termgraph: "api/subgraph/terms",
             },
-            term_graphs: new Set(),
+            term_graphs: [],
+            term_graphs_array: [],
             favourite_graphs: new Set(),
             activeGraphIndex: -1,
             graph_number: -1,
@@ -41,8 +43,21 @@ export default {
                 this.get_term_data(set)
             });
         }
+        this.term_graphs_array = this.$store.state.term_graph_dict
+        if(this.term_graphs_array.length != 0) {
+            this.graph_number = Math.max.apply(Math, this.term_graphs_array.map(item => item.id))
+            this.term_graphs = new Set(this.term_graphs_array)
+        }
+        else{
+            this.term_graphs = new Set()
+        }
+        
+    },
+    beforeUnmount () {
+        this.emitter.off('generateGraph')
     },
     activated(){
+        console.log("activated")
             this.term_graphs = new Set(this.$store.state.term_graph_dict)
             this.favourite_graphs = this.$store.state.favourite_graph_dict
     },
@@ -116,50 +131,12 @@ export default {
 
 
 <style>
-    #pathways-graphs {
-        width: 50.92%;
-        height: 96.92%;
-        position: absolute;
-        top:50%;
-        transform: translateY(-50%);
-        margin-left: 48.74%;
-        border-radius: 5px;
-        z-index: 999;
-        font-family: 'ABeeZee', sans-serif;
-    }
-    .generate-graph {
-        width: 24.20%;
-        height: 11.16%;
-        position: absolute;
-        border-radius: 5px;
-        cursor: default;
-    }
-    .generate-graph .generate-text {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 0.95vw;
-    }
-
-    .graph-section {
-        width: 100%;
-        height: 87.65%;
-        top: 12.35%;
-        display: flex;
-        border-radius: 5px;
-        position: absolute;
-        justify-content: center;
-    }
 
     .graph-section .slider {
         position: absolute;
         width: 100%;
-        height: 100%;
         display: flex;
-        padding: 1%;
+        padding: 0 1vw 0 1vw;
         flex-wrap: wrap;
         overflow-y: scroll;
         scroll-behavior: smooth;
@@ -180,15 +157,17 @@ export default {
 
     .graph-section .slider .graph{
         position: relative;
-        width: 20%;
-        height: 50%;
+        width: 33%;
+        height: 7.5vw;
         flex-shrink: 0;
-        border: 1px solid #FFF;
-        background: rgba(217, 217, 217, 0.12);
         transform-origin: center center;
         transform: scale(1);
         scroll-snap-align: center;
         display: flex;
+    }
+
+    .graph-section .slider .graph:hover{
+        background: rgba(217, 217, 217, 0.12);
     }
 
     .bookmark-graph {
@@ -225,7 +204,7 @@ export default {
         bottom: 5%;
         width: 100%;
         height: 20%;
-        border-radius: 0 0 5px 5px;
+        -webkit-backdrop-filter: blur(7.5px);
         text-align-last: center;
         justify-content: center;
     }
@@ -241,6 +220,14 @@ export default {
 
     .checked {
         background-color: #ffa500;
+    }
+
+    .slider span {
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        color: white;
+        font-size: 0.7vw;
     }
 
 </style>

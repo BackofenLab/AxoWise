@@ -1,8 +1,13 @@
 <template>
     <div class="text" v-show="active_node !== null">
-        <div id="colorbar" v-if="active_node !== null" :style="{ backgroundColor: colornode }">{{active_node.attributes['Name']}}</div>
-        <div class="nodeattributes">
-            <div id="informations" class="subsection">
+        <div class="gene_attribute" v-if="active_node !== null">
+            <div id="colorbar" :style="{ backgroundColor: colornode }"></div>
+            <div class="gene" >{{active_node.attributes['Name']}};</div>
+            <div class="gene_attr" > deg:{{active_node.attributes['Degree']}};</div>
+            <div class="gene_attr" > pr:{{Math.abs(Math.log10(active_node.attributes["PageRank"])).toFixed(2)}}</div>
+        </div>
+        <div :class="{'tool-section': !tool_active, 'tool-section-active': tool_active }">
+            <div id="informations" class="subsection" v-show="tool_active && active_section == 'information'">
                 <div class="subsection-header">
                     <span>informations</span>
                 </div>
@@ -12,7 +17,7 @@
                     ></ChatbotInformation>
                 </div>
             </div>
-            <div id="network" class="subsection">
+            <div id="network" class="subsection" v-show="tool_active && active_section == 'statistics'">
                 <div class="subsection-header">
                     <span>network statistics</span>
                 </div>
@@ -23,7 +28,7 @@
                     ></NetworkStatistics>
                 </div>
             </div>
-            <div id="connections" class="subsection">
+            <div id="connections" class="subsection" v-show="tool_active && active_section == 'connections'">
                 <div class="subsection-header">
                     <span>connections</span>
                     <img src="@/assets/pane/copy.png" v-on:click="copyclipboard()">
@@ -35,7 +40,7 @@
                     ></NodeConnections>
                 </div>
             </div>
-            <div id="routing" class="subsection">
+            <div id="routing" class="subsection" v-show="tool_active && active_section == 'routing'">
                 <div class="subsection-header">
                     <span>routing</span>
                 </div>
@@ -46,6 +51,13 @@
                     ></RoutingNode>
                 </div>
             </div>
+        </div>
+        <div class="nodeattributes">
+            <img  class="icons" src="@/assets/toolbar/menu-burger.png" v-on:click="change_section( 'information')">
+            <img  class="icons" src="@/assets/toolbar/settings-sliders.png" v-on:click="change_section('statistics')">
+            <img  class="icons" src="@/assets/toolbar/proteinselect.png" v-on:click="change_section('connections')">
+            <img  class="icons" src="@/assets/toolbar/logout.png" v-on:click="change_section('routing')">
+
         </div>
     </div>
 </template>
@@ -58,8 +70,8 @@ import RoutingNode from '@/components/pane/modules/node/RoutingNode.vue'
 
 export default {
     name: 'NodePane',
-    props: ['active_node','gephi_data','node_color_index','mode'],
-    emits: ['active_item_changed'],
+    props: ['active_node','gephi_data','node_color_index','mode','tool_active'],
+    emits: ['active_item_changed','tool_active_changed'],
     components: {
         NetworkStatistics,
         ChatbotInformation,
@@ -69,6 +81,8 @@ export default {
     },
     data() {
         return {
+            active: true,
+            active_section: '',
             links: null,
             colornode: null,
             expand_neighbor: false,
@@ -111,6 +125,25 @@ export default {
         }
     },
     methods: {
+        change_section(val){
+            var com = this;
+
+            if(com.tool_active && com.active_section == val) {
+                com.active_section = ''
+                com.$emit('tool_active_changed', false)
+            }else
+            {
+                if(!com.tool_active) {
+                    com.active_section = val
+                    com.$emit('tool_active_changed',true)
+                }
+                
+                if(com.tool_active && com.active_section != val) {
+                    com.active_section = val
+                    com.$emit('tool_active_changed', true)
+                }
+            } 
+        },
         copyclipboard(){
             var com = this;
 
@@ -128,31 +161,53 @@ export default {
 
 <style>
 
-    .pane-show {
-        transform: translateX(326px);
+    .text {
+        height: 100%;
     }
+
+    .gene_attribute{
+        display: flex;
+        font-family: 'ABeeZee', sans-serif;
+        align-items: center;
+        color:  #0A0A1A;
+        padding: 0 0.5vw 0 0.5vw;
+    }
+    .tool-section{
+        height: 0vw;
+    }
+
+    .tool-section-active{
+        height: 10vw;
+    }
+
     #colorbar {
         position: relative;
         display: flex;
-        border-radius: 5px;
-        margin-top: 5%;
-        width: 50%;
-        color: white;
-        align-items: center;
-        justify-content: center;
-        transform: translate(50%);
-        font-family: 'ABeeZee', sans-serif;
-        font-size: 0.9vw;
-        padding: 1%;
+        border-radius: 100%;
+        width: 0.5vw;
+        height: 0.5vw;
     }
+    .gene{
+        margin-left: 0.3vw;
+        font-size: 0.9vw;
+    }
+    .gene_attr{
+        font-size: 0.8vw;
+        margin-left: 0.3vw;
+    }
+
     .nodeattributes{
         position: absolute;
         display: flex;
-        flex-direction: column;
         width: 100%;
-        height: 100%;
-        margin-top: 10%;
+        height: 2vw;
         align-items: center;
+        justify-content: center;
+    }
+    .nodeattributes .icons{
+    width: 0.8vw;
+    height: 0.8vw;
+    margin: 0 0.5vw 0 0.5vw;
     }
     .nodeattributes .subsection {
         margin-bottom: 4%;
@@ -162,17 +217,16 @@ export default {
 
     .subsection .subsection-header {
         position: absolute;
-        height: 1vw;
         width: 100%;
-        background-color: rgba(255, 255, 255, 0.4);
-        border-radius: 5px 5px 0 0;
         display: flex;
         justify-content: left;
         align-items: center;
         font-family: 'ABeeZee', sans-serif;
         font-size: 0.7vw;
-        padding-left: 3%;
+        padding: 0.2vw 0 0 0.5vw;
+        color: rgba(255,255,255,0.5);
         z-index: 999;
+        background-color: #0A0A1A;
     }
 
     .subsection .subsection-header img{
@@ -181,33 +235,21 @@ export default {
         right: -15%;
         display: -webkit-flex;
         padding: 1%;
-        border-radius: 0 5px 5px 0;
         padding: 5% 23% 5% 23%;
         filter: invert(100%);
 
     }
 
     .subsection .subsection-main {
-        position: absolute;
         height: 100%;
         width: 100%;
-        border-radius: 5px;
     }
 
-    #informations {
-        height: 25.78%;
-    }
-
-    #routing {
-        height: 20%;
-    }
-
-    #network {
-        height: 16%;
-    }
-
+    #informations,
+    #routing,
+    #network,
     #connections {
-        height: 18%;
+        height: 100%;
     }
 
 

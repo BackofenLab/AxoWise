@@ -20,30 +20,24 @@ export default {
             this.protein_information = this.active_node.attributes['Description']
         },
     },
-    methods:{
-
-    }
 }
 </script>
 
 <style>
 
 #chatbot {
+    color: white;
     font-family: 'ABeeZee', sans-serif;
     font-size: 0.7vw;
     width: 100%;
     height: 100%;
-    position: absolute;
-    padding: 0% 2% 2% 2%;
+    padding: 1.3vw 1.3vw 0 1.3vw;
 }
 
 #chatbot .text {
     width: 100%;
-    top: 16%;
-    height: 80%;
+    height: 100%;
     overflow-y: scroll;
-    position: absolute;
-    padding: 0 5% 0 2%;
 }
 
 .text::-webkit-scrollbar {
@@ -56,5 +50,4 @@ export default {
     font-size: 0.6vw;
 
 }
-
 </style>

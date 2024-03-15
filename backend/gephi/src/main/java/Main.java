@@ -277,8 +277,8 @@ public class Main {
         Function degreeRanking = appearanceModel.getNodeFunction(degreeColumn,
                 RankingNodeSizeTransformer.class);
         RankingNodeSizeTransformer degreeTransformer = degreeRanking.getTransformer();
-        degreeTransformer.setMinSize(5);
-        degreeTransformer.setMaxSize(80);
+        // degreeTransformer.setMinSize(100);
+        // degreeTransformer.setMaxSize(1000000);
         appearanceController.transform(degreeRanking);
 
     }

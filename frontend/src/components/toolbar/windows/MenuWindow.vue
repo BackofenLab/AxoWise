@@ -23,12 +23,6 @@
                 :mode = 'mode'
                 ></NodeLabelSelect>
             </div>
-            <div v-if="mode=='protein'">
-                <div class="window-label">visualize de-value</div>
-                <div class="menu-items">
-                    <DEValue></DEValue>
-                </div>
-            </div>
             <div v-if="mode=='term'">
                 <div class="window-label">visualize fdr-rate</div>
                 <div class="menu-items">
@@ -59,7 +53,6 @@
 import ExportProteins from '@/components/toolbar/modules/ExportProteins.vue'
 import ExportEdges from '@/components/toolbar/modules/ExportEdges.vue'
 import ExportScreen from '@/components/toolbar/modules/ExportScreen.vue'
-import DEValue from '@/components/toolbar/modules/DEValue.vue'
 import FDRValue from '@/components/toolbar/modules/FDRValue.vue'
 import ExportGraph from '@/components/toolbar/modules/ExportGraph.vue'
 import NodeLabelSelect from '@/components/toolbar/modules/NodeLabelSelect.vue'
@@ -75,7 +68,6 @@ export default {
     emits:['tools_active_changed'],
     components: {
         ExportScreen,
-        DEValue,
         ExportGraph,
         EdgeOpacity,
         NodeLabelSelect,
@@ -99,13 +91,12 @@ export default {
 
 .menu-window {
     position: absolute;
-    left: 3.515%;
     height: fit-content;
     width: 22%;
-    top: 4.98%;
+    top: 5vw;
     padding: 0.3% 0 0.3% 0;
-    border-radius: 0 0 5px 5px;
-    background: rgba(222, 222, 222, 0.61);
+    border-radius: 5px;
+    background:grey;
 	overflow-y: scroll;
 	overflow-x: hidden;
 	color: white;
@@ -114,6 +105,7 @@ export default {
     border-top-style: solid;
     cursor: default;
     z-index: 1;
+    margin-left: 3vw;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */

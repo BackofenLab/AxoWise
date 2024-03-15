@@ -1,36 +1,20 @@
 <template>
     <div id="pathways-graphs">
-        <div id="pathway-tools-filter" class="colortype" v-on:click="handling_filter_menu()" >
-            <span>{{ tool }}</span>
-        </div>
-        <div id="pathway-tools-filter-categories" class="colortype" v-show="tool_selecting== true">
-            <div class="element" v-for="(entry, index) in tools" :key="index" v-on:click="tool = entry.id; handling_filter_menu()">
-                <a>{{ entry.id }}</a>
+        <div class="tool-section-term">
+            <div class="generate" v-show="tool == 'Termgraph'">
+                <div class="generate-text" v-on:click="get_term_graph()">generate graph</div>
+            </div>
+            <div class="generate" :class="{recolor_filter: bookmark_off == false}" v-on:click="bookmark_off = !bookmark_off">
+                <div class="generate-text" >bookmarks</div>
             </div>
         </div>
-        <div class="generate colortype" v-show="tool == 'Termgraph'">
-            <div class="generate-text" v-on:click="get_term_graph()">Generate term graph</div>
-        </div>
-        <div class="generate colortype" v-show="tool == 'Heatmap'">
-            <div class="generate-text" v-on:click="get_heatmap()">Generate heatmap</div>
-        </div>
-        <div class="bookmark-button-graph colortype" v-on:click="bookmark_off = !bookmark_off">
-            <img class="bookmark-image" src="@/assets/pathwaybar/favorite.png" :class="{recolor_filter: bookmark_off == false}">
-        </div>
-        <div class="export-heatmap colortype" v-show="tool == 'Heatmap'">
-            <div class="generate-text" v-on:click="get_svg()">Export Snapshot</div>
-        </div>
-        <div class="graph-section colortype">
+        <div class="graph-section">
             <PathwayGraph v-show="tool == 'Termgraph'"
             :mode = 'mode'
             :gephi_data='gephi_data'
             :filtered_terms = 'filtered_terms'
             :bookmark_off = 'bookmark_off'
             ></PathwayGraph>
-            <PathwayHeatmap v-show="tool == 'Heatmap'"
-            :bookmark_off = 'bookmark_off'
-            :favourite_pathways = 'favourite_pathways'
-            ></PathwayHeatmap>
         </div>
     </div>
 </template>
@@ -38,14 +22,12 @@
 <script>
 
 import PathwayGraph from '@/components/enrichment/graph/PathwayGraph.vue'
-import PathwayHeatmap from '@/components/enrichment/heatmap/PathwayHeatmap.vue'
 
 export default {
     name: 'PathwayTools',
     props: ['gephi_data','filtered_terms', 'favourite_pathways'],
     components: {
         PathwayGraph,
-        PathwayHeatmap
     },
     data() {
         return {
@@ -61,38 +43,7 @@ export default {
         get_term_graph(){
             this.emitter.emit("generateGraph");
         },
-        get_heatmap(){
-            this.emitter.emit("generateHeatmap");
-        },
-        get_svg(){
-            this.emitter.emit("exportHeatmap");
-        },
-        handling_filter_menu() {
-            var com = this;
-            if (!com.tool_selecting) {
-                com.tool_selecting = true;
 
-                // Add the event listener
-                document.addEventListener('mouseup', com.handleMouseUp);
-            }
-            else{
-                com.tool_selecting = false;
-                document.removeEventListener('mouseup', com.handleMouseUp);
-            }
-
-        },
-        handleMouseUp(e) {
-            var com = this;
-
-            var container = document.getElementById('pathway-tools-filter-categories');
-            var container_button = document.getElementById('pathway-tools-filter');
-            if (!container.contains(e.target) && !container_button.contains(e.target)) {
-                com.tool_selecting = false;
-
-                // Remove the event listener
-                document.removeEventListener('mouseup', com.handleMouseUp);
-            }
-        }
     },
 }
 </script>
@@ -100,23 +51,15 @@ export default {
 
 <style>
     #pathways-graphs {
-        width: 50.92%;
-        height: 96.92%;
-        position: absolute;
-        top:50%;
-        transform: translateY(-50%);
-        margin-left: 48.74%;
-        border-radius: 10px;
+        width: 100%;
+        height: 100%;
         z-index: 999;
         font-family: 'ABeeZee', sans-serif;
     }
     .generate {
-        width: 24.20%;
-        height: 11.16%;
-        left: 18.51%;
-        position: absolute;
-        border-radius: 5px;
+        width: 50%;
         cursor: default;
+        background: #D9D9D9;
     }
     .generate .generate-text {
         width: 100%;
@@ -124,16 +67,12 @@ export default {
         display: flex;
         align-items: center;
         justify-content: center;
-        color: white;
-        font-size: 0.95vw;
+        color: #0A0A1A;
+        font-size: 0.7vw;
     }
 
     .export-heatmap {
-        width: 24.20%;
-        height: 11.16%;
-        left: 48.92%;
         position: absolute;
-        border-radius: 5px;
         cursor: default;
     }
 
@@ -148,11 +87,8 @@ export default {
     }
 
     .bookmark-button-graph {
-        width: 4.81%;
-        height: 11.16%;
-        left: 43.41%;
-        position: absolute;
-        border-radius: 5px;
+        background: #D9D9D9;
+        width: 2.5vw;
         align-content: center;
         justify-content: center;
     }
@@ -208,6 +144,15 @@ export default {
     }
     #pathway-tools-filter-categories .element:hover {
         background: rgba(217, 217, 217, 0.47);
+    }
+
+    .tool-section-term {
+        display: inline-flex;
+        margin: 1vw 0 1vw 0;
+        height: 1vw;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
     }
 
 </style>

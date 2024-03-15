@@ -1,26 +1,28 @@
 <template>
     <div id="menu-tools" :class="{ 'pathwaybar-small': pane_hidden === true, 'pathways': pane_hidden === false }">
-        <div id="menu-tools_header">
-            <img src="@/assets/pathwaybar/fullscreen.png" v-on:click="pane_hidden = !pane_hidden">
-        </div>
         <div class="pathwaybar">
-            <PathwayList
+            <PathwayList v-if="sorted=='bottom'" v-show="active_function === 'list'"
             :gephi_data='gephi_data'
             :terms='terms'
             :await_load = 'await_load'
+            :favourite_pathways = 'favourite_pathways'
             @favourite_pathways_changed = 'favourite_pathways = $event'
             @filtered_terms_changed = 'filtered_terms = $event'
             ></PathwayList>
-            <PathwaySet v-show="pane_hidden === false"
+            <PathwaySet v-if="active_function === 'set'"
             :gephi_data='gephi_data'
             :api='api'
             ></PathwaySet>
-            <PathwayTools v-show="pane_hidden === false"
+            <PathwayTools v-if="active_function === 'graph'"
             :gephi_data='gephi_data'
             :filtered_terms='filtered_terms'
             :favourite_pathways='favourite_pathways'
             ></PathwayTools>
-            <img v-show="pane_hidden === false" id="pathway-bg" src="@/assets/pathwaybar/background-dna.png">
+            <HeatmapTool v-if="active_function === 'heatmap'"
+            :gephi_data='gephi_data'
+            :filtered_terms='filtered_terms'
+            :favourite_pathways='favourite_pathways'
+            ></HeatmapTool>
         </div>
     </div>
 </template>
@@ -28,15 +30,17 @@
 <script>
 import PathwayList from '@/components/enrichment/PathwayList.vue'
 import PathwayTools from '@/components/enrichment/PathwayTools.vue'
+import HeatmapTool from '@/components/enrichment/HeatmapTool.vue'
 import PathwaySet from '@/components/enrichment/PathwaySet.vue'
 
 export default {
     name: 'PathwayMenu',
-    props: ['gephi_data','active_term'],
+    props: ['gephi_data','active_term','active_function','sorted'],
     components: {
         PathwayList,
         PathwayTools,
         PathwaySet,
+        HeatmapTool
     },
     data() {
         return {
@@ -44,9 +48,9 @@ export default {
                 subgraph: "api/subgraph/enrichment",
             },
             terms: null,
+            terms_list: [],
             pane_hidden: false,
             await_load: false,
-            terms_list: [],
             favourite_pathways: [],
             filtered_terms: []
         }
@@ -162,13 +166,9 @@ export default {
 <style>
     .pathways {
         z-index: 999;
-        position: fixed;
-        width: 92.97%;
-        height: 27.2%;
-        top: 70.7%;
-        left: 50%;
-        transform: translateX(-50%);
-        transition: transform 330ms ease-in-out;
+        position: absolute;
+        width: 100%;
+        height: 95%;
     }
     #menu-tools_header {
         width: 100%;
@@ -192,13 +192,9 @@ export default {
     }
     .pathwaybar {
         width: 100%;
-        height: 90.59%;
+        height: 100%;
         position: absolute;
-        top: 9.41%;
         flex-shrink: 0;
-        border-radius: 0px 0px 5px 5px;
-        background: rgba(222, 222, 222, 0.61);
-        backdrop-filter: blur(7.5px);
     }
     .pathwaybar-small{
         z-index: 999;

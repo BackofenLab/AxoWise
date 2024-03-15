@@ -1,22 +1,21 @@
 <template>
     <div class="text" v-show="active_node !== null">
-        <div id="colorbar-pathway">
-            <div class='colorbar-text' :style="{ backgroundColor: colornode }" v-if="active_node !== null">
-                {{active_node.attributes["Name"]}}
-            </div>
-            <div class='colorbar-img colortype' v-on:click="to_proteins()">
+        <div class="path_attribute" v-if="active_node !== null">
+            <div id="colorbar" :style="{ backgroundColor: colornode }"></div>
+            <div class="term" >{{active_node.attributes['Name']}};</div>
+            <div class='colorbar-img' v-on:click="to_proteins()">
                 <img src="@/assets/pane/follow.png">
             </div>
         </div>
-        <div class="nodeattributes">
-            <div id="informations" class="subsection">
+        <div :class="{'tool-section': !tool_active, 'tool-section-active': tool_active }">
+            <div id="informations" class="subsection" v-show="tool_active && active_section == 'information'">
                 <div class="subsection-header">
                     <span>informations</span>
                 </div>
                 <div class="subsection-main colortype">
                 </div>
             </div>
-            <div id="network" class="subsection">
+            <div id="network" class="subsection" v-show="tool_active && active_section == 'statistics'">
                 <div class="subsection-header">
                     <span>network statistics</span>
                 </div>
@@ -27,7 +26,7 @@
                     ></NetworkStatistics>
                 </div>
             </div>
-            <div id="connections" class="subsection">
+            <div id="connections" class="subsection" v-show="tool_active && active_section == 'connections'">
                 <div class="subsection-header">
                     <span>connections</span>
                     <img src="@/assets/pane/copy.png" v-on:click="copyclipboard()">
@@ -40,6 +39,11 @@
                 </div>
             </div>
         </div>
+        <div class="nodeattributes">
+            <img  class="icons" src="@/assets/toolbar/menu-burger.png" v-on:click="change_section('information')">
+            <img  class="icons" src="@/assets/toolbar/settings-sliders.png" v-on:click="change_section('statistics')">
+            <img  class="icons" src="@/assets/toolbar/proteinselect.png" v-on:click="change_section('connections')">
+        </div>
     </div>
 </template>
 
@@ -49,8 +53,8 @@ import NodeConnections from '@/components/pane/modules/node/NodeConnections.vue'
 
 export default {
     name: 'PathwayPane',
-    props: ['active_node','gephi_data','node_color_index','mode'],
-    emits: ['active_item_changed'],
+    props: ['active_node','gephi_data','node_color_index','mode','tool_active'],
+    emits: ['active_item_changed','tool_active_changed'],
     components: {
         NetworkStatistics,
         NodeConnections,
@@ -59,6 +63,7 @@ export default {
     data() {
         return {
             links: null,
+            active_section: '',
             colornode: null,
             node_item: {
                 value: null,
@@ -98,6 +103,25 @@ export default {
         }
     },
     methods: {
+        change_section(val){
+            var com = this;
+
+            if(com.tool_active && com.active_section == val) {
+                com.active_section = ''
+                com.$emit('tool_active_changed', false)
+            }else
+            {
+                if(!com.tool_active) {
+                    com.active_section = val
+                    com.$emit('tool_active_changed',true)
+                }
+                
+                if(com.tool_active && com.active_section != val) {
+                    com.active_section = val
+                    com.$emit('tool_active_changed', true)
+                }
+            } 
+        },
         copyclipboard(){
             var com = this;
 

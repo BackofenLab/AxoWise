@@ -1,46 +1,57 @@
 <template>
     <div v-show="active_node !== null || active_subset !== null || active_term !== null || active_decoloumn !== null || active_termlayers !== null ||paneHidden == false">
-    <div id="attributepane" class="pane">
-        <div class="headertext">
+    <div class="pane" id="pane" :class="{'active': tool_active}">
+        <div class="pane_header"  id="pane_header">
             <span>{{active_tab}}</span>
-            <img  class="pane_close" src="@/assets/pathwaybar/cross.png" v-on:click="close_pane()">
+            <img  class="pane_close" src="@/assets/toolbar/cross.png" v-on:click="close_pane()">
         </div>
-    </div>
     <div class="pane-window">
         <NodePane v-show="active_tab === 'Protein'"
             :mode = 'mode'
+            :tool_active = 'tool_active'
+            @tool_active_changed = 'tool_active = $event'
             :active_node='active_node' 
             :node_color_index='node_color_index'
             :gephi_data='gephi_data'
             @active_item_changed = 'active_item = $event'
         ></NodePane>
-        <TermPane v-show="active_tab === 'Pathway'"
-            :mode = 'mode'
-            :active_term='active_term' 
-            :gephi_data='gephi_data'
-            @active_item_changed = 'active_item = $event'
-            @highlight_subset_changed = 'highlight_subset = $event'
-        ></TermPane>
         <SubsetPane v-show="active_tab === 'Subset'"
             :mode = 'mode'
+            :tool_active = 'tool_active'
+            @tool_active_changed = 'tool_active = $event'
             :active_subset='active_subset'
             :gephi_data='gephi_data'
             @active_item_changed = 'active_item = $event'
             @highlight_subset_changed = 'highlight_subset = $event'
             @active_layer_changed = 'active_layer = $event'
         ></SubsetPane>
+        <TermPane v-show="active_tab === 'Pathway'"
+            :mode = 'mode'
+            :tool_active = 'tool_active'
+            @tool_active_changed = 'tool_active = $event'
+            :active_term='active_term' 
+            :gephi_data='gephi_data'
+            @active_item_changed = 'active_item = $event'
+            @highlight_subset_changed = 'highlight_subset = $event'
+        ></TermPane>
         <DEValuePane v-show="active_tab === 'Differential expression'"
             :mode = 'mode'
+            :tool_active = 'tool_active'
+            @tool_active_changed = 'tool_active = $event'
             :active_decoloumn='active_decoloumn'
             :gephi_data='gephi_data'
             @active_item_changed = 'active_item = $event'
         ></DEValuePane>
+
         <EnrichmentLayerPane v-show="active_tab === 'Pathway layers'"
             :mode = 'mode'
+            :tool_active = 'tool_active'
+            @tool_active_changed = 'tool_active = $event'
             :active_termlayers='active_termlayers'
             :gephi_data='gephi_data'
             @active_item_changed = 'active_item = $event'
         ></EnrichmentLayerPane>
+    </div>
     </div>
     </div>
 </template>
@@ -48,8 +59,8 @@
 <script>
 
 import NodePane from '@/components/pane/modules/node/NodePane.vue'
-import TermPane from '@/components/pane/modules/pathways/TermPane.vue'
 import SubsetPane from '@/components/pane/modules/subset/SubsetPane.vue'
+import TermPane from '@/components/pane/modules/pathways/TermPane.vue'
 import DEValuePane from '@/components/pane/modules/difexp/DEValuePane.vue'
 import EnrichmentLayerPane from '@/components/pane/modules/layer/EnrichmentLayerPane.vue'
 
@@ -59,8 +70,8 @@ export default {
     emits:['active_node_changed','active_term_changed', 'active_subset_changed', 'active_combine_changed', 'active_layer_changed', 'active_termlayers_changed'],
     components: {
         NodePane,
-        TermPane,
         SubsetPane,
+        TermPane,
         DEValuePane,
         EnrichmentLayerPane
     },
@@ -71,11 +82,13 @@ export default {
             active_tab: "Protein",
             highlight_subset: null,
             paneHidden: true,
-            mode: "protein"
+            mode: "protein",
+            tool_active: false
         }
     },
     watch: {
         active_item(val){
+            if(this.active_tab != Object.keys(val)[0]) this.tool_active = false;
             this.active_tab = Object.keys(val)[0]
             if(val == null){
                 delete this.active_dict.val;
@@ -87,6 +100,47 @@ export default {
 
     },
     methods: {
+        dragElement(elmnt) {
+            var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            if (document.getElementById(elmnt.id + "_header")) {
+                // if present, the header is where you move the DIV from:
+                document.getElementById(elmnt.id + "_header").onmousedown = dragMouseDown;
+            } else {
+                // otherwise, move the DIV from anywhere inside the DIV: 
+                elmnt.onmousedown = dragMouseDown;
+            }
+
+            function dragMouseDown(e) {
+                e = e || window.event;
+                e.preventDefault();
+                // get the mouse cursor position at startup:
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                // call a function whenever the cursor moves:
+                document.onmousemove = elementDrag;
+            }
+
+            function elementDrag(e) {
+                e = e || window.event;
+                e.preventDefault();
+                // calculate the new cursor position:
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                // set the element's new position:
+                elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+            }
+
+            
+            function closeDragElement() {
+                // stop moving when mouse button is released:
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+        },
         open_pane(){
             const div = document.getElementById('attributepane');
             const paneButton = document.getElementById('panebutton');
@@ -164,6 +218,8 @@ export default {
         }
     },
     mounted(){
+        this.dragElement(document.getElementById("pane"));
+
         this.emitter.on("reset_protein",(state) => {
             this.selectTab("node",state)
         })
@@ -176,43 +232,42 @@ export default {
 
 .pane {
     position: absolute;
-    right: 3.515%;
-    border-radius: 5px 5px 0 0;
-    height: 3.98%;
-    width: 17.9%;
+    right: 1vw;
+    bottom: 1vw;
+    height: 4.5vw;
+    width: 12vw;
     display: block;
     background: #D9D9D9;
     backdrop-filter: blur(7.5px);
     -webkit-backdrop-filter: blur(7.5px);
     align-items: center;
-    padding: 0 10px;
     z-index: 99;
+}
+.active {
+    height: 14.5vw;
 }
 
 .pane-window {
     position: absolute;
-    right: 3.515%;
-    height: 61%;
-    width: 17.9%;
-    top: 4.98%;
-    border-radius: 0 0 5px 5px;
-    background: rgba(222, 222, 222, 0.61);
+    height: 1.5vw;
+    width: 100%;
+    background: #D9D9D9;
     backdrop-filter: blur(7.5px);
-	color: white;
-    border-top-color: rgba(255, 255, 255, 30%);
-    border-top-width: 1px;
-    border-top-style: solid;
+	color: #0A0A1A;
     cursor: default;
 }
 
-.pane .headertext{
+.pane .pane_header{
 	color:  #0A0A1A;
-    height: 100%;
+    height: 1.5vw;
+    width: 100%;
+    padding: 0.6vw;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-bottom: 0.05vw solid #0A0A1A;
 }
-.pane .headertext span{
+.pane .pane_header span{
     height: 100%;
     display: flex;
     font-size: 0.9vw;
@@ -222,9 +277,8 @@ export default {
 
 .pane .pane_close{
     right: 3%;
-    width: 0.9vw;
-    height: 0.9vw;
-    filter: invert(100%);
+    width: 0.5vw;
+    height: 0.5vw;
     position: absolute;
 }
 

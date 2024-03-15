@@ -423,23 +423,23 @@ export default {
       // var selectedNodes = e.ctrlKey ? NETWORK.getSelectedNodes() : null;
       com.backup_surface();
       var rectangle = com.rectangular_select.rectangle;
-      rectangle.startX = e.pageX - com.container.offsetLeft;
-      rectangle.startY = e.pageY - com.container.offsetTop;
+      rectangle.startX = e.layerX - com.container.offsetLeft;
+      rectangle.startY = e.layerY - com.container.offsetTop;
       com.rectangular_select.active = true;
       com.container.style.cursor = "crosshair";
   }
 },
 mousemove: function(e) {
     var com = this;
-    this.mouseX = e.pageX;
-    this.mouseY = e.pageY;
+    this.mouseX = e.layerX;
+    this.mouseY = e.layerY;
     if(com.mousedownleftCheck || com.mousedownrightCheck) com.mousemoveCheck = true
     if (com.rectangular_select.active) {
         var context = com.rectangular_select.context;
         var rectangle = com.rectangular_select.rectangle;
         com.restore_surface();
-        rectangle.w = (e.pageX - com.container.offsetLeft) - rectangle.startX;
-        rectangle.h = (e.pageY - com.container.offsetTop) - rectangle.startY ;
+        rectangle.w = (e.layerX - com.container.offsetLeft) - rectangle.startX;
+        rectangle.h = (e.layerY - com.container.offsetTop) - rectangle.startY ;
         var rectBounds = com.container.getBoundingClientRect();
         context.setLineDash([5]);
         context.strokeStyle = "rgb(82,182,229)";
@@ -715,11 +715,6 @@ getCircleStyle(circle){
 </script>
 
 <style>
-  #sigma-canvas {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-  }
 </style>
   
   

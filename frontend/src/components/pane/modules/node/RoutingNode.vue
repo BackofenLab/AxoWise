@@ -58,25 +58,22 @@ export default {
 
 <style>
 #route {
+    color: white;
+    font-family: 'ABeeZee', sans-serif;
+    font-size: 0.7vw;
     width: 100%;
     height: 100%;
-    top: 25%;
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    font-family: 'ABeeZee', sans-serif;
-    padding: 0% 2% 2% 2%;
+    padding: 2.3vw 1.3vw 0 1.3vw;
 }
 
 #route .search-field{
-    width: 70%;
-    height: 25%;
+    width: 80%;
+    left: 65%;
     display: flex;
-    border-radius: 5px;
     background: rgba(222, 222, 222, 0.3);
+    transform: translateX(-70%);
     position: absolute;
-    align-items: center;
-    align-content: center;
+    border-radius: 0;
     justify-content: center;
     z-index: 999;
 }
@@ -93,10 +90,11 @@ export default {
 }
 
 .request_answer {
-    top: 30%;
-    left: 20%;
-    position: absolute;
-    display: block;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 0.7vw;
 }
 

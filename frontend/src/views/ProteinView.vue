@@ -20,28 +20,26 @@
       ></MainVis>
       </keep-alive>
       <keep-alive>
-      <PathwayMenu
-        :gephi_data='gephi_data'
-        @active_term_changed = 'active_term = $event'
-        @active_termlayers_changed = 'active_termlayers = $event'
-        @active_layer_changed = 'active_layer = $event'
-      ></PathwayMenu>
-    </keep-alive>
+      <VerticalPane
+      :gephi_data='gephi_data'
+      :active_termlayers='active_termlayers'
+      :active_decoloumn='active_decoloumn'
+      ></VerticalPane>
+      </keep-alive>
       <keep-alive>
-        <div class="header-menu">
-        <MainToolBar
-          :gephi_data='gephi_data'
-          :active_subset='active_subset'
-          :active_term='active_term'
-          :ensembl_name_index='ensembl_name_index'
-        ></MainToolBar>
-        <NetworkValues
+      <MainToolBar
+        :gephi_data='gephi_data'
+        :active_subset='active_subset'
+        :active_term='active_term'
+        :ensembl_name_index='ensembl_name_index'
+      ></MainToolBar>
+      </keep-alive>
+      <keep-alive>
+      <NetworkValues
           :data='gephi_data'
-        ></NetworkValues>
-        <SearchField
-        :data='gephi_data'
-        :active_node='active_node' @active_node_changed = 'active_node = $event'
-        ></SearchField>
+      ></NetworkValues>
+      </keep-alive>
+      <keep-alive>
         <PaneSystem
         :active_node='active_node' @active_node_changed = 'active_node = $event'
         :active_term='active_term' @active_term_changed = 'active_term = $event'
@@ -53,9 +51,6 @@
         :gephi_data='gephi_data'
         :node_color_index='node_color_index'
         ></PaneSystem>
-      </div>
-    </keep-alive>
-      <keep-alive>
     </keep-alive>
   </div>
 </template>
@@ -63,9 +58,8 @@
 <script>
 // @ is an alias to /src
 import MainVis from '@/components/visualization/MainVis.vue'
+import VerticalPane from '@/components/verticalpane/VerticalPane.vue'
 import PaneSystem from '@/components/pane/PaneSystem.vue'
-import PathwayMenu from '@/components/enrichment/PathwayMenu.vue'
-import SearchField from '../components/interface/SearchField.vue'
 import NetworkValues from '../components/interface/NetworkValues.vue'
 import MainToolBar from '../components/toolbar/MainToolBar.vue'
 
@@ -74,10 +68,10 @@ export default {
   components: {
     MainVis,
     PaneSystem,
-    PathwayMenu,
-    SearchField,
+    // SearchField,
     MainToolBar,
-    NetworkValues
+    NetworkValues,
+    VerticalPane
   },
   data() {
     return {
@@ -178,6 +172,7 @@ export default {
 
 .protein-view{
   background-color: #0A0A1A;
+  display: flex;
 }
 
 .protein-view .colortype{

@@ -1,8 +1,8 @@
 <template>
-    <div id="pathway-layer-connect">
-        <div class="pane-sorting">
-            <a class="pane_attributes" >pathway</a>
-            <a class="pane_values">pathway</a>
+    <div id="pathway-layer-connect" class="connect">
+        <div class="sorting">
+            <a class="enrichment_filter" >pathway</a>
+            <a class="cluster_filter">pathway</a>
         </div>
 
         <div class="network-results" tabindex="0" @keydown="handleKeyDown">
@@ -34,7 +34,7 @@ export default {
     },
     data() {
         return {
-            intersectingDicts: null
+            intersectingDicts: null,
         }
     },
     watch: {
@@ -90,16 +90,10 @@ export default {
 #pathway-layer-connect {
     width: 100%;
     height: 100%;
-    top: 9.35%;
-    position: absolute;
     font-family: 'ABeeZee', sans-serif;
-    padding: 0% 2% 2% 2%;
+    padding: 1.3vw 1.3vw 1vw 1.3vw;
 }
-#pathway-layer-connect .network-results {
-    margin-top: 2%;
-    height: 78%;
-    overflow: scroll;
-}
+
 #pathway-layer-connect .pane_values{
     position: absolute;
     left: 50.5%;

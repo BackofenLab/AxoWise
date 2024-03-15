@@ -16,30 +16,24 @@
         :node_modul_index='node_modul_index'
         :unconnected_nodes='unconnected_nodes'
       ></TermVis>
-      <PathwayGraphMenu
-        :term_data='term_data'
-      ></PathwayGraphMenu>
-      <div class="header-menu">
-        <TermToolBar
-        :data='term_data'
-        :active_subset='active_subset'
-        ></TermToolBar>
-        <NetworkValues
-        :data='term_data'
-        ></NetworkValues>
-        <SearchField
-        :data='term_data'
+      <VerticalPanePathway
+      :term_data='term_data'
+      ></VerticalPanePathway>
+      <TermToolBar
+      :data='term_data'
+      :active_subset='active_subset'
+      ></TermToolBar>
+      <NetworkValues
+      :data='term_data'
+      ></NetworkValues>
+      <TermPaneSystem
+        :gephi_data='term_data'
         :active_node='active_node' @active_node_changed = 'active_node = $event'
-        ></SearchField>
-        <TermPaneSystem
-          :gephi_data='term_data'
-          :active_node='active_node' @active_node_changed = 'active_node = $event'
-          :active_subset='active_subset' @active_subset_changed = 'active_subset = $event'
-          @active_layer_changed = 'active_layer = $event'
-          @active_combine_changed = 'active_combine = $event'
-          :node_color_index='node_color_index'
-          ></TermPaneSystem>
-      </div>
+        :active_subset='active_subset' @active_subset_changed = 'active_subset = $event'
+        @active_layer_changed = 'active_layer = $event'
+        @active_combine_changed = 'active_combine = $event'
+        :node_color_index='node_color_index'
+        ></TermPaneSystem>
     </div>
   </keep-alive>
 </template>
@@ -47,10 +41,9 @@
 <script>
 import TermVis from '@/components/visualization/TermVis.vue'
 import TermPaneSystem from '@/components/pane/TermPaneSystem.vue'
-import SearchField from '../components/interface/SearchField.vue'
 import NetworkValues from '../components/interface/NetworkValues.vue'
 import TermToolBar from '../components/toolbar/TermToolBar.vue'
-import PathwayGraphMenu from '../components/pathwaytools/PathwayGraphMenu.vue'
+import VerticalPanePathway from '@/components/verticalpane/VerticalPanePathway.vue'
 
 export default {
   name: 'TermView',
@@ -58,9 +51,8 @@ export default {
     TermVis,
     NetworkValues,
     TermToolBar,
-    SearchField,
     TermPaneSystem,
-    PathwayGraphMenu
+    VerticalPanePathway
     
   },
   data() {
@@ -191,10 +183,11 @@ export default {
 
 <style>
 .term-view{
-  background-color: #0a1a0b;
+  background-color: #0A0A1A;
+  display: flex;
 }
 
 .term-view .colortype{
-  background: #0a1a0b;
+  background: #0A0A1A;
 }
 </style>

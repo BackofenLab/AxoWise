@@ -32,3 +32,23 @@ export default {
     }
 }
 </script>
+
+<style>
+.subform-de-values{
+    position: fixed;
+    margin-top: -0.3%;
+    left: 49.4%;
+    width: auto;
+    height: auto;
+    font-size: 0.9vw;
+    padding: 0.5vw;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #0A0A1A;
+    background: rgba(222, 222, 222, 0.61);
+    border-radius: 5px;
+    text-align: left;
+    overflow: hidden;
+    cursor: default;
+}
+</style>

@@ -1,27 +1,24 @@
 <template>
     <div class="text" v-show="active_term !== null">
-        <div id="colorbar-pathway">
+        <div class="path_attribute" v-if="active_term !== null">
             <div class="favourite-pane-symbol">
                 <label class="custom-checkbox">
                     <div class="checkbox-image" v-on:click="bookmark_pathway()" :class="{ checked: favourite_pathways.has(active_term)}" ></div>
                 </label>
             </div>
-            <div class='colorbar-text' v-if="active_term !== null">
-                {{active_term.name}}
-            </div>
-            <div class='colorbar-img colortype' v-on:click="to_term()">
+            <div class="term" >{{active_term.id}}</div>
+            <div class='colorbar-img' v-on:click="to_term()">
                 <img src="@/assets/pane/follow.png">
             </div>
         </div>
-        <div class="nodeattributes">
+
+        <!-- <div class="nodeattributes">
             <div id="network" class="subsection">
                 <div class="subsection-header">
                     <span>pathway statistics</span>
                 </div>
                 <div class="subsection-main colortype">
-                    <PathwayStatistics
-                    :active_term='active_term' 
-                    ></PathwayStatistics>
+
                 </div>
             </div>
             <div id="pathway-connections" class="subsection">
@@ -34,12 +31,48 @@
                     </div>
                 </div>
                 <div class="subsection-main colortype">
+
+                </div>
+            </div>
+        </div> -->
+
+        <div :class="{'tool-section': !tool_active, 'tool-section-active': tool_active }">
+            <div id="informations" class="subsection" v-show="tool_active && active_section == 'information'">
+                <div class="subsection-header">
+                    <span>informations</span>
+                </div>
+                <div class="subsection-main colortype">
+                </div>
+            </div>
+            <div id="network" class="subsection" v-show="tool_active && active_section == 'statistics'">
+                <div class="subsection-header">
+                    <span>statistics</span>
+                </div>
+                <div class="subsection-main colortype">
+                    <PathwayStatistics
+                    :active_term='active_term' 
+                    ></PathwayStatistics>
+                </div>
+            </div>
+            <div id="connections" class="subsection" v-show="tool_active && active_section == 'connections'">
+                <div class="subsection-header">
+                    <span>connections</span>
+                    <img src="@/assets/pane/copy.png" v-on:click="copyclipboard()">
+                </div>
+                <div class="subsection-main colortype">
                     <PathwayConnections
                     :active_term='active_term'
                     :gephi_data='gephi_data'
                     ></PathwayConnections>
                 </div>
             </div>
+        </div>
+
+        <div class="nodeattributes">
+            <img  class="icons" src="@/assets/toolbar/menu-burger.png" v-on:click="change_section('information')">
+            <img  class="icons" src="@/assets/toolbar/settings-sliders.png" v-on:click="change_section('statistics')">
+            <img  class="icons" src="@/assets/toolbar/proteinselect.png" v-on:click="change_section('connections')">
+            <!-- <img  class="icons" src="@/assets/toolbar/logout.png" v-on:click="change_section(!tool_active,'routing')"> -->
         </div>
     </div>
 </template>
@@ -50,14 +83,15 @@ import PathwayConnections from '@/components/pane/modules/pathways/PathwayConnec
 
 export default {
     name: 'TermPane',
-    props: ['active_term','gephi_data','mode'],
-    emits: ['active_item_changed', 'highlight_subset_changed'],
+    props: ['active_term','gephi_data','mode','tool_active'],
+    emits: ['active_item_changed', 'highlight_subset_changed','tool_active_changed'],
     components:{
         PathwayStatistics,
         PathwayConnections
     },
     data() {
         return {
+            active_section: '',
             hide: false,
             term_history: [],
             expand_stats: false,
@@ -82,6 +116,25 @@ export default {
         }
     },
     methods: {
+        change_section(val){
+            var com = this;
+
+            if(com.tool_active && com.active_section == val) {
+                com.active_section = ''
+                com.$emit('tool_active_changed', false)
+            }else
+            {
+                if(!com.tool_active) {
+                    com.active_section = val
+                    com.$emit('tool_active_changed',true)
+                }
+                
+                if(com.tool_active && com.active_section != val) {
+                    com.active_section = val
+                    com.$emit('tool_active_changed', true)
+                }
+            } 
+        },
         copyclipboard(){
             this.emitter.emit("copyConnections");
         },
@@ -120,6 +173,21 @@ export default {
 </script>
 
 <style>
+    .term {
+        width: 70%;
+        margin-left: 0.3vw;
+        font-size: 0.9vw;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .path_attribute{
+        display: flex;
+        font-family: 'ABeeZee', sans-serif;
+        align-items: center;
+        color: #0A0A1A;
+    }
+
     #colorbar-pathway{
         position: relative;
         display: flex;
@@ -141,21 +209,6 @@ export default {
         background-color: darkgreen;
         padding: 2%;
         border-radius: 5px 0 0 5px;
-    }
-    .colorbar-img {
-        width: 15%;
-        left: 100%;
-        height: 100%;
-        position: fixed;
-        display: -webkit-flex;
-        align-items: center;
-        padding: 1%;
-        border-radius: 0 5px 5px 0;
-    }
-
-    .colorbar-img img {
-        padding: 5% 23% 5% 23%;
-        filter: invert(100%);
     }
 
     #pathway-connections {

@@ -1,21 +1,16 @@
 <template>
     <div id="statistics">
-        <div class="pane-sorting">
-            <a class="pane_attributes" >values</a>
-            <a class="pane_values">attributes</a>
-        </div>
-
         <div class="network-results" tabindex="0" @keydown="handleKeyDown">
             <table >
                 <tbody>
                     <tr v-for="(key, entry, index) in statistics" :key="index" class="option">
                         <td>
                             <div class="statistics-attr">
-                                <a href="#">{{key}}</a>
+                                <a href="#">{{entry}}</a>
                             </div>
                         </td>
                         <td>
-                            <a class="statistics-val">{{entry}}</a>
+                            <a class="statistics-val">{{key}}</a>
                         </td>
                     </tr>
                 </tbody>

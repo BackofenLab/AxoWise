@@ -1,10 +1,11 @@
 <template>
     <div id="search-menu">
-        <div id="search" class="search-field" :class="{ full: search_raw.length >= 2 }">
+        <div id="search" class="search-field">
             <img class="search-field-icon" src="@/assets/toolbar/search.png">
             <input type="text" v-model="search_raw" class="empty" placeholder="Find your node" @keyup.enter="select_node(filt_search[0])"/>
         </div>
         <div class="check-active" v-if="search_raw.length >= 2 && filt_search.length > 0" v-on:click="search_raw=''"></div>
+        <div class="search-background" v-if="search_raw.length >= 2 && filt_search.length > 0"></div>
         <div class="results" v-if="search_raw.length >= 2 && filt_search.length > 0" >
             <div class="result-label">nodes in network</div>
             <div v-for="(entry, index) in filt_search" :key="index" class="network-search">
@@ -32,7 +33,7 @@ export default {
     methods: {
 
         select_node(node) {
-            if (node) this.$emit("active_node_changed", node);
+            if (node) this.emitter.emit("searchNode", {node: node, mode: "protein"});
         },
         google_search(protein, index){
             document.getElementById("results-"+ index).setAttribute("href","https://www.google.com/search?q=" + protein)
@@ -62,12 +63,14 @@ export default {
 
 <style>
 #search-menu {
-    width: 19.84%;
-    height: 3.98%;
+    height: 5%;
     display: flex;
-    position: absolute;
+    width: 100%;
+    position: relative;
     align-content: center;
     justify-content: center;
+    z-index: 9999;
+    margin-bottom: 2%;
 }
 
 #search-menu:after {
@@ -85,7 +88,6 @@ export default {
     width: 100%;
     height: 100%;
     display: flex;
-    border-radius: 5px;
     background: rgba(222, 222, 222, 0.3);
     position: absolute;
     align-items: center;
@@ -93,11 +95,6 @@ export default {
     justify-content: center;
     z-index: 999;
 }
-
-.full {
-    border-radius: 5px 5px 0 0;
-}
-
 
 .search-field-icon {
     position: absolute;
@@ -128,7 +125,6 @@ opacity: 70%;
     left: 0%;
     top: 100%;
     padding: 0.3% 0 0.3% 0;
-    border-radius: 0 0 5px 5px;
     background: rgba(222, 222, 222, 0.3);
     backdrop-filter: blur(7.5px);
 	overflow-y: scroll;
@@ -192,6 +188,16 @@ opacity: 70%;
     left: 0;
     z-index: 998;
 
+}
+
+.search-background {
+    position: fixed;
+    width:25%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 998;
+    -webkit-backdrop-filter: blur(4vw);
 }
 
 

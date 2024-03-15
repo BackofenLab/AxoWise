@@ -1,14 +1,14 @@
 <template>
-    <div id="layer-connect">
-        <div class="pane-sorting">
-            <a class="pane_attributes" >node</a>
-            <a class="pane_values">cluster</a>
+    <div id="layer-connect" class="connect">
+        <div class="sorting">
+            <a class="node_filter" v-on:click="sort_node = (sort_node === 'asc') ? 'dsc' : 'asc'; sort_cluster = ''; sort_degree = '' " >nodes</a>
+            <a class="cluster_filter" v-on:click="sort_cluster = (sort_cluster === 'asc') ? 'dsc' : 'asc'; sort_node = ''; sort_degree = '' " >cluster</a>
+            <a class="degree_filter" v-on:click="sort_degree = (sort_degree === 'asc') ? 'dsc' : 'asc'; sort_cluster = ''; sort_node = '' " >degree</a>
         </div>
-
         <div class="network-results" tabindex="0" @keydown="handleKeyDown">
             <table >
                 <tbody>
-                    <tr v-for="entry in intersectionSet" :key="entry" class="option">
+                    <tr v-for="(entry, index) in filt_links" :key="index" class="option">
                         <td>
                             <div class="statistics-attr">
                                 <a href="#">{{entry.attributes["Name"]}}</a>
@@ -16,6 +16,9 @@
                         </td>
                         <td>
                             <a class="statistics-val">{{entry.attributes["Modularity Class"]}}</a>
+                        </td>
+                        <td>
+                            <a class="statistics-val">{{entry.attributes["Degree"]}}</a>
                         </td>
                     </tr>
                 </tbody>
@@ -28,10 +31,14 @@
 
 export default {
     name: 'LayerProteins',
-    props: ['active_termlayers','gephi_data', 'hiding_terms'],
+    props: ['active_termlayers','gephi_data'],
     data() {
         return {
-            intersectionSet: null,
+            intersectionSet: new Set(),
+            hiding_terms: this.$store.state.hiding_pathways,
+            sort_node: "",
+            sort_cluster: "",
+            sort_degree: "",
         }
     },
     watch: {
@@ -42,6 +49,8 @@ export default {
             if (newList == null) {
                 return;
             }
+
+            com.hiding_terms = com.$store.state.hiding_pathways
 
             com.intersectionSet = new Set();
             var intersectionSet = new Set();
@@ -86,6 +95,36 @@ export default {
         this.emitter.on("copyLayerConnections", () => {
             this.copyclipboard()
         });
+    },
+    computed: {
+        filt_links() {
+            var com = this;
+            var filtered = [...com.intersectionSet];
+
+            if(com.sort_node == "asc"){
+                filtered.sort(function(t1, t2) { 
+                    return (t1.attributes["Name"].toLowerCase() > t2.attributes["Name"].toLowerCase() 
+                    ? 1 : (t1.attributes["Name"].toLowerCase() === t2.attributes["Name"].toLowerCase() ? 0 : -1)) })
+            }else if(com.sort_node == "dsc"){
+                filtered.sort(function(t1, t2) { 
+                    return (t2.attributes["Name"].toLowerCase() > t1.attributes["Name"].toLowerCase() 
+                    ? 1 : (t1.attributes["Name"].toLowerCase() === t2.attributes["Name"].toLowerCase() ? 0 : -1)) })
+            }
+
+            if(com.sort_cluster == "asc"){
+                filtered.sort((t1, t2) => t2.attributes["Modularity Class"] - t1.attributes["Modularity Class"])
+            }else if (com.sort_cluster == "dsc"){
+                filtered.sort((t1, t2) => t1.attributes["Modularity Class"] - t2.attributes["Modularity Class"])
+            }
+
+            if(com.sort_degree == "asc"){
+                filtered.sort((t1, t2) => t2.attributes["Degree"] - t1.attributes["Degree"] )
+            }else if (com.sort_degree == "dsc"){
+                filtered.sort((t1, t2) => t1.attributes["Degree"]  - t2.attributes["Degree"] )
+            }
+
+            return new Set(filtered);
+        },
     }
 }
 
@@ -95,15 +134,7 @@ export default {
 #layer-connect {
     width: 100%;
     height: 100%;
-    top: 9.35%;
-    position: absolute;
     font-family: 'ABeeZee', sans-serif;
-    padding: 0% 2% 2% 2%;
-}
-
-#layer-connect .network-results {
-    margin-top: 2%;
-    height: 78%;
-    overflow: scroll;
+    padding: 1.3vw 1.3vw 1vw 1.3vw;
 }
 </style>
