@@ -9,7 +9,7 @@
             @favourite_pathways_changed = 'favourite_pathways = $event'
             @filtered_terms_changed = 'filtered_terms = $event'
             ></PathwayList>
-            <PathwaySet v-if="active_function === 'set'"
+            <PathwaySet v-show="active_function === 'set'"
             :gephi_data='gephi_data'
             :api='api'
             ></PathwaySet>
