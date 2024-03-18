@@ -23,11 +23,13 @@ def summarize_section(section):
     return section_summary
 
 
-def create_summary(abstracts):
+def create_summary(summarize):
+    abstracts = [i[0] for i in summarize]
+    pmids = [i[1] for i in summarize]
     with ThreadPoolExecutor() as executor:
         # Map the function to the sections for parallel processing
         summaries = list(executor.map(summarize_section, abstracts))
-
+    summaries = [i.replace("\n", "") for i in summaries]
+    summaries = list(zip(summaries, pmids))
     # Step 4: Combine the individual summaries
-    combined_summary = " ".join(summaries)
-    return combined_summary
+    return summaries

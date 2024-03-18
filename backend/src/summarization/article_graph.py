@@ -55,7 +55,7 @@ def create_citations_graph(limit, search_query):
 
     # Call Meilisearch to retrieve results
     file = query.get_results(limit, search_query)
-    print(time.time() - begin)
+    print(f"Meilisearch: {time.time() - begin}")
 
     # Initialize an empty directed graph
     graph = Graph(directed=True)
@@ -73,7 +73,10 @@ def create_citations_graph(limit, search_query):
     for hit in hits:
         pmid = str(hit["PubMed ID"])
         if pmid not in pmids:
-            abstracts[pmid] = hit["Abstract"]
+            year = hit["Published"]
+            abstract = hit["Abstract"]
+            citations = hit["Cited number"]
+            abstracts[pmid] = {"abstract": abstract, "year": year, "cited_by": citations}
             pmids.add(pmid)
             node_mapping[pmid] = integer_id
             integer_id += 1
@@ -101,7 +104,6 @@ def create_citations_graph(limit, search_query):
     # Community calculations
     begin = time.time()
     communities = la.find_partition(graph, la.ModularityVertexPartition)
-    print(len(communities))
     print(f"community creation: {time.time()-begin}")
 
     # Top community and node detection
@@ -126,20 +128,24 @@ def create_citations_graph(limit, search_query):
             top_nodes.append([top1, top2])
         else:
             top_nodes.append(top1)
+    summarized_dict = {}
     to_summarize = []
     for i in top_nodes:
         if isinstance(i, list):
-            h = ""
-            for j in i:
-                h += abstracts[str(graph.vs(j)["name"][0])]
-            to_summarize.append(h)
+            name = str(graph.vs(i[0])["name"][0])
+            node = str(i[0])
         else:
-            to_summarize.append(abstracts[str(graph.vs(i)["name"][0])])
+            name = str(graph.vs(i)["name"][0])
+            node = str(i)
+        to_summarize.append((abstracts[name]["abstract"], name))
+        summarized_dict[name] = {
+            "pagerank": node_pagerank_mapping[node],
+            "year": abstracts[name]["year"],
+            "cited_by": abstracts[name]["cited_by"],
+        }
     summary_time = time.time()
     summary = create_summary(to_summarize)
+    for i in summary:
+        summarized_dict[i[1]]["summary"] = i[0]
     print(f"summarization: {time.time()-summary_time}")
-    return summary
-
-
-ie = input()
-create_citations_graph(20000, ie)
+    return summarized_dict
