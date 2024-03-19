@@ -43,21 +43,22 @@
                 <div v-if="mode=='term'">
                     <div class="window-label">padj value</div>
                     <div class="menu-items">
-                        <input 
-                            id="padj"
-                            type="range"
-                            v-bind:min="padj_boundary.min" v-bind:max="padj_boundary.max" v-bind:step="padj_boundary.step"
-                            v-model="padj_boundary.value"
-                            v-on:change="searchSubset()"
-                            v-on:input="valueChanged('padj')"
-                        />
-                        <!-- <input 
+                        <div id="padj"></div>
+                        <input
                             type="number"
                             v-bind:min="padj_boundary.min" v-bind:max="padj_boundary.max" v-bind:step="padj_boundary.step"
-                            v-model="padj_boundary.value"
+                            v-model="padj_boundary.minValue"
                             v-on:change="searchSubset()"
-                            v-on:input="valueChanged('padj')"
-                        /> -->
+                            v-on:input="valueChanged('padj',[padj_boundary.minValue, padj_boundary.maxValue])"
+                        />
+                        <span class="seperator">-</span>
+                        <input
+                            type="number"
+                            v-bind:min="padj_boundary.min" v-bind:max="padj_boundary.max" v-bind:step="padj_boundary.step"
+                            v-model="padj_boundary.maxValue"
+                            v-on:change="searchSubset()"
+                            v-on:input="valueChanged('padj',[padj_boundary.minValue, padj_boundary.maxValue])"
+                        />
                     </div>
                 </div>
                 <div class="window-label">page rank value</div>
@@ -79,7 +80,7 @@
                         v-on:input="valueChanged('pagerank',[pr_boundary.minValue, pr_boundary.maxValue])"
                     />
                 </div>
-                <div class="dcoloumn-window"  v-if="dcoloumns">
+                <div class="dcoloumn-window"  v-if="dcoloumns && mode!='term'">
                 <div class="class-section" v-on:click="coloumnsCheck = !coloumnsCheck">
                     <span>coloumn section</span>
                     <img src="@/assets/pane/invisible.png" v-if="!coloumnsCheck">
@@ -134,7 +135,7 @@ export default {
 			degree_boundary: { minValue: 0, maxValue: 0, min: 0, max: Number, step: 1},
             pr_boundary: { minValue: 0, maxValue: 0, min: 0, max: Number, step: 0.01},
             bc_boundary: { minValue: 0, maxValue: 0, min: 0, max: Number, step: 1},
-            padj_boundary: { value: 0, min: 0, max: 1000, step: 1},
+            padj_boundary: { minValue: 0, maxValue: 0, min: 0, max: Number, step: 0.01},
             dcoloumns: this.$store.state.dcoloumns,
             dboundaries: {},
             nodeCheck: false,
@@ -170,8 +171,8 @@ export default {
                 var result = subset_de.map(function (x) { 
                     return parseFloat(x);
                 });
-                var maxDe = Math.max(...result);
-                var minDe = Math.min(...result);
+                var maxDe = Math.ceil(Math.max(...result));
+                var minDe = Math.floor(Math.min(...result));
     
                 this.dboundaries[coloumn] = {minValue:minDe, maxValue:maxDe, min: minDe, max: maxDe, step:0.01}
 
@@ -355,6 +356,42 @@ export default {
             });
 
         },
+        initialize_padj() {
+            var com = this;
+
+            var dataForm = com.data;
+
+            // _____ this calculation has only to be done once _______
+            var subset_padj
+            subset_padj = dataForm.nodes.map(arrayItem => {
+                return arrayItem.attributes["FDR"]
+            });
+
+            // Convert String values to Integers
+            var result = subset_padj.map(function (x) { 
+                return parseFloat(x);
+            });
+            
+            var maxDeg =  Math.ceil(Math.abs(Math.log10( Math.min(...result) )))    // Need to use spread operator!
+
+            var slider = document.getElementById('padj');
+            noUiSlider.create(slider, {
+                start: [0, maxDeg],
+                connect: true,
+                range: {
+                    'min': 0,
+                    'max': maxDeg
+                },
+                step: 0.01
+            });
+
+            slider.noUiSlider.on('update', function (values, handle) {
+                com.padj_boundary[(handle ? "maxValue" : "minValue")] = values[handle];
+                com.searchSubset()
+                
+            });
+
+        },
         searchSubset() {
             var com = this
 
@@ -372,7 +409,11 @@ export default {
                    parseFloat(element.attributes["Betweenness Centrality"]) <= this.bc_boundary.maxValue
                    ){
                     if(com.mode=='term'){
-                        if(Math.abs(Math.log10(element.attributes["FDR"])) >= com.padj_boundary.value) nodes.push(element)
+                        if( Math.abs(Math.log10(parseFloat(element.attributes["FDR"]))) >= this.padj_boundary.minValue &&
+                            Math.abs(Math.log10(parseFloat(element.attributes["FDR"]))) <= this.padj_boundary.maxValue )
+                            {
+                                nodes.push(element)
+                            } 
                     }
                     else if (this.dcoloumns) {
                         this.nodeCheck = true
@@ -429,7 +470,8 @@ export default {
         this.initialize_dg()
         this.initialize_bc()
         this.initialize_pagerank()
-        if (this.dcoloumns) this.create_de()
+        if (this.dcoloumns && this.mode !="term") this.create_de()
+        if (this.mode =="term") this.initialize_padj();
 
         
     },
