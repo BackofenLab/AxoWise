@@ -99,8 +99,8 @@ def get_results(
     This function is just here until the connection to front end it established
     """
     # TODO:
-    # This needs to be moved to the main function when connecting to the frontend
-    # import Api_key
+    # add sort_by as a user option from front end and give as parameter to this function
+    # either ["Cited number:desc"] or ["Published:desc"] or ["Cited number:desc", "Published:desc"]
     client = meilisearch.Client("http://localhost:7700", Api_key.SEARCH_KEY)
     index = "pubmed_v1"
     sort_by = ["Cited number:desc", "Published:desc"]

@@ -2,8 +2,6 @@ import json
 import Api_key
 import meilisearch
 
-MASTER_KEY = Api_key.MASTER_KEY
-
 
 def create_key(client):
     """
@@ -140,15 +138,15 @@ def main():
 
 
     """
-    client = meilisearch.Client("http://localhost:7700", MASTER_KEY)
+    client = meilisearch.Client("http://localhost:7701", Api_key.MASTER_KEY)
 
     # create_key(client)
     get_keys(client)
 
-    key_uid = str(input("Please enter the key  UID: "))
+    # key_uid = str(input("Please enter the key  UID: "))
     # delete_key(client, key_uid)
     # key = get_key(client, key_uid)
-    save_key(client, key_uid)
+    # save_key(client, key_uid)
 
 
 if __name__ == "__main__":

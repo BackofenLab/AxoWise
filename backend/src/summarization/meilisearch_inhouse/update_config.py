@@ -5,15 +5,24 @@ import time
 
 def main():
     client = meilisearch.Client("http://localhost:7700", Api_key.MASTER_KEY)
+    update_config(client)
+
+
+def update_config(client):
+    """
+    Updates the config of the given index
+    """
+
     index = str(input("Which index do you want to update? "))
-    limit = int(input("What should the new limit be? "))
+    limit = int(input("What should the new maxTotalHits limit be? "))
 
     # set a limit for the index - 20k is good enough
     task = client.index(index).update_pagination_settings({"maxTotalHits": limit})
-    print(task.task_uid)
+    check_status(client, task)
 
     # disable typo allowance
     client.index(index).update_typo_tolerance({"enabled": False})
+    check_status(client, task)
 
     # add Cited number and Published to the sortable attributes
     task = client.index(index).update_sortable_attributes(["Cited number", "Published"])
@@ -21,6 +30,10 @@ def main():
 
     # update the ranking rules --> moved sort higher up
     task = client.index(index).update_ranking_rules(["words", "sort", "typo", "proximity", "attribute", "exactness"])
+    check_status(client, task)
+
+    # update searchable attributes - sortable must not be contained
+    task = client.index(index).update_searchable_attributes(["Title", "Abstract"])
     check_status(client, task)
 
     print("Settings updated")
@@ -37,7 +50,7 @@ def check_status(client, task):
     task_id = task.task_uid
 
     while task.status == "enqueued" or task.status == "processing":
-        time.sleep(2)  # we use sleep to avoid spamming the server with status requests
+        time.sleep(1)  # we use sleep to avoid spamming the server with status requests
         task = client.get_task(task_id)
 
     if task.status == "failed":

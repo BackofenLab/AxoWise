@@ -18,10 +18,14 @@ def add_data(client):
     size of one of your documents is bigger than the max payload limit set in meilisearch.
     Recommended size < 350MB
 
+    WHEN UPLOADING ON SERVER:
+    if you want to upload on the server and run this in the background, make sure to comment out
+    all the inputs and set the value yourself.
+
     """
 
     number_files = int(input("How many files do you want to upload?: "))
-
+    # number_files = 2
     if number_files > 1:
         print(
             "\nPlease make sure you files are named correct -"
@@ -34,31 +38,34 @@ def add_data(client):
                                \nlike this: 'test' for test0.json: "
             )
         )
+        # input_file = "Pubmed"
+
         multiple_files = True
     elif number_files == 1:
         input_file = str(input("Please give the input file you would like to upload: "))
         multiple_files = False
     else:
         return
-
+    # index = "pubmed_mouse_v1"
     index = str(input("What index do you want the data to be added to? "))
     print("Processing, this may take a while...")
 
-    for x in range(number_files):
+    for x in range(number_files):  # going through all the files, loading one after another
         if multiple_files:
             filename = input_file + str(x) + ".json"
         else:
             filename = input_file
 
-        # open the file with out data - has to be json!!!
         with open(filename, "r", encoding="utf-8") as json_file:
             data = json.load(json_file)
 
         print("Loading: ", filename)
 
+        # sending the file to meilisearch
         task = client.index(index).add_documents(data)
         task_id = task.task_uid
 
+        # wait until the documents are indexed
         while task.status == "enqueued" or task.status == "processing":
             time.sleep(10)  # we use sleep to avoid spamming the server with status requests
             task = client.get_task(task_id)
@@ -80,7 +87,8 @@ def delete_index(client):
 
 
 def main():
-    """docstring"""
+    """Uncomment function calls to either index new data to meilisearch or to delte an index"""
+
     # setup the client connection to the database using the master API key to identify us
     client = meilisearch.Client("http://localhost:7700", Api_key.ADMIN_API_KEY)
 

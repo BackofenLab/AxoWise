@@ -78,13 +78,11 @@ def set_synonyms(input_file):
             full_name_dict = add_full_name(full_name, synonyms_list, full_name_dict)
 
         # need to add len == 0 bc not all no aliases are labled correct, some are empty lists
-        if not synonyms_list or synonyms_list == ["no alias"]:
+        if not synonyms_list or synonyms_list == ["No alias"] or synonyms_list == ["no alias"]:
             continue
         else:
             # Remove "no alias" from the list if it exists, keep all other terms
-            synonyms_list = [synonym for synonym in synonyms_list if synonym != "no alias"]
-
-        # synonyms_list = aliases_list
+            synonyms_list = [synonym for synonym in synonyms_list if (synonym != "No alias" and synonym != "no alias")]
 
         # make sure all items are strings - some symbols have aliases in int format
         for index, term in enumerate(synonyms_list):
@@ -128,6 +126,7 @@ def check_synonyms(synonyms_dict, cross_count, failed_list):
         failed_file with the list of symbols causing trouble
     """
 
+    # saves processed synonyms to file
     print(f"Synonyms are being saved to file: {output_file}")
     try:
         save_to_file(synonyms_dict, output_file)
@@ -135,6 +134,7 @@ def check_synonyms(synonyms_dict, cross_count, failed_list):
         print("Failed to save the Synonyms")
         return False
 
+    # check if all synonyms have been processed by comparing lenght of created pairs vs saved pairs
     if len(synonyms_dict) != cross_count:
         print(
             f"Failed to process {cross_count - len(synonyms_dict)} items because they appear\
