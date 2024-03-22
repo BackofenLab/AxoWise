@@ -14,6 +14,7 @@ from multiprocessing import Process
 import database
 import enrichment
 import enrichment_graph
+# from summarization import article_graph as summarization
 import graph
 import jar
 import queries
@@ -73,6 +74,21 @@ def proteins_enrichment():
     json_str = json.dumps(list_enrichment.to_dict("records"), ensure_ascii=False, separators=(",", ":"))
     return Response(json_str, mimetype="application/json")
 
+# ====================== Meillisearch ======================
+# TODO Refactor this
+# Request comes from ContextSection.vue
+@app.route("/api/subgraph/context", methods=["POST"])
+def proteins_context():
+    base, context, rank, limit = request.form.get("base"), request.form.get("context"), request.form.get("rank"), 500
+    query = f"{base} {context}"
+    
+    print(query,limit)
+
+    # in-house context summary
+    # summary = summarization.create_citations_graph(limit, query)
+
+    json_str = json.dumps("summary")
+    return Response(json_str, mimetype="application/json")
 
 # ====================== Subgraph API ======================
 # request comes from home.js

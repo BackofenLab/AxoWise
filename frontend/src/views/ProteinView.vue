@@ -38,6 +38,10 @@
       <NetworkValues
           :data='gephi_data'
       ></NetworkValues>
+    </keep-alive>
+    <keep-alive>
+      <ContextSection
+      ></ContextSection>
       </keep-alive>
       <keep-alive>
         <PaneSystem
@@ -62,16 +66,17 @@ import VerticalPane from '@/components/verticalpane/VerticalPane.vue'
 import PaneSystem from '@/components/pane/PaneSystem.vue'
 import NetworkValues from '../components/interface/NetworkValues.vue'
 import MainToolBar from '../components/toolbar/MainToolBar.vue'
+import ContextSection from '../components/interface/ContextSection.vue'
 
 export default {
   name: 'ProteinView',
   components: {
     MainVis,
     PaneSystem,
-    // SearchField,
     MainToolBar,
     NetworkValues,
-    VerticalPane
+    VerticalPane,
+    ContextSection
   },
   data() {
     return {
