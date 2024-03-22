@@ -10,16 +10,17 @@
                 <img  class="pane_close" src="@/assets/toolbar/cross.png" v-on:click="summary_hidden = true">
             </div>
             <div class="context-text">
-                <div class="text">{{ summary }}</div>
+                <div class="summary-text">{{ summary }}</div>
             </div>
         </div>
-        <main class="leaderboard__profiles">
+        <div v-if="await_load" class="loading_pane" ></div>
+        <div class="leaderboard__profiles" v-if="!await_load">
             <article class="leaderboard__profile" v-for="(entry, index) in context_results" :key="index" v-on:click="open_conclusion(entry.summary)">
             <span class="leaderboard__name">{{ index }}</span>
-            <span class="leaderboard__value">{{ entry.pr }}<span>PR</span></span>
+            <span class="leaderboard__value">{{ Math.abs(Math.log10(parseFloat(entry.pagerank))).toFixed(2) }}<span>PR</span></span>
             </article>
             
-        </main>
+        </div>
 
     </div>
 </template>
@@ -34,11 +35,10 @@ export default {
                 context: "api/subgraph/context",
             },
             paneHidden:true,
-            context_results: {"12312":{"summary":"dsfasfassdfasfasfasfasdfasdfasdfasdf","pr":23,"citations":324,"year":1235},
-                              "12342":{"summary":"dfsdbbhmjmjhfmfhmfhjmfhjm","pr":2,"citations":324,"year":1235},
-                              "54747":{"summary":"adfgadfavvv vfvavavadfvadfad","pr":223,"citations":324,"year":1235}},
+            context_results: null,
             summary_hidden: true,
-            summary: ""
+            summary: "",
+            await_load: true
         }
     },
     methods: {
@@ -104,13 +104,14 @@ export default {
             formData.append('context', context);
             formData.append('rank', rank);
 
+            com.await_load = true
             //POST request for generating pathways
             com.axios
             .post(com.api.context, formData)
             .then((response) => {
-                // com.context_results = response.data.sort((t1, t2) => t1.pr - t2.pr)
-                com.test = response.data
                 console.log(response.data)
+                com.context_results = response.data
+                com.await_load = false
             })
 
         },
@@ -141,6 +142,7 @@ export default {
         backdrop-filter: blur(7.5px);
         -webkit-backdrop-filter: blur(7.5px);
         align-items: center;
+        overflow-y: scroll;
         z-index: 99;
     }
 
@@ -159,12 +161,18 @@ export default {
     }
 
     .context-text {
-        color: white;
+        color: #0A0A1A;
         font-family: 'ABeeZee', sans-serif;
         font-size: 0.7vw;
         width: 100%;
         height: 100%;
         padding: 1.3vw 1.3vw 0 1.3vw;
+    }
+
+    .summary-text {
+        width: 100%;
+        height: 100%;
+        overflow-wrap: break-word;
     }
 
     .leaderboard {
