@@ -4,12 +4,13 @@ help:
 	@echo "make node:        	installs node"
 	@echo "make java:        	installs java"
 	@echo "make maven:        	installs maven (please be sure to have installed java)"
+	@echo "make meilisearch:    installs meilisearch"
 	@echo "make neo4j:        	installs neo4j (please be sure to have installed java)"
 	@echo "make apoc:        	installs apoc (please be sure to have installed neo4j)"
 
 .NOTPARALLEL:
 
-all: prepare conda node java maven neo4j apoc dummydata
+all: prepare conda node java maven meilisearch neo4j apoc dummydata
 
 prepare:
 	@echo -n "Are you sure? [y/N] " && read ans && [ $${ans:-N} = y ]
@@ -44,6 +45,10 @@ maven:
 	sudo apt install maven
 	mvn --version
 
+meilisearch:
+# https://www.meilisearch.com/docs/learn/getting_started/quick_start
+	#cd backend/src/summarization/meilisearch_inhouse
+	cd backend/src/summarization/meilisearch_inhouse/; curl -L https://install.meilisearch.com | sh ; sudo chmod +x meilisearch; ls -l
 
 neo4j:
 # https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-neo4j-on-ubuntu-20-04
