@@ -139,8 +139,6 @@ export default {
         width: 12vw;
         display: block;
         background: #D9D9D9;
-        backdrop-filter: blur(7.5px);
-        -webkit-backdrop-filter: blur(7.5px);
         align-items: center;
         overflow-y: scroll;
         z-index: 99;
@@ -154,8 +152,6 @@ export default {
         width: 15vw;
         display: block;
         background: #D9D9D9;
-        backdrop-filter: blur(7.5px);
-        -webkit-backdrop-filter: blur(7.5px);
         align-items: center;
         z-index: 99;
     }

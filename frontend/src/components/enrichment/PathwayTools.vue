@@ -1,11 +1,11 @@
 <template>
     <div id="pathways-graphs">
-        <div class="tool-section-term">
-            <div class="generate" v-show="tool == 'Termgraph'">
-                <div class="generate-text" v-on:click="get_term_graph()">generate graph</div>
+        <div class="tool-section-graph">
+            <div class="coloumn-button">
+                <button class="tool-buttons" v-show="tool == 'Termgraph'" v-on:click="get_term_graph()">generate graph</button>
             </div>
-            <div class="generate" :class="{recolor_filter: bookmark_off == false}" v-on:click="bookmark_off = !bookmark_off">
-                <div class="generate-text" >bookmarks</div>
+            <div class="coloumn-button">
+                <button class="tool-buttons" :class="{recolor_filter: bookmark_off == false}" v-on:click="bookmark_off = !bookmark_off" >bookmarks</button>
             </div>
         </div>
         <div class="graph-section">
@@ -146,6 +146,14 @@ export default {
         background: rgba(217, 217, 217, 0.47);
     }
 
+    .tool-section-graph {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        margin: 1vw 0 1vw 0;
+        height: auto;
+        width: 100%;
+    }
+
     .tool-section-term {
         display: inline-flex;
         margin: 1vw 0 1vw 0;
@@ -153,6 +161,30 @@ export default {
         width: 100%;
         align-items: center;
         justify-content: center;
+    }
+
+    .coloumn-button{
+        padding: 1vw;
+        display: grid;
+        row-gap: 1vw;
+    }
+
+    .tool-buttons {
+        padding: 0.1vw;
+        border-radius: 0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        box-shadow: 0 6px 6px -3px rgba(255, 255, 255, 0.23);
+        transition: transform 0.25s cubic-bezier(0.7, 0.98, 0.86, 0.98), box-shadow 0.25s cubic-bezier(0.7, 0.98, 0.86, 0.98);
+        background-color: rgba(255, 255, 255, 0.8);
+    }
+
+    .tool-buttons:hover{
+        transform: scale(1.05);
+        box-shadow: 0 6px 9px 1px rgba(255, 255, 255, 0.23);
     }
 
 </style>
