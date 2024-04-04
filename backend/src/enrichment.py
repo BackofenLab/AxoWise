@@ -18,7 +18,6 @@ def calc_genes_pval(curr, alpha, in_gene, bg_genes, num_in_genes):
     # alternative is using eval() which is slower
     gene_list = curr.replace("'", '"')
     gene_list = json.loads(gene_list)
-    gene_list = [i.upper() for i in gene_list]
     # get the protein length of term
     num_term_prot = len(gene_list)
 

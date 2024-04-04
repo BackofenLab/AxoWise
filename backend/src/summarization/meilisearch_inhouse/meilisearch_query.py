@@ -1,6 +1,6 @@
 import meilisearch
 import json
-from meilisearch_inhouse import Api_key
+import summarization.meilisearch_inhouse.Api_key as Api_key
 
 
 def build_query(client, index, user_input, sort_by, limit=20000):

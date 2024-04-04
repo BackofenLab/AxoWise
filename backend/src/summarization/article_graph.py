@@ -2,8 +2,8 @@ from ast import literal_eval
 import time
 from igraph import Graph
 import leidenalg as la
-from meilisearch_inhouse import meilisearch_query as query
-from model import create_summary
+import summarization.meilisearch_inhouse.meilisearch_query as query
+from summarization.model import create_summary
 
 
 def citations_pagerank(graph):
@@ -42,7 +42,7 @@ def communities_sorted_by_pagerank(pagerank_dict):
     return [int(i[0]) for i in top_k_communities]
 
 
-def create_citations_graph(limit, search_query):
+def create_citations_graph(limit, search_query, tokenizer, model):
     """
     Return a tuple of(networkit_graph, node_mapping)
 
@@ -144,7 +144,7 @@ def create_citations_graph(limit, search_query):
             "cited_by": abstracts[name]["cited_by"],
         }
     summary_time = time.time()
-    summary = create_summary(to_summarize)
+    summary = create_summary(to_summarize, tokenizer, model)
     for i in summary:
         summarized_dict[i[1]]["summary"] = i[0]
     print(f"summarization: {time.time()-summary_time}")
