@@ -20,3 +20,4 @@ dependencies:
     - mygene
     - meilisearch
     - transformers
+    - igraph
