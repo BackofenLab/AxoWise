@@ -21,3 +21,4 @@ dependencies:
     - meilisearch
     - transformers
     - igraph
+    - leidenalg
