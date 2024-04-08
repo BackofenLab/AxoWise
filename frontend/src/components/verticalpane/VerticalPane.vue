@@ -8,7 +8,7 @@
                 <ul>
                 <li class="tab" :class="{ 'tabSelected': active_function_tab1 === 'set' }" v-on:click="active_function_tab1 = 'set'"><a href="#">term set</a></li>
                 <li class="tab" :class="{ 'tabSelected': active_function_tab1 === 'layers' }" v-on:click="active_function_tab1 = 'layers'"><a href="#">path layers</a></li>
-                <li class="tab" :class="{ 'tabSelected': active_function_tab1 === 'difexp' }" v-on:click="active_function_tab1 = 'difexp'"><a href="#">dif exp</a></li>
+                <li class="tab" v-if="dcoloumns" :class="{ 'tabSelected': active_function_tab1 === 'difexp' }" v-on:click="active_function_tab1 = 'difexp'"><a href="#">dif exp</a></li>
                 </ul>
             </div>
             <PathwayMenu
@@ -67,6 +67,7 @@ export default {
     },
     data() {
         return {
+            dcoloumns:this.$store.state.dcoloumns,
             active_function_tab1: 'set',
             active_function_tab2: 'list'
         }
