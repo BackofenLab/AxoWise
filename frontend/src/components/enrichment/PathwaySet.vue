@@ -1,20 +1,20 @@
 <template>
     <div id="pathways-set">
-        <div class="tool-section-term">
-            <div v-if="await_load == true" class="loading_pane" ></div>
-            <div class="generate" v-on:click="apply_enrichment()">
-                <div class="generate-text">generate set</div>
+        <div class="tool-section-graph">
+            <div class="coloumn-button">
+                <button class="tool-buttons" v-on:click="apply_enrichment()">generate set</button>
             </div>
-            <div class="generate">
-                <div class="generate-text" >bookmarks</div>
+            <div class="coloumn-button">
+                <button class="tool-buttons" >placeholder</button>
             </div>
         </div>
         <div class="pathway-apply-section">
-
+            
             <div class="sorting">
                 <a class="enrichment_filter" >pathway layers </a>
             </div>
-
+            
+            <div v-if="await_load == true" class="loading_pane" ></div>
             <div class="results" tabindex="0" @keydown="handleKeyDown" ref="resultsContainer">
                 <table >
                     <tbody>

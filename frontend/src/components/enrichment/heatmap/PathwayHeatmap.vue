@@ -1,5 +1,6 @@
 <template>
     <div class="slider" tabindex="0">
+        <span v-if="filt_heatmap.size == 0">There is no generated heatmap.</span>
         <div v-for="(entry, index) in filt_heatmap" :key="index" class="graph" v-on:click="switch_heatmap(entry)" @mouseover="activeHeatmapIndex = index" @mouseout="activeHeatmapIndex = -1">
             <SnapshotHeatmap :propValue="entry" :index="entry.id"/>
             <div class="graph-options" v-show="activeHeatmapIndex == index" >
