@@ -37,8 +37,8 @@ export default {
                 return;
             }
 
-            const { Degree, "Ensembl ID": EnsemblID, "Betweenness Centrality": BetweenesCentrality, "Modularity Class": Cluster, PageRank, Category, FDR} = com.active_node.attributes;
-            if (this.mode == "protein") com.statistics = {  Cluster, Degree, EnsemblID, BetweenesCentrality, PageRank }
+            const { Degree, "Ensembl ID": EnsemblID, "Betweenness Centrality": BetweenesCentrality, "Modularity Class": Cluster, PageRank, Category, FDR, Alias} = com.active_node.attributes;
+            if (this.mode == "protein") com.statistics = {  Cluster, Degree, EnsemblID, BetweenesCentrality, PageRank, Alias }
             else com.statistics = {  Cluster, Degree, EnsemblID,Category, BetweenesCentrality, PageRank, FDR }
             if(com.$store.state.dcoloumns != null) {
                 com.$store.state.dcoloumns.forEach(dcoloumn => {

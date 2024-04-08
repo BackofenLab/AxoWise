@@ -52,7 +52,7 @@ export default {
             if (com.search_raw.length >= 2) {
                 var regex = new RegExp(com.regex, 'i');
                 matches = com.data.nodes.filter(function(node) {
-                    return regex.test(node.label) || regex.test(node.alias);
+                    return regex.test(node.label) || regex.test(node.attributes.Alias);
                 });
             }
             return matches
