@@ -1,16 +1,24 @@
 <template>
     <div class="tool-item">
         <div id="protein_highlight" class="window-menu">
-            <div class="highlight_list">
-                    <textarea v-model="raw_text" rows="10" cols="30" autofocus></textarea>
-                    <button v-on:click="highlight(raw_text)" id="highlight_protein" class="colortype">search</button>
-            </div>  
             <div id="protein_highlight_header" class="window-header">
                 <div class="headertext">
                     <span>highlight nodes</span>
                     <img  class="protein_close" src="@/assets/pathwaybar/cross.png" v-on:click="unactive_proteinlist()">
                 </div>
             </div>
+            <div class="keyword-search">
+                    <div class="window-label">keyword search</div>
+                    <div class="keyword-searchbar">
+                        <span>></span>
+                        <input type="text" v-model="search_raw" class="empty" placeholder="input keyword"/>
+                    </div>
+            </div>  
+            <div class="highlight-list">
+                    <div class="window-label">gene search</div>
+                    <textarea v-model="raw_text" rows="10" cols="30" autofocus></textarea>
+                    <button v-on:click="highlight(raw_text)" id="highlight_protein" class="colortype">apply</button>
+            </div>  
         </div>
     </div>
 </template>
@@ -97,30 +105,36 @@ export default {
 
 .window-menu {
     position: fixed;
+    display: block;
     top: 30%;
     left: 42%;
     width: 16%;
-    height: 30%;
+    height: 40%;
     flex-shrink: 0;
+    border-style: solid;
+    border-width: 1px;
+    background: #0A0A1A;
+    border-color: white;
+    overflow: hidden;
 
 }
-.highlight_list {
-    position: absolute;
-    top: 9.41%;
+.keyword-search {
+    margin-top: 2%;
+    position: relative;
     width: 100%;
-    height: 80%;
-    border-radius: 0px 0px 5px 5px;
-    background: rgba(222, 222, 222, 0.61);
-    backdrop-filter: blur(7.5px);
-    text-align: center;
+    height: 45%;
+}
+.highlight-list {
+    position: relative;
+    width: 100%;
+    height: 45%;
 }
 
 .window-header {
     width: 100%;
     height: 9.41%;
-    position: absolute;
+    position: relative;
     flex-shrink: 0;
-    border-radius: 5px 5px 0px 0px;
     backdrop-filter: blur(7.5px);
     background: #D9D9D9;
     text-align: center;
@@ -148,19 +162,18 @@ export default {
     position: absolute;
 }
 
-.highlight_list textarea {
-    margin-top: 5%;
-	border-radius: 5px;
+.highlight-list textarea {
+    margin-top: 3%;
 	font-size: 0.9vw;
-    width: 90%;
+    width: 100%;
 	color: white;
-	background-color:  rgba(10, 10, 26, 0.5);
+	background-color:  rgba(255, 255, 255, 0.05);
 	text-align: center;
 	border: none;
 	padding-top: 5%;
 	resize: none;
 	outline: none;
-	height: 80%;
+	height: 65%;
 }
 
 #highlight_protein {
@@ -169,12 +182,45 @@ export default {
 	cursor: pointer;
     border: none;
 	color: white;
-	border-radius: 5px;
+    border-style: solid;
+    border-width: 1px;
+    background: #0A0A1A;
+    border-color: white;
+    margin-top: 1%;
 	padding: 1%;
 	width: 60%;
 	margin-left: 50%;
-	margin-top: 1%;
 	transform: translate(-50%,0);
+}
+
+.keyword-searchbar {
+    margin-top: 0.5vw;
+    padding: 0 0 0 0.3vw;
+    height: 1.4vw;
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: left;
+}
+    
+.keyword-searchbar span {
+    filter: invert(100%);
+}
+
+.keyword-searchbar input[type=text] {
+    margin-left: 0.5vw;
+    width: 8vw;
+    background-color:  rgba(255, 255, 255, 0.05);
+    padding: 0.2vw;
+    font-size: 0.85vw;
+    color: white;
+    cursor: default;
+    border: none;
+    font-family: 'ABeeZee', sans-serif;
+}
+
+.keyword-searchbar [type="text"]::-webkit-input-placeholder {
+opacity: 70%;
 }
 
 </style>
