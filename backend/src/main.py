@@ -108,13 +108,21 @@ def proteins_subgraph_api():
     else:
         panda_file = pd.read_csv(request.files.get("file"))
         protein_names = panda_file["SYMBOL"].to_list()
-
+    input_mapping = {}
+    for i in protein_names:
+        input_mapping[i.lower()] = i
     species_id = int(request.form.get("species_id"))
     # DColoumns
     selected_d = request.form.get("selected_d").split(",") if request.form.get("selected_d") else None
     threshold = int(float(request.form.get("threshold")) * 1000)
 
-    proteins, protein_ids, symbol_alias_mapping = queries.get_protein_ids_for_names(driver, protein_names, species_id)
+    proteins, protein_ids, symbol_alias_mapping, ensembl_alias = queries.get_protein_ids_for_names(
+        driver, protein_names, species_id
+    )
+    keys = list(symbol_alias_mapping.keys())
+    for num, i in enumerate(symbol_alias_mapping.values()):
+        if i in input_mapping:
+            input_mapping[keys[num]] = keys[num]
     stopwatch.round("Setup")
 
     if len(protein_ids) > 1:
@@ -189,8 +197,13 @@ def proteins_subgraph_api():
                 node["attributes"]["PageRank"] = str(pagerank[mapped_node_id])
             node["attributes"]["Description"] = df_node.annotation
             node["attributes"]["Ensembl ID"] = df_node.external_id
-            node["attributes"]["Name"] = symbol_value
-
+            node["attributes"]["Name"] = input_mapping[symbol_value]
+            if ensembl_id in ensembl_alias:
+                node["attributes"]["Alias"] = ensembl_alias[ensembl_id]
+                node["alias"] = ensembl_alias[ensembl_id]
+            else:
+                node["attributes"]["Alias"] = "not found"
+                node["alias"] = "not found"
             # Alias attribute
             """if symbol_value in all_symbols:
                 node["attributes"]["Alias"] = all_symbols[symbol_value]
@@ -204,8 +217,10 @@ def proteins_subgraph_api():
                             # to keep the alias name so the value can be taken
                             # from the input file correctly
                             symbol_value = symbol_alias_mapping[symbol_value]
-                        node["attributes"][column] = panda_file.loc[panda_file["name"] == symbol_value, column].item()
-            node["label"] = df_node.SYMBOL
+                        node["attributes"][column] = panda_file.loc[
+                            panda_file["name"] == input_mapping[symbol_value], column
+                        ].item()
+            node["label"] = input_mapping[symbol_value]
             node["species"] = str(10090)
 
     # Identify subgraph nodes and update their attributes

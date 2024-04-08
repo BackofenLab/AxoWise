@@ -46,7 +46,7 @@ def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id
     # Retrieve all the symbols that correspond to aliases found in names
     with driver.session() as session:
         result = session.run(query)
-        symbols_set, aliases_set, mapping = _convert_to_symbol_alias(result)
+        symbols_set, aliases_set, mapping, symbol_alias = _convert_to_symbol_alias(result)
     # To make less calls to the database, remove the aliases and add their corresponding symbol
     genes_set = set(names)
     result_names = list(genes_set - aliases_set) + list(symbols_set - genes_set)
@@ -68,12 +68,12 @@ def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id
         MATCH (protein:Protein:{species})
         WHERE protein.SYMBOL IN {result_names} 
             OR protein.ENSEMBL_PROTEIN IN {result_names} 
-        RETURN protein, protein.ENSEMBL_PROTEIN AS id
+        RETURN protein, protein.ENSEMBL_PROTEIN AS id, protein.SYMBOL as symbol
     """
     with driver.session() as session:
         result = session.run(query)
-        protein, id = _convert_to_protein_id(result)
-        return protein, id, mapping  # , symbol_alias
+        protein, id, protein_alias = _convert_to_protein_id(result, symbol_alias)
+        return protein, id, mapping, protein_alias
 
 
 def get_protein_neighbours(
@@ -157,27 +157,33 @@ def get_number_of_genes(driver: neo4j.Driver, species_id: int) -> int:
         return int(num_genes)
 
 
-def _convert_to_protein_id(result: neo4j.Result) -> (list, list[str]):
+def _convert_to_protein_id(result: neo4j.Result, symbol_alias: dict) -> (list, list[str]):
     proteins, ids = list(), list()
+    protein_alias = {}
     for row in result:
         proteins.append(row["protein"])
         ids.append(row["id"])
-    return proteins, ids
+        symbol = row["symbol"]
+        if symbol in symbol_alias:
+            protein_alias[row["id"]] = symbol_alias[symbol]
+    return proteins, ids, protein_alias
 
 
 def _convert_to_symbol_alias(result: neo4j.Result) -> (set[str], set[str]):
     symbols = set()
     aliases = set()
+    symbol_aliases = {}
     mapping = {}
     for row in result:
         symbol = row["symbol"]
         alias = row["found_alias"]
+        symbol_aliases[symbol] = row["found_alias"]
         symbols.add(symbol)
         aliases.add(alias)
         # Only add the (symbol: alias) if the symbol isnt there already
         if row["symbol"] not in mapping:
             mapping[symbol] = alias
-    return symbols, aliases, mapping
+    return symbols, aliases, mapping, symbol_aliases
 
 
 def _convert_to_connection_info_score(
