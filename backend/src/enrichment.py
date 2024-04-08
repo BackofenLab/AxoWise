@@ -13,7 +13,7 @@ import queries
 from util.stopwatch import Stopwatch
 
 
-def calc_genes_pval(curr, alpha, in_gene, bg_genes, num_in_genes):
+def calc_genes_pval(curr, alpha, in_gene, bg_genes, num_in_genes, mapping):
     # Lists are read as strings, evaluate to lists using JSON.
     # alternative is using eval() which is slower
     gene_list = curr.replace("'", '"')
@@ -23,6 +23,7 @@ def calc_genes_pval(curr, alpha, in_gene, bg_genes, num_in_genes):
 
     # Get intersection of proteins
     gene_term = list(set(gene_list) & in_gene)
+    gene_term = [mapping[i] for i in gene_term]
     num_inter = len(gene_term)
 
     if num_inter == 0:
@@ -73,11 +74,13 @@ def functional_enrichment(driver: neo4j.Driver, in_genes, species_id: Any):
             p-value, fdr-rate
     """
     stopwatch = Stopwatch()
-
+    mapping = {}
+    for i in in_genes:
+        mapping[i.lower()] = i
     # Get number of all proteins in the organism (from Cypher)
     bg_proteins = queries.get_number_of_genes(driver, species_id)
     num_in_gene = len(in_genes)
-    genes = set(in_genes)
+    genes = {i.lower() for i in in_genes}
     # pandas DataFrames for nodes and edges
     csv.field_size_limit(sys.maxsize)
 
@@ -93,7 +96,7 @@ def functional_enrichment(driver: neo4j.Driver, in_genes, species_id: Any):
     # calculate p_value for all terms
     new_genes = []
     new_p = []
-    arguments = [(value, alpha, genes, bg_proteins, num_in_gene) for value in df_terms["symbols"]]
+    arguments = [(value, alpha, genes, bg_proteins, num_in_gene, mapping) for value in df_terms["symbols"]]
 
     with multiprocessing.Pool() as pool:
         # Apply the function to each input value in parallel and collect the results
