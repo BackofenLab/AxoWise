@@ -200,10 +200,8 @@ def proteins_subgraph_api():
             node["attributes"]["Name"] = input_mapping[symbol_value]
             if ensembl_id in ensembl_alias:
                 node["attributes"]["Alias"] = ensembl_alias[ensembl_id]
-                node["alias"] = ensembl_alias[ensembl_id]
             else:
                 node["attributes"]["Alias"] = "not found"
-                node["alias"] = "not found"
             # Alias attribute
             """if symbol_value in all_symbols:
                 node["attributes"]["Alias"] = all_symbols[symbol_value]
