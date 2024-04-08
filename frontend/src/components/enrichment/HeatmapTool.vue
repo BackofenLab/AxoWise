@@ -1,11 +1,11 @@
 <template>
     <div id="heatmap-graphs">
-            <div class="tool-section-term">
-                <div class="generate">
-                <div class="generate-text" v-on:click="get_heatmap()">generate heatmap</div>
+        <div class="tool-section-graph">
+            <div class="coloumn-button">
+                <button class="tool-buttons" v-on:click="get_heatmap()">generate heatmap</button>
             </div>
-            <div class="generate">
-                <div class="generate-text" v-on:click="get_svg()">export Snapshot</div>
+            <div class="coloumn-button">
+                <button class="tool-buttons" v-on:click="get_svg()" >export snapshot</button>
             </div>
         </div>
         <div class="graph-section">

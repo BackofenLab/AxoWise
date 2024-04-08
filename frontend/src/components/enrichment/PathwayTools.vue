@@ -167,6 +167,7 @@ export default {
         padding: 1vw;
         display: grid;
         row-gap: 1vw;
+        z-index: 9999;
     }
 
     .tool-buttons {

@@ -340,7 +340,7 @@ export default {
     }
 
     .pathway-search input[type=text] {
-        margin-left: 2%;
+        margin-left: 0.5vw;
         width: 8vw;
         font-size: 0.85vw;
         background: none;

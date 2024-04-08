@@ -1,8 +1,11 @@
 <template>
     <div id="pathway-layer-show">
-        <div class="tool-section-term">
-            <div class="generate">
-                <div class="generate-text" v-on:click="call_layers()">generate layer visualization</div>
+        <div class="tool-section-graph">
+            <div class="coloumn-button">
+                <button class="tool-buttons" v-on:click="call_layers()">generate layers</button>
+            </div>
+            <div class="coloumn-button">
+                <button class="tool-buttons" >placeholder</button>
             </div>
         </div>
         <div class="network-results" tabindex="0" @keydown="handleKeyDown">
@@ -167,9 +170,7 @@ export default {
 #pathway-layer-show {
     width: 100%;
     height: 100%;
-    position: absolute;
     font-family: 'ABeeZee', sans-serif;
-    padding: 0% 2% 2% 2%;
     z-index: 999;
 }
 #pathway-layer-show .network-results {

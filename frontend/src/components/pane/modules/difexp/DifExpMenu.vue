@@ -41,7 +41,7 @@ export default {
             links: null,
             hide: true,
             dcoloumns: this.$store.state.dcoloumns,
-            category: "Selection",
+            category: "selection",
             category_filtering: false,
             dboundary: {
                 value: 1,
