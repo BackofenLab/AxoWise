@@ -68,13 +68,12 @@ export default {
         }
     },
     mounted(){
-        console.log(this.term_data)
         this.filter_options(this.term_data.nodes)
     },
     computed: {
         regex() {
             var com = this;
-            return RegExp(com.search_raw.toLowerCase());
+            return RegExp(com.search_raw.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
         },
         filt_terms() {
             var com = this;

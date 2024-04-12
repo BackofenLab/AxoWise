@@ -108,7 +108,7 @@ export default {
     computed: {
         regex() {
             var com = this;
-            return RegExp(com.search_raw.toLowerCase());
+            return RegExp(com.search_raw.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
         },
         filt_terms() {
             var com = this;

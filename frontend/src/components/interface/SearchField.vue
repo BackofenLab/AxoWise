@@ -43,7 +43,7 @@ export default {
     computed: {
         regex() {
             var com = this;
-            return RegExp(com.search_raw.toLowerCase());
+            return RegExp(com.search_raw.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
         },
         filt_search() {
             var com = this;
