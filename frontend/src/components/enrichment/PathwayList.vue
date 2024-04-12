@@ -18,14 +18,14 @@
             </div>
             <div class="function-section">
                 <div id="function-filter" class="pre-full" @mouseover="functions_active = true" @mouseleave="functions_active = false" :class="{ full: category_filtering == true }">
-                    <img class="bookmark-image" src="@/assets/pathwaybar/favorite.png">
+                    <img class="bookmark-image" src="@/assets/toolbar/menu-burger.png" >
                 </div>
                 <div id="function-filter-categories" v-show="functions_active == true" @mouseover="functions_active = true" @mouseleave="functions_active = false">
                     <div class="bookmark-button" v-on:click="bookmark_off = !bookmark_off">
                         <img class="bookmark-image" src="@/assets/pathwaybar/favorite.png" :class="{recolor_filter: bookmark_off == false}">
                     </div>
                     <div class="export-button" v-on:click="export_enrichment()">
-                        <img class="bookmark-image" src="@/assets/pathwaybar/favorite.png">
+                        <img class="bookmark-image" src="@/assets/pathwaybar/csv.png">
                     </div> 
                 </div>
             </div>
