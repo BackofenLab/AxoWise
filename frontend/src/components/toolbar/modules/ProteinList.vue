@@ -10,8 +10,13 @@
             <div class="keyword-search">
                     <div class="window-label">keyword search</div>
                     <div class="keyword-searchbar">
-                        <span>></span>
+                        <span v-on:click="search_subset(filt_keyword)">></span>
                         <input type="text" v-model="search_raw" class="empty" placeholder="input keyword"/>
+                    </div>
+                    <div class="keyword-result">                        
+                        <div v-for="(entry, index) in filt_keyword" :key="index">
+                            <a href="#" v-on:click="select_node(entry)" :class="{ in_subset: active_genes.has(entry.label)}">{{entry.attributes['Name']}}</a>
+                        </div>
                     </div>
             </div>  
             <div class="highlight-list">
@@ -24,6 +29,7 @@
 </template>
 
 <script>
+// import {QuickScore} from "quick-score";
 
 export default {
     name: 'ProteinList',
@@ -31,7 +37,9 @@ export default {
     emits: ['protein_active_changed'],
     data() {
         return {
-            raw_text: "",
+            search_raw: "",
+            raw_text:"",
+            active_genes: new Set(),
         }
     },
     methods: {
@@ -92,11 +100,38 @@ export default {
 
             com.emitter.emit("searchSubset", {subset: subset,mode: this.mode});
         },
+        select_node(node) {
+            if (node) this.emitter.emit("searchNode", {node: node, mode: "protein"});
+        },
+        search_subset(subset){
+            var com = this;
+            com.emitter.emit("searchSubset", {subset: subset,mode: this.mode});
+        }
     },
     mounted(){
         var com = this;
 
         com.dragElement(document.getElementById("protein_highlight"));
+    },
+    computed: {
+        regex() {
+            var com = this;
+            return RegExp(com.search_raw.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+        },
+        filt_keyword() {
+            var com = this;
+            var matches = [];
+            
+            
+            if (com.search_raw.length >= 2) {
+                com.active_genes = com.$store.state.active_subset ? new Set(com.$store.state.active_subset): new Set()
+                var regex = new RegExp(com.regex, 'i');
+                matches = com.gephi_data.nodes.filter(function(node) {
+                    return regex.test(node.attributes["Description"]) || regex.test(node.label);
+                });
+            }
+            return matches
+        }
     }
 }
 </script>
@@ -221,6 +256,25 @@ export default {
 
 .keyword-searchbar [type="text"]::-webkit-input-placeholder {
 opacity: 70%;
+}
+
+.keyword-search .keyword-result{
+    margin: 0.2vw 0.5vw 0.5vw 0.5vw;
+    padding: 0.3vw;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: 65%;
+    overflow: scroll;
+}
+
+.keyword-result a {
+    font-size: 0.85vw;
+    color: white;
+    text-decoration: none;
+}
+
+.keyword-result .in_subset {
+    color:lightgreen;
 }
 
 </style>
