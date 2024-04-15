@@ -71,7 +71,7 @@ export default {
     },
     mounted() {
         var com = this
-        com.generatePathways(com.gephi_data.nodes[0].species, com.gephi_data.nodes.map(node => node.attributes["Name"]))
+        if(com.sorted == 'bottom') com.generatePathways(com.gephi_data.nodes[0].species, com.gephi_data.nodes.map(node => node.attributes["Name"]))
 
     },
     methods: {
