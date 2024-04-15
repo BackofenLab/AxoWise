@@ -154,11 +154,9 @@ export default {
         const n = nodes[i]
         if (!neighbors.has(n.attributes["Ensembl ID"]) && n.attributes["Ensembl ID"] !== sigma_node.attributes["Ensembl ID"]) {
           n.color = "rgb(0, 100, 100)"
+          n.active = false
         }else{
-          if(com.special_label) {
-            n.sActive = true
-          }
-          else n.active = true;
+          n.active = true;
         }
       }
 
