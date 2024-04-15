@@ -53,10 +53,14 @@ def files(path):
 def proteins_enrichment():
     driver = database.get_driver()
     genes = request.form.get("genes").split(",")
+    symbol_alias_mapping = json.loads(request.form.get("mapping"))
+    alias_symbol_mapping = {value: key for key, value in symbol_alias_mapping.items()}
     species_id = int(request.form.get("species_id"))
 
     # in-house functional enrichment
-    list_enrichment = enrichment.functional_enrichment(driver, genes, species_id)
+    list_enrichment = enrichment.functional_enrichment(
+        driver, genes, species_id, symbol_alias_mapping, alias_symbol_mapping
+    )
 
     # STRING API functional enrichment
     """df_enrichment = stringdb.functional_enrichment(proteins, species_id)
@@ -85,7 +89,7 @@ def proteins_context():
     model = AutoModelForSeq2SeqLM.from_pretrained("lxyuan/distilbart-finetuned-summarization")
     model = model.to("cuda")
     base, context, rank, limit = request.form.get("base"), request.form.get("context"), request.form.get("rank"), 500
-    query = f'"{base} {context}"'
+    query = f'"{base}" "{context}"'
 
     # in-house context summary
     summary = summarization.create_citations_graph(limit, query, tokenizer, model)
@@ -110,19 +114,17 @@ def proteins_subgraph_api():
         protein_names = panda_file["SYMBOL"].to_list()
     input_mapping = {}
     for i in protein_names:
-        input_mapping[i.lower()] = i
+        input_mapping[i.upper()] = i
     species_id = int(request.form.get("species_id"))
     # DColoumns
     selected_d = request.form.get("selected_d").split(",") if request.form.get("selected_d") else None
     threshold = int(float(request.form.get("threshold")) * 1000)
 
-    proteins, protein_ids, symbol_alias_mapping, ensembl_alias = queries.get_protein_ids_for_names(
-        driver, protein_names, species_id
-    )
+    proteins, protein_ids, symbol_alias_mapping = queries.get_protein_ids_for_names(driver, protein_names, species_id)
     keys = list(symbol_alias_mapping.keys())
     for num, i in enumerate(symbol_alias_mapping.values()):
         if i in input_mapping:
-            input_mapping[keys[num]] = keys[num]
+            input_mapping[keys[num]] = input_mapping[i]
     stopwatch.round("Setup")
 
     if len(protein_ids) > 1:
@@ -162,7 +164,7 @@ def proteins_subgraph_api():
     stopwatch.round("Enrichment")
 
     if len(nodes.index) == 0:
-        sigmajs_data = {"nodes": [], "edges": []}
+        sigmajs_data = {"nodes": [], "edges": [], "settings": []}
     else:
         # Build a standard input string for Gephi's backend
         nodes_csv = io.StringIO()
@@ -178,6 +180,7 @@ def proteins_subgraph_api():
         stdout = jar.pipe_call(_BACKEND_JAR_PATH, stdin)
 
         sigmajs_data = json.loads(stdout)
+        sigmajs_data["settings"] = {}
 
     stopwatch.round("Gephi")
 
@@ -185,6 +188,7 @@ def proteins_subgraph_api():
     ensembl_to_node = dict(zip(nodes["external_id"], nodes.itertuples(index=False)))
 
     # Iterate over nodes in `sigmajs_data` and update their attributes
+    sigmajs_data["settings"]["gene_alias_mapping"] = symbol_alias_mapping
     for node in sigmajs_data["nodes"]:
         ensembl_id = node["id"]
         df_node = ensembl_to_node.get(ensembl_id)
@@ -197,9 +201,10 @@ def proteins_subgraph_api():
                 node["attributes"]["PageRank"] = str(pagerank[mapped_node_id])
             node["attributes"]["Description"] = df_node.annotation
             node["attributes"]["Ensembl ID"] = df_node.external_id
+            node["attributes"]["Ensembl Gene ID"] = df_node.ENSEMBL_GENE
             node["attributes"]["Name"] = input_mapping[symbol_value]
-            if ensembl_id in ensembl_alias:
-                node["attributes"]["Alias"] = ensembl_alias[ensembl_id]
+            if symbol_value in symbol_alias_mapping:
+                node["attributes"]["Alias"] = symbol_value
             else:
                 node["attributes"]["Alias"] = "not found"
             # Alias attribute

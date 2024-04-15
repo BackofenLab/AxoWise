@@ -82,6 +82,7 @@ export default {
             var formData = new FormData()
             formData.append('genes', genes)
             formData.append('species_id', species);
+            formData.append('mapping', JSON.stringify(com.gephi_data.settings["gene_alias_mapping"]));
                 
             this.await_load = true
 
