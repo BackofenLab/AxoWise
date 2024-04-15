@@ -1,8 +1,5 @@
 <template>
     <div id="vertical-pane">
-        <SearchField
-        :data='gephi_data'
-        ></SearchField>
         <div class="upper-block">
             <div class="tab-system">
                 <ul>
@@ -33,14 +30,12 @@
 
 <script>
 import PathwayGraphMenu from '@/components/pathwaytools/PathwayGraphMenu.vue'
-import SearchField from '@/components/interface/SearchField.vue'
 
 export default {
     name: 'VerticalPanePathway',
     props: ['term_data'],
     components: {
         PathwayGraphMenu,
-        SearchField,
     },
     data() {
         return {
