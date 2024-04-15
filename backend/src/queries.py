@@ -35,7 +35,7 @@ def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id
         species = "Mus_Musculus"
     elif species_id == 9606:
         species = "Homo_Sapiens"
-    names = [i.lower() for i in names]
+    names = [i.upper() for i in names]
     query = f"""
         MATCH (n:TG:Mus_Musculus) WHERE n.ALIAS IS NOT NULL
         WITH n, apoc.convert.fromJsonList(n.ALIAS) AS alias_list
@@ -72,8 +72,8 @@ def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id
     """
     with driver.session() as session:
         result = session.run(query)
-        protein, id, protein_alias = _convert_to_protein_id(result, symbol_alias)
-        return protein, id, mapping, protein_alias
+        protein, id = _convert_to_protein_id(result, symbol_alias)
+        return protein, id, mapping
 
 
 def get_protein_neighbours(
@@ -159,14 +159,10 @@ def get_number_of_genes(driver: neo4j.Driver, species_id: int) -> int:
 
 def _convert_to_protein_id(result: neo4j.Result, symbol_alias: dict) -> (list, list[str]):
     proteins, ids = list(), list()
-    protein_alias = {}
     for row in result:
         proteins.append(row["protein"])
         ids.append(row["id"])
-        symbol = row["symbol"]
-        if symbol in symbol_alias:
-            protein_alias[row["id"]] = symbol_alias[symbol]
-    return proteins, ids, protein_alias
+    return proteins, ids
 
 
 def _convert_to_symbol_alias(result: neo4j.Result) -> (set[str], set[str]):
