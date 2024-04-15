@@ -99,7 +99,8 @@ export default {
       sigmaFocus: true,
       moduleSelectionActive: true,
       heatmap: false,
-      showCluster: false
+      showCluster: false,
+      nodeclick: false
     }
   },
   watch: {
@@ -153,6 +154,11 @@ export default {
         const n = nodes[i]
         if (!neighbors.has(n.attributes["Ensembl ID"]) && n.attributes["Ensembl ID"] !== sigma_node.attributes["Ensembl ID"]) {
           n.color = "rgb(0, 100, 100)"
+        }else{
+          if(com.special_label) {
+            n.sActive = true
+          }
+          else n.active = true;
         }
       }
 
@@ -604,18 +610,18 @@ export default {
   },
   mouseup: function(e) {
       var com = this;
-      for (var element in this.moduleSet){
-        if(this.isMouseInside(this.moduleSet[element].data)) this.getClusterElements(this.moduleSet[element])
-      }
       com.mousedownleftCheck = false
       com.mousemoveCheck = false
       if (e.button == 2) {
         com.mousedownrightCheck = false
-          com.restore_surface();
-          com.rectangular_select.active = false;
-
-          com.container.style.cursor = "default";
-          com.select_nodes_rectangular();
+        com.restore_surface();
+        com.rectangular_select.active = false;
+        
+        com.container.style.cursor = "default";
+        com.select_nodes_rectangular();
+      }
+      for (var element in this.moduleSet){
+        if(this.isMouseInside(this.moduleSet[element].data)) this.getClusterElements(this.moduleSet[element])
       }
   },
   backup_surface: function() {
@@ -933,7 +939,7 @@ export default {
   getClusterElements(circle) {
     var com = this;
 
-    if(this.unconnectedActive(circle.modularity) || !com.moduleSelectionActive) return
+    if(this.unconnectedActive(circle.modularity) || !com.moduleSelectionActive || this.nodeclick) return
 
     var nodeSet = []
     if(this.active_subset) {
@@ -999,10 +1005,21 @@ export default {
 
     sigma_instance.bind('clickNode', function(event) {
       // Check if the desired key is being held down when clicking a node
+      
       if (keyState[17] && keyState[16]) com.reset_node_label(event.data.node);
       else if (keyState[17] && !keyState[16]) com.activeNode(event.data.node, true);
       else com.activeNode(event.data.node, false);
       
+    });
+
+    sigma_instance.bind('overNode', function() {
+      // Check if the desired key is being held down when clicking a node
+      com.nodeclick = true
+    });
+
+    sigma_instance.bind('outNode', function() {
+      // Check if the desired key is being held down when clicking a node
+      com.nodeclick = false
     });
 
     // select all elements with the class "sigma-mouse"
