@@ -58,7 +58,8 @@ export default {
       mousemoveCheck: false,
       sigmaFocus: true,
       moduleSelectionActive: true,
-      showCluster: false
+      showCluster: false,
+      nodeclick: false
     }
   },
   watch: {
@@ -82,9 +83,14 @@ export default {
       
       com.reset()
 
-      if(node == null) return
+      if(node == null) {
+        com.resetFocus(sigma_instance.cameras[0])
+        return
+      }
 
       var sigma_node = sigma_instance.graph.getNodeFromIndex(node.attributes["Ensembl ID"])
+
+      com.focusNode(sigma_instance.cameras[0] , sigma_node)
 
       const neighbors = new Set();
       const highlighted_edges = new Set();
@@ -116,6 +122,9 @@ export default {
         const n = nodes[i]
         if (!neighbors.has(n.attributes["Ensembl ID"]) && n.attributes["Ensembl ID"] !== sigma_node.attributes["Ensembl ID"]) {
           n.color = "rgb(0, 100, 100)"
+          n.active = false;
+        }else{
+          n.active = true;
         }
       }
 
@@ -557,7 +566,7 @@ getCircleStyle(circle){
   getClusterElements(circle) {
     var com = this;
 
-    if(this.unconnectedActive(circle.modularity) || !com.moduleSelectionActive) return
+    if(this.unconnectedActive(circle.modularity) || !com.moduleSelectionActive || this.nodeclick) return
 
     var nodeSet = []
     if(this.active_subset) {
@@ -578,7 +587,34 @@ getCircleStyle(circle){
 
     this.$emit('active_subset_changed', nodeSet.filter(item => com.clusterDict.has(item.attributes["Modularity Class"])))
     
-  }
+  },
+  focusNode(camera, node) {
+    sigma.misc.animation.camera(
+      camera,
+      {
+        x: node['read_cam0:x'],
+        y: node['read_cam0:y'],
+        ratio: 0.5,
+      },
+      {
+        duration: 1000,
+      },
+    );   
+  },
+  resetFocus(camera){
+
+    sigma.misc.animation.camera(
+      camera,
+      {
+        x: 0,
+        y: 0,
+        ratio: 1,
+      },
+      {
+        duration: 1000,
+      },
+    );   
+}
   },
   mounted() {
     var com = this;
@@ -629,6 +665,17 @@ getCircleStyle(circle){
       else com.activeNode(event.data.node, false);
       
     });
+
+    sigma_instance.bind('overNode', function() {
+      // Check if the desired key is being held down when clicking a node
+      com.nodeclick = true
+    });
+
+    sigma_instance.bind('outNode', function() {
+      // Check if the desired key is being held down when clicking a node
+      com.nodeclick = false
+    });
+
 
     // select all elements with the class "sigma-mouse"
     const sigmaMouse = document.querySelectorAll(".sigma-mouse");
