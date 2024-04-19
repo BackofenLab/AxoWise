@@ -585,8 +585,8 @@ export default {
         // var selectedNodes = e.ctrlKey ? NETWORK.getSelectedNodes() : null;
         com.backup_surface();
         var rectangle = com.rectangular_select.rectangle;
-        rectangle.startX = e.layerX - com.container.offsetLeft;
-        rectangle.startY = e.layerY - com.container.offsetTop;
+        rectangle.startX = e.layerX;
+        rectangle.startY = e.layerY;
         com.rectangular_select.active = true;
         com.container.style.cursor = "crosshair";
     }
@@ -600,15 +600,15 @@ export default {
           var context = com.rectangular_select.context;
           var rectangle = com.rectangular_select.rectangle;
           com.restore_surface();
-          rectangle.w = (e.layerX - com.container.offsetLeft) - rectangle.startX;
-          rectangle.h = (e.layerY - com.container.offsetTop) - rectangle.startY ;
+          rectangle.w = (e.layerX ) - rectangle.startX;
+          rectangle.h = (e.layerY ) - rectangle.startY ;
           var rectBounds = com.container.getBoundingClientRect();
           context.setLineDash([5]);
           context.strokeStyle = "rgb(82,182,229)";
-          context.strokeRect(rectangle.startX - rectBounds.x, rectangle.startY, rectangle.w, rectangle.h);
+          context.strokeRect(rectangle.startX, rectangle.startY, rectangle.w, rectangle.h);
           context.setLineDash([]);
           context.fillStyle = "rgba(82,182,229,"+ this.base_opacity +")";
-          context.fillRect(rectangle.startX- rectBounds.x, rectangle.startY, rectangle.w, rectangle.h);
+          context.fillRect(rectangle.startX, rectangle.startY, rectangle.w, rectangle.h);
       }
   },
   mouseup: function(e) {
@@ -645,8 +645,8 @@ export default {
       var rectBounds = com.container.getBoundingClientRect();
 
       var selected_nodes = [];
-      var x_range = com.get_select_range(rectangle.startX - rectBounds.x, rectangle.w);
-      var y_range = com.get_select_range(rectangle.startY - rectBounds.y, rectangle.h);
+      var x_range = com.get_select_range(rectangle.startX, rectangle.w);
+      var y_range = com.get_select_range(rectangle.startY, rectangle.h);
 
       var nodes = sigma_instance.graph.nodes();
       for (var i in nodes) {
