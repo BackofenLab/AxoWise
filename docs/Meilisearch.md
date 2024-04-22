@@ -2,10 +2,11 @@
 
 This README file covers the most important steps on how to set up and maintain meilisearch for the pgdb project.  
 You can find the full documentation [here](https://www.meilisearch.com/docs).
+<br>
 
 ## Installation - when not using our Makefile:
 
-**only necessary when you are not using the Requirements and Makefile**
+**Only necessary when you are not using the Requirements and Makefile!**
 
 When installing meilisearch for the first time you need to download it first, use the following command:
 ```curl -L https://install.meilisearch.com | sh```
@@ -15,6 +16,7 @@ You can add a standard config using this command if you dont have our config fil
 
 To test-run meilisearch use this command:
 ```./meilisearch --master-key="aSampleMasterKey```
+
 Check if the config file was recognized, when starting up ypu should see **Config file path: "./config.toml"** on the terminal.
 
 Keep the terminal open for the entire session, you should now be able to access the meilisearch preview on [_localhost:7700_](http://localhost:7700), if you are not working on a server. 
@@ -27,9 +29,20 @@ pip3 install meilisearch
 ```
 
 Congrats! You can now use meilisearch.
+<br>
 
+## Uploading a dumpfile:
 
-## <u>First time setup:</u>
+When you have a dumpfile you can just upload it using this command:
+
+```./meilisearch --import-dump dumps/{dump_uid.dump} --master-key="MASTER_KEY"```
+
+Make sure that meilisearch was installed before, either with the manual setup from above or using the Requirements / Makefile
+You can find the **MASTER_KEY** in the config file.
+<br>
+<br>
+## First time setup:
+**Follow this guide if you are not using a dumpfile and are setting up meilisearch for the very first time.**
 
 Before you start uploading data to meilisearch its important to cover a few steps. This is necessary because meilisearch will create the documents in an index in a specific way - related to its settings. If you change the settings after uploading data, all the document-indexing might need to be done again - this takes very long if it works at all.
 
@@ -40,13 +53,14 @@ Its best to follow these steps in the displayed order:
 4. Transform pubmed data from csv to json
 5. Upload pubmed data to meilisearch
 
+<br>
 
 ### Set API Keys:
 Meilisearch uses API keys and one Master Key to manage access.
 
 1. Adjust the **Master Key**:
    
-The Master Key is set in the config file and should be secure. Use [keygen](https://randomkeygen.com/) to generate a strong Master Key and set it in the config. Restart the meilisearch client with: ```make meili_stop     make meili``` from the Makefile, the Master Key is now taken from the config file.
+The Master Key is set in the config file and should be secure. Use [keygen](https://randomkeygen.com/) to generate a strong Master Key and set it in the config. Restart the meilisearch client with: ```make meili_stop  ``` and ```   make meili``` from the Makefile, the Master Key is now taken from the config file.
 
 
 2. Create a file **Api_key.py**:
@@ -57,6 +71,7 @@ Now call ```python meilisearch_key.py```, you will get an output of the keys cur
 ADMIN_API_KEY = "the admin API Key"
 SEARCH_KEY = "the search key"
 ```
+<br>
 
 ### Update index settings:
 Call ```python update_config.py```:
@@ -65,6 +80,7 @@ Call ```python update_config.py```:
 
 The function also adjusts settings such as disabeling spelling mistakes, setting searchable and sortable attributes. 
 
+<br>
 
 ### Upload the synonyms to meilisearch:
 Call ```python meilisearch_synonyms.py```:
@@ -72,6 +88,8 @@ Call ```python meilisearch_synonyms.py```:
 2. *Index:* Put the index you created earlier here
 
 The function will process all the synonyms and sort out any that appear more than once. Once the processing has been done you can decide if you want to upload them right away -- say yes and put your index.
+
+<br>
 
 ### Transform PubMed data from csv to json:
 Before you transform your PubMed data to json make sure the attributes in the *csv_to_json.py* function match the ones from your file and their order. 
@@ -84,30 +102,42 @@ If they dont match the order in ```csv-to-json()``` - adjust the code accordingl
 
 *This process might take a while*
 
-The function now processes each paper and returns one or multiple json files, depending on how big your input file is. Papers with missing title or abstract are being ignored.
+The function now processes each paper and returns one or multiple json files, depending on how big your input file is. Papers with missing title or abstract are ignored.
 
+<br>
 
 ### Upload Pubmed data to meilisearch:
 1. Adjust in the *config.toml*:
    - *http_payload_size_limit* = larger than your biggest .json file **(Watch your RAM)**
    - *max_indexing_memory* = as much as you can dedicate to meilisearch
    - *max_indexing_threads* = as many as you can dedicate to meilisearch
-1. Call ```python meilisearch_add_data.py``` or ```nohup python meilisearch_add_data.py > logs.txt 2>&1 &``` to run it in the background if you didnt use the Makefile. 
-2. Make sure to also run the meilisearch client in background if you want to close your ssh connection. ```nohup ./meilisearch > server_log.txt 2>&1 &```
+<br>
+2. Restart the meilisearch client with ```make meili_stop  ``` and ```   make meili``` from the Makefile
+<br>
+3. Call ```python meilisearch_add_data.py``` or ```nohup python meilisearch_add_data.py > logs.txt 2>&1 &``` to run it in the background if you didnt use the Makefile. 
+<br>
+1. Make sure to run the meilisearch client in background, if you your are not using our makefile, in case you want to close your ssh connection. ```nohup ./meilisearch > server_log.txt 2>&1 &```
+<br>
 
 Give the number of json files created in the *Transform Pubmed data from csv to json* function.
 
 - If you only have one file, give the whole filename.
 - If you have multiple files, just give the beginning of the filename.
   - For *Pubmed0.json, Pubmed1,json*,... only give *Pubmed*
+  
+<br>
 
 The function will now upload one file after another to meilisearch, this may take a while, depending on how big your index already is and how many files you want to upload.
 
 The indexing can take ~ 6h only for human data. You can check the progress with ```tail server_log.txt```. Remeber the task ID for the first upload, this way you know how many files have been uploaded successfully at a later point.
 
+<br>
 
 ### Before the first search:
 Once meilisearch is done indexing, its ready to use. Make sure that the correct index is set in ```meilisearch_query.py - get_results()``` function. 
+
+<br>
+<br>
 
 ## <u>Detailed Explanation:</u>
 
@@ -115,6 +145,8 @@ Once meilisearch is done indexing, its ready to use. Make sure that the correct 
 ### Synonymy:
 
 To create and upload synonyms you can use the **meilisearch_synonyms.py** function.
+
+<br>
 
 #### Using the provided function "meilisearch_synonyms.py":
 This function transforms a csv file to the correct json formate and can also upload dircetly to meilisearch.
@@ -146,6 +178,7 @@ After processing you can **upload** the synonyms directly. Just specify the inde
 
 **Please make sure to upload synonyms before you upload the data** - if done the other way around you might experience long processing times or the _too many open file discriptors_ issue.
 
+<br>
 
 #### Transforming the synonyms yourself:
 If you want to transform the synonyms yourself make sure you provide the right formate.
@@ -179,15 +212,18 @@ You would need to create the following synonym pairs:
   }
   ```
 
+<br>
 
 ## Preparing data to be uploaded
 
 When you want to upload data to the meilisearch database its best to provide it in json format. This section covers the conversion from _.csv_ to _.json_, but even if you have a different formate you should follow the steps.
+<br>
 
 ### PubMed abstracts:
 
 To convert from csv to json you can use the **csv_to_json.py** function.  
 This function take _PubMed_ abstracts in csv formate and returns several json files.
+<br>
 
 #### Using the provided function "csv_to_json.py":
 
@@ -203,7 +239,8 @@ If you have more or less column you can adjust the function or use your own tool
 When running the function you are asked to provide the csv filename as well as the number of rows per output file.
 The number of rows relate to the rows in the csv file, its generally better to have bigger and less .json files to upload. As the whole index needs to be restructured when uploading a document
 
-**Important:** The filesize of the output files can not be larger than the payload limit! To check you payload limit have a look at the config file under _http_payload_size_limit_. I would recommend to set the payload limit at about 6000MB and keep the .json files in the 3-4 GB range to avoid very long indexing times. **Make sure you have enough RAM or lower the limit**
+**Important:** The filesize of the output files can not be larger than the payload limit! To check you payload limit have a look at the config file under _http_payload_size_limit_. I would recommend to set the payload limit at about 6000MB and keep the .json files in the 3-4 GB range to avoid crashes during indexing. **Make sure you have enough RAM or lower the limit**
+<br>
 
 #### Do your own transformation:
 
@@ -225,22 +262,24 @@ Please make sure that you save your data in json formate, meilisearch expects a 
 ```
 * Make sure that every elements has a **unique key**. 
   In our case thats the PMID. This attribute has to be availible in all elements!
+<br>
 * Create multiple output files:
   Stay below the payload limit (check config) for the filesize - I recommend files to be around 3-4GB
+<br>
 * Name your files correct:
   Pick a name of your choice, and name the outputfiles with ascending numbers, starting at 0:
-  output0.json, output1.json, output2,json,....
-
+  ```output0.json, output1.json, output2,json,....```
+<br>
 
   ### Api Keys:
   With *meilisearch_key.py* you can create, delete, show or save keys, just uncomment the according function call in the main function.
-
+<br>
 
 ### Meilisearch query:
 Here the user query gets preprocessed and sent to meilisearch.
 
 - If the user query consists of a term that has a synonyms, meilisearch internally querries against these synonym terms too.
-
+<br>
 - If the user query consists of a term that has a full_name (we check for that in the *Dict_full_name.json*) we send a second query to meilisearch with the term replaced by the full name. We use "" around the full name, this way we enfore the words in the full name to appear behind each other in the results.
 
 **Further improvment:** It might be smart to switch to multi-search in a later stage when meilisearch can process these queries in parallel. [multisearch](https://www.meilisearch.com/docs/reference/api/multi_search)
