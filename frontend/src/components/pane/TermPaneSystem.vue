@@ -92,14 +92,26 @@ export default {
             function elementDrag(e) {
                 e = e || window.event;
                 e.preventDefault();
-                // calculate the new cursor position:
+                // calculate the conditions:
+                var parentWidth = window.innerWidth;
+                var parentHeight = window.innerHeight;
+                var elementWidth = elmnt.offsetWidth;
+                var elementHeight = elmnt.offsetHeight;
+
+                // calculate the new coordinates:
                 pos1 = pos3 - e.clientX;
                 pos2 = pos4 - e.clientY;
                 pos3 = e.clientX;
                 pos4 = e.clientY;
+
+                // Calculate the new coordinates for bottom and right
+                var newBottom = parentHeight - (elmnt.offsetTop - pos2 + elementHeight);
+                var newRight = parentWidth - (elmnt.offsetLeft - pos1 + elementWidth);
+
+
                 // set the element's new position:
-                elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+                elmnt.style.bottom = newBottom + "px";
+                elmnt.style.right = newRight + "px";
             }
 
             
@@ -133,7 +145,7 @@ export default {
     },
     mounted(){
         this.dragElement(document.getElementById("pane"));
-        
+
         this.emitter.on("reset_protein",(state) => {
             this.selectTab("node",state)
         })
