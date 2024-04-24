@@ -602,7 +602,6 @@ export default {
           com.restore_surface();
           rectangle.w = (e.layerX ) - rectangle.startX;
           rectangle.h = (e.layerY ) - rectangle.startY ;
-          var rectBounds = com.container.getBoundingClientRect();
           context.setLineDash([5]);
           context.strokeStyle = "rgb(82,182,229)";
           context.strokeRect(rectangle.startX, rectangle.startY, rectangle.w, rectangle.h);
@@ -642,7 +641,6 @@ export default {
   select_nodes_rectangular: function() {
       var com = this;
       var rectangle = com.rectangular_select.rectangle;
-      var rectBounds = com.container.getBoundingClientRect();
 
       var selected_nodes = [];
       var x_range = com.get_select_range(rectangle.startX, rectangle.w);

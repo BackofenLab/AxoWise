@@ -449,7 +449,6 @@ mousemove: function(e) {
         com.restore_surface();
         rectangle.w = (e.layerX) - rectangle.startX;
         rectangle.h = (e.layerY) - rectangle.startY ;
-        var rectBounds = com.container.getBoundingClientRect();
         context.setLineDash([5]);
         context.strokeStyle = "rgb(82,182,229)";
         context.strokeRect(rectangle.startX, rectangle.startY, rectangle.w, rectangle.h);
@@ -490,7 +489,6 @@ backup_surface: function() {
       var com = this;
       const render_id = sigma_instance.renderers[0].conradId
       var rectangle = com.rectangular_select.rectangle;
-      var rectBounds = com.container.getBoundingClientRect();
 
       var selected_nodes = [];
       var x_range = com.get_select_range(rectangle.startX, rectangle.w);
