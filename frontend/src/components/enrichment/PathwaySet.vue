@@ -72,6 +72,7 @@ export default {
             var formData = new FormData()
             formData.append('genes', genes)
             formData.append('species_id', com.gephi_data.nodes[0].species);
+            formData.append('mapping', JSON.stringify(com.gephi_data.settings["gene_alias_mapping"]));
 
             this.await_load = true
             //POST request for generating pathways
