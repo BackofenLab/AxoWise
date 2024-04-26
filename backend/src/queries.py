@@ -7,6 +7,25 @@ from typing import Any
 import neo4j
 
 
+def connected_terms(driver: neo4j.Driver, term_ids: list[str], species_id: int):
+    """improved version of get_terms_connected_by_overlap
+    returns: terms, source, target, score"""
+    if species_id == 10090:
+        species = "Mus_Musculus"
+    elif species_id == 9606:
+        species = "Homo_Sapiens"
+
+    query = f"""
+        MATCH (source:FT:{species})-[association:OVERLAP]->(target:FT:{species})
+        WHERE source.Term IN {term_ids}
+            AND target.Term IN {term_ids}
+        RETURN source.Term AS source, target.Term AS target, toInteger(round(association.Score,2)*100) AS score;
+        """
+    with driver.session() as session:
+        result = session.run(query)
+        return result.data()
+
+
 def get_terms_connected_by_overlap(driver: neo4j.Driver, term_ids: list[str], species_id: int):
     """:returns: terms, source, target, score"""
     if species_id == 10090:
@@ -50,19 +69,6 @@ def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id
     # To make less calls to the database, remove the aliases and add their corresponding symbol
     genes_set = set(names)
     result_names = list(genes_set - aliases_set) + list(symbols_set - genes_set)
-
-    # For alias attribute in frontend
-    '''query = f"""
-        MATCH (gene:TG:{species})
-        WHERE gene.SYMBOL IN {str([n.upper() for n in result_names])} 
-            OR gene.ENSEMBL IN {str([n.upper() for n in result_names])} 
-        RETURN gene.SYMBOL as symbol, gene.ALIAS as alias
-    """
-    symbol_alias = {}
-    with driver.session() as session:
-        result = session.run(query)
-        for row in result:
-            symbol_alias[row["symbol"].capitalize()] = row["alias"]'''
 
     query = f"""
         MATCH (protein:Protein:{species})
@@ -133,7 +139,7 @@ def get_enrichment_terms(driver: neo4j.Driver, species_id: int) -> list[dict[str
 
     query = f"""
         MATCH (term:FT:{species})
-        RETURN term.Term AS id, term.Name AS name, term.Category AS category, term.Symbols AS symbols
+        RETURN term.Term AS id, split(term.Term, "~")[0] as clean, term.Name AS name, term.Category AS category, term.Symbols AS symbols
     """
 
     with driver.session() as session:

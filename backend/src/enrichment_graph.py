@@ -24,33 +24,14 @@ def get_functional_graph(list_enrichment, species_id):
     driver = database.get_driver()
 
     # Execute the query and retrieve the CSV data
-    terms, source, target, score = queries.get_terms_connected_by_overlap(driver, list_term, species_id)
+    edges = pd.DataFrame(queries.connected_terms(driver, list_term, species_id))
 
     stopwatch.round("Neo4j")
 
-    if len(terms) == 0:
+    if len(edges) == 0:
         return
 
-    nodes = pd.DataFrame(terms).rename(columns={"Term": "external_id"}).drop_duplicates(subset="external_id")
-
-    nodesterm = pd.DataFrame(list_enrichment)
-
-    df2 = nodesterm.rename(columns={"id": "external_id"})
-    merged = pd.merge(df2[["external_id", "fdr_rate", "p_value"]], nodes, on="external_id")
-
-    # Add the two columns to df2
-    nodes = merged.drop_duplicates()
-
-    nodes["fdr_rate"] = nodes["fdr_rate"].fillna(0)
-    nodes["p_value"] = nodes["p_value"].fillna(0)
-
-    edges = pd.DataFrame({"source": source, "target": target, "score": score})
-    edges = edges.drop_duplicates(subset=["source", "target"])  # TODO edges` can be empty
-
-    # convert kappa scores to Integer
-    edges["score"] = edges["score"].apply(lambda x: round(x, 2))
-    edges["score"] = edges["score"].apply(lambda x: int(x * 100))
-
+    nodes = pd.DataFrame(list_enrichment).rename(columns={"id": "external_id"}).drop_duplicates(subset="external_id")
     # Create nk_graph and needed stats
     nk_graph, node_mapping = graph.nk_graph(nodes, edges)
     pagerank = graph.pagerank(nk_graph)
@@ -103,9 +84,9 @@ def get_functional_graph(list_enrichment, species_id):
                 node["attributes"]["Betweenness Centrality"] = str(betweenness[mapped_node_id])
                 node["attributes"]["PageRank"] = str(pagerank[mapped_node_id])
             node["attributes"]["Ensembl ID"] = df_node.external_id
-            node["attributes"]["Name"] = df_node.Name
-            node["label"] = df_node.Name  # Comment this out if you want no node labels displayed
-            node["attributes"]["Category"] = df_node.Category
+            node["attributes"]["Name"] = df_node.name
+            node["label"] = df_node.name  # Comment this out if you want no node labels displayed
+            node["attributes"]["Category"] = df_node.category
             node["attributes"]["FDR"] = df_node.fdr_rate
             node["attributes"]["P Value"] = df_node.p_value
 
