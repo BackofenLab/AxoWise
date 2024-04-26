@@ -2,7 +2,10 @@
     <div id="pathways-set">
         <div class="tool-section-graph">
             <div class="coloumn-button">
-                <button class="tool-buttons" v-on:click="apply_enrichment()">generate set</button>
+                <button class="tool-buttons" v-on:click="apply_enrichment()">
+                    <div v-if="!loading_state" > generate set</div>
+                    <div v-if="loading_state" class="loading_button" ></div>
+                </button>
             </div>
             <div class="coloumn-button">
                 <button class="tool-buttons" >placeholder</button>
@@ -14,7 +17,6 @@
                 <a class="enrichment_filter" >pathway layers </a>
             </div>
             
-            <div v-if="await_load == true" class="loading_pane" ></div>
             <div class="results" tabindex="0" @keydown="handleKeyDown" ref="resultsContainer">
                 <table >
                     <tbody>
@@ -58,7 +60,7 @@ export default {
         return{
             set_dict: new Set(),
             layer: 0,
-            await_load: false,
+            loading_state: false,
         }
     },
     methods: {
@@ -66,7 +68,7 @@ export default {
             var com = this
             var genes = com.$store.state.active_subset
 
-            if (!genes) return
+            if (!genes || com.loading_state) return
 
             //Adding proteins and species to formdata 
             var formData = new FormData()
@@ -74,7 +76,7 @@ export default {
             formData.append('species_id', com.gephi_data.nodes[0].species);
             formData.append('mapping', JSON.stringify(com.gephi_data.settings["gene_alias_mapping"]));
 
-            this.await_load = true
+            com.loading_state = true
             //POST request for generating pathways
             com.sourceToken = this.axios.CancelToken.source();
             com.axios
@@ -82,7 +84,7 @@ export default {
             .then((response) => {
                 com.set_dict.add({"name": `layer ${com.layer}`, "genes": genes, "terms": response.data.sort((t1, t2) => t1.fdr_rate - t2.fdr_rate), "status": false})
                 com.layer += 1
-                this.await_load = false
+                com.loading_state = false
             })
         },
         remove_set(entry){

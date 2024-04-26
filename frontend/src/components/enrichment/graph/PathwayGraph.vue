@@ -21,6 +21,7 @@ import SnapshotGraph from '@/components/enrichment/graph/SnapshotGraph.vue'
 export default {
     name: 'PathwayGraphs',
     props: ['gephi_data','filtered_terms', 'bookmark_off','mode'],
+    emits: ['loading_state_changed'],
     components: {
         SnapshotGraph,
     },
@@ -80,6 +81,7 @@ export default {
                         }
                         this.$store.commit('assign_new_term_graph', {id: this.graph_number, label: `Graph ${this.graph_number}`, graph: response.data})
                         this.term_graphs.add({ id: this.graph_number, label: `Graph ${this.graph_number}`, graph: response.data});
+                        com.$emit("loading_state_changed", false);
                     }
                 })
 

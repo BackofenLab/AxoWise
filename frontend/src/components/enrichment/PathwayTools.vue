@@ -2,7 +2,10 @@
     <div id="pathways-graphs">
         <div class="tool-section-graph">
             <div class="coloumn-button">
-                <button class="tool-buttons" v-show="tool == 'Termgraph'" v-on:click="get_term_graph()">generate graph</button>
+                <button class="tool-buttons" v-show="tool == 'Termgraph'" v-on:click=" get_term_graph() ">
+                    <div v-if="!loading_state" > generate graph</div>
+                    <div v-if="loading_state" class="loading_button" ></div>
+                </button>
             </div>
             <div class="coloumn-button">
                 <button class="tool-buttons" :class="{recolor_filter: bookmark_off == false}" v-on:click="bookmark_off = !bookmark_off" >bookmarks</button>
@@ -14,6 +17,7 @@
             :gephi_data='gephi_data'
             :filtered_terms = 'filtered_terms'
             :bookmark_off = 'bookmark_off'
+            @loading_state_changed = 'loading_state = $event'
             ></PathwayGraph>
         </div>
     </div>
@@ -36,11 +40,17 @@ export default {
             bookmark_off: true,
             tool_selecting: false,
             mode: 'protein',
-            tools: [{id: 'Termgraph'}, {id: 'Heatmap'}]
+            tools: [{id: 'Termgraph'}, {id: 'Heatmap'}],
+            loading_state: false,
         }
     },
     methods: {
         get_term_graph(){
+            var com = this;
+
+            if(com.loading_state) return
+
+            com.loading_state = true
             this.emitter.emit("generateGraph");
         },
 
@@ -186,6 +196,30 @@ export default {
     .tool-buttons:hover{
         transform: scale(1.05);
         box-shadow: 0 6px 9px 1px rgba(255, 255, 255, 0.23);
+    }
+
+    .loading_button {
+        position: relative;
+        display: flex;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+    .loading_button::after{
+        content: "";
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
+        border: 4px solid transparent;
+        border-top-color: #ffffff;
+        border-radius: 50%;
+        animation: button-loading-spinner 1s ease infinite;
     }
 
 </style>
