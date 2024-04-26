@@ -35,8 +35,8 @@ export default {
             if (com.active_term == null) {
                 return;
             }
-            const { category, id, fdr_rate, p_value } = com.active_term;
-            com.statistics = { category, id, fdr_rate, p_value }
+            const { category, clean, fdr_rate, p_value } = com.active_term;
+            com.statistics = { category, clean, fdr_rate, p_value }
 
         }
     }

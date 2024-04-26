@@ -6,7 +6,7 @@
                     <div class="checkbox-image" v-on:click="bookmark_pathway()" :class="{ checked: favourite_pathways.has(active_term)}" ></div>
                 </label>
             </div>
-            <div class="term" >{{active_term.id}}</div>
+            <div class="term" >{{active_term.clean}}</div>
             <div class='colorbar-img' v-on:click="to_term()">
                 <img src="@/assets/pane/follow.png">
             </div>
