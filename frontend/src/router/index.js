@@ -5,6 +5,7 @@ import ImportScreen from '../components/home/ImportScreen.vue'
 import FileScreen from '../components/home/FileScreen.vue'
 import ProteinView from '../views/ProteinView.vue'
 import TermView from '../views/TermView.vue'
+import CitationView from '../views/CitationView.vue'
 
 const routes = [
   {
@@ -30,6 +31,15 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: TermView,
+    meta: { keepAlive: true } // added meta to enable keep-alive
+  },
+  {
+    path: '/citation',
+    name: 'citation-graph',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: CitationView,
     meta: { keepAlive: true } // added meta to enable keep-alive
   },
   {

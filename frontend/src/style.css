@@ -1383,7 +1383,7 @@ display: none;
 	opacity: 0;
   }
 
-.protein-view, .term-view, .container {
+.protein-view, .term-view,.citation-view, .container {
 	position: absolute;
 	height: 100%;
 	width: 100%;

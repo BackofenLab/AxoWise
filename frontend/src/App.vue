@@ -11,6 +11,7 @@
 
 <script>
 import TermView from '@/views/TermView.vue'
+import CitationView from '@/views/CitationView.vue'
 import ProteinView from '@/views/ProteinView.vue'
 import HomeView from '@/views/HomeView.vue'
 
@@ -19,7 +20,8 @@ export default {
   components: {
     TermView,
     ProteinView,
-    HomeView
+    HomeView,
+    CitationView
   }
 }
 </script>
