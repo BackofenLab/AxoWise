@@ -24,7 +24,7 @@
 
 export default {
     name: 'CitationSummary',
-    props:['active_function','sorted'],
+    props:['active_function','sorted','citation_data','node_index'],
     data() {
         return{
             raw_text:"",
@@ -32,6 +32,7 @@ export default {
             api: {
                 summary: "api/subgraph/summary",
             },
+            abstractList: null
         }
     },
     methods:{
@@ -41,8 +42,18 @@ export default {
         summarize_abstracts(abstracts){
             var com = this
 
+
+            
+
+            com.abstractList = {}
+            for (var node of abstracts.split("\n")) {
+                if(com.node_index[node]) com.abstractList[node]= com.node_index[node]
+            }
+            
             var formData = new FormData()
-            formData.append('abstracts', abstracts.split("\n").join(";"))
+            formData.append('abstracts', com.abstractList )
+            
+            console.log(com.abstractList)
 
             //POST request for generating pathways
             com.axios

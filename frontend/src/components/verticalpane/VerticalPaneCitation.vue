@@ -20,6 +20,7 @@
             </div>
             <CitationSummary
             :citation_data='citation_data'
+            :node_index='node_index'
             :sorted = '"bottom"'
             ></CitationSummary>
 
@@ -33,7 +34,7 @@ import CitationSummary from '@/components/citation/CitationSummary.vue'
 
 export default {
     name: 'VerticalPaneCitation',
-    props: ['citation_data'],
+    props: ['citation_data','node_index'],
     components: {
         CitationList,
         CitationSummary

@@ -18,6 +18,7 @@
       ></CitationVis>
       <VerticalPaneCitation
       :citation_data='citation_data'
+      :node_index='node_index'
       ></VerticalPaneCitation>
       <CitationToolBar
       :data='citation_data'
@@ -72,6 +73,7 @@ export default {
       node_color_index: null,
       edge_color_index: null,
       node_size_index: null,
+      node_index: null,
       centering_active: null,
       unconnected_nodes: null,
     }
@@ -84,6 +86,11 @@ export default {
       for (var idx in com.citation_data.nodes) {
         var node = com.citation_data.nodes[idx];
         com.node_color_index[node.id] = node.color;
+      }
+      com.node_index = {};
+      for (var idi in com.citation_data.nodes) {
+        var node = com.citation_data.nodes[idi];
+        com.node_index[node.id] = node;
       }
 
       com.node_size_index = {};
@@ -129,6 +136,12 @@ export default {
     for (var idx in com.citation_data.nodes) {
       var node = com.citation_data.nodes[idx];
       com.node_color_index[node.id] = node.color;
+    }
+
+    com.node_index = {};
+    for (var idi in com.citation_data.nodes) {
+      var node = com.citation_data.nodes[idi];
+      com.node_index[node.id] = node;
     }
 
     com.node_size_index = {};
