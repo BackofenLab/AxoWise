@@ -51,20 +51,12 @@
                     ></RoutingNode>
                 </div>
             </div>
-            <div id="context" class="subsection" v-show="tool_active && active_section == 'context'">
-                <div class="subsection-main colortype">
-                    <ContextSearch 
-                    :active_node='active_node'
-                    ></ContextSearch>
-                </div>
-            </div>
         </div>
         <div class="nodeattributes">
             <img  class="icons" src="@/assets/toolbar/menu-burger.png" v-on:click="change_section( 'information')">
             <img  class="icons" src="@/assets/toolbar/settings-sliders.png" v-on:click="change_section('statistics')">
             <img  class="icons" src="@/assets/toolbar/proteinselect.png" v-on:click="change_section('connections')">
             <img  class="icons" src="@/assets/toolbar/logout.png" v-on:click="change_section('routing')">
-            <img  class="icons" src="@/assets/toolbar/search.png" v-on:click="change_section('context')">
 
         </div>
     </div>
@@ -75,7 +67,6 @@ import NetworkStatistics from '@/components/pane/modules/node/NetworkStatistics.
 import NodeConnections from '@/components/pane/modules/node/NodeConnections.vue'
 import ChatbotInformation from '@/components/pane/modules/node/ChatbotInformation.vue'
 import RoutingNode from '@/components/pane/modules/node/RoutingNode.vue'
-import ContextSearch from '@/components/pane/modules/node/ContextSearch.vue'
 
 export default {
     name: 'NodePane',
@@ -86,7 +77,6 @@ export default {
         ChatbotInformation,
         NodeConnections,
         RoutingNode,
-        ContextSearch
 
     },
     data() {

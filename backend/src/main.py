@@ -15,6 +15,7 @@ from multiprocessing import Process
 import database
 import enrichment
 import enrichment_graph
+import citation_graph
 from summarization import article_graph as summarization
 import graph
 import jar
@@ -85,16 +86,25 @@ def proteins_enrichment():
 # Request comes from ContextSection.vue
 @app.route("/api/subgraph/context", methods=["POST"])
 def proteins_context():
-    tokenizer = AutoTokenizer.from_pretrained("lxyuan/distilbart-finetuned-summarization")  # abstractive very few words
+    '''tokenizer = AutoTokenizer.from_pretrained("lxyuan/distilbart-finetuned-summarization")  # abstractive very few words
     model = AutoModelForSeq2SeqLM.from_pretrained("lxyuan/distilbart-finetuned-summarization")
-    model = model.to("cuda")
+    model = model.to("cuda")'''
     base, context, rank, limit = request.form.get("base"), request.form.get("context"), request.form.get("rank"), 500
     query = f'"{base}" "{context}"'
-
     # in-house context summary
-    summary = summarization.create_citations_graph(limit, query, tokenizer, model)
-    json_str = json.dumps(summary)
-    return Response(json_str, mimetype="application/json")
+    edges, nodes = summarization.create_citations_graph(limit, query, None, None)
+    graph = citation_graph.get_citation_graph(nodes,edges)
+    return Response(graph, mimetype="application/json")
+
+
+@app.route("/api/subgraph/summary", methods=["POST"])
+def abstract_summary():
+    abstracts = request.form.get("abstracts").split(";")
+
+    response = """Lorem ipsum dolor sit amet. Sit tempora illo est excepturi rerum et ratione sint ut explicabo magnam in esse magni. Non odit ipsum et quia fuga aut galisum natus in commodi perspiciatis et quae mollitia.
+                Ut ipsam praesentium ut quibusdam molestiae est voluptatem obcaecati nam alias dignissimos non voluptas Quis eos possimus quae. Hic iusto repellat et iste eligendi ab laudantium perspiciatis. At sequi deserunt et dolorum nihil et voluptatem Quis est nobis omnis. At optio architecto ut rerum iste vel iure placeat vel quas quia sit galisum quos aut accusamus aperiam aut nostrum delectus.
+                Ut ducimus tempore nam autem voluptatem et fugit saepe ut modi voluptas. Id quisquam quidem aut quam molestiae sit culpa quia hic molestiae tempore ad distinctio voluptatem est vitae harum. Quo officiis maxime non blanditiis molestias 33 quis galisum."""
+    return Response(response, mimetype="application/json")
 
 
 # ====================== Subgraph API ======================
@@ -269,6 +279,24 @@ def terms_subgraph_api():
     stopwatch.total("terms_subgraph_api")
 
     return Response(json_str, mimetype="application/json")
+
+
+# =============== Citation Graph ======================
+
+
+# TODO Refactor this
+# @app.route("/api/subgraph/citation", methods=["POST"])
+# def citation_subgraph_api():
+#     stopwatch = Stopwatch()
+
+#     # Functional terms
+#     list_enrichment = ast.literal_eval(request.form.get("func-terms"))
+
+#     json_str = citation_graph.get_citation_graph(list_enrichment=list_enrichment)
+
+#     stopwatch.total("citation_subgraph_api")
+
+#     return Response(json_str, mimetype="application/json")
 
 
 # Signal handler needed after changing to Networkit

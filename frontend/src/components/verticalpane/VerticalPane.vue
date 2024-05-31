@@ -37,33 +37,41 @@
                 <li class="tab" :class="{ 'tabSelected': active_function_tab2 === 'list' }" v-on:click="active_function_tab2 = 'list'"><a href="#">pathways</a></li>
                 <li class="tab" :class="{ 'tabSelected': active_function_tab2 === 'graph' }" v-on:click="active_function_tab2 = 'graph'"><a href="#">graphs</a></li>
                 <li class="tab" :class="{ 'tabSelected': active_function_tab2 === 'heatmap' }" v-on:click="active_function_tab2 = 'heatmap'"><a href="#">heatmap</a></li>
+                <li class="tab" :class="{ 'tabSelected': active_function_tab2 === 'citation' }" v-on:click="active_function_tab2 = 'citation'"><a href="#">citation</a></li>
                 </ul>
             </div>
-            <PathwayMenu
+            <PathwayMenu v-show="active_function_tab2==='list' || active_function_tab2==='graph' || active_function_tab2==='heatmap'"
             :sorted = '"bottom"'
             :gephi_data='gephi_data'
             :active_function='active_function_tab2'
             @active_term_changed = 'active_term = $event'
             @active_layer_changed = 'active_layer = $event'
             ></PathwayMenu>
+            <CitationMenu v-show="active_function_tab2==='citation'"
+            :sorted = '"bottom"'
+            :active_function='active_function_tab2'
+            :active_node='active_node'
+            ></CitationMenu>
         </div>
     </div>
 </template>
 
 <script>
 import PathwayMenu from '@/components/enrichment/PathwayMenu.vue'
+import CitationMenu from '@/components/citation/CitationMenu.vue'
 import SearchField from '@/components/interface/SearchField.vue'
 import PathwayLayers from '@/components/pane/modules/layer/PathwayLayers.vue'
 import DifExpMenu from '@/components/pane/modules/difexp/DifExpMenu.vue'
 
 export default {
     name: 'VerticalPane',
-    props: ['gephi_data','active_termlayers','active_decoloumn'],
+    props: ['gephi_data','active_node','active_termlayers','active_decoloumn'],
     components: {
         PathwayMenu,
         SearchField,
         PathwayLayers,
-        DifExpMenu
+        DifExpMenu,
+        CitationMenu
     },
     data() {
         return {

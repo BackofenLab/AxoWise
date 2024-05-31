@@ -68,6 +68,7 @@ def create_citations_graph(limit, search_query, tokenizer, model):
     hits = file["hits"]
     node_names = []
     edges = []
+    nodes = []
 
     # Process hits and add nodes to the graph, also add abstracts to mapping
     for hit in hits:
@@ -75,12 +76,15 @@ def create_citations_graph(limit, search_query, tokenizer, model):
         if pmid not in pmids:
             year = hit["Published"]
             abstract = hit["Abstract"]
+            title = hit["Title"]
             citations = hit["Cited number"]
             abstracts[pmid] = {"abstract": abstract, "year": year, "cited_by": citations}
             pmids.add(pmid)
             node_mapping[pmid] = integer_id
             integer_id += 1
             node_names.append(pmid)
+            nodes.append({"external_id": str(pmid), "abstract": abstract, "year": year, "cited_by": citations, 'title': title})
+            
 
     # Add edges to the graph
     for hit in hits:
@@ -130,6 +134,7 @@ def create_citations_graph(limit, search_query, tokenizer, model):
             top_nodes.append(top1)
     summarized_dict = {}
     to_summarize = []
+    check_edges = set()
     for i in top_nodes:
         if isinstance(i, list):
             name = str(graph.vs(i[0])["name"][0])
@@ -138,14 +143,21 @@ def create_citations_graph(limit, search_query, tokenizer, model):
             name = str(graph.vs(i)["name"][0])
             node = str(i)
         to_summarize.append((abstracts[name]["abstract"], name))
+        check_edges.add(name)
         summarized_dict[name] = {
+            "external_id": name,
             "pagerank": node_pagerank_mapping[node],
             "year": abstracts[name]["year"],
             "cited_by": abstracts[name]["cited_by"],
         }
-    summary_time = time.time()
+        
+    edge_list = []
+    edge_mapping = dict((v,k) for k,v in node_mapping.items())
+    for (source,target) in edges:
+        edge_list.append({"source": edge_mapping[source], "target": edge_mapping[target], "score": 1})
+    '''summary_time = time.time()
     summary = create_summary(to_summarize, tokenizer, model)
     for i in summary:
         summarized_dict[i[1]]["summary"] = i[0]
-    print(f"summarization: {time.time()-summary_time}")
-    return summarized_dict
+    print(f"summarization: {time.time()-summary_time}")'''
+    return edge_list, nodes

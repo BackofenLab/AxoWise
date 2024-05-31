@@ -22,6 +22,7 @@
       <keep-alive>
       <VerticalPane
       :gephi_data='gephi_data'
+      :active_node='active_node'
       :active_termlayers='active_termlayers'
       :active_decoloumn='active_decoloumn'
       ></VerticalPane>
@@ -39,10 +40,6 @@
           :data='gephi_data'
       ></NetworkValues>
     </keep-alive>
-    <keep-alive>
-      <ContextSection
-      ></ContextSection>
-      </keep-alive>
       <keep-alive>
         <PaneSystem
         :active_node='active_node' @active_node_changed = 'active_node = $event'
@@ -66,7 +63,6 @@ import VerticalPane from '@/components/verticalpane/VerticalPane.vue'
 import PaneSystem from '@/components/pane/PaneSystem.vue'
 import NetworkValues from '../components/interface/NetworkValues.vue'
 import MainToolBar from '../components/toolbar/MainToolBar.vue'
-import ContextSection from '../components/interface/ContextSection.vue'
 
 export default {
   name: 'ProteinView',
@@ -76,7 +72,6 @@ export default {
     MainToolBar,
     NetworkValues,
     VerticalPane,
-    ContextSection
   },
   data() {
     return {

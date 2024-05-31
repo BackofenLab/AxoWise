@@ -102,6 +102,6 @@ def get_results(
     # This needs to be moved to the main function when connecting to the frontend
     # import Api_key
     client = meilisearch.Client("http://localhost:7700", Api_key.SEARCH_KEY)
-    index = "pubmed_v1"
+    index = "mouse"
     sort_by = ["Cited number:desc", "Published:desc"]
     return build_query(client, index, query, sort_by, limit)

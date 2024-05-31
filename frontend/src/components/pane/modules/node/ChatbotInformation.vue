@@ -31,7 +31,7 @@ export default {
     font-size: 0.7vw;
     width: 100%;
     height: 100%;
-    padding: 1.3vw 1.3vw 0 1.3vw;
+    padding: 1vw 1.3vw 0 1.3vw;
 }
 
 #chatbot .text {

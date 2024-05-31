@@ -45,6 +45,7 @@ export default {
             });
         }
         this.term_graphs_array = this.$store.state.term_graph_dict
+        this.favourite_graphs = this.$store.state.favourite_graph_dict
         if(this.term_graphs_array.length != 0) {
             this.graph_number = Math.max.apply(Math, this.term_graphs_array.map(item => item.id))
             this.term_graphs = new Set(this.term_graphs_array)
@@ -59,8 +60,8 @@ export default {
     },
     activated(){
         console.log("activated")
-            this.term_graphs = new Set(this.$store.state.term_graph_dict)
-            this.favourite_graphs = this.$store.state.favourite_graph_dict
+        this.term_graphs = new Set(this.$store.state.term_graph_dict)
+        this.favourite_graphs = this.$store.state.favourite_graph_dict
     },
     methods: {
         get_term_data(set) {
@@ -96,7 +97,6 @@ export default {
             if (!this.favourite_graphs.has(entry.id)) {
                 // Checkbox is checked, add its state to the object
                 this.favourite_graphs.delete(entry.id)
-                this.$store.commit('assign_favourite_graph', this.favourite_graphs)
             }
             this.term_graphs.delete(entry)
             this.$store.commit('remove_snapshotPathway', entry.id)

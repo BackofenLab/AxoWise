@@ -5,6 +5,7 @@ export const store = createStore({
       gephi_json: null,
       term_graph_data: null,
       term_graph_dict: [],
+      citation_graph_dict: [],
       term_heatmap_dict: [],
       sigma_graph_node: null,
       sigma_graph_term: null,
@@ -25,7 +26,8 @@ export const store = createStore({
       node_modul_index_term: new Set(),
       active_subset: null,
       p_active_subset: null,
-      hiding_pathways: new Set()
+      hiding_pathways: new Set(),
+      citation_graph_data: null
 
 
     },
@@ -44,6 +46,9 @@ export const store = createStore({
     },
     assign_term_graph(state, value) {
       state.term_graph_data = value
+    },
+    assign_citation_graph(state, value) {
+      state.citation_graph_data = value
     },
     assign_graph_node(state, value){
       state.sigma_graph_node = value
@@ -68,6 +73,9 @@ export const store = createStore({
     },
     assign_new_term_graph(state, value) {
       state.term_graph_dict.push(value)
+    },
+    assign_new_citation_graph(state, value) {
+      state.citation_graph_dict.push(value)
     },
     assign_new_heatmap_graph(state, value) {
       state.term_heatmap_dict.push(value)
