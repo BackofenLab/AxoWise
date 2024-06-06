@@ -88,7 +88,7 @@ def proteins_enrichment():
 @app.route("/api/subgraph/context", methods=["POST"])
 def proteins_context():
     base, context, rank, limit = request.form.get("base"), request.form.get("context"), request.form.get("rank"), 500
-    query = f'"{base}" "{context}"'
+    query = base + context
     # in-house context summary
     edges, nodes = summarization.create_citations_graph(limit, query, None, None)
     graph = citation_graph.get_citation_graph(nodes, edges)
