@@ -3,6 +3,7 @@
         <div class="pathwaybar">
             <div id="citation-graphs" v-if="sorted=='bottom'" v-show="active_function === 'citation'">
                 <div class="tool-section-term">
+                    <div v-if="loading_state == true" class="loading_pane" ></div>
                     <div class="citation-search">
                         <img class="citation-search-icon" src="@/assets/toolbar/search.png">
                         <input type="text" v-model="context_raw" class="empty" placeholder="search context" @keyup.enter="get_citation_graph(context_raw)"/>
@@ -21,7 +22,7 @@
                         <input id="year" type="checkbox" /><label for="year"></label>
                     </div>
                 </div>
-                <div class="graph-section">
+                <div class="graph-section" v-if="loading_state == false">
                     <CitationGraph
                     :citation_graphs='citation_graphs'
                     :favourite_graphs='favourite_graphs'

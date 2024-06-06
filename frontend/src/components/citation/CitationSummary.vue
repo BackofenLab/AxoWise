@@ -9,7 +9,8 @@
                 <div class="summarized">
                     <div class="window-label">summary</div>
                     <div class="summarized-abstracts">
-                        <div class="text">
+                        <div v-if="await_load == true" class="loading_pane" ></div>
+                        <div class="text" v-if="await_load == false">
                             {{ summary }}
                         </div>
                     </div>
@@ -32,7 +33,8 @@ export default {
             api: {
                 summary: "api/subgraph/summary",
             },
-            abstractList: null
+            abstractList: null,
+            await_load: false
         }
     },
     methods:{
@@ -42,24 +44,22 @@ export default {
         summarize_abstracts(abstracts){
             var com = this
 
-
-            
-
             com.abstractList = {}
             for (var node of abstracts.split("\n")) {
                 if(com.node_index[node]) com.abstractList[node]= com.node_index[node]
             }
-            
+
+            com.await_load = true
             var formData = new FormData()
             formData.append('abstracts', JSON.stringify(com.abstractList) )
-            
-            console.log(com.abstractList)
+        
 
             //POST request for generating pathways
             com.axios
             .post(com.api.summary, formData)
             .then((response) => {
                 com.summary = response.data
+                com.await_load = false
             })
         }
 
