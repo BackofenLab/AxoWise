@@ -19,7 +19,7 @@ def get_citation_graph(nodes, edges):
 
     nodes_df = pd.DataFrame(nodes).drop_duplicates(subset="external_id")
     edges_df = pd.DataFrame(edges)
-    
+
     if edges_df.empty:
         return json.dumps([])
 
@@ -92,7 +92,7 @@ def get_citation_graph(nodes, edges):
             edge["color"] = "rgba(255,255,153,0.2)"
 
     sigmajs_data["subgraph"] = sub_proteins
-    
+
     stopwatch.round("End")
     stopwatch.total("get_functional_graph")
 

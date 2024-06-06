@@ -17,6 +17,7 @@ import enrichment
 import enrichment_graph
 import citation_graph
 from summarization import article_graph as summarization
+from summarization.model import create_summary
 import graph
 import jar
 import queries
@@ -86,25 +87,24 @@ def proteins_enrichment():
 # Request comes from ContextSection.vue
 @app.route("/api/subgraph/context", methods=["POST"])
 def proteins_context():
-    '''tokenizer = AutoTokenizer.from_pretrained("lxyuan/distilbart-finetuned-summarization")  # abstractive very few words
-    model = AutoModelForSeq2SeqLM.from_pretrained("lxyuan/distilbart-finetuned-summarization")
-    model = model.to("cuda")'''
     base, context, rank, limit = request.form.get("base"), request.form.get("context"), request.form.get("rank"), 500
     query = f'"{base}" "{context}"'
     # in-house context summary
     edges, nodes = summarization.create_citations_graph(limit, query, None, None)
-    graph = citation_graph.get_citation_graph(nodes,edges)
+    graph = citation_graph.get_citation_graph(nodes, edges)
     return Response(graph, mimetype="application/json")
 
 
 @app.route("/api/subgraph/summary", methods=["POST"])
 def abstract_summary():
     abstracts = request.form.get("abstracts")
-    print(abstracts)
-
-    response = """Lorem ipsum dolor sit amet. Sit tempora illo est excepturi rerum et ratione sint ut explicabo magnam in esse magni. Non odit ipsum et quia fuga aut galisum natus in commodi perspiciatis et quae mollitia.
-                Ut ipsam praesentium ut quibusdam molestiae est voluptatem obcaecati nam alias dignissimos non voluptas Quis eos possimus quae. Hic iusto repellat et iste eligendi ab laudantium perspiciatis. At sequi deserunt et dolorum nihil et voluptatem Quis est nobis omnis. At optio architecto ut rerum iste vel iure placeat vel quas quia sit galisum quos aut accusamus aperiam aut nostrum delectus.
-                Ut ducimus tempore nam autem voluptatem et fugit saepe ut modi voluptas. Id quisquam quidem aut quam molestiae sit culpa quia hic molestiae tempore ad distinctio voluptatem est vitae harum. Quo officiis maxime non blanditiis molestias 33 quis galisum."""
+    abstracts = json.loads(abstracts)
+    tokenizer = AutoTokenizer.from_pretrained("lxyuan/distilbart-finetuned-summarization")  # abstractive very few words
+    model = AutoModelForSeq2SeqLM.from_pretrained("lxyuan/distilbart-finetuned-summarization")
+    model = model.to("cuda")
+    pmids = list(abstracts.keys())
+    summaries = create_summary([(abstracts[i]["attributes"]["Abstract"], i) for i in pmids], tokenizer, model)
+    response = "\n".join(str(i) for i in summaries)
     return Response(response, mimetype="application/json")
 
 

@@ -83,8 +83,9 @@ def create_citations_graph(limit, search_query, tokenizer, model):
             node_mapping[pmid] = integer_id
             integer_id += 1
             node_names.append(pmid)
-            nodes.append({"external_id": str(pmid), "abstract": abstract, "year": year, "cited_by": citations, 'title': title})
-            
+            nodes.append(
+                {"external_id": str(pmid), "abstract": abstract, "year": year, "cited_by": citations, "title": title}
+            )
 
     # Add edges to the graph
     for hit in hits:
@@ -150,14 +151,14 @@ def create_citations_graph(limit, search_query, tokenizer, model):
             "year": abstracts[name]["year"],
             "cited_by": abstracts[name]["cited_by"],
         }
-        
+
     edge_list = []
-    edge_mapping = dict((v,k) for k,v in node_mapping.items())
-    for (source,target) in edges:
+    edge_mapping = dict((v, k) for k, v in node_mapping.items())
+    for source, target in edges:
         edge_list.append({"source": edge_mapping[source], "target": edge_mapping[target], "score": 1})
-    '''summary_time = time.time()
+    """summary_time = time.time()
     summary = create_summary(to_summarize, tokenizer, model)
     for i in summary:
         summarized_dict[i[1]]["summary"] = i[0]
-    print(f"summarization: {time.time()-summary_time}")'''
+    print(f"summarization: {time.time()-summary_time}")"""
     return edge_list, nodes
