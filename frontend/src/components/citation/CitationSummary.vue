@@ -51,7 +51,7 @@ export default {
             }
             
             var formData = new FormData()
-            formData.append('abstracts', com.abstractList )
+            formData.append('abstracts', JSON.stringify(com.abstractList) )
             
             console.log(com.abstractList)
 

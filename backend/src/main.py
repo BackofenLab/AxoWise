@@ -99,7 +99,8 @@ def proteins_context():
 
 @app.route("/api/subgraph/summary", methods=["POST"])
 def abstract_summary():
-    abstracts = request.form.get("abstracts").split(";")
+    abstracts = request.form.get("abstracts")
+    print(abstracts)
 
     response = """Lorem ipsum dolor sit amet. Sit tempora illo est excepturi rerum et ratione sint ut explicabo magnam in esse magni. Non odit ipsum et quia fuga aut galisum natus in commodi perspiciatis et quae mollitia.
                 Ut ipsam praesentium ut quibusdam molestiae est voluptatem obcaecati nam alias dignissimos non voluptas Quis eos possimus quae. Hic iusto repellat et iste eligendi ab laudantium perspiciatis. At sequi deserunt et dolorum nihil et voluptatem Quis est nobis omnis. At optio architecto ut rerum iste vel iure placeat vel quas quia sit galisum quos aut accusamus aperiam aut nostrum delectus.
