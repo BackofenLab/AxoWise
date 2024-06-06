@@ -89,8 +89,8 @@ export default {
       }
       com.node_index = {};
       for (var idi in com.citation_data.nodes) {
-        var node = com.citation_data.nodes[idi];
-        com.node_index[node.id] = node;
+        var nodeC = com.citation_data.nodes[idi];
+        com.node_index[nodeC.id] = nodeC;
       }
 
       com.node_size_index = {};
@@ -140,8 +140,8 @@ export default {
 
     com.node_index = {};
     for (var idi in com.citation_data.nodes) {
-      var node = com.citation_data.nodes[idi];
-      com.node_index[node.id] = node;
+      var nodeC = com.citation_data.nodes[idi];
+      com.node_index[nodeC.id] = nodeC;
     }
 
     com.node_size_index = {};
