@@ -13,7 +13,7 @@
                     <tr v-for="(entry, index) in filt_links" :key="index" class="option">
                         <td>
                             <div class="statistics-attr">
-                                <a href="#">{{entry.attributes["Name"]}}</a>
+                                <a href="#">{{entry.label}}</a>
                             </div>
                         </td>
                         <td>

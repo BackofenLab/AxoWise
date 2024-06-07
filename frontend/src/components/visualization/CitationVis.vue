@@ -218,6 +218,11 @@ export default {
         } else {
           edge.color = sourcePresent ? "rgba(255, 255, 255," + com.highlight_opacity + ")" : "rgba(0, 100, 100, " + com.base_opacity + ")";
         }
+
+        sigma_instance.graph.nodes().forEach(function(n) {
+            var node = sigma_instance.graph.getNodeFromIndex(n.id);
+            if(!proteins.has(n.id)) node.color = "rgb(0,100,100)"
+        });
       }
       this.$store.commit('assign_highlightedSet', highlighted_edges)
 
@@ -305,6 +310,11 @@ export default {
       s.color = `${com.node_color_index[edge.source]}`; s.hidden = false;
       t.color = `${com.node_color_index[edge.target]}`; t.hidden = false;
       edge.color = `${com.edge_color_index[edge.id]}`; edge.hidden = false;
+      });
+
+      sigma_instance.graph.nodes().forEach(function(n) {
+      var node = sigma_instance.graph.getNodeFromIndex(n.id);
+      node.color = `${com.node_color_index[n.id]}`; node.hidden = false;
       });
 
       if(com.graph_state) {

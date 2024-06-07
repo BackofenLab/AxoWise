@@ -41,6 +41,11 @@ export default {
         add_abstract(id){
             this.raw_text = this.raw_text + `${this.raw_text.length != 0 ? "\n": ""}` + id
         },
+        add_subset(subset){
+            for (var node of subset){
+                this.raw_text = this.raw_text + `${this.raw_text.length != 0 ? "\n": ""}` + node.id
+            }
+        },
         summarize_abstracts(abstracts){
             var com = this
 
@@ -67,6 +72,9 @@ export default {
     mounted(){
         this.emitter.on("addNodeToSummary", (id) => {
             this.add_abstract(id)
+        });
+        this.emitter.on("addSubsetToSummary", (subset) => {
+            this.add_subset(subset)
         });
     }
 }

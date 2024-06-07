@@ -1,6 +1,6 @@
 <template>
-<div id="citation_pane">
-    <div id="citation-pane" v-if="active_node !== null">
+<div id="citation_pane" v-if="active_node !== null">
+    <div id="citation-pane">
         <div class="pane_header">
             <a id="abstract-id" href="" v-on:click="google_search(active_node.id)" target="_blank" >PMID: {{active_node.id}}</a>
             <img  class="pane_close" src="@/assets/toolbar/cross.png" v-on:click="close_pane()">
@@ -37,10 +37,17 @@
 
 export default {
     name: 'CitationPane',
-    props: ['active_node'],
-    emits:['active_node_changed'],
+    props: ['active_node','active_subset'],
+    emits:['active_node_changed', 'active_subset_changed'],
     data() {
         return {
+        }
+    },
+    watch:{
+        active_node(){
+            if(this.active_node == null){
+                this.$emit('active_subset_changed', null)
+            }
         }
     },
     methods:{
@@ -52,6 +59,7 @@ export default {
         },
         close_pane(){
             this.$emit('active_node_changed', null)
+            this.$emit('active_subset_changed', null)
         }
     }
 }
@@ -62,7 +70,7 @@ export default {
         background: #0A0A1A;
     }
 
-    #citation-pane .abstract_add {
+    .abstract_add {
         right: 9%;
         width: 0.5vw;
         height: 0.5vw;

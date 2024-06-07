@@ -27,16 +27,17 @@
       <NetworkValues
       :data='citation_data'
       ></NetworkValues>
-      <!-- <TermPaneSystem
-        :gephi_data='term_data'
+      <CitationPaneSystem
+        :gephi_data='citation_data'
         :active_node='active_node' @active_node_changed = 'active_node = $event'
         :active_subset='active_subset' @active_subset_changed = 'active_subset = $event'
         @active_layer_changed = 'active_layer = $event'
         @active_combine_changed = 'active_combine = $event'
         :node_color_index='node_color_index'
-        ></TermPaneSystem> -->
+        ></CitationPaneSystem>
       <CitationPane
         :active_node='active_node' @active_node_changed='active_node = $event'
+        :active_subset='active_subset' @active_subset_changed='active_subset = $event'
       ></CitationPane>
     </div>
   </keep-alive>
@@ -44,7 +45,7 @@
 
 <script>
 import CitationVis from '@/components/visualization/CitationVis.vue'
-// import TermPaneSystem from '@/components/pane/TermPaneSystem.vue'
+import CitationPaneSystem from '@/components/pane/CitationPaneSystem.vue'
 import CitationPane from '@/components/citation/CitationPane.vue'
 import NetworkValues from '../components/interface/NetworkValues.vue'
 import CitationToolBar from '../components/toolbar/CitationToolBar.vue'
@@ -57,7 +58,7 @@ export default {
     NetworkValues,
     CitationPane,
     CitationToolBar,
-    // TermPaneSystem,
+    CitationPaneSystem,
     VerticalPaneCitation
     
   },
@@ -203,6 +204,10 @@ export default {
 .citation-view{
   background-color: #0A0A1A;
   display: flex;
+}
+
+.citation-view .colortype{
+  background: #0A0A1A;
 }
 
 </style>
