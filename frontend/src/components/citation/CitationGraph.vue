@@ -2,7 +2,7 @@
     <div class="slider" tabindex="0">
         <span v-if="citation_graphs.size == 0">There is no generated citation graph.</span>
         <div v-for="(entry, index) in filt_graphs" :key="index" class="graph" v-on:click="switch_graph(entry)" @mouseover="activeGraphIndex = index" @mouseout="activeGraphIndex = -1">
-            <SnapshotGraph :propValue="entry" :index="entry.id"/>
+            <SnapshotCitation :propValue="entry" :index="entry.id"/>
             <div class="graph-options" >
                 <div class="bookmark-graph"  v-show="activeGraphIndex == index"  v-on:click.stop="add_graph(entry)" :class="{ checked: favourite_graphs.has(entry.id)}" ref="checkboxStatesGraph"></div>
                 <img  class="remove-graph" v-show="activeGraphIndex == index" src="@/assets/pathwaybar/cross.png" v-on:click.stop="remove_graph(entry)">
@@ -16,14 +16,14 @@
 
 <script>
 
-import SnapshotGraph from '@/components/enrichment/graph/SnapshotGraph.vue'
+import SnapshotCitation from '@/components/citation/SnapshotCitation.vue'
 
 export default {
     name: 'CitationGraphs',
     props: ['citation_graphs','favourite_graphs', 'bookmark_off','mode'],
     emits: ['favourite_graph_changed'],
     components: {
-        SnapshotGraph,
+        SnapshotCitation,
     },
     data() {
         return {
@@ -42,8 +42,8 @@ export default {
                 this.favourite_graphs.delete(entry.id)
             }
             this.citation_graphs.delete(entry)
-            // this.$store.commit('remove_snapshotPathway', entry.id)
-            // this.$store.commit('remove_term_graph', entry)
+            this.$store.commit('remove_snapshotCitation', entry.id)
+            this.$store.commit('remove_citation_graph', entry)
             if(![...this.citation_graphs].some(e => e.id == this.$store.state.citation_graph_data.id)) {
                 this.$store.commit('assign_citation_graph', null)
             }
