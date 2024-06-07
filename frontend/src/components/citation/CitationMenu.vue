@@ -104,14 +104,14 @@ export default {
             .then((response) => {
                 if(response.data.length != 0){
                     this.graph_number += 1
-                            if(this.citation_graphs.size < 1) {
-                                this.$store.commit('assign_citation_graph', {id: this.graph_number, graph: response.data})
-                            }
-                            this.$store.commit('assign_new_citation_graph', {id: this.graph_number, label: `br: ${base} in: ${context}`, graph: response.data})
-                            this.citation_graphs.add({ id: this.graph_number, label: `br:${base} in:${context}`, graph: response.data});
+                    if(this.citation_graphs.size < 1) {
+                        this.$store.commit('assign_citation_graph', {id: this.graph_number, graph: response.data})
+                    }
+                    this.$store.commit('assign_new_citation_graph', {id: this.graph_number, label: `br: ${base} in: ${context}`, graph: response.data})
+                    this.citation_graphs.add({ id: this.graph_number, label: `br:${base} in:${context}`, graph: response.data});
     
-                    com.loading_state = false
                 }
+                com.loading_state = false
             })
 
         },
