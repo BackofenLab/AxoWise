@@ -1,4 +1,8 @@
-# Protein Graph Database
+# BioNetViz
+
+BioNetViz is a web service that utilizes an integrated graph system to visualize biological entities, functional terms, and publications. It emphasizes the visualization and interaction between different graph systems, providing convenient usability for exploring biological communities. Users can easily access information derived from graphs of functional terms and publications for functional exploration.
+
+Currently, BioNetViz supports the functional exploration of protein graphs. Future plans include integrating various types of biological entities.
 
 ## Project Structure
 The Protein Graph Database is organized into several directories:
