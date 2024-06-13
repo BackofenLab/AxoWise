@@ -21,13 +21,19 @@
                         </div>
                         <div class="subsection-main abstract">
                             <div id="chatbot">
-                                <div class="text">{{active_node.attributes['Abstract']}}</div>
+                                <div class="text" v-if="active_function == 'abstract'">{{active_node.attributes['Abstract']}}</div>
+                                <div v-if="await_load == true" class="loading_pane" ></div>
+                                <div class="text" v-if="active_function == 'summary' && await_load == false">{{summary_dict[active_node.id]}}</div>
                             </div>
                         </div>
 
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="nodeattributes">
+            <img  class="icons" src="@/assets/toolbar/menu-burger.png" v-on:click="active_function = 'abstract'">
+            <img  class="icons" src="@/assets/toolbar/settings-sliders.png" v-on:click="change_section('summary', active_node.id)">
         </div>
     </div>
 </div>
@@ -41,10 +47,17 @@ export default {
     emits:['active_node_changed', 'active_subset_changed'],
     data() {
         return {
+            active_function: "abstract",
+            summary_dict:{},
+            api: {
+                summary: "api/subgraph/summary",
+            },
+            await_load: false
         }
     },
     watch:{
         active_node(){
+            this.active_function = "abstract";
             if(this.active_node == null){
                 this.$emit('active_subset_changed', null)
             }
@@ -60,6 +73,26 @@ export default {
         close_pane(){
             this.$emit('active_node_changed', null)
             this.$emit('active_subset_changed', null)
+        },
+        change_section(tab, id){
+            var com = this;
+            com.active_function = tab;
+
+            if(!com.summary_dict[id]){
+                com.await_load = true
+                var formData = new FormData()
+                formData.append('abstracts', JSON.stringify(id) )
+            
+
+                //POST request for generating pathways
+                com.axios
+                .post(com.api.summary, formData)
+                .then((response) => {
+                    com.summary_dict[id] = response.data
+                    com.await_load = false
+                })
+            }
+
         }
     }
 }
@@ -223,6 +256,15 @@ export default {
 
     #citation-pane #chatbot{
         padding: 1vw 1.3vw 1vw 1.3vw;
+    }
+
+    #citation-pane .nodeattributes{
+        position: relative;
+        height: 1.5vw;
+    }
+    #citation-pane .pane-window{
+        height: unset;
+        position: relative;
     }
 
 </style>
