@@ -17,7 +17,7 @@ import enrichment
 import enrichment_graph
 import citation_graph
 from summarization import article_graph as summarization
-from summarization.model import create_summary
+from summarization.model import create_individual_summary, create_summary
 import graph
 import jar
 import queries
@@ -87,10 +87,13 @@ def proteins_enrichment():
 # Request comes from ContextSection.vue
 @app.route("/api/subgraph/context", methods=["POST"])
 def proteins_context():
+    tokenizer = AutoTokenizer.from_pretrained("facebook/bart-large-cnn")
+    model = AutoModelForSeq2SeqLM.from_pretrained("facebook/bart-large-cnn")
+    model = model.to("cuda")
     base, context, rank, limit = request.form.get("base"), request.form.get("context"), request.form.get("rank"), 500
     query = base + context
     # in-house context summary
-    edges, nodes = summarization.create_citations_graph(limit, query, None, None)
+    edges, nodes = summarization.create_citations_graph(limit, query, tokenizer, model)
     graph = citation_graph.get_citation_graph(nodes, edges)
     return Response(graph, mimetype="application/json")
 
@@ -99,11 +102,13 @@ def proteins_context():
 def abstract_summary():
     abstracts = request.form.get("abstracts")
     abstracts = json.loads(abstracts)
-    tokenizer = AutoTokenizer.from_pretrained("lxyuan/distilbart-finetuned-summarization")  # abstractive very few words
-    model = AutoModelForSeq2SeqLM.from_pretrained("lxyuan/distilbart-finetuned-summarization")
+    tokenizer = AutoTokenizer.from_pretrained("facebook/bart-large-cnn")
+    model = AutoModelForSeq2SeqLM.from_pretrained("facebook/bart-large-cnn")
     model = model.to("cuda")
     pmids = list(abstracts.keys())
-    summaries = create_summary([(abstracts[i]["attributes"]["Abstract"], i) for i in pmids], tokenizer, model)
+    summaries = create_individual_summary(
+        [(abstracts[i]["attributes"]["Abstract"], i) for i in pmids], tokenizer, model
+    )
     response = "\n".join(str(i) for i in summaries)
     return Response(response, mimetype="application/json")
 

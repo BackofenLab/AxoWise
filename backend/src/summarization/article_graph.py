@@ -120,45 +120,19 @@ def create_citations_graph(limit, search_query, tokenizer, model):
     top_nodes = []
     for i in best_communities:
         community = communities[i]
-        top1 = None
-        top2 = None
-        for i in community:
-            pagerank_i = node_pagerank_mapping[str(i)]
-            if top1 is None or pagerank_i > node_pagerank_mapping[str(top1)]:
-                top2 = top1
-                top1 = i
-            elif top2 is None or pagerank_i > node_pagerank_mapping[str(top2)]:
-                top2 = i
-        if top2 is not None:
-            top_nodes.append([top1, top2])
-        else:
-            top_nodes.append(top1)
-    summarized_dict = {}
-    to_summarize = []
-    check_edges = set()
-    for i in top_nodes:
-        if isinstance(i, list):
-            name = str(graph.vs(i[0])["name"][0])
-            node = str(i[0])
-        else:
-            name = str(graph.vs(i)["name"][0])
-            node = str(i)
-        to_summarize.append((abstracts[name]["abstract"], name))
-        check_edges.add(name)
-        summarized_dict[name] = {
-            "external_id": name,
-            "pagerank": node_pagerank_mapping[node],
-            "year": abstracts[name]["year"],
-            "cited_by": abstracts[name]["cited_by"],
-        }
+        top_nodes.append(
+            sorted(
+                [(abstracts[str(graph.vs(i)["name"][0])]["abstract"]) for i in community],
+                key=lambda x: x[1],
+                reverse=True,
+            )[:2]
+        )
 
     edge_list = []
     edge_mapping = dict((v, k) for k, v in node_mapping.items())
     for source, target in edges:
         edge_list.append({"source": edge_mapping[source], "target": edge_mapping[target], "score": 1})
-    """summary_time = time.time()
-    summary = create_summary(to_summarize, tokenizer, model)
-    for i in summary:
-        summarized_dict[i[1]]["summary"] = i[0]
-    print(f"summarization: {time.time()-summary_time}")"""
+    summary_time = time.time()
+    summary = create_summary(top_nodes, tokenizer, model)
+    print(f"summarization: {time.time()-summary_time}")
     return edge_list, nodes
