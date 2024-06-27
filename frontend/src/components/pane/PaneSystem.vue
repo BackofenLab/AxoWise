@@ -67,7 +67,7 @@ import EnrichmentLayerPane from '@/components/pane/modules/layer/EnrichmentLayer
 export default {
     name:"PaneSystem",
     props:['gephi_data', 'active_subset', 'active_term', 'active_node', 'active_decoloumn','active_termlayers', 'node_color_index'],
-    emits:['active_node_changed','active_term_changed', 'active_subset_changed', 'active_combine_changed', 'active_layer_changed', 'active_termlayers_changed'],
+    emits:['active_node_changed','active_term_changed', 'active_subset_changed', 'active_combine_changed', 'active_layer_changed', 'active_termlayers_changed','active_background_changed'],
     components: {
         NodePane,
         SubsetPane,
@@ -88,6 +88,7 @@ export default {
     },
     watch: {
         active_item(val){
+            this.$emit('active_background_changed', val)
             if(this.active_tab != Object.keys(val)[0]) this.tool_active = false;
             this.active_tab = Object.keys(val)[0]
             if(val == null){

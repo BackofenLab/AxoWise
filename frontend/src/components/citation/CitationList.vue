@@ -37,7 +37,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <a class="fdr-class">{{ Math.abs(Math.log10(parseFloat(entry.attributes["PageRank"]))).toFixed(2) }}</a>
+                                        <a class="fdr-class">{{ Math.log10(parseFloat(entry.attributes["PageRank"])).toFixed(2) }}</a>
                                     </td>
                                 </tr>
                             </tbody>

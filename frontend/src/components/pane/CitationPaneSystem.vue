@@ -123,8 +123,12 @@ export default {
 
         },
         add_subset(subset){
-            console.log(subset)
-            this.emitter.emit('addSubsetToSummary', subset)
+            if(subset.genes){ 
+                this.emitter.emit('addSubsetToSummary', subset.genes)
+            } 
+            else{
+                this.emitter.emit('addSubsetToSummary', subset)
+            }
         },
         selectTab(name, tab){
             if(name == "node"){

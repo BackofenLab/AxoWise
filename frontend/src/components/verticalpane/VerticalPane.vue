@@ -51,6 +51,7 @@
             :sorted = '"bottom"'
             :active_function='active_function_tab2'
             :active_node='active_node'
+            :active_background='active_background'
             ></CitationMenu>
         </div>
     </div>
@@ -65,7 +66,7 @@ import DifExpMenu from '@/components/pane/modules/difexp/DifExpMenu.vue'
 
 export default {
     name: 'VerticalPane',
-    props: ['gephi_data','active_node','active_termlayers','active_decoloumn'],
+    props: ['gephi_data','active_node','active_background','active_termlayers','active_decoloumn'],
     components: {
         PathwayMenu,
         SearchField,

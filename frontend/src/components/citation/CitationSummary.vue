@@ -76,6 +76,11 @@ export default {
         this.emitter.on("addSubsetToSummary", (subset) => {
             this.add_subset(subset)
         });
+        this.emitter.on("generateSummary", (subset) => {
+            this.add_subset(subset)
+            this.summarize_abstracts(this.raw_text)
+
+        });
     }
 }
 </script>

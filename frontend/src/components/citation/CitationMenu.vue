@@ -43,7 +43,7 @@ import CitationGraph from '@/components/citation/CitationGraph.vue'
 
 export default {
     name: 'CitationMenu',
-    props: ['active_node','active_function','sorted'],
+    props: ['active_node','active_background','active_function','sorted'],
     components: {
         CitationGraph,
     },
@@ -83,7 +83,8 @@ export default {
 
             com.loading_state = true
             const [year, citations] = [document.getElementById('year').checked, document.getElementById('citation').checked];
-            com.getContext(this.active_node ? this.active_node.attributes["Name"]:'' , context, com.get_rank(year,citations));
+            var base = this.active_background || ''
+            com.getContext(base , context, com.get_rank(year,citations));
 
         },
         get_rank(year,citations) {
@@ -92,9 +93,26 @@ export default {
         getContext(base,context,rank){
             var com = this
 
+            var background;
+            var displayBackground;
+
+            if( Object.keys(base)[0]== "Protein"){
+                background = base["Protein"].value.attributes["Name"]
+                displayBackground = background;
+
+            }else if(Object.keys(base)[0]== "Subset"){
+                background = base["Subset"].value.map(node => node.label).join(' ');
+                displayBackground = background
+
+            }else if(Object.keys(base)[0]== "Pathway"){
+                background = base["Pathway"].value.symbols.join(' ');
+                displayBackground = base["Pathway"].value.id
+            }
+            else{ background = '' }
+
             //Adding proteins and species to formdata 
             var formData = new FormData()
-            formData.append('base', base)
+            formData.append('base', background)
             formData.append('context', context);
             formData.append('rank', rank);
 
@@ -107,8 +125,8 @@ export default {
                     if(this.citation_graphs.size < 1) {
                         this.$store.commit('assign_citation_graph', {id: this.graph_number, graph: response.data})
                     }
-                    this.$store.commit('assign_new_citation_graph', {id: this.graph_number, label: `br: ${base} in: ${context}`, graph: response.data})
-                    this.citation_graphs.add({ id: this.graph_number, label: `br:${base} in:${context}`, graph: response.data});
+                    this.$store.commit('assign_new_citation_graph', {id: this.graph_number, label: `br: ${displayBackground} in: ${context}`, graph: response.data})
+                    this.citation_graphs.add({ id: this.graph_number, label: `br:${displayBackground} in:${context}`, graph: response.data});
     
                 }
                 com.loading_state = false

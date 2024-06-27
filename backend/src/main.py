@@ -91,7 +91,7 @@ def proteins_context():
     model = AutoModelForSeq2SeqLM.from_pretrained("facebook/bart-large-cnn")
     model = model.to("cuda")
     base, context, rank, limit = request.form.get("base"), request.form.get("context"), request.form.get("rank"), 500
-    query = base + context
+    query = base +" "+ context
     # in-house context summary
     edges, nodes = summarization.create_citations_graph(limit, query, tokenizer, model)
     graph = citation_graph.get_citation_graph(nodes, edges)

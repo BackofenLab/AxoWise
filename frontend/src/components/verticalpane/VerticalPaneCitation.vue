@@ -4,12 +4,17 @@
             <div class="tab-system">
                 <ul>
                 <li class="tab" :class="{ 'tabSelected': active_function_tab1 === 'list' }" v-on:click="active_function_tab1 = 'list'"><a href="#">list</a></li>
+                <li class="tab" :class="{ 'tabSelected': active_function_tab1 === 'clist' }" v-on:click="active_function_tab1 = 'clist'"><a href="#">communities</a></li>
                 </ul>
             </div>
-            <CitationList
+            <CitationList v-show="active_function_tab1 === 'list'"
             :citation_data='citation_data'
             :sorted = '"top"'
             ></CitationList>
+            <CitationCommunities v-show="active_function_tab1 === 'clist'"
+            :citation_data='citation_data'
+            :sorted = '"top"'
+            ></CitationCommunities>
 
         </div>
         <div class="lower-block">
@@ -30,6 +35,7 @@
 
 <script>
 import CitationList from '@/components/citation/CitationList.vue'
+import CitationCommunities from '@/components/citation/CitationCommunities.vue'
 import CitationSummary from '@/components/citation/CitationSummary.vue'
 
 export default {
@@ -37,7 +43,8 @@ export default {
     props: ['citation_data','node_index'],
     components: {
         CitationList,
-        CitationSummary
+        CitationSummary,
+        CitationCommunities
     },
     data() {
         return {
