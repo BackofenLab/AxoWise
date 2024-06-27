@@ -52,6 +52,9 @@ export default {
         width: 100%;
         height: 100%;
         z-index: 999;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
         font-family: 'ABeeZee', sans-serif;
     }
 </style>

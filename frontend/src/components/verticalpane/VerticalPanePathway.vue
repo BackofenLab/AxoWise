@@ -16,7 +16,7 @@
         <div class="lower-block">
             <div class="tab-system">
                 <ul>
-                <li class="tab" :class="{ 'tabSelected': active_function_tab2 === 'graph' }" v-on:click="active_function_tab2 = 'graph'"><a href="#">graphs</a></li>
+                <li class="tab" :class="{ 'tabSelected': active_function_tab2 === 'graph' }" v-on:click="active_function_tab2 = 'graph'"><a href="#">enrichment</a></li>
                 </ul>
             </div>
             <PathwayGraphMenu

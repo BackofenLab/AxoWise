@@ -35,7 +35,7 @@
             <div class="tab-system">
                 <ul>
                 <li class="tab" :class="{ 'tabSelected': active_function_tab2 === 'list' }" v-on:click="active_function_tab2 = 'list'"><a href="#">pathways</a></li>
-                <li class="tab" :class="{ 'tabSelected': active_function_tab2 === 'graph' }" v-on:click="active_function_tab2 = 'graph'"><a href="#">graphs</a></li>
+                <li class="tab" :class="{ 'tabSelected': active_function_tab2 === 'graph' }" v-on:click="active_function_tab2 = 'graph'"><a href="#">enrichment</a></li>
                 <li class="tab" :class="{ 'tabSelected': active_function_tab2 === 'heatmap' }" v-on:click="active_function_tab2 = 'heatmap'"><a href="#">heatmap</a></li>
                 <li class="tab" :class="{ 'tabSelected': active_function_tab2 === 'citation' }" v-on:click="active_function_tab2 = 'citation'"><a href="#">citation</a></li>
                 </ul>

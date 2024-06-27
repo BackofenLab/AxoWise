@@ -301,8 +301,10 @@ export default {
     .pathways #pathways-list {
         width: 100%;
         height: 100%;
-        z-index: 997;
-        cursor: default;
+        z-index: 999;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
         font-family: 'ABeeZee', sans-serif;
 
     }
@@ -450,8 +452,13 @@ export default {
     .list-section {
         width: 100%;
         height: 100%;
-        position: absolute;
+        z-index: 999;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        font-family: 'ABeeZee', sans-serif;
         padding: 0% 2% 2% 2%;
+
     }
     
     .visualize-button,
@@ -482,8 +489,9 @@ export default {
     }
 
     .list-section .results {
-        height: 99%;
-        overflow: scroll;
+        flex-grow: 1;
+        overflow-y: auto;
+        position: relative;
     }
 
     .option {

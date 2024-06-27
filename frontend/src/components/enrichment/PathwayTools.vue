@@ -64,6 +64,9 @@ export default {
         width: 100%;
         height: 100%;
         z-index: 999;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
         font-family: 'ABeeZee', sans-serif;
     }
     .generate {
@@ -160,8 +163,8 @@ export default {
         display: grid;
         grid-template-columns: 1fr 1fr;
         margin: 1vw 0 1vw 0;
-        height: auto;
         width: 100%;
+        flex-shrink: 0; /* Prevents the tool-section-graph from shrinking */
     }
 
     .tool-section-term {
@@ -221,5 +224,9 @@ export default {
         border-radius: 50%;
         animation: button-loading-spinner 1s ease infinite;
     }
-
+    .graph-section {
+        flex-grow: 1;
+        overflow-y: auto;
+        position: relative;
+    }
 </style>

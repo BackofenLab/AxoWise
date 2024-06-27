@@ -171,10 +171,11 @@ export default {
     .pathways #citation-list {
         width: 100%;
         height: 100%;
-        z-index: 997;
-        cursor: default;
+        z-index: 999;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
         font-family: 'ABeeZee', sans-serif;
-
     }
 
     .pathwaybar-small #citation-list {
