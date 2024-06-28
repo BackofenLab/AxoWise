@@ -83,6 +83,7 @@ export default {
             .post(com.api.summary, formData)
             .then((response) => {
                 if(community_check) {
+                    com.savedOverview = response.data.replace(/\\n/g,"\n")
                     alert(response.data.replace(/\\n/g,"\n"))
                     this.$emit('await_community_changed', false);
                 }
@@ -105,7 +106,7 @@ export default {
         });
         this.emitter.on("generateSummary", (subset) => {
             if(com.savedOverview == null) com.summarize_abstracts(subset, true) 
-            else com.summary = com.savedOverview
+            else alert(com.savedOverview)
         });
     }
 }
