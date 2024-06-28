@@ -85,10 +85,10 @@ export default {
             .post(com.api.summary, formData)
             .then((response) => {
                 if(community_check) {
-                    alert(JSON.stringify(response.data))
+                    alert(`${response.data}`)
                 }
                 else { 
-                    com.summary = JSON.stringify(response.data)
+                    com.summary = `${response.data}`
                 }
                 com.await_load = false
             })
