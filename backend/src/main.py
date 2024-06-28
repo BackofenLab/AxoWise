@@ -91,7 +91,7 @@ def proteins_context():
     model = AutoModelForSeq2SeqLM.from_pretrained("facebook/bart-large-cnn")
     model = model.to("cuda")
     base, context, rank, limit = request.form.get("base"), request.form.get("context"), request.form.get("rank"), 500
-    query = base +" "+ context
+    query = base + " " + context
     # in-house context summary
     edges, nodes = summarization.create_citations_graph(limit, query, tokenizer, model)
     graph = citation_graph.get_citation_graph(nodes, edges)
@@ -105,12 +105,19 @@ def abstract_summary():
     tokenizer = AutoTokenizer.from_pretrained("facebook/bart-large-cnn")
     model = AutoModelForSeq2SeqLM.from_pretrained("facebook/bart-large-cnn")
     model = model.to("cuda")
-    pmids = list(abstracts.keys())
-    summaries = create_individual_summary(
-        [(abstracts[i]["attributes"]["Abstract"], i) for i in pmids], tokenizer, model
+    is_community = json.loads(request.form.get("community_check"))
+    abstracts_list = (
+        [[j["attributes"]["Abstract"] for j in i.values()] for i in abstracts]
+        if is_community
+        else [[(j["attributes"]["Abstract"], j["label"]) for j in i.values()] for i in abstracts]
     )
-    response = "\n".join(str(i) for i in summaries)
-    return Response(response, mimetype="application/json")
+    summaries = (
+        create_summary(abstracts_list, tokenizer, model)
+        if is_community
+        else create_individual_summary(abstracts_list[0], tokenizer, model)
+    )
+    response = "\n\n".join(["\n".join(sublist) for sublist in summaries]) if is_community else "\n\n".join(summaries)
+    return Response(json.dumps(response), mimetype="application/json")
 
 
 # ====================== Subgraph API ======================

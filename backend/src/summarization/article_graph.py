@@ -132,7 +132,4 @@ def create_citations_graph(limit, search_query, tokenizer, model):
     edge_mapping = dict((v, k) for k, v in node_mapping.items())
     for source, target in edges:
         edge_list.append({"source": edge_mapping[source], "target": edge_mapping[target], "score": 1})
-    summary_time = time.time()
-    summary = create_summary(top_nodes, tokenizer, model)
-    print(f"summarization: {time.time()-summary_time}")
     return edge_list, nodes
