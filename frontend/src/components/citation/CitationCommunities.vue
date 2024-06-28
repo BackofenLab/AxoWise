@@ -139,23 +139,27 @@ export default {
                     }
                 });
                 
-                var highestPageRankNode = com.getHighestPageRankElement(subset);
+                var highestPageRankNode = com.getHighestPageRankElements(subset);
                 if (highestPageRankNode) {
                     top_nodes.push(highestPageRankNode);
                 }
             }
             
             com.emitter.emit("generateSummary", top_nodes);
-            com.emitter.emit("searchSubset", {subset: top_nodes, mode: "citation"});
+            var flatList = top_nodes.flat()
+            com.emitter.emit("searchSubset", {subset: flatList, mode: "citation"});
         },
         
-        getHighestPageRankElement(list) {
-            if (list.length === 0) return null; // Handle empty list case
+        getHighestPageRankElements(list) {
+            if (list.length === 0) return null;
 
-            return list.reduce((max, current) => {
-                return current.pagerank > max.pagerank ? current : max;
-            }, list[0]); // Initialize with the first element in the list
+            if (list.length === 1) return [list[0]];
+
+            list.sort((a, b) => b.pagerank - a.pagerank);
+            return [list[0], list[1]];
         },
+
+        
         scrollToSelected(selectedDiv) {
             const parent = this.$refs.resultsContainer; // Updated line to use this.$refs
 

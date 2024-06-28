@@ -4,7 +4,7 @@
                 <div class="summary-input">
                     <div class="window-label">gene search</div>
                     <textarea v-model="raw_text" rows="10" cols="30" autofocus></textarea>
-                    <button v-on:click="summarize_abstracts(raw_text)">apply</button>
+                    <button v-on:click="summarize_abstracts(raw_text, false)">apply</button>
                 </div>
                 <div class="summarized">
                     <div class="window-label">summary</div>
@@ -18,6 +18,7 @@
                 </div>
         
         </div>
+        <!-- <div class="summary-pop" v-if="community_check == true"> Text of Example</div> -->
     </div>
 </template>
 
@@ -46,7 +47,13 @@ export default {
                 this.raw_text = this.raw_text + `${this.raw_text.length != 0 ? "\n": ""}` + node.id
             }
         },
-        summarize_abstracts(abstracts){
+        add_community(subset){
+            var flatList = subset.flat()
+            for (var node of flatList){
+                this.raw_text = this.raw_text + `${this.raw_text.length != 0 ? "\n": ""}` + node.id
+            }
+        },
+        summarize_abstracts(abstracts, community_check){
             var com = this
 
             com.abstractList = {}
@@ -57,13 +64,18 @@ export default {
             com.await_load = true
             var formData = new FormData()
             formData.append('abstracts', JSON.stringify(com.abstractList) )
-        
+            formData.append('community_check', community_check)
 
             //POST request for generating pathways
             com.axios
             .post(com.api.summary, formData)
             .then((response) => {
-                com.summary = response.data
+                if(community_check) {
+                    alert(JSON.stringify(response.data))
+                }
+                else { 
+                    com.summary = JSON.stringify(response.data)
+                }
                 com.await_load = false
             })
         }
@@ -77,8 +89,9 @@ export default {
             this.add_subset(subset)
         });
         this.emitter.on("generateSummary", (subset) => {
-            this.add_subset(subset)
-            this.summarize_abstracts(this.raw_text)
+            console.log(subset)
+            this.add_community(subset)
+            this.summarize_abstracts(this.raw_text, true)
 
         });
     }
@@ -139,6 +152,10 @@ export default {
     border-color: white;
     width: 3vw;
     font-size: 0.7vw;
+}
+
+.summary-pop{
+
 }
 
 </style>
