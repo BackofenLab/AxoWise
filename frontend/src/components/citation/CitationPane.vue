@@ -78,10 +78,11 @@ export default {
             var com = this;
             com.active_function = tab;
 
+            var finalList = []
             if(!com.summary_dict[id]){
                 com.await_load = true
                 var formData = new FormData()
-                formData.append('abstracts', JSON.stringify(id) )
+                formData.append('abstracts', JSON.stringify(finalList.push(id)) )
             
 
                 //POST request for generating pathways
