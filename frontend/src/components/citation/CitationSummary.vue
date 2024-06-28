@@ -85,10 +85,10 @@ export default {
             .post(com.api.summary, formData)
             .then((response) => {
                 if(community_check) {
-                    alert(`${response.data}`)
+                    alert(response.data.replace(/\\n/g,"\n"))
                 }
                 else { 
-                    com.summary = `${response.data}`
+                    com.summary = response.data.replace(/\\n/g,"\n")
                 }
                 com.await_load = false
             })
