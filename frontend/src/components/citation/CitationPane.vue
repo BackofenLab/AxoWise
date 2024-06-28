@@ -33,7 +33,7 @@
         </div>
         <div class="nodeattributes">
             <img  class="icons" src="@/assets/toolbar/menu-burger.png" v-on:click="active_function = 'abstract'">
-            <img  class="icons" src="@/assets/toolbar/settings-sliders.png" v-on:click="change_section('summary', active_node.id)">
+            <img  class="icons" src="@/assets/toolbar/settings-sliders.png" v-on:click="change_section('summary', active_node)">
         </div>
     </div>
 </div>
@@ -74,22 +74,23 @@ export default {
             this.$emit('active_node_changed', null)
             this.$emit('active_subset_changed', null)
         },
-        change_section(tab, id){
+        change_section(tab, node){
             var com = this;
             com.active_function = tab;
 
             var finalList = []
-            if(!com.summary_dict[id]){
+            var nodeDict = {}
+            if(!com.summary_dict[node.id]){
                 com.await_load = true
                 var formData = new FormData()
-                formData.append('abstracts', JSON.stringify(finalList.push(id)) )
+                formData.append('abstracts', JSON.stringify(finalList.push(nodeDict[node.id]=node)) )
             
 
                 //POST request for generating pathways
                 com.axios
                 .post(com.api.summary, formData)
                 .then((response) => {
-                    com.summary_dict[id] = response.data
+                    com.summary_dict[node.id] = response.data
                     com.await_load = false
                 })
             }

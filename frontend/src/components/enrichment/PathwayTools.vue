@@ -188,17 +188,20 @@ export default {
         border-radius: 0;
         cursor: pointer;
         display: flex;
+        font-size: 0.7vw;
+        padding: 0.2vw;
         align-items: center;
+        color: rgba(255, 255, 255, 0.8);
         justify-content: center;
-        border: none;
-        box-shadow: 0 6px 6px -3px rgba(255, 255, 255, 0.23);
+        border: 0.05vw solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 2px 6px -3px rgba(255, 255, 255, 0.23);
         transition: transform 0.25s cubic-bezier(0.7, 0.98, 0.86, 0.98), box-shadow 0.25s cubic-bezier(0.7, 0.98, 0.86, 0.98);
-        background-color: rgba(255, 255, 255, 0.8);
+        background-color: #0A0A1A;
     }
 
     .tool-buttons:hover{
         transform: scale(1.05);
-        box-shadow: 0 6px 9px 1px rgba(255, 255, 255, 0.23);
+        box-shadow: 0 4px 6px -1.5px rgba(255, 255, 255, 0.23);
     }
 
     .loading_button {
