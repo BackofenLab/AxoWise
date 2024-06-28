@@ -37,7 +37,8 @@ export default {
             },
             abstractList: null,
             await_load: false,
-            finalList: null
+            finalList: null,
+            savedOverview: null
         }
     },
     methods:{
@@ -94,6 +95,8 @@ export default {
 
     },
     mounted(){
+        var com = this;
+        com.savedOverview = null
         this.emitter.on("addNodeToSummary", (id) => {
             this.add_abstract(id)
         });
@@ -101,8 +104,8 @@ export default {
             this.add_subset(subset)
         });
         this.emitter.on("generateSummary", (subset) => {
-            this.summarize_abstracts(subset, true)
-
+            if(savedOverview == null) com.summarize_abstracts(subset, true) 
+            else com.summary = savedOverview
         });
     }
 }
@@ -164,8 +167,8 @@ export default {
     font-size: 0.7vw;
 }
 
-.summary-pop{
-
+.text{
+  white-space: pre-wrap; /* This will render whitespace and line breaks */
 }
 
 </style>
