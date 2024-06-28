@@ -104,8 +104,8 @@ export default {
             this.add_subset(subset)
         });
         this.emitter.on("generateSummary", (subset) => {
-            if(savedOverview == null) com.summarize_abstracts(subset, true) 
-            else com.summary = savedOverview
+            if(com.savedOverview == null) com.summarize_abstracts(subset, true) 
+            else com.summary = com.savedOverview
         });
     }
 }
