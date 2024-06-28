@@ -35,7 +35,8 @@ export default {
                 summary: "api/subgraph/summary",
             },
             abstractList: null,
-            await_load: false
+            await_load: false,
+            finalList: null
         }
     },
     methods:{
@@ -56,14 +57,27 @@ export default {
         summarize_abstracts(abstracts, community_check){
             var com = this
 
-            com.abstractList = {}
-            for (var node of abstracts.split("\n")) {
-                if(com.node_index[node]) com.abstractList[node]= com.node_index[node]
+            com.finalList = []
+            if (community_check == false) {
+                var abstractList = {}
+                for (var node of abstracts.split("\n")) {
+                    if(com.node_index[node]) abstractList[node]= com.node_index[node]
+                }
+                com.finalList.push(abstractList)
+            }
+            else{
+                for (var community of abstracts) {
+                    var communityAbstract = {}
+                    for (var nodes of community) {
+                        if(com.node_index[nodes.id])  communityAbstract[nodes.id]= com.node_index[nodes.id]
+                    }
+                    com.finalList.push(communityAbstract)
+                }
             }
 
             com.await_load = true
             var formData = new FormData()
-            formData.append('abstracts', JSON.stringify(com.abstractList) )
+            formData.append('abstracts', JSON.stringify(com.finalList) )
             formData.append('community_check', community_check)
 
             //POST request for generating pathways
@@ -89,9 +103,8 @@ export default {
             this.add_subset(subset)
         });
         this.emitter.on("generateSummary", (subset) => {
-            console.log(subset)
             this.add_community(subset)
-            this.summarize_abstracts(this.raw_text, true)
+            this.summarize_abstracts(subset, true)
 
         });
     }

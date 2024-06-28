@@ -72,7 +72,6 @@ export default {
         }
     },
     mounted(){
-        console.log(this.top_communities())
     },
     computed: {
         regex() {
