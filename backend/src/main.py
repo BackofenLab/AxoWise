@@ -105,7 +105,7 @@ def abstract_summary():
     tokenizer = AutoTokenizer.from_pretrained("facebook/bart-large-cnn")
     model = AutoModelForSeq2SeqLM.from_pretrained("facebook/bart-large-cnn")
     model = model.to("cuda")
-    is_community = json.loads(request.form.get("community_check"))
+    is_community = json.loads(request.form.get("community_check")) if request.form.get("community_check") else False
     abstracts_list = (
         [[j["attributes"]["Abstract"] for j in i.values()] for i in abstracts]
         if is_community

@@ -83,8 +83,9 @@ export default {
             if(!com.summary_dict[node.id]){
                 com.await_load = true
                 var formData = new FormData()
-                formData.append('abstracts', JSON.stringify(finalList.push(nodeDict[node.id]=node)) )
-            
+                nodeDict[node.id]=node
+                finalList.push(nodeDict)
+                formData.append('abstracts', JSON.stringify(finalList))
 
                 //POST request for generating pathways
                 com.axios
