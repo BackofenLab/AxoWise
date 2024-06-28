@@ -27,6 +27,7 @@
 export default {
     name: 'CitationSummary',
     props:['active_function','sorted','citation_data','node_index'],
+    emits:['await_community_changed'],
     data() {
         return{
             raw_text:"",
@@ -48,17 +49,12 @@ export default {
                 this.raw_text = this.raw_text + `${this.raw_text.length != 0 ? "\n": ""}` + node.id
             }
         },
-        add_community(subset){
-            var flatList = subset.flat()
-            for (var node of flatList){
-                this.raw_text = this.raw_text + `${this.raw_text.length != 0 ? "\n": ""}` + node.id
-            }
-        },
         summarize_abstracts(abstracts, community_check){
             var com = this
 
             com.finalList = []
             if (community_check == false) {
+                com.await_load = true
                 var abstractList = {}
                 for (var node of abstracts.split("\n")) {
                     if(com.node_index[node]) abstractList[node]= com.node_index[node]
@@ -66,6 +62,7 @@ export default {
                 com.finalList.push(abstractList)
             }
             else{
+                this.$emit('await_community_changed', true);
                 for (var community of abstracts) {
                     var communityAbstract = {}
                     for (var nodes of community) {
@@ -75,7 +72,7 @@ export default {
                 }
             }
 
-            com.await_load = true
+            
             var formData = new FormData()
             formData.append('abstracts', JSON.stringify(com.finalList) )
             formData.append('community_check', community_check)
@@ -86,11 +83,12 @@ export default {
             .then((response) => {
                 if(community_check) {
                     alert(response.data.replace(/\\n/g,"\n"))
+                    this.$emit('await_community_changed', false);
                 }
                 else { 
                     com.summary = response.data.replace(/\\n/g,"\n")
+                    com.await_load = false
                 }
-                com.await_load = false
             })
         }
 
@@ -103,7 +101,6 @@ export default {
             this.add_subset(subset)
         });
         this.emitter.on("generateSummary", (subset) => {
-            this.add_community(subset)
             this.summarize_abstracts(subset, true)
 
         });

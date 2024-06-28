@@ -14,6 +14,7 @@
             <CitationCommunities v-show="active_function_tab1 === 'clist'"
             :citation_data='citation_data'
             :sorted = '"top"'
+            :await_community = 'await_community'
             ></CitationCommunities>
 
         </div>
@@ -26,6 +27,7 @@
             <CitationSummary
             :citation_data='citation_data'
             :node_index='node_index'
+            :await_community = 'await_community' @await_community_changed = 'await_community = $event'
             :sorted = '"bottom"'
             ></CitationSummary>
 
@@ -49,7 +51,8 @@ export default {
     data() {
         return {
             active_function_tab1: 'list',
-            active_function_tab2: 'summary'
+            active_function_tab2: 'summary',
+            await_community: false
         }
     },
 }

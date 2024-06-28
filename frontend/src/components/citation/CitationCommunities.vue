@@ -7,7 +7,10 @@
                         <img class="pathway-search-icon" src="@/assets/toolbar/search.png">
                         <input type="text" v-model="search_raw" class="empty" placeholder="search abstracts"/>
                     </div>
-                    <button class="community-citation" v-on:click="top_nodes(5)">top nodes</button>
+                    <button class="community-citation" v-on:click="top_nodes(5)">
+                        <div v-if="await_community == false" >top nodes</div>
+                        <div v-if="await_community == true" class="loading_pane" ></div>
+                    </button>
                 </div>
                 <div class="list-section">
                     
@@ -58,7 +61,7 @@
 
 export default {
     name: 'CitationCommunities',
-    props: ['active_node','citation_data'],
+    props: ['active_node','citation_data','await_community'],
     data() {
         return{
             search_raw: "",
