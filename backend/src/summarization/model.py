@@ -2,24 +2,30 @@ from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 
 
-def create_individual_summary(summarize, tokenizer, model):
-    # Lists to hold all summaries
-    summaries = []
+def create_individual_summary(to_summarize, tokenizer, model):
+    # Extract pmids and abstracts
+    pmids = [i[1] for i in to_summarize]
+    abstracts = [i[0] for i in to_summarize]
 
-    def summarize(abstracts):
-        inputs = tokenizer(abstracts, return_tensors="pt").to("cuda")
-
-        prediction = model.generate(**inputs)
-        section_summary = tokenizer.batch_decode(prediction, skip_special_tokens=True)[0]
+    def summarize(abstract):
+        input_tokens = tokenizer(abstract, return_tensors="pt").to("cuda")
+        prediction = model.generate(**input_tokens)
+        section_summary = tokenizer.decode(prediction[0], skip_special_tokens=True)
         return section_summary
 
-    # Process each community independently
+    # Initialize an empty list to store summaries
+    summaries = []
+
+    # Process each abstract independently
     with ThreadPoolExecutor() as executor:
-        for community in summarize:
-            # Summarize each abstract in parallel
-            summary_list = list(executor.map(summarize, community))
-            summaries.append(summary_list)
-    return summaries
+        # Summarize each abstract in parallel
+        results = executor.map(summarize, abstracts)
+        summaries.extend(results)
+
+    # Pair summaries with pmids
+    result_with_pmids = [f"({summary}, {pmid})" for summary, pmid in zip(summaries, pmids)]
+
+    return result_with_pmids
 
 
 def create_summary(summarize, tokenizer, model):

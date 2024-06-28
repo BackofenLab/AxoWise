@@ -61,8 +61,7 @@ def get_citation_graph(nodes, edges):
 
     # Create a dictionary mapping ENSEMBL IDs to rows in `nodes`
     ensembl_to_node = dict(zip(nodes_df["external_id"], nodes_df.itertuples(index=False)))
-    
-    
+
     """ Implement community pagerank """
     community_dict = {}
     for node in sigmajs_data["nodes"]:
@@ -71,14 +70,10 @@ def get_citation_graph(nodes, edges):
         if ensembl_id in node_mapping:
             mapped_node_id = node_mapping[ensembl_id]
             if modularity_class not in community_dict:
-                community_dict[modularity_class] =  {
-                    "cumulative_pagerank": 0,
-                    "nodes": []
-                }
+                community_dict[modularity_class] = {"cumulative_pagerank": 0, "nodes": []}
             community_dict[modularity_class]["cumulative_pagerank"] += pagerank[mapped_node_id]
             community_dict[modularity_class]["nodes"].append(ensembl_id)
             community_dict[modularity_class]["modularity_class"] = modularity_class
-            
 
     for node in sigmajs_data["nodes"]:
         ensembl_id = node["id"]
@@ -112,7 +107,7 @@ def get_citation_graph(nodes, edges):
             edge["color"] = "rgba(255,255,153,0.2)"
 
     sigmajs_data["subgraph"] = sub_proteins
-    
+
     sigmajs_data["community_scores"] = community_dict
 
     stopwatch.round("End")
