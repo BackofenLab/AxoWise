@@ -12,7 +12,7 @@ help:
 all: prepare conda node java maven neo4j apoc
 
 prepare:
-	@echo Checking for Homebrew ... 
+	@echo Checking for Homebrew ...
 	ifeq () # TODO: Check if Homebrew is installed
 	brew update
 
@@ -23,7 +23,7 @@ conda:
 	conda --version
 
 node:
-# TODO: Needed? 
+# TODO: Needed?
 # curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 	brew install node
 	node --version

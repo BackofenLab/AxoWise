@@ -1,4 +1,5 @@
 import json
+
 import Api_key
 import meilisearch
 
@@ -25,7 +26,9 @@ def create_key(client):
 
     name = str(input("Give a name for the new key: "))
     description = str(input("Give a description for the new key: "))
-    expires = str(input("Give an expiration date 'YYYY-MM-DD', leave empty for no expiration: "))
+    expires = str(
+        input("Give an expiration date 'YYYY-MM-DD', leave empty for no expiration: ")
+    )
 
     if len(expires) == 0:
         expires = None

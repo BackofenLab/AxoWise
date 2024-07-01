@@ -9,12 +9,12 @@ otherwise error[5] input/output error happens
 
 __author__ = "Dilmurat Yusuf"
 
-import itertools
-import pandas as pd
-import numpy as np
-import multiprocessing
 import gzip
+import itertools
+import multiprocessing
 import time
+
+import pandas as pd
 
 
 def cal_overlap_score(id1, id2, set1, set2, size1, size2):
@@ -42,7 +42,12 @@ def cal_overlap_score_worker(args):
 
     i, j = args
     score = cal_overlap_score(
-        df.loc[i].id, df.loc[j].id, df.loc[i].genes, df.loc[j].genes, df.loc[i].sizes, df.loc[j].sizes
+        df.loc[i].id,
+        df.loc[j].id,
+        df.loc[i].genes,
+        df.loc[j].genes,
+        df.loc[i].sizes,
+        df.loc[j].sizes,
     )
 
     # an abitratry threshold, assuming > 50% should indicate
@@ -72,7 +77,9 @@ try:
     start_time = time.time()
     with gzip.open(score_file, "wb") as f:
         pool = multiprocessing.Pool()
-        results = pool.map(cal_overlap_score_worker, itertools.combinations(range(len(df)), 2))
+        results = pool.map(
+            cal_overlap_score_worker, itertools.combinations(range(len(df)), 2)
+        )
         # remove None from the list
         # None corresponds to overlap sta < 0.5
         results = set(results)

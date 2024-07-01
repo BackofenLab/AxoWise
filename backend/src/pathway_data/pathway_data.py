@@ -1,19 +1,22 @@
-import os
-import requests
 import argparse
-import pandas as pd
-import kegg
-import sys
 import datetime
-import mygene
+import os
 import re
+import sys
+
+import kegg
+import mygene
+import pandas as pd
+import requests
 
 sys.path.append("..")
 import util.data_util as util
 
 
 def parse_cli_args():
-    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
 
     parser.add_argument(
         "species_name",
@@ -123,8 +126,12 @@ def format_string_data(species):
     Argument:
     species: species of interest
     """
-    df_proteins = pd.read_csv(f"data/proteins_string_{species}.txt.gz", compression="gzip", sep="\t")
-    df_pathways = pd.read_csv(f"data/pathways_string_{species}.txt.gz", compression="gzip", sep="\t")
+    df_proteins = pd.read_csv(
+        f"data/proteins_string_{species}.txt.gz", compression="gzip", sep="\t"
+    )
+    df_pathways = pd.read_csv(
+        f"data/pathways_string_{species}.txt.gz", compression="gzip", sep="\t"
+    )
     df_pathways = df_pathways[df_pathways["category"] == "Reactome Pathways"]
     df_pathways = (
         df_pathways.groupby("term")
@@ -138,7 +145,9 @@ def format_string_data(species):
         )
         .reset_index(drop=True)
     )
-    protein_dict = df_proteins.set_index("#string_protein_id")["preferred_name"].to_dict()
+    protein_dict = df_proteins.set_index("#string_protein_id")[
+        "preferred_name"
+    ].to_dict()
     df_pathways["#string_protein_id"] = df_pathways["#string_protein_id"].apply(
         lambda ids: [protein_dict.get(id, id) for id in ids]
     )
@@ -146,7 +155,9 @@ def format_string_data(species):
     for symbol_list in df_pathways["#string_protein_id"]:
         all_symbols.update(symbol_list)
     unique_symbols_list = list(all_symbols)
-    gene_mapping, genes_to_map = symbols_to_ensembl(unique_symbols_list, f"{species}", "gene")
+    gene_mapping, genes_to_map = symbols_to_ensembl(
+        unique_symbols_list, f"{species}", "gene"
+    )
     gene_lis = []
     for i in df_pathways["#string_protein_id"]:
         genes = []
@@ -161,7 +172,9 @@ def format_string_data(species):
                         genes.append(gene_mapping[j])
         gene_lis.append(genes)
     df_pathways["genes"] = gene_lis
-    df_pathways = df_pathways.rename(columns={"term": "id", "#string_protein_id": "symbols", "description": "name"})
+    df_pathways = df_pathways.rename(
+        columns={"term": "id", "#string_protein_id": "symbols", "description": "name"}
+    )
     df_pathways = df_pathways[["id", "name", "category", "symbols", "genes"]]
     df_pathways.to_csv(f"data/reactome_pathways_{species}.csv", index=False)
     df_proteins.to_csv(f"data/string_proteins_{species}.csv", index=False)
@@ -197,9 +210,13 @@ def read_data(species, file_name):
                 pass
 
     unique_symbols = list(unique_symbols)
-    gene_mapping, genes_to_map = symbols_to_ensembl(unique_symbols, f"{species}", "gene")
+    gene_mapping, genes_to_map = symbols_to_ensembl(
+        unique_symbols, f"{species}", "gene"
+    )
     prots = genes_to_proteins(genes_to_map, species)
-    pd.DataFrame(list(prots.items()), columns=["genes", "proteins"]).to_csv(f"data/mapped_genes_proteins_{species}.csv")
+    pd.DataFrame(list(prots.items()), columns=["genes", "proteins"]).to_csv(
+        f"data/mapped_genes_proteins_{species}.csv"
+    )
     gene_lis = []
     for i in symbol:
         genes = []
@@ -254,7 +271,9 @@ def symbols_to_ensembl(symbols, species, specifier):
     mapping = {}
     gene_lis = []
     mg = mygene.MyGeneInfo()
-    results = mg.querymany(symbols, scopes="symbol", fields=f"ensembl.{specifier}", species=f"{species}")
+    results = mg.querymany(
+        symbols, scopes="symbol", fields=f"ensembl.{specifier}", species=f"{species}"
+    )
     for result in results:
         if "ensembl" in result:
             res = result["ensembl"]
@@ -288,9 +307,13 @@ def data_formatting(species, folder):
     merged_df = pd.concat([df, kegg_df, reactome], ignore_index=True)
     merged_df = merged_df.drop_duplicates(subset=["name", "category"])
     merged_df = merged_df.loc[merged_df["genes"].str.len() > 2]
-    merged_df["id"] = merged_df.apply(lambda row: f"{row['id']}~{row['category']}", axis=1)
+    merged_df["id"] = merged_df.apply(
+        lambda row: f"{row['id']}~{row['category']}", axis=1
+    )
     merged_df = merged_df.reset_index(drop=True)
-    merged_df.to_csv(f"data/AllPathways_{species}.csv.gz", compression="gzip", index=False)
+    merged_df.to_csv(
+        f"data/AllPathways_{species}.csv.gz", compression="gzip", index=False
+    )
 
 
 def download_necessary(filepath):
@@ -342,7 +365,9 @@ def main():
     kegg_pattern = r"kegg: (.*)"
     filepath = os.path.join(folder, f"release_versions.txt")
 
-    kegg_update, geneset_update, geneset_name, kegg_version = download_necessary(filepath)
+    kegg_update, geneset_update, geneset_name, kegg_version = download_necessary(
+        filepath
+    )
     if geneset_update:
         # Download the data from Baderlabs
         print("Downloading Pathway data for mouse")

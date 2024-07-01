@@ -1,7 +1,9 @@
 """Module providing a function printing python version."""
+
 import json
-from ast import literal_eval
 import time
+from ast import literal_eval
+
 import Api_key
 import meilisearch
 import pandas as pd
@@ -82,7 +84,9 @@ def set_synonyms(input_file):
             continue
         else:
             # Remove "no alias" from the list if it exists, keep all other terms
-            synonyms_list = [synonym for synonym in synonyms_list if synonym != "no alias"]
+            synonyms_list = [
+                synonym for synonym in synonyms_list if synonym != "no alias"
+            ]
 
         # synonyms_list = aliases_list
 
@@ -92,17 +96,23 @@ def set_synonyms(input_file):
                 synonyms_list[index] = str(term)
                 term = "'" + str(term) + "'"
 
-            assert isinstance(synonyms_list[index], str), "One or multiple aliases could not be transformed to string"
+            assert isinstance(
+                synonyms_list[index], str
+            ), "One or multiple aliases could not be transformed to string"
 
         for _ in range(len(synonyms_list)):
-            cross_count += 1  # count number of pairs created to determin amount of missing ones
+            cross_count += (
+                1  # count number of pairs created to determin amount of missing ones
+            )
             synonym = synonyms_list.pop(0)
 
             # check if we have seen the item before
             if synonym in control_list:
                 failed_list.append(synonym)  # add to failed_list if it appeared before
             else:
-                control_list.append(synonym)  #  add to list of seen items if seen for first time
+                control_list.append(
+                    synonym
+                )  #  add to list of seen items if seen for first time
 
             copie = synonyms_list[:]
             synonyms_dict.update({synonym: copie})

@@ -1,49 +1,46 @@
 <template>
   <div class="container" id="container">
     <router-view v-slot="{ Component }">
-    <keep-alive exclude="HomeView">
-      <component :is="Component" />
-    </keep-alive>
-  </router-view>
-  
+      <keep-alive exclude="HomeView">
+        <component :is="Component" />
+      </keep-alive>
+    </router-view>
   </div>
 </template>
 
 <script>
-import TermView from '@/views/TermView.vue'
-import CitationView from '@/views/CitationView.vue'
-import ProteinView from '@/views/ProteinView.vue'
-import HomeView from '@/views/HomeView.vue'
+import TermView from "@/views/TermView.vue";
+import CitationView from "@/views/CitationView.vue";
+import ProteinView from "@/views/ProteinView.vue";
+import HomeView from "@/views/HomeView.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     TermView,
     ProteinView,
     HomeView,
-    CitationView
-  }
-}
+    CitationView,
+  },
+};
 </script>
-
-
 
 <style>
 .container {
-  font-family: 'Roboto Mono', monospace;
+  font-family: "Roboto Mono", monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-	display: flex;
+  display: flex;
   overflow: hidden;
-	min-height: 100vh;
-	align-items: center;
-	justify-content: center;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
 }
 
 nav {
   padding: 30px;
   display: inline-grid;
-text-align: center;
+  text-align: center;
 }
 
 nav a {

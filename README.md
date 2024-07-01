@@ -10,7 +10,7 @@ The Protein Graph Database is organized into several directories:
 - [docs](docs) contains files used for documentation, including images or text files.
 - [backend/src](backend/src) contains the [Flask](https://flask.palletsprojects.com/en/2.2.x/) server code,
   which serves all files and handles requests to the database.
-- [backend/gephi](backend/gephi) contains the code to pre-organize the data into nodes, 
+- [backend/gephi](backend/gephi) contains the code to pre-organize the data into nodes,
   which can then be used in the frontend. It is used as a submodule in the server.
 - [backend/test_data](backend/test_data) contains test data.
 - [frontend](frontend) contains the [Vue](https://vuejs.org/) frontend code used to visualize the protein data.

@@ -22,12 +22,12 @@ package jsonexporter.model;
  * @author shale
  */
 public class GraphNode  extends GraphElement{
-	
+
 	private String label;
 	private double x;
 	private double y;
         private String id;
-			
+
 	public GraphNode(String id) {
 		super();
                 this.id=id;
@@ -68,8 +68,7 @@ public class GraphNode  extends GraphElement{
     public void setId(String id) {
         this.id = id;
     }
-	
-	
+
+
 
 }
-

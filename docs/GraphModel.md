@@ -31,7 +31,7 @@
 
 7. Source (Placeholder / Aggregation Node)
     * Properties: None
-    
+
 8. TF (Transcription Factor) / TG (Target Gene)
     * Properties:
         - ENSEMBL (String): The ENSEMBL ID of the Entity
@@ -48,7 +48,7 @@
 ![DA Values](./figs/model/graph_v5.3_DA.png)
 ![Overview](./figs/model/graph_v5.3_overview.png)
 
-1. HAS 
+1. HAS
     * Between:
         - Celltype -> Source
         - Study -> Source

@@ -1,5 +1,6 @@
 import json
 from ast import literal_eval
+
 import pandas as pd
 
 
@@ -16,7 +17,9 @@ def csv_to_json():
     """
 
     input_file = str(input("Please give the input file: "))
-    filesize = int(input("How many abstracts should be saved in one file? (recommended ~ 100k): "))
+    filesize = int(
+        input("How many abstracts should be saved in one file? (recommended ~ 100k): ")
+    )
     print(f"Loading {input_file} ...")
     df = pd.read_csv(input_file, on_bad_lines="warn")
 

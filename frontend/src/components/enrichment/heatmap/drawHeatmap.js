@@ -49,9 +49,23 @@ export default function heatmapDendro(data, parent, snapshot) {
   }
 
   var output = `<?xml version="1.0" encoding="utf-8"?>\n`;
-  output += '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n';
+  output +=
+    '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n';
   output += new XMLSerializer().serializeToString(
-    drawHeatmap(parent, matrix, rowLabel, colLabel, linksNodes, snapshot, cellSize, clusterSpace, colNumber, rowNumber, height, width).node()
+    drawHeatmap(
+      parent,
+      matrix,
+      rowLabel,
+      colLabel,
+      linksNodes,
+      snapshot,
+      cellSize,
+      clusterSpace,
+      colNumber,
+      rowNumber,
+      height,
+      width
+    ).node()
   );
 
   return output;
@@ -90,19 +104,24 @@ function drawHeatmap(
       .append("svg")
       .attr("width", "100%")
       .attr("height", "100%")
-      .attr("viewBox", `0 0 ${cellSize * (colNumber + 2)} ${cellSize * (rowNumber + 2)}`);
+      .attr(
+        "viewBox",
+        `0 0 ${cellSize * (colNumber + 2)} ${cellSize * (rowNumber + 2)}`
+      );
   }
 
   const colorScale = scaleLinear()
     .domain([0, 30, 100])
     .range(["white", "orange", "red"]);
-    
-    svg.selectAll("*").remove();
 
-    const parentGroup = svg
-    .call(d3.zoom().on("zoom", (event) => {
-      parentGroup.attr("transform", event.transform);
-    }))
+  svg.selectAll("*").remove();
+
+  const parentGroup = svg
+    .call(
+      d3.zoom().on("zoom", (event) => {
+        parentGroup.attr("transform", event.transform);
+      })
+    )
     .append("g");
 
   if (!snapshot) {
@@ -116,7 +135,10 @@ function drawHeatmap(
       .attr("x", 0)
       .attr("y", (d, i) => (i + 1) * cellSize + 1 + clusterSpace)
       .style("text-anchor", "start")
-      .attr("transform", `translate(${width + cellSize * 1.5},${cellSize / 1.5})`)
+      .attr(
+        "transform",
+        `translate(${width + cellSize * 1.5},${cellSize / 1.5})`
+      )
       .attr("class", (d, i) => `rowLabel mono r${i}`);
 
     const colLabels = parentGroup
@@ -129,7 +151,12 @@ function drawHeatmap(
       .attr("x", 0)
       .attr("y", (d, i) => (i + 1) * cellSize + 4)
       .style("text-anchor", "end")
-      .attr("transform", `translate(${cellSize / 2},-6) rotate (-90) translate(-${height + cellSize * 2},${clusterSpace})`)
+      .attr(
+        "transform",
+        `translate(${cellSize / 2},-6) rotate (-90) translate(-${
+          height + cellSize * 2
+        },${clusterSpace})`
+      )
       .attr("class", (d, i) => `colLabel mono c${i}`);
 
     const rTree = parentGroup
@@ -168,7 +195,9 @@ function drawHeatmap(
         .style("top", `${mouseY - 10}px`)
         .select("#value")
         .html(
-          `Cluster: ${colLabel[d.col - 1]}<br>Pathway: ${rowLabel[d.row - 1]}<br>Value: ${d.value/100}`
+          `Cluster: ${colLabel[d.col - 1]}<br>Pathway: ${
+            rowLabel[d.row - 1]
+          }<br>Value: ${d.value / 100}`
         );
       d3.select("#d3tooltip").transition().duration(200).style("opacity", 0.9);
     })

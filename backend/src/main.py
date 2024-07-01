@@ -1,28 +1,26 @@
 import ast
 import io
 import json
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 import os
 import os.path
+import signal
 import sys
-
-import pandas as pd
-import networkit as nk
-from flask import Flask, Response, request, send_from_directory
-from werkzeug.middleware.proxy_fix import ProxyFix
 from multiprocessing import Process
 
+import citation_graph
 import database
 import enrichment
 import enrichment_graph
-import citation_graph
-from summarization import article_graph as summarization
-from summarization.model import create_individual_summary, create_summary
 import graph
 import jar
+import pandas as pd
 import queries
-import signal
+from flask import Flask, Response, request, send_from_directory
+from summarization import article_graph as summarization
+from summarization.model import create_individual_summary, create_summary
+from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 from util.stopwatch import Stopwatch
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
 
@@ -78,7 +76,9 @@ def proteins_enrichment():
             fdr_rate=row["fdr"]
         ))"""
 
-    json_str = json.dumps(list_enrichment.to_dict("records"), ensure_ascii=False, separators=(",", ":"))
+    json_str = json.dumps(
+        list_enrichment.to_dict("records"), ensure_ascii=False, separators=(",", ":")
+    )
     return Response(json_str, mimetype="application/json")
 
 
@@ -90,7 +90,12 @@ def proteins_context():
     tokenizer = AutoTokenizer.from_pretrained("facebook/bart-large-cnn")
     model = AutoModelForSeq2SeqLM.from_pretrained("facebook/bart-large-cnn")
     model = model.to("cuda")
-    base, context, rank, limit = request.form.get("base"), request.form.get("context"), request.form.get("rank"), 500
+    base, context, rank, limit = (
+        request.form.get("base"),
+        request.form.get("context"),
+        request.form.get("rank"),
+        500,
+    )
     query = base + " " + context
     # in-house context summary
     edges, nodes = summarization.create_citations_graph(limit, query, tokenizer, model)
@@ -105,18 +110,29 @@ def abstract_summary():
     tokenizer = AutoTokenizer.from_pretrained("facebook/bart-large-cnn")
     model = AutoModelForSeq2SeqLM.from_pretrained("facebook/bart-large-cnn")
     model = model.to("cuda")
-    is_community = json.loads(request.form.get("community_check")) if request.form.get("community_check") else False
+    is_community = (
+        json.loads(request.form.get("community_check"))
+        if request.form.get("community_check")
+        else False
+    )
     abstracts_list = (
         [[j["attributes"]["Abstract"] for j in i.values()] for i in abstracts]
         if is_community
-        else [[(j["attributes"]["Abstract"], j["label"]) for j in i.values()] for i in abstracts]
+        else [
+            [(j["attributes"]["Abstract"], j["label"]) for j in i.values()]
+            for i in abstracts
+        ]
     )
     summaries = (
         create_summary(abstracts_list, tokenizer, model)
         if is_community
         else create_individual_summary(abstracts_list[0], tokenizer, model)
     )
-    response = "\n\n".join(["\n".join(sublist) for sublist in summaries]) if is_community else "\n\n".join(summaries)
+    response = (
+        "\n\n".join(["\n".join(sublist) for sublist in summaries])
+        if is_community
+        else "\n\n".join(summaries)
+    )
     return Response(json.dumps(response), mimetype="application/json")
 
 
@@ -140,10 +156,16 @@ def proteins_subgraph_api():
         input_mapping[i.upper()] = i
     species_id = int(request.form.get("species_id"))
     # DColoumns
-    selected_d = request.form.get("selected_d").split(",") if request.form.get("selected_d") else None
+    selected_d = (
+        request.form.get("selected_d").split(",")
+        if request.form.get("selected_d")
+        else None
+    )
     threshold = int(float(request.form.get("threshold")) * 1000)
 
-    proteins, protein_ids, symbol_alias_mapping = queries.get_protein_ids_for_names(driver, protein_names, species_id)
+    proteins, protein_ids, symbol_alias_mapping = queries.get_protein_ids_for_names(
+        driver, protein_names, species_id
+    )
     keys = list(symbol_alias_mapping.keys())
     for num, i in enumerate(symbol_alias_mapping.values()):
         if i in input_mapping:
@@ -151,14 +173,20 @@ def proteins_subgraph_api():
     stopwatch.round("Setup")
 
     if len(protein_ids) > 1:
-        proteins, source, target, score = queries.get_protein_associations(driver, protein_ids, threshold, species_id)
+        proteins, source, target, score = queries.get_protein_associations(
+            driver, protein_ids, threshold, species_id
+        )
     else:
-        proteins, source, target, score = queries.get_protein_neighbours(driver, protein_ids, threshold, species_id)
+        proteins, source, target, score = queries.get_protein_neighbours(
+            driver, protein_ids, threshold, species_id
+        )
 
     stopwatch.round("Neo4j")
 
     nodes = (
-        pd.DataFrame(proteins).rename(columns={"ENSEMBL_PROTEIN": "external_id"}).drop_duplicates(subset="external_id")
+        pd.DataFrame(proteins)
+        .rename(columns={"ENSEMBL_PROTEIN": "external_id"})
+        .drop_duplicates(subset="external_id")
     )
 
     edges = pd.DataFrame({"source": source, "target": target, "score": score})
@@ -220,7 +248,9 @@ def proteins_subgraph_api():
             if ensembl_id in node_mapping:
                 mapped_node_id = node_mapping[ensembl_id]
                 # Use node mapping to add corresponding values of betweenness and pagerank
-                node["attributes"]["Betweenness Centrality"] = str(betweenness[mapped_node_id])
+                node["attributes"]["Betweenness Centrality"] = str(
+                    betweenness[mapped_node_id]
+                )
                 node["attributes"]["PageRank"] = str(pagerank[mapped_node_id])
             node["attributes"]["Description"] = df_node.annotation
             node["attributes"]["Ensembl ID"] = df_node.external_id
@@ -287,7 +317,9 @@ def terms_subgraph_api():
     list_enrichment = ast.literal_eval(request.form.get("func-terms"))
     species_id = int(request.form.get("species_id"))
 
-    json_str = enrichment_graph.get_functional_graph(list_enrichment=list_enrichment, species_id=species_id)
+    json_str = enrichment_graph.get_functional_graph(
+        list_enrichment=list_enrichment, species_id=species_id
+    )
 
     stopwatch.total("terms_subgraph_api")
 

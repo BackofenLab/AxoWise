@@ -2,6 +2,7 @@
 Collection of Cypher queries for writing and reading the resulting
 Neo4j graph database.
 """
+
 from typing import Any
 
 import neo4j
@@ -26,7 +27,9 @@ def connected_terms(driver: neo4j.Driver, term_ids: list[str], species_id: int):
         return result.data()
 
 
-def get_terms_connected_by_overlap(driver: neo4j.Driver, term_ids: list[str], species_id: int):
+def get_terms_connected_by_overlap(
+    driver: neo4j.Driver, term_ids: list[str], species_id: int
+):
     """:returns: terms, source, target, score"""
     if species_id == 10090:
         species = "Mus_Musculus"
@@ -42,10 +45,14 @@ def get_terms_connected_by_overlap(driver: neo4j.Driver, term_ids: list[str], sp
     with driver.session() as session:
         result = session.run(query)
         # custom conversion is needed because otherwise it takes 10s with neo4j (for unknown reasons)
-        return _convert_to_connection_info_score(result=result, _int=False, protein=False)
+        return _convert_to_connection_info_score(
+            result=result, _int=False, protein=False
+        )
 
 
-def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id: int) -> (list, list[str], dict):
+def get_protein_ids_for_names(
+    driver: neo4j.Driver, names: list[str], species_id: int
+) -> (list, list[str], dict):
     """
     Returns: protein, protein_id and a dictionary of format (Symbol: Alias) of all the symbols found from aliases
     """
@@ -65,15 +72,17 @@ def get_protein_ids_for_names(driver: neo4j.Driver, names: list[str], species_id
     # Retrieve all the symbols that correspond to aliases found in names
     with driver.session() as session:
         result = session.run(query)
-        symbols_set, aliases_set, mapping, symbol_alias = _convert_to_symbol_alias(result)
+        symbols_set, aliases_set, mapping, symbol_alias = _convert_to_symbol_alias(
+            result
+        )
     # To make less calls to the database, remove the aliases and add their corresponding symbol
     genes_set = set(names)
     result_names = list(genes_set - aliases_set) + list(symbols_set - genes_set)
 
     query = f"""
         MATCH (protein:Protein:{species})
-        WHERE protein.SYMBOL IN {result_names} 
-            OR protein.ENSEMBL_PROTEIN IN {result_names} 
+        WHERE protein.SYMBOL IN {result_names}
+            OR protein.ENSEMBL_PROTEIN IN {result_names}
         RETURN protein, protein.ENSEMBL_PROTEIN AS id, protein.SYMBOL as symbol
     """
     with driver.session() as session:
@@ -163,7 +172,9 @@ def get_number_of_genes(driver: neo4j.Driver, species_id: int) -> int:
         return int(num_genes)
 
 
-def _convert_to_protein_id(result: neo4j.Result, symbol_alias: dict) -> (list, list[str]):
+def _convert_to_protein_id(
+    result: neo4j.Result, symbol_alias: dict
+) -> (list, list[str]):
     proteins, ids = list(), list()
     for row in result:
         proteins.append(row["protein"])

@@ -1,12 +1,9 @@
 import io
 import json
 
-import pandas as pd
-
-import database
 import graph
 import jar
-import queries
+import pandas as pd
 from util.stopwatch import Stopwatch
 
 # =============== Functional Term Graph ======================
@@ -60,7 +57,9 @@ def get_citation_graph(nodes, edges):
     stopwatch.round("Gephi")
 
     # Create a dictionary mapping ENSEMBL IDs to rows in `nodes`
-    ensembl_to_node = dict(zip(nodes_df["external_id"], nodes_df.itertuples(index=False)))
+    ensembl_to_node = dict(
+        zip(nodes_df["external_id"], nodes_df.itertuples(index=False))
+    )
 
     """ Implement community pagerank """
     community_dict = {}
@@ -70,8 +69,13 @@ def get_citation_graph(nodes, edges):
         if ensembl_id in node_mapping:
             mapped_node_id = node_mapping[ensembl_id]
             if modularity_class not in community_dict:
-                community_dict[modularity_class] = {"cumulative_pagerank": 0, "nodes": []}
-            community_dict[modularity_class]["cumulative_pagerank"] += pagerank[mapped_node_id]
+                community_dict[modularity_class] = {
+                    "cumulative_pagerank": 0,
+                    "nodes": [],
+                }
+            community_dict[modularity_class]["cumulative_pagerank"] += pagerank[
+                mapped_node_id
+            ]
             community_dict[modularity_class]["nodes"].append(ensembl_id)
             community_dict[modularity_class]["modularity_class"] = modularity_class
 
@@ -83,12 +87,22 @@ def get_citation_graph(nodes, edges):
                 mapped_node_id = node_mapping[ensembl_id]
                 # Use node mapping to add corresponding values of betweenness and pagerank
                 node["attributes"]["Eigenvector Centrality"] = str(ec[mapped_node_id])
-                node["attributes"]["Betweenness Centrality"] = str(betweenness[mapped_node_id])
+                node["attributes"]["Betweenness Centrality"] = str(
+                    betweenness[mapped_node_id]
+                )
                 node["attributes"]["PageRank"] = str(pagerank[mapped_node_id])
-                node["attributes"]["CPageRank"] = str(community_dict[node["attributes"]["Modularity Class"]])
+                node["attributes"]["CPageRank"] = str(
+                    community_dict[node["attributes"]["Modularity Class"]]
+                )
             node["attributes"]["Ensembl ID"] = df_node.external_id
-            node["label"] = df_node.external_id  # Comment this out if you want no node labels displayed
-            node["attributes"]["Name"] = df_node.external_id  # Comment this out if you want no node labels displayed
+            node["label"] = (
+                df_node.external_id
+            )  # Comment this out if you want no node labels displayed
+            node["attributes"][
+                "Name"
+            ] = (
+                df_node.external_id
+            )  # Comment this out if you want no node labels displayed
             node["attributes"]["Abstract"] = df_node.abstract
             node["attributes"]["Year"] = df_node.year
             node["attributes"]["Citation"] = df_node.cited_by

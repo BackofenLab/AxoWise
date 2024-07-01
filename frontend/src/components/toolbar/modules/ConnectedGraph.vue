@@ -1,30 +1,31 @@
 <template>
-    <div class="tool-item">
-        <span>Hide unconnected nodes</span>
-        <input id="switch" v-on:change="show_whole()" type="checkbox" /><label for="switch"></label>
-    </div>
+  <div class="tool-item">
+    <span>Hide unconnected nodes</span>
+    <input id="switch" v-on:change="show_whole()" type="checkbox" /><label
+      for="switch"
+    ></label>
+  </div>
 </template>
 
 <script>
-
 export default {
-    name: 'ConnectedGraph',
-    props: ['mode'],
-    data() {
-        return {
-        }
+  name: "ConnectedGraph",
+  props: ["mode"],
+  data() {
+    return {};
+  },
+  methods: {
+    show_whole() {
+      this.emitter.emit("unconnectedGraph", {
+        check: document.getElementById("switch").checked,
+        mode: this.mode,
+      });
     },
-    methods: {
-        show_whole() {
-          this.emitter.emit("unconnectedGraph", {check: document.getElementById('switch').checked,mode: this.mode});
-                
-        }
-    }
-}
+  },
+};
 </script>
 
 <style>
-
 #switch {
   margin-left: 5%;
 }
@@ -63,12 +64,12 @@ export default {
   transition: margin 0.1s linear;
   box-shadow: 0px 0px 5px #aaa;
   position: absolute;
-  top:10%;
+  top: 10%;
   margin: 0.1vw 0 0 0.1vw;
   z-index: 10;
 }
 .protein-view [type="checkbox"]:checked + label:before {
-  background-color: #0A0A1A;
+  background-color: #0a0a1a;
 }
 .term-view [type="checkbox"]:checked + label:before {
   background-color: #0a1a0b;

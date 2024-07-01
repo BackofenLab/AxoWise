@@ -4,13 +4,16 @@ import sys
 
 sys.path.append("../..")
 
-from scraping.KEGG import api, parse
 import fuzzy_search
-from backend.src.utils import read_table, exit_on
+
+from backend.src.utils import exit_on, read_table
+from scraping.KEGG import api, parse
 
 
 def parse_cli_args():
-    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
 
     parser.add_argument(
         "species_name",
@@ -36,9 +39,21 @@ def main():
     os.makedirs(DATA_DIR, exist_ok=True)
 
     # Diseases, drugs & compounds
-    diseases_file = open(os.path.join(DATA_DIR, "kegg_diseases.{}.tsv".format(kegg_id)), mode="w", encoding="utf-8")
-    drugs_file = open(os.path.join(DATA_DIR, "kegg_drugs.{}.tsv".format(kegg_id)), mode="w", encoding="utf-8")
-    compounds_file = open(os.path.join(DATA_DIR, "kegg_compounds.{}.tsv".format(kegg_id)), mode="w", encoding="utf-8")
+    diseases_file = open(
+        os.path.join(DATA_DIR, "kegg_diseases.{}.tsv".format(kegg_id)),
+        mode="w",
+        encoding="utf-8",
+    )
+    drugs_file = open(
+        os.path.join(DATA_DIR, "kegg_drugs.{}.tsv".format(kegg_id)),
+        mode="w",
+        encoding="utf-8",
+    )
+    compounds_file = open(
+        os.path.join(DATA_DIR, "kegg_compounds.{}.tsv".format(kegg_id)),
+        mode="w",
+        encoding="utf-8",
+    )
 
     written_diseases = set()
     written_drugs = set()
@@ -46,7 +61,11 @@ def main():
 
     # Pathways
     print("Downloading pathways for: {}".format(kegg_id))
-    pathways_file = open(os.path.join(DATA_DIR, "kegg_pathways.{}.tsv".format(kegg_id)), mode="w", encoding="utf-8")
+    pathways_file = open(
+        os.path.join(DATA_DIR, "kegg_pathways.{}.tsv".format(kegg_id)),
+        mode="w",
+        encoding="utf-8",
+    )
 
     # Write headers
     diseases_file.write("\t".join(["id", "name"]) + "\n")
@@ -54,7 +73,16 @@ def main():
     compounds_file.write("\t".join(["id", "name"]) + "\n")
     pathways_file.write(
         "\t".join(
-            ["id", "name", "description", "classes", "genes_external_ids", "diseases_ids", "drugs_ids", "compounds_ids"]
+            [
+                "id",
+                "name",
+                "description",
+                "classes",
+                "genes_external_ids",
+                "diseases_ids",
+                "drugs_ids",
+                "compounds_ids",
+            ]
         )
         + "\n"
     )
@@ -88,13 +116,24 @@ def main():
         has_genes = pathway_genes is not None
         if has_genes:
             gene_ids, gene_short_names, gene_long_names = zip(*pathway_genes)
-            gene_ids = list(map(lambda gene_id: "{}:{}".format(kegg_id, gene_id), list(gene_ids)))
+            gene_ids = list(
+                map(lambda gene_id: "{}:{}".format(kegg_id, gene_id), list(gene_ids))
+            )
             print("\tGenes:", len(gene_ids))
 
             # Map KEGG gene identifiers to STRING external identifiers
             kegg2external = dict()
-            for mapped_identifiers, idx_offset in api.map_identifiers_to_STRING(gene_ids, ncbi_id):
-                for idx, external_id, species_id, species_name, preferred_name, annotation in read_table(
+            for mapped_identifiers, idx_offset in api.map_identifiers_to_STRING(
+                gene_ids, ncbi_id
+            ):
+                for (
+                    idx,
+                    external_id,
+                    species_id,
+                    species_name,
+                    preferred_name,
+                    annotation,
+                ) in read_table(
                     mapped_identifiers, (int, str, int, str, str, str), delimiter="\t"
                 ):
                     gene_id = gene_ids[idx + idx_offset]
@@ -105,7 +144,11 @@ def main():
 
             num_not_mapped = len(gene_ids) - len(kegg2external)
             if num_not_mapped > 0:
-                print("\t{} gene(s) could not be mapped to STRING external ID!".format(num_not_mapped))
+                print(
+                    "\t{} gene(s) could not be mapped to STRING external ID!".format(
+                        num_not_mapped
+                    )
+                )
 
         # Diseases
         has_diseases = pathway_diseases is not None

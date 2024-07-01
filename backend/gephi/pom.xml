@@ -13,22 +13,22 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
-    <build>  
-        <plugins>  
-            <plugin>  
-                <!-- Build an executable JAR -->  
-                <groupId>org.apache.maven.plugins</groupId>  
-                <artifactId>maven-jar-plugin</artifactId>  
-                <version>3.1.0</version>  
-                <configuration>  
-                    <archive>  
+    <build>
+        <plugins>
+            <plugin>
+                <!-- Build an executable JAR -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <mainClass>Main</mainClass>
                             <classpathPrefix>dependency-jars/</classpathPrefix>
-                        </manifest> 
-                    </archive>  
-                </configuration>  
+                        </manifest>
+                    </archive>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -48,7 +48,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin> 
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
@@ -63,8 +63,8 @@
                     </publicPackages>
                 </configuration>
             </plugin>
-        </plugins>  
-    </build> 
+        </plugins>
+    </build>
 
     <dependencies>
 

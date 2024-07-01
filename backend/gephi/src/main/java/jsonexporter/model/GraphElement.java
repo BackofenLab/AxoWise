@@ -14,12 +14,12 @@ public class GraphElement {
 	private HashMap<String,String> attributes;
         private String color;
         protected double size;
-	
+
 	public GraphElement() {
 		attributes=new HashMap<String,String>();
                 color="";
 	}
-	
+
 	public void putAttribute(String key, String value) {
 		attributes.put(key, value);
 	}
@@ -31,11 +31,11 @@ public class GraphElement {
 	public void putAttributes(HashMap<String, String> attributes) {
 		this.attributes = attributes;
 	}
-        
+
         public String getColor() {
 		return color;
 	}
-        
+
         public void setColor(String color) {
 		this.color = color;
 	}
@@ -48,6 +48,5 @@ public class GraphElement {
             this.size = size;
         }
 
-	
-}
 
+}

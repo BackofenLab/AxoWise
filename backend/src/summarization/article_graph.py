@@ -1,9 +1,9 @@
-from ast import literal_eval
 import time
-from igraph import Graph
+from ast import literal_eval
+
 import leidenalg as la
 import summarization.meilisearch_inhouse.meilisearch_query as query
-from summarization.model import create_summary
+from igraph import Graph
 
 
 def citations_pagerank(graph):
@@ -78,13 +78,23 @@ def create_citations_graph(limit, search_query, tokenizer, model):
             abstract = hit["Abstract"]
             title = hit["Title"]
             citations = hit["Cited number"]
-            abstracts[pmid] = {"abstract": abstract, "year": year, "cited_by": citations}
+            abstracts[pmid] = {
+                "abstract": abstract,
+                "year": year,
+                "cited_by": citations,
+            }
             pmids.add(pmid)
             node_mapping[pmid] = integer_id
             integer_id += 1
             node_names.append(pmid)
             nodes.append(
-                {"external_id": str(pmid), "abstract": abstract, "year": year, "cited_by": citations, "title": title}
+                {
+                    "external_id": str(pmid),
+                    "abstract": abstract,
+                    "year": year,
+                    "cited_by": citations,
+                    "title": title,
+                }
             )
 
     # Add edges to the graph
@@ -122,7 +132,10 @@ def create_citations_graph(limit, search_query, tokenizer, model):
         community = communities[i]
         top_nodes.append(
             sorted(
-                [(abstracts[str(graph.vs(i)["name"][0])]["abstract"]) for i in community],
+                [
+                    (abstracts[str(graph.vs(i)["name"][0])]["abstract"])
+                    for i in community
+                ],
                 key=lambda x: x[1],
                 reverse=True,
             )[:2]
@@ -131,5 +144,7 @@ def create_citations_graph(limit, search_query, tokenizer, model):
     edge_list = []
     edge_mapping = dict((v, k) for k, v in node_mapping.items())
     for source, target in edges:
-        edge_list.append({"source": edge_mapping[source], "target": edge_mapping[target], "score": 1})
+        edge_list.append(
+            {"source": edge_mapping[source], "target": edge_mapping[target], "score": 1}
+        )
     return edge_list, nodes

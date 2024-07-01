@@ -1,6 +1,7 @@
 """
 Connection interface towards the Neo4j databases.
 """
+
 from pathlib import Path
 from typing import Any
 

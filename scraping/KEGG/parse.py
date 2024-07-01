@@ -1,5 +1,4 @@
 import re
-import io
 
 
 def parse_flat_file(pathway):

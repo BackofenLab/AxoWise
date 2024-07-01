@@ -5,13 +5,13 @@
 package jsonexporter.model;
 
 public class GraphEdge extends GraphElement{
-	
-		
+
+
 	private String label;
 	private String source;
 	private String target;
         private String id;
-	
+
 	public GraphEdge(String id) {
 		super();
                 this.id=id;

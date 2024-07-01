@@ -1,8 +1,9 @@
-import re
-from string import Template
-import mygene
-import sys
 import os
+import re
+import sys
+from string import Template
+
+import mygene
 import requests
 
 sys.path.append("..")
@@ -91,7 +92,9 @@ def symbols_to_ensemble(symbols, species, specifier):
     """
     mg = mygene.MyGeneInfo()
     ensembl_list = []
-    results = mg.querymany(symbols, scopes="symbol", fields=f"ensembl.{specifier}", species=f"{species}")
+    results = mg.querymany(
+        symbols, scopes="symbol", fields=f"ensembl.{specifier}", species=f"{species}"
+    )
     for result in results:
         if "ensembl" in result:
             res = result["ensembl"]
@@ -120,16 +123,32 @@ def scrapping(path, species):
     kegg_id = "mmu" if species == "mouse" else "hsa"
 
     # Diseases, drugs & compounds
-    diseases_file = open(os.path.join(path, "kegg_diseases.{}.tsv".format(species)), mode="w", encoding="utf-8")
-    drugs_file = open(os.path.join(path, "kegg_drugs.{}.tsv".format(species)), mode="w", encoding="utf-8")
-    compounds_file = open(os.path.join(path, "kegg_compounds.{}.tsv".format(species)), mode="w", encoding="utf-8")
+    diseases_file = open(
+        os.path.join(path, "kegg_diseases.{}.tsv".format(species)),
+        mode="w",
+        encoding="utf-8",
+    )
+    drugs_file = open(
+        os.path.join(path, "kegg_drugs.{}.tsv".format(species)),
+        mode="w",
+        encoding="utf-8",
+    )
+    compounds_file = open(
+        os.path.join(path, "kegg_compounds.{}.tsv".format(species)),
+        mode="w",
+        encoding="utf-8",
+    )
 
     written_diseases = set()
     written_drugs = set()
     written_compounds = set()
 
     # Pathways
-    pathways_file = open(os.path.join(path, "kegg_pathways.{}.tsv".format(species)), mode="w", encoding="utf-8")
+    pathways_file = open(
+        os.path.join(path, "kegg_pathways.{}.tsv".format(species)),
+        mode="w",
+        encoding="utf-8",
+    )
 
     # Write headers
     diseases_file.write("\t".join(["id", "name"]) + "\n")
@@ -184,11 +203,15 @@ def scrapping(path, species):
             for i in pathway_genes:
                 if i:
                     pathway_gene_symbols.append(i[1])
-            kegg2external_genes = symbols_to_ensemble(pathway_gene_symbols, species, "gene")
+            kegg2external_genes = symbols_to_ensemble(
+                pathway_gene_symbols, species, "gene"
+            )
         # Diseases
         has_diseases = pathway_diseases is not None
         if has_diseases:
-            disease_ids = write_diseases(pathway_diseases, diseases_file, written_diseases)
+            disease_ids = write_diseases(
+                pathway_diseases, diseases_file, written_diseases
+            )
 
         # Drugs
         has_drugs = pathway_drugs is not None
@@ -198,7 +221,9 @@ def scrapping(path, species):
         # Compounds
         has_compounds = pathway_compounds is not None
         if has_compounds:
-            compound_ids = write_compounds(pathway_compounds, compounds_file, written_compounds)
+            compound_ids = write_compounds(
+                pathway_compounds, compounds_file, written_compounds
+            )
 
         # Save the pathway
         description_column = pathway_description if has_description else ""

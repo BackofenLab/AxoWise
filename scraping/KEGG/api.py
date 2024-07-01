@@ -1,4 +1,5 @@
 from string import Template
+
 from .url import get
 
 # Predefined API endpoints
@@ -29,7 +30,9 @@ def pathways(organism_id):
 
 
 def pathway(pathway_id, kgml=False):
-    endpoint = _get_template.substitute(entries=pathway_id, kgml="/kgml" if kgml else "")
+    endpoint = _get_template.substitute(
+        entries=pathway_id, kgml="/kgml" if kgml else ""
+    )
     pathway_file = get(endpoint)
     assert pathway_file is not None
     return pathway_file
@@ -44,7 +47,9 @@ def map_identifiers_to_STRING(identifiers, species=None, split=10):
         i = 0
         while True:
             identifiers_chunk = identifiers[i : i + split]
-            endpoint = template.substitute(format="tsv", identifiers="%0d".join(identifiers_chunk), species=species)
+            endpoint = template.substitute(
+                format="tsv", identifiers="%0d".join(identifiers_chunk), species=species
+            )
             identifiers_file = get(endpoint)
             assert identifiers_file is not None
             yield identifiers_file, i
@@ -53,7 +58,9 @@ def map_identifiers_to_STRING(identifiers, species=None, split=10):
             else:
                 i += split
     else:
-        endpoint = template.substitute(format="tsv", identifiers="%0d".join(identifiers), species=species)
+        endpoint = template.substitute(
+            format="tsv", identifiers="%0d".join(identifiers), species=species
+        )
         identifiers_file = get(endpoint)
         assert identifiers_file is not None
         yield identifiers_file, 0

@@ -42,4 +42,3 @@ test:
 	# backend
 	python -m unittest discover backend
 	find . -name "*.py" | xargs black -l 120 --check --target-version=py311
-
