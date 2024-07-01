@@ -1,0 +1,111 @@
+repos:
+  # Basic pre-commit hooks for whitespace and yaml checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
+    hooks:
+      - id: trailing-whitespace
+        description: "Removes trailing whitespace from all lines."
+      - id: end-of-file-fixer
+        description: "Ensures all files end with a newline."
+      - id: check-yaml
+        description: "Validates that YAML files have correct syntax."
+      - id: check-added-large-files
+        description: "Prevents the addition of large files exceeding a defined size limit."
+      - id: check-merge-conflict
+        description: "Detects leftover merge conflict markers."
+
+  # Python specific hooks
+  - repo: https://github.com/psf/black
+    rev: 24.4.2
+    hooks:
+      - id: black
+        description: "Automatically formats Python code to comply with PEP 8."
+  # - repo: https://github.com/pre-commit/mirrors-mypy
+    # rev: v1.10.0
+    # hooks:
+      # - id: mypy
+        # description: "Static type checker for Python code."
+  # - repo: https://github.com/PyCQA/bandit
+    # rev: 1.7.9
+    # hooks:
+      # - id: bandit
+        # description: "Security analysis tool for Python code to find common security issues."
+  - repo: https://github.com/timothycrosley/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        description: "Sorts imports in Python files."
+  - repo: https://github.com/PyCQA/autoflake
+    rev: v2.3.1
+    hooks:
+      - id: autoflake
+        name: Remove unused imports and variables
+        description: This hook uses autoflake to remove all unused imports and variables from the code.
+        args: [--remove-all-unused-imports, --remove-unused-variables, --in-place]
+
+  # Frontend specific hooks
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v2.3.2
+    hooks:
+      - id: prettier
+        description: "Code formatter for JavaScript, TypeScript, JSON, CSS, SCSS, HTML, and Vue files."
+        files: \.(js|ts|json|css|scss|html|vue)$
+  # - repo: https://github.com/pre-commit/mirrors-eslint
+    # rev: v7.32.0
+    # hooks:
+      # - id: eslint
+        # description: "Static analysis tool to find problems in JavaScript and Vue.js code."
+        # files: \.(js|ts|vue)$
+
+  # Custom hooks for running unit tests
+  # - repo: local
+    # hooks:
+      # - id: run-tests
+        # name: Run Tests
+        # entry: pytest
+        # language: system
+        # types: [python]
+        # description: "Runs unit tests using pytest to ensure code changes do not break existing functionality."
+        # skip: true  # Skip this hook
+
+  # Custom hooks for checking environment dependencies
+  # - repo: local
+    # hooks:
+      # - id: check-environment-yml
+        # name: Check Environment YAML
+        # entry: ./check-environment-yml
+        # language: system
+        # files: ^environment\.yml$
+        # description: "Checks for changes in environment.yml to ensure all dependencies are up to date."
+        # skip: true  # Skip this hook
+
+  # npm audit hook for checking vulnerabilities in frontend dependencies
+  # - repo: local
+    # hooks:
+      # - id: npm-audit
+        # name: npm audit
+        # entry: bash -c "cd frontend && npm audit --audit-level high"
+        # language: system
+        # description: "Runs npm audit to check for vulnerabilities in npm dependencies."
+
+
+  # Shell script linting and formatting
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
+    hooks:
+      - id: detect-private-key
+        description: "Detects private keys to prevent accidental commits."
+      - id: check-case-conflict
+        description: "Detects filename case conflicts that can cause issues on case-insensitive filesystems."
+      - id: check-json
+        description: "Validates that JSON files have correct syntax."
+
+# Additional configurations and overrides
+default_language_version:
+  python: python3.11
+  node: 16.13.1
+
+
+# Exclude certain directories from checks
+exclude: |
+  (^|/)(\.git|\.venv|node_modules|dist|build|static|public)/
