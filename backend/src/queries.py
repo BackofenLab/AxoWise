@@ -3,7 +3,7 @@ Collection of Cypher queries for writing and reading the resulting
 Neo4j graph database.
 """
 
-from typing import Any
+from typing import Any, Dict, List, Set, Tuple, Union
 
 import neo4j
 
@@ -52,7 +52,7 @@ def get_terms_connected_by_overlap(
 
 def get_protein_ids_for_names(
     driver: neo4j.Driver, names: list[str], species_id: int
-) -> (list, list[str], dict):
+) -> Tuple[list, list[str], dict[str, str]]:
     """
     Returns: protein, protein_id and a dictionary of format (Symbol: Alias) of all the symbols found from aliases
     """
@@ -93,7 +93,7 @@ def get_protein_ids_for_names(
 
 def get_protein_neighbours(
     driver: neo4j.Driver, protein_ids: list[str], threshold: int, species_id: int
-) -> (list[str], list[str], list[str], list[int]):
+) -> Tuple[List[str], List[str], List[str], List[Union[int, float]]]:
     """
     :returns: proteins, source_ids, target_ids, scores
     """
@@ -118,7 +118,7 @@ def get_protein_neighbours(
 
 def get_protein_associations(
     driver: neo4j.Driver, protein_ids: list[str], threshold: int, species_id: int
-) -> (list[str], list[str], list[str], list[int]):
+) -> Tuple[List[str], List[str], List[str], List[Union[int, float]]]:
     """
     :returns: proteins (nodes), source_ids, target_ids, score
     """
@@ -174,7 +174,7 @@ def get_number_of_genes(driver: neo4j.Driver, species_id: int) -> int:
 
 def _convert_to_protein_id(
     result: neo4j.Result, symbol_alias: dict
-) -> (list, list[str]):
+) -> Tuple[list, list[str]]:
     proteins, ids = list(), list()
     for row in result:
         proteins.append(row["protein"])
@@ -182,7 +182,9 @@ def _convert_to_protein_id(
     return proteins, ids
 
 
-def _convert_to_symbol_alias(result: neo4j.Result) -> (set[str], set[str]):
+def _convert_to_symbol_alias(
+    result: neo4j.Result,
+) -> Tuple[Set[str], Set[str], Dict[str, str], Dict[str, str]]:
     symbols = set()
     aliases = set()
     symbol_aliases = {}
@@ -201,8 +203,11 @@ def _convert_to_symbol_alias(result: neo4j.Result) -> (set[str], set[str]):
 
 def _convert_to_connection_info_score(
     result: neo4j.Result, _int: bool, protein: bool
-) -> (list[str], list[str], list[str], list[int]):
-    nodes, source, target, score = list(), list(), list(), list()
+) -> Tuple[List[str], List[str], List[str], List[Union[int, float]]]:
+    nodes: List[str] = []
+    source: List[str] = []
+    target: List[str] = []
+    score: List[Union[int, float]] = []
 
     for row in result:
         nodes.append(row["source"])
