@@ -20,11 +20,17 @@ repos:
     hooks:
       - id: black
         description: "Automatically formats Python code to comply with PEP 8."
-  # - repo: https://github.com/pre-commit/mirrors-mypy
-    # rev: v1.10.0
-    # hooks:
-      # - id: mypy
-        # description: "Static type checker for Python code."
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.10.1
+    hooks:
+      - id: mypy
+        description: "Static type checker for Python code."
+        args: [--show-error-codes, --install-types, --non-interactive]
+        additional_dependencies: ['types-flask']
+        'types_or':
+          - python
+          - pyi
+
   # - repo: https://github.com/PyCQA/bandit
     # rev: 1.7.9
     # hooks:
