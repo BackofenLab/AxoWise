@@ -82,14 +82,14 @@ try:
         )
         # remove None from the list
         # None corresponds to overlap sta < 0.5
-        results = set(results)
-        results.remove(None)
-        f.write("".join(results).encode())
+        results_ = set(results)
+        results_.remove(None)
+        f.write("".join(results_).encode())
     print(f"completed overlap calculation and saved in {score_file}")
     time_cost = (time.time() - start_time) / 3600
     time_file = "data/Overlap/MusMusculusDATA/functional_terms_overlap_time_cost.txt"
-    with open(time_file, "w") as f:
-        f.write(f"time cost: {time_cost} hours\n")
+    with open(time_file, "w") as f_txt:
+        f_txt.write(f"time cost: {time_cost} hours\n")
     print(f"time cost at {time_file}")
 except Exception as e:
     with open("error.txt", "w") as error:
