@@ -1,13 +1,13 @@
-from dotenv import load_dotenv
-import os
 import json
+import os
 
 import meilisearch
-
+from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
-SEARCH_KEY = os.getenv('SEARCH_KEY')
+SEARCH_KEY = os.getenv("SEARCH_KEY")
+
 
 def build_query(client, index, user_input, sort_by, limit=20000):
     """

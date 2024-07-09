@@ -1,17 +1,17 @@
 """Module providing a function printing python version."""
 
-from dotenv import load_dotenv
-import os
 import json
+import os
 import time
 from ast import literal_eval
 
 import meilisearch
 import pandas as pd
+from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
-ADMIN_API_KEY = os.getenv('ADMIN_API_KEY')
+ADMIN_API_KEY = os.getenv("ADMIN_API_KEY")
 
 
 output_file = "processed_synonyms.json"

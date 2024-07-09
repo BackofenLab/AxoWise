@@ -1,13 +1,14 @@
-from dotenv import load_dotenv
-import os
 import json
+import os
 import time
 
 import meilisearch
+from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
-ADMIN_API_KEY = os.getenv('ADMIN_API_KEY')
+ADMIN_API_KEY = os.getenv("ADMIN_API_KEY")
+
 
 def add_data(client):
     """

@@ -1,12 +1,12 @@
-from dotenv import load_dotenv
-import os
 import json
+import os
 
 import meilisearch
+from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
-MASTER_KEY = os.getenv('MASTER_KEY')
+MASTER_KEY = os.getenv("MASTER_KEY")
 
 
 def create_key(client):

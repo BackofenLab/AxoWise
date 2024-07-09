@@ -1,12 +1,13 @@
-from dotenv import load_dotenv
 import os
 import time
 
 import meilisearch
+from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
-MASTER_KEY = os.getenv('MASTER_KEY')
+MASTER_KEY = os.getenv("MASTER_KEY")
+
 
 def main():
     client = meilisearch.Client("http://localhost:7700", MASTER_KEY)
