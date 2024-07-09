@@ -1,8 +1,13 @@
+from dotenv import load_dotenv
+import os
 import json
 
-import Api_key
 import meilisearch
 
+
+# Load environment variables from .env file
+load_dotenv()
+SEARCH_KEY = os.getenv('SEARCH_KEY')
 
 def build_query(client, index, user_input, sort_by, limit=20000):
     """
@@ -103,8 +108,7 @@ def get_results(
     """
     # TODO:
     # This needs to be moved to the main function when connecting to the frontend
-    # import Api_key
-    client = meilisearch.Client("http://localhost:7700", Api_key.SEARCH_KEY)
+    client = meilisearch.Client("http://localhost:7700", SEARCH_KEY)
     index = "pubmed_mouse_v1"
     sort_by = ["Cited number:desc", "Published:desc"]
     return build_query(client, index, query, sort_by, limit)

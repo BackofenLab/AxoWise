@@ -1,12 +1,18 @@
 """Module providing a function printing python version."""
 
+from dotenv import load_dotenv
+import os
 import json
 import time
 from ast import literal_eval
 
-import Api_key
 import meilisearch
 import pandas as pd
+
+# Load environment variables from .env file
+load_dotenv()
+ADMIN_API_KEY = os.getenv('ADMIN_API_KEY')
+
 
 output_file = "processed_synonyms.json"
 failed_file = "failed_synonyms.json"
@@ -17,7 +23,7 @@ full_name_dict_file = "Dict_full_name.json"
 def main():
     """main"""
 
-    client = meilisearch.Client("http://localhost:7700", Api_key.ADMIN_API_KEY)
+    client = meilisearch.Client("http://localhost:7700", ADMIN_API_KEY)
 
     input_file = str(input("Please give the input file: "))
     upload = set_synonyms(input_file)

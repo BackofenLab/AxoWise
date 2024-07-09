@@ -1,9 +1,13 @@
+from dotenv import load_dotenv
+import os
 import json
 import time
 
-import Api_key
 import meilisearch
 
+# Load environment variables from .env file
+load_dotenv()
+ADMIN_API_KEY = os.getenv('ADMIN_API_KEY')
 
 def add_data(client):
     """
@@ -85,7 +89,7 @@ def delete_index(client):
 def main():
     """docstring"""
     # setup the client connection to the database using the master API key to identify us
-    client = meilisearch.Client("http://localhost:7700", Api_key.ADMIN_API_KEY)
+    client = meilisearch.Client("http://localhost:7700", ADMIN_API_KEY)
 
     add_data(client)
 

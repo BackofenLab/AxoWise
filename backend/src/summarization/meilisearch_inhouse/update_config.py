@@ -1,11 +1,15 @@
+from dotenv import load_dotenv
+import os
 import time
 
-import Api_key
 import meilisearch
 
+# Load environment variables from .env file
+load_dotenv()
+MASTER_KEY = os.getenv('MASTER_KEY')
 
 def main():
-    client = meilisearch.Client("http://localhost:7700", Api_key.MASTER_KEY)
+    client = meilisearch.Client("http://localhost:7700", MASTER_KEY)
     index = str(input("Which index do you want to update? "))
     limit = int(input("What should the new limit be? "))
 
