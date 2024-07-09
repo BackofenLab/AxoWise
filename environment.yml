@@ -16,6 +16,7 @@ dependencies:
   - backports.functools_lru_cache=1.6.4.*
   - networkit=10.1.*
   - pre-commit=3.7.*
+  - python-dotenv
   - pip
   - pip:
     - mygene
