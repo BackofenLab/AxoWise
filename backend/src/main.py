@@ -15,6 +15,7 @@ import graph
 import jar
 import pandas as pd
 import queries
+from dotenv import load_dotenv
 from flask import Flask, Response, request, send_from_directory
 from summarization import article_graph as summarization
 from summarization.model import create_individual_summary, create_summary
@@ -29,7 +30,10 @@ app = Flask(__name__)
 _SCRIPT_DIR = os.path.dirname(__file__)
 _SERVE_DIR = "../../frontend/dist"
 _INDEX_FILE = "index.html"
-_BACKEND_JAR_PATH = "../gephi/target/gephi.backend-1.0-SNAPSHOT.jar"
+
+# Load .env file
+load_dotenv()
+_BACKEND_JAR_PATH = os.getenv("_BACKEND_JAR_PATH")
 
 
 @app.route("/")

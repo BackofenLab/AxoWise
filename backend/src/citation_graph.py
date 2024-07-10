@@ -1,14 +1,18 @@
 import io
 import json
+import os
 
 import graph
 import jar
 import pandas as pd
+from dotenv import load_dotenv
 from util.stopwatch import Stopwatch
 
 # =============== Functional Term Graph ======================
 
-_BACKEND_JAR_PATH = "../gephi/target/gephi.backend-1.0-SNAPSHOT.jar"
+# Load .env file
+load_dotenv()
+_BACKEND_JAR_PATH = os.getenv("_BACKEND_JAR_PATH")
 
 
 def get_citation_graph(nodes, edges):

@@ -1,16 +1,20 @@
 import io
 import json
+import os
 
 import database
 import graph
 import jar
 import pandas as pd
 import queries
+from dotenv import load_dotenv
 from util.stopwatch import Stopwatch
 
 # =============== Functional Term Graph ======================
 
-_BACKEND_JAR_PATH = "../gephi/target/gephi.backend-1.0-SNAPSHOT.jar"
+# Load .env file
+load_dotenv()
+_BACKEND_JAR_PATH = os.getenv("_BACKEND_JAR_PATH")
 
 
 def get_functional_graph(list_enrichment, species_id):
