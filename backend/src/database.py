@@ -2,14 +2,11 @@
 Connection interface towards the Neo4j databases.
 """
 
-from pathlib import Path
-from typing import Any
+import os
 
 import neo4j
-import yaml
+from dotenv import load_dotenv
 from flask import g
-
-_CONFIG_PATH = Path(__file__).parent / Path("../../config.yml")
 
 
 def get_driver() -> neo4j.Driver:
@@ -17,18 +14,15 @@ def get_driver() -> neo4j.Driver:
     :return: neo4j-driver object that is needed when calling functions of `queries.py`
     """
     if "db" not in g:
-        # read config
-        config = _get_neo4j_config(_CONFIG_PATH)
+        # Load environment variables from .env file
+        load_dotenv()
+
         # set config
-        uri = f'bolt://{config["host"]}:{config["port"]}'
-        username = config["username"]
-        password = config["password"]
+        NEO4J_HOST = os.getenv("NEO4J_HOST")
+        NEO4J_PORT = os.getenv("NEO4J_PORT")
+        NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
+        NEO4J_USERNAME = os.getenv("NEO4J_USERNAME")
         # connect
-        g.db = neo4j.GraphDatabase.driver(uri, auth=(username, password))
+        uri = f"bolt://{NEO4J_HOST}:{NEO4J_PORT}"
+        g.db = neo4j.GraphDatabase.driver(uri, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))
     return g.db
-
-
-def _get_neo4j_config(path: Path) -> dict[str, Any]:
-    with open(path, "rt", encoding="utf-8") as f:
-        config = yaml.load(f, Loader=yaml.FullLoader)
-    return config["neo4j"]
