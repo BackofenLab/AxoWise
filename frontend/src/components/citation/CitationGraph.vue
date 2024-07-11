@@ -1,33 +1,40 @@
 <template>
-  <div class="slider" tabindex="0">
-    <span v-if="citation_graphs.size == 0"
-      >There is no generated citation graph.</span
-    >
-    <div
-      v-for="(entry, index) in filt_graphs"
-      :key="index"
-      class="graph"
-      v-on:click="switch_graph(entry)"
-      @mouseover="activeGraphIndex = index"
-      @mouseout="activeGraphIndex = -1"
-    >
-      <SnapshotCitation :propValue="entry" :index="entry.id" />
-      <div class="graph-options">
-        <div
-          class="bookmark-graph"
-          v-show="activeGraphIndex == index"
-          v-on:click.stop="add_graph(entry)"
-          :class="{ checked: favourite_graphs.has(entry.id) }"
-          ref="checkboxStatesGraph"
-        ></div>
-        <img
-          class="remove-graph"
-          v-show="activeGraphIndex == index"
-          src="@/assets/pathwaybar/cross.png"
-          v-on:click.stop="remove_graph(entry)"
-        />
-        <div class="graph-citation-name">
-          <input type="text" v-model="entry.label" class="empty" @click.stop />
+  <div class="loading-section">
+    <div class="loading-text" v-if="citation_graphs.size == 0">
+      <span>There is no generated citation graph.</span>
+    </div>
+    <div class="slider" tabindex="0" v-if="citation_graphs.size != 0">
+      <div
+        v-for="(entry, index) in filt_graphs"
+        :key="index"
+        class="graph"
+        v-on:click="switch_graph(entry)"
+        @mouseover="activeGraphIndex = index"
+        @mouseout="activeGraphIndex = -1"
+      >
+        <SnapshotCitation :propValue="entry" :index="entry.id" />
+        <div class="graph-options">
+          <div
+            class="bookmark-graph"
+            v-show="activeGraphIndex == index"
+            v-on:click.stop="add_graph(entry)"
+            :class="{ checked: favourite_graphs.has(entry.id) }"
+            ref="checkboxStatesGraph"
+          ></div>
+          <img
+            class="remove-graph"
+            v-show="activeGraphIndex == index"
+            src="@/assets/pathwaybar/cross.png"
+            v-on:click.stop="remove_graph(entry)"
+          />
+          <div class="graph-citation-name">
+            <input
+              type="text"
+              v-model="entry.label"
+              class="empty"
+              @click.stop
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -7,7 +7,6 @@
         v-show="active_function === 'citation'"
       >
         <div class="tool-section-term">
-          <div v-if="loading_state == true" class="loading_pane"></div>
           <div class="citation-search">
             <img
               class="citation-search-icon"
@@ -20,6 +19,10 @@
               placeholder="search context"
               @keyup.enter="get_citation_graph(context_raw)"
             />
+            <div
+              class="loading_pane_citation"
+              v-if="loading_state == true"
+            ></div>
           </div>
           <!-- <div class="coloumn-button">
                         <button class="tool-buttons" :class="{recolor_filter: bookmark_off == false}" v-on:click="bookmark_off = !bookmark_off" >bookmarks</button>
@@ -37,7 +40,7 @@
             <input id="year" type="checkbox" /><label for="year"></label>
           </div>
         </div>
-        <div class="graph-section" v-if="loading_state == false">
+        <div class="graph-section">
           <CitationGraph
             :citation_graphs="citation_graphs"
             :favourite_graphs="favourite_graphs"
@@ -260,5 +263,17 @@ export default {
 
 .context-confirm [type="checkbox"]:checked + label:after {
   margin: 0.09vw 0 0 0.69vw;
+}
+
+.loading_pane_citation {
+  content: "";
+  position: absolute;
+  width: 1vw;
+  height: 1vw;
+  border: 4px solid transparent;
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  right: 1vw;
+  animation: button-loading-spinner 1s ease infinite;
 }
 </style>
