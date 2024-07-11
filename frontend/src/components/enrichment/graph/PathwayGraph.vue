@@ -1,33 +1,40 @@
 <template>
-  <div class="slider" tabindex="0">
-    <span v-if="term_graphs.size == 0"
-      >There is no generated pathway graph.</span
-    >
-    <div
-      v-for="(entry, index) in filt_graphs"
-      :key="index"
-      class="graph"
-      v-on:click="switch_graph(entry)"
-      @mouseover="activeGraphIndex = index"
-      @mouseout="activeGraphIndex = -1"
-    >
-      <SnapshotGraph :propValue="entry" :index="entry.id" />
-      <div class="graph-options">
-        <div
-          class="bookmark-graph"
-          v-show="activeGraphIndex == index"
-          v-on:click.stop="add_graph(entry)"
-          :class="{ checked: favourite_graphs.has(entry.id) }"
-          ref="checkboxStatesGraph"
-        ></div>
-        <img
-          class="remove-graph"
-          v-show="activeGraphIndex == index"
-          src="@/assets/pathwaybar/cross.png"
-          v-on:click.stop="remove_graph(entry)"
-        />
-        <div class="graph-name">
-          <input type="text" v-model="entry.label" class="empty" @click.stop />
+  <div class="loading-section">
+    <div class="loading-text" v-if="term_graphs.size == 0">
+      <span>There is no generated pathway graph.</span>
+    </div>
+    <div class="slider" tabindex="0" v-if="term_graphs.size != 0">
+      <div
+        v-for="(entry, index) in filt_graphs"
+        :key="index"
+        class="graph"
+        v-on:click="switch_graph(entry)"
+        @mouseover="activeGraphIndex = index"
+        @mouseout="activeGraphIndex = -1"
+      >
+        <SnapshotGraph :propValue="entry" :index="entry.id" />
+        <div class="graph-options">
+          <div
+            class="bookmark-graph"
+            v-show="activeGraphIndex == index"
+            v-on:click.stop="add_graph(entry)"
+            :class="{ checked: favourite_graphs.has(entry.id) }"
+            ref="checkboxStatesGraph"
+          ></div>
+          <img
+            class="remove-graph"
+            v-show="activeGraphIndex == index"
+            src="@/assets/pathwaybar/cross.png"
+            v-on:click.stop="remove_graph(entry)"
+          />
+          <div class="graph-name">
+            <input
+              type="text"
+              v-model="entry.label"
+              class="empty"
+              @click.stop
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -79,7 +86,6 @@ export default {
     this.emitter.off("generateGraph");
   },
   activated() {
-    console.log("activated");
     this.term_graphs = new Set(this.$store.state.term_graph_dict);
     this.favourite_graphs = this.$store.state.favourite_graph_dict;
   },
@@ -130,8 +136,11 @@ export default {
         this.favourite_graphs.delete(entry.id);
       }
       this.term_graphs.delete(entry);
-      this.$store.commit("remove_snapshotPathway", entry.id);
       this.$store.commit("remove_term_graph", entry);
+      console.log(this.$store.state.term_graph_data);
+
+      if (this.$store.state.term_graph_data == null) return;
+
       if (
         ![...this.term_graphs].some(
           (e) => e.id == this.$store.state.term_graph_data.id
@@ -168,10 +177,10 @@ export default {
 
 <style>
 .graph-section .slider {
-  position: absolute;
   width: 100%;
+  max-height: 100%;
   display: flex;
-  padding: 0 1vw 0 1vw;
+  padding: 0.5vw 1vw 0.5vw 1vw;
   flex-wrap: wrap;
   overflow-y: scroll;
   scroll-behavior: smooth;
@@ -193,6 +202,7 @@ export default {
   position: relative;
   width: 33%;
   height: 7.5vw;
+  padding: 0.5vw;
   flex-shrink: 0;
   transform-origin: center center;
   transform: scale(1);
@@ -225,8 +235,9 @@ export default {
 }
 
 .graph-options {
-  position: fixed;
+  position: absolute;
   width: 100%;
+  padding: 0 0.5vw 0 0.5vw;
   display: flex;
   align-items: center;
   justify-content: end;
@@ -250,6 +261,8 @@ export default {
   cursor: default;
   font-family: "ABeeZee", sans-serif;
   border: none;
+  padding: 0 0.5vw 0 0.5vw;
+  overflow: hidden;
 }
 
 .checked {
@@ -261,6 +274,23 @@ export default {
   height: 100%;
   text-align: center;
   color: white;
+  font-size: 0.7vw;
+}
+
+.loading-section {
+  height: 100%;
+  width: 100%;
+  padding: 0.5vw;
+  border: solid 0.01vw rgba(255, 255, 255, 0.5);
+}
+
+.loading-text {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.6);
   font-size: 0.7vw;
 }
 </style>

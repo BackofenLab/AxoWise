@@ -21,6 +21,7 @@ export const store = createStore({
     snapshot_pathways: [],
     snapshot_citations: [],
     favourite_graph_dict: new Set(),
+    favourite_heatmaps_dict: new Set(),
     snapshot_heatmaps: [],
     node_cluster_index: {},
     node_modul_index: new Set(),
@@ -80,6 +81,9 @@ export const store = createStore({
     assign_new_heatmap_graph(state, value) {
       state.term_heatmap_dict.push(value);
     },
+    update_heatmap_dict(state, value) {
+      state.term_heatmap_dict = value;
+    },
     remove_term_graph(state, value) {
       const index = state.term_graph_dict.indexOf(value);
       state.term_graph_dict.splice(index, 1);
@@ -90,6 +94,9 @@ export const store = createStore({
     },
     assign_favourite_graph(state, value) {
       state.favourite_graph_dict = value;
+    },
+    assign_favourite_heatmap(state, value) {
+      state.favourite_heatmaps_dict = value;
     },
     assign_highlightedSet(state, value) {
       state.highlighted_edges = value;

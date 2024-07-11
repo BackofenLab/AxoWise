@@ -3,12 +3,21 @@
     <div class="tool-section-graph">
       <div class="coloumn-button">
         <button class="tool-buttons" v-on:click="get_heatmap()">
-          generate heatmap
+          <img class="buttons-img" src="@/assets/plus-1.png" />
+        </button>
+      </div>
+      <div class="coloumn-button">
+        <button
+          class="tool-buttons"
+          :class="{ recolor_filter: bookmark_off == false }"
+          v-on:click="bookmark_off = !bookmark_off"
+        >
+          <img class="buttons-img" src="@/assets/star.png" />
         </button>
       </div>
       <div class="coloumn-button">
         <button class="tool-buttons" v-on:click="get_svg()">
-          export snapshot
+          <img class="buttons-img" src="@/assets/toolbar/download.png" />
         </button>
       </div>
     </div>
@@ -37,6 +46,10 @@ export default {
   },
   methods: {
     get_heatmap() {
+      if (this.favourite_pathways.length == 0) {
+        alert("favorize pathways before generating heatmap");
+        return;
+      }
       this.emitter.emit("generateHeatmap", this.favourite_pathways);
     },
     get_svg() {

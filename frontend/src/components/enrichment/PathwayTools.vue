@@ -7,7 +7,11 @@
           v-show="tool == 'Termgraph'"
           v-on:click="get_term_graph()"
         >
-          <div v-if="!loading_state">generate graph</div>
+          <img
+            class="buttons-img"
+            src="@/assets/plus-1.png"
+            v-if="!loading_state"
+          />
           <div v-if="loading_state" class="loading_button"></div>
         </button>
       </div>
@@ -17,7 +21,7 @@
           :class="{ recolor_filter: bookmark_off == false }"
           v-on:click="bookmark_off = !bookmark_off"
         >
-          bookmarks
+          <img class="buttons-img" src="@/assets/star.png" />
         </button>
       </div>
     </div>
@@ -168,8 +172,8 @@ export default {
 
 .tool-section-graph {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  margin: 1vw 0 1vw 0;
+  grid-template-columns: 0.5fr 0.5fr 0.7fr 0.7fr 0.7fr 0.7fr;
+  padding: 0.5vw 1vw 0.5vw 1vw;
   width: 100%;
   flex-shrink: 0; /* Prevents the tool-section-graph from shrinking */
 }
@@ -184,23 +188,22 @@ export default {
 }
 
 .coloumn-button {
-  padding: 1vw;
+  padding: 0.5vw;
   display: grid;
   row-gap: 1vw;
   z-index: 9999;
 }
 
 .tool-buttons {
-  padding: 0.1vw;
+  padding: 0.2vw 0 0.2vw 0;
   border-radius: 0;
   cursor: pointer;
   display: flex;
   font-size: 0.7vw;
-  padding: 0.2vw;
   align-items: center;
   color: rgba(255, 255, 255, 0.8);
   justify-content: center;
-  border: 0.05vw solid rgba(255, 255, 255, 0.8);
+  border: 0.05vw solid rgba(255, 255, 255, 0.6);
   box-shadow: 0 2px 6px -3px rgba(255, 255, 255, 0.23);
   transition: transform 0.25s cubic-bezier(0.7, 0.98, 0.86, 0.98),
     box-shadow 0.25s cubic-bezier(0.7, 0.98, 0.86, 0.98);
@@ -239,5 +242,12 @@ export default {
   flex-grow: 1;
   overflow-y: auto;
   position: relative;
+  padding: 0.5vw;
+}
+
+.buttons-img {
+  width: 0.6vw;
+  height: 0.6vw;
+  filter: invert(80%);
 }
 </style>

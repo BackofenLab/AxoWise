@@ -1,6 +1,8 @@
 <template>
   <div class="slider" tabindex="0">
-    <span v-if="filt_heatmap.size == 0">There is no generated heatmap.</span>
+    <div class="loading-text">
+      <span v-if="filt_heatmap.size == 0">There is no generated heatmap.</span>
+    </div>
     <div
       v-for="(entry, index) in filt_heatmap"
       :key="index"
@@ -14,7 +16,7 @@
         <div
           class="bookmark-graph"
           v-on:click.stop="add_graph(entry)"
-          :class="{ checked: favourite_heatmaps.has(entry) }"
+          :class="{ checked: favourite_heatmaps.has(entry.id) }"
           ref="checkboxStatesHeatmap"
         ></div>
         <img
@@ -53,14 +55,18 @@ export default {
     };
   },
   mounted() {
-    this.emitter.on("generateHeatmap", (pathway_data) => {
-      this.draw_heatmap(pathway_data);
-    });
-    this.emitter.on("exportHeatmap", () => {
-      this.export_svg();
-    });
+    var com = this;
+    if (this.mode != "term") {
+      this.emitter.on("generateHeatmap", (pathway_data) => {
+        this.draw_heatmap(pathway_data);
+      });
+      this.emitter.on("exportHeatmap", () => {
+        this.export_svg();
+      });
+    }
 
-    this.heatmap_dict_array = this.$store.state.term_heatmap_dict;
+    com.heatmap_dict_array = this.$store.state.term_heatmap_dict;
+    com.favourite_heatmaps = this.$store.state.favourite_heatmaps_dict;
     if (this.heatmap_dict_array.length != 0) {
       this.heatmap_number = Math.max.apply(
         Math,
@@ -70,6 +76,11 @@ export default {
     } else {
       this.heatmap_dict = new Set();
     }
+    console.log(
+      "mounted",
+      this.favourite_heatmaps,
+      this.$store.state.favourite_heatmaps_dict
+    );
   },
   beforeUnmount() {
     this.emitter.off("generateHeatmap");
@@ -180,16 +191,21 @@ export default {
         this.favourite_heatmaps.delete(entry);
       }
       this.heatmap_dict.delete(entry);
-      // this.$store.commit('assign_heatmap_dict', this.heatmap_dict )
+      this.$store.commit("update_heatmap_dict", [...this.heatmap_dict]);
+      this.$store.commit("assign_favourite_heatmap", this.favourite_heatmaps);
     },
     add_graph(entry) {
-      if (!this.favourite_heatmaps.has(entry)) {
-        // Checkbox is checked, add its state to the object
-        this.favourite_heatmaps.add(entry);
+      if (!this.favourite_heatmaps.has(entry.id)) {
+        this.favourite_heatmaps.add(entry.id);
       } else {
-        // Checkbox is unchecked, remove its state from the object
-        this.favourite_heatmaps.delete(entry);
+        this.favourite_heatmaps.delete(entry.id);
       }
+      this.$store.commit("assign_favourite_heatmap", this.favourite_heatmaps);
+      console.log(
+        "added",
+        this.favourite_heatmaps,
+        this.$store.state.favourite_heatmaps_dict
+      );
     },
     export_svg() {
       this.download(this.export_image, "heatmap.svg");
@@ -316,7 +332,7 @@ export default {
 
       if (!com.bookmark_off) {
         filtered = filtered.filter(function (heatmap) {
-          return com.favourite_heatmaps.has(heatmap);
+          return com.favourite_heatmaps.has(heatmap.id);
         });
       }
 
