@@ -32,24 +32,26 @@ def validate_and_sanitize_jar_path(jar_path: str) -> str:
     return abs_path
 
 
-def validate_and_sanitize_stdin(stdin):
+def validate_and_sanitize_stdin(stdin: str) -> str:
     """
-    Validates and sanitizes the stdin string to ensure it only contains
+    Validates and sanitizes each line of the stdin string to ensure it only contains
     alphanumeric characters, hyphens, commas, and tildes.
-    Newline characters are not allowed.
+    Newline characters are allowed between lines but not within a line.
     """
-
-    # Ensure 'stdin' is a string
     if not isinstance(stdin, str):
+        print("'stdin' must be a string.")
         raise ValueError("'stdin' must be a string.")
 
-    # Define a pattern for allowed characters, including tilde (~)
-    pattern = re.compile(r"[a-zA-Z0-9,~\n-]+")
+    pattern = re.compile(r"^[a-zA-Z0-9,~_\-]+$")
 
-    # Validate stdin with the defined pattern
-    if not pattern.match(stdin):
-        raise ValueError("stdin contains invalid characters.")
+    lines = stdin.splitlines()
+    # Check if any non-empty line contains invalid characters
+    invalid_lines = [line for line in lines if line and not pattern.match(line)]
+    if invalid_lines:
+        print(f"stdin contains invalid characters: {invalid_lines}")
+        raise ValueError(f"stdin contains invalid characters: {invalid_lines}")
 
+    print("Validated and sanitized stdin")
     return stdin
 
 
