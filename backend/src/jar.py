@@ -1,14 +1,8 @@
-"""
-Interface towards Java's executable JAR files.
-Assumes Java is already installed and set up,
-i.e. `java` is in PATH variable and available
-to be called.
-"""
-
 import os
 import re
 import shlex
 import subprocess
+from shutil import which
 
 
 def validate_and_sanitize_jar_path(jar_path: str) -> str:
@@ -56,20 +50,31 @@ def validate_and_sanitize_stdin(stdin: str) -> str:
     return stdin
 
 
-def pipe_call(jar_path: str, stdin: str, encoding="utf-8"):
+def get_java_path() -> str:
+    """
+    Gets the full path to the Java executable.
+    """
+    java_path = which("java")
+    if java_path is None:
+        raise EnvironmentError("Java executable not found in PATH.")
+    return java_path
+
+
+def pipe_call(jar_path: str, stdin: str, encoding="utf-8") -> str:
     """
     Runs an executable JAR file specified by `jar_path` and
     pipes `stdin` to its standard input. `encoding` specifies
     input's and output's encodings. Returns the standard output
     of the terminated JAR subprocess.
     """
-
     # Validate and sanitize 'jar_path'
     jar_path = validate_and_sanitize_jar_path(jar_path)
 
     # Validate and sanitize 'stdin'
     stdin = validate_and_sanitize_stdin(stdin)
 
+    # Get the full path to the Java executable
+    java_path = get_java_path()
 
     # Prepare the command with shlex
     # to ensure proper quoting of arguments
