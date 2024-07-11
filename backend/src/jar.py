@@ -1,7 +1,7 @@
 import os
 import re
 import shlex
-import subprocess
+import subprocess  # nosec
 from shutil import which
 
 
@@ -67,6 +67,7 @@ def pipe_call(jar_path: str, stdin: str, encoding="utf-8") -> str:
     input's and output's encodings. Returns the standard output
     of the terminated JAR subprocess.
     """
+
     # Validate and sanitize 'jar_path'
     jar_path = validate_and_sanitize_jar_path(jar_path)
 
@@ -87,7 +88,8 @@ def pipe_call(jar_path: str, stdin: str, encoding="utf-8") -> str:
             command,
             input=stdin.encode(encoding),
             capture_output=True,
-            shell=False,
+            # Bandit warning suppressed after implementation of input validation and shlex.quote
+            shell=False,  # nosec
             check=True,  # This will raise an error if the command fails
         )
         return output.stdout.decode(encoding)
