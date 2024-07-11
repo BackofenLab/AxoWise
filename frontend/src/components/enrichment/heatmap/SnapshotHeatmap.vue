@@ -52,7 +52,8 @@ export default {
 [id^="heatmap-visual-"] {
   height: 100%;
   width: 100%;
-  position: absolute;
   overflow: scroll;
+  object-fit: scale-down;
+  border: solid 0.05vw rgba(255, 255, 255, 0.3);
 }
 </style>

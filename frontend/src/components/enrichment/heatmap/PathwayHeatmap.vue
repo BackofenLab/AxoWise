@@ -1,31 +1,40 @@
 <template>
-  <div class="slider" tabindex="0">
-    <div class="loading-text">
-      <span v-if="filt_heatmap.size == 0">There is no generated heatmap.</span>
+  <div class="loading-section">
+    <div class="loading-text" v-if="filt_heatmap.size == 0">
+      <span>There is no generated heatmap.</span>
     </div>
-    <div
-      v-for="(entry, index) in filt_heatmap"
-      :key="index"
-      class="graph"
-      v-on:click="switch_heatmap(entry)"
-      @mouseover="activeHeatmapIndex = index"
-      @mouseout="activeHeatmapIndex = -1"
-    >
-      <SnapshotHeatmap :propValue="entry" :index="entry.id" />
-      <div class="graph-options" v-show="activeHeatmapIndex == index">
-        <div
-          class="bookmark-graph"
-          v-on:click.stop="add_graph(entry)"
-          :class="{ checked: favourite_heatmaps.has(entry.id) }"
-          ref="checkboxStatesHeatmap"
-        ></div>
-        <img
-          class="remove-graph"
-          src="@/assets/pathwaybar/cross.png"
-          v-on:click.stop="remove_graph(entry)"
-        />
-        <div class="graph-name">
-          <input type="text" v-model="entry.label" class="empty" @click.stop />
+    <div class="slider" tabindex="0" v-if="filt_heatmap.size != 0">
+      <div
+        v-for="(entry, index) in filt_heatmap"
+        :key="index"
+        class="graph"
+        v-on:click="switch_heatmap(entry)"
+        @mouseover="activeHeatmapIndex = index"
+        @mouseout="activeHeatmapIndex = -1"
+      >
+        <SnapshotHeatmap :propValue="entry" :index="entry.id" />
+        <div class="graph-options">
+          <div
+            class="bookmark-graph"
+            v-show="activeHeatmapIndex == index"
+            v-on:click.stop="add_graph(entry)"
+            :class="{ checked: favourite_heatmaps.has(entry.id) }"
+            ref="checkboxStatesHeatmap"
+          ></div>
+          <img
+            class="remove-graph"
+            v-show="activeHeatmapIndex == index"
+            src="@/assets/pathwaybar/cross.png"
+            v-on:click.stop="remove_graph(entry)"
+          />
+          <div class="graph-name">
+            <input
+              type="text"
+              v-model="entry.label"
+              class="empty"
+              @click.stop
+            />
+          </div>
         </div>
       </div>
     </div>
