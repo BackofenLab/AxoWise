@@ -7,6 +7,7 @@ to be called.
 
 import os
 import re
+import shlex
 import subprocess
 
 
@@ -69,15 +70,21 @@ def pipe_call(jar_path: str, stdin: str, encoding="utf-8"):
     # Validate and sanitize 'stdin'
     stdin = validate_and_sanitize_stdin(stdin)
 
-    # Run JAR file and capture its standard output
-    output = subprocess.run(
-        ["java", "-jar", jar_path],
-        input=bytes(stdin, encoding),
-        capture_output=True,
-        shell=False,
-    )
 
-    if not output.stdout:
-        raise Exception(output.stderr.decode())
-    else:
-        return output.stdout.decode()
+    # Prepare the command with shlex
+    # to ensure proper quoting of arguments
+    command = [java_path, "-jar", jar_path]
+    command = [shlex.quote(arg) for arg in command]
+
+    # Run JAR file and capture its standard output
+    try:
+        output = subprocess.run(
+            command,
+            input=stdin.encode(encoding),
+            capture_output=True,
+            shell=False,
+            check=True,  # This will raise an error if the command fails
+        )
+        return output.stdout.decode(encoding)
+    except subprocess.CalledProcessError as e:
+        raise Exception(f"Error running JAR file: {e.stderr.decode(encoding)}")
