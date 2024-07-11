@@ -360,9 +360,15 @@ def run_flask():
         with open("process.pid", "w+") as file:
             pid = f"{os.getpid()}"
             file.write(pid)
+
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+
+    # Get host and port from environment variables, with default values
+    host = os.getenv("FLASK_RUN_HOST", "127.0.0.1")
+    port = int(os.getenv("FLASK_RUN_PORT", "5000"))
+
     if "--server" in sys.argv:
-        app.run(host="0.0.0.0", port=80)
+        app.run(host=host, port=port)
     else:
         app.run()
 
