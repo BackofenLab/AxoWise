@@ -186,9 +186,11 @@ export default {
 <style>
 .pathways {
   z-index: 999;
-  position: absolute;
   width: 100%;
-  height: 95%;
+  height: 100%;
+  overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
 }
 #menu-tools_header {
   width: 100%;
@@ -213,7 +215,6 @@ export default {
 .pathwaybar {
   width: 100%;
   height: 100%;
-  position: absolute;
   flex-shrink: 0;
 }
 .pathwaybar-small {

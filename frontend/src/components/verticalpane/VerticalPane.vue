@@ -29,6 +29,7 @@
         </ul>
       </div>
       <PathwayMenu
+        v-show="active_function_tab1 == 'set'"
         :gephi_data="gephi_data"
         :sorted="'top'"
         :active_function="active_function_tab1"
@@ -153,6 +154,9 @@ export default {
   height: 45%;
   top: 0%;
   position: relative;
+  overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
   border-style: solid;
   border-width: 1px;
   border-color: white;
@@ -164,7 +168,9 @@ export default {
   margin-top: 2%;
   height: 48%;
   position: relative;
-  overflow: hidden;
+  overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
   border-style: solid;
   border-width: 1px;
   border-color: white;
@@ -181,6 +187,10 @@ ul {
   font-family: "ABeeZee", sans-serif;
   text-decoration: none;
   color: white;
+}
+
+.tab-system {
+  flex-direction: column;
 }
 
 .tab {

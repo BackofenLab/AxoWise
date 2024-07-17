@@ -1,73 +1,77 @@
 <template>
-  <div id="pathway-layer-show">
+  <div id="pathway-layer-show" class="pathways">
     <div class="tool-section-graph">
       <div class="coloumn-button">
         <button class="tool-buttons" v-on:click="call_layers()">
-          generate layers
+          <img class="buttons-img" src="@/assets/plus-1.png" />
         </button>
       </div>
-      <div class="coloumn-button">
-        <button class="tool-buttons">placeholder</button>
-      </div>
     </div>
-    <div class="network-results" tabindex="0" @keydown="handleKeyDown">
-      <table>
-        <tbody>
-          <tr v-for="entry in terms" :key="entry" class="option">
-            <td>
-              <div class="statistics-attr">
-                <div
-                  class="color-rect"
-                  id="color_rect"
-                  v-on:click="open_picker($event, entry)"
-                  :style="{ backgroundColor: colorpalette[entry.name] }"
-                ></div>
-              </div>
-            </td>
-            <td>
-              <div class="statistics-hide">
-                <img
-                  src="@/assets/pane/invisible.png"
-                  v-on:click="hide_termlayer(entry)"
-                  v-if="hiding_terms.has(entry)"
-                />
-                <img
-                  src="@/assets/pane/visible.png"
-                  v-on:click="hide_termlayer(entry)"
-                  v-if="!hiding_terms.has(entry)"
-                />
-              </div>
-            </td>
-            <td>
-              <div class="statistics-val">
-                <a href="#">{{ entry.name }}</a>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div
-      id="pathway_color"
-      class="color-picker-sketch"
-      v-show="color_picker == true"
-    >
-      <div id="pathway_color_header" class="window-header">
-        <div class="headertext">
-          <span>coloring menu</span>
-          <img
-            class="protein_close"
-            src="@/assets/pathwaybar/cross.png"
-            v-on:click="color_picker = false"
+    <div class="graph-section">
+      <div class="loading-section">
+        <!-- <div class="loading-text" v-if="term_graphs.size == 0">
+          <span>There is no generated pathway graph.</span>
+        </div> -->
+        <div class="network-results" tabindex="0" @keydown="handleKeyDown">
+          <table>
+            <tbody>
+              <tr v-for="entry in terms" :key="entry" class="option">
+                <td>
+                  <div class="statistics-attr">
+                    <div
+                      class="color-rect"
+                      id="color_rect"
+                      v-on:click="open_picker($event, entry)"
+                      :style="{ backgroundColor: colorpalette[entry.name] }"
+                    ></div>
+                  </div>
+                </td>
+                <td>
+                  <div class="statistics-hide">
+                    <img
+                      src="@/assets/pane/invisible.png"
+                      v-on:click="hide_termlayer(entry)"
+                      v-if="hiding_terms.has(entry)"
+                    />
+                    <img
+                      src="@/assets/pane/visible.png"
+                      v-on:click="hide_termlayer(entry)"
+                      v-if="!hiding_terms.has(entry)"
+                    />
+                  </div>
+                </td>
+                <td>
+                  <div class="statistics-val">
+                    <a href="#">{{ entry.name }}</a>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div
+          id="pathway_color"
+          class="color-picker-sketch"
+          v-show="color_picker == true"
+        >
+          <div id="pathway_color_header" class="window-header">
+            <div class="headertext">
+              <span>coloring menu</span>
+              <img
+                class="protein_close"
+                src="@/assets/pathwaybar/cross.png"
+                v-on:click="color_picker = false"
+              />
+            </div>
+          </div>
+          <Sketch
+            id="color-picker"
+            v-model="colors"
+            @update:model-value="handleColorChange(term)"
+            :style="{ top: mouseY + 'px', left: mouseX + 'px' }"
           />
         </div>
       </div>
-      <Sketch
-        id="color-picker"
-        v-model="colors"
-        @update:model-value="handleColorChange(term)"
-        :style="{ top: mouseY + 'px', left: mouseX + 'px' }"
-      />
     </div>
   </div>
 </template>
@@ -204,12 +208,6 @@ export default {
 </script>
 
 <style>
-#pathway-layer-show {
-  width: 100%;
-  height: 100%;
-  font-family: "ABeeZee", sans-serif;
-  z-index: 999;
-}
 #pathway-layer-show .network-results {
   overflow: scroll;
 }
