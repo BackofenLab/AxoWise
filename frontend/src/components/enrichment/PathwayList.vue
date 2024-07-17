@@ -526,7 +526,7 @@ export default {
   overflow-y: scroll;
   overflow-x: hidden;
   color: white;
-  z-index: 999;
+  z-index: 9999;
 }
 
 .function-section {
