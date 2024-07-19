@@ -96,9 +96,6 @@
                 </tr>
               </tbody>
             </table>
-            <div v-if="!context_results">
-              <i>No context available.</i>
-            </div>
           </div>
         </div>
       </div>
@@ -119,10 +116,8 @@ export default {
       sort_cb: "",
       sort_y: "",
       selectedIndex: -1,
-      communities: this.$store.state.citation_graph_data.graph.community_scores,
     };
   },
-  mounted() {},
   computed: {
     regex() {
       var com = this;
@@ -132,7 +127,7 @@ export default {
     },
     filt_communities() {
       var com = this;
-      var filtered = Object.values(com.communities);
+      var filtered = Object.values(com.citation_data.community_scores);
 
       if (com.search_raw !== "") {
         // If search term is not empty, filter by search term
@@ -175,7 +170,7 @@ export default {
     },
     top_communities(count) {
       var com = this;
-      var filtered = Object.values(com.communities);
+      var filtered = Object.values(com.citation_data.community_scores);
       return filtered
         .sort((t1, t2) => t2.cumulative_pagerank - t1.cumulative_pagerank)
         .slice(0, count);
@@ -187,7 +182,7 @@ export default {
       var top_nodes = [];
 
       for (var community of sorted_communities) {
-        var abstract_names = new Set(community.nodes); // Replace with the actual field in your community objects
+        var abstract_names = new Set(community.nodes);
         var subset = [];
 
         com.citation_data.nodes.forEach((node) => {
@@ -280,5 +275,9 @@ export default {
   font-size: 0.7vw;
   height: 1.3vw;
   width: 4.2vw;
+}
+
+.pathway-text {
+  font-size: 0.9vw;
 }
 </style>

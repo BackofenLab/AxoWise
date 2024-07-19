@@ -606,7 +606,7 @@ export default {
 
 .fdr_filter {
   position: absolute;
-  left: 78.6%;
+  left: 77.6%;
 }
 
 .pathway-text {
@@ -647,9 +647,9 @@ td:nth-child(2) {
   align-self: center;
 }
 td:last-child {
-  font-size: 0.9vw;
+  font-size: 0.7vw;
   color: white;
-  width: 24.04%;
+  width: 26.04%;
   align-self: center;
 }
 
