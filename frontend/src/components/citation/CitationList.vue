@@ -100,9 +100,6 @@
                 </tr>
               </tbody>
             </table>
-            <div v-if="!context_results">
-              <i>No context available.</i>
-            </div>
           </div>
         </div>
       </div>
@@ -113,7 +110,7 @@
 <script>
 export default {
   name: "CitationList",
-  props: ["active_node"],
+  props: ["citation_data", "active_node"],
   data() {
     return {
       search_raw: "",
@@ -134,7 +131,7 @@ export default {
     },
     filt_abstracts() {
       var com = this;
-      var filtered = this.$store.state.citation_graph_data.graph.nodes;
+      var filtered = com.citation_data.nodes;
 
       if (com.search_raw !== "") {
         // If search term is not empty, filter by search term

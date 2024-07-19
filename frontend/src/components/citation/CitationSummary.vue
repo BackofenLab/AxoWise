@@ -35,7 +35,8 @@ export default {
       abstractList: null,
       await_load: false,
       finalList: null,
-      savedOverview: null,
+      savedOverview: {},
+      graphID: null,
     };
   },
   methods: {
@@ -79,7 +80,7 @@ export default {
       //POST request for generating pathways
       com.axios.post(com.api.summary, formData).then((response) => {
         if (community_check) {
-          com.savedOverview = response.data.replace(/\\n/g, "\n");
+          com.savedOverview[com.graphID] = response.data.replace(/\\n/g, "\n");
           alert(response.data.replace(/\\n/g, "\n"));
           this.$emit("await_community_changed", false);
         } else {
@@ -91,7 +92,7 @@ export default {
   },
   mounted() {
     var com = this;
-    com.savedOverview = null;
+    com.graphID = com.$store.state.citation_graph_data.id;
     this.emitter.on("addNodeToSummary", (id) => {
       this.add_abstract(id);
     });
@@ -99,9 +100,13 @@ export default {
       this.add_subset(subset);
     });
     this.emitter.on("generateSummary", (subset) => {
-      if (com.savedOverview == null) com.summarize_abstracts(subset, true);
-      else alert(com.savedOverview);
+      if (com.savedOverview[com.graphID] == undefined)
+        com.summarize_abstracts(subset, true);
+      else alert(com.savedOverview[com.graphID]);
     });
+  },
+  activated() {
+    this.graphID = this.$store.state.citation_graph_data.id;
   },
 };
 </script>
