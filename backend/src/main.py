@@ -19,7 +19,6 @@ from dotenv import load_dotenv
 from flask import Flask, Response, request, send_from_directory
 from summarization import article_graph as summarization
 from summarization.model import create_individual_summary, create_summary
-from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 from util.stopwatch import Stopwatch
 from werkzeug.middleware.proxy_fix import ProxyFix
 
@@ -91,9 +90,6 @@ def proteins_enrichment():
 # Request comes from ContextSection.vue
 @app.route("/api/subgraph/context", methods=["POST"])
 def proteins_context():
-    tokenizer = AutoTokenizer.from_pretrained("facebook/bart-large-cnn")
-    model = AutoModelForSeq2SeqLM.from_pretrained("facebook/bart-large-cnn")
-    model = model.to("cuda")
     base, context, rank, limit = (
         request.form.get("base"),
         request.form.get("context"),
@@ -102,7 +98,7 @@ def proteins_context():
     )
     query = base + " " + context
     # in-house context summary
-    edges, nodes = summarization.create_citations_graph(limit, query, tokenizer, model)
+    edges, nodes = summarization.create_citations_graph(limit, query)
     graph = citation_graph.get_citation_graph(nodes, edges)
     return Response(graph, mimetype="application/json")
 
@@ -111,9 +107,6 @@ def proteins_context():
 def abstract_summary():
     abstracts = request.form.get("abstracts")
     abstracts = json.loads(abstracts)
-    tokenizer = AutoTokenizer.from_pretrained("facebook/bart-large-cnn")
-    model = AutoModelForSeq2SeqLM.from_pretrained("facebook/bart-large-cnn")
-    model = model.to("cuda")
     is_community = (
         json.loads(request.form.get("community_check"))
         if request.form.get("community_check")
@@ -128,15 +121,11 @@ def abstract_summary():
         ]
     )
     summaries = (
-        create_summary(abstracts_list, tokenizer, model)
+        create_summary(abstracts_list)
         if is_community
-        else create_individual_summary(abstracts_list[0], tokenizer, model)
+        else create_individual_summary(abstracts_list[0])
     )
-    response = (
-        "\n\n".join(["\n".join(sublist) for sublist in summaries])
-        if is_community
-        else "\n\n".join(summaries)
-    )
+    response = "\n\n".join(summaries)
     return Response(json.dumps(response), mimetype="application/json")
 
 
