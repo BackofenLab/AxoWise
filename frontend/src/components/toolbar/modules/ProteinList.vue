@@ -6,7 +6,7 @@
           <span>highlight nodes</span>
           <img
             class="protein_close"
-            src="@/assets/pathwaybar/cross.png"
+            src="@/assets/toolbar/cross.png"
             v-on:click="unactive_proteinlist()"
           />
         </div>
@@ -168,7 +168,8 @@ export default {
 <style>
 .window-menu {
   position: fixed;
-  display: block;
+  display: flex;
+  flex-direction: column;
   top: 30%;
   left: 42%;
   width: 16%;
@@ -218,9 +219,8 @@ export default {
 
 .window-header .protein_close {
   right: 3%;
-  width: 0.9vw;
-  height: 0.9vw;
-  filter: invert(100%);
+  width: 0.5vw;
+  height: 0.5vw;
   position: absolute;
 }
 

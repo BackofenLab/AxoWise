@@ -1,6 +1,16 @@
 <template>
   <div class="tool-item">
-    <div id="selection_highlight" class="window-menu">
+    <div id="selection_highlight" class="window-menu selection">
+      <div id="selection_highlight_header" class="window-header">
+        <div class="headertext">
+          <span>graph parameter</span>
+          <img
+            class="protein_close"
+            src="@/assets/toolbar/cross.png"
+            v-on:click="unactive_proteinlist()"
+          />
+        </div>
+      </div>
       <div class="selection_list">
         <div class="window-label">degree value</div>
         <div class="menu-items">
@@ -136,7 +146,9 @@
             "
           />
         </div>
-        <div class="dcoloumn-window" v-if="dcoloumns && mode != 'term'">
+      </div>
+      <div class="dcoloumn-window" v-if="mode != 'term'">
+        <div class="coloumn-padding">
           <div
             class="class-section"
             v-on:click="coloumnsCheck = !coloumnsCheck"
@@ -145,56 +157,51 @@
             <img src="@/assets/pane/invisible.png" v-if="!coloumnsCheck" />
             <img src="@/assets/pane/visible.png" v-if="coloumnsCheck" />
           </div>
-          <div
-            class="d-section-slider"
-            v-show="coloumnsCheck"
-            v-for="(entry, index) in dcoloumns"
-            :key="index"
+          <span v-if="!dcoloumns" class="loading-text"
+            >no selectable dcoloumns</span
           >
-            <div class="window-label">{{ entry }}</div>
-            <div class="menu-items">
-              <div :id="'deval-slider-' + index"></div>
-              <input
-                type="number"
-                v-bind:min="dboundaries[entry].min"
-                v-bind:max="dboundaries[entry].max"
-                v-bind:step="dboundaries[entry].step"
-                v-model="dboundaries[entry].minValue"
-                v-on:change="searchSubset()"
-                v-on:input="
-                  valueChanged('deval-slider-' + index, [
-                    dboundaries[entry].minValue,
-                    dboundaries[entry].maxValue,
-                  ])
-                "
-              />
-              <span class="seperator">-</span>
-              <input
-                type="number"
-                v-bind:min="dboundaries[entry].min"
-                v-bind:max="dboundaries[entry].max"
-                v-bind:step="dboundaries[entry].step"
-                v-model="dboundaries[entry].maxValue"
-                v-on:change="searchSubset()"
-                v-on:input="
-                  valueChanged('deval-slider-' + index, [
-                    dboundaries[entry].minValue,
-                    dboundaries[entry].maxValue,
-                  ])
-                "
-              />
+          <div v-if="dcoloumns" class="slider-section-scroll">
+            <div
+              class="d-section-slider"
+              v-show="coloumnsCheck"
+              v-for="(entry, index) in dcoloumns"
+              :key="index"
+            >
+              <div class="window-label">{{ entry }}</div>
+              <div class="menu-items">
+                <div :id="'deval-slider-' + index"></div>
+                <input
+                  type="number"
+                  v-bind:min="dboundaries[entry].min"
+                  v-bind:max="dboundaries[entry].max"
+                  v-bind:step="dboundaries[entry].step"
+                  v-model="dboundaries[entry].minValue"
+                  v-on:change="searchSubset()"
+                  v-on:input="
+                    valueChanged('deval-slider-' + index, [
+                      dboundaries[entry].minValue,
+                      dboundaries[entry].maxValue,
+                    ])
+                  "
+                />
+                <span class="seperator">-</span>
+                <input
+                  type="number"
+                  v-bind:min="dboundaries[entry].min"
+                  v-bind:max="dboundaries[entry].max"
+                  v-bind:step="dboundaries[entry].step"
+                  v-model="dboundaries[entry].maxValue"
+                  v-on:change="searchSubset()"
+                  v-on:input="
+                    valueChanged('deval-slider-' + index, [
+                      dboundaries[entry].minValue,
+                      dboundaries[entry].maxValue,
+                    ])
+                  "
+                />
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div id="selection_highlight_header" class="window-header">
-        <div class="headertext">
-          <span>graph parameter</span>
-          <img
-            class="protein_close"
-            src="@/assets/pathwaybar/cross.png"
-            v-on:click="unactive_proteinlist()"
-          />
         </div>
       </div>
     </div>
@@ -594,48 +601,39 @@ export default {
 
 <style>
 .selection_list {
-  position: absolute;
-  top: 9.41%;
+  position: relative;
   width: 100%;
-  height: 12vw;
+  height: 100%;
   padding-top: 3%;
   border-radius: 0px 0px 5px 5px;
-  background: rgba(222, 222, 222, 0.61);
   backdrop-filter: blur(7.5px);
   overflow-y: scroll;
   overflow-x: hidden;
 }
-.selection_list .menu-items {
+.selection .menu-items {
   display: flex;
+  margin: 0;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 0.5vw;
+  justify-content: center;
+  background-clip: content-box;
 }
 /* Hide scrollbar for Chrome, Safari and Opera */
-.selection_list::-webkit-scrollbar {
+.selection_list::-webkit-scrollbar,
+.slider-section-scroll::-webkit-scrollbar {
   display: none;
 }
 
-.selection_list .window-label {
+.selection .window-label {
   color: white;
   white-space: nowrap;
   overflow-x: hidden; /* Hide overflow content */
   text-overflow: ellipsis;
-}
-#degree {
-  margin: 0.5vw 0.5vw 0.5vw 0;
-}
-
-#betweenes {
-  margin: 0.5vw 0.5vw 0.5vw 0;
+  margin: 0 0.5vw 0 0.5vw;
+  width: auto;
 }
 
-#pagerank {
-  margin: 0.5vw 0.5vw 0.5vw 0;
-}
-
-[id^="deval-slider-"] {
-  margin: 0.5vw 0.5vw 0.5vw 0;
-}
-
-.selection_list input[type="number"] {
+.selection input[type="number"] {
   width: 10%;
   border: none;
   font-family: "ABeeZee", sans-serif;
@@ -648,7 +646,7 @@ export default {
   text-align: center;
 }
 
-.selection_list input[type="range"] {
+.selection input[type="range"] {
   appearance: none;
   outline: none;
   width: 10vw;
@@ -656,7 +654,7 @@ export default {
   border-radius: 5px;
   background-color: #ccc;
 }
-.selection_list input[type="range"]::-webkit-slider-thumb {
+.selection input[type="range"]::-webkit-slider-thumb {
   background: #fafafa;
   appearance: none;
   box-shadow: 1px 2px 26px 1px #bdbdbd;
@@ -675,11 +673,12 @@ export default {
 .dcoloumn-window {
   width: 100%;
   height: 100%;
+  padding: 0.7vw;
+  overflow: hidden;
 }
 
 .class-section {
-  margin-top: 0.5vw;
-  height: 1vw;
+  height: 1.2vw;
   width: 100%;
   display: flex;
   font-size: 0.7vw;
@@ -696,10 +695,30 @@ export default {
 
 .class-section span {
   width: 100%;
+  align-self: center;
   text-align-last: center;
 }
 
 .d-section-slider {
   padding: 4% 5% 0 5%;
+}
+
+.noUi-target {
+  margin: 0.5vw 0.9vw 0.5vw 0;
+  width: 8.5vw;
+}
+
+.coloumn-padding {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  border: solid 0.01vw rgba(255, 255, 255, 0.3);
+}
+
+.slider-section-scroll {
+  height: 100%;
+  width: 100%;
+  overflow-y: scroll;
 }
 </style>
