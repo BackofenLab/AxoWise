@@ -42,7 +42,7 @@ def communities_sorted_by_pagerank(pagerank_dict):
     return [int(i[0]) for i in top_k_communities]
 
 
-def create_citations_graph(limit, search_query, tokenizer, model):
+def create_citations_graph(limit, search_query):
     """
     Return a tuple of(networkit_graph, node_mapping)
 
@@ -113,7 +113,6 @@ def create_citations_graph(limit, search_query, tokenizer, model):
     # Pagerank calculations
     begin = time.time()
     pagerank = citations_pagerank(graph)
-    node_pagerank_mapping = {str(i): j for i, j in enumerate(pagerank)}
     print(f"pagerank: {time.time()-begin}s")
 
     # Community calculations
@@ -140,7 +139,6 @@ def create_citations_graph(limit, search_query, tokenizer, model):
                 reverse=True,
             )[:2]
         )
-
     edge_list = []
     edge_mapping = dict((v, k) for k, v in node_mapping.items())
     for source, target in edges:
