@@ -82,9 +82,12 @@ To create a Neo4j account, follow these steps:
    journalctl -e -u ollama
    ```
 5. Add environmental variables (such as the one to keep the model alive and loaded in memory):
+   ```commandline
+   sudo systemctl edit ollama.service
+   ```
    ```ini
    [Service]
-   Environment="OLLAMA_HOST=0.0.0.0"
+   Environment="OLLAMA_KEEP_ALIVE=-1"
    ```
 6. Restart ollama and reload systemd:
    ```commandline
