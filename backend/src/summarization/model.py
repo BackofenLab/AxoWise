@@ -56,7 +56,7 @@ def create_summary(summarize):
     return final_summaries
 
 
-def overall_summary(summarize, community):
+def overall_summary(summarize, base, context, community):
     def get_response(prompt):
         response = ollama.generate(model="llama3", prompt=prompt)
         response = response["response"].split("\n")
@@ -64,7 +64,7 @@ def overall_summary(summarize, community):
         return summary
 
     abstracts = [i[0] for i in summarize]
-    prompt = f"What is the main knowledge conveyed in all the text. The text is: {' '.join(abstracts) if not community else ' '.join(str(item) for sublist in summarize for item in sublist)}"
+    prompt = f"What is the main knowledge conveyed in all the text with a focus on {(base or '') + ' ' + (context or '')}. The text is: {' '.join(abstracts) if not community else ' '.join(str(item) for sublist in summarize for item in sublist)}"
     summary = get_response(prompt)
 
     return [summary]

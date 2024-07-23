@@ -105,7 +105,11 @@ def proteins_context():
 
 @app.route("/api/subgraph/summary", methods=["POST"])
 def abstract_summary():
-    abstracts = request.form.get("abstracts")
+    base, context, abstracts = (
+        request.form.get("base"),
+        request.form.get("context"),
+        request.form.get("abstracts"),
+    )
     abstracts = json.loads(abstracts)
     is_community = (
         json.loads(request.form.get("community_check"))
@@ -121,9 +125,9 @@ def abstract_summary():
         ]
     )
     summaries = (
-        overall_summary(abstracts_list, True)
+        overall_summary(abstracts_list, base, context, True)
         if is_community
-        else overall_summary(abstracts_list[0], False)
+        else overall_summary(abstracts_list[0], base, context, False)
     )
     response = "\n\n".join(summaries)
     return Response(json.dumps(response), mimetype="application/json")
