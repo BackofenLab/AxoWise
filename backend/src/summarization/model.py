@@ -54,3 +54,17 @@ def create_summary(summarize):
     for thread in threads:
         thread.join()
     return final_summaries
+
+
+def overall_summary(summarize, community):
+    def get_response(prompt):
+        response = ollama.generate(model="llama3", prompt=prompt)
+        response = response["response"].split("\n")
+        summary = response if len(response) <= 3 else "\n".join(response)
+        return summary
+
+    abstracts = [i[0] for i in summarize]
+    prompt = f"What is the main knowledge conveyed in all the text. The text is: {' '.join(abstracts) if not community else ' '.join(str(item) for sublist in summarize for item in sublist)}"
+    summary = get_response(prompt)
+
+    return [summary]

@@ -18,7 +18,7 @@ import queries
 from dotenv import load_dotenv
 from flask import Flask, Response, request, send_from_directory
 from summarization import article_graph as summarization
-from summarization.model import create_individual_summary, create_summary
+from summarization.model import overall_summary
 from util.stopwatch import Stopwatch
 from werkzeug.middleware.proxy_fix import ProxyFix
 
@@ -121,9 +121,9 @@ def abstract_summary():
         ]
     )
     summaries = (
-        create_summary(abstracts_list)
+        overall_summary(abstracts_list, True)
         if is_community
-        else create_individual_summary(abstracts_list[0])
+        else overall_summary(abstracts_list[0], False)
     )
     response = "\n\n".join(summaries)
     return Response(json.dumps(response), mimetype="application/json")
