@@ -62,3 +62,40 @@ To create a Neo4j account, follow these steps:
       username: "neo4j"
       password: "pgdb"
    ```
+
+## Installing and using ollama
+
+1. Download and install ollama:
+   ```commandline
+   curl -fsSL https://ollama.com/install.sh | sh
+   ```
+2. Make sure ollama for python is installed:
+    ```commandline
+   pip install ollama
+   ```
+3. Start ollama as a system:
+   ```commandline
+   sudo systemctl start ollama
+   ```
+4. To check if ollama was correctly started and the gpu recognized check logs:
+   ```commandline
+   journalctl -e -u ollama
+   ```
+5. Add environmental variables (such as the one to keep the model alive and loaded in memory):
+   ```ini
+   [Service]
+   Environment="OLLAMA_HOST=0.0.0.0"
+   ```
+6. Restart ollama and reload systemd:
+   ```commandline
+   systemctl daemon-reload
+   systemctl restart ollama
+   ```
+7. Soft start llama3 to keep in memory:
+   ```commandline
+   ollama run llama3 ""
+   ```
+8. Check if the model was correctly loaded and is using the gpu:
+   ```commandline
+   ollama ps
+   ```
