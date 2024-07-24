@@ -37,7 +37,7 @@ def validate_and_sanitize_stdin(stdin: str) -> str:
         print("'stdin' must be a string.")
         raise ValueError("'stdin' must be a string.")
 
-    pattern = re.compile(r"^[a-zA-Z0-9,:~_\-\(\) ]+$")
+    pattern = re.compile(r"^[a-zA-Z0-9,:~_\-\(\)\s]+$")
 
     lines = stdin.splitlines()
     # Check if any non-empty line contains invalid characters

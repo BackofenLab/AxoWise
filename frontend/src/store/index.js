@@ -31,6 +31,7 @@ export const store = createStore({
     p_active_subset: null,
     hiding_pathways: new Set(),
     citation_graph_data: null,
+    context_dict:{},
   },
   mutations: {
     assign(state, value) {
@@ -134,6 +135,9 @@ export const store = createStore({
     },
     assign_hiding_pathways(state, value) {
       state.hiding_pathways = value;
+    },
+    assign_context_br(state, value) {
+      state.context_dict = value;
     },
   },
 });

@@ -73,8 +73,11 @@ export default {
         }
       }
 
+      const contextD = com.$store.state.context_dict;
       var formData = new FormData();
       formData.append("abstracts", JSON.stringify(com.finalList));
+      formData.append("base", contextD.base);
+      formData.append("context", contextD.context);
       formData.append("community_check", community_check);
 
       //POST request for generating pathways
