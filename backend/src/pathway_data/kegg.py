@@ -29,12 +29,22 @@ def version():
     Check the latest build of KEGG
 
     Returns:
-    Latest KEGG Version (float)
+    Latest KEGG Version (str) in the format "%b %d"
     """
-    content = requests.get("https://rest.kegg.jp/info/kegg").text
-    match = re.search(r"Release \d+\.\d+\+/\d{2}-\d{2}, (\w{3} \d{2})", content)
-    release_number = match.group(1)
-    return release_number
+    try:
+        # Assuming the URL and parameters are correctly set up to fetch the version
+        url = "https://rest.kegg.jp/info/kegg"
+        content = requests.get(url, timeout=5).text
+        # Example regex, adjust based on actual content format
+        match = re.search(r"Release \d+\.\d+\+/\d{2}-\d{2}, (\w{3} \d{2})", content)
+
+        if match:
+            release_number = match.group(1)
+            return release_number  # Returns the matched date string in "%b %d" format
+        else:
+            raise ValueError(f"Could not find the release number of KEGG in\n{content}.")
+    except requests.exceptions.Timeout:
+        raise TimeoutError(f"The request to {url} timed out. Please try again later.")
 
 
 def get_pathways(organism_id):
