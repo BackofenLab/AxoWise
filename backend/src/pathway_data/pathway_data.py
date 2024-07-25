@@ -41,8 +41,15 @@ def get_url(species):
         string_species = "homo+sapiens"
     url_string = f"https://string-db.org/cgi/download?sessionId=bthCAcyLVvFS&species_text={string_species}"
     url_bader = f"http://download.baderlab.org/EM_Genesets/current_release/{species.capitalize()}/symbol/"
-    response_string = requests.get(url_string)
-    response_bader = requests.get(url_bader)
+    try:
+        response_string = requests.get(url_string, timeout=5)
+        response_bader = requests.get(url_bader, timeout=5)
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred while making the HTTP requests: {e}")
+        return 0
+    except requests.exceptions.Timeout as e:
+        print(f"The HTTP requests timed out: {e}")
+        return 0
     if response_bader.status_code == 404:
         print(f"The URL {url_bader} returned a 404 error")
         return 0
@@ -73,8 +80,15 @@ def download_data(species):
     if url_bader == 0:
         return 0
     # For string download
-    response_protein = requests.get(string[0])
-    response_pathway = requests.get(string[1])
+    try:
+        response_protein = requests.get(string[0], timeout=5)
+        response_pathway = requests.get(string[1], timeout=5)
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred while making the HTTP requests: {e}")
+        return 0
+    except requests.exceptions.Timeout as e:
+        print(f"The HTTP requests timed out: {e}")
+        return 0
     with open(f"data/proteins_string_{species}.txt.gz", "wb") as file:
         file.write(response_protein.content)
     with open(f"data/pathways_string_{species}.txt.gz", "wb") as file:
