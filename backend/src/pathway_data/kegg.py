@@ -49,15 +49,17 @@ def version():
 
 def get_pathways(organism_id):
     endpoint = _pathway_template.substitute(organism_id=organism_id)
-    pathways_file = util.get(endpoint)
-    assert pathways_file is not None
-    return pathways_file
+    pathway_file = util.get(endpoint)
+    if pathway_file is None:
+        raise ValueError("Failed to retrieve pathway file")
+    return pathway_file
 
 
 def get_pathway_file(id, kgml=False):
     endpoint = _get_template.substitute(entries=id, kgml="/kgml" if kgml else "")
     pathway_file = util.get(endpoint)
-    assert pathway_file is not None
+    if pathway_file is None:
+        raise ValueError("Failed to retrieve pathway file")
     return pathway_file
 
 
