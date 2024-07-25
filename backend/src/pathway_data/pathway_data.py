@@ -93,7 +93,14 @@ def download_data(species):
         file.write(response_protein.content)
     with open(f"data/pathways_string_{species}.txt.gz", "wb") as file:
         file.write(response_pathway.content)
-    response = requests.get(url_bader)
+    try:
+        response = requests.get(url_bader, timeout=5)
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred while making the HTTP request: {e}")
+        return 0
+    except requests.exceptions.Timeout as e:
+        print(f"The HTTP request timed out: {e}")
+        return 0
     # Handle 404 error (Case: database updated for human but mouse not yet available)
     if response.status_code == 404:
         print(f"The URL {url_bader} returned a 404 error")
@@ -343,7 +350,14 @@ def download_necessary(filepath):
     """
     update_kegg = False
     update_geneset = False
-    response = requests.get("http://download.baderlab.org/EM_Genesets/")
+    try:
+        response = requests.get("http://download.baderlab.org/EM_Genesets/", timeout=5)
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred while making the HTTP request: {e}")
+        return 0
+    except requests.exceptions.Timeout as e:
+        print(f"The HTTP request timed out: {e}")
+        return 0
     kegg_release = f"kegg: {kegg.version()}"
     # get the content of the webpage as a string
     webpage_content = response.text
