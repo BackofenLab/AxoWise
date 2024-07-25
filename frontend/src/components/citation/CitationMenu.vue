@@ -140,8 +140,10 @@ export default {
       formData.append("context", context);
       formData.append("rank", rank);
 
-      this.$store.commit("assign_context_br", {"base": background, "context": context
-          });
+      this.$store.commit("assign_context_br", {
+        base: background,
+        context: context,
+      });
 
       //POST request for generating pathways
       com.axios.post(com.api.context, formData).then((response) => {

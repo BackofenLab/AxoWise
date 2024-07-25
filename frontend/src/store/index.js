@@ -31,7 +31,7 @@ export const store = createStore({
     p_active_subset: null,
     hiding_pathways: new Set(),
     citation_graph_data: null,
-    context_dict:{},
+    context_dict: {},
   },
   mutations: {
     assign(state, value) {

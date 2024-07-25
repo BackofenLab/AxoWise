@@ -42,7 +42,9 @@ def version():
             release_number = match.group(1)
             return release_number  # Returns the matched date string in "%b %d" format
         else:
-            raise ValueError(f"Could not find the release number of KEGG in\n{content}.")
+            raise ValueError(
+                f"Could not find the release number of KEGG in\n{content}."
+            )
     except requests.exceptions.Timeout:
         raise TimeoutError(f"The request to {url} timed out. Please try again later.")
 
