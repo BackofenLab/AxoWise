@@ -102,9 +102,10 @@ def set_synonyms(input_file):
                 synonyms_list[index] = str(term)
                 term = "'" + str(term) + "'"
 
-            assert isinstance(
-                synonyms_list[index], str
-            ), "One or multiple aliases could not be transformed to string"
+            if not isinstance(synonyms_list[index], str):
+                raise TypeError(
+                    "One or multiple aliases could not be transformed to string"
+                )
 
         for _ in range(len(synonyms_list)):
             cross_count += (
