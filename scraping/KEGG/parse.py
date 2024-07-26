@@ -63,7 +63,8 @@ def parse_flat_file(pathway):
         elif line.startswith("NAME"):
             name = line.lstrip("NAME").lstrip()
             name = name[: last_index(name, " - ")]
-            assert name.strip() != ""
+            if name.strip() == "":
+                raise ValueError("Name cannot be an empty string")
         elif line.startswith("DESCRIPTION"):
             description = line.lstrip("DESCRIPTION").lstrip()
         elif line.startswith("CLASS"):

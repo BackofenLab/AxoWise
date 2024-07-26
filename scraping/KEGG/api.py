@@ -18,14 +18,16 @@ _map_id_template_no_species = Template(
 
 def organisms():
     organisms_file = get(_organisms_endpoint)
-    assert organisms_file is not None
+    if organisms_file is None:
+        raise ValueError("organisms_file cannot be None")
     return organisms_file
 
 
 def pathways(organism_id):
     endpoint = _pathway_template.substitute(organism_id=organism_id)
     pathways_file = get(endpoint)
-    assert pathways_file is not None
+    if pathways_file is None:
+        raise ValueError("pathways_file cannot be None")
     return pathways_file
 
 
@@ -34,7 +36,8 @@ def pathway(pathway_id, kgml=False):
         entries=pathway_id, kgml="/kgml" if kgml else ""
     )
     pathway_file = get(endpoint)
-    assert pathway_file is not None
+    if pathway_file is None:
+        raise ValueError("pathway_file cannot be None")
     return pathway_file
 
 
@@ -51,7 +54,8 @@ def map_identifiers_to_STRING(identifiers, species=None, split=10):
                 format="tsv", identifiers="%0d".join(identifiers_chunk), species=species
             )
             identifiers_file = get(endpoint)
-            assert identifiers_file is not None
+            if identifiers_file is None:
+                raise ValueError("identifiers_file cannot be None")
             yield identifiers_file, i
             if i + split >= len(identifiers):
                 break
@@ -62,5 +66,6 @@ def map_identifiers_to_STRING(identifiers, species=None, split=10):
             format="tsv", identifiers="%0d".join(identifiers), species=species
         )
         identifiers_file = get(endpoint)
-        assert identifiers_file is not None
+        if identifiers_file is None:
+            raise ValueError("identifiers_file cannot be None")
         yield identifiers_file, 0
