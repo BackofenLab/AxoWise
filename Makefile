@@ -33,6 +33,10 @@ deployment:
 	$(MAKE) build > /home/ubuntu/logs/build.log 2>&1
 	cd backend/src; nohup sudo env "PATH=$$PATH" python main.py --pid > /home/ubuntu/logs/server.log 2>&1
 
+restart:
+	sudo kill `cat backend/src/process.pid` > /home/ubuntu/logs/kill.log 2>&1 || true
+	cd backend/src; nohup sudo env "PATH=$$PATH" python main.py --pid > /home/ubuntu/logs/server.log 2>&1
+
 lint:
 	find . -name "*.py" | xargs black -l 120 --target-version=py311
 
