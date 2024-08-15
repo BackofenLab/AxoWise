@@ -1,16 +1,17 @@
 # AxoWise
 
-AxoWise is a web service tool engineered to convert complex networks of knowledge into actionable insights through advanced visualization and AI techniques.
+AxoWise is a web service tool engineered to convert complex networks of knowledge into contextual insights through interactive visualization and AI techniques.
 
 ## Motivation
 
 > "Knowledge is the first concern of the scientist, but wisdom is the ultimate intellectual goal of us all." — *The Stress of Life*, Hans Selye, p. 404.
 
-AxoWise is designed around the theme of "Bridging Knowledge and Wisdom through Networks." Inspired by the adaptability and regenerative capabilities of the axolotl, the tool symbolizes the transformation of isolated data points into interconnected, actionable wisdom within their broader context. Just as the axolotl adapts and regenerates, AxoWise adapts to diverse layers of knowledge—such as biological networks, networks of functional terms, and networks of publications—integrating them into a cohesive whole. This process of connecting and regenerating fragmented data points within their contextual frameworks enables the discovery of holistic insights, revealing patterns and connections that are often hidden when viewing information in isolation, much like how the brain’s neural pathways create complex understanding through their interconnectedness.
+AxoWise is designed around the theme of "Bridging Knowledge and Wisdom through Networks." Inspired by the adaptability and regenerative capabilities of the axolotl, the tool symbolizes the transformation of isolated data points into interconnected, contextual insights. Just as the axolotl adapts and regenerates, AxoWise adapts to diverse layers of knowledge—such as biological networks, networks of functional terms, and networks of publications—integrating them into a cohesive whole. This process of connecting and integrating fragmented data points within their relevant contexts enables the discovery of holistic insights, much like how the brain’s neural pathways create complex understanding through their interconnectedness.
 
 ## Current Status
 
-Currently, AxoWise supports biological networks by integrating protein networks along with networks of functional terms and publication abstracts. These interconnected layers of knowledge, placed within their relevant contexts, provide a robust foundation for exploring the interactions and functions within biological systems. In the next phase of development, we aim to expand AxoWise by incorporating regulatory networks, which are crucial for understanding gene regulation and cellular processes within their contextual settings. By adding regulatory network data, AxoWise will further enhance its ability to reveal complex interactions, such as transcriptional regulation and signaling pathways, offering users a deeper and more comprehensive view of biological networks in context.
+Currently, AxoWise supports biological networks by integrating protein networks along with networks of functional terms and publication abstracts. These interconnected layers of knowledge provide a robust foundation for exploring the interactions and functions within biological systems, delivering contextual insights. In the next phase of development, we aim to expand AxoWise by incorporating regulatory networks, which are crucial for understanding gene regulation and cellular processes. By adding regulatory network data, AxoWise will further enhance its ability to reveal complex interactions, such as transcriptional regulation and signaling pathways, offering users a deeper and more contextualized view of biological networks.
+
 
 
 
