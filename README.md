@@ -1,8 +1,19 @@
-# BioNetViz
+# AxoWise
 
-BioNetViz is a web service that utilizes an integrated graph system to visualize biological entities, functional terms, and publications. It emphasizes the visualization and interaction between different graph systems, providing convenient usability for exploring biological communities. Users can easily access information derived from graphs of functional terms and publications for functional exploration.
+AxoWise is a web service tool engineered to convert complex networks of knowledge into actionable insights through advanced visualization and AI techniques.
 
-Currently, BioNetViz supports the functional exploration of protein graphs. Future plans include integrating various types of biological entities.
+## Motivation
+
+> "Knowledge is the first concern of the scientist, but wisdom is the ultimate intellectual goal of us all." — *The Stress of Life*, Hans Selye, p. 404.
+
+AxoWise is designed around the theme of "Bridging Knowledge and Wisdom through Networks." Inspired by the adaptability and regenerative capabilities of the axolotl, the tool symbolizes the transformation of isolated data points into interconnected, actionable wisdom within their broader context. Just as the axolotl adapts and regenerates, AxoWise adapts to diverse layers of knowledge—such as biological networks, networks of functional terms, and networks of publications—integrating them into a cohesive whole. This process of connecting and regenerating fragmented data points within their contextual frameworks enables the discovery of holistic insights, revealing patterns and connections that are often hidden when viewing information in isolation, much like how the brain’s neural pathways create complex understanding through their interconnectedness.
+
+## Current Status
+
+Currently, AxoWise supports biological networks by integrating protein networks along with networks of functional terms and publication abstracts. These interconnected layers of knowledge, placed within their relevant contexts, provide a robust foundation for exploring the interactions and functions within biological systems. In the next phase of development, we aim to expand AxoWise by incorporating regulatory networks, which are crucial for understanding gene regulation and cellular processes within their contextual settings. By adding regulatory network data, AxoWise will further enhance its ability to reveal complex interactions, such as transcriptional regulation and signaling pathways, offering users a deeper and more comprehensive view of biological networks in context.
+
+
+
 
 ## Project Structure
 The Protein Graph Database is organized into several directories:
