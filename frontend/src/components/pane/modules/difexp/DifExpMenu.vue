@@ -1,45 +1,56 @@
 <template>
   <div id="colorbar-difexp">
-    <div class="tool-section-term">
-      <div class="filter-section">
-        <div
-          id="pathway-filter"
-          class="pre-full"
-          v-on:click="handling_filter_menu()"
-          :class="{ full: category_filtering == true }"
-        >
-          <span>{{ category }}</span>
+    <div class="tool-set-section-graph">
+      <div class="coloumn-set-button">
+        <button class="tool-buttons">
           <img
-            class="remove-filter"
-            src="@/assets/pathwaybar/cross.png"
-            v-on:click.stop="active_categories(null)"
-            v-if="category !== 'Selection'"
+            class="buttons-img"
+            src="@/assets/plus-1.png"
+            v-if="!loading_state"
           />
-        </div>
-        <div id="pathway-filter-categories" v-show="category_filtering == true">
-          <div
-            class="element"
-            v-for="(entry, index) in dcoloumns"
-            :key="index"
-            v-on:click="active_categories(entry)"
-            :class="{ active_cat: category == entry }"
-          >
-            <a>{{ entry }}</a>
-          </div>
+          <div v-if="loading_state" class="loading_button"></div>
+        </button>
+      </div>
+      <div
+        id="pathway-filter"
+        v-on:click="handling_filter_menu()"
+        :class="{ full: category_filtering == true }"
+      >
+        <span>{{ category }}</span>
+        <img
+          class="remove-filter"
+          src="@/assets/pathwaybar/cross.png"
+          v-on:click.stop="active_categories(null)"
+          v-if="category !== 'Selection'"
+        />
+      </div>
+      <div id="pathway-filter-categories" v-show="category_filtering == true">
+        <div
+          class="element"
+          v-for="(entry, index) in dcoloumns"
+          :key="index"
+          v-on:click="active_categories(entry)"
+          :class="{ active_cat: category == entry }"
+        >
+          <a>{{ entry }}</a>
         </div>
       </div>
     </div>
-    <div class="list-section" v-if="active_decoloumn !== null">
-      <svg id="demo1" width="250" height="120"></svg>
-      <input
-        id="legend"
-        type="range"
-        v-bind:min="dboundary.min"
-        v-bind:max="dboundary.max"
-        v-bind:step="dboundary.step"
-        v-model="dboundary.value"
-        v-on:change="check_boundary()"
-      />
+    <div class="graph-section">
+      <div class="loading-section">
+        <div v-if="active_decoloumn !== null">
+          <svg id="demo1" width="250" height="120"></svg>
+          <input
+            id="legend"
+            type="range"
+            v-bind:min="dboundary.min"
+            v-bind:max="dboundary.max"
+            v-bind:step="dboundary.step"
+            v-model="dboundary.value"
+            v-on:change="check_boundary()"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -206,11 +217,12 @@ export default {
 
 <style>
 #colorbar-difexp {
+  z-index: 999;
   width: 100%;
   height: 100%;
-  position: absolute;
-  flex-shrink: 0;
-  z-index: 999;
+  overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
 }
 #colorbar-difexp .colorbar-text {
   width: 100%;
@@ -252,12 +264,21 @@ export default {
   left: 21%;
 }
 
-#colorbar-difexp .filter-section {
-  width: 80%;
+#colorbar-difexp #pathway-filter {
+  background: rgba(222, 222, 222, 0.3);
+  padding: 0 0 0 0.3vw;
+  height: 1.4vw;
+  width: 16.8vw;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
 }
 
 #colorbar-difexp #pathway-filter-categories {
-  width: 80%;
+  width: 16.8vw;
+  left: 3vw;
+  top: 4vw;
 }
 
 #colorbar-difexp #pathway-filter-categories .element {
