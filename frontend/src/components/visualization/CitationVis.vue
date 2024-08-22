@@ -39,7 +39,6 @@
 </template>
 
 <script>
-import sigma from "sigma";
 import { scaleLinear } from "d3-scale";
 import saveAsPNG from "../../rendering/saveAsPNG";
 import saveAsSVG from "../../rendering/saveAsSVG";
@@ -738,7 +737,7 @@ export default {
     var camera = sigma_instance.addCamera();
 
     sigma_instance.addRenderer({
-      container: "sigma-canvas",
+      container: this.$refs.sigmaContainer,
       type: "canvas",
       camera: camera,
       settings: {

@@ -1,5 +1,3 @@
-import sigma from "sigma";
-
 export default function saveAsPNG(renderer, params, mode) {
   // Constants
   var CONTEXTS = ["scene", "edges", "nodes", "labels"],

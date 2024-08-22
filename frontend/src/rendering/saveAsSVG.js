@@ -1,4 +1,3 @@
-import sigma from "sigma";
 import { updateSVGLabel } from "./customLabelRenderer";
 import { createCustomNodeSVG } from "./customNodeRenderer";
 

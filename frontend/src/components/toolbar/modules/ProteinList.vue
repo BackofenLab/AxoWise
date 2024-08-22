@@ -135,7 +135,9 @@ export default {
   mounted() {
     var com = this;
 
-    com.dragElement(document.getElementById("protein_highlight"));
+    this.$nextTick(() => {
+      com.dragElement(document.getElementById("protein_highlight"));
+    });
   },
   computed: {
     regex() {

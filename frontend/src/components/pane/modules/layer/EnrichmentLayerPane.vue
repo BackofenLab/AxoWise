@@ -88,7 +88,6 @@ export default {
       active_section: "",
       layer_item: {
         value: null,
-        imageSrc: require("@/assets/pane/layer-icon.png"),
       },
       terms: null,
       colorpalette: {},

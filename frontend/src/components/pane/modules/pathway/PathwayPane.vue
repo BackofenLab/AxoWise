@@ -100,7 +100,6 @@ export default {
       colornode: null,
       node_item: {
         value: null,
-        imageSrc: require("@/assets/pane/protein-icon.png"),
       },
       nodes: this.gephi_data.nodes,
     };

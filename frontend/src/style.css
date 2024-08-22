@@ -1193,8 +1193,8 @@ body {
   background-image: url("./assets/sprite.png");
   border: 1px solid #999;
   display: inline-block;
-  *display: inline;
-  *zoom: 1;
+  display: inline;
+  zoom: 1;
 }
 
 #information .button span {

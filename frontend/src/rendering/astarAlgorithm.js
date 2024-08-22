@@ -1,5 +1,3 @@
-import sigma from "sigma";
-
 (function () {
   "use strict";
 

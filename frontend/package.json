@@ -1,71 +1,32 @@
 {
-  "name": "pgdb",
-  "version": "0.1.0",
+  "name": "vite-project",
   "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@ckpack/vue-color": "^1.5.0",
-    "@vue/cli-plugin-vuex": "^5.0.8",
-    "3d-force-graph": "^1.71.1",
+    "@ckpack/vue-color": "^1.6.0",
+    "3d-force-graph": "^1.73.3",
     "axios": "^1.7.4",
-    "braces": "^3.0.3",
-    "core-js": "^3.8.3",
-    "d3": "^7.8.5",
-    "file-saver": "^2.0.5",
-    "graphology": "^0.25.1",
-    "imports-loader": "^4.0.1",
-    "jquery": "^3.6.3",
-    "mitt": "^3.0.0",
+    "d3": "^7.9.0",
+    "d3-scale": "^4.0.2",
+    "mitt": "^3.0.1",
     "ml-hclust": "^3.1.0",
-    "nouislider": "^15.7.1",
-    "postcss": "^8.4.41",
+    "nouislider": "^15.8.1",
     "random-color-rgb": "^1.1.1",
-    "sigma": "^1.2.2",
     "smallest-enclosing-circle": "^1.0.2",
     "vue": "^3.4.37",
     "vue-axios": "^3.5.2",
-    "vue-loader": "^17.4.2",
-    "vue-router": "^4.0.3",
+    "vue-router": "^4.4.3",
     "vue-select": "^4.0.0-beta.6",
-    "vue-template-compiler": "^2.7.16",
-    "vuex": "^4.0.2",
-    "ws": "^8.18.0"
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.16",
-    "@babel/eslint-parser": "^7.12.16",
-    "@vue/cli-plugin-babel": "^5.0.8",
-    "@vue/cli-plugin-eslint": "^5.0.8",
-    "@vue/cli-plugin-router": "^5.0.8",
-    "@vue/cli-service": "^5.0.8",
-    "eslint": "^7.32.0",
-    "eslint-plugin-vue": "^8.0.3",
-    "sass": "^1.72.0",
-    "sass-loader": "^14.1.1",
-    "versions": "^10.4.1"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/vue3-essential",
-      "eslint:recommended"
-    ],
-    "parserOptions": {
-      "parser": "@babel/eslint-parser"
-    },
-    "rules": {}
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead",
-    "not ie 11"
-  ]
+    "@vitejs/plugin-vue": "^5.1.2",
+    "vite": "^5.4.1"
+  }
 }

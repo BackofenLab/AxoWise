@@ -89,7 +89,6 @@ export default {
       expand_proteins: false,
       subset_item: {
         value: null,
-        imageSrc: require("@/assets/pane/cluster-icon.png"),
       },
       number_prot: "",
       number_asc: "",

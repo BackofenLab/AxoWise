@@ -132,7 +132,6 @@ export default {
       expand_proteins: false,
       term_item: {
         value: null,
-        imageSrc: require("@/assets/pane/enrichment-icon.png"),
       },
       favourite_pathways: new Set(),
     };

@@ -61,7 +61,6 @@
 </template>
 
 <script>
-import sigma from "sigma";
 // import Graph from 'graphology'
 import { scaleLinear } from "d3-scale";
 import saveAsPNG from "../../rendering/saveAsPNG";
@@ -1138,179 +1137,182 @@ export default {
 
     //Initializing the sigma instance to draw graph network
 
-    sigma_instance = new sigma();
-    var camera = sigma_instance.addCamera();
+    this.$nextTick(() => {
+      sigma_instance = new sigma();
+      var camera = sigma_instance.addCamera();
 
-    sigma_instance.addRenderer({
-      container: "sigma-canvas",
-      type: "canvas",
-      camera: camera,
-      settings: {
-        defaultLabelColor: "#FFFF",
-        hideEdgesOnMove: true,
-        minNodeSize: 1,
-        maxNodeSize: 20,
-        labelThreshold: 5,
-      },
-    });
-
-    sigma_instance.graph.clear();
-    sigma_instance.graph.read(com.gephi_data);
-
-    com.edit_opacity("full");
-
-    this.get_module_circles();
-
-    var keyState = {};
-
-    document.addEventListener("keydown", function (event) {
-      // Set the key state to true when the key is pressed
-      keyState[event.keyCode] = true;
-    });
-
-    document.addEventListener("keyup", function (event) {
-      // Reset the key state when the key is released
-      keyState[event.keyCode] = false;
-    });
-
-    sigma_instance.bind("clickNode", function (event) {
-      // Check if the desired key is being held down when clicking a node
-
-      if (keyState[17] && keyState[16]) com.reset_node_label(event.data.node);
-      else if (keyState[17] && !keyState[16])
-        com.activeNode(event.data.node, true);
-      else com.activeNode(event.data.node, false);
-    });
-
-    sigma_instance.bind("overNode", function () {
-      // Check if the desired key is being held down when clicking a node
-      com.nodeclick = true;
-    });
-
-    sigma_instance.bind("outNode", function () {
-      // Check if the desired key is being held down when clicking a node
-      com.nodeclick = false;
-    });
-
-    // select all elements with the class "sigma-mouse"
-    const sigmaMouse = document.querySelectorAll(".sigma-mouse");
-
-    // select all elements with the class "sigma-parent"
-    const sigmaParent = document.querySelectorAll(".sigma-parent");
-
-    // set the values of the com object properties using the first element of each NodeList
-    com.rectangular_select.canvas = sigmaMouse[0];
-    (com.container = sigmaParent[0]),
-      (com.rectangular_select.canvas.oncontextmenu = function () {
-        return false;
+      sigma_instance.addRenderer({
+        container: this.$refs.sigmaContainer,
+        type: "canvas",
+        camera: camera,
+        settings: {
+          defaultLabelColor: "#FFFF",
+          hideEdgesOnMove: true,
+          minNodeSize: 1,
+          maxNodeSize: 20,
+          labelThreshold: 5,
+        },
       });
-    com.rectangular_select.canvas.onmousedown = com.mousedown;
-    com.rectangular_select.canvas.onmousemove = com.mousemove;
-    com.rectangular_select.canvas.onmouseup = com.mouseup;
-    com.rectangular_select.context =
-      com.rectangular_select.canvas.getContext("2d");
 
-    this.emitter.on("unconnectedGraph", (state) => {
-      if (state.mode == "protein") this.show_unconnectedGraph(state.check);
-    });
+      console.log(sigma_instance);
 
-    this.emitter.on("searchNode", (state) => {
-      if (state.mode == "protein")
-        this.$emit(
-          "active_node_changed",
-          sigma_instance.graph.getNodeFromIndex(state.node.id)
-        );
-    });
-    this.emitter.on("searchPathway", (element) => {
-      this.visualize_pathway(element.source, element.target);
-    });
+      sigma_instance.graph.clear();
+      sigma_instance.graph.read(com.gephi_data);
 
-    this.emitter.on("searchSubset", (state) => {
-      if (state.mode == "protein")
-        this.$emit("active_subset_changed", state.subset);
-    });
+      com.edit_opacity("full");
 
-    this.emitter.on("resizeCircle", () => {
       this.get_module_circles();
-    });
 
-    this.emitter.on("searchEnrichment", (state) => {
-      this.$emit("active_term_changed", state);
-    });
+      var keyState = {};
 
-    this.emitter.on("highlightProteinList", (state) => {
-      if (state.mode == "protein")
-        this.$emit("subactive_subset_changed", state.subset);
-    });
+      document.addEventListener("keydown", function (event) {
+        // Set the key state to true when the key is pressed
+        keyState[event.keyCode] = true;
+      });
 
-    this.emitter.on("hideTermLayer", (state) => {
-      this.colorpalette = this.$store.state.colorpalette;
-      this.$emit("active_termlayers_changed", state);
-    });
+      document.addEventListener("keyup", function (event) {
+        // Reset the key state when the key is released
+        keyState[event.keyCode] = false;
+      });
 
-    this.emitter.on("hideSubset", (state) => {
-      if (state.mode == "protein")
-        this.$emit("active_layer_changed", state.subset);
-    });
+      sigma_instance.bind("clickNode", function (event) {
+        // Check if the desired key is being held down when clicking a node
 
-    this.emitter.on("centerGraph", (state) => {
-      if (state.mode == "protein") {
-        sigma_instance.camera.goTo({
-          x: 0,
-          y: 0,
-          ratio: 1,
-          angle: sigma_instance.camera.angle,
+        if (keyState[17] && keyState[16]) com.reset_node_label(event.data.node);
+        else if (keyState[17] && !keyState[16])
+          com.activeNode(event.data.node, true);
+        else com.activeNode(event.data.node, false);
+      });
+
+      sigma_instance.bind("overNode", function () {
+        // Check if the desired key is being held down when clicking a node
+        com.nodeclick = true;
+      });
+
+      sigma_instance.bind("outNode", function () {
+        // Check if the desired key is being held down when clicking a node
+        com.nodeclick = false;
+      });
+
+      console.log("Before query:", document.body.innerHTML);
+
+      const sigmaMouse = document.querySelectorAll(".sigma-mouse");
+      console.log("sigmaMouse:", sigmaMouse);
+
+      const sigmaParent = document.querySelectorAll(".sigma-parent");
+      console.log("sigmaParent:", sigmaParent);
+
+      // set the values of the com object properties using the first element of each NodeList
+      com.rectangular_select.canvas = sigmaMouse[0];
+      (com.container = sigmaParent[0]),
+        (com.rectangular_select.canvas.oncontextmenu = function () {
+          return false;
         });
+      com.rectangular_select.canvas.onmousedown = com.mousedown;
+      com.rectangular_select.canvas.onmousemove = com.mousemove;
+      com.rectangular_select.canvas.onmouseup = com.mouseup;
+      com.rectangular_select.context =
+        com.rectangular_select.canvas.getContext("2d");
+
+      this.emitter.on("unconnectedGraph", (state) => {
+        if (state.mode == "protein") this.show_unconnectedGraph(state.check);
+      });
+
+      this.emitter.on("searchNode", (state) => {
+        if (state.mode == "protein")
+          this.$emit(
+            "active_node_changed",
+            sigma_instance.graph.getNodeFromIndex(state.node.id)
+          );
+      });
+      this.emitter.on("searchPathway", (element) => {
+        this.visualize_pathway(element.source, element.target);
+      });
+
+      this.emitter.on("searchSubset", (state) => {
+        if (state.mode == "protein")
+          this.$emit("active_subset_changed", state.subset);
+      });
+
+      this.emitter.on("resizeCircle", () => {
         this.get_module_circles();
-      }
-    });
+      });
 
-    this.emitter.on("exportGraph", (state) => {
-      if (state.mode == "protein") this.exportGraphAsImage(state.params);
-    });
+      this.emitter.on("searchEnrichment", (state) => {
+        this.$emit("active_term_changed", state);
+      });
 
-    this.emitter.on("resetSelect", (state) => {
-      if (state.mode == "protein") this.reset_label_select();
-    });
+      this.emitter.on("highlightProteinList", (state) => {
+        if (state.mode == "protein")
+          this.$emit("subactive_subset_changed", state.subset);
+      });
 
-    this.emitter.on("hideLabels", (state) => {
-      if (state.mode == "protein") this.hide_labels(state.check);
-    });
+      this.emitter.on("hideTermLayer", (state) => {
+        this.colorpalette = this.$store.state.colorpalette;
+        this.$emit("active_termlayers_changed", state);
+      });
 
-    this.emitter.on("heatmapView", () => {
-      this.split();
-    });
+      this.emitter.on("hideSubset", (state) => {
+        if (state.mode == "protein")
+          this.$emit("active_layer_changed", state.subset);
+      });
 
-    this.emitter.on("threeView", () => {
-      this.three_view();
-    });
+      this.emitter.on("centerGraph", (state) => {
+        if (state.mode == "protein") {
+          sigma_instance.camera.goTo({
+            x: 0,
+            y: 0,
+            ratio: 1,
+            angle: sigma_instance.camera.angle,
+          });
+          this.get_module_circles();
+        }
+      });
 
-    this.emitter.on("adjustDE", (value) => {
-      this.update_boundary(value);
-    });
-    this.emitter.on("selectDE", (value) => {
-      this.highlight_de(value);
-    });
-    this.emitter.on("showCluster", (state) => {
-      if (state.mode == "protein") this.showCluster = state.check;
-    });
-    this.emitter.on("deactivateModules", (state) => {
-      if (state.mode == "protein")
-        com.moduleSelectionActive = !com.moduleSelectionActive;
-    });
-    this.emitter.on("changeOpacity", (state) => {
-      if (state.mode == "protein") {
-        if (state.value.layers == "highlight")
-          com.highlight_opacity = state.value.opacity;
-        else com.base_opacity = state.value.opacity;
-        com.edit_opacity(state.value.layers);
-      }
-    });
+      this.emitter.on("exportGraph", (state) => {
+        if (state.mode == "protein") this.exportGraphAsImage(state.params);
+      });
 
-    sigma_instance.refresh();
-  },
-  activated() {
-    sigma_instance.refresh();
+      this.emitter.on("resetSelect", (state) => {
+        if (state.mode == "protein") this.reset_label_select();
+      });
+
+      this.emitter.on("hideLabels", (state) => {
+        if (state.mode == "protein") this.hide_labels(state.check);
+      });
+
+      this.emitter.on("heatmapView", () => {
+        this.split();
+      });
+
+      this.emitter.on("threeView", () => {
+        this.three_view();
+      });
+
+      this.emitter.on("adjustDE", (value) => {
+        this.update_boundary(value);
+      });
+      this.emitter.on("selectDE", (value) => {
+        this.highlight_de(value);
+      });
+      this.emitter.on("showCluster", (state) => {
+        if (state.mode == "protein") this.showCluster = state.check;
+      });
+      this.emitter.on("deactivateModules", (state) => {
+        if (state.mode == "protein")
+          com.moduleSelectionActive = !com.moduleSelectionActive;
+      });
+      this.emitter.on("changeOpacity", (state) => {
+        if (state.mode == "protein") {
+          if (state.value.layers == "highlight")
+            com.highlight_opacity = state.value.opacity;
+          else com.base_opacity = state.value.opacity;
+          com.edit_opacity(state.value.layers);
+        }
+      });
+
+      sigma_instance.refresh();
+    });
   },
 };
 </script>

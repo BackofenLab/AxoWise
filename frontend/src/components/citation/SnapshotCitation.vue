@@ -3,7 +3,6 @@
 </template>
 
 <script>
-import sigma from "sigma";
 import saveAsSVG from "../../rendering/saveAsSVG";
 
 export default {

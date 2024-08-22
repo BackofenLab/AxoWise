@@ -1,4 +1,3 @@
-import sigma from "sigma";
 import { emitter } from "../main.js";
 
 /**

@@ -21,7 +21,7 @@
           <v-select v-model="selected_species" :options="species"></v-select>
           <div class="input-field-protein">
             <h4>Protein list:</h4>
-            <button id="test-btn" @click="random_proteins">sample</button>
+            <button id="test-btn" @click="random_proteins()">sample</button>
             <textarea
               ref="protein_list_input"
               id="protein-list"
@@ -55,9 +55,7 @@
             @click="submit()"
             :class="{ loading: isAddClass }"
           >
-            <span class="button__text" onClick="this.disabled=true;"
-              >Submit</span
-            >
+            <span class="button__text">Submit</span>
           </button>
         </div>
       </div>

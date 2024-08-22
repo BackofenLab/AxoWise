@@ -64,7 +64,6 @@ export default {
       active_section: "",
       d_item: {
         value: null,
-        imageSrc: require("@/assets/pane/d-icon.png"),
       },
     };
   },
