@@ -17,13 +17,15 @@
     <div class="input-data">
       <div class="input field">
         <div class="input-form-data">
-          <div class="species-selection">
+          <div class="form-selection">
             <a>Species:</a>
             <v-select v-model="selected_species" :options="species"></v-select>
           </div>
-          <div class="input-field-protein">
-            <h4>Protein list:</h4>
-            <button id="test-btn" @click="random_proteins()">sample</button>
+          <div class="form-selection">
+            <div class="form-heading">
+              <a>Protein list:</a>
+              <button id="test-btn" @click="random_proteins()">sample</button>
+            </div>
             <textarea
               ref="protein_list_input"
               id="protein-list"
@@ -66,6 +68,8 @@
 </template>
 
 <script>
+import validator from "validator";
+
 export default {
   name: "InputScreen",
 
@@ -125,18 +129,25 @@ export default {
         return;
       }
 
+      var cleanData = validator.whitelist(this.raw_text, "a-zA-Z0-9\\s");
+
       // Creating FormData to send files & parameters with an ajax call
 
       formData.append("threshold", this.threshold.value);
       formData.append("species_id", this.selected_species.code);
-      formData.append("proteins", this.raw_text.split("\n").join(";"));
+      formData.append("proteins", cleanData.split(/\s+/).join(";"));
 
       this.isAddClass = true;
       this.axios.post(this.api.subgraph, formData).then((response) => {
-        response.edge_thick = this.edge_thick.value;
-        this.isAddClass = false;
-        this.$store.commit("assign", response);
-        this.$router.push("protein");
+        if (response.data.length != 0) {
+          response.edge_thick = this.edge_thick.value;
+          this.isAddClass = false;
+          this.$store.commit("assign", response);
+          this.$router.push("protein");
+        } else {
+          alert("no proteins were found.");
+          this.isAddClass = false;
+        }
       });
     },
     async random_proteins() {
@@ -171,15 +182,17 @@ export default {
 </script>
 
 <style>
-.input-field-protein {
-  display: block;
-}
-
 #test-btn {
-  margin: 0 0 6px 0;
   text-transform: lowercase;
-  padding: 3px;
-  font-size: 9px;
+  color: #fff;
+  background: #0a0a1a57;
+  border: none;
+  padding: 0.6rem;
+  height: 59%;
+  display: flex;
+  justify-content: center;
+  -webkit-align-items: center;
+  margin-left: 0.4rem;
 }
 
 .input-form-data input[type="number"] {
@@ -210,16 +223,21 @@ export default {
   border-radius: 50%;
 }
 
-.species-selection {
+.form-selection {
   display: grid;
   width: 100%;
   grid-template-columns: 1fr;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: 1.5rem 1fr;
   grid-row-gap: 0;
   text-align: left;
 }
 
 .species-selection a {
   align-self: center;
+}
+
+.form-heading {
+  display: flex;
+  grid-template-columns: 1fr 1fr;
 }
 </style>
