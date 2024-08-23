@@ -9,16 +9,18 @@
     </div>
 
     <div class="input-card-navigation">
-      <router-link to="/input">Input</router-link> |
-      <router-link to="/file">File</router-link> |
+      <router-link to="/input">Input</router-link>
+      <router-link to="/file">File</router-link>
       <router-link to="/import">Import</router-link>
     </div>
 
     <div class="input-data">
       <div class="input field">
         <div class="input-form-data">
-          <h4>Species:</h4>
-          <v-select v-model="selected_species" :options="species"></v-select>
+          <div class="species-selection">
+            <a>Species:</a>
+            <v-select v-model="selected_species" :options="species"></v-select>
+          </div>
           <div class="input-field-protein">
             <h4>Protein list:</h4>
             <button id="test-btn" @click="random_proteins()">sample</button>
@@ -74,6 +76,10 @@ export default {
         {
           label: "Mus musculus (mouse)",
           code: "10090",
+        },
+        {
+          label: "Homo sapiens (human)",
+          code: "9606",
         },
       ],
       api: {
@@ -202,5 +208,18 @@ export default {
   width: 0.8vw;
   height: 0.8vw;
   border-radius: 50%;
+}
+
+.species-selection {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-row-gap: 0;
+  text-align: left;
+}
+
+.species-selection a {
+  align-self: center;
 }
 </style>

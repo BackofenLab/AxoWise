@@ -9,8 +9,8 @@
     </div>
 
     <div class="input-card-navigation">
-      <router-link to="/input">Input</router-link> |
-      <router-link to="/file">File</router-link> |
+      <router-link to="/input">Input</router-link>
+      <router-link to="/file">File</router-link>
       <router-link to="/import">Import</router-link>
     </div>
 

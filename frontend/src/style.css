@@ -68,7 +68,7 @@ body {
 }
 
 #pgdb-app {
-  font-family: "Roboto Mono", monospace;
+  font-family: "ABeeZee", sans-serif;
   display: flex;
   overflow: hidden;
   width: 100%;
@@ -80,7 +80,7 @@ body {
 }
 
 #pgdb-app2 {
-  font-family: "Roboto Mono", monospace;
+  font-family: "ABeeZee", sans-serif;
   display: flex;
   min-height: 100vh;
   align-items: center;
@@ -137,7 +137,7 @@ body {
 }
 
 .input-card-header h2 {
-  font-family: "Roboto Mono", monospace;
+  font-family: "ABeeZee", sans-serif;
   font-weight: bold;
   color: black;
   font-size: 22px;
@@ -196,7 +196,7 @@ body {
 }
 
 .input-form-data textarea {
-  font-family: "Roboto Mono", monospace;
+  font-family: "ABeeZee", sans-serif;
   border-radius: 20px;
   font-size: 14px;
   color: black;
@@ -219,21 +219,26 @@ body {
 }
 
 .vs__dropdown-toggle {
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(255, 255, 255, 0.4);
   border: none;
-  border-radius: 20px;
-  font-family: "Roboto Mono", monospace;
+  border-radius: 0;
+  font-family: "ABeeZee", sans-serif;
 }
 
 .vs__dropdown-menu {
-  background-color: rgba(0, 0, 0, 0.85);
-  color: #ffffff;
-  text-align: center;
-  font-size: 14px;
-  border: none;
-  border-radius: 20px;
-  margin-top: 10px;
-  font-family: "Roboto Mono", monospace;
+  padding: 0.3% 0 0.3% 0;
+  border-radius: 0 0 5px 5px;
+  -webkit-backdrop-filter: blur(7.5px);
+  backdrop-filter: blur(7.5px);
+  overflow-y: scroll;
+  overflow-x: hidden;
+  color: #fff;
+  border-color: hsla(0, 0%, 100%, 0.3);
+  border-width: 1px;
+  border-style: solid;
+  background: none;
+  font-size: 12px;
+  font-family: "ABeeZee", sans-serif;
 }
 
 .vs__dropdown-menu::-webkit-scrollbar {
@@ -241,12 +246,6 @@ body {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none;
   width: 0 !important;
-}
-
-.vs--open .vs__dropdown-toggle {
-  border-bottom-color: transparent;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
 }
 
 .vs__actions button {
@@ -292,7 +291,7 @@ body {
   background-color: rgba(255, 255, 255, 0.15);
   border: none;
   border-radius: 20px;
-  font-family: "Roboto Mono", monospace;
+  font-family: "ABeeZee", sans-serif;
   width: 100px;
   height: 25px;
   display: -webkit-flex;
@@ -309,7 +308,7 @@ body {
   border-radius: 20px;
   border-width: 1px;
   margin-top: 10px;
-  font-family: "Roboto Mono", monospace;
+  font-family: "ABeeZee", sans-serif;
   min-width: 0;
   max-height: 150px;
 }
@@ -351,7 +350,7 @@ body {
 
 #vsel .vs__search {
   font-size: 12px;
-  font-family: "Roboto Mono", monospace;
+  font-family: "ABeeZee", sans-serif;
   text-transform: uppercase;
 }
 
@@ -501,13 +500,14 @@ body {
 
 .input-card-navigation {
   margin-bottom: 2rem;
-  background-color: rgba(0, 0, 0, 1);
-  border-radius: 10px;
-  position: relative;
+  background-color: #0a0a1a;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 0.5vw 0.5vw 0.5vw 0.5vw;
+  width: 100%;
+  flex-shrink: 0;
 }
 .input-card-navigation a {
-  margin: 5px;
-  padding: 15px;
   text-decoration: none;
   font-size: 14px;
   color: white;
@@ -530,7 +530,7 @@ body {
   background: rgba(255, 255, 255, 0.7);
 }
 .input-form-data input[type="text"] {
-  font-family: "Roboto Mono", monospace;
+  font-family: "ABeeZee", sans-serif;
   font-size: 14px;
   border-radius: 20px;
   color: black;
@@ -718,7 +718,7 @@ body {
 }
 
 .toolbar-icon {
-  font-family: Arial Black;
+  font-family: "ABeeZee", sans-serif;
   border-radius: 100%;
   background-color: rgba(0, 0, 0, 0.7);
   height: 25px;
@@ -910,7 +910,7 @@ body {
 }
 
 .enrichment-filtering {
-  font-family: "Roboto Mono", monospace;
+  font-family: "ABeeZee", sans-serif;
   position: relative;
   display: flex;
   margin: 5px;
@@ -927,7 +927,7 @@ body {
 }
 
 .enrichment-filtering select {
-  font-family: "Roboto Mono", monospace;
+  font-family: "ABeeZee", sans-serif;
   text-align: center;
   margin-left: 5px;
   padding: 5px;
@@ -1149,7 +1149,7 @@ body {
 }
 
 #zoom .z {
-  font-family: Arial;
+  font-family: "ABeeZee", sans-serif;
   background: #fff;
   background-color: rgba(0, 0, 0, 0.9);
   width: 20px;

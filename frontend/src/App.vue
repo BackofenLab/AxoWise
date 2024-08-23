@@ -27,7 +27,7 @@ export default {
 
 <style>
 .container {
-  font-family: "Roboto Mono", monospace;
+  font-family: "ABeeZee", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   display: flex;
