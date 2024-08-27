@@ -36,24 +36,28 @@
             >
             </textarea>
           </div>
-          <h4>Edge score:</h4>
-          <input
-            id="scoregraph"
-            type="range"
-            v-bind:min="threshold.min"
-            v-bind:max="threshold.max"
-            v-bind:step="threshold.step"
-            v-model="threshold.value"
-            v-on:input="valueChanged('scoregraph')"
-          />
-          <input
-            type="number"
-            v-bind:min="threshold.min"
-            v-bind:max="threshold.max"
-            v-bind:step="threshold.step"
-            v-model="threshold.value"
-            v-on:input="valueChanged('scoregraph')"
-          />
+          <div class="form-selection">
+            <div class="form-heading">
+              <a>Edge score:</a>
+              <input
+                type="number"
+                v-bind:min="threshold.min"
+                v-bind:max="threshold.max"
+                v-bind:step="threshold.step"
+                v-model="threshold.value"
+                v-on:input="valueChanged('scoregraph')"
+              />
+            </div>
+            <input
+              id="scoregraph"
+              type="range"
+              v-bind:min="threshold.min"
+              v-bind:max="threshold.max"
+              v-bind:step="threshold.step"
+              v-model="threshold.value"
+              v-on:input="valueChanged('scoregraph')"
+            />
+          </div>
           <button
             id="submit-btn"
             @click="submit()"
@@ -63,6 +67,12 @@
           </button>
         </div>
       </div>
+    </div>
+    <div class="social-media">
+      <img src="@/assets/socials/youtube.png" />
+      <img src="@/assets/socials/git.png" />
+      <img src="@/assets/socials/reddit.png" />
+      <img src="@/assets/socials/linkedin.png" />
     </div>
   </div>
 </template>
@@ -92,7 +102,7 @@ export default {
       threshold: {
         value: 0,
         min: 0,
-        max: 0.9999,
+        max: 1,
         step: 0.01,
       },
       edge_thick: {
@@ -193,34 +203,35 @@ export default {
   justify-content: center;
   -webkit-align-items: center;
   margin-left: 0.4rem;
+  text-align: center;
+  align-self: center;
+  width: 3.5rem;
 }
 
 .input-form-data input[type="number"] {
+  text-transform: lowercase;
+  color: #fff;
+  background: #0a0a1a57;
   border: none;
-  border-radius: 5px;
+  padding: 0.6rem;
+  height: 59%;
+  display: flex;
   text-align: center;
-  font-family: "ABeeZee", sans-serif;
-  background: none;
+  align-self: center;
+  -webkit-align-items: center;
+  margin-left: 0.4rem;
   -moz-appearance: textfield;
   -webkit-appearance: textfield;
   appearance: textfield;
+  width: 3.5rem;
 }
 
-.input-form-data input[type="range"] {
-  appearance: none;
-  outline: none;
-  width: 10vw;
-  height: 0.3vw;
-  border-radius: 5px;
-  background-color: #ccc;
-}
 .input-form-data input[type="range"]::-webkit-slider-thumb {
   background: #fafafa;
   appearance: none;
   box-shadow: 1px 2px 26px 1px #bdbdbd;
-  width: 0.8vw;
-  height: 0.8vw;
-  border-radius: 50%;
+  width: 0.6rem;
+  height: 0.6rem;
 }
 
 .form-selection {
@@ -232,12 +243,27 @@ export default {
   text-align: left;
 }
 
-.species-selection a {
+.form-selection a {
   align-self: center;
 }
 
 .form-heading {
   display: flex;
   grid-template-columns: 1fr 1fr;
+}
+
+.social-media {
+  position: fixed;
+  display: flex;
+  right: 1rem;
+  bottom: 1rem;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+}
+
+.social-media img {
+  padding: 0.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
 }
 </style>

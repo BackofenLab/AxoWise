@@ -38,6 +38,12 @@
         </div>
       </div>
     </div>
+    <div class="social-media">
+      <img src="@/assets/socials/youtube.png" />
+      <img src="@/assets/socials/git.png" />
+      <img src="@/assets/socials/reddit.png" />
+      <img src="@/assets/socials/linkedin.png" />
+    </div>
   </div>
 </template>
 

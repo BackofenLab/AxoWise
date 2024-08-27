@@ -17,72 +17,82 @@
     <div class="input-data">
       <div class="input field">
         <div class="input-form-data">
-          <div class="species-selection">
+          <div class="form-selection">
             <a>Species:</a>
             <v-select v-model="selected_species" :options="species"></v-select>
           </div>
-          <h4>Protein file:</h4>
-          <div class="file-upload-wrapper" :data-text="fileuploadText">
-            <input
-              type="file"
-              id="protein-file"
-              accept=".csv"
-              v-on:change="load_file"
-            />
+          <div class="form-selection">
+            <a>Protein file:</a>
+            <div class="file-upload-wrapper" :data-text="fileuploadText">
+              <input
+                type="file"
+                id="protein-file"
+                accept=".csv"
+                v-on:change="load_file"
+              />
+            </div>
           </div>
           <div id="coloumn-selection" v-if="dcoloumns != null">
-            <h4>D Coloumns:</h4>
-            <button id="test-btn" @click="select_all">select all</button>
-            <div class="filter-section">
-              <div
-                id="pathway-filter"
-                class="pre-full colortype"
-                v-on:click="handling_filter_menu()"
-                :class="{ full: dcoloumn_filtering == true }"
-              >
-                <span>{{ coloumn }}</span>
-                <img
-                  class="remove-filter"
-                  src="@/assets/pathwaybar/cross.png"
-                  v-on:click.stop="active_categories(null)"
-                  v-if="coloumn !== 'Filter'"
-                />
+            <div class="form-selection">
+              <div class="form-heading">
+                <a>De-coloumns:</a>
+                <button id="test-btn" @click="select_all">all</button>
               </div>
-              <div
-                id="home-filter-categories"
-                class="colortype"
-                v-show="dcoloumn_filtering == true"
-              >
+              <div class="filter-section">
                 <div
-                  class="element"
-                  v-for="(entry, index) in dcoloumns"
-                  :key="index"
-                  v-on:click="active_categories(entry)"
-                  :class="{ active_cat: active_categories_set.has(entry) }"
+                  id="pathway-filter"
+                  class="pre-full colortype"
+                  v-on:click="handling_filter_menu()"
+                  :class="{ full: dcoloumn_filtering == true }"
                 >
-                  <a>{{ entry }}</a>
+                  <span>{{ coloumn }}</span>
+                  <img
+                    class="remove-filter"
+                    src="@/assets/pathwaybar/cross.png"
+                    v-on:click.stop="active_categories(null)"
+                    v-if="coloumn !== 'Filter'"
+                  />
+                </div>
+                <div
+                  id="home-filter-categories"
+                  class="colortype"
+                  v-show="dcoloumn_filtering == true"
+                >
+                  <div
+                    class="element"
+                    v-for="(entry, index) in dcoloumns"
+                    :key="index"
+                    v-on:click="active_categories(entry)"
+                    :class="{ active_cat: active_categories_set.has(entry) }"
+                  >
+                    <a>{{ entry }}</a>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <h4>Edge score:</h4>
-          <input
-            id="scoregraph"
-            type="range"
-            v-bind:min="threshold.min"
-            v-bind:max="threshold.max"
-            v-bind:step="threshold.step"
-            v-model="threshold.value"
-            v-on:input="valueChanged('scoregraph')"
-          />
-          <input
-            type="number"
-            v-bind:min="threshold.min"
-            v-bind:max="threshold.max"
-            v-bind:step="threshold.step"
-            v-model="threshold.value"
-            v-on:input="valueChanged('scoregraph')"
-          />
+          <div class="form-selection">
+            <div class="form-heading">
+              <a>Edge score:</a>
+              <input
+                type="number"
+                v-bind:min="threshold.min"
+                v-bind:max="threshold.max"
+                v-bind:step="threshold.step"
+                v-model="threshold.value"
+                v-on:input="valueChanged('scoregraph')"
+              />
+            </div>
+            <input
+              id="scoregraph"
+              type="range"
+              v-bind:min="threshold.min"
+              v-bind:max="threshold.max"
+              v-bind:step="threshold.step"
+              v-model="threshold.value"
+              v-on:input="valueChanged('scoregraph')"
+            />
+          </div>
           <button
             id="submit-btn"
             @click="submit()"
@@ -94,6 +104,12 @@
           </button>
         </div>
       </div>
+    </div>
+    <div class="social-media">
+      <img src="@/assets/socials/youtube.png" />
+      <img src="@/assets/socials/git.png" />
+      <img src="@/assets/socials/reddit.png" />
+      <img src="@/assets/socials/linkedin.png" />
     </div>
   </div>
 </template>
@@ -128,7 +144,7 @@ export default {
       selected_species: null,
       isAddClass: false,
       dcoloumn_filtering: false,
-      coloumn: "Filter",
+      coloumn: "Select...",
       active_categories_set: new Set(),
     };
   },
@@ -271,11 +287,17 @@ export default {
 }
 
 #coloumn-selection .filter-section {
-  width: 100%;
-  height: 3vw;
+  width: unset;
+  max-width: 100%;
+  height: 30px;
   display: flex;
   position: relative;
   left: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(255, 255, 255, 0.5);
+  color: black;
+}
+
+#coloumn-selection #pathway-filter span {
+  color: #0a0a1a53;
 }
 </style>

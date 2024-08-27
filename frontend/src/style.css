@@ -133,7 +133,7 @@ body {
 .input-form-data {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .input-card-header h2 {
@@ -144,14 +144,16 @@ body {
 }
 
 #submit-btn {
-  background-color: #000;
+  background-color: #0a0a1a;
   margin-top: 2rem;
   color: white;
-  padding: 1rem;
-  border-radius: 100px;
+  padding: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 1px;
   transition: 0.5s;
+  border: none;
+  width: 50%;
+  align-self: center;
 }
 
 #submit-btn button:hover {
@@ -427,18 +429,17 @@ body {
 .input-form-data .file-upload-wrapper {
   position: relative;
   width: 100%;
-  border-radius: 20px;
   height: 30px;
 }
 
 .input-form-data .file-upload-wrapper::after {
   content: attr(data-text);
   text-align: left;
-  font-size: 16px;
+  font-size: 14px;
   position: absolute;
   top: 0;
   left: 0;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.5);
   padding: 10px 15px;
   display: block;
   width: calc(100% - 40px);
@@ -446,8 +447,7 @@ body {
   z-index: 20;
   height: 30px;
   line-height: 10px;
-  color: rgba(0, 0, 0, 0.2);
-  border-radius: 20px;
+  color: #0a0a1a53;
   font-weight: 300;
 }
 
@@ -458,21 +458,20 @@ body {
   right: 0;
   display: inline-block;
   height: 30px;
-  background: rgba(0, 0, 0, 0.7);
+  background: #0a0a1a;
   color: #fff;
   z-index: 25;
   line-height: 30px;
   padding: 0 15px;
-  font-size: 14px;
+  font-size: 10px;
   letter-spacing: 1px;
   text-transform: uppercase;
   pointer-events: none;
-  border-radius: 0 20px 20px 0;
   transition: 0.5s;
 }
 
 .input-form-data .file-upload-wrapper:hover:before {
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: #0a0a1a91;
 }
 
 .input-form-data .file-upload-wrapper:focus-within:after {
@@ -491,7 +490,6 @@ body {
   height: 30 - 20px;
   margin: 0;
   padding: 0;
-  border-radius: 20px;
   display: block;
   cursor: pointer;
   width: 100%;
@@ -523,8 +521,7 @@ body {
   appearance: none;
   cursor: pointer;
   width: 100%;
-  height: 10px;
-  border-radius: 20px;
+  height: 0.4rem;
   border: none;
   background: rgba(255, 255, 255, 0.7);
 }
