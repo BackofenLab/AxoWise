@@ -1,6 +1,4 @@
-/* eslint-disable no-redeclare */
 /* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
 
 import * as d3 from "d3";
 import { scaleLinear } from "d3-scale";

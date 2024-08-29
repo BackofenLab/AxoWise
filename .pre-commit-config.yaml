@@ -55,12 +55,15 @@ repos:
       - id: prettier
         description: "Code formatter for JavaScript, TypeScript, JSON, CSS, SCSS, HTML, and Vue files."
         files: \.(js|ts|json|css|scss|html|vue)$
-  # - repo: https://github.com/pre-commit/mirrors-eslint
-    # rev: v7.32.0
-    # hooks:
-      # - id: eslint
-        # description: "Static analysis tool to find problems in JavaScript and Vue.js code."
-        # files: \.(js|ts|vue)$
+
+  - repo: local
+    hooks:
+      - id: eslint
+        name: ESLint
+        entry: bash -c "cd frontend && npm run lint"
+        language: system
+        files: \.(js|ts|vue)$
+        description: "Runs ESLint to check JavaScript and Vue.js code for issues."
 
   # Custom hooks for running unit tests
   # - repo: local
