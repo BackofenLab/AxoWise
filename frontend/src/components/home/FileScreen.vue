@@ -73,6 +73,29 @@
           </div>
           <div class="form-selection">
             <div class="form-heading">
+              <input
+                type="checkbox"
+                id="edgeCheck"
+                name="edgeCheck"
+                v-model="customEdge"
+              />
+              <label for="edgeCheck"> Use custom protein interactions.</label>
+            </div>
+            <div
+              v-if="customEdge == true"
+              class="file-upload-wrapper"
+              :data-text="fileuploadText"
+            >
+              <input
+                type="file"
+                id="edge-file"
+                accept=".txt"
+                v-on:change="load_file"
+              />
+            </div>
+          </div>
+          <div class="form-selection">
+            <div class="form-heading">
               <a>Edge score:</a>
               <input
                 type="number"
@@ -145,6 +168,7 @@ export default {
       isAddClass: false,
       dcoloumn_filtering: false,
       coloumn: "Select...",
+      customEdge: false,
       active_categories_set: new Set(),
     };
   },

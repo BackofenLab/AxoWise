@@ -163,31 +163,59 @@ def proteins_subgraph_api():
     proteins, protein_ids, symbol_alias_mapping = queries.get_protein_ids_for_names(
         driver, protein_names, species_id
     )
+
     keys = list(symbol_alias_mapping.keys())
     for num, i in enumerate(symbol_alias_mapping.values()):
         if i in input_mapping:
             input_mapping[keys[num]] = input_mapping[i]
     stopwatch.round("Setup")
 
-    if len(protein_ids) > 1:
-        proteins, source, target, score = queries.get_protein_associations(
-            driver, protein_ids, threshold, species_id
+    if not request.files.get("edge-file"):
+
+        if len(protein_ids) > 1:
+            proteins, source, target, score = queries.get_protein_associations(
+                driver, protein_ids, threshold, species_id
+            )
+        else:
+            proteins, source, target, score = queries.get_protein_neighbours(
+                driver, protein_ids, threshold, species_id
+            )
+
+        nodes = (
+            pd.DataFrame(proteins)
+            .rename(columns={"ENSEMBL_PROTEIN": "external_id"})
+            .drop_duplicates(subset="external_id")
         )
+
+        edges = pd.DataFrame({"source": source, "target": target, "score": score})
     else:
-        proteins, source, target, score = queries.get_protein_neighbours(
-            driver, protein_ids, threshold, species_id
+
+        nodes = (
+            pd.DataFrame(proteins)
+            .rename(columns={"ENSEMBL_PROTEIN": "external_id"})
+            .drop_duplicates(subset="external_id")
         )
+        edge_file = pd.read_csv(request.files.get("edge-file"), delimiter=" ")
+
+        # Filter rows in edge_file where 'source' or 'target' is in external_ids
+        edges = edge_file[
+            (edge_file["source"].isin(protein_ids))
+            & (edge_file["target"].isin(protein_ids))
+            & (edge_file["score"] >= threshold)
+        ]
+
+        # Get unique values from 'source' and 'target' columns
+        unique_sources, unique_targets = set(edges["source"].unique()), set(
+            edges["target"].unique()
+        )
+
+        # Combine both sets to get all unique values
+        all_unique_values = unique_sources.union(unique_targets)
+        nodes = nodes[(nodes["external_id"].isin(all_unique_values))]
+
+    edges = edges.drop_duplicates(subset=["source", "target"])
 
     stopwatch.round("Neo4j")
-
-    nodes = (
-        pd.DataFrame(proteins)
-        .rename(columns={"ENSEMBL_PROTEIN": "external_id"})
-        .drop_duplicates(subset="external_id")
-    )
-
-    edges = pd.DataFrame({"source": source, "target": target, "score": score})
-    edges = edges.drop_duplicates(subset=["source", "target"])
 
     # Check if there is no data from database, return from here
     if edges.empty:

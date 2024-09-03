@@ -38,6 +38,29 @@
           </div>
           <div class="form-selection">
             <div class="form-heading">
+              <input
+                type="checkbox"
+                id="edgeCheck"
+                name="edgeCheck"
+                v-model="customEdge"
+              />
+              <label for="edgeCheck"> Use custom protein interactions.</label>
+            </div>
+            <div
+              v-if="customEdge == true"
+              class="file-upload-wrapper"
+              :data-text="fileuploadText"
+            >
+              <input
+                type="file"
+                id="edge-file"
+                accept=".txt"
+                v-on:change="load_file"
+              />
+            </div>
+          </div>
+          <div class="form-selection">
+            <div class="form-heading">
               <a>Edge score:</a>
               <input
                 type="number"
@@ -110,6 +133,8 @@ export default {
       },
       raw_text: null,
       selected_species: "",
+      customEdge: false,
+      fileuploadText: "Select your file",
     };
   },
 
@@ -139,6 +164,11 @@ export default {
         return;
       }
 
+      if (document.getElementById("edge-file")) {
+        const edge_file = document.getElementById("edge-file");
+        formData.append("edge-file", edge_file.files[0]);
+      }
+
       var cleanData = validator.whitelist(this.raw_text, "a-zA-Z0-9\\s");
 
       // Creating FormData to send files & parameters with an ajax call
@@ -159,6 +189,11 @@ export default {
           this.isAddClass = false;
         }
       });
+    },
+    load_file(e) {
+      var com = this;
+      const file = e.target.files[0];
+      com.fileuploadText = file.name;
     },
     async random_proteins() {
       const response = await fetch("./mousedb.csv");
@@ -265,5 +300,10 @@ export default {
   padding: 0.5rem;
   width: 2.5rem;
   height: 2.5rem;
+}
+
+.form-heading label {
+  font-size: 12px;
+  margin-left: 0.5rem;
 }
 </style>

@@ -128,4 +128,52 @@ export default {
   font-size: 1vw;
   display: flex;
 }
+
+.menu-window [type="checkbox"] {
+  display: none;
+  z-index: 0;
+}
+
+.menu-window [type="checkbox"] + label {
+  display: block;
+  cursor: pointer;
+  font-family: sans-serif;
+  font-size: 24px;
+  line-height: 1.3;
+  position: absolute;
+  right: 15%;
+  margin-top: 0.7%;
+}
+.menu-window [type="checkbox"] + label:before {
+  width: 1.8vw;
+  height: 0.9vw;
+  border-radius: 30px;
+  background-color: #ddd;
+  content: "";
+  transition: background-color 0.5s linear;
+  z-index: 5;
+  position: absolute;
+}
+.menu-window [type="checkbox"] + label:after {
+  width: 0.7vw;
+  height: 0.7vw;
+  border-radius: 30px;
+  background-color: #fff;
+  content: "";
+  transition: margin 0.1s linear;
+  box-shadow: 0px 0px 5px #aaa;
+  position: absolute;
+  top: 10%;
+  margin: 0.1vw 0 0 0.1vw;
+  z-index: 10;
+}
+.protein-view [type="checkbox"]:checked + label:before {
+  background-color: #0a0a1a;
+}
+.term-view [type="checkbox"]:checked + label:before {
+  background-color: #0a1a0b;
+}
+.menu-window [type="checkbox"]:checked + label:after {
+  margin: 0.1vw 0 0 1vw;
+}
 </style>
