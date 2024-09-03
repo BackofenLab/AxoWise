@@ -28,7 +28,7 @@
                 type="file"
                 id="protein-file"
                 accept=".csv"
-                v-on:change="load_file"
+                v-on:change="load_file($event, false)"
               />
             </div>
           </div>
@@ -84,13 +84,13 @@
             <div
               v-if="customEdge == true"
               class="file-upload-wrapper"
-              :data-text="fileuploadText"
+              :data-text="fileuploadTextEdge"
             >
               <input
                 type="file"
                 id="edge-file"
                 accept=".txt"
-                v-on:change="load_file"
+                v-on:change="load_file($event, true)"
               />
             </div>
           </div>
@@ -162,6 +162,7 @@ export default {
         step: 0.01,
       },
       fileuploadText: "Select your file",
+      fileuploadTextEdge: "Select your file",
       dcoloumns: null,
       selected_d: [],
       selected_species: null,
@@ -224,13 +225,18 @@ export default {
         document.removeEventListener("mouseup", com.handleMouseUp);
       }
     },
-    load_file(e) {
+    load_file(e, edgeCheck) {
       var com = this;
 
       //Read csv file to get coloumn information
-      com.dcoloumns = [];
       const file = e.target.files[0];
-      com.fileuploadText = file.name;
+      edgeCheck
+        ? (com.fileuploadTextEdge = file.name)
+        : (com.fileuploadText = file.name);
+
+      if (edgeCheck) return;
+
+      com.dcoloumns = [];
       const reader = new FileReader();
       reader.onload = function (e) {
         var allTextLines = e.target.result.split(/\n|\n/);
@@ -253,6 +259,7 @@ export default {
     },
     submit() {
       var com = this;
+      var formData = new FormData();
 
       if (com.selected_species == "") {
         alert("Please select a species!");
@@ -266,7 +273,11 @@ export default {
         return;
       }
 
-      var formData = new FormData();
+      if (document.getElementById("edge-file")) {
+        const edge_file = document.getElementById("edge-file");
+        formData.append("edge-file", edge_file.files[0]);
+      }
+
       formData.append("threshold", com.threshold.value);
       formData.append("species_id", com.selected_species.code);
       formData.append("file", protein_file.files[0]);
