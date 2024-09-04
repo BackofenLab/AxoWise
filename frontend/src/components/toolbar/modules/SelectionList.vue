@@ -304,7 +304,7 @@ export default {
           step: 0.01,
         });
 
-        slider.noUiSlider.on("update", function (values, handle) {
+        slider.noUiSlider.on("slide", function (values, handle) {
           com.dboundaries[coloumn][handle ? "maxValue" : "minValue"] =
             values[handle];
           com.searchSubset();
@@ -373,6 +373,8 @@ export default {
       });
 
       var maxDeg = Math.max(...result); // Need to use spread operator!
+      com.degree_boundary["maxValue"] = maxDeg
+      com.degree_boundary["minValue"] = 0
 
       var slider = document.getElementById("degree");
       noUiSlider.create(slider, {
@@ -386,7 +388,7 @@ export default {
         step: 1,
       });
 
-      slider.noUiSlider.on("update", function (values, handle) {
+      slider.noUiSlider.on("slide", function (values, handle) {
         com.degree_boundary[handle ? "maxValue" : "minValue"] = values[handle];
         com.searchSubset();
       });
@@ -407,6 +409,8 @@ export default {
         return parseFloat(x, 10);
       });
       var maxDeg = Math.max(...result) + 10; // Need to use spread operator!
+      com.bc_boundary["maxValue"] = maxDeg
+      com.bc_boundary["minValue"] = 0
 
       var slider = document.getElementById("betweenes");
       noUiSlider.create(slider, {
@@ -420,7 +424,7 @@ export default {
         step: 1,
       });
 
-      slider.noUiSlider.on("update", function (values, handle) {
+      slider.noUiSlider.on("slide", function (values, handle) {
         com.bc_boundary[handle ? "maxValue" : "minValue"] = values[handle];
         com.searchSubset();
       });
@@ -440,7 +444,9 @@ export default {
       var result = subset_pr.map(function (x) {
         return parseFloat(x);
       });
-      var maxDeg = Math.abs(Math.log10(Math.min(...result))) + 1; // Need to use spread operator!
+      var maxDeg = Math.abs(Math.log10(Math.min(...result))) + 1;
+      com.pr_boundary["maxValue"] = maxDeg
+      com.pr_boundary["minValue"] = 0
 
       this.pr_boundary.max = maxDeg;
       var slider = document.getElementById("pagerank");
@@ -454,7 +460,7 @@ export default {
         step: 0.01,
       });
 
-      slider.noUiSlider.on("update", function (values, handle) {
+      slider.noUiSlider.on("slide", function (values, handle) {
         com.pr_boundary[handle ? "maxValue" : "minValue"] = values[handle];
         com.searchSubset();
       });
@@ -488,7 +494,7 @@ export default {
         step: 0.01,
       });
 
-      slider.noUiSlider.on("update", function (values, handle) {
+      slider.noUiSlider.on("slide", function (values, handle) {
         com.padj_boundary[handle ? "maxValue" : "minValue"] = values[handle];
         com.searchSubset();
       });
@@ -592,6 +598,7 @@ export default {
     this.initialize_pagerank();
     if (this.dcoloumns && this.mode != "term") this.create_de();
     if (this.mode == "term") this.initialize_padj();
+    this.searchSubset();
   },
   created() {
     if (this.dcoloumns) this.initialize_de();
