@@ -2,7 +2,7 @@
   <div id="citation-tools" class="pathways">
     <div class="pathwaybar">
       <div class="summary-input">
-        <div class="window-label">gene search</div>
+        <div class="window-label">abstracts</div>
         <textarea v-model="raw_text" rows="10" cols="30" autofocus></textarea>
         <button id="clear-btn" v-on:click="raw_text=''">clear</button>
         <button id="apply-btn" v-on:click="summarize_abstracts(raw_text, false)">apply</button>
@@ -145,7 +145,7 @@ export default {
   color: white;
   font-family: "ABeeZee", sans-serif;
   background-color: rgba(255, 255, 255, 0.05);
-  font-size: 0.7vw;
+  font-size: 1.2vw;
   width: 100%;
   height: 90%;
   margin-top: 3%;
