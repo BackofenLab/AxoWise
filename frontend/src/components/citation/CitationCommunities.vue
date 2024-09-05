@@ -197,7 +197,6 @@ export default {
         }
       }
 
-      com.emitter.emit("generateSummary", top_nodes);
       var flatList = top_nodes.flat();
       com.emitter.emit("searchSubset", { subset: flatList, mode: "citation" });
     },
