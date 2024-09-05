@@ -4,7 +4,8 @@
       <div class="summary-input">
         <div class="window-label">gene search</div>
         <textarea v-model="raw_text" rows="10" cols="30" autofocus></textarea>
-        <button v-on:click="summarize_abstracts(raw_text, false)">apply</button>
+        <button id="clear-btn" v-on:click="raw_text=''">clear</button>
+        <button id="apply-btn" v-on:click="summarize_abstracts(raw_text, false)">apply</button>
       </div>
       <div class="summarized">
         <div class="window-label">summary</div>
@@ -151,9 +152,26 @@ export default {
   overflow-y: scroll;
   padding: 1.3vw 1.3vw 0 1.3vw;
 }
-.summary-input button {
+.summary-input #apply-btn {
   position: absolute;
   right: 2vw;
+  top: 0.8vw;
+  position: absolute;
+  display: block;
+  cursor: pointer;
+  border: none;
+  color: white;
+  border-style: solid;
+  border-width: 1px;
+  background: #0a0a1a;
+  border-color: white;
+  width: 3vw;
+  font-size: 0.7vw;
+}
+.summary-input #clear-btn {
+  position: absolute;
+  right: 5vw;
+  margin-right: 0.5rem;
   top: 0.8vw;
   position: absolute;
   display: block;
