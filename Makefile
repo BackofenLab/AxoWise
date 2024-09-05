@@ -16,8 +16,13 @@ neo4j:
 	sudo neo4j start
 
 build:
-	cd frontend; npm install; npm run build
-	cd backend/gephi; mvn install
+	cd frontend && \
+	if [ -d "node_modules" ]; then rm -r node_modules; fi && \
+	if [ -f "package-lock.json" ]; then rm package-lock.json; fi && \
+	npm install && \
+	npm run build && \
+	cd ../backend/gephi && \
+	mvn install
 
 update:
 	conda env update --file environment.yml --prune
