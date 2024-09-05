@@ -373,8 +373,8 @@ export default {
       });
 
       var maxDeg = Math.max(...result); // Need to use spread operator!
-      com.degree_boundary["maxValue"] = maxDeg
-      com.degree_boundary["minValue"] = 0
+      com.degree_boundary["maxValue"] = maxDeg;
+      com.degree_boundary["minValue"] = 0;
 
       var slider = document.getElementById("degree");
       noUiSlider.create(slider, {
@@ -409,8 +409,8 @@ export default {
         return parseFloat(x, 10);
       });
       var maxDeg = Math.max(...result) + 10; // Need to use spread operator!
-      com.bc_boundary["maxValue"] = maxDeg
-      com.bc_boundary["minValue"] = 0
+      com.bc_boundary["maxValue"] = maxDeg;
+      com.bc_boundary["minValue"] = 0;
 
       var slider = document.getElementById("betweenes");
       noUiSlider.create(slider, {
@@ -445,8 +445,8 @@ export default {
         return parseFloat(x);
       });
       var maxDeg = Math.abs(Math.log10(Math.min(...result))) + 1;
-      com.pr_boundary["maxValue"] = maxDeg
-      com.pr_boundary["minValue"] = 0
+      com.pr_boundary["maxValue"] = maxDeg;
+      com.pr_boundary["minValue"] = 0;
 
       this.pr_boundary.max = maxDeg;
       var slider = document.getElementById("pagerank");

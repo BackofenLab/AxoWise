@@ -112,7 +112,7 @@ export default {
       search_raw: "",
       await_load: false,
       sort_alph: "",
-      sort_pr: "",
+      sort_pr: "asc", //active filter on start
       sort_cb: "",
       sort_y: "",
       selectedIndex: -1,

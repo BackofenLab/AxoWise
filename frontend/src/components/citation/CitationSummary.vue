@@ -4,8 +4,13 @@
       <div class="summary-input">
         <div class="window-label">abstracts</div>
         <textarea v-model="raw_text" rows="10" cols="30" autofocus></textarea>
-        <button id="clear-btn" v-on:click="raw_text=''">clear</button>
-        <button id="apply-btn" v-on:click="summarize_abstracts(raw_text, false)">apply</button>
+        <button id="clear-btn" v-on:click="raw_text = ''">clear</button>
+        <button
+          id="apply-btn"
+          v-on:click="summarize_abstracts(raw_text, false)"
+        >
+          apply
+        </button>
       </div>
       <div class="summarized">
         <div class="window-label">summary</div>
