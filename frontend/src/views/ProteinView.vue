@@ -1,28 +1,25 @@
 <template>
   <div class="protein-view">
     <div id="view" class="filter-section">
+      <div
+        id="pathway-filter"
+        class="pre-full"
+        v-on:click="handling_filter_menu()"
+        :class="{ full: view_filtering == true }"
+      >
+        <span>{{ view }}</span>
+      </div>
+      <div id="list-filter-categories" v-show="view_filtering == true">
         <div
-          id="pathway-filter"
-          class="pre-full"
-          v-on:click="handling_filter_menu()"
-          :class="{ full: view_filtering == true }"
+          class="element"
+          v-for="entry in filter_views"
+          :key="entry"
+          v-on:click="swap_view(entry)"
         >
-          <span>{{ view }}</span>
-        </div>
-        <div
-          id="list-filter-categories"
-          v-show="view_filtering == true"
-        >
-          <div
-            class="element"
-            v-for="entry in filter_views"
-            :key="entry"
-            v-on:click="swap_view(entry)"
-          >
-            <a>{{ entry + " view" }} </a>
-          </div>
+          <a>{{ entry + " view" }} </a>
         </div>
       </div>
+    </div>
     <keep-alive>
       <MainVis
         ref="mainVis"
@@ -130,7 +127,7 @@ export default {
       ensembl_name_index: null,
       view: "protein view",
       view_filtering: false,
-      filter_views:['term','citation']
+      filter_views: ["term", "citation"],
     };
   },
   activated() {
@@ -199,7 +196,7 @@ export default {
       com.active_decoloumn = state;
     });
   },
-  methods:{
+  methods: {
     handling_filter_menu() {
       var com = this;
       if (!com.view_filtering) {
@@ -227,19 +224,23 @@ export default {
         document.removeEventListener("mouseup", com.handleMouseUp);
       }
     },
-    swap_view(entry){
-      if(entry == "term"){
-        this.$store.state.term_graph_data 
-        ? this.$router.push("terms")
-        : alert("Please generate first a term graph via the enrichment section ")
+    swap_view(entry) {
+      if (entry == "term") {
+        this.$store.state.term_graph_data
+          ? this.$router.push("terms")
+          : alert(
+              "Please generate first a term graph via the enrichment section "
+            );
       }
-      if(entry == "citation"){
+      if (entry == "citation") {
         this.$store.state.citation_graph_data
-        ? this.$router.push("citation")
-        : alert("Please generate first a citation graph via the citation section ")
+          ? this.$router.push("citation")
+          : alert(
+              "Please generate first a citation graph via the citation section "
+            );
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -260,7 +261,7 @@ export default {
   background: #0a0a1a;
 }
 
-#view{
+#view {
   position: fixed;
   right: 0;
   top: 0;
@@ -269,7 +270,7 @@ export default {
   height: 5%;
   background-color: rgba(255, 255, 255, 0.2);
 }
-#view #list-filter-categories{
+#view #list-filter-categories {
   max-height: unset;
 }
 #view #pathway-filter span {

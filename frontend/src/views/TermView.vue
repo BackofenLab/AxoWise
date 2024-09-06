@@ -10,10 +10,7 @@
         >
           <span>{{ view }}</span>
         </div>
-        <div
-          id="list-filter-categories"
-          v-show="view_filtering == true"
-        >
+        <div id="list-filter-categories" v-show="view_filtering == true">
           <div
             class="element"
             v-for="entry in filter_views"
@@ -96,7 +93,7 @@ export default {
       unconnected_nodes: null,
       view: "term view",
       view_filtering: false,
-      filter_views:['protein','citation']
+      filter_views: ["protein", "citation"],
     };
   },
   watch: {
@@ -236,17 +233,19 @@ export default {
         document.removeEventListener("mouseup", com.handleMouseUp);
       }
     },
-    swap_view(entry){
-      if(entry == "protein"){
-        this.$router.push("protein")
+    swap_view(entry) {
+      if (entry == "protein") {
+        this.$router.push("protein");
       }
-      if(entry == "citation"){
+      if (entry == "citation") {
         this.$store.state.citation_graph_data
-        ? this.$router.push("citation")
-        : alert("Please generate first a citation graph via the citation section on protein view.")
+          ? this.$router.push("citation")
+          : alert(
+              "Please generate first a citation graph via the citation section on protein view."
+            );
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

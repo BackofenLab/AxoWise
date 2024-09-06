@@ -10,10 +10,7 @@
         >
           <span>{{ view }}</span>
         </div>
-        <div
-          id="list-filter-categories"
-          v-show="view_filtering == true"
-        >
+        <div id="list-filter-categories" v-show="view_filtering == true">
           <div
             class="element"
             v-for="entry in filter_views"
@@ -108,7 +105,7 @@ export default {
       unconnected_nodes: null,
       view: "citation view",
       view_filtering: false,
-      filter_views:['term','protein']
+      filter_views: ["term", "protein"],
     };
   },
   watch: {
@@ -259,17 +256,19 @@ export default {
         document.removeEventListener("mouseup", com.handleMouseUp);
       }
     },
-    swap_view(entry){
-      if(entry == "term"){
-        this.$store.state.term_graph_data 
-        ? this.$router.push("terms")
-        : alert("Please generate first a term graph via the enrichment section on protein view.")
+    swap_view(entry) {
+      if (entry == "term") {
+        this.$store.state.term_graph_data
+          ? this.$router.push("terms")
+          : alert(
+              "Please generate first a term graph via the enrichment section on protein view."
+            );
       }
-      if(entry == "protein"){
-        this.$router.push("protein")
+      if (entry == "protein") {
+        this.$router.push("protein");
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -283,7 +282,7 @@ export default {
   background: #1b1613;
 }
 
-.view-label{
+.view-label {
   position: fixed;
   top: 0;
   right: 0;
@@ -291,6 +290,5 @@ export default {
   color: rgba(255, 255, 255, 0.522);
   font-size: 1rem;
   z-index: 9999;
-
 }
 </style>
