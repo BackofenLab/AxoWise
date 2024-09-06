@@ -145,7 +145,6 @@ export default {
   top: 0;
   height: 100%;
   width: 25vw;
-  background: #0a0a1a;
   -webkit-backdrop-filter: blur(7.5px);
   padding: 1%;
 }

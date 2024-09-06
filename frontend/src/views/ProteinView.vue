@@ -1,5 +1,28 @@
 <template>
   <div class="protein-view">
+    <div id="view" class="filter-section">
+        <div
+          id="pathway-filter"
+          class="pre-full"
+          v-on:click="handling_filter_menu()"
+          :class="{ full: view_filtering == true }"
+        >
+          <span>{{ view }}</span>
+        </div>
+        <div
+          id="list-filter-categories"
+          v-show="view_filtering == true"
+        >
+          <div
+            class="element"
+            v-for="entry in filter_views"
+            :key="entry"
+            v-on:click="swap_view(entry)"
+          >
+            <a>{{ entry + " view" }} </a>
+          </div>
+        </div>
+      </div>
     <keep-alive>
       <MainVis
         ref="mainVis"
@@ -105,6 +128,9 @@ export default {
       node_modul_index: null,
       node_cluster_index: null,
       ensembl_name_index: null,
+      view: "protein view",
+      view_filtering: false,
+      filter_views:['term','citation']
     };
   },
   activated() {
@@ -173,6 +199,47 @@ export default {
       com.active_decoloumn = state;
     });
   },
+  methods:{
+    handling_filter_menu() {
+      var com = this;
+      if (!com.view_filtering) {
+        com.view_filtering = true;
+
+        // Add the event listener
+        document.addEventListener("mouseup", com.handleMouseUp);
+      } else {
+        com.view_filtering = false;
+        document.removeEventListener("mouseup", com.handleMouseUp);
+      }
+    },
+    handleMouseUp(e) {
+      var com = this;
+
+      var container = document.getElementById("list-filter-categories");
+      var container_button = document.getElementById("pathway-filter");
+      if (
+        !container.contains(e.target) &&
+        !container_button.contains(e.target)
+      ) {
+        com.view_filtering = false;
+
+        // Remove the event listener
+        document.removeEventListener("mouseup", com.handleMouseUp);
+      }
+    },
+    swap_view(entry){
+      if(entry == "term"){
+        this.$store.state.term_graph_data 
+        ? this.$router.push("terms")
+        : alert("Please generate first a term graph via the enrichment section ")
+      }
+      if(entry == "citation"){
+        this.$store.state.citation_graph_data
+        ? this.$router.push("citation")
+        : alert("Please generate first a citation graph via the citation section ")
+      }
+    }
+  }
 };
 </script>
 
@@ -191,5 +258,21 @@ export default {
 
 .protein-view .colortype {
   background: #0a0a1a;
+}
+
+#view{
+  position: fixed;
+  right: 0;
+  top: 0;
+  margin: 1%;
+  z-index: 999;
+  height: 5%;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+#view #list-filter-categories{
+  max-height: unset;
+}
+#view #pathway-filter span {
+  color: rgba(255, 255, 255, 0.7);
 }
 </style>

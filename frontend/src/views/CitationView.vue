@@ -1,6 +1,29 @@
 <template>
   <keep-alive>
     <div class="citation-view">
+      <div id="view" class="filter-section">
+        <div
+          id="pathway-filter"
+          class="pre-full"
+          v-on:click="handling_filter_menu()"
+          :class="{ full: view_filtering == true }"
+        >
+          <span>{{ view }}</span>
+        </div>
+        <div
+          id="list-filter-categories"
+          v-show="view_filtering == true"
+        >
+          <div
+            class="element"
+            v-for="entry in filter_views"
+            :key="entry"
+            v-on:click="swap_view(entry)"
+          >
+            <a>{{ entry + " view" }} </a>
+          </div>
+        </div>
+      </div>
       <CitationVis
         ref="CitationVis"
         :active_node="active_node"
@@ -83,6 +106,9 @@ export default {
       node_index: null,
       centering_active: null,
       unconnected_nodes: null,
+      view: "citation view",
+      view_filtering: false,
+      filter_views:['term','protein']
     };
   },
   watch: {
@@ -206,17 +232,65 @@ export default {
         this.$store.commit("assign_active_enrichment_node", null);
       }
     },
-  },
+    handling_filter_menu() {
+      var com = this;
+      if (!com.view_filtering) {
+        com.view_filtering = true;
+
+        // Add the event listener
+        document.addEventListener("mouseup", com.handleMouseUp);
+      } else {
+        com.view_filtering = false;
+        document.removeEventListener("mouseup", com.handleMouseUp);
+      }
+    },
+    handleMouseUp(e) {
+      var com = this;
+
+      var container = document.getElementById("list-filter-categories");
+      var container_button = document.getElementById("pathway-filter");
+      if (
+        !container.contains(e.target) &&
+        !container_button.contains(e.target)
+      ) {
+        com.view_filtering = false;
+
+        // Remove the event listener
+        document.removeEventListener("mouseup", com.handleMouseUp);
+      }
+    },
+    swap_view(entry){
+      if(entry == "term"){
+        this.$store.state.term_graph_data 
+        ? this.$router.push("terms")
+        : alert("Please generate first a term graph via the enrichment section on protein view.")
+      }
+      if(entry == "protein"){
+        this.$router.push("protein")
+      }
+    }
+  }
 };
 </script>
 
 <style>
 .citation-view {
-  background-color: #0a0a1a;
+  background-color: #1b1613;
   display: flex;
 }
 
 .citation-view .colortype {
-  background: #0a0a1a;
+  background: #1b1613;
+}
+
+.view-label{
+  position: fixed;
+  top: 0;
+  right: 0;
+  margin: 1rem;
+  color: rgba(255, 255, 255, 0.522);
+  font-size: 1rem;
+  z-index: 9999;
+
 }
 </style>
