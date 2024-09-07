@@ -169,36 +169,53 @@
             >
               <div class="window-label">{{ entry }}</div>
               <div class="menu-items">
-                <div :id="'deval-slider-' + index"></div>
-                <input
-                  type="number"
-                  v-bind:min="dboundaries[entry].min"
-                  v-bind:max="dboundaries[entry].max"
-                  v-bind:step="dboundaries[entry].step"
-                  v-model="dboundaries[entry].minValue"
-                  v-on:change="searchSubset()"
-                  v-on:input="
-                    valueChanged('deval-slider-' + index, [
-                      dboundaries[entry].minValue,
-                      dboundaries[entry].maxValue,
-                    ])
-                  "
-                />
-                <span class="seperator">-</span>
-                <input
-                  type="number"
-                  v-bind:min="dboundaries[entry].min"
-                  v-bind:max="dboundaries[entry].max"
-                  v-bind:step="dboundaries[entry].step"
-                  v-model="dboundaries[entry].maxValue"
-                  v-on:change="searchSubset()"
-                  v-on:input="
-                    valueChanged('deval-slider-' + index, [
-                      dboundaries[entry].minValue,
-                      dboundaries[entry].maxValue,
-                    ])
-                  "
-                />
+                <div class="checkbox-header">
+                  <input
+                    type="checkbox"
+                    :id="'deval-check-' + index"
+                    v-on:change="
+                      change_limits(
+                        'deval-slider-' + index,
+                        'deval-check-' + index,
+                        entry
+                      );
+                      searchSubset();
+                    "
+                  />
+                  <label for="edgeCheck"> inverse selection</label>
+                </div>
+                <div class="body-selection">
+                  <div :id="'deval-slider-' + index"></div>
+                  <input
+                    type="number"
+                    v-bind:min="dboundaries[entry].min"
+                    v-bind:max="dboundaries[entry].max"
+                    v-bind:step="dboundaries[entry].step"
+                    v-model="dboundaries[entry].minValue"
+                    v-on:change="searchSubset()"
+                    v-on:input="
+                      valueChanged('deval-slider-' + index, [
+                        dboundaries[entry].minValue,
+                        dboundaries[entry].maxValue,
+                      ])
+                    "
+                  />
+                  <span class="seperator">-</span>
+                  <input
+                    type="number"
+                    v-bind:min="dboundaries[entry].min"
+                    v-bind:max="dboundaries[entry].max"
+                    v-bind:step="dboundaries[entry].step"
+                    v-model="dboundaries[entry].maxValue"
+                    v-on:change="searchSubset()"
+                    v-on:input="
+                      valueChanged('deval-slider-' + index, [
+                        dboundaries[entry].minValue,
+                        dboundaries[entry].maxValue,
+                      ])
+                    "
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -247,6 +264,7 @@ export default {
       dboundaries: {},
       nodeCheck: false,
       formatType: null,
+      check: {},
     };
   },
   watch: {
@@ -262,6 +280,19 @@ export default {
     },
   },
   methods: {
+    change_limits(slider_id, check_id, entry) {
+      let com = this;
+      let slider = document.getElementById(slider_id);
+      com.check[entry] = document.getElementById(check_id).checked;
+
+      com.check[entry]
+        ? slider.noUiSlider.set([0, 0])
+        : slider.noUiSlider.reset();
+
+      let currentBorder = slider.noUiSlider.get();
+      com.dboundaries[entry].minValue = currentBorder[0];
+      com.dboundaries[entry].maxValue = currentBorder[1];
+    },
     initialize_de() {
       var com = this;
       var dataForm = com.data;
@@ -535,13 +566,28 @@ export default {
             this.nodeCheck = true;
             for (var coloumn of com.dcoloumns) {
               if (
-                parseFloat(element.attributes[coloumn]) <
-                  com.dboundaries[coloumn].minValue ||
-                parseFloat(element.attributes[coloumn]) >
-                  com.dboundaries[coloumn].maxValue
+                com.check[coloumn] == false ||
+                com.check[coloumn] == undefined
               ) {
-                this.nodeCheck = false;
-                break;
+                if (
+                  parseFloat(element.attributes[coloumn]) <
+                    com.dboundaries[coloumn].minValue ||
+                  parseFloat(element.attributes[coloumn]) >
+                    com.dboundaries[coloumn].maxValue
+                ) {
+                  this.nodeCheck = false;
+                  break;
+                }
+              } else {
+                if (
+                  parseFloat(element.attributes[coloumn]) >
+                    com.dboundaries[coloumn].minValue &&
+                  parseFloat(element.attributes[coloumn]) <
+                    com.dboundaries[coloumn].maxValue
+                ) {
+                  this.nodeCheck = false;
+                  break;
+                }
               }
             }
             if (this.nodeCheck) nodes.push(element);
@@ -619,6 +665,16 @@ export default {
 }
 .selection .menu-items {
   display: flex;
+  margin: 0;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 0.5vw;
+  justify-content: center;
+  background-clip: content-box;
+}
+
+.dcoloumn-window .menu-items {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
   margin: 0;
   background-color: rgba(255, 255, 255, 0.1);
   padding: 0.5vw;
@@ -727,5 +783,19 @@ export default {
   height: 100%;
   width: 100%;
   overflow-y: scroll;
+}
+
+.body-selection {
+  padding-left: 0.5rem;
+  display: -webkit-flex;
+}
+
+.checkbox-header {
+  padding: 0.5rem 0 0 0.3rem;
+  font-size: 0.6vw;
+}
+
+.checkbox-header input[type="checkbox"] {
+  accent-color: green;
 }
 </style>

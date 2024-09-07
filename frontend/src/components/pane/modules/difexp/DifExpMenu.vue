@@ -3,12 +3,8 @@
     <div class="tool-set-section-graph">
       <div class="coloumn-set-button">
         <button class="tool-buttons">
-          <img
-            class="buttons-img"
-            src="@/assets/plus-1.png"
-            v-if="!loading_state"
-          />
-          <div v-if="loading_state" class="loading_button"></div>
+          <img class="buttons-img" src="@/assets/plus-1.png" />
+          <!-- <div v-if="loading_state" class="loading_button"></div> -->
         </button>
       </div>
       <div
