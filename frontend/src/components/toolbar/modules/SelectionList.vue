@@ -147,7 +147,7 @@
           />
         </div>
       </div>
-      <div class="dcoloumn-window" v-if="mode != 'term'">
+      <div class="dcoloumn-window" v-if="mode != 'term' && mode != 'citation'">
         <div class="coloumn-padding">
           <div
             class="class-section"
@@ -540,7 +540,6 @@ export default {
       // filter hubs
       var finalNodes = [];
       var nodes = [];
-      console.log(com.mode);
       // degree filtering
       for (var element of dataForm) {
         if (
@@ -558,7 +557,6 @@ export default {
             this.bc_boundary.maxValue
         ) {
           if (com.mode == "term") {
-            console.log("term");
             if (
               Math.abs(Math.log10(parseFloat(element.attributes["FDR"]))) >=
                 this.padj_boundary.minValue &&
@@ -567,8 +565,9 @@ export default {
             ) {
               nodes.push(element);
             }
+          } else if (com.mode == "citation") {
+            nodes.push(element);
           } else if (this.dcoloumns) {
-            console.log("dcoloumns");
             this.nodeCheck = true;
             for (var coloumn of com.dcoloumns) {
               if (
@@ -603,7 +602,6 @@ export default {
         }
       }
       finalNodes = nodes;
-      console.log(finalNodes);
       this.emitter.emit("searchSubset", {
         subset: { selection: true, genes: finalNodes },
         mode: this.mode,
@@ -649,7 +647,8 @@ export default {
     this.initialize_dg();
     this.initialize_bc();
     this.initialize_pagerank();
-    if (this.dcoloumns && this.mode != "term") this.create_de();
+    if (this.dcoloumns && this.mode != "term" && this.mode != "citation")
+      this.create_de();
     if (this.mode == "term") this.initialize_padj();
     this.searchSubset();
   },
