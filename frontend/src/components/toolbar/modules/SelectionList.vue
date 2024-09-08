@@ -514,6 +514,9 @@ export default {
 
       var maxDeg = Math.ceil(Math.abs(Math.log10(Math.min(...result)))); // Need to use spread operator!
 
+      com.padj_boundary["maxValue"] = maxDeg;
+      com.padj_boundary["minValue"] = 0;
+
       var slider = document.getElementById("padj");
       noUiSlider.create(slider, {
         start: [0, maxDeg],
@@ -537,6 +540,7 @@ export default {
       // filter hubs
       var finalNodes = [];
       var nodes = [];
+      console.log(com.mode);
       // degree filtering
       for (var element of dataForm) {
         if (
@@ -554,6 +558,7 @@ export default {
             this.bc_boundary.maxValue
         ) {
           if (com.mode == "term") {
+            console.log("term");
             if (
               Math.abs(Math.log10(parseFloat(element.attributes["FDR"]))) >=
                 this.padj_boundary.minValue &&
@@ -563,6 +568,7 @@ export default {
               nodes.push(element);
             }
           } else if (this.dcoloumns) {
+            console.log("dcoloumns");
             this.nodeCheck = true;
             for (var coloumn of com.dcoloumns) {
               if (
@@ -597,6 +603,7 @@ export default {
         }
       }
       finalNodes = nodes;
+      console.log(finalNodes);
       this.emitter.emit("searchSubset", {
         subset: { selection: true, genes: finalNodes },
         mode: this.mode,
