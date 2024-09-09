@@ -19,8 +19,7 @@ uri = f"bolt://{NEO4J_HOST}:{NEO4J_PORT}"
 driver = GraphDatabase.driver(uri, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))
 
 # Get the citation file names needed for neo4j
-csv_files = glob.glob("/home/maluuck/Documents/genes_abstracts_*.gz")
-# csv_files = glob.glob("/mnt/MainBackup/for_graph_RAG/genes_abstracts_*.gz")
+csv_files = glob.glob("/mnt/MainBackup/for_graph_RAG/genes_abstracts_*.gz")
 csv_files = [i.split("/")[-1] for i in csv_files]
 
 
