@@ -275,7 +275,7 @@ export default {
   right: 1vw;
   bottom: 1vw;
   height: 4.5vw;
-  width: 12vw;
+  width: 15vw;
   display: block;
   background: #d9d9d9;
   align-items: center;

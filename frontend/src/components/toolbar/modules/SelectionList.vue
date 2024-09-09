@@ -231,7 +231,7 @@ import "@/slider.css";
 
 export default {
   name: "SelectionList",
-  props: ["data", "mode", "active_subset", "active_term"],
+  props: ["data", "mode", "active_subset", "active_term", "selection_active"],
   emits: ["selection_active_changed"],
   data() {
     return {
@@ -268,15 +268,8 @@ export default {
     };
   },
   watch: {
-    active_subset() {
-      if (!this.active_subset) {
-        this.unactive_proteinlist();
-        return;
-      }
-      if (!this.active_subset.selection) this.unactive_proteinlist();
-    },
-    active_term() {
-      this.unactive_proteinlist();
+    selection_active() {
+      if (this.selection_active) this.searchSubset();
     },
   },
   methods: {
@@ -633,15 +626,7 @@ export default {
       },
     };
 
-    if (this.mode == "protein") {
-      this.search_data = this.$store.state.active_subset
-        ? this.term_genes(this.$store.state.active_subset)
-        : this.data.nodes;
-    } else {
-      this.search_data = this.$store.state.p_active_subset
-        ? this.term_genes(this.$store.state.p_active_subset)
-        : this.data.nodes;
-    }
+    this.search_data = this.data.nodes;
     this.dragElement(document.getElementById("selection_highlight"));
 
     this.initialize_dg();
@@ -678,7 +663,7 @@ export default {
   background-clip: content-box;
 }
 
-.dcoloumn-window .menu-items {
+.slider-section-scroll .menu-items {
   display: grid;
   grid-template-rows: 1fr 1fr;
   margin: 0;

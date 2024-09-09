@@ -32,7 +32,8 @@
       @tools_active_changed="tools_active = $event"
     ></MenuWindow>
     <SelectionList
-      v-if="selection_active"
+      v-show="selection_active"
+      :selection_active="selection_active"
       :data="data"
       :mode="mode"
       :active_subset="active_subset"

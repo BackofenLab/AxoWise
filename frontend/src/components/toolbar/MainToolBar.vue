@@ -34,8 +34,9 @@
       @tools_active_changed="tools_active = $event"
     ></MenuWindow>
     <SelectionList
-      v-if="selection_active"
+      v-show="selection_active"
       :data="gephi_data"
+      :selection_active="selection_active"
       :active_subset="active_subset"
       :active_term="active_term"
       :mode="mode"

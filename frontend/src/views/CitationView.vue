@@ -164,6 +164,8 @@ export default {
   mounted() {
     const com = this;
 
+    com.active_subset = null;
+
     com.node_color_index = {};
     for (var idx in com.citation_data.nodes) {
       var node = com.citation_data.nodes[idx];

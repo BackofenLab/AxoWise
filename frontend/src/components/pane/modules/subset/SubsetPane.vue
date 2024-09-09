@@ -25,15 +25,21 @@
         </div>
         <div class="subsection-main colortype"></div>
       </div>
-      <!-- <div id="network" class="subsection" v-show="tool_active && active_section == 'statistics'">
-                <div class="subsection-header">
-                </div>
-                <div class="subsection-main colortype">
-                    <SubsetLinks
-                    :contained_edges='contained_edges'
-                    ></SubsetLinks>
-                </div>
-            </div> -->
+      <div
+        id="network"
+        class="subsection"
+        v-if="tool_active && active_section == 'statistics'"
+      >
+        <div class="subsection-header">
+          <span>parameter selection</span>
+        </div>
+        <div class="subsection-main colortype">
+          <SubsetLinks
+            :active_subset="active_subset"
+            :mode="mode"
+          ></SubsetLinks>
+        </div>
+      </div>
       <div
         id="connections"
         class="subsection"
@@ -49,12 +55,16 @@
       </div>
     </div>
     <div class="nodeattributes">
-      <img
+      <!-- <img
         class="icons"
         src="@/assets/toolbar/menu-burger.png"
         v-on:click="change_section('information')"
+      /> -->
+      <img
+        class="icons"
+        src="@/assets/toolbar/settings-sliders.png"
+        v-on:click="change_section('statistics')"
       />
-      <!-- <img  class="icons" src="@/assets/toolbar/settings-sliders.png" v-on:click="change_section('statistics')"> -->
       <img
         class="icons"
         src="@/assets/toolbar/proteinselect.png"
@@ -67,7 +77,7 @@
 
 <script>
 import SubsetConnections from "@/components/pane/modules/subset/SubsetConnections.vue";
-// import SubsetLinks from '@/components/pane/modules/subset/SubsetLinks.vue'
+import SubsetLinks from "@/components/pane/modules/subset/SubsetLinks.vue";
 
 export default {
   name: "SubsetPane",
@@ -79,7 +89,7 @@ export default {
   ],
   components: {
     SubsetConnections,
-    // SubsetLinks
+    SubsetLinks,
   },
   data() {
     return {
@@ -104,6 +114,11 @@ export default {
 
       if (com.active_subset == null) {
         return;
+      }
+
+      if (com.active_subset.type != "subset") {
+        com.active_section = "";
+        com.$emit("tool_active_changed", false);
       }
 
       com.subset = com.active_subset.selection
