@@ -1,8 +1,10 @@
+import os
+
 import pandas as pd
+from dotenv import load_dotenv
 from neo4j import GraphDatabase
 from summarization.meilisearch_inhouse import meilisearch_query
-import os
-from dotenv import load_dotenv
+
 
 def neo4j_driver():
     load_dotenv()
@@ -18,6 +20,7 @@ def neo4j_driver():
     driver = GraphDatabase.driver(uri, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))
     return driver
 
+
 # Function to execute a query
 def run_query(driver, query):
     with driver.session() as session:
@@ -25,9 +28,10 @@ def run_query(driver, query):
         # Close the driver connection when done
         return [record for record in result]
 
+
 def format_and_save_df(genes):
     # Dataframe of mouse and human genes
-    df = pd.DataFrame({"symbol":genes})
+    df = pd.DataFrame({"symbol": genes})
 
     # Drop duplicates that occur due to mixing of multiple organisms
     df = df.drop_duplicates(subset="symbol", keep="first")
@@ -36,6 +40,7 @@ def format_and_save_df(genes):
     df.to_csv("genes.csv", index=False)
     return df
 
+
 def create_gene_abstracts(df, chunk_size=100000):
     genes_for_csv = []
     abstracts = []
@@ -43,14 +48,16 @@ def create_gene_abstracts(df, chunk_size=100000):
 
     for i in list(df["symbol"]):
         res = meilisearch_query.get_results(100000000, i)["hits"]
-        genes_for_csv.extend([i]*len(res))
+        genes_for_csv.extend([i] * len(res))
         for j in res:
             abstracts.append(j)
 
         # Check if the current chunk size has been reached
         if len(genes_for_csv) >= chunk_size:
             # Create a DataFrame for the current chunk
-            genes_abstracts_df = pd.DataFrame({"symbol": genes_for_csv, "abstracts": abstracts})
+            genes_abstracts_df = pd.DataFrame(
+                {"symbol": genes_for_csv, "abstracts": abstracts}
+            )
 
             # Write the DataFrame to a CSV file
             genes_abstracts_df.to_csv(f"genes_abstracts_{file_index}.gz", index=False)
@@ -62,7 +69,9 @@ def create_gene_abstracts(df, chunk_size=100000):
 
     # Handle any remaining rows not written to file
     if genes_for_csv:
-        genes_abstracts_df = pd.DataFrame({"symbol": genes_for_csv, "abstracts": abstracts})
+        genes_abstracts_df = pd.DataFrame(
+            {"symbol": genes_for_csv, "abstracts": abstracts}
+        )
         genes_abstracts_df.to_csv(f"genes_abstracts_{file_index}.gz", index=False)
 
 
