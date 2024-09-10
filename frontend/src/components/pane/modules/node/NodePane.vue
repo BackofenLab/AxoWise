@@ -5,9 +5,7 @@
       <div class="gene">{{ active_node.attributes["Name"] }};</div>
       <div class="gene_attr">deg:{{ active_node.attributes["Degree"] }};</div>
       <div class="gene_attr">
-        pr:{{
-          Math.abs(Math.log10(active_node.attributes["PageRank"])).toFixed(2)
-        }}
+        pr:{{ Math.abs(active_node.attributes["PageRank"]).toExponential(2) }}
       </div>
     </div>
     <div

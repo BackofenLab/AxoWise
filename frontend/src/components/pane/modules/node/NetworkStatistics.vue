@@ -40,7 +40,7 @@ export default {
         return;
       }
 
-      const {
+      let {
         Degree,
         "Ensembl ID": EnsemblID,
         "Betweenness Centrality": BetweenesCentrality,
@@ -50,6 +50,8 @@ export default {
         FDR,
         Alias,
       } = com.active_node.attributes;
+      PageRank = Math.abs(PageRank).toExponential(2);
+      FDR = Math.abs(FDR).toExponential(2);
       if (this.mode == "protein")
         com.statistics = {
           Cluster,

@@ -68,7 +68,7 @@
         />
       </div>
       <div v-if="mode == 'term'">
-        <div class="window-label">padj value</div>
+        <div class="window-label">padj value (log10)</div>
         <div class="menu-items">
           <div id="subset-padj"></div>
           <input
@@ -102,7 +102,7 @@
           />
         </div>
       </div>
-      <div class="window-label">page rank value</div>
+      <div class="window-label">pagerank value (log10)</div>
       <div class="menu-items">
         <div id="subset-pagerank"></div>
         <input
@@ -135,7 +135,10 @@
           "
         />
       </div>
-      <div v-if="dcoloumns && mode != 'term' && mode != 'citation'" class="slider-section-scroll">
+      <div
+        v-if="dcoloumns && mode != 'term' && mode != 'citation'"
+        class="slider-section-scroll"
+      >
         <div v-for="(entry, index) in dcoloumns" :key="index">
           <div class="window-label">{{ entry }}</div>
           <div class="menu-items">
@@ -387,18 +390,19 @@ export default {
       var result = subset_pr.map(function (x) {
         return parseFloat(x);
       });
-      var maxDeg = Math.abs(Math.log10(Math.min(...result))) + 1;
-      com.pr_boundary["maxValue"] = maxDeg;
-      com.pr_boundary["minValue"] = 0;
+      var minDeg = Math.log10(Math.min(...result)) - 1;
+      com.pr_boundary["maxValue"] = 0;
+      com.pr_boundary["minValue"] = minDeg;
 
-      this.pr_boundary.max = maxDeg;
+      this.pr_boundary.min = minDeg;
+      this.pr_boundary.max = 0;
       var slider = document.getElementById("subset-pagerank");
       noUiSlider.create(slider, {
-        start: [0, maxDeg],
+        start: [minDeg, 0],
         connect: true,
         range: {
-          min: 0,
-          max: maxDeg,
+          min: minDeg,
+          max: 0,
         },
         step: 0.01,
       });
@@ -424,18 +428,18 @@ export default {
         return parseFloat(x);
       });
 
-      var maxDeg = Math.ceil(Math.abs(Math.log10(Math.min(...result)))); // Need to use spread operator!
+      var minDeg = Math.log10(Math.min(...result)) - 1; // Need to use spread operator!
 
-      com.padj_boundary["maxValue"] = maxDeg;
-      com.padj_boundary["minValue"] = 0;
+      com.padj_boundary["maxValue"] = 0;
+      com.padj_boundary["minValue"] = minDeg;
 
       var slider = document.getElementById("subset-padj");
       noUiSlider.create(slider, {
-        start: [0, maxDeg],
+        start: [minDeg, 0],
         connect: true,
         range: {
-          min: 0,
-          max: maxDeg,
+          min: minDeg,
+          max: 0,
         },
         step: 0.01,
       });
@@ -459,9 +463,9 @@ export default {
             this.degree_boundary.minValue &&
           parseInt(element.attributes["Degree"]) <=
             this.degree_boundary.maxValue &&
-          Math.abs(Math.log10(parseFloat(element.attributes["PageRank"]))) >=
+          Math.log10(parseFloat(element.attributes["PageRank"])) >=
             this.pr_boundary.minValue &&
-          Math.abs(Math.log10(parseFloat(element.attributes["PageRank"]))) <=
+          Math.log10(parseFloat(element.attributes["PageRank"])) <=
             this.pr_boundary.maxValue &&
           parseFloat(element.attributes["Betweenness Centrality"]) >=
             this.bc_boundary.minValue &&
@@ -470,9 +474,9 @@ export default {
         ) {
           if (com.mode == "term") {
             if (
-              Math.abs(Math.log10(parseFloat(element.attributes["FDR"]))) >=
+              Math.log10(parseFloat(element.attributes["FDR"])) >=
                 this.padj_boundary.minValue &&
-              Math.abs(Math.log10(parseFloat(element.attributes["FDR"]))) <=
+              Math.log10(parseFloat(element.attributes["FDR"])) <=
                 this.padj_boundary.maxValue
             ) {
               nodes.push(element);

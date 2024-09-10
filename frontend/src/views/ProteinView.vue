@@ -263,11 +263,11 @@ export default {
 
 #view {
   position: fixed;
-  right: 0;
+  left: 50%;
   top: 0;
   margin: 1%;
   z-index: 999;
-  height: 5%;
+  height: 3%;
   background-color: rgba(255, 255, 255, 0.2);
 }
 #view #list-filter-categories {
