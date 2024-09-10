@@ -1,9 +1,8 @@
-import pandas as pd
-from neo4j import GraphDatabase
-from summarization.meilisearch_inhouse import meilisearch_query
 import os
-from dotenv import load_dotenv
 
+import pandas as pd
+from dotenv import load_dotenv
+from neo4j import GraphDatabase
 
 load_dotenv()
 # set config
@@ -23,6 +22,7 @@ def run_query(query):
     with driver.session() as session:
         res = session.run(query)
         return res.data()
+
 
 # Create a Neo4j driver instance
 driver = GraphDatabase.driver(uri, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))
