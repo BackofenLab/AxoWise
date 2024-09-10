@@ -1,5 +1,5 @@
 <template>
-  <div id="network-values">
+  <div id="network-values" :class="{ chatbot: chatbotactive }">
     <div class="value-text">nodes: {{ data.nodes.length }}</div>
     <div class="value-text">edges: {{ data.edges.length }}</div>
   </div>
@@ -8,7 +8,7 @@
 <script>
 export default {
   name: "NetworkValues",
-  props: ["data"],
+  props: ["data", "chatbotactive"],
   data() {
     return {};
   },
@@ -27,6 +27,12 @@ export default {
   position: absolute;
   /* border-radius: 5px; */
   -webkit-backdrop-filter: blur(7.5px);
+  transition: left 0.5s ease-in-out;
+}
+
+#network-values.chatbot {
+  left: 35%;
+  transition: left 0.5s ease-in-out;
 }
 
 #network-values .value-text {

@@ -25,6 +25,7 @@
         ref="CitationVis"
         :active_node="active_node"
         @active_node_changed="active_node = $event"
+        :chatbotactive="chatbotactive"
         :active_fdr="active_fdr"
         @active_fdr_changed="active_fdr = $event"
         :active_subset="active_subset"
@@ -43,13 +44,18 @@
       ></CitationVis>
       <VerticalPaneCitation
         :citation_data="citation_data"
+        :chatbotactive="chatbotactive"
+        @chatbotactive_changed="chatbotactive = $event"
         :node_index="node_index"
       ></VerticalPaneCitation>
       <CitationToolBar
         :data="citation_data"
         :active_subset="active_subset"
       ></CitationToolBar>
-      <NetworkValues :data="citation_data"></NetworkValues>
+      <NetworkValues
+        :data="citation_data"
+        :chatbotactive="chatbotactive"
+      ></NetworkValues>
       <CitationPaneSystem
         :gephi_data="citation_data"
         :active_node="active_node"
@@ -103,6 +109,7 @@ export default {
       node_index: null,
       centering_active: null,
       unconnected_nodes: null,
+      chatbotactive: false,
       view: "citation view",
       view_filtering: false,
       filter_views: ["term", "protein"],

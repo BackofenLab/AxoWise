@@ -1,5 +1,5 @@
 <template>
-  <div id="vertical-pane">
+  <div id="vertical-pane" :class="{ chatbot: chatbotactive }">
     <div class="upper-block">
       <div class="tab-system">
         <ul>
@@ -17,6 +17,13 @@
           >
             <a href="#">communities</a>
           </li>
+          <li
+            class="tab"
+            :class="{ tabSelected: active_function_tab1 === 'chatbot' }"
+            v-on:click="active_function_tab1 = 'chatbot'"
+          >
+            <a href="#">chatbot</a>
+          </li>
         </ul>
       </div>
       <CitationList
@@ -30,25 +37,13 @@
         :sorted="'top'"
         :await_community="await_community"
       ></CitationCommunities>
-    </div>
-    <div class="lower-block">
-      <div class="tab-system">
-        <ul>
-          <li
-            class="tab"
-            :class="{ tabSelected: active_function_tab2 === 'summary' }"
-            v-on:click="active_function_tab2 = 'summary'"
-          >
-            <a href="#">summary</a>
-          </li>
-        </ul>
-      </div>
       <CitationSummary
+        v-show="active_function_tab1 === 'chatbot'"
         :citation_data="citation_data"
         :node_index="node_index"
         :await_community="await_community"
         @await_community_changed="await_community = $event"
-        :sorted="'bottom'"
+        :sorted="'top'"
       ></CitationSummary>
     </div>
   </div>
@@ -61,7 +56,8 @@ import CitationSummary from "@/components/citation/CitationSummary.vue";
 
 export default {
   name: "VerticalPaneCitation",
-  props: ["citation_data", "node_index"],
+  props: ["citation_data", "node_index", "chatbotactive"],
+  emits: ["chatbotactive_changed"],
   components: {
     CitationList,
     CitationSummary,
@@ -74,7 +70,27 @@ export default {
       await_community: false,
     };
   },
+  watch: {
+    active_function_tab1() {
+      this.active_function_tab1 == "chatbot"
+        ? this.$emit("chatbotactive_changed", true)
+        : this.$emit("chatbotactive_changed", false);
+    },
+  },
 };
 </script>
 
-<style></style>
+<style>
+.citation-view .upper-block {
+  height: 99%;
+}
+
+#vertical-pane.chatbot {
+  width: 35%;
+  transition: width 0.5s ease-in-out;
+}
+
+#vertical-pane {
+  transition: width 0.5s ease-in-out;
+}
+</style>
