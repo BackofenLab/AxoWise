@@ -26,3 +26,4 @@ dependencies:
     - leidenalg
     - torch
     - ollama
+    - langchain-ollama
