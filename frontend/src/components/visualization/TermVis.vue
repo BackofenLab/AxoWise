@@ -280,6 +280,14 @@ export default {
             : "rgba(0, 100, 100, " + com.base_opacity + ")";
         }
       }
+
+      sigma_instance.graph.nodes().forEach(function (n) {
+        var node = sigma_instance.graph.getNodeFromIndex(n.id);
+        !proteins.has(n.id)
+          ? (node.color = "rgb(0,100,100)")
+          : (node.color = "rgb(255,255,255)");
+      });
+
       this.$store.commit("assign_highlightedSet", highlighted_edges);
 
       sigma_instance.refresh();
