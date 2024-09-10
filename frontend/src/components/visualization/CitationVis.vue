@@ -2,7 +2,6 @@
   <div class="visualization">
     <div
       id="sigma-canvas"
-      :class="{ chatbot: chatbotactive }"
       class="sigma-parent"
       ref="sigmaContainer"
       @contextmenu.prevent="handleSigmaContextMenu"
@@ -58,7 +57,6 @@ export default {
   name: "CitationVis",
   props: [
     "citation_data",
-    "chatbotactive",
     "active_node",
     "node_color_index",
     "node_size_index",
@@ -737,8 +735,6 @@ export default {
   mounted() {
     var com = this;
 
-    console.log(com.chatbotactive);
-
     sigma_instance = new sigma();
     var camera = sigma_instance.addCamera();
 
@@ -891,9 +887,4 @@ export default {
 };
 </script>
 
-<style>
-#sigma-canvas.chatbot {
-  width: 65%;
-  left: 35%;
-}
-</style>
+<style></style>
