@@ -9,7 +9,7 @@
             :class="{ tabSelected: active_function_tab1 === 'set' }"
             v-on:click="active_function_tab1 = 'set'"
           >
-            <a href="#">term set</a>
+            <a href="#">subsets</a>
           </li>
           <li
             class="tab"

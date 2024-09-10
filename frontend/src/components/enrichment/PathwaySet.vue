@@ -2,13 +2,8 @@
   <div id="pathways-set">
     <div class="tool-set-section-graph">
       <div class="coloumn-set-button">
-        <button class="tool-buttons" v-on:click="apply_enrichment()">
-          <img
-            class="buttons-img"
-            src="@/assets/plus-1.png"
-            v-if="!loading_state"
-          />
-          <div v-if="loading_state" class="loading_button"></div>
+        <button class="tool-buttons" v-on:click="save_subset()">
+          <img class="buttons-img" src="@/assets/plus-1.png" />
         </button>
       </div>
       <div class="citation-search">
@@ -23,7 +18,7 @@
     </div>
     <div class="pathway-apply-section">
       <div class="sorting">
-        <a class="enrichment_filter">generated term sets </a>
+        <a class="enrichment_filter">saved subsets</a>
       </div>
 
       <div
@@ -49,14 +44,20 @@
                 <td>
                   <div class="pathway-text">
                     <input type="text" v-model="entry.name" class="empty" />
-                    <span>({{ entry.terms.length }})</span>
+                    <span>({{ entry.genes.length }})</span>
                   </div>
                 </td>
                 <td>
                   <label class="custom-icons">
                     <div
-                      class="expand-image"
+                      class="functions-image"
                       v-on:click="entry.information = !entry.information"
+                    ></div>
+                  </label>
+                  <label class="custom-icons">
+                    <div
+                      class="expand-image"
+                      v-on:click="entry.actions = !entry.actions"
                     ></div>
                   </label>
                   <label class="custom-icons">
@@ -71,6 +72,18 @@
                 <td v-for="element in entry.stats" :key="element">
                   <div class="information-set">{{ element }}</div>
                 </td>
+              </tr>
+              <tr v-if="entry.actions" class="expanded">
+                <div class="actions-tab">
+                  <button
+                    class="tool-buttons"
+                    v-on:click="apply_enrichment(entry)"
+                  >
+                    <img class="buttons-img" src="@/assets/plus-1.png" />
+                    <div v-if="loading_state" class="loading_button"></div>
+                  </button>
+                  <span> apply enrichment {{ entry.enriched }} </span>
+                </div>
               </tr>
             </span>
           </tbody>
@@ -116,18 +129,17 @@ export default {
     },
   },
   methods: {
-    apply_enrichment() {
+    apply_enrichment(subset) {
       var com = this;
-      var genes = com.$store.state.active_subset;
 
-      if (!genes || com.loading_state) {
+      if (!subset.genes || com.loading_state) {
         alert("please select a subset or pathway to apply enrichment");
         return;
       }
 
       //Adding proteins and species to formdata
       var formData = new FormData();
-      formData.append("genes", genes);
+      formData.append("genes", subset.genes);
       formData.append("species_id", com.gephi_data.nodes[0].species);
       formData.append(
         "mapping",
@@ -142,17 +154,32 @@ export default {
           cancelToken: com.sourceToken.token,
         })
         .then((response) => {
-          com.set_dict.add({
-            name: `layer ${com.layer}`,
-            genes: genes,
-            terms: response.data.sort((t1, t2) => t1.fdr_rate - t2.fdr_rate),
-            status: false,
-            information: false,
-            stats: com.get_significant_words(response.data),
-          });
-          com.layer += 1;
+          subset.terms = response.data.sort(
+            (t1, t2) => t1.fdr_rate - t2.fdr_rate
+          );
+          subset.stats = com.get_significant_words(response.data);
+          subset.name = subset.name + "(enriched)";
           com.loading_state = false;
+          subset.actions = false;
         });
+    },
+    save_subset() {
+      var com = this;
+      let genes = com.$store.state.active_subset;
+
+      if (!genes) return;
+
+      com.set_dict.add({
+        name: `subset ${com.layer}`,
+        genes: genes,
+        terms: null,
+        abstracts: null,
+        status: false,
+        information: false,
+        actions: false,
+        stats: null,
+      });
+      com.layer += 1;
     },
     remove_set(entry) {
       if (entry.status) this.emitter.emit("enrichTerms", null);
@@ -468,7 +495,7 @@ table tbody {
 .set-table td:nth-child(2) {
   color: #fff;
   font-size: 0.9vw;
-  width: 88.55%;
+  width: 62%;
   overflow: hidden;
   align-self: center;
 }
@@ -545,6 +572,17 @@ table tbody {
   background-repeat: no-repeat;
 }
 
+.functions-image {
+  display: block;
+  width: 0.9vw;
+  height: 0.9vw;
+  background-color: white;
+  -webkit-mask: url(@/assets/toolbar/settings-sliders.png) no-repeat center;
+  mask: url(@/assets/toolbar/settings-sliders.png) no-repeat center;
+  mask-size: 0.9vw;
+  background-repeat: no-repeat;
+}
+
 .checked {
   background-color: #ffa500;
 }
@@ -575,11 +613,43 @@ table tbody {
   text-align: center;
   padding: 0.2vw;
 }
+.actions-tab {
+  font-size: 0.5vw;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  padding: 0.2vw;
+  color: white;
+}
 
 .expanded {
   display: -webkit-flex;
   padding: 0 2vw 0 2vw;
   background: rgba(255, 255, 255, 0.1);
   background-clip: content-box;
+}
+
+.actions-tab span {
+  align-self: center;
+  margin-left: 0.2rem;
+}
+.actions-tab .loading-button {
+  position: absolute;
+}
+
+.actions-tab .tool-buttons {
+  padding: 0.2vw 0.2vw 0.2vw 0.2vw;
+  border-radius: 0;
+  cursor: pointer;
+  display: flex;
+  font-size: 0.7vw;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.8);
+  justify-content: center;
+  border: 0.05vw solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 2px 6px -3px rgba(255, 255, 255, 0.23);
+  transition: transform 0.25s cubic-bezier(0.7, 0.98, 0.86, 0.98),
+    box-shadow 0.25s cubic-bezier(0.7, 0.98, 0.86, 0.98);
+  background-color: #0a0a1a;
 }
 </style>
