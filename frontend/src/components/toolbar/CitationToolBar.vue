@@ -19,6 +19,9 @@
       <li v-on:click="center()">
         <img src="@/assets/toolbar/expand.png" alt="Center Icon" />
       </li>
+      <li v-on:click="chatbot()">
+        <img src="@/assets/toolbar/bote.png" alt="bot Icon" />
+      </li>
       <li v-on:click="switch_graph()">
         <img src="@/assets/toolbar/logout.png" alt="3D Icon" />
       </li>
@@ -82,6 +85,9 @@ export default {
     },
     center() {
       this.emitter.emit("centerGraph", { check: true, mode: this.mode });
+    },
+    chatbot() {
+      this.emitter.emit("openChatbot");
     },
   },
 };

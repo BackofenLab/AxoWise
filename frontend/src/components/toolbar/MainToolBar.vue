@@ -20,8 +20,11 @@
         <img src="@/assets/toolbar/expand.png" alt="Center Icon" />
       </li>
       <!-- <li v-on:click="threeview()">
-                <img src="@/assets/toolbar/3d-icon.png" alt="3D Icon">
-            </li> -->
+        <img src="@/assets/toolbar/3d-icon.png" alt="3D Icon">
+      </li> -->
+      <li v-on:click="chatbot()">
+        <img src="@/assets/toolbar/bote.png" alt="bot Icon" />
+      </li>
     </ul>
     <MenuWindow
       v-show="tools_active"
@@ -91,6 +94,9 @@ export default {
     },
     threeview() {
       this.emitter.emit("threeView");
+    },
+    chatbot() {
+      this.emitter.emit("openChatbot");
     },
   },
 };
