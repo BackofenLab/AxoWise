@@ -19,17 +19,30 @@ for i in range(0, total_rows, chunk_size):
     # Get the chunk of data
     df_chunk = df[i : i + chunk_size].copy()
 
-    print(f"Started generating embeddings of chunk {i//chunk_size + 1}")
+    print(f"Started generating embeddings of chunk {i // chunk_size + 1}")
 
-    # Step 4: Generate embeddings for each abstract in the chunk
-    embeddings = embedder.embed_documents(list(df_chunk["abstract"]))
+    # Initialize list to store embeddings for the whole chunk
+    embeddings = []
+
+    # Process the chunk in batches of 100 rows
+    for j in range(0, len(df_chunk), 100):
+        sub_chunk = df_chunk["abstract"].iloc[j : j + 100].tolist()
+
+        # Generate embeddings for the current sub-chunk
+        sub_embeddings = embedder.embed_documents(sub_chunk)
+
+        # Append the sub_embeddings to the main embeddings list
+        embeddings.extend(sub_embeddings)
+
+    # Add the embeddings to the dataframe
     df_chunk["embeddings"] = embeddings
-    # Step 5: Save each chunk as a separate CSV file
-    chunk_file_name = f"genes_abstract_with_embeddings_part_{i//chunk_size + 1}.gz"
+
+    # Save each chunk as a separate CSV file
+    chunk_file_name = f"genes_abstract_with_embeddings_part_{i // chunk_size + 1}.gz"
     df_chunk.to_csv(chunk_file_name, index=False)
 
     print(
-        f"Saved {chunk_file_name} with {len(df_chunk)} rows in {time.time()-time_begin}s."
+        f"Saved {chunk_file_name} with {len(df_chunk)} rows in {time.time() - time_begin}s."
     )
 
 print("Splitting and embedding generation completed.")
