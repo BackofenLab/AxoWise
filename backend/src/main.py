@@ -133,6 +133,13 @@ def abstract_summary():
     return Response(json.dumps(response), mimetype="application/json")
 
 
+@app.route("/api/subgraph/chatbot", methods=["POST"])
+def chatbot_response():
+    message = (request.form.get("message"),)
+    response = "Generating answer to:" + str(message)
+    return Response(json.dumps(response), mimetype="application/json")
+
+
 # ====================== Subgraph API ======================
 # request comes from home.js
 # TODO Refactor this

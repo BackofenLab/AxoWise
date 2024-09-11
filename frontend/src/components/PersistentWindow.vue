@@ -41,6 +41,9 @@ export default {
       userInput: "",
       messages: [{ sender: "Bot", text: "Hello! How can I assist you today?" }],
       windowCheck: false,
+      api: {
+        chatbot: "api/subgraph/chatbot",
+      },
     };
   },
   computed: {
@@ -130,15 +133,24 @@ export default {
     sendMessage() {
       if (this.userInput.trim() !== "") {
         this.messages.push({ sender: "User", text: this.userInput });
+        this.getAnswer(this.userInput);
         this.userInput = "";
-        // Add bot response
-        setTimeout(() => {
-          this.messages.push({
-            sender: "Bot",
-            text: "Let me get back to you on that!",
-          });
-        }, 1000);
+        // setTimeout(() => {
+        // }, 1000);
       }
+    },
+    getAnswer(input) {
+      let com = this;
+      let formData = new FormData();
+      formData.append("message", input);
+
+      //POST request for generating pathways
+      com.axios.post(com.api.chatbot, formData).then((response) => {
+        this.messages.push({
+          sender: "Bot",
+          text: response.data,
+        });
+      });
     },
     closeWindow() {
       this.windowCheck = false;
