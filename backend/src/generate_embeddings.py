@@ -10,7 +10,7 @@ embedder = OllamaEmbeddings(model="llama3.1")
 df = pd.read_csv("/mnt/workspace/for_graph_RAG/PMID_abstracts.csv")
 
 # Step 2: Define the chunk size (100,000 rows per CSV file)
-chunk_size = 500000
+chunk_size = 50000
 total_rows = len(df)
 
 # Step 3: Loop through the DataFrame in chunks of 100,000 rows
