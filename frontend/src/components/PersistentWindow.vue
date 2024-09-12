@@ -92,6 +92,7 @@ export default {
     });
 
     com.emitter.on("addToChatbot", (data) => {
+      console.log(data);
       this.addLink(data);
     });
   },

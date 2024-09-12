@@ -66,6 +66,12 @@
                       v-on:click="remove_set(entry)"
                     ></div>
                   </label>
+                  <label class="custom-icons">
+                    <div
+                      class="chatbot-image"
+                      v-on:click="addToChatbot(entry)"
+                    ></div>
+                  </label>
                 </td>
               </tr>
               <tr v-if="entry.information" class="expanded">
@@ -162,6 +168,14 @@ export default {
           com.loading_state = false;
           subset.actions = false;
         });
+    },
+    addToChatbot(subset) {
+      this.emitter.emit("addToChatbot", {
+        id: subset.name,
+        mode: "protein",
+        type: "subset",
+        data: this.activate_genes(subset.genes),
+      });
     },
     save_subset() {
       var com = this;
@@ -502,7 +516,7 @@ table tbody {
 .set-table td:last-child {
   font-size: 0.9vw;
   color: white;
-  width: 21.04%;
+  width: 32.04%;
   padding: 0.1vw;
   align-self: center;
 }
@@ -579,6 +593,17 @@ table tbody {
   background-color: white;
   -webkit-mask: url(@/assets/toolbar/settings-sliders.png) no-repeat center;
   mask: url(@/assets/toolbar/settings-sliders.png) no-repeat center;
+  mask-size: 0.9vw;
+  background-repeat: no-repeat;
+}
+
+.chatbot-image {
+  display: block;
+  width: 0.9vw;
+  height: 0.9vw;
+  background-color: white;
+  -webkit-mask: url(@/assets/toolbar/bote.png) no-repeat center;
+  mask: url(@/assets/toolbar/bote.png) no-repeat center;
   mask-size: 0.9vw;
   background-repeat: no-repeat;
 }

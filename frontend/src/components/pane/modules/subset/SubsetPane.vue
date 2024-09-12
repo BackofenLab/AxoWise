@@ -203,7 +203,6 @@ export default {
       com.hide = !com.hide;
     },
     call_chatbot(mode) {
-      console.log(this.active_subset);
       this.emitter.emit("addToChatbot", {
         id: "subset" + this.active_subset.length,
         mode: mode,
