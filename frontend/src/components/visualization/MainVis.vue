@@ -174,6 +174,8 @@ export default {
 
       com.reset();
 
+      this.$store.commit("assign_selection", { type: "protein", data: node });
+
       if (node == null) {
         com.resetFocus(sigma_instance.cameras[0]);
         return;
@@ -261,6 +263,8 @@ export default {
     },
     active_term(term) {
       const com = this;
+
+      console.log(term);
 
       this.$store.commit("assign_active_subset", term ? term.symbols : null);
 
@@ -1162,8 +1166,6 @@ export default {
         },
       });
 
-      console.log(sigma_instance);
-
       sigma_instance.graph.clear();
       sigma_instance.graph.read(com.gephi_data);
 
@@ -1202,13 +1204,8 @@ export default {
         com.nodeclick = false;
       });
 
-      console.log("Before query:", document.body.innerHTML);
-
       const sigmaMouse = document.querySelectorAll(".sigma-mouse");
-      console.log("sigmaMouse:", sigmaMouse);
-
       const sigmaParent = document.querySelectorAll(".sigma-parent");
-      console.log("sigmaParent:", sigmaParent);
 
       // set the values of the com object properties using the first element of each NodeList
       com.rectangular_select.canvas = sigmaMouse[0];

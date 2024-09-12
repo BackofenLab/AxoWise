@@ -135,8 +135,8 @@ def abstract_summary():
 
 @app.route("/api/subgraph/chatbot", methods=["POST"])
 def chatbot_response():
-    message = (request.form.get("message"),)
-    response = "Generating answer to:" + str(message)
+    message, background = (request.form.get("message"), request.form.get("background"))
+    response = "Generating answer to:" + str(message) + str(background)
     return Response(json.dumps(response), mimetype="application/json")
 
 

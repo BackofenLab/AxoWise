@@ -94,6 +94,11 @@
         src="@/assets/toolbar/logout.png"
         v-on:click="change_section('routing')"
       />
+      <img
+        class="icons"
+        src="@/assets/toolbar/bote.png"
+        v-on:click="call_chatbot(mode)"
+      />
     </div>
   </div>
 </template>
@@ -191,6 +196,14 @@ export default {
     },
     select_node(value) {
       this.emitter.emit("searchNode", { node: value, mode: this.mode });
+    },
+    call_chatbot(mode) {
+      this.emitter.emit("addToChatbot", {
+        id: this.active_node.attributes["Name"],
+        mode: mode,
+        type: "protein",
+        data: this.active_node,
+      });
     },
   },
 };

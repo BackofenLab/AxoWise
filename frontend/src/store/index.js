@@ -32,10 +32,14 @@ export const store = createStore({
     hiding_pathways: new Set(),
     citation_graph_data: null,
     context_dict: {},
+    selection: null,
   },
   mutations: {
     assign(state, value) {
       state.gephi_json = value;
+    },
+    assign_selection(state, value) {
+      state.selection = value;
     },
     assign_colorpalette(state, value) {
       state.colorpalette = value;

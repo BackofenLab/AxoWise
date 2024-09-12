@@ -23,7 +23,7 @@ const routes = [
     meta: { keepAlive: true }, // added meta to enable keep-alive
   },
   {
-    path: "/terms",
+    path: "/term",
     name: "terms-graph",
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route

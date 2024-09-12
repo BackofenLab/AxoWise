@@ -70,6 +70,11 @@
           src="@/assets/toolbar/settings-sliders.png"
           v-on:click="change_section('summary', active_node)"
         />
+        <img
+          class="icons"
+          src="@/assets/toolbar/bote.png"
+          v-on:click="call_chatbot('citation')"
+        />
       </div>
     </div>
   </div>
@@ -130,6 +135,14 @@ export default {
           com.await_load = false;
         });
       }
+    },
+    call_chatbot(mode) {
+      this.emitter.emit("addToChatbot", {
+        id: this.active_node.attributes["Name"],
+        mode: mode,
+        type: "protein",
+        data: this.active_node,
+      });
     },
   },
 };

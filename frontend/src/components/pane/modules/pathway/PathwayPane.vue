@@ -71,6 +71,11 @@
         src="@/assets/toolbar/proteinselect.png"
         v-on:click="change_section('connections')"
       />
+      <img
+        class="icons"
+        src="@/assets/toolbar/bote.png"
+        v-on:click="call_chatbot(mode)"
+      />
     </div>
   </div>
 </template>
@@ -169,6 +174,14 @@ export default {
         com.active_node.attributes["Ensembl ID"]
       );
       this.$router.push("protein");
+    },
+    call_chatbot(mode) {
+      this.emitter.emit("addToChatbot", {
+        id: this.active_node.attributes["Name"],
+        mode: mode,
+        type: "protein",
+        data: this.active_node,
+      });
     },
   },
 };

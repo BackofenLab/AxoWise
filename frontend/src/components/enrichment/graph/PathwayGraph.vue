@@ -128,7 +128,7 @@ export default {
         graph: entry.graph,
       });
       if (this.mode == "term") this.emitter.emit("graphChanged");
-      else this.$router.push("terms");
+      else this.$router.push("term");
     },
     remove_graph(entry) {
       if (!this.favourite_graphs.has(entry.id)) {

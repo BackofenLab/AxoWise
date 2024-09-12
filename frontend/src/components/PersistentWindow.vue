@@ -18,17 +18,41 @@
           msg.sender === 'User' ? 'user-message' : 'bot-message',
         ]"
       >
+        <div v-if="msg.data">
+          <span
+            v-for="(element, index) in msg.data"
+            :key="index"
+            class="small-tag"
+            @click="searchInput(element)"
+          >
+            {{ element.id }}
+          </span>
+        </div>
         <p>{{ msg.text }}</p>
       </div>
     </div>
 
-    <div class="chat-input">
-      <input
-        v-model="userInput"
-        @keydown.enter="sendMessage"
-        placeholder="Send a message"
+    <div class="chat-input-container">
+      <!-- Editable div with contenteditable attribute -->
+      <div
+        ref="editableDiv"
+        id="input_chatbot"
+        contenteditable="true"
+        @keydown.enter.prevent="sendMessage"
         class="input-box"
-      />
+      ></div>
+
+      <div class="tag-container" v-if="tags.length">
+        <span
+          v-for="(tag, index) in tags"
+          :key="index"
+          class="tag"
+          @click="searchInput(tag)"
+        >
+          {{ tag.id }}
+          <span class="remove-tag" @click.stop="removeTag(index)">x</span>
+        </span>
+      </div>
     </div>
   </div>
 </template>
@@ -41,6 +65,7 @@ export default {
       userInput: "",
       messages: [{ sender: "Bot", text: "Hello! How can I assist you today?" }],
       windowCheck: false,
+      tags: [],
       api: {
         chatbot: "api/subgraph/chatbot",
       },
@@ -65,8 +90,33 @@ export default {
     com.emitter.on("openChatbot", () => {
       com.windowCheck = !com.windowCheck;
     });
+
+    com.emitter.on("addToChatbot", (data) => {
+      this.addLink(data);
+    });
   },
   methods: {
+    addLink(tag) {
+      if (!this.windowCheck) this.windowCheck = true;
+      if (tag && !this.tags.includes(tag)) {
+        this.tags.push(tag);
+      }
+    },
+    removeTag(index) {
+      // Remove the tag at the given index
+      this.tags.splice(index, 1);
+    },
+    searchInput(tag) {
+      if (tag.type == "protein") {
+        this.$router.push(tag.mode);
+        this.emitter.emit("searchNode", { node: tag.data, mode: tag.mode });
+      } else if (tag.type == "term") {
+        this.emitter.emit("searchEnrichment", tag.data);
+      } else if (tag.type == "subset") {
+        this.$router.push(tag.mode);
+        this.emitter.emit("searchSubset", { subset: tag.data, mode: tag.mode });
+      }
+    },
     dragElement(elmnt) {
       var pos1 = 0,
         pos2 = 0,
@@ -131,24 +181,35 @@ export default {
       }
     },
     sendMessage() {
-      if (this.userInput.trim() !== "") {
-        this.messages.push({ sender: "User", text: this.userInput });
-        this.getAnswer(this.userInput);
-        this.userInput = "";
-        // setTimeout(() => {
-        // }, 1000);
+      const inputDiv = this.$refs.editableDiv;
+      const userInput = inputDiv.innerText.trim();
+      if (userInput !== "") {
+        const messageTags = [...this.tags];
+        let message = { text: userInput, data: messageTags };
+
+        this.messages.push({
+          sender: "User",
+          text: userInput,
+          data: messageTags,
+        });
+        this.getAnswer(message);
+        inputDiv.innerText = "";
       }
     },
-    getAnswer(input) {
+    getAnswer(message) {
       let com = this;
       let formData = new FormData();
-      formData.append("message", input);
+      formData.append("message", message.text);
+      formData.append("background", message.data);
+
+      const responseTags = [...this.tags];
 
       //POST request for generating pathways
       com.axios.post(com.api.chatbot, formData).then((response) => {
         this.messages.push({
           sender: "Bot",
           text: response.data,
+          data: responseTags,
         });
       });
     },
@@ -211,7 +272,11 @@ export default {
   margin-bottom: 10px;
   border-radius: 8px;
   max-width: 80%;
+  word-wrap: break-word; /* Ensure long words or links wrap */
+  word-break: break-word; /* Break long words */
+  white-space: pre-wrap; /* Preserve formatting like newlines */
   line-height: 1.4;
+  cursor: default;
 }
 
 .user-message {
@@ -226,7 +291,7 @@ export default {
   border: 1px solid #e0e0e0;
 }
 
-.chat-input {
+.chat-input-container {
   padding: 10px 15px;
   background-color: rgb(107, 107, 107);
   border-top: 1px solid #e0e0e0;
@@ -246,5 +311,38 @@ export default {
 
 .input-box::placeholder {
   color: rgb(237, 235, 235);
+}
+
+.tag-container {
+  padding: 10px 15px;
+  background-color: rgb(107, 107, 107);
+}
+
+.tag {
+  display: inline-block;
+  background-color: #555; /* Darker background color */
+  color: #fff; /* White text for better contrast */
+  padding: 5px 8px; /* Smaller padding */
+  font-size: 14px; /* Smaller font size */
+  border-radius: 8px; /* Slightly smaller rounded corners */
+  margin: 0 5px 5px 0;
+  cursor: pointer;
+}
+
+.small-tag {
+  display: inline-block;
+  background-color: #555; /* Darker background color */
+  color: #fff; /* White text for better contrast */
+  padding: 3px 6px; /* Smaller padding */
+  font-size: 10px; /* Smaller font size */
+  border-radius: 8px; /* Slightly smaller rounded corners */
+  margin: 0 5px 5px 0;
+  cursor: pointer;
+}
+
+.remove-tag {
+  cursor: pointer;
+  color: rgb(175, 175, 175); /* Slightly darker red for remove button */
+  font-size: 12px; /* Smaller "x" size */
 }
 </style>

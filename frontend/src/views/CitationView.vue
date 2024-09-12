@@ -261,7 +261,7 @@ export default {
     swap_view(entry) {
       if (entry == "term") {
         this.$store.state.term_graph_data
-          ? this.$router.push("terms")
+          ? this.$router.push("term")
           : alert(
               "Please generate first a term graph via the enrichment section on protein view."
             );

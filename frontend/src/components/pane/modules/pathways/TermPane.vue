@@ -102,6 +102,11 @@
         src="@/assets/toolbar/proteinselect.png"
         v-on:click="change_section('connections')"
       />
+      <img
+        class="icons"
+        src="@/assets/toolbar/bote.png"
+        v-on:click="call_chatbot(mode)"
+      />
       <!-- <img  class="icons" src="@/assets/toolbar/logout.png" v-on:click="change_section(!tool_active,'routing')"> -->
     </div>
   </div>
@@ -177,7 +182,7 @@ export default {
       }
 
       this.$store.commit("assign_active_enrichment_node", com.active_term);
-      this.$router.push("terms");
+      this.$router.push("term");
     },
     select_node(value) {
       this.emitter.emit("searchNode", { node: value, mode: this.mode });
@@ -195,6 +200,15 @@ export default {
         mode: this.mode,
       });
       com.hide = !com.hide;
+    },
+    call_chatbot(mode) {
+      console.log(this.active_term);
+      this.emitter.emit("addToChatbot", {
+        id: this.active_term.id,
+        mode: mode,
+        type: "term",
+        data: this.active_term,
+      });
     },
   },
   mounted() {

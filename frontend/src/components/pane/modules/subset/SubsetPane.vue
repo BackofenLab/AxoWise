@@ -70,6 +70,11 @@
         src="@/assets/toolbar/proteinselect.png"
         v-on:click="change_section('connections')"
       />
+      <img
+        class="icons"
+        src="@/assets/toolbar/bote.png"
+        v-on:click="call_chatbot(mode)"
+      />
       <!-- <img  class="icons" src="@/assets/toolbar/logout.png" v-on:click="change_section(!tool_active,'routing')"> -->
     </div>
   </div>
@@ -197,7 +202,15 @@ export default {
       });
       com.hide = !com.hide;
     },
-
+    call_chatbot(mode) {
+      console.log(this.active_subset);
+      this.emitter.emit("addToChatbot", {
+        id: "subset" + this.active_subset.length,
+        mode: mode,
+        type: "subset",
+        data: this.active_subset,
+      });
+    },
     /**
      * Calling the procedure in component MainVis to highlight a specific node
      * @param {dict} value - A dictionary of a single node
