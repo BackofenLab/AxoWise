@@ -52,20 +52,24 @@
         v-show="tool_active && active_section == 'information'"
       >
         <div class="subsection-header">
-          <span>informations</span>
+          <span>information</span>
         </div>
-        <div class="subsection-main colortype"></div>
+        <div class="subsection-main colortype">
+          <PathwayStatistics :active_term="active_term"></PathwayStatistics>
+        </div>
       </div>
       <div
         id="network"
         class="subsection"
-        v-show="tool_active && active_section == 'statistics'"
+        v-if="
+          tool_active && active_section == 'statistics' && active_term !== null
+        "
       >
         <div class="subsection-header">
-          <span>statistics</span>
+          <span>parameter selection</span>
         </div>
         <div class="subsection-main colortype">
-          <PathwayStatistics :active_term="active_term"></PathwayStatistics>
+          <PathwayLinks :active_term="active_term" :mode="mode"></PathwayLinks>
         </div>
       </div>
       <div
@@ -115,6 +119,7 @@
 <script>
 import PathwayStatistics from "@/components/pane/modules/pathways/PathwayStatistics.vue";
 import PathwayConnections from "@/components/pane/modules/pathways/PathwayConnections.vue";
+import PathwayLinks from "@/components/pane/modules/pathways/PathwayLinks.vue";
 
 export default {
   name: "TermPane",
@@ -127,6 +132,7 @@ export default {
   components: {
     PathwayStatistics,
     PathwayConnections,
+    PathwayLinks,
   },
   data() {
     return {

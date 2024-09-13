@@ -535,6 +535,7 @@ export default {
       return termlist;
     },
     load_data() {
+      console.log("Links");
       this.parameter_data = this.active_subset.selection
         ? this.active_subset.genes
         : this.active_subset;

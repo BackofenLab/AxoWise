@@ -1143,6 +1143,56 @@ export default {
         }
       );
     },
+    color_term(term) {
+      const com = this;
+
+      this.$store.commit("assign_active_subset", term ? term : null);
+
+      const proteins = new Set(term);
+      const highlighted_edges = new Set();
+      const graph = sigma_instance.graph;
+
+      graph.nodes().forEach(function (node) {
+        if (proteins.has(node.attributes["Name"])) {
+          node.color = "rgb(255, 255, 255)";
+          node.active = true;
+        } else {
+          node.color = "rgb(0, 100, 0)";
+          node.active = false;
+        }
+      });
+
+      graph.edges().forEach(function (edge) {
+        const source = graph.getNodeFromIndex(edge.source);
+        const target = graph.getNodeFromIndex(edge.target);
+        const source_present = proteins.has(source.attributes["Name"]);
+        const target_present = proteins.has(target.attributes["Name"]);
+
+        if (
+          (source_present && !target_present) ||
+          (!source_present && target_present)
+        ) {
+          edge.color = "rgba(220, 255, 220," + com.highlight_opacity + ")";
+          highlighted_edges.add(edge);
+        } else if (source_present && target_present) {
+          edge.color = "rgba(255, 255, 255," + com.highlight_opacity + ")";
+          highlighted_edges.add(edge);
+        } else {
+          edge.color = "rgba(0, 100, 0," + com.base_opacity + ")";
+        }
+      });
+
+      this.$store.commit("assign_highlightedSet", highlighted_edges);
+
+      if (com.graph_state) {
+        com.unconnected_nodes.forEach(function (n) {
+          var node = graph.getNodeFromIndex(n.id);
+          node.hidden = true;
+        });
+      }
+
+      sigma_instance.refresh();
+    },
   },
   mounted() {
     var com = this;
@@ -1237,6 +1287,10 @@ export default {
       this.emitter.on("searchSubset", (state) => {
         if (state.mode == "protein")
           this.$emit("active_subset_changed", state.subset);
+      });
+
+      this.emitter.on("filterPathway", (state) => {
+        if (state.mode == "protein") this.color_term(state.subset);
       });
 
       this.emitter.on("resizeCircle", () => {

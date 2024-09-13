@@ -28,7 +28,11 @@
       <div
         id="network"
         class="subsection"
-        v-if="tool_active && active_section == 'statistics'"
+        v-if="
+          tool_active &&
+          active_section == 'statistics' &&
+          active_subset !== null
+        "
       >
         <div class="subsection-header">
           <span>parameter selection</span>
