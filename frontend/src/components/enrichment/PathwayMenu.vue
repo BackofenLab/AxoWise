@@ -18,9 +18,10 @@
         @filtered_terms_changed="filtered_terms = $event"
       ></PathwayList>
       <PathwaySet
-        v-show="active_function === 'set'"
+        v-if="active_function === 'set'"
         :gephi_data="gephi_data"
         :api="api"
+        :mode="mode"
       ></PathwaySet>
       <PathwayTools
         v-if="active_function === 'graph'"
@@ -46,7 +47,7 @@ import PathwaySet from "@/components/enrichment/PathwaySet.vue";
 
 export default {
   name: "PathwayMenu",
-  props: ["gephi_data", "active_term", "active_function", "sorted"],
+  props: ["gephi_data", "active_term", "active_function", "sorted", "mode"],
   components: {
     PathwayList,
     PathwayTools,

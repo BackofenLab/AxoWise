@@ -225,13 +225,13 @@ export default {
 
       if (subset == null) {
         com.reset();
-        this.$store.commit("assign_active_pgraph_subset", null);
+        this.$store.commit("assign_active_cgraph_subset", null);
         return;
       } else {
         if (subset.selection) subset = subset.genes;
         proteins = new Set(subset.map((node) => node.attributes["Ensembl ID"]));
         this.$store.commit(
-          "assign_active_pgraph_subset",
+          "assign_active_cgraph_subset",
           subset.map((node) => node.attributes["Name"])
         );
       }

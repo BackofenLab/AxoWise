@@ -5,22 +5,31 @@
         <ul>
           <li
             class="tab"
-            :class="{ tabSelected: active_function_tab1 === 'list' }"
-            v-on:click="active_function_tab1 = 'list'"
+            :class="{ tabSelected: active_function_tab1 === 'set' }"
+            v-on:click="active_function_tab1 = 'set'"
           >
-            <a href="#">list</a>
+            <a href="#">subset</a>
           </li>
         </ul>
       </div>
-      <PathwayGraphMenu
-        :term_data="term_data"
+      <PathwayMenu
+        v-show="active_function_tab1 == 'set'"
+        :gephi_data="term_data"
         :sorted="'top'"
+        :mode="mode"
         :active_function="active_function_tab1"
-      ></PathwayGraphMenu>
+      ></PathwayMenu>
     </div>
     <div class="lower-block">
       <div class="tab-system">
         <ul>
+          <li
+            class="tab"
+            :class="{ tabSelected: active_function_tab2 === 'list' }"
+            v-on:click="active_function_tab2 = 'list'"
+          >
+            <a href="#">list</a>
+          </li>
           <li
             class="tab"
             :class="{ tabSelected: active_function_tab2 === 'graph' }"
@@ -41,17 +50,20 @@
 
 <script>
 import PathwayGraphMenu from "@/components/pathwaytools/PathwayGraphMenu.vue";
+import PathwayMenu from "@/components/enrichment/PathwayMenu.vue";
 
 export default {
   name: "VerticalPanePathway",
   props: ["term_data"],
   components: {
     PathwayGraphMenu,
+    PathwayMenu,
   },
   data() {
     return {
-      active_function_tab1: "list",
-      active_function_tab2: "graph",
+      active_function_tab1: "set",
+      active_function_tab2: "list",
+      mode: "term",
     };
   },
   mounted() {},

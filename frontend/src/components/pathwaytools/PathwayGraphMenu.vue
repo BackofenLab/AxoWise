@@ -8,7 +8,6 @@
   >
     <div class="pathwaybar">
       <PathwayGraphList
-        v-if="sorted == 'top'"
         v-show="active_function === 'list'"
         :term_data="term_data"
       ></PathwayGraphList>

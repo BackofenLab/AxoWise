@@ -16,9 +16,20 @@
         />
       </div>
     </div>
-    <div class="pathway-apply-section">
+    <div class="list-section">
       <div class="sorting">
-        <a class="enrichment_filter">saved subsets</a>
+        <a
+          class="pubid_filter"
+          v-on:click="
+            sort_alph = sort_alph === 'asc' ? 'dsc' : 'asc';
+            sort_pr = '';
+            sort_cb = '';
+            sort_y = '';
+          "
+          >subset</a
+        >
+        <a class="nodes_filter">nodes</a>
+        <a class="view_filter">view</a>
       </div>
 
       <div
@@ -44,22 +55,33 @@
                 <td>
                   <div class="pathway-text">
                     <input type="text" v-model="entry.name" class="empty" />
+                  </div>
+                </td>
+                <td>
+                  <div class="pathway-text">
                     <span>({{ entry.genes.length }})</span>
                   </div>
                 </td>
                 <td>
-                  <label class="custom-icons">
+                  <div class="pathway-text">
+                    <span>{{ entry.view }}</span>
+                  </div>
+                </td>
+                <td>
+                  <label class="custom-icons" v-if="entry.view == 'protein'">
                     <div
                       class="functions-image"
                       v-on:click="entry.information = !entry.information"
                     ></div>
                   </label>
-                  <label class="custom-icons">
+                  <label class="custom-icons" v-if="entry.view == 'protein'">
                     <div
                       class="expand-image"
                       v-on:click="entry.actions = !entry.actions"
                     ></div>
                   </label>
+                </td>
+                <td>
                   <label class="custom-icons">
                     <div
                       class="delete-image"
@@ -102,7 +124,7 @@
 <script>
 export default {
   name: "PathwaySet",
-  props: ["gephi_data", "api"],
+  props: ["gephi_data", "api", "mode"],
   emits: ["term_set_changed"],
   data() {
     return {
@@ -121,14 +143,19 @@ export default {
     },
     filt_abstracts() {
       var com = this;
-      var filtered = [...this.set_dict];
+      var filtered = [...this.$store.state.favourite_subsets];
 
       if (com.search_raw !== "") {
         // If search term is not empty, filter by search term
         var regex = new RegExp(com.regex, "i");
         filtered = filtered.filter(function (set) {
-          return regex.test(set.stats.join(" "));
+          if (set.stats != null) {
+            return regex.test(set.stats.join(" ")) || regex.test(set.name);
+          } else {
+            return regex.test(set.name);
+          }
         });
+        console.log(filtered);
       }
 
       return new Set(filtered);
@@ -164,7 +191,7 @@ export default {
             (t1, t2) => t1.fdr_rate - t2.fdr_rate
           );
           subset.stats = com.get_significant_words(response.data);
-          subset.name = subset.name + "(enriched)";
+          subset.name = subset.name + " (e)";
           com.loading_state = false;
           subset.actions = false;
         });
@@ -179,14 +206,25 @@ export default {
     },
     save_subset() {
       var com = this;
-      let genes = com.$store.state.active_subset;
+      console.log(com.mode);
+      let genes;
+      if (com.mode == "protein") {
+        genes = com.$store.state.active_subset;
+      } else if (com.mode == "term") {
+        genes = com.$store.state.p_active_subset;
+      } else {
+        genes = com.$store.state.c_active_subset;
+      }
+
+      console.log(genes);
 
       if (!genes) return;
 
-      com.set_dict.add({
+      this.$store.commit("assign_subset", {
         name: `subset ${com.layer}`,
         genes: genes,
         terms: null,
+        view: com.mode,
         abstracts: null,
         status: false,
         information: false,
@@ -198,20 +236,22 @@ export default {
     remove_set(entry) {
       if (entry.status) this.emitter.emit("enrichTerms", null);
       this.set_dict.delete(entry);
+      this.$store.commit("delete_subset", entry);
     },
     set_active(entry) {
-      for (var layer of this.set_dict) {
+      for (var layer of this.$store.state.favourite_subsets) {
         if (layer != entry) layer.status = false;
       }
 
+      this.$router.push(entry.view);
       if (!entry.status) {
         this.emitter.emit("searchSubset", {
           subset: this.activate_genes(entry.genes),
-          mode: "protein",
+          mode: entry.view,
         });
         this.emitter.emit("enrichTerms", entry.terms);
       } else {
-        this.emitter.emit("searchSubset", { subset: null, mode: "protein" });
+        this.emitter.emit("searchSubset", { subset: null, mode: entry.view });
         this.emitter.emit("enrichTerms", null);
       }
       entry.status = !entry.status;
@@ -469,6 +509,16 @@ export default {
   text-overflow: ellipsis;
   margin-left: 2%;
 }
+
+.nodes_filter {
+  position: absolute;
+  left: 35%;
+}
+.view_filter {
+  position: absolute;
+  left: 50%;
+}
+
 #pathways-set .pathway-text input[type="text"] {
   width: 100%;
   font-size: 0.85vw;
@@ -503,32 +553,43 @@ table tbody {
   width: 100%;
 }
 .set-table td:first-child {
-  width: 15.41%;
+  width: 3.41%;
   align-self: center;
 }
 .set-table td:nth-child(2) {
   color: #fff;
   font-size: 0.9vw;
-  width: 62%;
+  width: 30%;
+  padding: 0 0 0 2px;
   overflow: hidden;
+  align-self: center;
+}
+.set-table td:nth-child(3) {
+  color: #fff;
+  font-size: 0.9vw;
+  width: 15%;
+  padding: 0 0 0 2px;
+  overflow: hidden;
+  align-self: center;
+}
+.set-table td:nth-child(4) {
+  color: #fff;
+  font-size: 0.9vw;
+  width: 23%;
+  padding: 0 0 0 2px;
+  overflow: hidden;
+  align-self: center;
+}
+.set-table td:nth-child(5) {
+  font-size: 0.7vw;
+  color: white;
+  width: 13%;
   align-self: center;
 }
 .set-table td:last-child {
-  font-size: 0.9vw;
+  font-size: 0.7vw;
   color: white;
-  width: 32.04%;
-  padding: 0.1vw;
-  align-self: center;
-}
-
-.expanded td:first-child,
-.expanded td:nth-child(2),
-.expanded td:nth-child(3),
-.expanded td:nth-child(4),
-.expanded td:last-child {
-  color: #fff;
-  width: 20%;
-  overflow: hidden;
+  width: 13%;
   align-self: center;
 }
 
@@ -546,6 +607,21 @@ table tbody {
   cursor: default;
 }
 
+.checked {
+  background-color: #ffa500;
+}
+
+.expanded td:first-child,
+.expanded td:nth-child(2),
+.expanded td:nth-child(3),
+.expanded td:nth-child(4),
+.expanded td:last-child {
+  color: #fff;
+  width: 20%;
+  overflow: hidden;
+  align-self: center;
+}
+
 .custom-icons {
   position: relative;
   display: inline-block;
@@ -558,8 +634,8 @@ table tbody {
   width: 0.9vw;
   height: 0.9vw;
   background-color: white;
-  -webkit-mask: url(@/assets/pathwaybar/active.png) no-repeat center;
-  mask: url(@/assets/pathwaybar/active.png) no-repeat center;
+  -webkit-mask: url(@/assets/pathwaybar/star-solid.svg) no-repeat center;
+  mask: url(@/assets/pathwaybar/star-solid.svg) no-repeat center;
   mask-size: 0.9vw;
   background-repeat: no-repeat;
 }

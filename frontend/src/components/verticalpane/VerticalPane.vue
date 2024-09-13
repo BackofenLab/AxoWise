@@ -32,6 +32,7 @@
         v-show="active_function_tab1 == 'set'"
         :gephi_data="gephi_data"
         :sorted="'top'"
+        :mode="mode"
         :active_function="active_function_tab1"
         @active_term_changed="active_term = $event"
         @active_layer_changed="active_layer = $event"
@@ -133,6 +134,7 @@ export default {
       dcoloumns: this.$store.state.dcoloumns,
       active_function_tab1: "set",
       active_function_tab2: "list",
+      mode: "protein",
     };
   },
   mounted() {},

@@ -29,10 +29,12 @@ export const store = createStore({
     node_modul_index_term: new Set(),
     active_subset: null,
     p_active_subset: null,
+    c_active_subset: null,
     hiding_pathways: new Set(),
     citation_graph_data: null,
     context_dict: {},
     selection: null,
+    favourite_subsets: new Set(),
   },
   mutations: {
     assign(state, value) {
@@ -40,6 +42,12 @@ export const store = createStore({
     },
     assign_selection(state, value) {
       state.selection = value;
+    },
+    assign_subset(state, value) {
+      state.favourite_subsets.add(value);
+    },
+    delete_subset(state, value) {
+      state.favourite_subsets.delete(value);
     },
     assign_colorpalette(state, value) {
       state.colorpalette = value;
@@ -49,6 +57,9 @@ export const store = createStore({
     },
     assign_active_pgraph_subset(state, value) {
       state.p_active_subset = value;
+    },
+    assign_active_cgraph_subset(state, value) {
+      state.c_active_subset = value;
     },
     assign_term_graph(state, value) {
       state.term_graph_data = value;
