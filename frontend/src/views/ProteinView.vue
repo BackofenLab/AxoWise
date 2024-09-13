@@ -263,7 +263,7 @@ export default {
 
 #view {
   position: fixed;
-  left: 50%;
+  left: 30%;
   top: 0;
   margin: 1%;
   z-index: 999;

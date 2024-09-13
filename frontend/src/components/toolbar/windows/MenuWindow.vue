@@ -129,12 +129,14 @@ export default {
   display: flex;
 }
 
-.menu-window [type="checkbox"] {
+.menu-window [type="checkbox"],
+.context-check [type="checkbox"] {
   display: none;
   z-index: 0;
 }
 
-.menu-window [type="checkbox"] + label {
+.menu-window [type="checkbox"] + label,
+.context-check [type="checkbox"] + label {
   display: block;
   cursor: pointer;
   font-family: sans-serif;
@@ -144,7 +146,8 @@ export default {
   right: 15%;
   margin-top: 0.7%;
 }
-.menu-window [type="checkbox"] + label:before {
+.menu-window [type="checkbox"] + label:before,
+.context-check [type="checkbox"] + label:before {
   width: 1.8vw;
   height: 0.9vw;
   border-radius: 30px;
@@ -154,7 +157,8 @@ export default {
   z-index: 5;
   position: absolute;
 }
-.menu-window [type="checkbox"] + label:after {
+.menu-window [type="checkbox"] + label:after,
+.context-check [type="checkbox"] + label:after {
   width: 0.7vw;
   height: 0.7vw;
   border-radius: 30px;
