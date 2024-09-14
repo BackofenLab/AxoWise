@@ -224,3 +224,42 @@ def _convert_to_connection_info_score(
             score.append(float(row["score"]))
 
     return nodes, source, target, score
+
+
+def get_abstracts(driver, species, query: list) -> list:
+    neo4j_query = f"""
+        MATCH (n:TG:{species})-[:REFERENCES]->(a:abstract)
+        WHERE n.SYMBOL in {query}
+        WITH percentileCont(a.times_cited, 0.85) AS top_15_threshold, count(a) as total_abstracts
+
+        // Case 1: More than 2000 abstracts are returned. Take the top 15% and limit to 2000 hits
+        MATCH (n:TG:{species})-[:REFERENCES]->(a:abstract)
+        WHERE total_abstracts >= 2000 AND n.SYMBOL in {query} AND a.times_cited >= top_15_threshold
+        RETURN DISTINCT a.PMID AS PMID,
+        a.abstract AS abstract,
+        a.title AS title,
+        a.times_cited AS times_cited,
+        a.published AS published,
+        a.cited_by AS citations,
+        a.abstractEmbedding AS abstractEmbedding
+        ORDER BY a.times_cited DESC LIMIT 2000
+        UNION
+
+        // Case 2: Less than 2000 abstracts are returned. Return all abstracts
+        MATCH (n:TG:{species})-[:REFERENCES]->(a:abstract)
+        WHERE n.SYMBOL in {query}
+        WITH count(a) as total_abstracts
+
+        MATCH (n:TG:{species})-[:REFERENCES]->(a:abstract)
+        WHERE total_abstracts < 2000 AND n.SYMBOL in {query}
+        RETURN DISTINCT a.PMID AS PMID,
+        a.abstract AS abstract,
+        a.title AS title,
+        a.times_cited AS times_cited,
+        a.published AS published,
+        a.cited_by AS citations,
+        a.abstractEmbedding AS abstractEmbedding
+        """
+    with driver.session() as session:
+        result = session.run(neo4j_query)
+        return result.data()

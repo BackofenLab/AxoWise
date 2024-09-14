@@ -18,7 +18,7 @@ import queries
 from dotenv import load_dotenv
 from flask import Flask, Response, request, send_from_directory
 from summarization import article_graph as summarization
-from summarization.model import overall_summary
+from summarization.model import create_summary_RAG, overall_summary
 from util.stopwatch import Stopwatch
 from werkzeug.middleware.proxy_fix import ProxyFix
 
@@ -90,15 +90,20 @@ def proteins_enrichment():
 # Request comes from ContextSection.vue
 @app.route("/api/subgraph/context", methods=["POST"])
 def proteins_context():
+    driver = database.get_driver()
     base, context, rank, limit = (
         request.form.get("base"),
         request.form.get("context"),
         request.form.get("rank"),
         500,
     )
-    query = base + " " + context
+    query = base.split(" ")
+    query = [i.upper() for i in query]
+    print(query)
     # in-house context summary
-    edges, nodes = summarization.create_citations_graph(limit, query)
+    edges, nodes = summarization.create_citations_graph(
+        driver, species="Mus_Musculus", search_query=query
+    )
     graph = citation_graph.get_citation_graph(nodes, edges)
     return Response(graph, mimetype="application/json")
 
@@ -137,7 +142,51 @@ def abstract_summary():
 def chatbot_response():
     message, background = (request.form.get("message"), request.form.get("background"))
     response = "Generating answer to:" + str(message) + str(background)
-    return Response(json.dumps(response), mimetype="application/json")
+    data = json.loads(background)
+    pmid_embedding_list = []
+    pmid_embedding = {}
+    pmid_abstract = {}
+    protein_list = []
+    funct_terms_list = []
+    for item in data:
+        mode = item["mode"]
+        entries = [item["data"]] if item["type"] != "subset" else item["data"]
+        if mode == "citation":
+            pmid_embedding_list.extend(
+                [
+                    {
+                        "PMID": j["attributes"]["Name"],
+                        "embedding": j["attributes"]["embedding"],
+                    }
+                    for j in entries
+                ]
+            )
+            pmid_embedding.update(
+                {j["attributes"]["Name"]: j["attributes"]["embedding"] for j in entries}
+            )
+            pmid_abstract.update(
+                {j["attributes"]["Name"]: j["attributes"]["Abstract"] for j in entries}
+            )
+        elif mode == "protein":
+            protein_list.extend([j["attributes"]["Name"] for j in entries])
+        else:
+            funct_terms_list.extend([j["label"] for j in entries])
+
+    embedded_query = summarization.generate_embedding(str(message))
+    top_n_similiar = summarization.top_n_similar_vectors(
+        embedded_query, pmid_embedding_list, 6
+    )
+    query = ""
+    for i in top_n_similiar:
+        query += f"PMID: {i} Abstract: {pmid_abstract[i]} "
+    testing = create_summary_RAG(
+        str(message),
+        proteins=protein_list,
+        funct_terms=funct_terms_list,
+        abstract=query,
+    )
+    {"message": testing, "pmids": top_n_similiar}
+    return Response(json.dumps(testing), mimetype="application/json")
 
 
 # ====================== Subgraph API ======================

@@ -2,8 +2,41 @@ import time
 from ast import literal_eval
 
 import leidenalg as la
-import summarization.meilisearch_inhouse.meilisearch_query as query
+import numpy as np
 from igraph import Graph
+from langchain_ollama.embeddings import OllamaEmbeddings
+from queries import get_abstracts
+
+
+def cosine_similarity(vec1, vec2):
+    """Compute cosine similarity between two vectors."""
+    dot_product = np.dot(vec1, vec2)
+    norm_vec1 = np.linalg.norm(vec1)
+    norm_vec2 = np.linalg.norm(vec2)
+    return dot_product / (norm_vec1 * norm_vec2)
+
+
+def generate_embedding(query):
+    embedder = OllamaEmbeddings(model="llama3.1")
+    embeddings = embedder.embed_query(query)
+    return embeddings
+
+
+def top_n_similar_vectors(input_vector, vectors, n):
+    """Find the top n most similar vectors to the input_vector."""
+    similarities = []
+
+    for vector in vectors:
+        similiars = cosine_similarity(input_vector, vector["embedding"])
+        similarities.append((vector["PMID"], similiars))
+
+    # Sort by similarity score in descending order
+    similarities.sort(key=lambda x: x[1], reverse=True)
+
+    # Get the top n similar vectors
+    top_n = similarities[:n]
+    top_n = [i[0] for i in top_n]
+    return top_n
 
 
 def citations_pagerank(graph):
@@ -42,7 +75,7 @@ def communities_sorted_by_pagerank(pagerank_dict):
     return [int(i[0]) for i in top_k_communities]
 
 
-def create_citations_graph(limit, search_query):
+def create_citations_graph(driver, species, search_query):
     """
     Return a tuple of(networkit_graph, node_mapping)
 
@@ -53,10 +86,9 @@ def create_citations_graph(limit, search_query):
 
     begin = time.time()
 
-    # Call Meilisearch to retrieve results
-    file = query.get_results(limit, search_query)
-    print(f"Meilisearch: {time.time() - begin}")
-
+    # Call neo4j to retrieve results
+    results = get_abstracts(driver, species, search_query)
+    print(f"Neo4j for abstracts: {time.time() - begin}")
     # Initialize an empty directed graph
     graph = Graph(directed=True)
     abstracts = {}
@@ -65,19 +97,19 @@ def create_citations_graph(limit, search_query):
     node_mapping = {}
     pmids = set()
     integer_id = 0
-    hits = file["hits"]
     node_names = []
     edges = []
     nodes = []
 
     # Process hits and add nodes to the graph, also add abstracts to mapping
-    for hit in hits:
-        pmid = str(hit["PubMed ID"])
+    for hit in results:
+        pmid = str(hit["PMID"])
         if pmid not in pmids:
-            year = hit["Published"]
-            abstract = hit["Abstract"]
-            title = hit["Title"]
-            citations = hit["Cited number"]
+            year = hit["published"]
+            abstract = hit["abstract"]
+            title = hit["title"]
+            embedding = hit["abstractEmbedding"]
+            citations = hit["times_cited"]
             abstracts[pmid] = {
                 "abstract": abstract,
                 "year": year,
@@ -94,13 +126,14 @@ def create_citations_graph(limit, search_query):
                     "year": year,
                     "cited_by": citations,
                     "title": title,
+                    "embedding": embedding,
                 }
             )
 
     # Add edges to the graph
-    for hit in hits:
-        pmid = str(hit["PubMed ID"])
-        cited_by = literal_eval(hit["Cited by"])
+    for hit in results:
+        pmid = str(hit["PMID"])
+        cited_by = literal_eval(hit["citations"])
         target = node_mapping[pmid]
         for source in cited_by:
             if str(source) in node_mapping:

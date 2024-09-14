@@ -5,7 +5,7 @@ import ollama
 
 def create_individual_summary(to_summarize):
     def get_response(prompt, final_summaries):
-        response = ollama.generate(model="llama3", prompt=prompt[0])
+        response = ollama.generate(model="llama3.1", prompt=prompt[0])
         response = response["response"].split("\n")
         summary = response[-1] if len(response) <= 3 else "\n".join(response[2:-1])
         final_summaries.append((summary + " " + prompt[1]))
@@ -33,7 +33,7 @@ def create_individual_summary(to_summarize):
 
 def create_summary(summarize):
     def get_response(prompt, final_summaries):
-        response = ollama.generate(model="llama3", prompt=prompt)
+        response = ollama.generate(model="llama3.1", prompt=prompt)
         response = response["response"].split("\n")
         summary = response[-1] if len(response) <= 3 else "\n".join(response[2:-1])
         final_summaries.append(summary)
@@ -68,3 +68,27 @@ def overall_summary(summarize, base, context, community):
     summary = get_response(prompt)
 
     return [summary]
+
+
+def create_summary_RAG(query, proteins, funct_terms, abstract):
+    pro = "use the following proteins:" if len(proteins) > 0 else ""
+    funct = "use the following functional terms:" if len(funct_terms) > 0 else ""
+    abstract_is = (
+        "use the following abstracts and state PMID if you use them for information:"
+        if len(abstract) > 0
+        else ""
+    )
+    proteins = proteins if len(proteins) > 0 else ""
+    funct_terms = funct_terms if len(funct_terms) > 0 else ""
+    abstract = abstract if len(abstract) > 0 else ""
+
+    def get_response(prompt):
+        response = ollama.generate(model="llama3.1", prompt=prompt)
+        response = response["response"].split("\n")
+        summary = response[0] if len(response) <= 3 else "\n".join(response)
+        return summary
+
+    prompt = f"{query} {pro} {proteins} {funct} {funct_terms} {abstract_is} {abstract}"
+    summary = get_response(prompt)
+
+    return summary
