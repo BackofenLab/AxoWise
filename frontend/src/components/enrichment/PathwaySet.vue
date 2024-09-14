@@ -198,15 +198,14 @@ export default {
     },
     addToChatbot(subset) {
       this.emitter.emit("addToChatbot", {
-        id: subset.name,
-        mode: "protein",
+        id: `${subset.view}:${subset.name}`,
+        mode: subset.view,
         type: "subset",
         data: this.activate_genes(subset.genes),
       });
     },
     save_subset() {
       var com = this;
-      console.log(com.mode);
       let genes;
       if (com.mode == "protein") {
         genes = com.$store.state.active_subset;
@@ -215,8 +214,6 @@ export default {
       } else {
         genes = com.$store.state.c_active_subset;
       }
-
-      console.log(genes);
 
       if (!genes) return;
 

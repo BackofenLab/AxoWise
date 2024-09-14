@@ -201,7 +201,7 @@ export default {
       let com = this;
       let formData = new FormData();
       formData.append("message", message.text);
-      formData.append("background", message.data);
+      formData.append("background", JSON.stringify(message.data));
 
       const responseTags = [...this.tags];
 
