@@ -29,6 +29,12 @@
           </span>
         </div>
         <p>{{ msg.text }}</p>
+
+        <div v-if="msg.ref">
+          <span class="small-tag blue" @click="searchRef(msg.ref)">
+            reference
+          </span>
+        </div>
       </div>
     </div>
 
@@ -117,6 +123,25 @@ export default {
         this.$router.push(tag.mode);
         this.emitter.emit("searchSubset", { subset: tag.data, mode: tag.mode });
       }
+    },
+    searchRef(ref) {
+      if (this.$store.state.citation_graph_data) {
+        this.$router.push("citation");
+        this.emitter.emit("searchSubset", {
+          subset: this.pmid_nodes(ref),
+          mode: "citation",
+        });
+      } else {
+        alert("no citation graph");
+      }
+    },
+    pmid_nodes(list) {
+      let data = this.$store.state.citation_graph_data.graph;
+      var pmid_nodes = new Set(list);
+      var pmidlist = data.nodes.filter((element) =>
+        pmid_nodes.has(element.attributes["Name"])
+      );
+      return pmidlist;
     },
     dragElement(elmnt) {
       var pos1 = 0,
@@ -207,10 +232,12 @@ export default {
 
       //POST request for generating pathways
       com.axios.post(com.api.chatbot, formData).then((response) => {
+        // let fakeresponse = {"message": "", "pmids": ["18668037", "16153702", "9851930"]}
         this.messages.push({
           sender: "Bot",
-          text: response.data,
+          text: response.message,
           data: responseTags,
+          ref: response.pmids,
         });
       });
     },
@@ -339,6 +366,10 @@ export default {
   border-radius: 8px; /* Slightly smaller rounded corners */
   margin: 0 5px 5px 0;
   cursor: pointer;
+}
+
+.blue {
+  background-color: rgb(24, 37, 213);
 }
 
 .remove-tag {

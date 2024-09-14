@@ -208,7 +208,7 @@ export default {
     },
     call_chatbot(mode) {
       this.emitter.emit("addToChatbot", {
-        id: "subset" + this.active_subset.length,
+        id: `${mode}:subset${this.active_subset.length}`,
         mode: mode,
         type: "subset",
         data: this.active_subset,

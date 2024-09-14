@@ -137,7 +137,10 @@ export default {
         // If search term is not empty, filter by search term
         var regex = new RegExp(com.regex, "i");
         filtered = filtered.filter(function (abstract) {
-          return regex.test(abstract.attributes["Title"]);
+          return (
+            regex.test(abstract.attributes["Title"]) ||
+            regex.test(abstract.attributes["Ensembl ID"])
+          );
         });
       }
 
