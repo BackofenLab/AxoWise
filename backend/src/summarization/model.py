@@ -90,5 +90,4 @@ def create_summary_RAG(query, proteins, funct_terms, abstract):
 
     prompt = f"{query} {pro} {proteins} {funct} {funct_terms} {abstract_is} {abstract}"
     summary = get_response(prompt)
-
     return summary

@@ -141,7 +141,6 @@ def abstract_summary():
 @app.route("/api/subgraph/chatbot", methods=["POST"])
 def chatbot_response():
     message, background = (request.form.get("message"), request.form.get("background"))
-    response = "Generating answer to:" + str(message) + str(background)
     data = json.loads(background)
     pmid_embedding_list = []
     pmid_embedding = {}
@@ -179,14 +178,14 @@ def chatbot_response():
     query = ""
     for i in top_n_similiar:
         query += f"PMID: {i} Abstract: {pmid_abstract[i]} "
-    testing = create_summary_RAG(
+    answer = create_summary_RAG(
         str(message),
         proteins=protein_list,
         funct_terms=funct_terms_list,
         abstract=query,
     )
-    {"message": testing, "pmids": top_n_similiar}
-    return Response(json.dumps(testing), mimetype="application/json")
+    response = {"message": answer, "pmids": top_n_similiar}
+    return Response(json.dumps(response), mimetype="application/json")
 
 
 # ====================== Subgraph API ======================

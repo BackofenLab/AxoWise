@@ -235,9 +235,9 @@ export default {
         // let fakeresponse = {"message": "", "pmids": ["18668037", "16153702", "9851930"]}
         this.messages.push({
           sender: "Bot",
-          text: response.message,
+          text: response.data.message,
           data: responseTags,
-          ref: response.pmids,
+          ref: response.data.pmids,
         });
       });
     },
