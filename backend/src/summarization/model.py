@@ -58,7 +58,7 @@ def create_summary(summarize):
 
 def overall_summary(summarize, base, context, community):
     def get_response(prompt):
-        response = ollama.generate(model="llama3", prompt=prompt)
+        response = ollama.generate(model="llama3.1", prompt=prompt)
         response = response["response"].split("\n")
         summary = response[0] if len(response) <= 3 else "\n".join(response)
         return summary
