@@ -97,9 +97,9 @@ def proteins_context():
         request.form.get("rank"),
         500,
     )
-    query = base.split(" ")
-    query = [i.upper() for i in query]
-    print(query)
+    context = [i.upper() for i in context.split(" ") if i]
+    base = [i.upper() for i in base.split(" ") if i]
+    query = base + context
     # in-house context summary
     edges, nodes = summarization.create_citations_graph(
         driver, species="Mus_Musculus", search_query=query
