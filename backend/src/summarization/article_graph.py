@@ -27,7 +27,7 @@ def top_n_similar_vectors(input_vector, vectors, n):
     similarities = []
 
     for vector in vectors:
-        similiars = cosine_similarity(input_vector, vector["embedding"])
+        similiars = cosine_similarity(input_vector, vector["abstractEmbedding"])
         similarities.append((vector["PMID"], similiars))
 
     # Sort by similarity score in descending order
@@ -108,7 +108,6 @@ def create_citations_graph(driver, species, search_query):
             year = hit["published"]
             abstract = hit["abstract"]
             title = hit["title"]
-            embedding = hit["abstractEmbedding"]
             citations = hit["times_cited"]
             abstracts[pmid] = {
                 "abstract": abstract,
@@ -126,7 +125,6 @@ def create_citations_graph(driver, species, search_query):
                     "year": year,
                     "cited_by": citations,
                     "title": title,
-                    "embedding": embedding,
                 }
             )
 

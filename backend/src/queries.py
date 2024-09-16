@@ -169,6 +169,7 @@ def get_number_of_genes(driver: neo4j.Driver, species_id: int) -> int:
     with driver.session() as session:
         result = session.run(query)
         num_genes = result.single(strict=True)["num_genes"]
+        driver.close()
         return int(num_genes)
 
 
@@ -240,8 +241,7 @@ def get_abstracts(driver, species, query: list) -> list:
         a.title AS title,
         a.times_cited AS times_cited,
         a.published AS published,
-        a.cited_by AS citations,
-        a.abstractEmbedding AS abstractEmbedding
+        a.cited_by AS citations
         ORDER BY a.times_cited DESC LIMIT 2000
         UNION
 
@@ -257,9 +257,20 @@ def get_abstracts(driver, species, query: list) -> list:
         a.title AS title,
         a.times_cited AS times_cited,
         a.published AS published,
-        a.cited_by AS citations,
-        a.abstractEmbedding AS abstractEmbedding
+        a.cited_by AS citations
         """
     with driver.session() as session:
-        result = session.run(neo4j_query)
-        return result.data()
+        result = session.run(neo4j_query).data()
+        driver.close()
+        return result
+
+
+def fetch_vector_embeddings(driver, pmids: list) -> list:
+    neo4j_query = f"""
+    MATCH (a:abstract) where a.PMID in {pmids}
+    RETURN DISTINCT a.PMID as PMID, a.abstractEmbedding as abstractEmbedding
+    """
+    with driver.session() as session:
+        result = session.run(neo4j_query).data()
+        driver.close()
+        return result

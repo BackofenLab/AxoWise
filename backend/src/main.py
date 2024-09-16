@@ -142,8 +142,7 @@ def abstract_summary():
 def chatbot_response():
     message, background = (request.form.get("message"), request.form.get("background"))
     data = json.loads(background)
-    pmid_embedding_list = []
-    pmid_embedding = {}
+    pmids = []
     pmid_abstract = {}
     protein_list = []
     funct_terms_list = []
@@ -151,18 +150,7 @@ def chatbot_response():
         mode = item["mode"]
         entries = [item["data"]] if item["type"] != "subset" else item["data"]
         if mode == "citation":
-            pmid_embedding_list.extend(
-                [
-                    {
-                        "PMID": j["attributes"]["Name"],
-                        "embedding": j["attributes"]["embedding"],
-                    }
-                    for j in entries
-                ]
-            )
-            pmid_embedding.update(
-                {j["attributes"]["Name"]: j["attributes"]["embedding"] for j in entries}
-            )
+            pmids.extend([j["attributes"]["Name"] for j in entries])
             pmid_abstract.update(
                 {j["attributes"]["Name"]: j["attributes"]["Abstract"] for j in entries}
             )
@@ -170,11 +158,16 @@ def chatbot_response():
             protein_list.extend([j["attributes"]["Name"] for j in entries])
         else:
             funct_terms_list.extend([j["label"] for j in entries])
-
+    stopwatch = Stopwatch()
+    driver = database.get_driver()
+    pmids_embeddings = queries.fetch_vector_embeddings(driver=driver, pmids=pmids)
+    stopwatch.round("Fetching embeddings")
     embedded_query = summarization.generate_embedding(str(message))
+    stopwatch.round("Embedding query")
     top_n_similiar = summarization.top_n_similar_vectors(
-        embedded_query, pmid_embedding_list, 6
+        embedded_query, pmids_embeddings, 6
     )
+    stopwatch.round("Vector search")
     query = ""
     for i in top_n_similiar:
         query += f"PMID: {i} Abstract: {pmid_abstract[i]} "
@@ -184,6 +177,7 @@ def chatbot_response():
         funct_terms=funct_terms_list,
         abstract=query,
     )
+    stopwatch.round("Generating answer")
     response = {"message": answer, "pmids": top_n_similiar}
     return Response(json.dumps(response), mimetype="application/json")
 
@@ -267,7 +261,7 @@ def proteins_subgraph_api():
         # Combine both sets to get all unique values
         all_unique_values = unique_sources.union(unique_targets)
         nodes = nodes[(nodes["external_id"].isin(all_unique_values))]
-
+    driver.close()
     edges = edges.drop_duplicates(subset=["source", "target"])
 
     stopwatch.round("Neo4j")

@@ -111,7 +111,6 @@ def get_citation_graph(nodes, edges):
             node["attributes"]["Year"] = df_node.year
             node["attributes"]["Citation"] = df_node.cited_by
             node["attributes"]["Title"] = df_node.title
-            node["attributes"]["embedding"] = df_node.embedding
 
     sub_proteins = []
     ensembl_sub = set(nodes_sub["external_id"])
