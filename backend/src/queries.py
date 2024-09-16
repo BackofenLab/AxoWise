@@ -23,8 +23,9 @@ def connected_terms(driver: neo4j.Driver, term_ids: list[str], species_id: int):
         RETURN source.Term AS source, target.Term AS target, toInteger(round(association.Score,2)*100) AS score;
         """
     with driver.session() as session:
-        result = session.run(query)
-        return result.data()
+        result = session.run(query).data()
+        driver.close()
+        return result
 
 
 def get_terms_connected_by_overlap(
@@ -152,8 +153,9 @@ def get_enrichment_terms(driver: neo4j.Driver, species_id: int) -> list[dict[str
     """
 
     with driver.session() as session:
-        result = session.run(query)
-        return result.data()
+        result = session.run(query).data()
+        driver.close()
+        return result
 
 
 def get_number_of_genes(driver: neo4j.Driver, species_id: int) -> int:
