@@ -91,6 +91,12 @@ export const store = createStore({
     assign_new_term_graph(state, value) {
       state.term_graph_dict.push(value);
     },
+    assign_term_dict(state, value) {
+      state.term_graph_dict = value;
+    },
+    assign_citation_dict(state, value) {
+      state.citation_graph_dict = value;
+    },
     assign_new_citation_graph(state, value) {
       state.citation_graph_dict.push(value);
     },

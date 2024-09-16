@@ -82,6 +82,9 @@ export default {
       this.term_graphs = new Set();
     }
   },
+  deactivated() {
+    this.$store.commit("assign_term_dict", [...this.term_graphs]);
+  },
   beforeUnmount() {
     this.emitter.off("generateGraph");
   },
@@ -137,7 +140,6 @@ export default {
       }
       this.term_graphs.delete(entry);
       this.$store.commit("remove_term_graph", entry);
-      console.log(this.$store.state.term_graph_data);
 
       if (this.$store.state.term_graph_data == null) return;
 

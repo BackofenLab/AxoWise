@@ -89,6 +89,9 @@ export default {
       this.citation_graphs = new Set();
     }
   },
+  deactivated() {
+    this.$store.commit("assign_citation_dict", [...this.citation_graphs]);
+  },
   activated() {
     this.citation_graphs = new Set(this.$store.state.citation_graph_dict);
   },
