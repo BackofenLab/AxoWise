@@ -3,7 +3,6 @@
     <div class="menu-window">
       <div class="window-label">graph settings</div>
       <div class="menu-items">
-        <ToggleLabel :mode="mode"></ToggleLabel>
         <ConnectedGraph :mode="mode"></ConnectedGraph>
         <ShowModules :mode="mode"></ShowModules>
         <ModuleSelection :mode="mode"></ModuleSelection>
@@ -43,7 +42,6 @@ import ExportGraph from "@/components/toolbar/modules/ExportGraph.vue";
 import NodeLabelSelect from "@/components/toolbar/modules/NodeLabelSelect.vue";
 import ConnectedGraph from "@/components/toolbar/modules/ConnectedGraph.vue";
 import ShowModules from "@/components/toolbar/modules/ShowModules.vue";
-import ToggleLabel from "@/components/toolbar/modules/ToggleLabel.vue";
 import EdgeOpacity from "@/components/toolbar/modules/EdgeOpacity.vue";
 import ModuleSelection from "@/components/toolbar/modules/ModuleSelection.vue";
 
@@ -57,7 +55,6 @@ export default {
     EdgeOpacity,
     NodeLabelSelect,
     ConnectedGraph,
-    ToggleLabel,
     ModuleSelection,
     FDRValue,
     ExportProteins,

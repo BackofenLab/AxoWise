@@ -207,11 +207,14 @@ export default {
       com.hide = !com.hide;
     },
     call_chatbot(mode) {
+      let addedSubset = this.active_subset.selection
+        ? this.active_subset.genes
+        : this.active_subset;
       this.emitter.emit("addToChatbot", {
-        id: `${mode}:subset${this.active_subset.length}`,
+        id: `${mode}:subset${addedSubset.length}`,
         mode: mode,
         type: "subset",
-        data: this.active_subset,
+        data: addedSubset,
       });
     },
     /**

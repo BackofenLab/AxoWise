@@ -6,38 +6,28 @@
         v-if="sorted == 'bottom'"
         v-show="active_function === 'citation'"
       >
-        <div class="tool-section-term">
-          <div class="citation-search">
-            <img
-              class="citation-search-icon"
-              src="@/assets/toolbar/search.png"
-            />
-            <input
-              type="text"
-              v-model="context_raw"
-              class="empty"
-              placeholder="search context"
-              @keyup.enter="get_citation_graph(context_raw)"
-            />
-            <div
-              class="loading_pane_citation"
-              v-if="loading_state == true"
-            ></div>
+        <div class="tool-section-graph">
+          <div class="coloumn-button">
+            <button
+              class="tool-buttons"
+              v-on:click="get_citation_graph(context_raw)"
+            >
+              <img
+                class="buttons-img"
+                src="@/assets/plus-1.png"
+                v-if="!loading_state"
+              />
+              <div v-if="loading_state" class="loading_button"></div>
+            </button>
           </div>
-          <!-- <div class="coloumn-button">
-                        <button class="tool-buttons" :class="{recolor_filter: bookmark_off == false}" v-on:click="bookmark_off = !bookmark_off" >bookmarks</button>
-                    </div> -->
-        </div>
-        <div class="context-check">
-          <div class="context-confirm">
-            <span>citations</span>
-            <input id="citation" type="checkbox" /><label
-              for="citation"
-            ></label>
-          </div>
-          <div class="context-confirm">
-            <span>year</span>
-            <input id="year" type="checkbox" /><label for="year"></label>
+          <div class="coloumn-button">
+            <button
+              class="tool-buttons"
+              :class="{ recolor_filter: bookmark_off == false }"
+              v-on:click="bookmark_off = !bookmark_off"
+            >
+              <img class="buttons-img" src="@/assets/star.png" />
+            </button>
           </div>
         </div>
         <div class="graph-section">
@@ -102,10 +92,7 @@ export default {
       if (com.loading_state) return;
 
       com.loading_state = true;
-      const [year, citations] = [
-        document.getElementById("year").checked,
-        document.getElementById("citation").checked,
-      ];
+      const [year, citations] = [true, true];
       var base = this.active_background || "";
       com.getContext(base, context, com.get_rank(year, citations));
     },
@@ -122,17 +109,13 @@ export default {
       var com = this;
 
       var background;
-      var displayBackground;
 
       if (Object.keys(base)[0] == "Protein") {
         background = base["Protein"].value.attributes["Name"];
-        displayBackground = background;
       } else if (Object.keys(base)[0] == "Subset") {
         background = base["Subset"].value.map((node) => node.label).join(" ");
-        displayBackground = background;
       } else if (Object.keys(base)[0] == "Pathway") {
         background = base["Pathway"].value.symbols.join(" ");
-        displayBackground = base["Pathway"].value.id;
       } else {
         background = "";
       }
@@ -160,12 +143,12 @@ export default {
           }
           this.$store.commit("assign_new_citation_graph", {
             id: this.graph_number,
-            label: `br: ${displayBackground} in: ${context}`,
+            label: `Graph ${this.graph_number}`,
             graph: response.data,
           });
           this.citation_graphs.add({
             id: this.graph_number,
-            label: `br:${displayBackground} in:${context}`,
+            label: `Graph ${this.graph_number}`,
             graph: response.data,
           });
         }

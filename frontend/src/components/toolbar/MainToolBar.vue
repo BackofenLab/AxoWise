@@ -25,6 +25,15 @@
       <li v-on:click="chatbot()">
         <img src="@/assets/toolbar/bote.png" alt="bot Icon" />
       </li>
+      <li
+        v-on:click="hide_labels(label_check)"
+        :class="{ crossed: label_check }"
+      >
+        <div class="label-container">
+          <img src="@/assets/toolbar/label.png" alt="label Icon" />
+          <span v-if="label_check" class="cross-line"></span>
+        </div>
+      </li>
     </ul>
     <MenuWindow
       v-show="tools_active"
@@ -80,6 +89,7 @@ export default {
       tools_active: false,
       protein_active: false,
       selection_active: false,
+      label_check: false,
       mode: "protein",
     };
   },
@@ -97,6 +107,13 @@ export default {
     },
     chatbot() {
       this.emitter.emit("openChatbot");
+    },
+    hide_labels(check) {
+      this.label_check = !check;
+      this.emitter.emit("hideLabels", {
+        check: this.label_check,
+        mode: this.mode,
+      });
     },
   },
 };
@@ -167,5 +184,17 @@ export default {
 }
 ::v-deep .menu-bar li:hover {
   color: black;
+}
+.label-container {
+  position: relative;
+  display: contents;
+  text-align: center;
+}
+
+.cross-line {
+  position: absolute;
+  border-top: 1px solid rgba(255, 255, 255, 0.883); /* Red cross line, adjust thickness/color as needed */
+  transform: rotate(-45deg); /* Optional: Diagonal cross */
+  width: 60%;
 }
 </style>

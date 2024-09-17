@@ -98,7 +98,6 @@ export default {
     });
 
     com.emitter.on("addToChatbot", (data) => {
-      console.log(data);
       this.addLink(data);
     });
   },
@@ -222,24 +221,72 @@ export default {
         inputDiv.innerText = "";
       }
     },
+    async streamChatbotResponse(formData) {
+      const response = await fetch(this.api.chatbot, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.body) {
+        throw new Error("No response body");
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder("utf-8");
+      let done = false;
+      let fullText = "";
+      let refData = null;
+
+      const botMessage = {
+        sender: "Bot",
+        text: "", // Initially empty, will be updated progressively
+        data: [...this.tags], // Add contextual data if needed
+        ref: null, // This will hold the pmids when received
+      };
+      this.messages.push(botMessage);
+
+      // Index of the newly added Bot message
+      const botMessageIndex = this.messages.length - 1;
+
+      while (!done) {
+        const { value, done: readerDone } = await reader.read();
+        done = readerDone;
+        if (done) break;
+
+        // Decode the streamed data
+        const chunk = decoder.decode(value || new Uint8Array(), {
+          stream: !done,
+        });
+        // Parse the chunk as JSON to extract "messages" and "pmids"
+        let parsedChunk = JSON.parse(chunk);
+
+        // Check if it's a message part or pmids
+        if (parsedChunk.messages) {
+          // Append message chunks to the fullText
+          fullText += parsedChunk.messages;
+
+          // Update the bot message progressively
+          this.updateBotMessage(fullText, botMessageIndex);
+        }
+
+        if (parsedChunk.pmids) {
+          // If pmids are received, store them for later
+          refData = parsedChunk.pmids;
+          this.messages[botMessageIndex].ref = refData;
+        }
+      }
+    },
+    updateBotMessage(text, index) {
+      // Ensure we're updating the correct (newest) bot message by index
+      this.messages[index].text = text;
+    },
     getAnswer(message) {
       let com = this;
       let formData = new FormData();
       formData.append("message", message.text);
       formData.append("background", JSON.stringify(message.data));
 
-      const responseTags = [...this.tags];
-
-      //POST request for generating pathways
-      com.axios.post(com.api.chatbot, formData).then((response) => {
-        // let fakeresponse = {"message": "", "pmids": ["18668037", "16153702", "9851930"]}
-        this.messages.push({
-          sender: "Bot",
-          text: response.data.message,
-          data: responseTags,
-          ref: response.data.pmids,
-        });
-      });
+      com.streamChatbotResponse(formData);
     },
     closeWindow() {
       this.windowCheck = false;

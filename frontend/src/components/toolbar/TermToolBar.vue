@@ -22,6 +22,15 @@
       <li v-on:click="chatbot()">
         <img src="@/assets/toolbar/bote.png" alt="bot Icon" />
       </li>
+      <li
+        v-on:click="hide_labels(label_check)"
+        :class="{ crossed: label_check }"
+      >
+        <div class="label-container">
+          <img src="@/assets/toolbar/label.png" alt="label Icon" />
+          <span v-if="label_check" class="cross-line"></span>
+        </div>
+      </li>
       <li v-on:click="switch_graph()">
         <img src="@/assets/toolbar/logout.png" alt="3D Icon" />
       </li>
@@ -71,6 +80,7 @@ export default {
       tools_active: false,
       protein_active: false,
       selection_active: false,
+      label_check: false,
       mode: "term",
     };
   },
@@ -88,6 +98,13 @@ export default {
     },
     chatbot() {
       this.emitter.emit("openChatbot");
+    },
+    hide_labels(check) {
+      this.label_check = !check;
+      this.emitter.emit("hideLabels", {
+        check: this.label_check,
+        mode: this.mode,
+      });
     },
   },
 };
