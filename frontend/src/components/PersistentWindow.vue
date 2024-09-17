@@ -75,6 +75,7 @@ export default {
       api: {
         chatbot: "api/subgraph/chatbot",
       },
+      controller:null
     };
   },
   computed: {
@@ -222,9 +223,27 @@ export default {
       }
     },
     async streamChatbotResponse(formData) {
+      let refData = null;
+      if (this.controller) {
+        this.controller.abort();
+      }
+
+      // Create a new AbortController instance
+      this.controller = new AbortController();
+      const signal = this.controller.signal; // Get the signal
+  
+      const botMessage = {
+        sender: "Bot",
+        text: "Waiting for response...", // Initially empty, will be updated progressively
+        data: [...this.tags], // Add contextual data if needed
+        ref: null, // This will hold the pmids when received
+      };
+      this.messages.push(botMessage);
+
       const response = await fetch(this.api.chatbot, {
         method: "POST",
         body: formData,
+        signal: signal,
       });
 
       if (!response.body) {
@@ -235,15 +254,6 @@ export default {
       const decoder = new TextDecoder("utf-8");
       let done = false;
       let fullText = "";
-      let refData = null;
-
-      const botMessage = {
-        sender: "Bot",
-        text: "", // Initially empty, will be updated progressively
-        data: [...this.tags], // Add contextual data if needed
-        ref: null, // This will hold the pmids when received
-      };
-      this.messages.push(botMessage);
 
       // Index of the newly added Bot message
       const botMessageIndex = this.messages.length - 1;
@@ -251,13 +261,13 @@ export default {
       while (!done) {
         const { value, done: readerDone } = await reader.read();
         done = readerDone;
+        if (done) break;
 
         // Decode the streamed data
         const chunk = decoder.decode(value || new Uint8Array(), {
           stream: !done,
         });
         // Parse the chunk as JSON to extract "messages" and "pmids"
-        if (done) break;
         console.log(chunk);
         let parsedChunk = JSON.parse(chunk);
         console.log(parsedChunk);
