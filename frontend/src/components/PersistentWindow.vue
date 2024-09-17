@@ -251,19 +251,20 @@ export default {
       while (!done) {
         const { value, done: readerDone } = await reader.read();
         done = readerDone;
-        if (done) break;
 
         // Decode the streamed data
         const chunk = decoder.decode(value || new Uint8Array(), {
           stream: !done,
         });
         // Parse the chunk as JSON to extract "messages" and "pmids"
+        if (done) break;
+        console.log(chunk);
         let parsedChunk = JSON.parse(chunk);
-
+        console.log(parsedChunk);
         // Check if it's a message part or pmids
-        if (parsedChunk) {
+        if (parsedChunk.message) {
           // Append message chunks to the fullText
-          fullText += parsedChunk;
+          fullText += parsedChunk.message;
 
           // Update the bot message progressively
           this.updateBotMessage(fullText, botMessageIndex);
