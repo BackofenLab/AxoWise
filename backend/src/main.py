@@ -177,9 +177,13 @@ def chatbot_response():
         funct_terms=funct_terms_list,
         abstract=query,
     )
+
+    def generate():
+        for i in answer:
+            yield (json.dumps(i["response"]))
+
     stopwatch.round("Generating answer")
-    response = {"message": answer, "pmids": top_n_similiar}
-    return Response(json.dumps(response), mimetype="application/json")
+    return Response(generate(), mimetype="application/json")
 
 
 # ====================== Subgraph API ======================

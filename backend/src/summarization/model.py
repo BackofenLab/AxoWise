@@ -83,10 +83,8 @@ def create_summary_RAG(query, proteins, funct_terms, abstract):
     abstract = abstract if len(abstract) > 0 else ""
 
     def get_response(prompt):
-        response = ollama.generate(model="llama3.1", prompt=prompt)
-        response = response["response"].split("\n")
-        summary = response[0] if len(response) <= 3 else "\n".join(response)
-        return summary
+        response = ollama.generate(model="llama3.1", prompt=prompt, stream=True)
+        return response
 
     prompt = f"{query} {pro} {proteins} {funct} {funct_terms} {abstract_is} {abstract}"
     summary = get_response(prompt)

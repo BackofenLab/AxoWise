@@ -261,9 +261,9 @@ export default {
         let parsedChunk = JSON.parse(chunk);
 
         // Check if it's a message part or pmids
-        if (parsedChunk.messages) {
+        if (parsedChunk) {
           // Append message chunks to the fullText
-          fullText += parsedChunk.messages;
+          fullText += parsedChunk;
 
           // Update the bot message progressively
           this.updateBotMessage(fullText, botMessageIndex);
