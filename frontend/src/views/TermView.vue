@@ -1,6 +1,7 @@
 <template>
   <keep-alive>
     <div class="term-view">
+      <ExportScreen :mode="mode" :filter_views="filter_views"></ExportScreen>
       <TermVis
         ref="termVis"
         :active_node="active_node"
@@ -67,6 +68,7 @@ import TermPaneSystem from "@/components/pane/TermPaneSystem.vue";
 import NetworkValues from "../components/interface/NetworkValues.vue";
 import TermToolBar from "../components/toolbar/TermToolBar.vue";
 import VerticalPanePathway from "@/components/verticalpane/VerticalPanePathway.vue";
+import ExportScreen from "@/components/toolbar/modules/ExportScreen.vue";
 
 export default {
   name: "TermView",
@@ -76,6 +78,7 @@ export default {
     TermToolBar,
     TermPaneSystem,
     VerticalPanePathway,
+    ExportScreen,
   },
   data() {
     return {

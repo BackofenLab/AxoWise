@@ -17,7 +17,7 @@
       </div>
       <div class="window-label">export graph</div>
       <div class="menu-items">
-        <ExportScreen :mode="mode"></ExportScreen>
+        <ExportingButton :mode="mode"></ExportingButton>
         <ExportGraph v-if="mode == 'protein'"></ExportGraph>
         <ExportProteins
           v-if="mode == 'protein'"
@@ -36,7 +36,7 @@
 <script>
 import ExportProteins from "@/components/toolbar/modules/ExportProteins.vue";
 import ExportEdges from "@/components/toolbar/modules/ExportEdges.vue";
-import ExportScreen from "@/components/toolbar/modules/ExportScreen.vue";
+import ExportingButton from "@/components/toolbar/modules/ExportingButton.vue";
 import FDRValue from "@/components/toolbar/modules/FDRValue.vue";
 import ExportGraph from "@/components/toolbar/modules/ExportGraph.vue";
 import NodeLabelSelect from "@/components/toolbar/modules/NodeLabelSelect.vue";
@@ -50,7 +50,7 @@ export default {
   props: ["tools_active", "mode", "gephi_data", "ensembl_name_index"],
   emits: ["tools_active_changed"],
   components: {
-    ExportScreen,
+    ExportingButton,
     ExportGraph,
     EdgeOpacity,
     NodeLabelSelect,

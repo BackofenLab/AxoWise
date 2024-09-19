@@ -1,6 +1,9 @@
 <template>
   <div class="protein-view">
     <keep-alive>
+      <ExportScreen :mode="mode" :filter_views="filter_views"></ExportScreen>
+    </keep-alive>
+    <keep-alive>
       <MainVis
         ref="mainVis"
         :active_node="active_node"
@@ -96,6 +99,7 @@ import VerticalPane from "@/components/verticalpane/VerticalPane.vue";
 import PaneSystem from "@/components/pane/PaneSystem.vue";
 import NetworkValues from "../components/interface/NetworkValues.vue";
 import MainToolBar from "../components/toolbar/MainToolBar.vue";
+import ExportScreen from "@/components/toolbar/modules/ExportScreen.vue";
 
 export default {
   name: "ProteinView",
@@ -105,6 +109,7 @@ export default {
     MainToolBar,
     NetworkValues,
     VerticalPane,
+    ExportScreen,
   },
   data() {
     return {
@@ -126,6 +131,7 @@ export default {
       node_cluster_index: null,
       ensembl_name_index: null,
       view: "protein view",
+
       view_filtering: false,
       filter_views: ["term", "citation"],
     };

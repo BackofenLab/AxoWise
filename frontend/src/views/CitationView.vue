@@ -1,6 +1,7 @@
 <template>
   <keep-alive>
     <div class="citation-view">
+      <ExportScreen :mode="mode" :filter_views="filter_views"></ExportScreen>
       <CitationVis
         ref="CitationVis"
         :active_node="active_node"
@@ -77,6 +78,7 @@ import CitationPane from "@/components/citation/CitationPane.vue";
 import NetworkValues from "../components/interface/NetworkValues.vue";
 import CitationToolBar from "../components/toolbar/CitationToolBar.vue";
 import VerticalPaneCitation from "@/components/verticalpane/VerticalPaneCitation.vue";
+import ExportScreen from "@/components/toolbar/modules/ExportScreen.vue";
 
 export default {
   name: "CitationView",
@@ -87,6 +89,7 @@ export default {
     CitationToolBar,
     CitationPaneSystem,
     VerticalPaneCitation,
+    ExportScreen,
   },
   data() {
     return {
