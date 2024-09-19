@@ -263,6 +263,7 @@ export default {
       this.active_categories_set = new Set();
     },
     init_categories() {
+      this.reset_categories()
       for (let element of this.filter_terms) {
         let checkCategory = element.label;
         if (
