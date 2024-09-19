@@ -183,7 +183,7 @@ def chatbot_response():
         # Yield each message from 'answer'
         for i in answer:
             yield json.dumps({"message": i["response"], "pmids": top_n_similiar})
-            time.sleep(0.05)
+            time.sleep(0.1)
 
     stopwatch.round("Generating answer")
     return Response(generate(), mimetype="application/json")
