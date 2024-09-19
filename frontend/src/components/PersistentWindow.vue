@@ -131,7 +131,7 @@ export default {
     searchRef(ref) {
       if (this.$store.state.citation_graph_data) {
         this.$router.push("citation").then(() => {
-          this.emitter.emit("searchfavouriteSubset", {
+          this.emitter.emit("searchSubset", {
             subset: this.pmid_nodes(ref),
             mode: "citation",
           });
