@@ -1,26 +1,6 @@
 <template>
   <keep-alive>
     <div class="term-view">
-      <div id="view" class="filter-section">
-        <div
-          id="pathway-filter"
-          class="pre-full"
-          v-on:click="handling_filter_menu()"
-          :class="{ full: view_filtering == true }"
-        >
-          <span>{{ view }}</span>
-        </div>
-        <div id="list-filter-categories" v-show="view_filtering == true">
-          <div
-            class="element"
-            v-for="entry in filter_views"
-            :key="entry"
-            v-on:click="swap_view(entry)"
-          >
-            <a>{{ entry + " view" }} </a>
-          </div>
-        </div>
-      </div>
       <TermVis
         ref="termVis"
         :active_node="active_node"
@@ -47,6 +27,26 @@
         :active_subset="active_subset"
       ></TermToolBar>
       <NetworkValues :data="term_data"></NetworkValues>
+      <div id="view" class="filter-section">
+        <div
+          id="pathway-filter"
+          class="pre-full"
+          v-on:click="handling_filter_menu()"
+          :class="{ full: view_filtering == true }"
+        >
+          <span>{{ view }}</span>
+        </div>
+        <div id="list-filter-categories" v-show="view_filtering == true">
+          <div
+            class="element"
+            v-for="entry in filter_views"
+            :key="entry"
+            v-on:click="swap_view(entry)"
+          >
+            <a>{{ entry + " view" }} </a>
+          </div>
+        </div>
+      </div>
       <TermPaneSystem
         :gephi_data="term_data"
         :active_node="active_node"

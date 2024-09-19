@@ -178,6 +178,7 @@ export default {
   watch: {
     terms() {
       this.filter_options(this.terms);
+      this.init_categories();
     },
   },
   computed: {
@@ -260,6 +261,18 @@ export default {
     reset_categories() {
       this.category = "Filter";
       this.active_categories_set = new Set();
+    },
+    init_categories() {
+      for (let element of this.filter_terms) {
+        let checkCategory = element.label;
+        if (
+          checkCategory !== "GOCC" &&
+          checkCategory !== "GOMF" &&
+          checkCategory !== "GOBP"
+        )
+          this.active_categories(checkCategory);
+      }
+      this.category = [...this.active_categories_set].join(", ");
     },
     filter_options(terms) {
       var com = this;

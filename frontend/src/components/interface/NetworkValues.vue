@@ -19,12 +19,11 @@ export default {
 #network-values {
   width: 5%;
   height: 3.98%;
-  left: 25vw;
-  bottom: 1vw;
+  top: 1%;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  position: absolute;
+  position: relative;
   /* border-radius: 5px; */
   -webkit-backdrop-filter: blur(7.5px);
   transition: left 0.5s ease-in-out;

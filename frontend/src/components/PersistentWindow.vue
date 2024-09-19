@@ -28,13 +28,12 @@
             {{ element.id }}
           </span>
         </div>
-        <p>{{ msg.text }}</p>
-
         <div v-if="msg.ref">
           <span class="small-tag blue" @click="searchRef(msg.ref)">
             reference
           </span>
         </div>
+        <p>{{ msg.text }}</p>
       </div>
     </div>
 
@@ -75,7 +74,7 @@ export default {
       api: {
         chatbot: "api/subgraph/chatbot",
       },
-      controller:null
+      controller: null,
     };
   },
   computed: {
@@ -115,21 +114,27 @@ export default {
     },
     searchInput(tag) {
       if (tag.type == "protein") {
-        this.$router.push(tag.mode);
-        this.emitter.emit("searchNode", { node: tag.data, mode: tag.mode });
+        this.$router.push(tag.mode).then(() => {
+          this.emitter.emit("searchNode", { node: tag.data, mode: tag.mode });
+        });
       } else if (tag.type == "term") {
         this.emitter.emit("searchEnrichment", tag.data);
       } else if (tag.type == "subset") {
-        this.$router.push(tag.mode);
-        this.emitter.emit("searchSubset", { subset: tag.data, mode: tag.mode });
+        this.$router.push(tag.mode).then(() => {
+          this.emitter.emit("searchSubset", {
+            subset: tag.data,
+            mode: tag.mode,
+          });
+        });
       }
     },
     searchRef(ref) {
       if (this.$store.state.citation_graph_data) {
-        this.$router.push("citation");
-        this.emitter.emit("searchSubset", {
-          subset: this.pmid_nodes(ref),
-          mode: "citation",
+        this.$router.push("citation").then(() => {
+          this.emitter.emit("searchfavouriteSubset", {
+            subset: this.pmid_nodes(ref),
+            mode: "citation",
+          });
         });
       } else {
         alert("no citation graph");
@@ -231,7 +236,7 @@ export default {
       // Create a new AbortController instance
       this.controller = new AbortController();
       const signal = this.controller.signal; // Get the signal
-  
+
       const botMessage = {
         sender: "Bot",
         text: "Waiting for response...", // Initially empty, will be updated progressively
@@ -268,9 +273,7 @@ export default {
           stream: !done,
         });
         // Parse the chunk as JSON to extract "messages" and "pmids"
-        console.log(chunk);
         let parsedChunk = JSON.parse(chunk);
-        console.log(parsedChunk);
         // Check if it's a message part or pmids
         if (parsedChunk.message) {
           // Append message chunks to the fullText

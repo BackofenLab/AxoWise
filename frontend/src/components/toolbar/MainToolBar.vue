@@ -89,7 +89,7 @@ export default {
       tools_active: false,
       protein_active: false,
       selection_active: false,
-      label_check: false,
+      label_check: true,
       mode: "protein",
     };
   },

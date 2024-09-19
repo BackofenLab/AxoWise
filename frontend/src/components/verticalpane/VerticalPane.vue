@@ -143,12 +143,21 @@ export default {
 
 <style>
 #vertical-pane {
-  left: 0;
-  top: 0;
+  left: 1%;
+  top: 1.5%;
   height: 100%;
-  width: 25vw;
+  width: 24vw;
+  padding: 0.5rem;
   -webkit-backdrop-filter: blur(7.5px);
-  padding: 1%;
+  border: 1px solid #e0e0e0;
+  background-color: rgba(107, 107, 107, 0.5);
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  z-index: 9999;
+  resize: horizontal;
 }
 
 .upper-block {

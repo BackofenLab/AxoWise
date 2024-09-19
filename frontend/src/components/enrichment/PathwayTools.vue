@@ -195,6 +195,7 @@ export default {
 }
 
 .tool-buttons {
+  min-width: 2rem;
   padding: 0.2vw 0 0.2vw 0;
   border-radius: 0;
   cursor: pointer;

@@ -759,6 +759,7 @@ export default {
     this.get_module_circles();
 
     com.edit_opacity("full");
+    com.hide_labels(true);
 
     if (com.graph_state) this.show_unconnectedGraph(com.graph_state);
 

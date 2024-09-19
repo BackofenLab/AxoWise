@@ -1,25 +1,5 @@
 <template>
   <div class="protein-view">
-    <div id="view" class="filter-section">
-      <div
-        id="pathway-filter"
-        class="pre-full"
-        v-on:click="handling_filter_menu()"
-        :class="{ full: view_filtering == true }"
-      >
-        <span>{{ view }}</span>
-      </div>
-      <div id="list-filter-categories" v-show="view_filtering == true">
-        <div
-          class="element"
-          v-for="entry in filter_views"
-          :key="entry"
-          v-on:click="swap_view(entry)"
-        >
-          <a>{{ entry + " view" }} </a>
-        </div>
-      </div>
-    </div>
     <keep-alive>
       <MainVis
         ref="mainVis"
@@ -66,6 +46,26 @@
     <keep-alive>
       <NetworkValues :data="gephi_data"></NetworkValues>
     </keep-alive>
+    <div id="view" class="filter-section">
+      <div
+        id="pathway-filter"
+        class="pre-full"
+        v-on:click="handling_filter_menu()"
+        :class="{ full: view_filtering == true }"
+      >
+        <span>{{ view }}</span>
+      </div>
+      <div id="list-filter-categories" v-show="view_filtering == true">
+        <div
+          class="element"
+          v-for="entry in filter_views"
+          :key="entry"
+          v-on:click="swap_view(entry)"
+        >
+          <a>{{ entry + " view" }} </a>
+        </div>
+      </div>
+    </div>
     <keep-alive>
       <PaneSystem
         :active_node="active_node"
@@ -262,12 +262,11 @@ export default {
 }
 
 #view {
-  position: fixed;
-  left: 30%;
-  top: 0;
-  margin: 1%;
+  position: relative;
+  top: 0.65rem;
+  margin-left: 1rem;
   z-index: 999;
-  height: 3%;
+  height: 2rem;
   background-color: rgba(255, 255, 255, 0.2);
 }
 #view #list-filter-categories {

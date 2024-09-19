@@ -115,6 +115,7 @@ export default {
 
 #statistics .network-results {
   overflow: scroll;
+  height: 100%;
 }
 
 .network-results::-webkit-scrollbar {

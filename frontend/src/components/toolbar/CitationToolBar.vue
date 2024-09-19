@@ -81,7 +81,7 @@ export default {
       protein_active: false,
       selection_active: false,
       mode: "citation",
-      label_check: false,
+      label_check: true,
     };
   },
   methods: {

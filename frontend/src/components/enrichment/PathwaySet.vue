@@ -201,7 +201,7 @@ export default {
         id: `${subset.view}:${subset.name}`,
         mode: subset.view,
         type: "subset",
-        data: this.activate_genes(subset.genes),
+        data: this.activate_genes(subset.genes, subset.view),
       });
     },
     save_subset() {
@@ -240,25 +240,34 @@ export default {
         if (layer != entry) layer.status = false;
       }
 
-      this.$router.push(entry.view);
-      if (!entry.status) {
-        this.emitter.emit("searchSubset", {
-          subset: this.activate_genes(entry.genes),
-          mode: entry.view,
-        });
-        this.emitter.emit("enrichTerms", entry.terms);
-      } else {
-        this.emitter.emit("searchSubset", { subset: null, mode: entry.view });
-        this.emitter.emit("enrichTerms", null);
-      }
-      entry.status = !entry.status;
+      this.$router.push(entry.view).then(() => {
+        if (!entry.status) {
+          this.emitter.emit("searchSubset", {
+            subset: this.activate_genes(entry.genes, entry.view),
+            mode: entry.view,
+          });
+          this.emitter.emit("enrichTerms", entry.terms);
+        } else {
+          this.emitter.emit("searchSubset", { subset: null, mode: entry.view });
+          this.emitter.emit("enrichTerms", null);
+        }
+        entry.status = !entry.status;
+      });
     },
-    activate_genes(genes) {
-      var com = this;
+    activate_genes(genes, view) {
       var subset = [];
       var genes_set = new Set(genes);
+      let data;
 
-      com.gephi_data.nodes.forEach((node) => {
+      if (view === "citation") {
+        data = this.$store.state.citation_graph_data.graph;
+      } else if (view === "term") {
+        data = this.$store.state.term_graph_data.graph;
+      } else if (view === "protein") {
+        data = this.$store.state.gephi_json.data;
+      }
+
+      data.nodes.forEach((node) => {
         if (genes_set.has(node.attributes["Name"])) {
           subset.push(node);
         }

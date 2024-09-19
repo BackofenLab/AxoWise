@@ -1221,6 +1221,8 @@ export default {
 
       com.edit_opacity("full");
 
+      com.hide_labels(true);
+
       this.get_module_circles();
 
       var keyState = {};
@@ -1387,8 +1389,8 @@ export default {
 #sigma-canvas {
   position: absolute;
   height: 100%;
-  width: 75%;
-  left: 25%;
+  width: 80%;
+  left: 20%;
   box-sizing: border-box;
   overflow: hidden;
   backdrop-filter: blur(10px);

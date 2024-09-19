@@ -271,6 +271,9 @@ export default {
     selection_active() {
       if (this.selection_active) this.searchSubset();
     },
+    data() {
+      if (this.mode == "term" || this.mode == "citation") this.initialize_all();
+    },
   },
   methods: {
     change_limits(slider_id, check_id, entry) {
@@ -399,23 +402,38 @@ export default {
       var maxDeg = Math.max(...result); // Need to use spread operator!
       com.degree_boundary["maxValue"] = maxDeg;
       com.degree_boundary["minValue"] = 0;
+      console.log(maxDeg, com.data);
 
       var slider = document.getElementById("degree");
-      noUiSlider.create(slider, {
-        start: [0, maxDeg],
-        connect: true,
-        range: {
-          min: 0,
-          max: maxDeg,
-        },
-        format: this.formatType,
-        step: 1,
-      });
 
-      slider.noUiSlider.on("slide", function (values, handle) {
-        com.degree_boundary[handle ? "maxValue" : "minValue"] = values[handle];
-        com.searchSubset();
-      });
+      if (!slider.noUiSlider) {
+        console.log("undef");
+        noUiSlider.create(slider, {
+          start: [0, maxDeg],
+          connect: true,
+          range: {
+            min: 0,
+            max: maxDeg,
+          },
+          format: this.formatType,
+          step: 1,
+        });
+
+        slider.noUiSlider.on("slide", function (values, handle) {
+          com.degree_boundary[handle ? "maxValue" : "minValue"] =
+            values[handle];
+          com.searchSubset();
+        });
+      } else {
+        console.log(slider.noUiSlider);
+        slider.noUiSlider.updateOptions({
+          start: [0, maxDeg],
+          range: {
+            min: 0,
+            max: maxDeg,
+          },
+        });
+      }
     },
     initialize_bc() {
       var com = this;
@@ -435,23 +453,32 @@ export default {
       var maxDeg = Math.max(...result) + 10; // Need to use spread operator!
       com.bc_boundary["maxValue"] = maxDeg;
       com.bc_boundary["minValue"] = 0;
-
       var slider = document.getElementById("betweenes");
-      noUiSlider.create(slider, {
-        start: [0, maxDeg],
-        connect: true,
-        range: {
-          min: 0,
-          max: maxDeg,
-        },
-        format: this.formatType,
-        step: 1,
-      });
 
-      slider.noUiSlider.on("slide", function (values, handle) {
-        com.bc_boundary[handle ? "maxValue" : "minValue"] = values[handle];
-        com.searchSubset();
-      });
+      if (!slider.noUiSlider) {
+        noUiSlider.create(slider, {
+          start: [0, maxDeg],
+          connect: true,
+          range: {
+            min: 0,
+            max: maxDeg,
+          },
+          format: this.formatType,
+          step: 1,
+        });
+
+        slider.noUiSlider.on("slide", function (values, handle) {
+          com.bc_boundary[handle ? "maxValue" : "minValue"] = values[handle];
+          com.searchSubset();
+        });
+      } else {
+        slider.noUiSlider.updateOptions({
+          range: {
+            min: 0,
+            max: maxDeg,
+          },
+        });
+      }
     },
     initialize_pagerank() {
       var com = this;
@@ -474,20 +501,29 @@ export default {
 
       this.pr_boundary.min = minDeg;
       var slider = document.getElementById("pagerank");
-      noUiSlider.create(slider, {
-        start: [minDeg, 0],
-        connect: true,
-        range: {
-          min: minDeg,
-          max: 0,
-        },
-        step: 0.01,
-      });
+      if (!slider.noUiSlider) {
+        noUiSlider.create(slider, {
+          start: [minDeg, 0],
+          connect: true,
+          range: {
+            min: minDeg,
+            max: 0,
+          },
+          step: 0.01,
+        });
 
-      slider.noUiSlider.on("slide", function (values, handle) {
-        com.pr_boundary[handle ? "maxValue" : "minValue"] = values[handle];
-        com.searchSubset();
-      });
+        slider.noUiSlider.on("slide", function (values, handle) {
+          com.pr_boundary[handle ? "maxValue" : "minValue"] = values[handle];
+          com.searchSubset();
+        });
+      } else {
+        slider.noUiSlider.updateOptions({
+          range: {
+            min: minDeg,
+            max: 0,
+          },
+        });
+      }
     },
     initialize_padj() {
       var com = this;
@@ -511,25 +547,34 @@ export default {
       com.padj_boundary["minValue"] = minDeg;
 
       var slider = document.getElementById("padj");
-      noUiSlider.create(slider, {
-        start: [minDeg, 0],
-        connect: true,
-        range: {
-          min: minDeg,
-          max: 0,
-        },
-        step: 0.01,
-      });
+      if (!slider.noUiSlider) {
+        noUiSlider.create(slider, {
+          start: [minDeg, 0],
+          connect: true,
+          range: {
+            min: minDeg,
+            max: 0,
+          },
+          step: 0.01,
+        });
 
-      slider.noUiSlider.on("slide", function (values, handle) {
-        com.padj_boundary[handle ? "maxValue" : "minValue"] = values[handle];
-        com.searchSubset();
-      });
+        slider.noUiSlider.on("slide", function (values, handle) {
+          com.padj_boundary[handle ? "maxValue" : "minValue"] = values[handle];
+          com.searchSubset();
+        });
+      } else {
+        slider.noUiSlider.updateOptions({
+          range: {
+            min: minDeg,
+            max: 0,
+          },
+        });
+      }
     },
     searchSubset() {
       var com = this;
 
-      var dataForm = com.search_data;
+      var dataForm = this.data.nodes;
       // filter hubs
       var finalNodes = [];
       var nodes = [];
@@ -615,6 +660,16 @@ export default {
       );
       return termlist;
     },
+    initialize_all() {
+      console.log("initialize");
+      this.initialize_dg();
+      this.initialize_bc();
+      this.initialize_pagerank();
+      if (this.dcoloumns && this.mode != "term" && this.mode != "citation")
+        this.create_de();
+      if (this.mode == "term") this.initialize_padj();
+      this.searchSubset();
+    },
   },
   mounted() {
     this.formatType = {
@@ -626,16 +681,9 @@ export default {
       },
     };
 
-    this.search_data = this.data.nodes;
     this.dragElement(document.getElementById("selection_highlight"));
 
-    this.initialize_dg();
-    this.initialize_bc();
-    this.initialize_pagerank();
-    if (this.dcoloumns && this.mode != "term" && this.mode != "citation")
-      this.create_de();
-    if (this.mode == "term") this.initialize_padj();
-    this.searchSubset();
+    this.initialize_all();
   },
   created() {
     if (this.dcoloumns) this.initialize_de();
