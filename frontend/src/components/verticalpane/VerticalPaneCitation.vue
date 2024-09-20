@@ -1,5 +1,9 @@
 <template>
   <div id="vertical-pane">
+    <SearchField 
+    :data="citation_data"
+    :mode="mode"
+    ></SearchField>
     <div class="upper-block">
       <div class="tab-system">
         <ul>
@@ -73,6 +77,7 @@ import CitationList from "@/components/citation/CitationList.vue";
 import CitationCommunities from "@/components/citation/CitationCommunities.vue";
 import CitationSummary from "@/components/citation/CitationSummary.vue";
 import PathwayMenu from "@/components/enrichment/PathwayMenu.vue";
+import SearchField from "@/components/interface/SearchField.vue";
 
 export default {
   name: "VerticalPaneCitation",
@@ -82,6 +87,7 @@ export default {
     CitationSummary,
     CitationCommunities,
     PathwayMenu,
+    SearchField
   },
   data() {
     return {

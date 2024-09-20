@@ -1,5 +1,9 @@
 <template>
   <div id="vertical-pane">
+    <SearchField 
+    :data="term_data"
+    :mode="mode"
+    ></SearchField>
     <div class="upper-block">
       <div class="tab-system">
         <ul>
@@ -51,6 +55,7 @@
 <script>
 import PathwayGraphMenu from "@/components/pathwaytools/PathwayGraphMenu.vue";
 import PathwayMenu from "@/components/enrichment/PathwayMenu.vue";
+import SearchField from "@/components/interface/SearchField.vue";
 
 export default {
   name: "VerticalPanePathway",
@@ -58,6 +63,7 @@ export default {
   components: {
     PathwayGraphMenu,
     PathwayMenu,
+    SearchField
   },
   data() {
     return {

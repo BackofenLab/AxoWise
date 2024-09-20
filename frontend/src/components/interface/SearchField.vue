@@ -55,8 +55,7 @@
 <script>
 export default {
   name: "SearchField",
-  props: ["data", "active_node"],
-  emits: ["active_node_changed"],
+  props: ["data", "mode"],
   data() {
     return {
       search_raw: "",
@@ -65,7 +64,7 @@ export default {
   methods: {
     select_node(node) {
       if (node)
-        this.emitter.emit("searchNode", { node: node, mode: "protein" });
+        this.emitter.emit("searchNode", { node: node, mode: this.mode });
     },
     google_search(protein, index) {
       document

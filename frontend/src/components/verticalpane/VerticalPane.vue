@@ -1,6 +1,9 @@
 <template>
   <div id="vertical-pane">
-    <SearchField :data="gephi_data"></SearchField>
+    <SearchField 
+    :data="gephi_data"
+    :mode="mode"
+    ></SearchField>
     <div class="upper-block">
       <div class="tab-system">
         <ul>
