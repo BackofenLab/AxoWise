@@ -5,7 +5,6 @@ import os
 import os.path
 import signal
 import sys
-import time
 from multiprocessing import Process
 
 import citation_graph
@@ -178,15 +177,9 @@ def chatbot_response():
         funct_terms=funct_terms_list,
         abstract=query,
     )
-
-    def generate():
-        # Yield each message from 'answer'
-        for i in answer:
-            yield json.dumps({"message": i["response"], "pmids": top_n_similiar})
-            time.sleep(0.1)
-
+    response = json.dumps({"message": answer, "pmids": top_n_similiar})
     stopwatch.round("Generating answer")
-    return Response(generate(), mimetype="application/json")
+    return Response(response, mimetype="application/json")
 
 
 # ====================== Subgraph API ======================
