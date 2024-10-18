@@ -20,7 +20,7 @@ prepare:
 
 conda:
 # https://docs.anaconda.com/free/anaconda/install/linux/
-	sudo apt-get install libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6
+	sudo apt-get install libgl1 libglx-mesa0 libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2t64 libxi6 libxtst6
 	sudo apt-get update
 	curl -o /tmp/Miniconda3-latest-Linux-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 	bash /tmp/Miniconda3-latest-Linux-x86_64.sh
