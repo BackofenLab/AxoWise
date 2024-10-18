@@ -1,9 +1,6 @@
 <template>
   <div id="vertical-pane">
-    <SearchField 
-    :data="citation_data"
-    :mode="mode"
-    ></SearchField>
+    <SearchField :data="citation_data" :mode="mode"></SearchField>
     <div class="upper-block">
       <div class="tab-system">
         <ul>
@@ -87,7 +84,7 @@ export default {
     CitationSummary,
     CitationCommunities,
     PathwayMenu,
-    SearchField
+    SearchField,
   },
   data() {
     return {
