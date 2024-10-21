@@ -28,7 +28,7 @@
             {{ element.id }}
           </span>
         </div>
-        <div v-if="msg.ref">
+        <div v-if="msg.ref !== null">
           <span class="small-tag blue" @click="searchRef(msg.ref)">
             reference
           </span>
@@ -74,7 +74,7 @@ export default {
       api: {
         chatbot: "api/subgraph/chatbot",
       },
-      controller: null,
+      sourceToken: null,
     };
   },
   computed: {
@@ -227,80 +227,38 @@ export default {
         inputDiv.innerText = "";
       }
     },
-    async streamChatbotResponse(formData) {
-      let refData = null;
-      if (this.controller) {
-        this.controller.abort();
-      }
 
-      // Create a new AbortController instance
-      this.controller = new AbortController();
-      const signal = this.controller.signal; // Get the signal
-
-      const botMessage = {
-        sender: "Bot",
-        text: "Waiting for response...", // Initially empty, will be updated progressively
-        data: [...this.tags], // Add contextual data if needed
-        ref: null, // This will hold the pmids when received
-      };
-      this.messages.push(botMessage);
-
-      const response = await fetch(this.api.chatbot, {
-        method: "POST",
-        body: formData,
-        signal: signal,
-      });
-
-      if (!response.body) {
-        throw new Error("No response body");
-      }
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder("utf-8");
-      let done = false;
-      let fullText = "";
-
-      // Index of the newly added Bot message
-      const botMessageIndex = this.messages.length - 1;
-
-      while (!done) {
-        const { value, done: readerDone } = await reader.read();
-        done = readerDone;
-        if (done) break;
-
-        // Decode the streamed data
-        const chunk = decoder.decode(value || new Uint8Array(), {
-          stream: !done,
-        });
-        // Parse the chunk as JSON to extract "messages" and "pmids"
-        let parsedChunk = JSON.parse(chunk);
-        // Check if it's a message part or pmids
-        if (parsedChunk.message) {
-          // Append message chunks to the fullText
-          fullText += parsedChunk.message;
-
-          // Update the bot message progressively
-          this.updateBotMessage(fullText, botMessageIndex);
-        }
-
-        if (parsedChunk.pmids) {
-          // If pmids are received, store them for later
-          refData = parsedChunk.pmids;
-          this.messages[botMessageIndex].ref = refData;
-        }
-      }
-    },
-    updateBotMessage(text, index) {
-      // Ensure we're updating the correct (newest) bot message by index
-      this.messages[index].text = text;
-    },
     getAnswer(message) {
       let com = this;
       let formData = new FormData();
       formData.append("message", message.text);
       formData.append("background", JSON.stringify(message.data));
 
-      com.streamChatbotResponse(formData);
+      if (this.sourceToken) {
+        this.abort_chatbot();
+      }
+
+      this.messages.push({
+        sender: "Bot",
+        text: "Waiting for response...",
+        data: [...this.tags],
+        ref: null,
+      });
+      //POST request for generating pathways
+      com.sourceToken = this.axios.CancelToken.source();
+      com.axios
+        .post(com.api.chatbot, formData, {
+          cancelToken: com.sourceToken.token,
+        })
+        .then((response) => {
+          const botMessageIndex = this.messages.length - 1;
+          this.messages[botMessageIndex].ref = response.data.pmids;
+          this.messages[botMessageIndex].text = response.data.message;
+          this.sourceToken = null;
+        });
+    },
+    abort_chatbot() {
+      this.sourceToken.cancel("Request canceled");
     },
     closeWindow() {
       this.windowCheck = false;

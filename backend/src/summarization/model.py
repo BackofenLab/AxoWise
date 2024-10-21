@@ -70,22 +70,6 @@ def overall_summary(summarize, base, context, community):
     return [summary]
 
 
-def create_summary_RAG(query, proteins, funct_terms, abstract):
-    pro = "use the following proteins:" if len(proteins) > 0 else ""
-    funct = "use the following functional terms:" if len(funct_terms) > 0 else ""
-    abstract_is = (
-        "use the following abstracts and state PMID if you use them for information:"
-        if len(abstract) > 0
-        else ""
-    )
-    proteins = proteins if len(proteins) > 0 else ""
-    funct_terms = funct_terms if len(funct_terms) > 0 else ""
-    abstract = abstract if len(abstract) > 0 else ""
-
-    def get_response(prompt):
-        response = ollama.generate(model="llama3.1", prompt=prompt, stream=True)
-        return response
-
-    prompt = f"{query} {pro} {proteins} {funct} {funct_terms} {abstract_is} {abstract}"
-    summary = get_response(prompt)
-    return summary
+def create_summary_RAG(history):
+    response = ollama.chat(model="llama3.1", messages=history)
+    return response["message"]
