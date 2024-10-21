@@ -23,7 +23,7 @@ from util.stopwatch import Stopwatch
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
-
+history = []
 # ====================== Index page ======================
 
 _SCRIPT_DIR = os.path.dirname(__file__)
@@ -138,6 +138,33 @@ def abstract_summary():
     return Response(json.dumps(response), mimetype="application/json")
 
 
+def make_prompt(message, proteins, funct_terms, abstract):
+    """
+    Create a prompt for the chatbot.
+    Args:
+        message: Input message from user.
+        proteins: User selected proteins to be included in the prompt.
+        funct_terms: User selected functional terms to be included in the prompt.
+        abstract: User selected abstracts to be included in the prompt.
+    Returns:
+        prompt: The prompt to be used for response generation.
+    """
+    pro = "use the following proteins:" if len(proteins) > 0 else ""
+    funct = "use the following functional terms:" if len(funct_terms) > 0 else ""
+    abstract_is = (
+        "use the following abstracts and state PMID if you use them for information:"
+        if len(abstract) > 0
+        else ""
+    )
+    proteins = proteins if len(proteins) > 0 else ""
+    funct_terms = funct_terms if len(funct_terms) > 0 else ""
+    abstract = abstract if len(abstract) > 0 else ""
+    prompt = (
+        f"{message} {pro} {proteins} {funct} {funct_terms} {abstract_is} {abstract}"
+    )
+    return prompt
+
+
 @app.route("/api/subgraph/chatbot", methods=["POST"])
 def chatbot_response():
     message, background = (request.form.get("message"), request.form.get("background"))
@@ -168,16 +195,21 @@ def chatbot_response():
         embedded_query, pmids_embeddings, 6
     )
     stopwatch.round("Vector search")
-    query = ""
+    abstracts = ""
     for i in top_n_similiar:
-        query += f"PMID: {i} Abstract: {pmid_abstract[i]} "
-    answer = create_summary_RAG(
-        str(message),
+        abstracts += f"PMID: {i} Abstract: {pmid_abstract[i]} "
+    message = make_prompt(
+        message=message,
         proteins=protein_list,
         funct_terms=funct_terms_list,
-        abstract=query,
+        abstract=abstracts,
     )
-    response = json.dumps({"message": answer, "pmids": top_n_similiar})
+    history.append({"role": "user", "content": message})
+    answer = create_summary_RAG(
+        history=history,
+    )
+    history.append(answer)
+    response = json.dumps({"message": answer["content"], "pmids": top_n_similiar})
     stopwatch.round("Generating answer")
     return Response(response, mimetype="application/json")
 
