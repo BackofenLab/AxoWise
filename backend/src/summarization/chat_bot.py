@@ -25,7 +25,7 @@ def make_prompt(message, proteins, funct_terms, abstract):
         else ""
     )
     protein_prompt = (
-        f"with the background of the provided proteins, " if len(proteins) > 0 else ""
+        f"using only the provided proteins stating a synonym if used." if len(proteins) > 0 else ""
     )
     abstract_prompt = (
         f"use the information from the {len(abstract)} provided abstracts and state the pmids if used."
@@ -33,7 +33,7 @@ def make_prompt(message, proteins, funct_terms, abstract):
         else ""
     )
 
-    final_prompt = f"{protein_background}{functional_term_background}{abstracts}{message}{protein_prompt}{functional_term_prompt}{abstract_prompt}"
+    final_prompt = f"{protein_background}{functional_term_background}{abstracts}{message}{functional_term_prompt}{abstract_prompt}{protein_prompt}"
     return final_prompt
 
 
@@ -43,9 +43,10 @@ def populate(data):
     protein_list = []
     funct_terms_list = []
     for item in data:
+        data_mode = item["mode"]
         data_type = item["type"]
         entries = [item["data"]] if item["type"] != "subset" else item["data"]
-        if data_type == "subset":
+        if data_mode == "citation":
             pmids.extend([j["attributes"]["Name"] for j in entries])
             pmid_abstract.update(
                 {
@@ -55,10 +56,11 @@ def populate(data):
                     for j in entries
                 }
             )
-        elif data_type == "protein":
-            protein_list.extend([j["attributes"]["Name"] for j in entries])
-        else:
-            funct_terms_list.extend([j["name"] for j in entries])
+        elif data_mode == "protein":
+            if data_type == "term":
+                funct_terms_list.extend([j["name"] for j in entries])
+            else:
+                protein_list.extend([j["attributes"]["Name"] for j in entries])
     return pmids, pmid_abstract, protein_list, funct_terms_list
 
 
@@ -91,7 +93,7 @@ def summarize(input_text, proteins):
     raw_response = [
         ollama.generate(
             "llama3.1",
-            f"{i} summarize with a focus on {proteins} each one of the {len(i)} abstracts in 30 words into a list i.e format ['summary 1', .. , 'summary n'] dont say anything like here are the summaries or so, make sure it has the correct format for python",
+            f"{i} create a summary of each one of the {len(i)} abstracts in 30 words into a list i.e format ['summary 1', .. , 'summary n'] dont say anything like here are the summaries or so, make sure it has the correct format for python and make sure to keep any information on {proteins}",
         )["response"]
         for i in input_text
     ]
