@@ -68,8 +68,3 @@ def overall_summary(summarize, base, context, community):
     summary = get_response(prompt)
 
     return [summary]
-
-
-def create_summary_RAG(history):
-    response = ollama.chat(model="llama3.1", messages=history)
-    return response["message"]
