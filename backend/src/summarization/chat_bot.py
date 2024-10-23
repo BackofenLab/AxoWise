@@ -25,7 +25,9 @@ def make_prompt(message, proteins, funct_terms, abstract):
         else ""
     )
     protein_prompt = (
-        f"using only the provided proteins stating a synonym if used." if len(proteins) > 0 else ""
+        f"using only the provided proteins stating a synonym if used."
+        if len(proteins) > 0
+        else ""
     )
     abstract_prompt = (
         f"use the information from the {len(abstract)} provided abstracts and state the pmids if used."
