@@ -172,7 +172,6 @@ def chatbot_response():
             f"Abstract {num+1} with PMID {i}: {summarized[num]}"
             for num, i in enumerate(top_n_similiar)
         ]
-        protein_list = []
     message = make_prompt(
         message=message,
         funct_terms=funct_terms_list,

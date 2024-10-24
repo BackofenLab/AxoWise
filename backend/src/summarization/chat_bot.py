@@ -35,7 +35,7 @@ def make_prompt(message, proteins, funct_terms, abstract):
         else ""
     )
 
-    final_prompt = f"{protein_background}{functional_term_background}{abstracts}{message}{functional_term_prompt}{abstract_prompt}{protein_prompt}"
+    final_prompt = f"{protein_background}{functional_term_background}{abstracts}{message} {functional_term_prompt}{abstract_prompt}{protein_prompt}"
     return final_prompt
 
 
@@ -95,7 +95,7 @@ def summarize(input_text, proteins):
     raw_response = [
         ollama.generate(
             "llama3.1",
-            f"{i} create a summary of each one of the {len(i)} abstracts in 30 words into a list i.e format ['summary 1', .. , 'summary n'] dont say anything like here are the summaries or so, make sure it has the correct format for python and make sure to keep any information on {proteins}",
+            f"{i} create a summary of each one of the {len(i)} abstracts in 30 words into a list i.e format ['summary 1', .. , 'summary n'] dont say anything like here are the summaries or so, make sure it has the correct format for python and make sure to keep any information regarding {proteins}",
         )["response"]
         for i in input_text
     ]
