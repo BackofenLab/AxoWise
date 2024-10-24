@@ -158,14 +158,10 @@ def chatbot_response():
         top_n_similiar = summarization.top_n_similar_vectors(
             embedded_query, pmids_embeddings, 6
         )
-        unsummarized = (
-            [
-                [pmid_abstract[i] for i in top_n_similiar[:3]],
-                [pmid_abstract[i] for i in top_n_similiar[3:]],
-            ]
-            if len(top_n_similiar) > 3
-            else [pmid_abstract[i] for i in top_n_similiar]
-        )
+        unsummarized = [
+            [pmid_abstract[i] for i in top_n_similiar[j : j + 3]]
+            for j in range(0, len(top_n_similiar), 3)
+        ]
         summarized = summarize(unsummarized, protein_list)
         stopwatch.round("Vector search")
         abstracts = [
