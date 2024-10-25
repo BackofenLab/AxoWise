@@ -1,37 +1,35 @@
 import re
-from ast import literal_eval
 
 import ollama
 
 
-def make_prompt(message, proteins, funct_terms, abstract):
+def make_prompt(message="", proteins=None, funct_terms=None, abstract=None):
     """
     Create a prompt for the chatbot.
     Args:
         message: Input message from user.
         funct_terms: User selected functional terms to be included in the prompt.
         abstract: User selected abstracts to be included in the prompt.
+
     Returns:
         prompt: The prompt to be used for response generation.
     """
     functional_term_background = (
-        f"Functional terms: {funct_terms} \n" if len(funct_terms) > 0 else ""
+        f"Functional terms: {funct_terms} \n" if funct_terms else ""
     )
-    protein_background = f"Proteins: {proteins} \n" if len(proteins) > 0 else ""
-    abstracts = f"Scientific Abstracts: {abstract} \n" if len(abstract) > 0 else ""
+    protein_background = f"Proteins: {proteins} \n" if proteins else ""
+    abstracts = f"Scientific Abstracts: {abstract} \n" if abstract else ""
     functional_term_prompt = (
-        "with the background of the provided functional terms, "
-        if len(funct_terms) > 0
-        else ""
+        "with the background of the provided functional terms, " if funct_terms else ""
     )
     protein_prompt = (
-        f"using only the provided proteins stating a synonym if used."
-        if len(proteins) > 0
+        "using only the provided proteins stating a synonym if used."
+        if proteins
         else ""
     )
     abstract_prompt = (
         f"use the information from the {len(abstract)} provided abstracts and state the pmids if used."
-        if len(abstract) > 0
+        if abstract
         else ""
     )
 
@@ -81,7 +79,26 @@ def chat(history, model="llama3.1"):
     return response["message"]
 
 
-def summarize(input_text, proteins):
+def clean_abstracts(input_list):
+    """
+    Clean raw summarized text from AI model to get a single list, rather than batches of summarized text
+    """
+    # Initialize a list to store cleaned abstracts
+    cleaned_abstracts = []
+
+    # Iterate over each string in the input list
+    for string in input_list:
+        # Remove unwanted characters such as brackets and newline characters
+        cleaned_text = re.sub(r"[\[\]\n']", "", string)
+        # Split each cleaned string by ', ' to get individual abstracts
+        individual_abstracts = cleaned_text.split(", ")
+        # Extend the cleaned_abstracts list with the current individual abstracts
+        cleaned_abstracts.extend(individual_abstracts)
+
+    return cleaned_abstracts
+
+
+def summarize(input_text, proteins, model="llama3.1"):
     """
     Summarize abstracts obtained by Graph_RAG.
 
@@ -94,14 +111,13 @@ def summarize(input_text, proteins):
     """
     raw_response = [
         ollama.generate(
-            "llama3.1",
-            f"{i} create a summary of each one of the {len(i)} abstracts in 30 words into a list i.e format ['summary 1', .. , 'summary n'] dont say anything like here are the summaries or so, make sure it has the correct format for python and make sure to keep any information regarding {proteins}",
+            model,
+            f"""{i} create a summary of each one of the {len(i)} abstracts in 30 words into a list i.e format ['summary 1', .. , 'summary n']
+                dont say anything like here are the summaries or so, make sure it has the correct format for python and make sure to keep any
+                information regarding {proteins}
+            """,
         )["response"]
         for i in input_text
     ]
-    cleaned_response = [
-        literal_eval(re.sub(r"(?<![\[\],\s])'(?![\[\],])", "", i.replace("\n", "")))
-        for i in raw_response
-    ]
-    flattened_response = [i for j in cleaned_response for i in j]
-    return flattened_response
+    cleaned_response = clean_abstracts(raw_response)
+    return cleaned_response

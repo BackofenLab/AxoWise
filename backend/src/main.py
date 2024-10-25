@@ -18,7 +18,7 @@ import queries
 from dotenv import load_dotenv
 from flask import Flask, Response, request, send_from_directory
 from summarization import article_graph as summarization
-from summarization.chat_bot import chat, make_prompt, populate, summarize
+from summarization.chat_bot import chat, make_prompt, populate
 from summarization.model import overall_summary
 from util.stopwatch import Stopwatch
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -141,44 +141,48 @@ def abstract_summary():
 
 @app.route("/api/subgraph/chatbot", methods=["POST"])
 def chatbot_response():
-    message, background = (request.form.get("message"), request.form.get("background"))
-    data = json.loads(background)
+    """
+    Create prompt for AI bot from user input which will then be used to create a reply for the frontend.
+    Recieves from frontend:
+        message: user input (string)
+        background: the selected user input (proteins, functional terms and abstracts)
+    Sends:
+        response: the generated AI reply with the format: {"message": <Ai generated response>, "pmids": <abstract pmids used to generate the reply>}
+    """
+    message = request.form.get("message")
+    data = json.loads(request.form.get("background"))
     stopwatch = Stopwatch()
     driver = database.get_driver()
     # Bring background data into usable format
     pmids, pmid_abstract, protein_list, funct_terms_list = populate(data)
-    abstracts = []
-    top_n_similiar = []
-    # Case abstracts are selected
+    # If abstracts are selected, use vector search to filter for most relevant ones
     if len(pmids) > 0:
         pmids_embeddings = queries.fetch_vector_embeddings(driver=driver, pmids=pmids)
-        stopwatch.round("Fetching embeddings")
-        embedded_query = summarization.generate_embedding(str(message))
-        stopwatch.round("Embedding query")
-        top_n_similiar = summarization.top_n_similar_vectors(
-            embedded_query, pmids_embeddings, 6
+        abstracts, pmids = summarization.get_most_relevant_abstracts(
+            message=message,
+            pmids_embeddings=pmids_embeddings,
+            pmid_abstract=pmid_abstract,
+            protein_list=protein_list,
         )
-        unsummarized = [
-            [pmid_abstract[i] for i in top_n_similiar[j : j + 3]]
-            for j in range(0, len(top_n_similiar), 3)
-        ]
-        summarized = summarize(unsummarized, protein_list)
-        stopwatch.round("Vector search")
-        abstracts = [
-            f"Abstract {num+1} with PMID {i}: {summarized[num]}"
-            for num, i in enumerate(top_n_similiar)
-        ]
-    message = make_prompt(
-        message=message,
-        funct_terms=funct_terms_list,
-        proteins=protein_list,
-        abstract=abstracts,
-    )
+        message = make_prompt(
+            message=message,
+            funct_terms=funct_terms_list,
+            proteins=protein_list,
+            abstract=abstracts,
+        )
+    else:
+        message = make_prompt(
+            message=message,
+            funct_terms=funct_terms_list,
+            proteins=protein_list,
+        )
     history.append({"role": "user", "content": message})
     answer = chat(history=history)
-    history.append(answer)
-    response = json.dumps({"message": answer["content"], "pmids": top_n_similiar})
     stopwatch.round("Generating answer")
+    history.append(answer)
+    with open("history.txt", "w") as f:
+        f.write(str(history))
+    response = json.dumps({"message": answer["content"], "pmids": pmids})
     return Response(response, mimetype="application/json")
 
 

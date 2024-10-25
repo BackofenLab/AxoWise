@@ -6,6 +6,7 @@ Neo4j graph database.
 from typing import Any, Dict, List, Set, Tuple, Union
 
 import neo4j
+from util.stopwatch import Stopwatch
 
 
 def connected_terms(driver: neo4j.Driver, term_ids: list[str], species_id: int):
@@ -268,6 +269,7 @@ def get_abstracts(driver, species, query: list) -> list:
 
 
 def fetch_vector_embeddings(driver, pmids: list) -> list:
+    stopwatch = Stopwatch()
     neo4j_query = f"""
     MATCH (a:abstract) where a.PMID in {pmids}
     RETURN DISTINCT a.PMID as PMID, a.abstractEmbedding as abstractEmbedding
@@ -275,4 +277,5 @@ def fetch_vector_embeddings(driver, pmids: list) -> list:
     with driver.session() as session:
         result = session.run(neo4j_query).data()
         driver.close()
+        stopwatch.round("Fetching embeddings")
         return result

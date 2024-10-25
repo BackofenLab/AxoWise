@@ -6,6 +6,8 @@ import numpy as np
 from igraph import Graph
 from langchain_ollama.embeddings import OllamaEmbeddings
 from queries import get_abstracts
+from summarization.chat_bot import summarize
+from util.stopwatch import Stopwatch
 
 
 def cosine_similarity(vec1, vec2):
@@ -177,3 +179,36 @@ def create_citations_graph(driver, species, search_query):
             {"source": edge_mapping[source], "target": edge_mapping[target], "score": 1}
         )
     return edge_list, nodes
+
+
+def get_most_relevant_abstracts(message, pmids_embeddings, pmid_abstract, protein_list):
+    """
+    Using vector search, obtain abstracts most similiar to the input message. These abstracts are summarized to
+    then be returned for further processing.
+
+    Args:
+        message: user input
+        pmids_embeddings: dictionary of format {pmid: embedding} of all abstracts to be searched with vector search
+        pmid_abstract: dictionary of format {pmid: abstract}
+        protein_list: list of proteins to be taken into account in summarization of abstracts
+    Returns:
+        abstracts: Abstracts obtained from vector search in format list of dictionaries
+                    (each dictionary is format: {Abstract <abstract_i> with PMID <pmid>: summarized abstract})
+        top_n_similiar: pmids of the most similiar abstracts
+    """
+    stopwatch = Stopwatch()
+    embedded_query = generate_embedding(str(message))
+    stopwatch.round("Embedding query")
+    top_n_similiar = top_n_similar_vectors(embedded_query, pmids_embeddings, 6)
+    stopwatch.round("Vector search")
+    unsummarized = [
+        [pmid_abstract[i] for i in top_n_similiar[j : j + 3]]
+        for j in range(0, len(top_n_similiar), 3)
+    ]
+    summarized = summarize(unsummarized, protein_list)
+    stopwatch.round("Summarize in batches")
+    abstracts = [
+        f"Abstract {num+1} with PMID {i}: {summarized[num]}"
+        for num, i in enumerate(top_n_similiar)
+    ]
+    return abstracts, top_n_similiar
