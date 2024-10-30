@@ -1,8 +1,8 @@
 <template>
-  <div id="network-values">
-    <div class="value-text">nodes: {{ data.nodes.length }}</div>
-    <div class="value-text">edges: {{ data.edges.length }}</div>
-  </div>
+  <ul class="flex flex-col text-xs">
+    <li class="flex"><span class="w-[40px]">Nodes</span> {{ data.nodes.length }}</li>
+    <li class="flex"><span class="w-[40px]">Edges</span> {{ data.edges.length }}</li>
+  </ul>
 </template>
 
 <script>
@@ -15,24 +15,3 @@ export default {
 };
 </script>
 
-<style>
-#network-values {
-  width: 5%;
-  height: 3.98%;
-  top: 1%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  position: relative;
-  /* border-radius: 5px; */
-  -webkit-backdrop-filter: blur(7.5px);
-  transition: left 0.5s ease-in-out;
-}
-
-#network-values .value-text {
-  font-family: "ABeeZee", sans-serif;
-  font-size: 0.7vw;
-  color: #d9d9d9;
-  text-align: center; /* Optional: Center text within the container */
-}
-</style>

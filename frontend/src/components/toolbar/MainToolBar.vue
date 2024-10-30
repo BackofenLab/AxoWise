@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <ul class="menu-bar" :class="{ full: tools_active == true }">
+  <aside class="py-4">
+    <!-- <ul class="menu-bar" :class="{ full: tools_active == true }">
       <li v-on:click="switch_home()">
         <img src="@/assets/toolbar/home.png" alt="Home Icon" />
       </li>
@@ -19,9 +19,9 @@
       <li v-on:click="center()">
         <img src="@/assets/toolbar/expand.png" alt="Center Icon" />
       </li>
-      <!-- <li v-on:click="threeview()">
+      <li v-on:click="threeview()">
         <img src="@/assets/toolbar/3d-icon.png" alt="3D Icon">
-      </li> -->
+      </li>
       <li v-on:click="chatbot()">
         <img src="@/assets/toolbar/bote.png" alt="bot Icon" />
       </li>
@@ -37,8 +37,40 @@
           <span v-if="label_check" class="cross-line"></span>
         </div>
       </li>
-    </ul>
-    <MenuWindow
+    </ul> -->
+
+    <nav class="w-[64px] flex flex-col items-center gap-4 overflow-auto">
+      <Button icon="material-icons" text plain @click="switch_home">
+        <span class="material-icons">home</span>
+      </Button>
+
+      <Button icon="material-icons" text plain @click="protein_active = !protein_active">
+        <span class="material-icons">hub</span>
+      </Button>
+
+      <!-- <Button icon="material-icons" v-on:mouseover="tools_active = true" v-on:mouseleave="tools_active = false"> -->
+      <Button icon="material-icons" text plain @click="showWindow">
+        <span class="material-icons">tune</span>
+      </Button>
+
+      <Button icon="material-icons" text plain @click="selection_active = !selection_active">
+        <span class="material-icons">settings_applications</span>
+      </Button>
+
+      <Button icon="material-icons" text plain @click="center">
+        <span class="material-icons">fullscreen</span>
+      </Button>
+
+      <Button icon="material-icons" text plain @click="chatbot">
+        <span class="material-icons">chat</span>
+      </Button>
+
+      <Button icon="material-icons" text plain @click="hide_labels(label_check)">
+        <span v-if="!label_check" class="material-icons">visibility</span>
+        <span v-if="label_check" class="material-icons">visibility_off</span>
+      </Button>
+    </nav>
+    <!-- <MenuWindow
       v-show="tools_active"
       v-on:mouseover="tools_active = true"
       v-on:mouseleave="tools_active = false"
@@ -47,7 +79,7 @@
       :tools_active="tools_active"
       :mode="mode"
       @tools_active_changed="tools_active = $event"
-    ></MenuWindow>
+    ></MenuWindow> -->
     <SelectionList
       v-show="selection_active"
       :data="gephi_data"
@@ -65,31 +97,35 @@
       @protein_active_changed="protein_active = $event"
     >
     </ProteinList>
-  </div>
+  </aside>
 </template>
 
+<script setup>
+import { ref } from "vue";
+
+const windowRef = ref();
+
+const showWindow = (event) => {
+  windowRef.value.toggle(event);
+};
+</script>
+
 <script>
-import MenuWindow from "@/components/toolbar/windows/MenuWindow.vue";
+// import MenuWindow from "@/components/toolbar/windows/MenuWindow.vue";
 import ProteinList from "@/components/toolbar/modules/ProteinList.vue";
 import SelectionList from "@/components/toolbar/modules/SelectionList.vue";
 
 export default {
   name: "MainToolBar",
-  props: [
-    "gephi_data",
-    "term_data",
-    "active_subset",
-    "active_term",
-    "ensembl_name_index",
-  ],
+  props: ["gephi_data", "term_data", "active_subset", "active_term", "ensembl_name_index", "widget"],
   components: {
-    MenuWindow,
+    // MenuWindow,
     ProteinList,
     SelectionList,
   },
   data() {
     return {
-      tools_active: false,
+      // tools_active: false,
       protein_active: false,
       selection_active: false,
       label_check: true,
