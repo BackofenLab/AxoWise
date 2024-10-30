@@ -73,4 +73,4 @@ _________________________________________________________________
 * Cancer Cell: 48.8
 * Immunity: 43.47
 
-Note: Science journals cannot be accessed without Institution registration.
+Note: Most of the Science journals cannot be accessed without Institution registration.
