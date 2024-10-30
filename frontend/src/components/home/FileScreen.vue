@@ -1,104 +1,92 @@
 <template>
-  <div class="input-card">
-    <div class="input-card-logo">
-      <img src="@/assets/logo.png" />
-    </div>
+  <div class="w-[100vw] h-[100vh] flex justify-center items-center">
+    <div class="input-card">
+      <div class="input-card-logo">
+        <img src="@/assets/logo.png" />
+      </div>
 
-    <div class="input-card-header">
-      <h2>Protein Graph Database</h2>
-    </div>
+      <div class="input-card-header">
+        <h2>Protein Graph Database</h2>
+      </div>
 
-    <div class="input-card-navigation">
-      <router-link to="/input">Input</router-link>
-      <router-link to="/file">File</router-link>
-      <router-link to="/import">Import</router-link>
-    </div>
+      <div class="input-card-navigation">
+        <router-link to="/input">Input</router-link>
+        <router-link to="/file">File</router-link>
+        <router-link to="/import">Import</router-link>
+      </div>
 
-    <div class="input-data">
-      <div class="input field">
-        <div class="input-form-data">
-          <div class="form-selection">
-            <a>Species:</a>
-            <v-select v-model="selected_species" :options="species"></v-select>
-          </div>
-          <div class="form-selection">
-            <a>Protein file:</a>
-            <div class="file-upload-wrapper" :data-text="fileuploadText">
-              <input
-                type="file"
-                id="protein-file"
-                accept=".csv"
-                v-on:change="load_file($event, false)"
-              />
-            </div>
-          </div>
-          <div id="coloumn-selection" v-if="dcoloumns != null">
+      <div class="input-data">
+        <div class="input field">
+          <div class="input-form-data">
             <div class="form-selection">
-              <div class="form-heading">
-                <a>De-coloumns:</a>
-                <button id="test-btn" @click="select_all">all</button>
+              <a>Species:</a>
+              <v-select v-model="selected_species" :options="species"></v-select>
+            </div>
+            <div class="form-selection">
+              <a>Protein file:</a>
+              <div class="file-upload-wrapper" :data-text="fileuploadText">
+                <input type="file" id="protein-file" accept=".csv" v-on:change="load_file($event, false)" />
               </div>
-              <div class="filter-section">
-                <div
-                  id="pathway-filter"
-                  class="pre-full colortype"
-                  v-on:click="handling_filter_menu()"
-                  :class="{ full: dcoloumn_filtering == true }"
-                >
-                  <span>{{ coloumn }}</span>
-                  <img
-                    class="remove-filter"
-                    src="@/assets/pathwaybar/cross.png"
-                    v-on:click.stop="active_categories(null)"
-                    v-if="coloumn !== 'Filter'"
-                  />
+            </div>
+            <div id="coloumn-selection" v-if="dcoloumns != null">
+              <div class="form-selection">
+                <div class="form-heading">
+                  <a>De-coloumns:</a>
+                  <button id="test-btn" @click="select_all">all</button>
                 </div>
-                <div
-                  id="home-filter-categories"
-                  class="colortype"
-                  v-show="dcoloumn_filtering == true"
-                >
+                <div class="filter-section">
                   <div
-                    class="element"
-                    v-for="(entry, index) in dcoloumns"
-                    :key="index"
-                    v-on:click="active_categories(entry)"
-                    :class="{ active_cat: active_categories_set.has(entry) }"
+                    id="pathway-filter"
+                    class="pre-full colortype"
+                    v-on:click="handling_filter_menu()"
+                    :class="{ full: dcoloumn_filtering == true }"
                   >
-                    <a>{{ entry }}</a>
+                    <span>{{ coloumn }}</span>
+                    <img
+                      class="remove-filter"
+                      src="@/assets/pathwaybar/cross.png"
+                      v-on:click.stop="active_categories(null)"
+                      v-if="coloumn !== 'Filter'"
+                    />
+                  </div>
+                  <div id="home-filter-categories" class="colortype" v-show="dcoloumn_filtering == true">
+                    <div
+                      class="element"
+                      v-for="(entry, index) in dcoloumns"
+                      :key="index"
+                      v-on:click="active_categories(entry)"
+                      :class="{ active_cat: active_categories_set.has(entry) }"
+                    >
+                      <a>{{ entry }}</a>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="form-selection">
-            <div class="form-heading">
-              <input
-                type="checkbox"
-                id="edgeCheck"
-                name="edgeCheck"
-                v-model="customEdge"
-              />
-              <label for="edgeCheck"> Use custom protein interactions.</label>
+            <div class="form-selection">
+              <div class="form-heading">
+                <input type="checkbox" id="edgeCheck" name="edgeCheck" v-model="customEdge" />
+                <label for="edgeCheck"> Use custom protein interactions.</label>
+              </div>
+              <div v-if="customEdge == true" class="file-upload-wrapper" :data-text="fileuploadTextEdge">
+                <input type="file" id="edge-file" accept=".txt" v-on:change="load_file($event, true)" />
+              </div>
             </div>
-            <div
-              v-if="customEdge == true"
-              class="file-upload-wrapper"
-              :data-text="fileuploadTextEdge"
-            >
+            <div class="form-selection">
+              <div class="form-heading">
+                <a>Edge score:</a>
+                <input
+                  type="number"
+                  v-bind:min="threshold.min"
+                  v-bind:max="threshold.max"
+                  v-bind:step="threshold.step"
+                  v-model="threshold.value"
+                  v-on:input="valueChanged('scoregraph')"
+                />
+              </div>
               <input
-                type="file"
-                id="edge-file"
-                accept=".txt"
-                v-on:change="load_file($event, true)"
-              />
-            </div>
-          </div>
-          <div class="form-selection">
-            <div class="form-heading">
-              <a>Edge score:</a>
-              <input
-                type="number"
+                id="scoregraph"
+                type="range"
                 v-bind:min="threshold.min"
                 v-bind:max="threshold.max"
                 v-bind:step="threshold.step"
@@ -106,33 +94,18 @@
                 v-on:input="valueChanged('scoregraph')"
               />
             </div>
-            <input
-              id="scoregraph"
-              type="range"
-              v-bind:min="threshold.min"
-              v-bind:max="threshold.max"
-              v-bind:step="threshold.step"
-              v-model="threshold.value"
-              v-on:input="valueChanged('scoregraph')"
-            />
+            <button id="submit-btn" @click="submit()" :class="{ loading: isAddClass }">
+              <span class="button__text" onClick="this.disabled=true;">Submit</span>
+            </button>
           </div>
-          <button
-            id="submit-btn"
-            @click="submit()"
-            :class="{ loading: isAddClass }"
-          >
-            <span class="button__text" onClick="this.disabled=true;"
-              >Submit</span
-            >
-          </button>
         </div>
       </div>
-    </div>
-    <div class="social-media">
-      <img src="@/assets/socials/youtube.png" />
-      <img src="@/assets/socials/git.png" />
-      <img src="@/assets/socials/reddit.png" />
-      <img src="@/assets/socials/linkedin.png" />
+      <div class="social-media">
+        <img src="@/assets/socials/youtube.png" />
+        <img src="@/assets/socials/git.png" />
+        <img src="@/assets/socials/reddit.png" />
+        <img src="@/assets/socials/linkedin.png" />
+      </div>
     </div>
   </div>
 </template>
@@ -215,10 +188,7 @@ export default {
 
       var container = document.getElementById("home-filter-categories");
       var container_button = document.getElementById("pathway-filter");
-      if (
-        !container.contains(e.target) &&
-        !container_button.contains(e.target)
-      ) {
+      if (!container.contains(e.target) && !container_button.contains(e.target)) {
         com.dcoloumn_filtering = false;
 
         // Remove the event listener
@@ -230,9 +200,7 @@ export default {
 
       //Read csv file to get coloumn information
       const file = e.target.files[0];
-      edgeCheck
-        ? (com.fileuploadTextEdge = file.name)
-        : (com.fileuploadText = file.name);
+      edgeCheck ? (com.fileuploadTextEdge = file.name) : (com.fileuploadText = file.name);
 
       if (edgeCheck) return;
 

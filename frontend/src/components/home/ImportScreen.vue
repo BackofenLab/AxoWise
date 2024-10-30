@@ -1,48 +1,39 @@
 <template>
-  <div class="input-card">
-    <div class="input-card-logo">
-      <img src="@/assets/logo.png" />
-    </div>
+  <div class="w-[100vw] h-[100vh] flex justify-center items-center">
+    <div class="input-card">
+      <div class="input-card-logo">
+        <img src="@/assets/logo.png" />
+      </div>
 
-    <div class="input-card-header">
-      <h2>Protein Graph Database</h2>
-    </div>
+      <div class="input-card-header">
+        <h2>Protein Graph Database</h2>
+      </div>
 
-    <div class="input-card-navigation">
-      <router-link to="/input">Input</router-link>
-      <router-link to="/file">File</router-link>
-      <router-link to="/import">Import</router-link>
-    </div>
+      <div class="input-card-navigation">
+        <router-link to="/input">Input</router-link>
+        <router-link to="/file">File</router-link>
+        <router-link to="/import">Import</router-link>
+      </div>
 
-    <div class="input-data">
-      <div class="input field">
-        <div class="input-form-data">
-          <h4>Import your graph:</h4>
-          <div class="file-upload-wrapper" :data-text="fileuploadText">
-            <input
-              type="file"
-              id="graph-file"
-              accept=".json"
-              v-on:change="load_json"
-            />
+      <div class="input-data">
+        <div class="input field">
+          <div class="input-form-data">
+            <h4>Import your graph:</h4>
+            <div class="file-upload-wrapper" :data-text="fileuploadText">
+              <input type="file" id="graph-file" accept=".json" v-on:change="load_json" />
+            </div>
+            <button id="submit-btn" @click="submit()" :class="{ loading: isAddClass }">
+              <span class="button__text" onClick="this.disabled=true;">Submit</span>
+            </button>
           </div>
-          <button
-            id="submit-btn"
-            @click="submit()"
-            :class="{ loading: isAddClass }"
-          >
-            <span class="button__text" onClick="this.disabled=true;"
-              >Submit</span
-            >
-          </button>
         </div>
       </div>
-    </div>
-    <div class="social-media">
-      <img src="@/assets/socials/youtube.png" />
-      <img src="@/assets/socials/git.png" />
-      <img src="@/assets/socials/reddit.png" />
-      <img src="@/assets/socials/linkedin.png" />
+      <div class="social-media">
+        <img src="@/assets/socials/youtube.png" />
+        <img src="@/assets/socials/git.png" />
+        <img src="@/assets/socials/reddit.png" />
+        <img src="@/assets/socials/linkedin.png" />
+      </div>
     </div>
   </div>
 </template>

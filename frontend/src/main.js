@@ -5,6 +5,7 @@ import router from "./router";
 import "vue-select/dist/vue-select.css";
 import "./style.css";
 import "primeicons/primeicons.css";
+import "material-icons/iconfont/material-icons.css";
 import vSelect from "vue-select";
 import axios from "axios";
 import VueAxios from "vue-axios";
@@ -14,6 +15,7 @@ import StyleClass from "primevue/styleclass";
 import ThemeSwitcher from "./components/ThemeSwitcher.vue";
 import AppState from "./plugins/appState.js";
 import DarkNovaBlueTheme from "./presets/DarkNovaBluetheme.js";
+import "animate.css";
 
 // Create a reactive object to serve as the EventBus
 const emitter = mitt();
@@ -27,15 +29,14 @@ app.use(PrimeVue, {
     preset: DarkNovaBlueTheme,
     options: {
       prefix: "p",
-      darkModeSelector: ".p-dark",
+      darkModeSelector: ".p-dark", // use "system" for auto selection from system
       cssLayer: false,
     },
   },
 });
 app.component("v-select", vSelect);
 app.config.globalProperties.emitter = emitter;
-// StyleClass manages css classes declaratively to during enter/leave animations or just to toggle classes on an element
-app.directive("styleclass", StyleClass);
+app.directive("styleclass", StyleClass); // StyleClass manages css classes declaratively to during enter/leave animations or just to toggle classes on an element
 app.use(AppState);
 app.component("ThemeSwitcher", ThemeSwitcher);
 app.mount("#app");

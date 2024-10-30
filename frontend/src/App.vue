@@ -30,31 +30,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.container {
-  font-family: "ABeeZee", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: flex;
-  overflow: hidden;
-  min-height: 100vh;
-  align-items: center;
-  justify-content: center;
-}
-
-nav {
-  padding: 30px;
-  display: inline-grid;
-  text-align: center;
-}
-
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
