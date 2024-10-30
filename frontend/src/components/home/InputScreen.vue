@@ -1,69 +1,59 @@
 <template>
-  <div class="input-card">
-    <div class="input-card-logo">
-      <img src="@/assets/logo.png" />
-    </div>
+  <div class="w-[100vw] h-[100vh] flex justify-center items-center">
+    <div class="input-card">
+      <div class="input-card-logo">
+        <img src="@/assets/logo.png" />
+      </div>
 
-    <div class="input-card-header">
-      <h2>Protein Graph Database</h2>
-    </div>
+      <div class="input-card-header">
+        <h2>Protein Graph Database</h2>
+      </div>
 
-    <div class="input-card-navigation">
-      <router-link to="/input">Input</router-link>
-      <router-link to="/file">File</router-link>
-      <router-link to="/import">Import</router-link>
-    </div>
+      <div class="input-card-navigation">
+        <router-link to="/input">Input</router-link>
+        <router-link to="/file">File</router-link>
+        <router-link to="/import">Import</router-link>
+      </div>
 
-    <div class="input-data">
-      <div class="input field">
-        <div class="input-form-data">
-          <div class="form-selection">
-            <a>Species:</a>
-            <v-select v-model="selected_species" :options="species"></v-select>
-          </div>
-          <div class="form-selection">
-            <div class="form-heading">
-              <a>Protein list:</a>
-              <button id="test-btn" @click="random_proteins()">sample</button>
+      <div class="input-data">
+        <div class="input field">
+          <div class="input-form-data">
+            <div class="form-selection">
+              <a>Species:</a>
+              <v-select v-model="selected_species" :options="species"></v-select>
             </div>
-            <textarea
-              ref="protein_list_input"
-              id="protein-list"
-              v-model="raw_text"
-              rows="10"
-              cols="30"
-              autofocus
-            >
-            </textarea>
-          </div>
-          <div class="form-selection">
-            <div class="form-heading">
-              <input
-                type="checkbox"
-                id="edgeCheck"
-                name="edgeCheck"
-                v-model="customEdge"
-              />
-              <label for="edgeCheck"> Use custom protein interactions.</label>
+            <div class="form-selection">
+              <div class="form-heading">
+                <a>Protein list:</a>
+                <button id="test-btn" @click="random_proteins()">sample</button>
+              </div>
+              <textarea ref="protein_list_input" id="protein-list" v-model="raw_text" rows="10" cols="30" autofocus>
+              </textarea>
             </div>
-            <div
-              v-if="customEdge == true"
-              class="file-upload-wrapper"
-              :data-text="fileuploadText"
-            >
-              <input
-                type="file"
-                id="edge-file"
-                accept=".txt"
-                v-on:change="load_file"
-              />
+            <div class="form-selection">
+              <div class="form-heading">
+                <input type="checkbox" id="edgeCheck" name="edgeCheck" v-model="customEdge" />
+                <label for="edgeCheck"> Use custom protein interactions.</label>
+              </div>
+              <div v-if="customEdge == true" class="file-upload-wrapper" :data-text="fileuploadText">
+                <input type="file" id="edge-file" accept=".txt" v-on:change="load_file" />
+              </div>
             </div>
-          </div>
-          <div class="form-selection">
-            <div class="form-heading">
-              <a>Edge score:</a>
+            <div class="form-selection">
+              <div class="form-heading">
+                <a>Edge score:</a>
+                <input
+                  type="number"
+                  v-bind:min="threshold.min"
+                  v-bind:max="threshold.max"
+                  v-bind:step="threshold.step"
+                  v-model="threshold.value"
+                  v-on:input="valueChanged('scoregraph')"
+                />
+              </div>
               <input
-                type="number"
+                id="scoregraph"
+                type="range"
                 v-bind:min="threshold.min"
                 v-bind:max="threshold.max"
                 v-bind:step="threshold.step"
@@ -71,31 +61,18 @@
                 v-on:input="valueChanged('scoregraph')"
               />
             </div>
-            <input
-              id="scoregraph"
-              type="range"
-              v-bind:min="threshold.min"
-              v-bind:max="threshold.max"
-              v-bind:step="threshold.step"
-              v-model="threshold.value"
-              v-on:input="valueChanged('scoregraph')"
-            />
+            <button id="submit-btn" @click="submit()" :class="{ loading: isAddClass }">
+              <span class="button__text">Submit</span>
+            </button>
           </div>
-          <button
-            id="submit-btn"
-            @click="submit()"
-            :class="{ loading: isAddClass }"
-          >
-            <span class="button__text">Submit</span>
-          </button>
         </div>
       </div>
-    </div>
-    <div class="social-media">
-      <img src="@/assets/socials/youtube.png" />
-      <img src="@/assets/socials/git.png" />
-      <img src="@/assets/socials/reddit.png" />
-      <img src="@/assets/socials/linkedin.png" />
+      <div class="social-media">
+        <img src="@/assets/socials/youtube.png" />
+        <img src="@/assets/socials/git.png" />
+        <img src="@/assets/socials/reddit.png" />
+        <img src="@/assets/socials/linkedin.png" />
+      </div>
     </div>
   </div>
 </template>

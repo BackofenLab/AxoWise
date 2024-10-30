@@ -1,5 +1,5 @@
 <template>
-  <div class="visualization">
+  <div class="relative flex-1 visualization">
     <div id="sigma-heatmap" v-show="heatmap">
       <img
         class="twoview"
@@ -1389,8 +1389,8 @@ export default {
 #sigma-canvas {
   position: absolute;
   height: 100%;
-  width: 80%;
-  left: 20%;
+  width: 100%;
+  left: 0%;
   box-sizing: border-box;
   overflow: hidden;
   backdrop-filter: blur(10px);
@@ -1407,8 +1407,6 @@ export default {
   height: 350px;
   position: absolute;
   background-color: #0a0a1a;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
 }
 
 #sigma-canvas.split {
