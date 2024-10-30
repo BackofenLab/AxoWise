@@ -23,6 +23,8 @@ This document contains the structure of Journals having Impact Factor greater th
 * ProteomeXchange Consortium - PeptideAtlas: stores datasets focusing on peptide identifications and their associated spectral evidence
 * ImmPort (Immunology Database and Analysis Portal)
 * Zenodo
+* China National GeneBank DataBase (CNGBdb)
+* BioProject
 
 
 _________________________________________________________________
@@ -53,3 +55,25 @@ _________________________________________________________________
   * not provided
   * available from authors upon request
   * no new code, used existing code
+
+## Science Immunology: IF 17.6
+* unable to access without institute registration
+
+## Other Nature journals:
+* Nature Biotechnology: 68.2
+* Nature Medicine: 87.5
+* Nature Genetics: 31.7
+* Nature: 50.5
+* Nature Cell Biology: 17.3
+* Nature Neuroscience: 29.9
+* Nature Cancer: 38.7
+* Nature Methods: 36.1
+* Nature Metabolism: 25.5
+* Nature Protocols: 17.1
+* Nature Biomedical Engineering: 28.9
+
+## Other Cell journals:
+* Cancer Cell: 48.8
+* Immunity: 43.47
+
+
