@@ -56,9 +56,6 @@ _________________________________________________________________
   * available from authors upon request
   * no new code, used existing code
 
-## Science Immunology: IF 17.6
-* unable to access without institute registration
-
 ## Other Nature journals:
 * Nature Biotechnology: 68.2
 * Nature Medicine: 87.5
@@ -76,4 +73,4 @@ _________________________________________________________________
 * Cancer Cell: 48.8
 * Immunity: 43.47
 
-
+Note: Science journals cannot be accessed without Institution registration.
