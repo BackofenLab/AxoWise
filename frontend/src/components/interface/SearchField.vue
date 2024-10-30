@@ -1,5 +1,26 @@
 <template>
-  <div id="search-menu">
+  <IconField>
+    <InputIcon class="z-10 pi pi-search" />
+    <AutoComplete
+      placeholder="Find your node"
+      v-model="search_raw"
+      optionLabel="attributes['Name']"
+      :suggestions="filt_search"
+      :pt="{
+        pcInputText: { root: { class: 'w-[450px] !pr-0 !pl-11 !rounded-3xl !text-center indent-[-2.75rem]' } },
+      }"
+      @complete="select_node(filt_search[0])"
+    >
+      <template #option="slotProps">
+        <div class="flex items-center w-[100%]">
+          <div v-on:click="select_node(slotProps.option)">{{ slotProps.option.attributes["Name"] }}</div>
+          <Button class="ml-auto" icon="pi pi-google" text plain></Button>
+        </div>
+      </template>
+    </AutoComplete>
+  </IconField>
+
+  <fieldset id="search-menu" class="!hidden">
     <div id="search" class="search-field">
       <img class="search-field-icon" src="@/assets/toolbar/search.png" />
       <input
@@ -19,26 +40,13 @@
       class="search-background"
       v-if="search_raw.length >= 2 && filt_search.length > 0"
     ></div>
-    <div
-      class="results"
-      v-if="search_raw.length >= 2 && filt_search.length > 0"
-    >
+    <div class="results" v-if="search_raw.length >= 2 && filt_search.length > 0">
       <div class="result-label">nodes in network</div>
-      <div
-        v-for="(entry, index) in filt_search"
-        :key="index"
-        class="network-search"
-      >
-        <a href="#" v-on:click="select_node(entry)">{{
-          entry.attributes["Name"]
-        }}</a>
+      <div v-for="(entry, index) in filt_search" :key="index" class="network-search">
+        <a href="#" v-on:click="select_node(entry)">{{ entry.attributes["Name"] }}</a>
       </div>
       <div class="result-label">search google</div>
-      <div
-        v-for="(entry, index) in filt_search"
-        :key="index"
-        class="google-search"
-      >
+      <div v-for="(entry, index) in filt_search" :key="index" class="google-search">
         <img class="google-logo" src="@/assets/toolbar/google-logo.png" />
         <a
           :id="'results-' + index"
@@ -49,7 +57,7 @@
         >
       </div>
     </div>
-  </div>
+  </fieldset>
 </template>
 
 <script>
@@ -63,21 +71,16 @@ export default {
   },
   methods: {
     select_node(node) {
-      if (node)
-        this.emitter.emit("searchNode", { node: node, mode: this.mode });
+      if (node) this.emitter.emit("searchNode", { node: node, mode: this.mode });
     },
     google_search(protein, index) {
-      document
-        .getElementById("results-" + index)
-        .setAttribute("href", "https://www.google.com/search?q=" + protein);
+      document.getElementById("results-" + index).setAttribute("href", "https://www.google.com/search?q=" + protein);
     },
   },
   computed: {
     regex() {
       var com = this;
-      return RegExp(
-        com.search_raw.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
-      );
+      return RegExp(com.search_raw.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
     },
     filt_search() {
       var com = this;

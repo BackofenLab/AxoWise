@@ -1,6 +1,5 @@
 <template>
   <div id="vertical-pane">
-    <SearchField :data="gephi_data" :mode="mode"></SearchField>
     <div class="upper-block">
       <div class="tab-system">
         <ul>
@@ -109,7 +108,6 @@
 <script>
 import PathwayMenu from "@/components/enrichment/PathwayMenu.vue";
 import CitationMenu from "@/components/citation/CitationMenu.vue";
-import SearchField from "@/components/interface/SearchField.vue";
 import PathwayLayers from "@/components/pane/modules/layer/PathwayLayers.vue";
 import DifExpMenu from "@/components/pane/modules/difexp/DifExpMenu.vue";
 
@@ -124,7 +122,6 @@ export default {
   ],
   components: {
     PathwayMenu,
-    SearchField,
     PathwayLayers,
     DifExpMenu,
     CitationMenu,
