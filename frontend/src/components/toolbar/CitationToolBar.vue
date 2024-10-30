@@ -22,6 +22,9 @@
       <li v-on:click="chatbot()">
         <img src="@/assets/toolbar/bote.png" alt="bot Icon" />
       </li>
+      <li v-on:click="word()">
+        <img src="@/assets/toolbar/word.png" alt="word Icon" />
+      </li>
       <li
         v-on:click="hide_labels(label_check)"
         :class="{ crossed: label_check }"
@@ -98,6 +101,9 @@ export default {
     },
     chatbot() {
       this.emitter.emit("openChatbot");
+    },
+    word() {
+      this.emitter.emit("openWord");
     },
     hide_labels(check) {
       this.label_check = !check;

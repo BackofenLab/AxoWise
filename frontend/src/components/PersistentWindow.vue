@@ -28,12 +28,17 @@
             {{ element.id }}
           </span>
         </div>
-        <div v-if="msg.ref !== null">
+        <div v-if="msg.ref">
           <span class="small-tag blue" @click="searchRef(msg.ref)">
             reference
           </span>
         </div>
         <p>{{ msg.text }}</p>
+        <img
+          src="@/assets/pane/copy.png"
+          v-on:click="copyToClipboard(msg.text)"
+        />
+        <img src="@/assets/toolbar/word.png" v-on:click="addToWord(msg.text)" />
       </div>
     </div>
 
@@ -102,6 +107,19 @@ export default {
     });
   },
   methods: {
+    copyToClipboard(text) {
+      navigator.clipboard
+        .writeText(text)
+        .then(() => {
+          alert("Message copied to clipboard");
+        })
+        .catch((err) => {
+          console.error("Could not copy text: ", err);
+        });
+    },
+    addToWord(text) {
+      this.emitter.emit("addToWord", text);
+    },
     addLink(tag) {
       if (!this.windowCheck) this.windowCheck = true;
       if (tag && !this.tags.includes(tag)) {
@@ -237,6 +255,11 @@ export default {
       if (this.sourceToken) {
         this.abort_chatbot();
       }
+
+      this.emitter.emit("updateHistory", {
+        type: "tags",
+        data: [...this.tags],
+      });
 
       this.messages.push({
         sender: "Bot",
@@ -395,5 +418,13 @@ export default {
   cursor: pointer;
   color: rgb(175, 175, 175); /* Slightly darker red for remove button */
   font-size: 12px; /* Smaller "x" size */
+}
+
+.chat-history img {
+  filter: invert(50%);
+  position: relative;
+  width: 0.7vw;
+  margin-top: 0.5vw;
+  bottom: 0;
 }
 </style>

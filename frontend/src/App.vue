@@ -1,6 +1,7 @@
 <template>
   <div class="container" id="container">
     <PersistentWindow />
+    <DocumentWindow />
     <router-view v-slot="{ Component }">
       <keep-alive exclude="HomeView">
         <component :is="Component" />
@@ -15,6 +16,7 @@ import CitationView from "@/views/CitationView.vue";
 import ProteinView from "@/views/ProteinView.vue";
 import HomeView from "@/views/HomeView.vue";
 import PersistentWindow from "@/components/PersistentWindow.vue";
+import DocumentWindow from "@/components/DocumentWindow.vue";
 
 export default {
   name: "App",
@@ -24,6 +26,7 @@ export default {
     HomeView,
     CitationView,
     PersistentWindow,
+    DocumentWindow,
   },
 };
 </script>

@@ -2,6 +2,7 @@ import { createStore } from "vuex";
 
 export const store = createStore({
   state: {
+    sigma_instance: null,
     gephi_json: null,
     term_graph_data: null,
     term_graph_dict: [],
@@ -37,6 +38,10 @@ export const store = createStore({
     favourite_subsets: new Set(),
   },
   mutations: {
+    assign_sigma_instance(state, value) {
+      console.log(value);
+      state.sigma_instance = value;
+    },
     assign(state, value) {
       state.gephi_json = value;
     },

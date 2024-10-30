@@ -479,6 +479,15 @@ export default {
         saveAsSVG(sigma_instance, { download: true }, params.mode);
       else saveAsPNG(sigma_instance, { download: true }, params.mode);
     },
+    exportGraphAsURL(params) {
+      let exportURL = null;
+      if (params.format == "svg")
+        exportURL = saveAsSVG(sigma_instance, { download: false }, params.mode);
+      else
+        exportURL = saveAsPNG(sigma_instance, { download: false }, params.mode);
+
+      this.emitter.emit("addImageToWord", exportURL);
+    },
     hide_labels(state) {
       if (state) {
         sigma_instance.graph.nodes().forEach(function (n) {
@@ -751,6 +760,8 @@ export default {
     sigma_instance.graph.clear();
     sigma_instance.graph.read(com.term_data);
 
+    this.$store.commit("assign_sigma_instance", sigma_instance);
+
     this.get_module_circles();
 
     com.edit_opacity("full");
@@ -852,6 +863,10 @@ export default {
       if (state.mode == "term") this.exportGraphAsImage(state.params);
     });
 
+    this.emitter.on("exportGraphWord", (state) => {
+      if (state.mode == "terms-graph") this.exportGraphAsURL(state.params);
+    });
+
     this.emitter.on("resetSelect", (state) => {
       if (state.mode == "term") this.reset_label_select();
     });
@@ -882,6 +897,7 @@ export default {
   },
   activated() {
     sigma_instance.refresh();
+    this.$store.commit("assign_sigma_instance", sigma_instance);
   },
 };
 </script>
