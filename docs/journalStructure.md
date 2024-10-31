@@ -68,6 +68,7 @@ _________________________________________________________________
 * Nature Metabolism: 25.5
 * Nature Protocols: 17.1
 * Nature Biomedical Engineering: 28.9
+* Nature Microbiology: 20.5
 
 ## Other Cell journals:
 * Cancer Cell: 48.8
