@@ -186,6 +186,16 @@ def chatbot_response():
     return Response(response, mimetype="application/json")
 
 
+# ====================== AI enrich text ======================
+# TODO Refactor this
+# Request comes from ContextSection.vue
+@app.route("/api/subgraph/textenrich", methods=["POST"])
+def enrich_text():
+    content = request.form.get("content")
+
+    return Response(json.dumps(content), mimetype="application/json")
+
+
 # ====================== Subgraph API ======================
 # request comes from home.js
 # TODO Refactor this

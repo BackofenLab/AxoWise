@@ -68,6 +68,7 @@
       </div>
     </div>
     <div class="export-bar">
+      <button @click="textImprove">AI improve</button>
       <button @click="exportdocX">Export Document</button>
     </div>
   </div>
@@ -89,6 +90,9 @@ export default {
       pathways: [],
       proteins: [],
       tags: [],
+      api: {
+        textenrich: "api/subgraph/textenrich",
+      },
     };
   },
   computed: {
@@ -168,14 +172,12 @@ export default {
       }
     },
     addTag(bullet) {
-      console.log(bullet.data);
       if (bullet.type == "protein") this.addBullet(bullet.data.label);
       if (bullet.type == "subset")
         this.addBullet(
           `${bullet.id} (${bullet.data.map((node) => node.label).join(", ")})`
         );
       if (bullet.type == "term") this.addBullet(bullet.data.name);
-      console.log(bullet);
     },
     addImage(imgURL) {
       var selection = quill.getSelection(true);
@@ -210,6 +212,17 @@ export default {
         quillToWordConfig
       );
       saveAs(docAsBlob, "word-export.docx");
+    },
+    async textImprove() {
+      const delta = quill.getContents();
+      var com = this;
+
+      var formData = new FormData();
+      formData.append("content", JSON.stringify(delta.ops));
+
+      com.axios.post(com.api.textenrich, formData).then((response) => {
+        console.log(response);
+      });
     },
     dragElement(elmnt) {
       var pos1 = 0,
@@ -362,7 +375,7 @@ export default {
 
 .export-bar {
   color: white;
-  padding: 15px;
+  padding: 1%;
   width: 99%;
   display: flex;
   justify-content: end;
@@ -375,6 +388,7 @@ export default {
 
 .export-bar button {
   padding: 8px 16px;
+  margin-left: 2%;
   background-color: #007bff;
   color: white;
   border: none;
