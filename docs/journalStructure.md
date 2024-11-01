@@ -30,15 +30,33 @@ This document contains the structure of Journals having Impact Factor greater th
 _________________________________________________________________
 
 ## Cell: IF 45.5
-### Resource availability
-* materials availability
-* **Data and Code/Software Availability**
+_Structure 01:_
+### Resource availability:
+#### Materials availability
+#### Data and Code/Software Availability
+  * contains info regarding sequencing data and source code
   * if code unavailable > “This paper does not report original code” (MUST BE ADDED but not always added)
   * code available upon request from authors
   * already-existing SWs and Algorithms used but no unique code generated - found in Key Resources Table
   * ‘original code’
   * ‘unique code’
   * ‘custom code’
+ 
+_Structure 02:_
+### Data and Code/Software Availability:
+  * contains info regarding sequencing data and source code
+
+## Cell Stem Cell: IF 19.8
+### Resource availability:
+#### Lead contact
+#### Materials availability 
+  * contains information regarding code in some publications where 'Data and SW Availability' is missing
+#### Data and Code/Software Availability
+  * sometimes this section is skipped
+
+## Other Cell journals:
+* Cancer Cell: 48.8
+* Immunity: 43.47
 
 ## Nature Immunology: IF 27.7
 ### Data availability
@@ -70,8 +88,5 @@ _________________________________________________________________
 * Nature Biomedical Engineering: 28.9
 * Nature Microbiology: 20.5
 
-## Other Cell journals:
-* Cancer Cell: 48.8
-* Immunity: 43.47
 
 Note: Most of the Science journals cannot be accessed without Institution registration.
