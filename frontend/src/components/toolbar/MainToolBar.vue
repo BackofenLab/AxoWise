@@ -25,6 +25,9 @@
       <li v-on:click="chatbot()">
         <img src="@/assets/toolbar/bote.png" alt="bot Icon" />
       </li>
+      <li v-on:click="word()">
+        <img src="@/assets/toolbar/word.png" alt="word Icon" />
+      </li>
       <li
         v-on:click="hide_labels(label_check)"
         :class="{ crossed: label_check }"
@@ -144,6 +147,9 @@ export default {
     chatbot() {
       this.emitter.emit("openChatbot");
     },
+    word() {
+      this.emitter.emit("openWord");
+    },
     hide_labels(check) {
       this.label_check = !check;
       this.emitter.emit("hideLabels", {
@@ -154,3 +160,83 @@ export default {
   },
 };
 </script>
+
+<style>
+.menu-bar {
+  position: relative;
+  border-radius: 5px;
+  width: 3vw;
+  display: inline-block;
+  backdrop-filter: blur(7.5px);
+  -webkit-backdrop-filter: blur(7.5px);
+  align-items: center;
+  padding: 5% 0;
+  z-index: 99;
+  margin: 0.5vw 0 0 0.5vw;
+}
+
+.menu-bar li {
+  list-style: none;
+  color: #0a0a1a;
+  font-family: sans-serif;
+  font-weight: bold;
+  padding: 0.5vw;
+  margin: 0 2%;
+  position: relative;
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.menu-bar li img {
+  max-width: none;
+  width: 60%;
+  filter: invert(100%);
+}
+
+.menu-bar li::before {
+  content: " ";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: -1;
+  transition: 0.2s;
+  border-radius: 5px;
+}
+.menu-bar li:hover::before {
+  background: linear-gradient(to bottom, #e8edec, #d2d1d3);
+  box-shadow: 0px 3px 20px 0px black;
+  transform: scale(1.2);
+}
+.menu-bar li:hover {
+  color: black;
+}
+.menu-bar li:hover img {
+  color: black;
+  filter: none;
+}
+/* Use ::v-deep to apply styles to nested child components */
+::v-deep .menu-bar li {
+  color: white;
+}
+::v-deep .menu-bar li:hover {
+  color: black;
+}
+.label-container {
+  position: relative;
+  display: contents;
+  text-align: center;
+}
+
+.cross-line {
+  position: absolute;
+  border-top: 1px solid rgba(255, 255, 255, 0.883); /* Red cross line, adjust thickness/color as needed */
+  transform: rotate(-45deg); /* Optional: Diagonal cross */
+  width: 60%;
+}
+</style>

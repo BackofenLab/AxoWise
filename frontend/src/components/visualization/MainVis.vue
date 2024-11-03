@@ -180,6 +180,7 @@ export default {
         com.resetFocus(sigma_instance.cameras[0]);
         return;
       }
+      this.emitter.emit("updateHistory", { type: "protein", data: node });
 
       if (com.three_view)
         var sigma_node = sigma_instance.graph.getNodeFromIndex(node.id);
@@ -263,8 +264,6 @@ export default {
     },
     active_term(term) {
       const com = this;
-
-      console.log(term);
 
       this.$store.commit("assign_active_subset", term ? term.symbols : null);
 
@@ -777,6 +776,15 @@ export default {
         saveAsSVG(sigma_instance, { download: true }, params.mode);
       else saveAsPNG(sigma_instance, { download: true }, params.mode);
     },
+    exportGraphAsURL(params) {
+      let exportURL = null;
+      if (params.format == "svg")
+        exportURL = saveAsSVG(sigma_instance, { download: false }, params.mode);
+      else
+        exportURL = saveAsPNG(sigma_instance, { download: false }, params.mode);
+
+      this.emitter.emit("addImageToWord", exportURL);
+    },
     show_unconnectedGraph(state) {
       var com = this;
 
@@ -1219,6 +1227,8 @@ export default {
       sigma_instance.graph.clear();
       sigma_instance.graph.read(com.gephi_data);
 
+      this.$store.commit("assign_sigma_instance", sigma_instance);
+
       com.edit_opacity("full");
 
       com.hide_labels(true);
@@ -1334,6 +1344,10 @@ export default {
         if (state.mode == "protein") this.exportGraphAsImage(state.params);
       });
 
+      this.emitter.on("exportGraphWord", (state) => {
+        if (state.mode == "protein-graph") this.exportGraphAsURL(state.params);
+      });
+
       this.emitter.on("resetSelect", (state) => {
         if (state.mode == "protein") this.reset_label_select();
       });
@@ -1374,6 +1388,9 @@ export default {
 
       sigma_instance.refresh();
     });
+  },
+  activated() {
+    this.$store.commit("assign_sigma_instance", sigma_instance);
   },
 };
 </script>
