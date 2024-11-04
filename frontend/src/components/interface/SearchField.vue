@@ -1,63 +1,35 @@
 <template>
-  <IconField>
-    <InputIcon class="z-10 pi pi-search" />
-    <AutoComplete
-      placeholder="Find your node"
-      v-model="search_raw"
-      optionLabel="attributes['Name']"
-      :suggestions="filt_search"
-      :pt="{
-        pcInputText: { root: { class: 'w-[450px] !pr-0 !pl-11 !rounded-3xl !text-center indent-[-2.75rem]' } },
-      }"
-      @complete="select_node(filt_search[0])"
-    >
-      <template #option="slotProps">
-        <div class="flex items-center w-[100%]">
-          <div v-on:click="select_node(slotProps.option)">{{ slotProps.option.attributes["Name"] }}</div>
-          <Button class="ml-auto" icon="pi pi-google" text plain></Button>
-        </div>
-      </template>
-    </AutoComplete>
-  </IconField>
+  <Button label="Find your node" icon="pi pi-search" severity="secondary" class="w-[220px] dark:!bg-[#020617]"
+    :pt="{ label: { class: 'mx-auto' } }" @click="show_search = !show_search" />
 
-  <fieldset id="search-menu" class="!hidden">
-    <div id="search" class="search-field">
-      <img class="search-field-icon" src="@/assets/toolbar/search.png" />
-      <input
-        type="text"
-        v-model="search_raw"
-        class="empty"
-        placeholder="Find your node"
-        @keyup.enter="select_node(filt_search[0])"
-      />
-    </div>
-    <div
-      class="check-active"
-      v-if="search_raw.length >= 2 && filt_search.length > 0"
-      v-on:click="search_raw = ''"
-    ></div>
-    <div
-      class="search-background"
-      v-if="search_raw.length >= 2 && filt_search.length > 0"
-    ></div>
-    <div class="results" v-if="search_raw.length >= 2 && filt_search.length > 0">
-      <div class="result-label">nodes in network</div>
-      <div v-for="(entry, index) in filt_search" :key="index" class="network-search">
-        <a href="#" v-on:click="select_node(entry)">{{ entry.attributes["Name"] }}</a>
-      </div>
-      <div class="result-label">search google</div>
-      <div v-for="(entry, index) in filt_search" :key="index" class="google-search">
-        <img class="google-logo" src="@/assets/toolbar/google-logo.png" />
-        <a
-          :id="'results-' + index"
-          href=""
-          v-on:click="google_search(entry.attributes['Name'], index)"
-          target="_blank"
-          >{{ entry.attributes["Name"] }}</a
-        >
-      </div>
-    </div>
-  </fieldset>
+  <Dialog v-model:visible="show_search" position="top" :minY="60" :minX="60" :closable="true" :pt="{
+    root: { class: 'w-[25rem] !mt-[60px] !ml-[60px]' },
+    headerActions: { class: '!hidden' },
+    header: { class: '!p-3 order-1 cursor-move' },
+    content: { class: 'order-2 !px-0' },
+  }">
+    <h6 v-if="filt_search.length === 0" class="text-center text-slate-300">No available options</h6>
+
+    <ul class="divide-y border-slate-200 dark:divide-slate-100/10"
+      v-if="search_raw.length >= 2 && filt_search.length > 0">
+      <li class="flex !justify-between items-center px-4 hover:dark:bg-slate-100/10 hover:bg-slate-100"
+        v-for="(entry, index) in filt_search" :key="index">
+        <a class="flex-1 py-2.5" href="#" v-on:click="select_node(entry)">{{ entry.label }}</a>
+        <Divider layout="vertical" />
+        <a :id="'results-' + index" href="" v-on:click="google_search(entry.attributes['Name'], index)" target="_blank">
+          <img :alt="entry.label" src="@/assets/toolbar/google-logo.png" class="w-4" />
+        </a>
+      </li>
+    </ul>
+
+    <template #header>
+      <IconField class="w-full !mt-[10px]">
+        <InputIcon class="z-10 pi pi-search" />
+        <InputText v-model="search_raw" placeholder="Find your node" class="w-full"
+          v-on:keyup.enter="select_node(filt_search[0])" autofocus />
+      </IconField>
+    </template>
+  </Dialog>
 </template>
 
 <script>
@@ -66,6 +38,7 @@ export default {
   props: ["data", "mode"],
   data() {
     return {
+      show_search: false,
       search_raw: "",
     };
   },
@@ -97,141 +70,3 @@ export default {
   },
 };
 </script>
-
-<style>
-#search-menu {
-  height: 5%;
-  display: flex;
-  width: 100%;
-  position: relative;
-  align-content: center;
-  justify-content: center;
-  z-index: 9999;
-  margin-bottom: 2%;
-}
-
-#search-menu:after {
-  content: "";
-  position: absolute;
-  z-index: 1;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  backdrop-filter: blur(7.5px);
-}
-
-.search-field {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  background: rgba(222, 222, 222, 0.3);
-  position: absolute;
-  align-items: center;
-  align-content: center;
-  justify-content: center;
-  z-index: 999;
-}
-
-.search-field-icon {
-  position: absolute;
-  left: 3%;
-  height: 0.9vw;
-  width: 0.9vw;
-  filter: invert(100%);
-}
-
-.search-field input[type="text"] {
-  margin-left: 2%;
-  font-size: 0.85vw;
-  width: 83%;
-  background: none;
-  color: white;
-  cursor: default;
-  font-family: "ABeeZee", sans-serif;
-  border: none;
-}
-
-.search-field [type="text"]::-webkit-input-placeholder {
-  opacity: 70%;
-}
-
-#search-menu .results {
-  position: absolute;
-  width: 100%;
-  left: 0%;
-  top: 100%;
-  padding: 0.3% 0 0.3% 0;
-  background: rgba(222, 222, 222, 0.3);
-  backdrop-filter: blur(7.5px);
-  overflow-y: scroll;
-  overflow-x: hidden;
-  color: white;
-  border-top-color: rgba(255, 255, 255, 30%);
-  border-top-width: 1px;
-  border-top-style: solid;
-  z-index: 999;
-}
-
-#search-menu .results a {
-  margin-top: 1%;
-  margin-bottom: 1%;
-  display: block;
-  cursor: pointer;
-  text-decoration: none;
-  color: white;
-  font-family: "ABeeZee", sans-serif;
-  font-size: 0.85vw;
-}
-
-.network-search {
-  margin-left: 3%;
-}
-
-.result-label {
-  margin-left: 3%;
-  width: 93%;
-  font-family: "ABeeZee", sans-serif;
-  color: rgba(255, 255, 255, 50%);
-  font-size: 0.73vw;
-  border-bottom: 1px solid;
-  border-color: rgba(255, 255, 255, 50%);
-  cursor: default;
-}
-
-.google-search {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  align-items: center;
-}
-
-.google-search a {
-  margin-left: 1%;
-}
-
-.google-logo {
-  margin-left: 3%;
-  height: 0.8vw;
-  width: 0.8vw;
-}
-
-.check-active {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  z-index: 998;
-}
-
-.search-background {
-  position: fixed;
-  width: 25%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  z-index: 998;
-  -webkit-backdrop-filter: blur(4vw);
-}
-</style>
