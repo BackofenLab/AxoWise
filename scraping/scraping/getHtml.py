@@ -44,7 +44,7 @@ def scrape_publications():
             publication_elements = driver.find_element(By.CLASS_NAME, "PublicationSearch")  # find and extract HTML
             html_content = publication_elements.get_attribute("outerHTML")
 
-            with open("publications_test.html", "w", encoding="utf-8") as f:
+            with open("publications_humans.html", "w", encoding="utf-8") as f:
                 f.write(html_content + "\n")
 
             if new_height == last_height:   # no change in height, all content is loaded
@@ -64,7 +64,7 @@ def get_doi():
 
     searchHits = soup.find_all('a', {'class':'css-1nszd81 es4dp9v0'})   #class contains only DOI and PubMedID
 
-    with open("searchHits_test.txt", "w", encoding="utf-8") as f2:
+    with open("searchHits_humans.txt", "w", encoding="utf-8") as f2:
         for hit in searchHits:
             pattern = r'https://doi.org/[^\s"]+'    #pick only DOI hrefs
             url = re.search(pattern, str(hit))
