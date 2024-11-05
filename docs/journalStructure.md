@@ -63,7 +63,9 @@ _Structure 02:_
 
 ## Other Cell journals:
 * Cancer Cell: 48.8
-* Immunity: 43.47
+* Immunity: 25.5
+* Cell Host & Microbe: 20.6
+* Cell Metabolism: 27.7
 
 ## Nature Immunology: IF 27.7
 ### Data availability
@@ -82,18 +84,18 @@ _Structure 02:_
   * no new code, used existing code
 
 ## Other Nature journals:
-* Nature Biotechnology: 68.2
-* Nature Medicine: 87.5
+* Nature Biotechnology: 33.1
+* Nature Medicine: 58.7
 * Nature Genetics: 31.7
 * Nature: 50.5
 * Nature Cell Biology: 17.3
-* Nature Neuroscience: 29.9
-* Nature Cancer: 38.7
+* Nature Neuroscience: 21.2
+* Nature Cancer: 23.5
 * Nature Methods: 36.1
-* Nature Metabolism: 25.5
-* Nature Protocols: 17.1
-* Nature Biomedical Engineering: 28.9
+* Nature Metabolism: 18.9
+* Nature Biomedical Engineering: 26.8
 * Nature Microbiology: 20.5
+* Nature Metabolism: 18.9
 
 
 Note: Most of the Science journals cannot be accessed without Institution registration.
