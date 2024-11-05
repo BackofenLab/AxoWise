@@ -47,6 +47,10 @@ _Structure 02:_
 ### Data and Code/Software Availability:
   * contains info regarding sequencing data and source code
 
+_Structure 03_: (in publications from 04/2011 to 12/2015)
+### Accession Numbers
+  * mostly written in plain text without a URL
+
 ## Cell Stem Cell: IF 19.8 
 (some publications are not publicly accessible)
 ### Resource availability:
