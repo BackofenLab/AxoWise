@@ -2,29 +2,29 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 import time
 import re
 
 def setup_chrome_driver():
-    """set up Chrome driver with specific Chrome installation"""
+    """set up Chrome driver"""
     chrome_options = Options()
     chrome_options.add_argument('--headless') 
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
 
-    chrome_options.binary_location = r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
-
-    chrome_service = Service(
-        executable_path=r"C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe"
+    driver = webdriver.Chrome(
+        service = Service(ChromeDriverManager().install()),
+        options = chrome_options
     )
 
-    return webdriver.Chrome(service=chrome_service, options=chrome_options)
+    return driver
 
 def scrape_publications():
     """scrapes the full HTML content with infinite scroll"""
 
-    base_url = "https://www.10xgenomics.com/publications?refinementList%5Bspecies%5D%5B0%5D=Human&page=1"
+    base_url = "https://www.10xgenomics.com/publications?refinementList%5Bspecies%5D%5B0%5D=Human&page=1"   #scrape publications related to Human species only
     
     driver = setup_chrome_driver()
 
@@ -44,7 +44,7 @@ def scrape_publications():
             publication_elements = driver.find_element(By.CLASS_NAME, "PublicationSearch")  # find and extract HTML
             html_content = publication_elements.get_attribute("outerHTML")
 
-            with open("publications_humans.html", "w", encoding="utf-8") as f:
+            with open("publications_test.html", "w", encoding="utf-8") as f:
                 f.write(html_content + "\n")
 
             if new_height == last_height:   # no change in height, all content is loaded
@@ -64,7 +64,7 @@ def get_doi():
 
     searchHits = soup.find_all('a', {'class':'css-1nszd81 es4dp9v0'})   #class contains only DOI and PubMedID
 
-    with open("searchHits_humans.txt", "w", encoding="utf-8") as f2:
+    with open("searchHits_test.txt", "w", encoding="utf-8") as f2:
         for hit in searchHits:
             pattern = r'https://doi.org/[^\s"]+'    #pick only DOI hrefs
             url = re.search(pattern, str(hit))
