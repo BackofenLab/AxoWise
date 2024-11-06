@@ -1,4 +1,4 @@
-# Structure of High IF Journals
+# Structure of High IF Journals (Total number: 23)
 
 This document contains the structure of Journals having Impact Factor greater than 15 - taken from [10x Genomics](https://www.10xgenomics.com/publications). Only relevant sections from the journals are added.
 
@@ -111,9 +111,20 @@ _Structure 03_: (in publications from 04/2011 to 12/2015)
   * The Lancet Infectious Diseases: 36.4
 
 ## Cancer Discovery: IF 30.6
-### Data Availability/ Data Deposition/ Data and Software Availability/ Data and Materials Availability (2019-)
+_Structure 01:_
+### Data Availability/ Data Deposition/ Data and Software Availability/ Data and Materials Availability/ Data Reporting/ Code Available/ Data Archive (2019-present)
   * contains accession numbers for sequencing data and source code URLs
   * accession numbers stated in plain text instead of hyperlinks/URLs
+  * very few publications contain source code
 
+### Accession numbers
+  * contains accession numbers of publicly available data used by authors
+
+_Structure 02:_
+### Methods:
+#### Data Availability
+  * information related to sequencing data
+#### Software/Code Availability
+  * source code
 
 Note: Most of the Science journals cannot be accessed without Institution registration.
