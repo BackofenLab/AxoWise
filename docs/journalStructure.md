@@ -25,6 +25,7 @@ This document contains the structure of Journals having Impact Factor greater th
 * Zenodo
 * China National GeneBank DataBase (CNGBdb)
 * BioProject
+* Medical Genomics Japan Variant Database (MGeND)
 
 
 _________________________________________________________________
@@ -63,13 +64,12 @@ _Structure 03_: (in publications from 04/2011 to 12/2015)
   * 'original code'
   * 'novel code'
   * accession numbers of sequencing data & source code URL (Github/Zenodo) listed in Key Resources Table
-  * accession number stated in plain text instead of a URL
-
+  * accession number stated in plain text instead of hyperlinks/URLs
 ## Other Cell journals:
-* Cancer Cell: 48.8
-* Immunity: 25.5
-* Cell Host & Microbe: 20.6
-* Cell Metabolism: 27.7
+  * Cancer Cell: 48.8
+  * Immunity: 25.5
+  * Cell Host & Microbe: 20.6
+  * Cell Metabolism: 27.7
 
 ## Nature Immunology: IF 27.7
 ### Data availability
@@ -88,18 +88,32 @@ _Structure 03_: (in publications from 04/2011 to 12/2015)
   * no new code, used existing code
 
 ## Other Nature journals:
-* Nature Biotechnology: 33.1
-* Nature Medicine: 58.7
-* Nature Genetics: 31.7
-* Nature: 50.5
-* Nature Cell Biology: 17.3
-* Nature Neuroscience: 21.2
-* Nature Cancer: 23.5
-* Nature Methods: 36.1
-* Nature Metabolism: 18.9
-* Nature Biomedical Engineering: 26.8
-* Nature Microbiology: 20.5
-* Nature Metabolism: 18.9
+  * Nature Biotechnology: 33.1
+  * Nature Medicine: 58.7
+  * Nature Genetics: 31.7
+  * Nature: 50.5
+  * Nature Cell Biology: 17.3
+  * Nature Neuroscience: 21.2
+  * Nature Cancer: 23.5
+  * Nature Methods: 36.1
+  * Nature Metabolism: 18.9
+  * Nature Biomedical Engineering: 26.8
+  * Nature Microbiology: 20.5
+  * Nature Metabolism: 18.9
+
+## The Lancet Microbe: IF 20.9
+### Data Sharing
+  * contains accession numbers for sequencing data and source code URLs
+  * accession numbers stated in plain text instead of hyperlink
+
+## Other Lancet Journals:
+  * The Lancet Oncology: 41.6
+  * The Lancet Infectious Diseases: 36.4
+
+## Cancer Discovery: IF 30.6
+### Data Availability/ Data Deposition/ Data and Software Availability/ Data and Materials Availability (2019-)
+  * contains accession numbers for sequencing data and source code URLs
+  * accession numbers stated in plain text instead of hyperlinks/URLs
 
 
 Note: Most of the Science journals cannot be accessed without Institution registration.
