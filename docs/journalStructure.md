@@ -127,4 +127,9 @@ _Structure 02:_
 #### Software/Code Availability
   * source code
 
-Note: Most of the Science journals cannot be accessed without Institution registration.
+## Science Immunology: IF 19.1
+### Data and materials availability
+  * contains accession numbers for sequencing data and source code URLs
+
+## Other Science Journals:
+  * Science Translational Medicine: 16.9
