@@ -1,7 +1,6 @@
 <template>
-  <div class="tool-item">
-    <span v-on:click="export_graph">Export graph as .js </span>
-  </div>
+  <Button severity="secondary" type="button" label="Export graph as .js" icon="pi pi-download" iconPos="right"
+  class="!w-full !justify-between !rounded-lg" @click="export_graph" />
 </template>
 
 <script>

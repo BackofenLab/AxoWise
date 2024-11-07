@@ -1,34 +1,23 @@
 <template>
-  <div>
-    <div class="tool-item">
-      <div class="opacity">
-        <span>Background edge opacity</span>
-        <input
-          class="opacity-input"
-          type="number"
-          v-bind:min="opacityBackground.min"
-          v-bind:max="opacityBackground.max"
-          v-bind:step="opacityBackground.step"
-          v-model="opacityBackground.value"
-          v-on:change="change_opacity('background')"
-        />
-      </div>
+  <li class="flex flex-col gap-2 py-2 dark:text-[#c3c3c3]">
+    <div class="flex items-center justify-between gap-2">
+      Background edge opacity
+      <InputNumber :min="opacityBackground.min" :max="opacityBackground.max" :step="opacityBackground.step"
+        v-model="opacityBackground.value" @value-change="change_opacity('background')"
+        inputClass="w-12 h-8 text-center" />
     </div>
-    <div class="tool-item">
-      <div class="opacity">
-        <span>Highlighted edge opacity</span>
-        <input
-          class="opacity-input"
-          type="number"
-          v-bind:min="opacityHighlight.min"
-          v-bind:max="opacityHighlight.max"
-          v-bind:step="opacityHighlight.step"
-          v-model="opacityHighlight.value"
-          v-on:change="change_opacity('highlight')"
-        />
-      </div>
+    <Slider class="mx-1 mt-3 mb-3" :min="opacityBackground.min" :max="opacityBackground.max"
+      :step="opacityBackground.step" v-model="opacityBackground.value" />
+  </li>
+  <li class="flex flex-col gap-2 py-2 dark:text-[#c3c3c3]">
+    <div class="flex items-center justify-between gap-2">
+      Highlighted edge opacity
+      <InputNumber :min="opacityHighlight.min" :max="opacityHighlight.max" :step="opacityHighlight.step"
+        v-model="opacityHighlight.value" @value-change="change_opacity('highlight')" inputClass="w-12 h-8 text-center" />
     </div>
-  </div>
+    <Slider class="mx-1 mt-3 mb-3" :min="opacityHighlight.min" :max="opacityHighlight.max" :step="opacityHighlight.step"
+      v-model="opacityHighlight.value" />
+  </li>
 </template>
 
 <script>
@@ -66,28 +55,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.opacity input[type="number"] {
-  position: absolute;
-  margin-top: 0.1vw;
-  right: 6.3%;
-  width: 9%;
-  border-radius: 5px;
-  border: none;
-  height: 6%;
-  font-family: "ABeeZee", sans-serif;
-  font-size: 0.7vw;
-  color: #0a0a1a;
-  background-color: #ddd;
-  -moz-appearance: textfield;
-  appearance: textfield;
-  text-align: center;
-}
-
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-</style>

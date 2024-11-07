@@ -1,7 +1,6 @@
 <template>
-  <div class="tool-item">
-    <span v-on:click="export_edges">Export edges as .csv</span>
-  </div>
+  <Button severity="secondary" type="button" label="Export edges as .csv" icon="pi pi-download" iconPos="right"
+    class="!w-full !justify-between !rounded-lg" @click="export_edges" />
 </template>
 
 <script>
