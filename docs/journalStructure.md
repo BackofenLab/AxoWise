@@ -1,4 +1,4 @@
-# Structure of High IF Journals (Total number: 23)
+# Structure of High IF Journals (Total number: 26)
 
 This document contains the structure of Journals having Impact Factor greater than 15 - taken from [10x Genomics](https://www.10xgenomics.com/publications). Only relevant sections from the journals are added.
 
@@ -72,6 +72,7 @@ _Structure 03_: (in publications from 04/2011 to 12/2015)
   * Cell Metabolism: 27.7
 
 ## Nature Immunology: IF 27.7
+_Structure 01:_
 ### Data availability
   * uploaded on database(s) mentioned above
   * available upon request
@@ -87,6 +88,10 @@ _Structure 03_: (in publications from 04/2011 to 12/2015)
   * available from authors upon request
   * no new code, used existing code
 
+_Structure 02: (found in old publications late 90s-00s)_
+### Accession codes
+  * contains URLs to sequencing data
+
 ## Other Nature journals:
   * Nature Biotechnology: 33.1
   * Nature Medicine: 58.7
@@ -99,7 +104,6 @@ _Structure 03_: (in publications from 04/2011 to 12/2015)
   * Nature Metabolism: 18.9
   * Nature Biomedical Engineering: 26.8
   * Nature Microbiology: 20.5
-  * Nature Metabolism: 18.9
 
 ## The Lancet Microbe: IF 20.9
 ### Data Sharing
@@ -133,6 +137,15 @@ _Structure 02:_
 
 ## Other Science Journals:
   * Science Translational Medicine: 16.9
-  * 
 
 ## Nucleic Acids Research: IF 16.6
+### Data Availability
+  * contains information regarding sequencing data
+  * few publications mention source code
+
+## Cell Research: IF 28.2
+### Data Availability/ Data Access
+  * very few mentioned source code
+  * accession numbers stated in plain text instead of hyperlink
+
+**General Observation:** Most publications started adding source code from 2019 onwards
