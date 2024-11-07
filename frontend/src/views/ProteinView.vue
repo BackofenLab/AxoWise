@@ -1,75 +1,39 @@
 <template>
   <keep-alive>
-    <AppBar :gephi_data="gephi_data" :mode="mode" @widget_toggled="widget = $event" :widget="widget" :view="view"></AppBar>
+    <AppBar :gephi_data="gephi_data" :mode="mode" @widget_toggled="widget = $event" :widget="widget" :view="view">
+    </AppBar>
   </keep-alive>
   <keep-alive>
-    <PaneSystem
-      :active_node="active_node"
-      @active_node_changed="active_node = $event"
-      :active_term="active_term"
-      @active_term_changed="active_term = $event"
-      :active_background="active_background"
-      @active_background_changed="active_background = $event"
-      :active_subset="active_subset"
-      @active_subset_changed="active_subset = $event"
-      :active_decoloumn="active_decoloumn"
-      @active_decoloumn_changed="active_decoloumn = $event"
-      :active_termlayers="active_termlayers"
-      @active_termlayers_changed="active_termlayers = $event"
-      @active_layer_changed="active_layer = $event"
-      @active_combine_changed="active_combine = $event"
-      :gephi_data="gephi_data"
-      :node_color_index="node_color_index"
-    ></PaneSystem>
+    <PaneSystem :active_node="active_node" @active_node_changed="active_node = $event" :active_term="active_term"
+      @active_term_changed="active_term = $event" :active_background="active_background"
+      @active_background_changed="active_background = $event" :active_subset="active_subset"
+      @active_subset_changed="active_subset = $event" :active_decoloumn="active_decoloumn"
+      @active_decoloumn_changed="active_decoloumn = $event" :active_termlayers="active_termlayers"
+      @active_termlayers_changed="active_termlayers = $event" @active_layer_changed="active_layer = $event"
+      @active_combine_changed="active_combine = $event" :gephi_data="gephi_data" :node_color_index="node_color_index">
+    </PaneSystem>
   </keep-alive>
   <main class="h-[calc(100vh-65px)] flex flex-1">
     <keep-alive>
-      <MainToolBar
-        :gephi_data="gephi_data"
-        :active_subset="active_subset"
-        :active_term="active_term"
-        :ensembl_name_index="ensembl_name_index"
-        :widget="widget"
-      ></MainToolBar>
+      <MainToolBar :gephi_data="gephi_data" :active_subset="active_subset" :active_term="active_term"
+        :ensembl_name_index="ensembl_name_index" :widget="widget"></MainToolBar>
     </keep-alive>
 
     <keep-alive>
-      <MainVis
-        ref="mainVis"
-        :active_node="active_node"
-        @active_node_changed="active_node = $event"
-        :active_term="active_term"
-        @active_term_changed="active_term = $event"
-        :active_termlayers="active_termlayers"
-        @active_termlayers_changed="active_termlayers = $event"
-        :active_layer="active_layer"
-        @active_layer_changed="active_layer = $event"
-        :active_subset="active_subset"
-        @active_subset_changed="active_subset = $event"
-        :subactive_subset="subactive_subset"
-        @subactive_subset_changed="subactive_subset = $event"
-        :gephi_data="gephi_data"
-        :active_decoloumn="active_decoloumn"
-        :unconnected_nodes="unconnected_nodes"
-        :active_combine="active_combine"
-        @active_decoloumn_changed="active_decoloumn = $event"
-        :node_color_index="node_color_index"
-        :node_size_index="node_size_index"
-        :edge_color_index="edge_color_index"
-        :node_modul_index="node_modul_index"
-      ></MainVis>
+      <MainVis ref="mainVis" :active_node="active_node" @active_node_changed="active_node = $event"
+        :active_term="active_term" @active_term_changed="active_term = $event" :active_termlayers="active_termlayers"
+        @active_termlayers_changed="active_termlayers = $event" :active_layer="active_layer"
+        @active_layer_changed="active_layer = $event" :active_subset="active_subset"
+        @active_subset_changed="active_subset = $event" :subactive_subset="subactive_subset"
+        @subactive_subset_changed="subactive_subset = $event" :gephi_data="gephi_data"
+        :active_decoloumn="active_decoloumn" :unconnected_nodes="unconnected_nodes" :active_combine="active_combine"
+        @active_decoloumn_changed="active_decoloumn = $event" :node_color_index="node_color_index"
+        :node_size_index="node_size_index" :edge_color_index="edge_color_index" :node_modul_index="node_modul_index">
+      </MainVis>
     </keep-alive>
     <keep-alive>
-      <ExportScreen :mode="mode" :filter_views="filter_views"></ExportScreen>
-    </keep-alive>
-    <keep-alive>
-      <VerticalPane
-        :gephi_data="gephi_data"
-        :active_node="active_node"
-        :active_background="active_background"
-        :active_termlayers="active_termlayers"
-        :active_decoloumn="active_decoloumn"
-      ></VerticalPane>
+      <VerticalPane :gephi_data="gephi_data" :active_node="active_node" :active_background="active_background"
+        :active_termlayers="active_termlayers" :active_decoloumn="active_decoloumn"></VerticalPane>
     </keep-alive>
   </main>
 </template>
@@ -80,7 +44,6 @@ import MainVis from "@/components/visualization/MainVis.vue";
 import VerticalPane from "@/components/verticalpane/VerticalPane.vue";
 import PaneSystem from "@/components/pane/PaneSystem.vue";
 import MainToolBar from "../components/toolbar/MainToolBar.vue";
-import ExportScreen from "@/components/toolbar/modules/ExportScreen.vue";
 import AppBar from "@/layout/AppBar.vue";
 
 export default {
@@ -91,7 +54,6 @@ export default {
     PaneSystem,
     MainToolBar,
     VerticalPane,
-    ExportScreen,
   },
   data() {
     return {

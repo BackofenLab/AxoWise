@@ -1,6 +1,6 @@
 <template>
   <Toolbar
-    class="h-[60px] !py-1.5 relative !rounded-none dark:!border-0 dark:!bg-[#34343D] z-[1]"
+    class="h-[58px] !py-1.5 relative !rounded-none dark:!border-0 dark:!bg-[#34343D] z-[1]"
     :pt="{ end: { class: 'flex items-center gap-4' } }"
   >
     <template #start>

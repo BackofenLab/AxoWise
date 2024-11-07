@@ -1,15 +1,15 @@
 <template>
-  <ul class="list-none p-0 m-0 flex flex-col divide-y dark:divide-[#343b4c]">
-    <li class="flex items-center justify-between gap-2 py-2 dark:text-[#c3c3c3]">
+  <ul class="flex flex-col gap-1.5 p-0 m-0 list-none">
+    <li class="flex items-center justify-between gap-2 dark:text-[#c3c3c3]">
       <ExportingButton :mode="mode"></ExportingButton>
     </li>
-    <li v-if="mode == 'protein'" class="flex items-center justify-between gap-2 py-2 dark:text-[#c3c3c3]">
+    <li v-if="mode == 'protein'" class="flex items-center justify-between gap-2 dark:text-[#c3c3c3]">
       <ExportGraph></ExportGraph>
     </li>
-    <li v-if="mode == 'protein'" class="flex items-center justify-between gap-2 py-2 dark:text-[#c3c3c3]">
+    <li v-if="mode == 'protein'" class="flex items-center justify-between gap-2 dark:text-[#c3c3c3]">
       <ExportProteins :gephi_data="gephi_data"></ExportProteins>
     </li>
-    <li v-if="mode == 'protein'" class="flex items-center justify-between gap-2 py-2 dark:text-[#c3c3c3]">
+    <li v-if="mode == 'protein'" class="flex items-center justify-between gap-2 dark:text-[#c3c3c3]">
       <ExportEdges :gephi_data="gephi_data" :ensembl_name_index="ensembl_name_index">
       </ExportEdges>
     </li>
