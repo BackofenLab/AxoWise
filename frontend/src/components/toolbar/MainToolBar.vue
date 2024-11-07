@@ -14,7 +14,7 @@
       </Button>
 
       <Button icon="material-icons" text plain v-tooltip="'Export graph'" @click="export_active = !export_active">
-        <span class="material-icons">download</span>
+        <span class="material-icons">file_open</span>
       </Button>
 
       <Button icon="material-icons" text plain v-tooltip="'Graph parameter'"
@@ -38,18 +38,17 @@
 
     <Dialog v-model:visible="selection_active" header="Graph parameter" position="topleft" :minY="60" :minX="60" :pt="{
       root: { class: 'w-[25rem] !mt-[60px] !ml-[60px]' },
-      header: { class: '!py-2.5' },
+      header: { class: '!py-2.5 cursor-move' },
       title: { class: '!text-base' },
     }">
-      <SelectionList v-show="selection_active" :data="gephi_data" :selection_active="selection_active"
-        :active_subset="active_subset" :active_term="active_term" :mode="mode"
-        @selection_active_changed="selection_active = $event">
+      <SelectionList :data="gephi_data" :selection_active="selection_active" :active_subset="active_subset"
+        :active_term="active_term" :mode="mode" @selection_active_changed="selection_active = $event">
       </SelectionList>
     </Dialog>
 
     <Dialog v-model:visible="protein_active" header="Highlight nodes" position="topleft" :minY="60" :minX="60" :pt="{
       root: { class: 'w-[32rem] !mt-[60px] !ml-[60px]' },
-      header: { class: '!py-2.5' },
+      header: { class: '!py-2.5 cursor-move' },
       title: { class: '!text-base' },
     }">
       <ProteinList v-show="protein_active" :gephi_data="gephi_data" :mode="mode"
@@ -59,7 +58,7 @@
 
     <Dialog v-model:visible="tools_active" header="Graph settings" position="topleft" :minY="60" :minX="60" :pt="{
       root: { class: 'w-[25rem] !mt-[60px] !ml-[60px]' },
-      header: { class: '!py-2.5' },
+      header: { class: '!py-2.5 cursor-move' },
       title: { class: '!text-base' },
     }">
       <MenuWindow v-show="tools_active" :gephi_data="gephi_data" :ensembl_name_index="ensembl_name_index"
@@ -67,9 +66,10 @@
     </Dialog>
 
     <Dialog v-model:visible="export_active" header="Export graph" position="topleft" :minY="60" :minX="60" :pt="{
-      root: { class: 'w-[25rem] !mt-[60px] !ml-[60px]' },
-      header: { class: '!py-2.5' },
+      root: { class: 'w-[18rem] !mt-[60px] !ml-[60px]' },
+      header: { class: '!py-2.5 cursor-move' },
       title: { class: '!text-base' },
+      content: { class: '!px-4' }
     }">
       <ExportWindow v-show="export_active" :gephi_data="gephi_data" :ensembl_name_index="ensembl_name_index"
         :mode="mode"></ExportWindow>
