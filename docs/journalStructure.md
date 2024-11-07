@@ -133,3 +133,6 @@ _Structure 02:_
 
 ## Other Science Journals:
   * Science Translational Medicine: 16.9
+  * 
+
+## Nucleic Acids Research: IF 16.6
