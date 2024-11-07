@@ -1,12 +1,8 @@
 <template>
-  <div class="tool-item">
-    <span>Show all cluster</span>
-    <input
-      id="switch-modules"
-      v-on:change="show_whole()"
-      type="checkbox"
-    /><label for="switch-modules"></label>
-  </div>
+  <li class="flex items-center justify-between gap-2 py-2 dark:text-[#c3c3c3]">
+    Show all cluster
+    <ToggleSwitch class="toggle-xs" @value-change="show_whole" />
+    </li>
 </template>
 
 <script>
@@ -17,18 +13,12 @@ export default {
     return {};
   },
   methods: {
-    show_whole() {
+    show_whole(value) {
       this.emitter.emit("showCluster", {
-        check: document.getElementById("switch-modules").checked,
+        check: value,
         mode: this.mode,
       });
     },
   },
 };
 </script>
-
-<style>
-#switch-modules {
-  margin-left: 5%;
-}
-</style>
