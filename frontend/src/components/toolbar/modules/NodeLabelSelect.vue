@@ -1,8 +1,8 @@
 <template>
-  <div class="tool-item">
-    <span>Reset labels</span>
-    <button v-on:click="reset_labels()" id="reset-labels">yes</button>
-  </div>
+  <li class="flex items-center justify-between gap-2 py-2 dark:text-[#c3c3c3]">
+    Reset labels
+    <Button label="yes" size="small" severity="secondary" @click="reset_labels"></Button>
+  </li>
 </template>
 
 <script>
@@ -14,27 +14,8 @@ export default {
   },
   methods: {
     reset_labels() {
-      console.log(this.mode);
       this.emitter.emit("resetSelect", { mode: this.mode });
     },
   },
 };
 </script>
-
-<style>
-#reset-labels {
-  width: 9%;
-  height: 6%;
-  position: absolute;
-  right: 6.3%;
-  margin-top: 0.1vw;
-  background-color: #ddd;
-  cursor: pointer;
-  border: none;
-  border-radius: 5px;
-  color: #0a0a1a;
-  font-family: "ABeeZee", sans-serif;
-  font-size: 0.7vw;
-  text-align: center;
-}
-</style>

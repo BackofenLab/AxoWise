@@ -1,16 +1,9 @@
 <template>
-  <div class="tool-item">
-    <span>Visualize fdr-rate</span>
-    <button
-      v-on:click="
-        activate_fdr(check);
-        check = !check;
-      "
-      id="activate-fdr"
-    >
-      yes
-    </button>
-  </div>
+  <li class="flex items-center justify-between gap-2 py-2 dark:text-[#c3c3c3]">
+    Visualize fdr-rate
+    <Button label="yes" size="small" severity="secondary" @click="activate_fdr(check);
+    check = !check;"></Button>
+  </li>
 </template>
 
 <script>
@@ -28,21 +21,3 @@ export default {
   },
 };
 </script>
-
-<style>
-#activate-fdr {
-  width: 9%;
-  height: 6%;
-  position: absolute;
-  right: 6.3%;
-  margin-top: 0.1vw;
-  background-color: #ddd;
-  cursor: pointer;
-  border: none;
-  border-radius: 5px;
-  color: #0a0a1a;
-  font-family: "ABeeZee", sans-serif;
-  font-size: 0.7vw;
-  text-align: center;
-}
-</style>
