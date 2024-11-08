@@ -49,7 +49,7 @@ _Structure 02:_
 ### Data and Code/Software Availability:
   * contains info regarding sequencing data and source code
 
-_Structure 03_: (in publications from 04/2011 to 12/2015)
+_Structure 03:_ (in publications from 04/2011 to 2016)
 ### Accession Numbers
   * mostly written in plain text without a URL
 
@@ -66,7 +66,7 @@ _Structure 03_: (in publications from 04/2011 to 12/2015)
   * 'novel code'
   * accession numbers of sequencing data & source code URL (Github/Zenodo) listed in Key Resources Table
   * accession number stated in plain text instead of hyperlinks/URLs
-  * 
+
 ## Other Cell journals:
   * Cancer Cell: 48.8
   * Immunity: 25.5
@@ -75,7 +75,7 @@ _Structure 03_: (in publications from 04/2011 to 12/2015)
 
 ## Nature Immunology: IF 27.7
 _Structure 01:_
-### Data availability
+### Data availability 
   * uploaded on database(s) mentioned above
   * available upon request
   * fasta files found under Supplementary Information as Supplementary Data (observed in only one publication so far)
@@ -90,9 +90,11 @@ _Structure 01:_
   * available from authors upon request
   * no new code, used existing code
 
-_Structure 02: (found in old publications late 90s-00s)_
+_Structure 02:_
 ### Accession codes
   * contains URLs to sequencing data
+
+**NOTE:** before 2019: Accession Codes, in 2019: Data Availability, 2020 onwards: Data Availability, Code Availability
 
 ## Other Nature journals:
   * Nature Biotechnology: 33.1
