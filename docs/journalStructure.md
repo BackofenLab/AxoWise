@@ -173,3 +173,9 @@ _Structure 02:_
 
 
 **General Observation:** Most publications started adding source code from 2019 onwards
+
+
+# ISSUES WITH 10xGenomics:
+  * results show around 8000 articles but scrapes only 999 articles
+  * search hits go till page 50, each page contains 20 articles
+  * faulty sorting: ascending starts from 1880 and goes till 2019 (page 50), descending starts from 2024 and goes till 2023 (page 50)
