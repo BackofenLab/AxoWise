@@ -148,7 +148,7 @@ _Structure 02:_
   * contains information regarding sequencing data
   * few publications mention source code
 
-## Cell Research: IF 28.2
+## Cell Research (Nature): IF 28.2
 ### Data Availability/ Data Access
   * very few mentioned source code
   * accession numbers stated in plain text instead of hyperlink
