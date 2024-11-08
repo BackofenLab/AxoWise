@@ -1,23 +1,23 @@
 <template>
-  <Toolbar
-    class="h-[58px] !py-1.5 relative !rounded-none dark:!border-0 dark:!bg-[#34343D] z-[1]"
-    :pt="{ end: { class: 'flex items-center gap-4' } }"
-  >
+  <Toolbar class="h-[58px] !py-1.5 relative !rounded-none dark:!border-0 dark:!bg-[#34343D] z-[1]"
+    :pt="{ end: { class: 'flex items-center gap-4' } }">
     <template #start>
       <div class="flex gap-4">
-        <Button icon="material-icons" aria-label="menu" severity="secondary" @click="toggle_widget(!widget)">
-          <span v-if="widget" class="material-icons">widgets</span>
-          <span v-if="!widget" class="material-icons">dashboard</span>
+        <Button icon="material-symbols-rounded" aria-label="menu" severity="secondary" @click="toggle_widget(!widget)">
+          <span v-if="widget" class="material-symbols-rounded font-variation-ico-filled">widgets</span>
+          <span v-if="!widget" class="material-symbols-rounded font-variation-ico-filled">dashboard</span>
         </Button>
 
         <Button @click="toggle" plain text class="capitalize">
-          <span class="material-icons">display_settings</span>
+          <span class="material-symbols-rounded">display_settings</span>
           {{ view }}
         </Button>
       </div>
     </template>
 
-    <template #center><SearchField :data="gephi_data" :mode="mode"></SearchField></template>
+    <template #center>
+      <SearchField :data="gephi_data" :mode="mode"></SearchField>
+    </template>
 
     <template #end>
       <keep-alive>
@@ -30,12 +30,8 @@
 
   <Popover ref="op">
     <ul class="flex flex-col p-0 m-0 list-none">
-      <li
-        v-for="entry in filter_views"
-        :key="entry"
-        v-on:click="swap_view(entry)"
-        class="flex items-center gap-2 px-2 py-3 capitalize cursor-pointer hover:bg-emphasis rounded-border"
-      >
+      <li v-for="entry in filter_views" :key="entry" v-on:click="swap_view(entry)"
+        class="flex items-center gap-2 px-2 py-3 capitalize cursor-pointer hover:bg-emphasis rounded-border">
         {{ entry + " view" }}
       </li>
     </ul>

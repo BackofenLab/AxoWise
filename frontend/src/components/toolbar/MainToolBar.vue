@@ -1,38 +1,45 @@
 <template>
   <aside :class="`py-4 animate__animated animate__faster ${widget ? 'animate__fadeInDown' : 'w-0 animate__fadeOutUp'}`">
     <nav class="w-[64px] flex flex-col items-center gap-4 overflow-auto">
-      <Button icon="material-icons" text plain v-tooltip="'Home'" @click="switch_home">
-        <span class="material-icons">home</span>
+      <Button class="group" icon="material-symbols-rounded" text plain v-tooltip="'Home'" @click="switch_home">
+        <span class="material-symbols-rounded group-hover:font-variation-ico-filled">home</span>
       </Button>
 
-      <Button icon="material-icons" text plain v-tooltip="'Highlight nodes'" @click="protein_active = !protein_active">
-        <span class="material-icons">hub</span>
+      <Button class="group" icon="material-symbols-rounded" text plain v-tooltip="'Highlight nodes'"
+        @click="protein_active = !protein_active">
+        <span class="material-symbols-rounded group-hover:font-variation-ico-filled">hub</span>
       </Button>
 
-      <Button icon="material-icons" text plain v-tooltip="'Graph settings'" @click="tools_active = !tools_active">
-        <span class="material-icons">tune</span>
+
+      <Button class="group" icon="material-symbols-rounded" text plain v-tooltip="'Graph settings'"
+        @click="tools_active = !tools_active">
+        <span class="material-symbols-rounded group-hover:font-variation-ico-filled">settings_motion_mode</span>
       </Button>
 
-      <Button icon="material-icons" text plain v-tooltip="'Export graph'" @click="export_active = !export_active">
-        <span class="material-icons">file_open</span>
+
+      <Button class="group" icon="material-symbols-rounded" text plain v-tooltip="'Export graph'" @click="export_active = !export_active">
+        <span class="material-symbols-rounded group-hover:font-variation-ico-filled">file_export</span>
       </Button>
 
-      <Button icon="material-icons" text plain v-tooltip="'Graph parameter'"
+      <Button class="group" icon="material-symbols-rounded" text plain v-tooltip="'Graph parameter'"
         @click="selection_active = !selection_active">
-        <span class="material-icons">settings_applications</span>
+        <span class="material-symbols-rounded group-hover:font-variation-ico-filled">filter_b_and_w</span>
       </Button>
 
-      <Button icon="material-icons" text plain v-tooltip="'Re-center'" @click="center">
-        <span class="material-icons">fullscreen</span>
+      <Button class="group" icon="material-symbols-rounded" text plain v-tooltip="'Re-center'" @click="center">
+        <span class="material-symbols-rounded group-hover:font-variation-ico-filled">center_focus_strong</span>
       </Button>
 
-      <Button icon="material-icons" text plain v-tooltip="'Chat bot'" @click="chatbot">
-        <span class="material-icons">chat</span>
+      <Button class="group" icon="material-symbols-rounded" text plain v-tooltip="'Chat bot'" @click="chatbot">
+        <span class="material-symbols-rounded group-hover:font-variation-ico-filled">forum</span>
       </Button>
 
-      <Button icon="material-icons" text plain v-tooltip="'Show label'" @click="hide_labels(label_check)">
-        <span v-if="!label_check" class="material-icons">visibility</span>
-        <span v-if="label_check" class="material-icons">visibility_off</span>
+      <Button class="group" icon="material-symbols-rounded" text plain v-tooltip="'Show label'"
+        @click="hide_labels(label_check)">
+        <span v-if="!label_check"
+          class="material-symbols-rounded group-hover:font-variation-ico-filled">subtitles</span>
+        <span v-if="label_check"
+          class="material-symbols-rounded group-hover:font-variation-ico-filled">subtitles_off</span>
       </Button>
     </nav>
 
@@ -47,7 +54,7 @@
     </Dialog>
 
     <Dialog v-model:visible="protein_active" header="Highlight nodes" position="topleft" :minY="60" :minX="60" :pt="{
-      root: { class: 'w-[32rem] !mt-[60px] !ml-[60px]' },
+      root: { class: 'w-[24rem] !mt-[60px] !ml-[60px]' },
       header: { class: '!py-2.5 cursor-move' },
       title: { class: '!text-base' },
     }">

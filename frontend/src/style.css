@@ -4,7 +4,7 @@
 
 /* Start Styles for PrimeVue */
 :root {
-  --body-bg: var(--p-surface-50);
+  --body-bg: #f3f3f3;
   --body-text-color: var(--p-surface-900);
   --card-border: 1px solid var(--border-color);
   --card-bg: var(--p-surface-0);
@@ -34,6 +34,50 @@ body {
   color: var(--body-text-color);
 }
 
+/* Global scrollbar styling for Chrome, Safari, Edge (Chromium-based) */
+@media (min-width: 1280px) {
+  /* WebKit Browsers (Chrome, Safari, Edge) */
+  ::-webkit-scrollbar {
+    width: 6px; /* Width of the scrollbar */
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: #e2e8f0; /* Track color */
+    border-radius: 100px; /* Rounded corners */
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #64748b; /* Thumb color */
+    border-radius: 100px; /* Rounded corners */
+  }
+
+  /* Firefox Styling */
+  /* Applies similar thin scrollbar with matching colors */
+  * {
+    scrollbar-width: thin; /* Makes the scrollbar thin */
+    scrollbar-color: #64748b #e2e8f0; /* Thumb color and track color */
+  }
+}
+
+/* Optional: Narrow screen scrollbar styles */
+@media (max-width: 1279px) {
+  /* WebKit Browsers (Chrome, Safari, Edge) */
+  ::-webkit-scrollbar {
+    width: 8px; /* Width for smaller screens */
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #64748b; /* Darker thumb color */
+    border-radius: 100px;
+  }
+
+  /* Firefox Styling */
+  * {
+    scrollbar-width: auto;
+    scrollbar-color: #64748b #f0f4f8; /* Subtle color for small screens */
+  }
+}
+
 .card {
   background: var(--card-bg);
   border: var(--card-border);
@@ -52,9 +96,11 @@ body {
   height: 14px !important;
   margin-top: -6px !important;
 }
+
 .toggle-xs.p-toggleswitch.p-toggleswitch-checked .p-toggleswitch-handle {
   left: 15px !important;
 }
+
 /* End Styles for PrimeVue */
 
 * {

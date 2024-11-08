@@ -1,7 +1,7 @@
 <template>
   <div class="tool-item">
     <div id="selection_highlight" class="window-menu selection">
-      <div id="selection_highlight_header" class="window-header">
+      <!-- <div id="selection_highlight_header" class="window-header">
         <div class="headertext">
           <span>graph parameter</span>
           <img
@@ -10,7 +10,7 @@
             v-on:click="unactive_proteinlist()"
           />
         </div>
-      </div>
+      </div> -->
       <div class="selection_list">
         <div class="window-label">degree value</div>
         <div class="menu-items">

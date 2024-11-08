@@ -1,8 +1,8 @@
 <template>
-  <ul class="flex list-none m-0 p-0 gap-2 items-center">
+  <ul class="flex items-center gap-2 p-0 m-0 list-none">
     <li>
       <Button type="button" plain text @click="onThemeToggler">
-        <span :class="`material-icons dark:text-white`">{{ iconClass }}</span>
+        <span :class="`material-symbols-rounded dark:text-white`">{{ iconClass }}</span>
       </Button>
     </li>
     <!-- <li class="relative">
@@ -16,16 +16,16 @@
           hideOnOutsideClick: true,
         }"
         type="button"
-        class="inline-flex w-8 h-8 p-0 items-center justify-center surface-0 dark:surface-800 border border-surface-200 dark:border-surface-600 rounded"
+        class="inline-flex items-center justify-center w-8 h-8 p-0 border rounded surface-0 dark:surface-800 border-surface-200 dark:border-surface-600"
       >
         <i class="pi pi-palette dark:text-white"></i>
       </button>
       <div
         class="absolute top-[2.5rem] right-0 hidden w-[16rem] p-3 bg-white dark:bg-surface-800 rounded-md shadow border border-surface-200 dark:border-surface-700 flex-col justify-start items-start gap-3.5 inline-flex origin-top z-10"
       >
-        <div class="flex-col justify-start items-start gap-2 inline-flex pr-4">
+        <div class="inline-flex flex-col items-start justify-start gap-2 pr-4">
           <span class="text-sm font-medium">Primary Colors</span>
-          <div class="self-stretch justify-start items-start gap-2 inline-flex flex-wrap">
+          <div class="inline-flex flex-wrap items-start self-stretch justify-start gap-2">
             <button
               v-for="primaryColor of primaryColors"
               :key="primaryColor.name"
@@ -40,9 +40,9 @@
             ></button>
           </div>
         </div>
-        <div class="flex-col justify-start items-start gap-2 inline-flex pr-2">
+        <div class="inline-flex flex-col items-start justify-start gap-2 pr-2">
           <span class="text-sm font-medium">Surface Colors</span>
-          <div class="self-stretch justify-start items-start gap-2 inline-flex">
+          <div class="inline-flex items-start self-stretch justify-start gap-2">
             <button
               v-for="surface of surfaces"
               :key="surface.name"
@@ -57,7 +57,7 @@
             ></button>
           </div>
         </div>
-        <div class="flex-col justify-start items-start gap-2 inline-flex w-full">
+        <div class="inline-flex flex-col items-start justify-start w-full gap-2">
           <span class="text-sm font-medium">Preset</span>
           <div
             class="inline-flex p-[0.28rem] items-start gap-[0.28rem] rounded-[0.71rem] border border-[#00000003] w-full"
@@ -70,8 +70,8 @@
             />
           </div>
         </div>
-        <div class="inline-flex flex-col justify-start items-start gap-2 w-full pt-4 pb-2">
-          <span class="text-sm font-medium m-0">Ripple Effect</span>
+        <div class="inline-flex flex-col items-start justify-start w-full gap-2 pt-4 pb-2">
+          <span class="m-0 text-sm font-medium">Ripple Effect</span>
           <ToggleSwitch :modelValue="rippleActive" @update:modelValue="onRippleChange" />
         </div>
       </div>
