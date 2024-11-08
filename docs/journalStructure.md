@@ -1,4 +1,4 @@
-# Structure of High IF Journals (Total number: 26)
+# Structure of High IF Journals (Total number: 31)
 
 This document contains the structure of Journals having Impact Factor greater than 15 - taken from [10x Genomics](https://www.10xgenomics.com/publications). Only relevant sections from the journals are added.
 
@@ -26,6 +26,7 @@ This document contains the structure of Journals having Impact Factor greater th
 * China National GeneBank DataBase (CNGBdb)
 * BioProject
 * Medical Genomics Japan Variant Database (MGeND)
+* CellxGene
 
 
 _________________________________________________________________
@@ -65,6 +66,7 @@ _Structure 03_: (in publications from 04/2011 to 12/2015)
   * 'novel code'
   * accession numbers of sequencing data & source code URL (Github/Zenodo) listed in Key Resources Table
   * accession number stated in plain text instead of hyperlinks/URLs
+  * 
 ## Other Cell journals:
   * Cancer Cell: 48.8
   * Immunity: 25.5
@@ -104,6 +106,7 @@ _Structure 02: (found in old publications late 90s-00s)_
   * Nature Metabolism: 18.9
   * Nature Biomedical Engineering: 26.8
   * Nature Microbiology: 20.5
+  * Cellular & Molecular Immunology: 21.8
 
 ## The Lancet Microbe: IF 20.9
 ### Data Sharing
@@ -147,5 +150,24 @@ _Structure 02:_
 ### Data Availability/ Data Access
   * very few mentioned source code
   * accession numbers stated in plain text instead of hyperlink
+
+## Gastroenterology: IF 25.7
+### Data availability statement
+  * contains accession codes and source code
+
+## Journal of Hepatology: IF 26.8
+### Data availability statement
+  * contains accession codes (plain text) and source code (1 out of 19 publications)
+
+## Gut: IF 23.0
+### Data availability statement
+  * contains accession codes (plain text) and source code (2 out of 13 publications)
+
+## Circulation: IF 35.5
+### Independent Data Access/ Data Availability/ Methods/ Data Resources
+  * accession codes (plain text)
+  * source code found (1 out of 23 publications)
+  * available upon request
+
 
 **General Observation:** Most publications started adding source code from 2019 onwards
