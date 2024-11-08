@@ -5,7 +5,6 @@ import router from "./router";
 import "vue-select/dist/vue-select.css";
 import "./style.css";
 import "primeicons/primeicons.css";
-import "material-icons/iconfont/material-icons.css";
 import vSelect from "vue-select";
 import axios from "axios";
 import VueAxios from "vue-axios";
