@@ -1,6 +1,6 @@
 <template>
-  <Button severity="secondary" type="button" label="Export proteins as .csv" icon="pi pi-download" iconPos="right"
-    class="!w-full !justify-between !rounded-lg" @click="export_proteins" />
+  <Button text plain severity="secondary" type="button" label="Export proteins as .csv" class="!justify-start !py-1"
+    @click="export_proteins" />
 </template>
 
 <script>

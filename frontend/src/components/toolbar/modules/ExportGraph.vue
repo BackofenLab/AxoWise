@@ -1,6 +1,6 @@
 <template>
-  <Button severity="secondary" type="button" label="Export graph as .js" icon="pi pi-download" iconPos="right"
-  class="!w-full !justify-between !rounded-lg" @click="export_graph" />
+  <Button text plain severity="secondary" type="button" label="Export graph as .js" class="!justify-start !py-1"
+    @click="export_graph" />
 </template>
 
 <script>

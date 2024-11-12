@@ -1,7 +1,7 @@
 <template>
-  <Button severity="secondary" type="button" label="Export proteins as .csv" icon="pi pi-download" iconPos="right"
+  <Button severity="secondary" type="button" label="Export protein graph image" icon="pi pi-download" iconPos="right"
     class="!w-full !justify-between !rounded-lg" @click="toggle" />
-  <Popover class="w-[12rem]" ref="op" :pt="{ content: { class: 'px-1 flex flex-col gap-1' } }">
+  <Popover class="w-[13rem]" ref="op" :pt="{ content: { class: 'px-1 flex flex-col gap-1' } }">
     <Button text plain severity="secondary" type="button" label="White / .png" class="!justify-start !py-1"
       @click="take_screen('white', 'png')" />
     <Button text plain severity="secondary" type="button" label="Black / .png" class="!justify-start !py-1"
@@ -26,7 +26,7 @@ const toggle = (event) => {
 
 <script>
 export default {
-  name: "ExportingButton",
+  name: "ExportGraphImage",
   props: ["mode"],
   data() {
     return {};

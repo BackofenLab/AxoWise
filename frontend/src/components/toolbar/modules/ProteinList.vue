@@ -1,56 +1,49 @@
 <template>
-  <div class="tool-item">
+  <h6 class="mb-5 text-sm text-slate-300">
+    <span
+      class="inline-block mr-1 text-xl leading-none align-bottom material-symbols-rounded font-variation-ico-filled">help</span>
+    To find multiple nodes separate each node name with comma (<span
+      class="leading-[0] text-primary-400 text-4xl">,</span>)
+  </h6>
+  <Textarea v-model="raw_text" rows="4" cols="45" autofocus placeholder="Search by gene..." />
+  <Button label="Apply" severity="secondary" type="button" class="mt-2.5 !rounded-lg" @click="highlight(raw_text)">
+  </Button>
+
+  <!-- <div class="hidden tool-item">
     <div id="protein_highlight" class="window-menu">
       <div id="protein_highlight_header" class="window-header">
         <div class="headertext">
           <span>highlight nodes</span>
-          <img
-            class="protein_close"
-            src="@/assets/toolbar/cross.png"
-            v-on:click="unactive_proteinlist()"
-          />
+          <img class="protein_close" src="@/assets/toolbar/cross.png" v-on:click="unactive_proteinlist()" />
         </div>
       </div>
       <div class="keyword-search">
         <div class="window-label">keyword search</div>
         <div class="keyword-searchbar">
           <span v-on:click="search_subset(filt_keyword)">></span>
-          <input
-            type="text"
-            v-model="search_raw"
-            class="empty"
-            placeholder="input keyword"
-          />
+          <input type="text" v-model="search_raw" class="empty" placeholder="input keyword" />
         </div>
         <div class="keyword-result">
           <div v-for="(entry, index) in filt_keyword" :key="index">
-            <a
-              href="#"
-              v-on:click="select_node(entry)"
-              :class="{ in_subset: active_genes.has(entry.label) }"
-              >{{ entry.attributes["Name"] }}</a
-            >
+            <a href="#" v-on:click="select_node(entry)" :class="{ in_subset: active_genes.has(entry.label) }">{{
+              entry.attributes["Name"] }}</a>
           </div>
         </div>
       </div>
       <div class="highlight-list">
         <div class="window-label">gene search</div>
         <textarea v-model="raw_text" rows="10" cols="30" autofocus></textarea>
-        <button
-          v-on:click="highlight(raw_text)"
-          id="highlight_protein"
-          class="colortype"
-        >
+        <button v-on:click="highlight(raw_text)" id="highlight_protein" class="colortype">
           apply
         </button>
       </div>
     </div>
-  </div>
+  </div> -->
 </template>
+
 
 <script>
 // import {QuickScore} from "quick-score";
-
 export default {
   name: "ProteinList",
   props: ["gephi_data", "mode"],
@@ -63,57 +56,58 @@ export default {
     };
   },
   methods: {
-    dragElement(elmnt) {
-      var pos1 = 0,
-        pos2 = 0,
-        pos3 = 0,
-        pos4 = 0;
-      if (document.getElementById(elmnt.id + "_header")) {
-        // if present, the header is where you move the DIV from:
-        document.getElementById(elmnt.id + "_header").onmousedown =
-          dragMouseDown;
-      } else {
-        // otherwise, move the DIV from anywhere inside the DIV:
-        elmnt.onmousedown = dragMouseDown;
-      }
+    // dragElement(elmnt) {
+    //   var pos1 = 0,
+    //     pos2 = 0,
+    //     pos3 = 0,
+    //     pos4 = 0;
+    //   if (document.getElementById(elmnt.id + "_header")) {
+    //     // if present, the header is where you move the DIV from:
+    //     document.getElementById(elmnt.id + "_header").onmousedown =
+    //       dragMouseDown;
+    //   } else {
+    //     // otherwise, move the DIV from anywhere inside the DIV:
+    //     elmnt.onmousedown = dragMouseDown;
+    //   }
 
-      function dragMouseDown(e) {
-        e = e || window.event;
-        e.preventDefault();
-        // get the mouse cursor position at startup:
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        document.onmouseup = closeDragElement;
-        // call a function whenever the cursor moves:
-        document.onmousemove = elementDrag;
-      }
+    //   function dragMouseDown(e) {
+    //     e = e || window.event;
+    //     e.preventDefault();
+    //     // get the mouse cursor position at startup:
+    //     pos3 = e.clientX;
+    //     pos4 = e.clientY;
+    //     document.onmouseup = closeDragElement;
+    //     // call a function whenever the cursor moves:
+    //     document.onmousemove = elementDrag;
+    //   }
 
-      function elementDrag(e) {
-        e = e || window.event;
-        e.preventDefault();
-        // calculate the new cursor position:
-        pos1 = pos3 - e.clientX;
-        pos2 = pos4 - e.clientY;
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        // set the element's new position:
-        elmnt.style.top = elmnt.offsetTop - pos2 + "px";
-        elmnt.style.left = elmnt.offsetLeft - pos1 + "px";
-      }
+    //   function elementDrag(e) {
+    //     e = e || window.event;
+    //     e.preventDefault();
+    //     // calculate the new cursor position:
+    //     pos1 = pos3 - e.clientX;
+    //     pos2 = pos4 - e.clientY;
+    //     pos3 = e.clientX;
+    //     pos4 = e.clientY;
+    //     // set the element's new position:
+    //     elmnt.style.top = elmnt.offsetTop - pos2 + "px";
+    //     elmnt.style.left = elmnt.offsetLeft - pos1 + "px";
+    //   }
 
-      function closeDragElement() {
-        // stop moving when mouse button is released:
-        document.onmouseup = null;
-        document.onmousemove = null;
-      }
-    },
-    unactive_proteinlist() {
-      this.$emit("protein_active_changed", false);
-    },
+    //   function closeDragElement() {
+    //     // stop moving when mouse button is released:
+    //     document.onmouseup = null;
+    //     document.onmousemove = null;
+    //   }
+    // },
+    // unactive_proteinlist() {
+    //   this.$emit("protein_active_changed", false);
+    // },
     highlight(proteins) {
       var com = this;
-
-      const protein_names = new Set(proteins.toUpperCase().split("\n"));
+      // This regex is not user friendly instead use ','
+      // const protein_names = new Set(proteins.toUpperCase().split("\n"));
+      const protein_names = new Set(proteins.toUpperCase().split(",").map(item => item.trim()));
       const subset = [];
       com.gephi_data.nodes.forEach((node) => {
         if (protein_names.has(node.attributes["Name"].toUpperCase())) {
@@ -133,11 +127,10 @@ export default {
     },
   },
   mounted() {
-    var com = this;
-
-    this.$nextTick(() => {
-      com.dragElement(document.getElementById("protein_highlight"));
-    });
+    // var com = this;
+    // this.$nextTick(() => {
+    //   com.dragElement(document.getElementById("protein_highlight"));
+    // });
   },
   computed: {
     regex() {
@@ -167,7 +160,7 @@ export default {
 };
 </script>
 
-<style>
+<!-- <style>
 .window-menu {
   position: fixed;
   display: flex;
@@ -305,4 +298,4 @@ export default {
 .keyword-result .in_subset {
   color: lightgreen;
 }
-</style>
+</style> -->
