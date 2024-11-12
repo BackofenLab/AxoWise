@@ -1,6 +1,6 @@
 <template>
-  <Button severity="secondary" type="button" label="Export edges as .csv" icon="pi pi-download" iconPos="right"
-    class="!w-full !justify-between !rounded-lg" @click="export_edges" />
+  <Button text plain severity="secondary" type="button" label="Export edges as .csv" class="!justify-start !py-1"
+    @click="export_edges" />
 </template>
 
 <script>
@@ -38,7 +38,7 @@ export default {
       hiddenElement.target = "_blank";
       hiddenElement.href =
         "data:text/csv;charset=utf-8," + encodeURI(terms_csv);
-      hiddenElement.download = "Proteins.csv";
+      hiddenElement.download = "Edges.csv";
       hiddenElement.click();
     },
   },
