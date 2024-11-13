@@ -1,14 +1,11 @@
 <template>
-  <h6 class="mb-5 text-sm text-slate-300">
-    <span
-      class="inline-block mr-1 text-xl leading-none align-bottom material-symbols-rounded font-variation-ico-filled">help</span>
-    To find multiple nodes separate each node name with comma (<span
-      class="leading-[0] text-primary-400 text-4xl">,</span>)
+  <h6 class="mb-2 text-sm text-slate-300">
+    To find multiple nodes separate each node with comma (<span class="leading-[0] text-primary-400 text-4xl">,</span>)
   </h6>
-  <Textarea v-model="raw_text" rows="4" cols="45" autofocus placeholder="Search by gene..." />
-  <Button label="Apply" severity="secondary" type="button" class="mt-2.5 !rounded-lg" @click="highlight(raw_text)">
+  <Textarea v-model="raw_text" rows="4" fluid autofocus placeholder="Search by gene..." />
+  <Button label="Apply" severity="secondary" size="small" fluid type="button" class="mt-2.5 !rounded-lg"
+    @click="highlight(raw_text)">
   </Button>
-
   <!-- <div class="hidden tool-item">
     <div id="protein_highlight" class="window-menu">
       <div id="protein_highlight_header" class="window-header">
