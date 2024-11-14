@@ -142,6 +142,7 @@ _Structure 02:_
 
 ## Other Science Journals:
   * Science Translational Medicine: 16.9
+  * Science Bulletin: 18.8
 
 ## Nucleic Acids Research: IF 16.6
 ### Data Availability
@@ -161,12 +162,19 @@ _Structure 02:_
 ### Data availability statement
   * contains accession codes (plain text) and source code (1 out of 19 publications)
 
+## Gut: IF 23.0
+### Data availability statement
+  * contains accession codes (plain text) and source code (2 out of 13 publications)
+
 ## Circulation: IF 35.5
 ### Independent Data Access/ Data Availability/ Methods/ Data Resources
   * accession codes (plain text)
   * source code found (1 out of 23 publications)
   * available upon request
 
+## Neuro-oncology: IF 16.4
+### Data Availability 
+  * contains info regarding sequencing data and source code _(1 out of 4 publications)_
 
 **General Observation:** Most publications started adding source code from 2019 onwards
 
