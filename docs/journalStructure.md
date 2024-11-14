@@ -161,10 +161,6 @@ _Structure 02:_
 ### Data availability statement
   * contains accession codes (plain text) and source code (1 out of 19 publications)
 
-## Gut: IF 23.0
-### Data availability statement
-  * contains accession codes (plain text) and source code (2 out of 13 publications)
-
 ## Circulation: IF 35.5
 ### Independent Data Access/ Data Availability/ Methods/ Data Resources
   * accession codes (plain text)
