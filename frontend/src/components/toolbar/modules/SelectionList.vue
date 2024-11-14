@@ -4,10 +4,10 @@
       <div class="flex items-center justify-between gap-2 mb-2">
         Degree value
         <fieldset class="flex gap-1">
-          <InputNumber :format="false" :min="degree_boundary.min" :max="degree_boundary.max"
+          <InputNumber :useGrouping="false" :min="degree_boundary.min" :max="degree_boundary.max"
             :step="degree_boundary.step" v-model="degree_boundary.minValue" @value-change="searchSubset()"
             inputClass="w-14 h-7 !px-1.5 !text-xs text-center" />-
-          <InputNumber :format="false" :min="degree_boundary.min" :max="degree_boundary.max"
+          <InputNumber :useGrouping="false" :min="degree_boundary.min" :max="degree_boundary.max"
             :step="degree_boundary.step" v-model="degree_boundary.maxValue" @value-change="searchSubset()"
             inputClass="w-14 h-7 !px-1.5 !text-xs text-center" />
         </fieldset>
@@ -21,10 +21,10 @@
       <div class="flex items-center justify-between gap-2 mb-2">
         Betweenness centrality value
         <fieldset class="flex gap-1">
-          <InputNumber :format="false" :min="bc_boundary.min" :max="bc_boundary.max" :step="bc_boundary.step"
+          <InputNumber :useGrouping="false" :min="bc_boundary.min" :max="bc_boundary.max" :step="bc_boundary.step"
             v-model="bc_boundary.minValue" @value-change="searchSubset()"
             inputClass="w-14 h-7 !px-1.5 !text-xs text-center" />-
-          <InputNumber :format="false" :min="bc_boundary.min" :max="bc_boundary.max" :step="bc_boundary.step"
+          <InputNumber :useGrouping="false" :min="bc_boundary.min" :max="bc_boundary.max" :step="bc_boundary.step"
             v-model="bc_boundary.maxValue" @value-change="searchSubset()"
             inputClass="w-14 h-7 !px-1.5 !text-xs text-center" />
         </fieldset>
@@ -38,10 +38,10 @@
       <div class="flex items-center justify-between gap-2 mb-2">
         padj value (log10)
         <fieldset class="flex gap-1">
-          <InputNumber :format="false" :min="padj_boundary.min" :max="padj_boundary.max" :step="padj_boundary.step"
+          <InputNumber :useGrouping="false" :min="padj_boundary.min" :max="padj_boundary.max" :step="padj_boundary.step"
             v-model="padj_boundary.minValue" @value-change="searchSubset()"
             inputClass="w-14 h-7 !px-1.5 !text-xs text-center" />-
-          <InputNumber :format="false" :min="padj_boundary.min" :max="padj_boundary.max" :step="padj_boundary.step"
+          <InputNumber :useGrouping="false" :min="padj_boundary.min" :max="padj_boundary.max" :step="padj_boundary.step"
             v-model="padj_boundary.maxValue" @value-change="searchSubset()"
             inputClass="w-14 h-7 !px-1.5 !text-xs text-center" />
         </fieldset>
@@ -55,10 +55,10 @@
       <div class="flex items-center justify-between gap-2 mb-2">
         pagerank value (log10)
         <fieldset class="flex gap-1">
-          <InputNumber :format="false" :min="pr_boundary.min" :max="pr_boundary.max" :step="pr_boundary.step"
+          <InputNumber :useGrouping="false" :min="pr_boundary.min" :max="pr_boundary.max" :step="pr_boundary.step"
             v-model="pr_boundary.minValue" @value-change="searchSubset()"
             inputClass="w-14 h-7 !px-1.5 !text-xs text-center" />-
-          <InputNumber :format="false" :min="pr_boundary.min" :max="pr_boundary.max" :step="pr_boundary.step"
+          <InputNumber :useGrouping="false" :min="pr_boundary.min" :max="pr_boundary.max" :step="pr_boundary.step"
             v-model="pr_boundary.maxValue" @value-change="searchSubset()"
             inputClass="w-14 h-7 !px-1.5 !text-xs text-center" />
         </fieldset>
@@ -77,34 +77,30 @@
   <span v-if="!dcoloumns" class="flex justify-center pt-2 text-sm dark:text-[#c3c3c3]">No selectable dcoloumns</span>
 
   <ul v-if="dcoloumns" v-show="coloumnsCheck"
-    class="max-h-[240px] overflow-auto overflow-x-visible list-none mb-4 p-0 m-0 mt-5 px-2.5 flex flex-col divide-y dark:divide-[#343b4c]">
+    class="max-h-[240px] overflow-auto overflow-x-visible list-none mb-4 p-0 m-0 mt-1 px-2.5 flex flex-col divide-y dark:divide-[#343b4c]">
     <li class="flex flex-col gap-2 py-5 dark:text-[#c3c3c3]" v-for="(entry, index) in dcoloumns" :key="index">
       <div class="flex items-center justify-between gap-2 mb-2">
         {{ entry }}
         <fieldset class="flex gap-1">
-          <InputNumber :format="false" :min="dboundaries[entry].min" :max="dboundaries[entry].max"
-            :step="dboundaries[entry].step" v-model="dboundaries[entry].minValue" @value-change="searchSubset()"
-            inputClass="w-14 h-7 !px-1.5 !text-xs text-center" />-
-          <InputNumber :format="false" :min="dboundaries[entry].min" :max="dboundaries[entry].max"
-            :step="dboundaries[entry].step" v-model="dboundaries[entry].maxValue" @value-change="searchSubset()"
+            <InputNumber :useGrouping="false" :min="dboundaries[entry].min" :max="dboundaries[entry].max"
+              :step="dboundaries[entry].step" v-model="dboundaries[entry].minValue" @value-change="searchSubset()"
+              inputClass="w-14 h-7 !px-1.5 !text-xs text-center" />-
+            <InputNumber :useGrouping="false" :min="dboundaries[entry].min" :max="dboundaries[entry].max"
+              :step="dboundaries[entry].step" v-model="dboundaries[entry].maxValue" @value-change="searchSubset()"
             inputClass="w-14 h-7 !px-1.5 !text-xs text-center" />
         </fieldset>
       </div>
       <span class="flex items-center justify-end gap-2 mb-2 text-sm">
-        Inverse
-        <ToggleSwitch :id="'deval-check-' + index" class="toggle-xs" @value-change="
-          change_limits($event, entry);
-          searchSubset();
-        " />
+        Inverse selection
+        <ToggleSwitch :id="'deval-check-' + index" class="toggle-xs" @value-change="change_limits($event, entry);searchSubset();" />
       </span>
-
       <Slider :name="'deval-slider-' + index" :min="dboundaries[entry].min" :max="dboundaries[entry].max" range
         :step="dboundaries[entry].step" @update:modelValue="devalSliderChanged($event, entry)"
         :modelValue=[dboundaries[entry].minValue,dboundaries[entry].maxValue] />
-    </li>
+      </li>
   </ul>
 
-  <div class="hidden tool-item">
+  <!-- <div class="tool-item">
     <div id="selection_highlight" class="window-menu selection">
       <div id="selection_highlight_header" class="window-header">
         <div class="headertext">
@@ -243,7 +239,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>
@@ -263,22 +259,22 @@ export default {
         minValue: 0,
         maxValue: 0,
         min: 0,
-        max: Number,
+        max: 0,
         step: 1,
       },
       pr_boundary: {
         minValue: 0,
         maxValue: 0,
         min: 0,
-        max: Number,
+        max: 0,
         step: 0.01,
       },
-      bc_boundary: { minValue: 0, maxValue: 0, min: 0, max: Number, step: 1 },
+      bc_boundary: { minValue: 0, maxValue: 0, min: 0, max: 0, step: 1 },
       padj_boundary: {
         minValue: 0,
         maxValue: 0,
         min: 0,
-        max: Number,
+        max: 0,
         step: 0.01,
       },
       dcoloumns: this.$store.state.dcoloumns,
@@ -313,7 +309,7 @@ export default {
     change_limits(value, entry) {
       let com = this;
       com.check[entry] = value;
-      com.dboundaries[entry].minValue = com.check[entry] ? 0 : com.dboundaries[entry].min;
+      com.dboundaries[entry].minValue = com.check[entry] ? 0.001 : com.dboundaries[entry].min;
       com.dboundaries[entry].maxValue = com.check[entry] ? 0 : com.dboundaries[entry].max;
     },
     initialize_de() {
@@ -343,27 +339,27 @@ export default {
         };
       }
     },
-    create_de() {
-      // var com = this;
-      // Object.entries(com.dcoloumns).forEach(([index, coloumn]) => {
-      //   var slider = document.getElementById("deval-slider-" + index);
-      //   noUiSlider.create(slider, {
-      //     start: [com.dboundaries[coloumn].min, com.dboundaries[coloumn].max],
-      //     connect: true,
-      //     range: {
-      //       min: com.dboundaries[coloumn].min,
-      //       max: com.dboundaries[coloumn].max,
-      //     },
-      //     step: 0.01,
-      //   });
+    // create_de() {
+    //   var com = this;
+    //   Object.entries(com.dcoloumns).forEach(([index, coloumn]) => {
+    //     var slider = document.getElementById("deval-slider-" + index);
+    //     noUiSlider.create(slider, {
+    //       start: [com.dboundaries[coloumn].min, com.dboundaries[coloumn].max],
+    //       connect: true,
+    //       range: {
+    //         min: com.dboundaries[coloumn].min,
+    //         max: com.dboundaries[coloumn].max,
+    //       },
+    //       step: 0.01,
+    //     });
 
-      //   slider.noUiSlider.on("slide", function (values, handle) {
-      //     com.dboundaries[coloumn][handle ? "maxValue" : "minValue"] =
-      //       values[handle];
-      //     com.searchSubset();
-      //   });
-      // });
-    },
+    //     slider.noUiSlider.on("slide", function (values, handle) {
+    //       com.dboundaries[coloumn][handle ? "maxValue" : "minValue"] =
+    //         values[handle];
+    //       com.searchSubset();
+    //     });
+    //   });
+    // },
     // dragElement(elmnt) {
     //   var pos1 = 0,
     //     pos2 = 0,
@@ -427,12 +423,10 @@ export default {
 
       var maxDeg = Math.max(...result); // Need to use spread operator!
       com.degree_boundary["max"] = maxDeg;
+      com.degree_boundary["min"] = 0;
       com.degree_boundary["maxValue"] = maxDeg;
       com.degree_boundary["minValue"] = 0;
-      console.log(maxDeg, com.data);
-
       // var slider = document.getElementById("degree");
-
       // if (!slider.noUiSlider) {
       //   noUiSlider.create(slider, {
       //     start: [0, maxDeg],
@@ -478,6 +472,7 @@ export default {
       });
       var maxDeg = Math.max(...result) + 10; // Need to use spread operator!
       com.bc_boundary["max"] = maxDeg;
+      com.bc_boundary["min"] = 0;
       com.bc_boundary["maxValue"] = maxDeg;
       com.bc_boundary["minValue"] = 0;
       // var slider = document.getElementById("betweenes");
@@ -523,9 +518,10 @@ export default {
         return parseFloat(x);
       });
       var minDeg = Math.log10(Math.min(...result)) - 1;
+      com.pr_boundary["max"] = 0;
+      com.pr_boundary["min"] = minDeg;
       com.pr_boundary["maxValue"] = 0;
       com.pr_boundary["minValue"] = minDeg;
-      this.pr_boundary.min = minDeg;
 
       // var slider = document.getElementById("pagerank");
       // if (!slider.noUiSlider) {
@@ -571,7 +567,8 @@ export default {
       var minDeg = Math.log10(Math.min(...result)) - 1; // Need to use spread operator!
       com.padj_boundary["maxValue"] = 0;
       com.padj_boundary["minValue"] = minDeg;
-
+      com.pr_boundary["max"] = 0;
+      com.pr_boundary["min"] = minDeg;
       // var slider = document.getElementById("padj");
       // if (!slider.noUiSlider) {
       //   noUiSlider.create(slider, {
@@ -706,8 +703,8 @@ export default {
       this.initialize_dg();
       this.initialize_bc();
       this.initialize_pagerank();
-      if (this.dcoloumns && this.mode != "term" && this.mode != "citation")
-        this.create_de();
+      // if (this.dcoloumns && this.mode != "term" && this.mode != "citation")
+      //   this.create_de();
       if (this.mode == "term") this.initialize_padj();
       this.searchSubset();
     },
