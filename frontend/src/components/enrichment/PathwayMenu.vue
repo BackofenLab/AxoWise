@@ -86,7 +86,7 @@ export default {
     if (com.sorted == "bottom")
       com.generatePathways(
         com.gephi_data.nodes[0].species,
-        com.gephi_data.nodes.map((node) => node.attributes["Name"])
+        com.gephi_data.nodes.map((node) => node.SYMBOL)
       );
   },
   methods: {

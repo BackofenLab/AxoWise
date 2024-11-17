@@ -1,8 +1,8 @@
-import { updateSVGLabel } from "./customLabelRenderer";
-import { createCustomNodeSVG } from "./customNodeRenderer";
+// import { updateSVGLabel } from "./customLabelRenderer";
+// import { createCustomNodeSVG } from "./customNodeRenderer";
 
-sigma.svg.labels.def.update = updateSVGLabel;
-sigma.svg.nodes.def.create = createCustomNodeSVG;
+// sigma.svg.labels.def.update = updateSVGLabel;
+// sigma.svg.nodes.def.create = createCustomNodeSVG;
 
 export default function saveAsSVG(renderer, params, mode) {
   /**

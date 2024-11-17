@@ -175,7 +175,7 @@ export default {
 
       formData.append("threshold", this.threshold.value);
       formData.append("species_id", this.selected_species.code);
-      formData.append("proteins", cleanData.split(/\s+/).join(";"));
+      formData.append("proteins", cleanData.split(/\s+/).map(element => element.toUpperCase()).join(";"));
 
       this.isAddClass = true;
       this.axios.post(this.api.subgraph, formData).then((response) => {

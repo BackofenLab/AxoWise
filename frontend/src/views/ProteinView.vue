@@ -29,7 +29,7 @@
         :node_modul_index="node_modul_index"
       ></MainVis>
     </keep-alive>
-    <keep-alive>
+    <!-- <keep-alive>
       <VerticalPane
         :gephi_data="gephi_data"
         :active_node="active_node"
@@ -88,28 +88,28 @@
         :gephi_data="gephi_data"
         :node_color_index="node_color_index"
       ></PaneSystem>
-    </keep-alive>
+    </keep-alive> -->
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import MainVis from "@/components/visualization/MainVis.vue";
-import VerticalPane from "@/components/verticalpane/VerticalPane.vue";
-import PaneSystem from "@/components/pane/PaneSystem.vue";
-import NetworkValues from "../components/interface/NetworkValues.vue";
-import MainToolBar from "../components/toolbar/MainToolBar.vue";
-import ExportScreen from "@/components/toolbar/modules/ExportScreen.vue";
+// import VerticalPane from "@/components/verticalpane/VerticalPane.vue";
+// import PaneSystem from "@/components/pane/PaneSystem.vue";
+// import NetworkValues from "../components/interface/NetworkValues.vue";
+// import MainToolBar from "../components/toolbar/MainToolBar.vue";
+// import ExportScreen from "@/components/toolbar/modules/ExportScreen.vue";
 
 export default {
   name: "ProteinView",
   components: {
     MainVis,
-    PaneSystem,
-    MainToolBar,
-    NetworkValues,
-    VerticalPane,
-    ExportScreen,
+    // PaneSystem,
+    // MainToolBar,
+    // NetworkValues,
+    // VerticalPane,
+    // ExportScreen,
   },
   data() {
     return {
@@ -150,57 +150,57 @@ export default {
     }
   },
   mounted() {
-    var com = this;
+    // var com = this;
 
-    com.ensembl_name_index = {};
-    for (var ele of com.gephi_data.nodes) {
-      com.ensembl_name_index[ele.attributes["Ensembl ID"]] =
-        ele.attributes["Name"];
-    }
+    // com.ensembl_name_index = {};
+    // for (var ele of com.gephi_data.nodes) {
+    //   com.ensembl_name_index[ele.attributes["Ensembl ID"]] =
+    //     ele.attributes["Name"];
+    // }
 
-    com.node_color_index = {};
-    for (var idx in com.gephi_data.nodes) {
-      var node = com.gephi_data.nodes[idx];
-      com.node_color_index[node.id] = node.color;
-    }
+    // com.node_color_index = {};
+    // for (var idx in com.gephi_data.nodes) {
+    //   var node = com.gephi_data.nodes[idx];
+    //   com.node_color_index[node.id] = node.color;
+    // }
 
-    com.node_size_index = {};
-    for (var idz in com.gephi_data.nodes) {
-      var nodeZ = com.gephi_data.nodes[idz];
-      com.node_size_index[nodeZ.id] = nodeZ.size;
-    }
+    // com.node_size_index = {};
+    // for (var idz in com.gephi_data.nodes) {
+    //   var nodeZ = com.gephi_data.nodes[idz];
+    //   com.node_size_index[nodeZ.id] = nodeZ.size;
+    // }
 
-    com.edge_color_index = {};
-    for (var idy in com.gephi_data.edges) {
-      var edge = com.gephi_data.edges[idy];
-      com.edge_color_index[edge.id] = edge.color;
-    }
+    // com.edge_color_index = {};
+    // for (var idy in com.gephi_data.edges) {
+    //   var edge = com.gephi_data.edges[idy];
+    //   com.edge_color_index[edge.id] = edge.color;
+    // }
 
-    com.node_cluster_index = {};
-    for (var idg in com.gephi_data.nodes) {
-      var nodeG = com.gephi_data.nodes[idg];
-      var modularityClass = nodeG.attributes["Modularity Class"];
-      if (!com.node_cluster_index[modularityClass])
-        com.node_cluster_index[modularityClass] = new Set();
-      com.node_cluster_index[modularityClass].add(nodeG.attributes["Name"]);
-    }
-    this.$store.commit("assign_moduleCluster", com.node_cluster_index);
+    // com.node_cluster_index = {};
+    // for (var idg in com.gephi_data.nodes) {
+    //   var nodeG = com.gephi_data.nodes[idg];
+    //   var modularityClass = nodeG.attributes["Modularity Class"];
+    //   if (!com.node_cluster_index[modularityClass])
+    //     com.node_cluster_index[modularityClass] = new Set();
+    //   com.node_cluster_index[modularityClass].add(nodeG.attributes["Name"]);
+    // }
+    // this.$store.commit("assign_moduleCluster", com.node_cluster_index);
 
-    const maingraph = new Set(com.gephi_data.subgraph);
-    com.unconnected_nodes = com.gephi_data.nodes.filter(
-      (item) => !maingraph.has(item.id)
-    );
+    // const maingraph = new Set(com.gephi_data.subgraph);
+    // com.unconnected_nodes = com.gephi_data.nodes.filter(
+    //   (item) => !maingraph.has(item.id)
+    // );
 
-    com.node_modul_index = new Set();
-    for (var idm in com.unconnected_nodes) {
-      var node_m = com.unconnected_nodes[idm];
-      com.node_modul_index.add(node_m.attributes["Modularity Class"]);
-    }
-    this.$store.commit("assign_moduleIndex", com.node_modul_index);
+    // com.node_modul_index = new Set();
+    // for (var idm in com.unconnected_nodes) {
+    //   var node_m = com.unconnected_nodes[idm];
+    //   com.node_modul_index.add(node_m.attributes["Modularity Class"]);
+    // }
+    // this.$store.commit("assign_moduleIndex", com.node_modul_index);
 
-    this.emitter.on("decoloumn", (state) => {
-      com.active_decoloumn = state;
-    });
+    // this.emitter.on("decoloumn", (state) => {
+    //   com.active_decoloumn = state;
+    // });
   },
   methods: {
     handling_filter_menu() {

@@ -63,35 +63,41 @@
 <script>
 // import Graph from 'graphology'
 import { scaleLinear } from "d3-scale";
-import saveAsPNG from "../../rendering/saveAsPNG";
-import saveAsSVG from "../../rendering/saveAsSVG";
-import customLabelRenderer from "../../rendering/customLabelRenderer";
-import customNodeRenderer from "../../rendering/customNodeRenderer";
-import sigmaRenderer from "../../rendering/sigma_renderer";
+// import saveAsPNG from "../../rendering/saveAsPNG";
+// import saveAsSVG from "../../rendering/saveAsSVG";
+// import customLabelRenderer from "../../rendering/customLabelRenderer";
+// import customNodeRenderer from "../../rendering/customNodeRenderer";
+// import sigmaRenderer from "../../rendering/sigma_renderer";
 import ForceGraph3D from "3d-force-graph";
-import "@/rendering/astarAlgorithm.js";
+// import "@/rendering/astarAlgorithm.js";
 import randomColorRGB from "random-color-rgb";
 import smallestEnclosingCircle from "smallest-enclosing-circle";
+import Graph from 'graphology';
+import louvain from 'graphology-communities-louvain';
+import {circlepack} from 'graphology-layout';
+// import betweennessCentrality from 'graphology-metrics/centrality/betweenness';
+// import pagerank from 'graphology-metrics/centrality/pagerank';
+import Sigma from "sigma";
 
-sigma.canvas.labels.def = customLabelRenderer;
-sigma.canvas.nodes.def = customNodeRenderer;
-sigma.renderers.canvas.prototype.resize = sigmaRenderer;
+// sigma.canvas.labels.def = customLabelRenderer;
+// sigma.canvas.nodes.def = customNodeRenderer;
+// sigma.renderers.canvas.prototype.resize = sigmaRenderer;
 
 var sigma_instance = null;
 var three_instance = null;
 
-sigma.classes.graph.addMethod("getNodeFromIndex", function (id) {
-  return this.nodesIndex[id];
-});
+// sigma.classes.graph.addMethod("getNodeFromIndex", function (id) {
+//   return this.nodesIndex[id];
+// });
 
-sigma.classes.graph.addMethod("ensemblIdToNode", function (ensembl_id) {
-  var nodes = this.nodes();
-  for (var idx in nodes) {
-    var node = nodes[idx];
-    if (node.attributes["Ensembl ID"] === ensembl_id) return node;
-  }
-  return null;
-});
+// sigma.classes.graph.addMethod("ensemblIdToNode", function (ensembl_id) {
+//   var nodes = this.nodes();
+//   for (var idx in nodes) {
+//     var node = nodes[idx];
+//     if (node.attributes["Ensembl ID"] === ensembl_id) return node;
+//   }
+//   return null;
+// });
 
 export default {
   name: "MainVis",
@@ -161,11 +167,11 @@ export default {
   },
   watch: {
     gephi_data() {
-      const com = this;
+      // const com = this;
 
       sigma_instance.clear();
-      sigma_instance.read(com.gephi_data);
-      com.edit_opacity("full");
+      // sigma_instance.read(com.gephi_data);
+      // com.edit_opacity("full");
 
       sigma_instance.refresh();
     },
@@ -773,15 +779,18 @@ export default {
     },
     exportGraphAsImage(params) {
       if (params.format == "svg")
-        saveAsSVG(sigma_instance, { download: true }, params.mode);
-      else saveAsPNG(sigma_instance, { download: true }, params.mode);
+        // saveAsSVG(sigma_instance, { download: true }, params.mode);
+        console.log("")
+      // else saveAsPNG(sigma_instance, { download: true }, params.mode);
     },
     exportGraphAsURL(params) {
       let exportURL = null;
       if (params.format == "svg")
-        exportURL = saveAsSVG(sigma_instance, { download: false }, params.mode);
+        // exportURL = saveAsSVG(sigma_instance, { download: false }, params.mode);
+        console.log("hey")
       else
-        exportURL = saveAsPNG(sigma_instance, { download: false }, params.mode);
+        // exportURL = saveAsPNG(sigma_instance, { download: false }, params.mode);
+        console.log("hey")
 
       this.emitter.emit("addImageToWord", exportURL);
     },
@@ -1206,34 +1215,93 @@ export default {
     var com = this;
 
     //Initializing the sigma instance to draw graph network
+    var start = performance.now();
+
+    const testgraph = new Graph();
+
+    console.log(com.gephi_data)
+
+    for (var idx in com.gephi_data.nodes) {
+      var node = com.gephi_data.nodes[idx];
+      testgraph.addNode(node.ENSEMBL_PROTEIN, {label: node.SYMBOL})
+    }
+    for (var idy in com.gephi_data.edges) {
+      var edge = com.gephi_data.edges[idy];
+      testgraph.addEdgeWithKey(`${edge.source}+${edge.target}`, edge.source, edge.target, {color: "rgba(20,20,20,0.2)", opacity: 0.2, size: 0.2});
+    }
+
+    louvain.assign(testgraph);
+    circlepack.assign(testgraph, {
+      hierarchyAttributes: ['degree', 'community'],
+    });
+    // betweennessCentrality.assign(testgraph);
+    // pagerank.assign(testgraph);
+
+
+    testgraph.nodes().forEach((node) => {
+      const size = testgraph.degree(node);
+      testgraph.setNodeAttribute(node, "size", 1 + (200 * size/testgraph.order));
+    });
+
+    var end = performance.now();
+    var duration = end - start;
+    console.log("Time in ms: ", duration)
+    console.log(testgraph)
+
+    // let my_data = testgraph.export();
+
+    // my_data.nodes = my_data.nodes.map(node => {
+    //   node.id = node.key;  // Copy the "key" to "id"
+    //   node.size = 1
+    //   node.label = node.key
+    //   node.x = node.attributes.x
+    //   node.y = node.attributes.y
+    //   // node.color = "rgb(255,255,255, 1)"
+    //   delete node.key;     // Remove the old "key" property
+    //   return node;
+    // });
+
+    // my_data.edges = my_data.edges.map(edge => {
+    //   edge.id = edge.key;  // Copy "key" to "id" for edges too if they have it
+    //   edge.size = 0.02
+    //   // edge.color = "rgba(255,255,255,0.2)"
+    //   delete edge.key;
+    //   return edge;
+    // });
+
 
     this.$nextTick(() => {
-      sigma_instance = new sigma();
-      var camera = sigma_instance.addCamera();
+      sigma_instance = new Sigma(testgraph, this.$refs.sigmaContainer);
+      // sigma_instance = new sigma();
+      // var camera = sigma_instance.addCamera();
 
-      sigma_instance.addRenderer({
-        container: this.$refs.sigmaContainer,
-        type: "canvas",
-        camera: camera,
-        settings: {
-          defaultLabelColor: "#FFFF",
-          hideEdgesOnMove: true,
-          minNodeSize: 1,
-          maxNodeSize: 20,
-          labelThreshold: 5,
-        },
-      });
+      // sigma_instance.addRenderer({
+      //   container: this.$refs.sigmaContainer,
+      //   type: "canvas",
+      //   camera: camera,
+      //   settings: {
+      //     defaultLabelColor: "#FFFF",
+      //     hideEdgesOnMove: true,
+      //     minNodeSize: 1,
+      //     maxNodeSize: 20,
+      //     labelThreshold: 5,
+      //   },
+      // });
 
-      sigma_instance.graph.clear();
-      sigma_instance.graph.read(com.gephi_data);
+
+      // sigma_instance.graph.clear();
+      // sigma_instance.graph.read(com.gephi_data);
+
+      // console.log(my_data, sigma_instance)
+      console.log(com.gephi_data)
 
       this.$store.commit("assign_sigma_instance", sigma_instance);
 
-      com.edit_opacity("full");
+      // com.edit_opacity("full");
 
-      com.hide_labels(true);
+      // com.hide_labels(true);
 
-      this.get_module_circles();
+      // this.get_module_circles();
 
       var keyState = {};
 

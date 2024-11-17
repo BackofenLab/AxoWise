@@ -42,14 +42,14 @@
 import { scaleLinear } from "d3-scale";
 import saveAsPNG from "../../rendering/saveAsPNG";
 import saveAsSVG from "../../rendering/saveAsSVG";
-import customLabelRenderer from "../../rendering/customLabelRenderer";
-import customNodeRenderer from "../../rendering/customNodeRenderer";
-import sigmaRenderer from "../../rendering/sigma_renderer";
+// import customLabelRenderer from "../../rendering/customLabelRenderer";
+// import customNodeRenderer from "../../rendering/customNodeRenderer";
+// import sigmaRenderer from "../../rendering/sigma_renderer";
 import smallestEnclosingCircle from "smallest-enclosing-circle";
 
-sigma.canvas.labels.def = customLabelRenderer;
-sigma.canvas.nodes.def = customNodeRenderer;
-sigma.renderers.canvas.prototype.resize = sigmaRenderer;
+// sigma.canvas.labels.def = customLabelRenderer;
+// sigma.canvas.nodes.def = customNodeRenderer;
+// sigma.renderers.canvas.prototype.resize = sigmaRenderer;
 
 var sigma_instance = null;
 

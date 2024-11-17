@@ -209,25 +209,20 @@ def _convert_to_connection_info_score(
     result: neo4j.Result, _int: bool, protein: bool
 ) -> Tuple[List[str], List[str], List[str], List[Union[int, float]]]:
     nodes: List[str] = []
-    source: List[str] = []
-    target: List[str] = []
-    score: List[Union[int, float]] = []
+    edges: List[Dict[str, Union[str, int, float]]] = []
 
     for row in result:
         nodes.append(row["source"])
         nodes.append(row["target"])
+        score = int(row["score"]) if _int else float(row["score"])
         if protein:
-            source.append(row["source"].get("ENSEMBL_PROTEIN"))
-            target.append(row["target"].get("ENSEMBL_PROTEIN"))
+            edges.append({ 'source':row["source"]
+                          .get("ENSEMBL_PROTEIN"), 'target': row["target"].get("ENSEMBL_PROTEIN"), 'score': score})
         else:
-            source.append(row["source"].get("Term"))
-            target.append(row["target"].get("Term"))
-        if _int:
-            score.append(int(row["score"]))
-        else:
-            score.append(float(row["score"]))
+            edges.append({ 'source':row["source"]
+                          .get("Term"), 'target': row["target"].get("Term"),  'score': score})
 
-    return nodes, source, target, score
+    return nodes, edges
 
 
 def get_abstracts(driver, species, query: list) -> list:
