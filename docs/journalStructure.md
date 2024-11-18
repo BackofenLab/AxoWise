@@ -1,4 +1,4 @@
-# Structure of High IF Journals (Total number: 33)
+# Structure of High IF Journals (Total number: 34)
 
 This document contains the structure of Journals having Impact Factor greater than 15 - taken from [10x Genomics](https://www.10xgenomics.com/publications). Only relevant sections from the journals are added.
 
@@ -175,6 +175,16 @@ _Structure 02:_
 ## Neuro-oncology: IF 16.4
 ### Data Availability 
   * contains info regarding sequencing data and source code _(1 out of 4 publications)_
+
+## Signal Transduction and Targeted Therapy: IF 40.8
+_Structure 01:_
+### Data Availability
+  * accession numbers/project number found in plaintext instead of hyperlink
+  * source code available upon request or not available at all
+
+_Structure 02:_
+### Data Availability
+### Code Availability
 
 **General Observation:** Most publications started adding source code from 2019 onwards
 
