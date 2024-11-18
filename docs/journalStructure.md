@@ -1,4 +1,4 @@
-# Structure of High IF Journals (Total number: 39)
+# Structure of High IF Journals (Total number: 41)
 
 This document contains the structure of Journals having Impact Factor greater than 15 - taken from [10x Genomics](https://www.10xgenomics.com/publications). Only relevant sections from the journals are added.
 
@@ -31,7 +31,7 @@ This document contains the structure of Journals having Impact Factor greater th
 
 _________________________________________________________________
 
-## Cell: IF 45.5
+## Cell: IF 45.5 (6)
 _Structure 01:_
 ### Resource availability:
 #### Materials availability
@@ -73,7 +73,7 @@ _Structure 03:_ (in publications from 04/2011 to 2016)
   * Cell Host & Microbe: 20.6
   * Cell Metabolism: 27.7
 
-## Nature Immunology: IF 27.7
+## Nature Immunology: IF 27.7 (14)
 _Structure 01:_
 ### Data availability 
   * uploaded on database(s) mentioned above
@@ -111,7 +111,7 @@ _Structure 02:_
   * Cellular & Molecular Immunology: 21.8
   * Nature Nanotechnology: 38.1
 
-## The Lancet Microbe: IF 20.9
+## The Lancet Microbe: IF 20.9 (3)
 ### Data Sharing
   * contains accession numbers for sequencing data and source code URLs
   * accession numbers stated in plain text instead of hyperlink
@@ -119,6 +119,14 @@ _Structure 02:_
 ## Other Lancet Journals:
   * The Lancet Oncology: 41.6
   * The Lancet Infectious Diseases: 36.4
+
+## Science Immunology: IF 19.1 (3)
+### Data and materials availability
+  * contains accession numbers for sequencing data and source code URLs
+
+## Other Science Journals:
+  * Science Translational Medicine: 16.9
+  * Science Bulletin: 18.8
 
 ## Cancer Discovery: IF 30.6
 _Structure 01:_
@@ -136,14 +144,6 @@ _Structure 02:_
   * information related to sequencing data
 #### Software/Code Availability
   * source code
-
-## Science Immunology: IF 19.1
-### Data and materials availability
-  * contains accession numbers for sequencing data and source code URLs
-
-## Other Science Journals:
-  * Science Translational Medicine: 16.9
-  * Science Bulletin: 18.8
 
 ## Nucleic Acids Research: IF 16.6
 ### Data Availability
@@ -204,13 +204,29 @@ _Structure 02:_
 ### Data Availability
   * accession numbers stated in plaintext
   * code available upon request or not available at all
-  * 
+    
 ## Molecular Cancer: IF 27.7
 ### Data Availability/ Availability of data and materials
   * accession numbers in plain text
   * data available upon request
   * source code not available for any publication
 
+## Journal of Hepatology: IF 26.8
+_Structure 01:_
+### Data Availability Statement
+  * accession numbers stated
+  * source code URLs stated (1 out of 19 publications)
+  * available upon request
+
+_Structure 02:_
+### Data Availability Statement
+### Code Availability
+
+## Journal of Hematology and Oncology: IF 29.9 (15)
+### Availability of Data and Materials
+  * data available upon request
+  * 1/4 publications stated sequencing data accession number (plain text)
+  * no source code found
 
 **General Observation:** Most publications started adding source code from 2019 onwards
 
