@@ -1,4 +1,4 @@
-# Structure of High IF Journals (Total number: 38)
+# Structure of High IF Journals (Total number: 39)
 
 This document contains the structure of Journals having Impact Factor greater than 15 - taken from [10x Genomics](https://www.10xgenomics.com/publications). Only relevant sections from the journals are added.
 
@@ -204,6 +204,13 @@ _Structure 02:_
 ### Data Availability
   * accession numbers stated in plaintext
   * code available upon request or not available at all
+  * 
+## Molecular Cancer: IF 27.7
+### Data Availability/ Availability of data and materials
+  * accession numbers in plain text
+  * data available upon request
+  * source code not available for any publication
+
 
 **General Observation:** Most publications started adding source code from 2019 onwards
 
