@@ -1,4 +1,4 @@
-# Structure of High IF Journals (Total number: 35)
+# Structure of High IF Journals (Total number: 38)
 
 This document contains the structure of Journals having Impact Factor greater than 15 - taken from [10x Genomics](https://www.10xgenomics.com/publications). Only relevant sections from the journals are added.
 
@@ -16,7 +16,6 @@ This document contains the structure of Journals having Impact Factor greater th
 * Sequence Read Archive (SRA)
 * International Nucleotide Sequence Database Collaboration (INSDC)
 * European Nucleotide Archive (ENA)
-* Genome Sequence Archive (GSA)
 * BioStudies: ArrayExpress (Gene expression data)
 * database of Genotypes and Phenotypes (dbGaP)
 * ProteomeXchange Consortium - PRIDE: stores data related to protein and peptide identifications
@@ -27,6 +26,7 @@ This document contains the structure of Journals having Impact Factor greater th
 * BioProject
 * Medical Genomics Japan Variant Database (MGeND)
 * CellxGene
+* National Genomics Data Center (NGDC): Genome Warehouse, Genome Sequence Archive (GSA)
 
 
 _________________________________________________________________
@@ -193,6 +193,17 @@ _Structure 02:_
   * data available upon request
   * no data available at all
   * no source code
+
+## Annals of the Rheumatic Diseases: IF 20.3
+### Data Availability Statement:
+  * only accession numbers found (2/5 publications) - no source code 
+  * available upon request
+  * section not found
+
+## National Science Review: IF 16.3
+### Data Availability
+  * accession numbers stated in plaintext
+  * code available upon request or not available at all
 
 **General Observation:** Most publications started adding source code from 2019 onwards
 
