@@ -1,4 +1,4 @@
-# Structure of High IF Journals (Total number: 34)
+# Structure of High IF Journals (Total number: 35)
 
 This document contains the structure of Journals having Impact Factor greater than 15 - taken from [10x Genomics](https://www.10xgenomics.com/publications). Only relevant sections from the journals are added.
 
@@ -109,6 +109,7 @@ _Structure 02:_
   * Nature Biomedical Engineering: 26.8
   * Nature Microbiology: 20.5
   * Cellular & Molecular Immunology: 21.8
+  * Nature Nanotechnology: 38.1
 
 ## The Lancet Microbe: IF 20.9
 ### Data Sharing
@@ -179,12 +180,19 @@ _Structure 02:_
 ## Signal Transduction and Targeted Therapy: IF 40.8
 _Structure 01:_
 ### Data Availability
-  * accession numbers/project number found in plaintext instead of hyperlink
-  * source code available upon request or not available at all
+  * accession number/acession code/project number found in plaintext instead of hyperlink
+  * source code available upon request or not available at all - available on Github for only 1 out of 23 publications
 
 _Structure 02:_
 ### Data Availability
 ### Code Availability
+
+## Bioactive Materials: IF 18.0
+### Data Availability (Statement)
+  * 1 out of 7 publications stated accession number
+  * data available upon request
+  * no data available at all
+  * no source code
 
 **General Observation:** Most publications started adding source code from 2019 onwards
 
