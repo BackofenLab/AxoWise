@@ -9,6 +9,7 @@
     import { Graph } from "graphology";
     import louvain from 'graphology-communities-louvain';
     import {circlepack} from 'graphology-layout';
+    import {largestConnectedComponent} from 'graphology-components';
     import betweennessCentrality from 'graphology-metrics/centrality/betweenness';
     import pagerank from 'graphology-metrics/centrality/pagerank';
     import chroma from "chroma-js";
@@ -43,9 +44,10 @@
                     }
                 );
             }
-            this.generateGraphLayout();
-            this.generateGraphStatistics();
-            this.generateGraphColor();
+            this.generateGraphLayout(graph);
+            this.generateGraphStatistics(graph);
+            this.generateGraphColor(graph);
+            this.generateSubgraph(graph);
 
             testgraph.forEachNode((node, attr) => {
                 const size = testgraph.degree(node);
@@ -79,6 +81,19 @@
 
             betweennessCentrality.assign(graph);
             pagerank.assign(graph);
+        },
+
+        generateSubgraph(graph){
+        /* Filters the highest connected component and hides all unconnected nodes.
+           Input: graph: graphObject
+        */
+            const largest = new Set(largestConnectedComponent(testgraph));
+
+            graph.forEachNode((node) => {
+                !largest.has(node) 
+                    ? graph.setNodeAttribute(node, 'hidden', true)
+                    : graph.removeNodeAttribute(node, 'hidden');
+            });
         },
 
         generateGraphColor(graph){
