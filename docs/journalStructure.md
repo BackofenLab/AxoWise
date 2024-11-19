@@ -1,4 +1,4 @@
-# Structure of High IF Journals (Total number: 41)
+# Structure of High IF Journals (Total number: 42)
 
 This document contains the structure of Journals having Impact Factor greater than 15 - taken from [10x Genomics](https://www.10xgenomics.com/publications). Only relevant sections from the journals are added.
 
@@ -27,6 +27,7 @@ This document contains the structure of Journals having Impact Factor greater th
 * Medical Genomics Japan Variant Database (MGeND)
 * CellxGene
 * National Genomics Data Center (NGDC): Genome Warehouse, Genome Sequence Archive (GSA)
+* The Neuroscience Multi-omic Data Archive (NeMo)
 
 
 _________________________________________________________________
@@ -120,6 +121,13 @@ _Structure 02:_
   * The Lancet Oncology: 41.6
   * The Lancet Infectious Diseases: 36.4
 
+## Science: 50.3
+### Acknowledgments
+#### Data and materials availability
+  * accession numbers in plain text/ links to sequencing data in References (Zenodo URLs)/ hyperlinks
+  * source code: hyperlinks, sometimes in References, not available at all
+  * several publications are not freely accessible
+
 ## Science Immunology: IF 19.1 (3)
 ### Data and materials availability
   * contains accession numbers for sequencing data and source code URLs
@@ -158,10 +166,6 @@ _Structure 02:_
 ## Gastroenterology: IF 25.7
 ### Data availability statement
   * contains accession codes and source code
-
-## Journal of Hepatology: IF 26.8
-### Data availability statement
-  * contains accession codes (plain text) and source code (1 out of 19 publications)
 
 ## Gut: IF 23.0
 ### Data availability statement
@@ -214,7 +218,7 @@ _Structure 02:_
 ## Journal of Hepatology: IF 26.8
 _Structure 01:_
 ### Data Availability Statement
-  * accession numbers stated
+  * accession numbers stated in plain text
   * source code URLs stated (1 out of 19 publications)
   * available upon request
 
@@ -227,6 +231,11 @@ _Structure 02:_
   * data available upon request
   * 1/4 publications stated sequencing data accession number (plain text)
   * no source code found
+
+## Military Medical Research: IF 16.7
+### Availability of data and materials
+  * 3/4 publications contain accession numbers
+  * 1/4 publication's data is available upon request
 
 **General Observation:** Most publications started adding source code from 2019 onwards
 
