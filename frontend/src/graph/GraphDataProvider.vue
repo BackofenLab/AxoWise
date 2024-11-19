@@ -56,9 +56,28 @@
 
         };
 
+        const saveGraph = (graph) => {
+        /* Export graph as serialized JSON object into localStorage.
+        */
+            const serializedGraph = JSON.stringify(graph.export());
+            localStorage.setItem("graph", serializedGraph);
+        };
+
+        const loadGraph = () => {
+        /* Import graph as serialized JSON object from localStorage.
+        */
+            const savedGraph = localStorage.getItem("graph");
+            if (savedGraph) {
+                const importedData = JSON.parse(savedGraph);
+                graph.import(importedData);
+            } 
+        };
+
         return {
         graph,
         initializeGraph,
+        saveGraph,
+        loadGraph
         };
 
     },

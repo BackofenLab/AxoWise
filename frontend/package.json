@@ -19,6 +19,7 @@
     "file-saver": "^2.0.5",
     "graphology": "^0.25.4",
     "graphology-communities-louvain": "^2.0.1",
+    "graphology-components": "^1.5.4",
     "graphology-layout": "^0.6.1",
     "graphology-metrics": "^2.3.1",
     "mitt": "^3.0.1",
