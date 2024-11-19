@@ -2,7 +2,7 @@
   <li class="flex items-center justify-between gap-2 py-2 dark:text-[#c3c3c3]">
     Show all cluster
     <ToggleSwitch class="toggle-xs" @value-change="show_whole" />
-    </li>
+  </li>
 </template>
 
 <script>

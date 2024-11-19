@@ -1,10 +1,8 @@
 <template>
-  <div class="tool-item">
-    <span>Hide labels</span>
-    <input id="confirm" v-on:change="check()" type="checkbox" /><label
-      for="confirm"
-    ></label>
-  </div>
+  <li class="flex items-center justify-between gap-2 py-2 dark:text-[#c3c3c3]">
+    Hide labels
+    <ToggleSwitch class="toggle-xs" @value-change="check" />
+  </li>
 </template>
 
 <script>
@@ -15,9 +13,9 @@ export default {
     return {};
   },
   methods: {
-    check() {
+    check(value) {
       this.emitter.emit("hideLabels", {
-        check: document.getElementById("confirm").checked,
+        check: value,
         mode: this.mode,
       });
     },
