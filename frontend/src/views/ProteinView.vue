@@ -15,8 +15,13 @@
   </keep-alive>
   <main class="h-[calc(100vh-65px)] flex flex-1">
     <keep-alive>
-      <MainToolBar :gephi_data="gephi_data" :active_subset="active_subset" :active_term="active_term"
+      <MainToolBar :mode="mode" :gephi_data="gephi_data" :active_subset="active_subset" :active_term="active_term"
         :ensembl_name_index="ensembl_name_index" :widget="widget"></MainToolBar>
+    </keep-alive>
+
+    <keep-alive>
+      <VerticalPane :mode="mode" :gephi_data="gephi_data" :active_node="active_node" :active_background="active_background"
+        :active_termlayers="active_termlayers" :active_decoloumn="active_decoloumn"></VerticalPane>
     </keep-alive>
 
     <keep-alive>
@@ -30,10 +35,6 @@
         @active_decoloumn_changed="active_decoloumn = $event" :node_color_index="node_color_index"
         :node_size_index="node_size_index" :edge_color_index="edge_color_index" :node_modul_index="node_modul_index">
       </MainVis>
-    </keep-alive>
-    <keep-alive>
-      <VerticalPane :gephi_data="gephi_data" :active_node="active_node" :active_background="active_background"
-        :active_termlayers="active_termlayers" :active_decoloumn="active_decoloumn"></VerticalPane>
     </keep-alive>
   </main>
 </template>

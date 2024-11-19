@@ -69,6 +69,9 @@ export default {
     },
     swap_view(entry) {
       // FIXME: Use toast instead of alert
+      if (entry == "protein") {
+        this.$router.push("protein");
+      }
       if (entry == "term") {
         this.$store.state.term_graph_data
           ? this.$router.push("term")

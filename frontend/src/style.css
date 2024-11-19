@@ -1,8 +1,9 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Start Styles for PrimeVue */
+/* Start Updated Styles for PrimeVue */
 :root {
   --body-bg: #f3f3f3;
   --body-text-color: var(--p-surface-900);
@@ -38,43 +39,17 @@ body {
 @media (min-width: 1280px) {
   /* WebKit Browsers (Chrome, Safari, Edge) */
   ::-webkit-scrollbar {
-    width: 6px; /* Width of the scrollbar */
+    width: 8px;
   }
 
   ::-webkit-scrollbar-track {
-    background-color: #e2e8f0; /* Track color */
-    border-radius: 100px; /* Rounded corners */
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background-color: #64748b; /* Thumb color */
-    border-radius: 100px; /* Rounded corners */
-  }
-
-  /* Firefox Styling */
-  /* Applies similar thin scrollbar with matching colors */
-  * {
-    scrollbar-width: thin; /* Makes the scrollbar thin */
-    scrollbar-color: #64748b #e2e8f0; /* Thumb color and track color */
-  }
-}
-
-/* Optional: Narrow screen scrollbar styles */
-@media (max-width: 1279px) {
-  /* WebKit Browsers (Chrome, Safari, Edge) */
-  ::-webkit-scrollbar {
-    width: 8px; /* Width for smaller screens */
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background-color: #64748b; /* Darker thumb color */
+    background-color: #e2e8f0;
     border-radius: 100px;
   }
 
-  /* Firefox Styling */
-  * {
-    scrollbar-width: auto;
-    scrollbar-color: #64748b #f0f4f8; /* Subtle color for small screens */
+  ::-webkit-scrollbar-thumb {
+    background-color: #334155;
+    border-radius: 100px;
   }
 }
 
@@ -101,7 +76,18 @@ body {
   left: 15px !important;
 }
 
-/* End Styles for PrimeVue */
+.tab-active-grad .p-tab {
+  border-radius: 0;
+  font-weight: 400;
+}
+.tab-active-grad .p-tab.p-tab-active {
+  color: #fff;
+}
+.tab-active-grad .p-tablist-active-bar {
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(45, 212, 191, 0) 0%, rgba(45, 212, 191, 0.3) 100%);
+}
+/* End Updated Styles for PrimeVue */
 
 * {
   padding: 0px;

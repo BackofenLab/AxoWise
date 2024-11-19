@@ -34,7 +34,7 @@
         <span class="material-symbols-rounded group-hover:font-variation-ico-filled">forum</span>
       </Button>
 
-      <Button class="group" icon="material-symbols-rounded" text plain v-tooltip="'Show label'"
+      <Button class="group" icon="material-symbols-rounded" text plain v-tooltip="label_check ? 'Show label': 'Hide label'"
         @click="hide_labels(label_check)">
         <span v-if="!label_check"
           class="material-symbols-rounded group-hover:font-variation-ico-filled">subtitles</span>
@@ -92,7 +92,7 @@ import SelectionList from "@/components/toolbar/modules/SelectionList.vue";
 
 export default {
   name: "MainToolBar",
-  props: ["gephi_data", "term_data", "active_subset", "active_term", "ensembl_name_index", "widget"],
+  props: ["mode", "gephi_data", "term_data", "active_subset", "active_term", "ensembl_name_index", "widget"],
   components: {
     MenuWindow,
     ExportWindow,
@@ -106,7 +106,6 @@ export default {
       protein_active: false,
       selection_active: false,
       label_check: true,
-      mode: "protein",
     };
   },
   methods: {

@@ -33,6 +33,7 @@
     "vue-axios": "^3.5.2",
     "vue-router": "^4.4.3",
     "vue-select": "^4.0.0-beta.6",
+    "vuedraggable": "^4.1.0",
     "vuex": "^4.1.0"
   },
   "devDependencies": {
