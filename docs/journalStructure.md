@@ -1,4 +1,4 @@
-# Structure of High IF Journals (Total number: 42)
+# Structure of High IF Journals (Total number: 43)
 
 This document contains the structure of Journals having Impact Factor greater than 15 - taken from [10x Genomics](https://www.10xgenomics.com/publications). Only relevant sections from the journals are added.
 
@@ -121,14 +121,14 @@ _Structure 02:_
   * The Lancet Oncology: 41.6
   * The Lancet Infectious Diseases: 36.4
 
-## Science: 50.3
+## Science: 50.3 (4)
 ### Acknowledgments
 #### Data and materials availability
   * accession numbers in plain text/ links to sequencing data in References (Zenodo URLs)/ hyperlinks
   * source code: hyperlinks, sometimes in References, not available at all
   * several publications are not freely accessible
 
-## Science Immunology: IF 19.1 (3)
+## Science Immunology: IF 19.1
 ### Data and materials availability
   * contains accession numbers for sequencing data and source code URLs
 
@@ -226,7 +226,7 @@ _Structure 02:_
 ### Data Availability Statement
 ### Code Availability
 
-## Journal of Hematology and Oncology: IF 29.9 (15)
+## Journal of Hematology and Oncology: IF 29.9
 ### Availability of Data and Materials
   * data available upon request
   * 1/4 publications stated sequencing data accession number (plain text)
@@ -236,6 +236,12 @@ _Structure 02:_
 ### Availability of data and materials
   * 3/4 publications contain accession numbers
   * 1/4 publication's data is available upon request
+
+## Molecular Neurodegeneration: IF 15.1 (16)
+### Availability of data and materials
+  * data available upon request
+  * 1/7 publication shared source code URL
+  * 1/7 publication shared correct accession number with name of the Database
 
 **General Observation:** Most publications started adding source code from 2019 onwards
 
