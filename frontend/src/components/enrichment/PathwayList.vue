@@ -1,5 +1,102 @@
 <template>
-  <div id="pathways-list">
+  <ProgressSpinner v-if="await_load == true" class="!flex" style="width: 30px; height: 30px;" strokeWidth="5"
+    fill="transparent" animationDuration="1s" aria-label="ProgressSpinner" />
+
+  <Listbox v-if="terms !== null && await_load === false" v-model="selected_pathway" optionLabel="name"
+    :options="filt_terms" :pt="{
+      header: { class: 'sticky top-0 flex-1 !px-0 bg-[var(--card-bg)] z-[1] order-1' },
+      listContainer: { class: 'order-3' },
+      list: { class: '!p-0' },
+      emptyMessage: { class: '!flex !justify-center !items-center !text-sm !text-slate-500 dark:!text-slate-300' },
+      option: {
+        class:
+          '!px-0 !py-1.5 !text-slate-500 dark:!text-slate-300 leading-tight transition-all duration-300 ease-in-out',
+      },
+    }" listStyle="max-height:100%" class="h-full flex flex-col !p-0 !bg-transparent !border-0"
+    @update:modelValue="select_term" :tabindex="0" emptyMessage="No terms available." >
+
+    <template #footer>
+      <header class="sticky top-0 bg-[var(--card-bg)] pt-3 items-center gap-2 z-[1] order-1">
+        <!-- filter -->
+        <InputGroup>
+          <InputGroupAddon>
+            <MultiSelect v-model="selected_categories" optionLabel="label" placeholder="Filter" showClear
+              resetFilterOnClear filterPlaceholder="Search categories" filter class="!w-56 !p-0 !border-0"
+              emptyMessage="No categories available" emptyFilterMessage="No categories available"
+              :selectedItemsLabel="`${selected_categories?.length} categories`" :options="filter_terms"
+              :maxSelectedLabels="1" :pt="{
+                clearIcon: { class: '!w-[.8rem] !absolute !right-6' },
+                overlay: { class: '!w-[18rem]' },
+                label: { class: 'max-w-[100px] !py-0 !px-0 !line-clamp-1' },
+                dropdown: { class: '!w-auto' },
+                optionLabel: { class: 'whitespace-normal' }
+              }" />
+          </InputGroupAddon>
+
+          <IconField class="w-full">
+            <InputText v-model="search_raw" placeholder="Search pathway" class="w-full" />
+            <InputIcon class="z-10 pi pi-search" />
+          </IconField>
+
+          <InputGroupAddon>
+            <Button @click="toggle" icon="pi pi-list" text plain />
+          </InputGroupAddon>
+        </InputGroup>
+
+        <!-- sorting -->
+        <div
+          class="grid grid-cols-12 items-center gap-2 py-2 bg-[var(--card-bg)] shadow-[0_10px_30px_-18px_#34343D] dark:shadow-[0_10px_30px_-18px_#ffffff] z-[1]">
+          <a class="flex items-center justify-start col-span-9 gap-1 text-right cursor-pointer" v-on:click="
+            sort_alph = sort_alph === 'asc' ? 'dsc' : 'asc';
+          sort_fdr = '';
+          ">
+            Functional enrichment pathways ({{ filt_terms.length }})
+
+            <span :class="`material-symbols-rounded text-base cursor-pointer 
+            ${sort_alph ? 'text-primary-500' : 'text-slate-600'}`">
+              {{ !sort_alph ? "swap_vert" : sort_alph === "asc" ? "south" : "north" }}
+            </span>
+          </a>
+
+          <a class="flex items-center justify-end col-span-3 gap-1 text-right cursor-pointer" v-on:click="
+            sort_fdr = sort_fdr === 'asc' ? 'dsc' : 'asc';
+          sort_alph = '';
+          ">
+            Fdr rate
+
+            <span :class="`material-symbols-rounded text-base cursor-pointer 
+            ${sort_fdr ? 'text-primary-500' : 'text-slate-600'}`">
+              {{ !sort_fdr ? "swap_vert" : sort_fdr === "asc" ? "south" : "north" }}
+            </span>
+          </a>
+        </div>
+      </header>
+    </template>
+    <!-- options -->
+    <template #option="slotProps">
+      <div :class="`grid items-center w-full grid-cols-12 gap-2 ${slotProps.selected ? '!text-primary-400' : ''}`">
+        <span class="col-span-8">{{ slotProps.option.name }}</span>
+
+        <span class="col-span-3 text-right">{{ slotProps.option.fdr_rate.toExponential(2) }}</span>
+
+        <span v-on:click.stop="add_enrichment(slotProps.option)" :class="`material-symbols-rounded text-slate-600 cursor-pointer 
+          ${favourite_tab.has(slotProps.option)
+            ? 'font-variation-ico-filled text-yellow-500 hover:text-yellow-400'
+            : 'hover:text-yellow-600'
+          }`">
+          star
+        </span>
+      </div>
+    </template>
+  </Listbox>
+
+  <Popover ref="op" :pt="{ content: { class: '!flex !flex-col' } }">
+    <Button @click="bookmark_off = !bookmark_off" icon="pi pi-star" text plain
+      v-tooltip="bookmark_off ? 'Filter favorite terms' : 'Remove filter'"></Button>
+    <Button @click="export_enrichment" icon="pi pi-download" text plain v-tooltip="'Export terms as csv'"></Button>
+  </Popover>
+
+  <!-- <div id="pathways-list">
     <div class="tool-section-term">
       <div class="pathway-search">
         <img class="pathway-search-icon" src="@/assets/toolbar/search.png" />
@@ -137,8 +234,18 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 </template>
+
+<script setup>
+import { ref } from "vue";
+
+const op = ref();
+
+const toggle = (event) => {
+  op.value.toggle(event);
+};
+</script>
 
 <script>
 export default {
@@ -150,20 +257,22 @@ export default {
     "filtered_terms",
     "favourite_pathways",
   ],
+  emits: ["favourite_pathways_changed", "filtered_terms_changed"],
   data() {
     return {
       search_raw: "",
-      filter_raw: "",
       sort_fdr: "",
       sort_alph: "",
-      category: "Filter",
-      active_categories_set: new Set(),
-      category_filtering: false,
+      selected_categories: [],
+      // category: "Filter",
+      // active_categories_set: new Set(),
+      // category_filtering: false,
       filter_terms: [],
       bookmark_off: true,
       favourite_tab: new Set(),
-      selectedIndex: -1,
-      functions_active: false,
+      // selectedIndex: -1,
+      // functions_active: false,
+      selected_pathway: "",
     };
   },
   mounted() {
@@ -192,10 +301,13 @@ export default {
       var com = this;
       var filtered = com.terms;
 
-      if (com.category != "Filter") {
-        // If category is set, filter by category
+      if (com.selected_categories?.length) {
+        // If category is selected, filter by category
+        // filtered = filtered.filter(function (term) {
+        //   return com.active_categories_set.has(term.category);
+        // });
         filtered = filtered.filter(function (term) {
-          return com.active_categories_set.has(term.category);
+          return com.selected_categories.some(el => el.label === term.category);
         });
       }
 
@@ -212,16 +324,16 @@ export default {
           return t1.name.toLowerCase() > t2.name.toLowerCase()
             ? 1
             : t1.name.toLowerCase() === t2.name.toLowerCase()
-            ? 0
-            : -1;
+              ? 0
+              : -1;
         });
       } else if (com.sort_alph == "dsc") {
         filtered.sort(function (t1, t2) {
           return t2.name.toLowerCase() > t1.name.toLowerCase()
             ? 1
             : t1.name.toLowerCase() === t2.name.toLowerCase()
-            ? 0
-            : -1;
+              ? 0
+              : -1;
         });
       }
 
@@ -238,42 +350,46 @@ export default {
       }
 
       this.$emit("filtered_terms_changed", filtered);
-      return new Set(filtered);
+
+      return filtered;
+      // return new Set(filtered);
     },
   },
   methods: {
-    active_categories(category) {
-      if (!category) {
-        this.reset_categories();
-        return;
-      }
-      if (this.active_categories_set.has(category)) {
-        if (this.active_categories_set.size == 1) {
-          this.reset_categories();
-          return;
-        }
-        this.active_categories_set.delete(category);
-      } else {
-        this.active_categories_set.add(category);
-      }
-      this.category = [...this.active_categories_set].join(", ");
-    },
-    reset_categories() {
-      this.category = "Filter";
-      this.active_categories_set = new Set();
-    },
+    // active_categories(category) {
+    //   if (!category) {
+    //     this.reset_categories();
+    //     return;
+    //   }
+    //   if (this.active_categories_set.has(category)) {
+    //     if (this.active_categories_set.size == 1) {
+    //       this.reset_categories();
+    //       return;
+    //     }
+    //     this.active_categories_set.delete(category);
+    //   } else {
+    //     this.active_categories_set.add(category);
+    //   }
+    //   this.category = [...this.active_categories_set].join(", ");
+    // },
+    // reset_categories() {
+    //   this.category = "Filter";
+    //   this.active_categories_set = new Set();
+    // },
     init_categories() {
-      this.reset_categories();
+      // this.reset_categories();
       for (let element of this.filter_terms) {
         let checkCategory = element.label;
         if (
           checkCategory !== "GOCC" &&
           checkCategory !== "GOMF" &&
           checkCategory !== "GOBP"
-        )
-          this.active_categories(checkCategory);
+        ) {
+          this.selected_categories.push({ label: checkCategory });
+          // this.active_categories(checkCategory);
+        }
       }
-      this.category = [...this.active_categories_set].join(", ");
+      // this.category = [...this.active_categories_set].join(", ");
     },
     filter_options(terms) {
       var com = this;
@@ -283,54 +399,54 @@ export default {
         com.filter_terms.push({ label: term });
       });
     },
-    select_term(term, index) {
+    select_term(term) {
       var com = this;
-      this.selectedIndex = index;
+      // this.selectedIndex = index;
       com.emitter.emit("searchEnrichment", term);
     },
-    scrollToSelected(selectedDiv) {
-      const parent = this.$refs.resultsContainer; // Updated line to use this.$refs
+    // scrollToSelected(selectedDiv) {
+    //   const parent = this.$refs.resultsContainer; // Updated line to use this.$refs
 
-      if (!selectedDiv) {
-        return;
-      }
+    //   if (!selectedDiv) {
+    //     return;
+    //   }
 
-      const selectedDivPosition = selectedDiv.getBoundingClientRect();
-      const parentBorders = parent.getBoundingClientRect();
+    //   const selectedDivPosition = selectedDiv.getBoundingClientRect();
+    //   const parentBorders = parent.getBoundingClientRect();
 
-      if (selectedDivPosition.bottom >= parentBorders.bottom) {
-        selectedDiv.scrollIntoView(false);
-      }
+    //   if (selectedDivPosition.bottom >= parentBorders.bottom) {
+    //     selectedDiv.scrollIntoView(false);
+    //   }
 
-      if (selectedDivPosition.top <= parentBorders.top) {
-        selectedDiv.scrollIntoView(true);
-      }
-    },
-    handleKeyDown(event) {
-      const keyCode = event.keyCode;
+    //   if (selectedDivPosition.top <= parentBorders.top) {
+    //     selectedDiv.scrollIntoView(true);
+    //   }
+    // },
+    // handleKeyDown(event) {
+    //   const keyCode = event.keyCode;
 
-      if (keyCode === 38) {
-        event.preventDefault();
-        if (this.selectedIndex > 0) {
-          this.selectedIndex--;
-          this.scrollToSelected(this.$refs.selectedNodes[this.selectedIndex]);
-          this.clickNode();
-        }
-      } else if (keyCode === 40) {
-        event.preventDefault();
-        if (this.selectedIndex < this.filt_terms.size - 1) {
-          this.selectedIndex++;
-          this.scrollToSelected(this.$refs.selectedNodes[this.selectedIndex]);
-          this.clickNode();
-        }
-      }
-    },
-    clickNode() {
-      const selectedNode = this.$refs.selectedNodes[this.selectedIndex];
-      if (selectedNode) {
-        selectedNode.click();
-      }
-    },
+    //   if (keyCode === 38) {
+    //     event.preventDefault();
+    //     if (this.selectedIndex > 0) {
+    //       this.selectedIndex--;
+    //       this.scrollToSelected(this.$refs.selectedNodes[this.selectedIndex]);
+    //       this.clickNode();
+    //     }
+    //   } else if (keyCode === 40) {
+    //     event.preventDefault();
+    //     if (this.selectedIndex < this.filt_terms.size - 1) {
+    //       this.selectedIndex++;
+    //       this.scrollToSelected(this.$refs.selectedNodes[this.selectedIndex]);
+    //       this.clickNode();
+    //     }
+    //   }
+    // },
+    // clickNode() {
+    //   const selectedNode = this.$refs.selectedNodes[this.selectedIndex];
+    //   if (selectedNode) {
+    //     selectedNode.click();
+    //   }
+    // },
     add_enrichment(enrichment) {
       if (!this.favourite_tab.has(enrichment)) {
         // Checkbox is checked, add its state to the object
@@ -377,38 +493,38 @@ export default {
       hiddenElement.download = "Terms.csv";
       hiddenElement.click();
     },
-    handling_filter_menu() {
-      var com = this;
-      if (!com.category_filtering) {
-        com.category_filtering = true;
+    // handling_filter_menu() {
+    //   var com = this;
+    //   if (!com.category_filtering) {
+    //     com.category_filtering = true;
 
-        // Add the event listener
-        document.addEventListener("mouseup", com.handleMouseUp);
-      } else {
-        com.category_filtering = false;
-        document.removeEventListener("mouseup", com.handleMouseUp);
-      }
-    },
-    handleMouseUp(e) {
-      var com = this;
+    //     // Add the event listener
+    //     document.addEventListener("mouseup", com.handleMouseUp);
+    //   } else {
+    //     com.category_filtering = false;
+    //     document.removeEventListener("mouseup", com.handleMouseUp);
+    //   }
+    // },
+    // handleMouseUp(e) {
+    //   var com = this;
 
-      var container = document.getElementById("list-filter-categories");
-      var container_button = document.getElementById("pathway-filter");
-      if (
-        !container.contains(e.target) &&
-        !container_button.contains(e.target)
-      ) {
-        com.category_filtering = false;
+    //   var container = document.getElementById("list-filter-categories");
+    //   var container_button = document.getElementById("pathway-filter");
+    //   if (
+    //     !container.contains(e.target) &&
+    //     !container_button.contains(e.target)
+    //   ) {
+    //     com.category_filtering = false;
 
-        // Remove the event listener
-        document.removeEventListener("mouseup", com.handleMouseUp);
-      }
-    },
+    //     // Remove the event listener
+    //     document.removeEventListener("mouseup", com.handleMouseUp);
+    //   }
+    // },
   },
 };
 </script>
 
-<style>
+<!-- <style>
 .pathways #pathways-list {
   width: 100%;
   height: 100%;
@@ -768,4 +884,4 @@ td:last-child {
 #list-filter-categories .active_cat {
   background: #ffa500;
 }
-</style>
+</style> -->
