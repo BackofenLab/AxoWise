@@ -1,6 +1,6 @@
 <template>
     <div>
-        <slot :graph="graph" :initializeGraph="initializeGraph"></slot>
+        <slot :graph="graph"></slot>
     </div>
 </template>
 
@@ -16,15 +16,24 @@
 
     export default {
     name: "GraphDataProvider",
-    setup() {
-        const graph = ref(new Graph());
+    props:["backend_data"],
+    data(){
+        return{
+            graph: null
+        }
+    },
 
-        const initializeGraph = (data) => {
+    methods: {
+
+        initializeGraph(graph, data) {
         /* Creates graphology.js graph of given data and assign respective attributes.(size, color, pagerank, bc, community)
            Applying Mike Bostocks circle pack layout to graph data and louvain community detection.
            Input: data dict{ nodes: List[], edges: List[]}
            Return: initializeGraph: function(), graph: graphObject
         */
+
+            console.log("provider", graph)
+
             const nodes = data.nodes;
             const edges = data.edges;
 
@@ -49,39 +58,12 @@
             this.generateGraphColor(graph);
             this.generateSubgraph(graph);
 
-            testgraph.forEachNode((node, attr) => {
-                const size = testgraph.degree(node);
-                testgraph.setNodeAttribute(node, "size", 1 + (200 * size/testgraph.order));
+            graph.forEachNode((node) => {
+                const size = graph.degree(node);
+                graph.setNodeAttribute(node, "size", 1 + (200 * size/graph.order));
             });
-
-        };
-
-        const saveGraph = (graph) => {
-        /* Export graph as serialized JSON object into localStorage.
-        */
-            const serializedGraph = JSON.stringify(graph.export());
-            localStorage.setItem("graph", serializedGraph);
-        };
-
-        const loadGraph = () => {
-        /* Import graph as serialized JSON object from localStorage.
-        */
-            const savedGraph = localStorage.getItem("graph");
-            if (savedGraph) {
-                const importedData = JSON.parse(savedGraph);
-                graph.import(importedData);
-            } 
-        };
-
-        return {
-        graph,
-        initializeGraph,
-        saveGraph,
-        loadGraph
-        };
-
-    },
-    methods: {
+            
+        },
 
         generateGraphLayout(graph){
         /* Generates x,y positions for graph nodes by Mike Bostock circle pack algorithm based on degree and community.
@@ -106,7 +88,7 @@
         /* Filters the highest connected component and hides all unconnected nodes.
            Input: graph: graphObject
         */
-            const largest = new Set(largestConnectedComponent(testgraph));
+            const largest = new Set(largestConnectedComponent(graph));
 
             graph.forEachNode((node) => {
                 !largest.has(node) 
@@ -134,9 +116,31 @@
 
             graph.forEachNode((node, attr) => {
               const community = attr.community
-              testgraph.setNodeAttribute(node, 'color', communityColors[community]);
+              graph.setNodeAttribute(node, 'color', communityColors[community]);
             });
-        }
+        },
+
+        saveGraph(graph){
+        /* Export graph as serialized JSON object into localStorage.
+        */
+            const serializedGraph = JSON.stringify(graph.export());
+            localStorage.setItem("graph", serializedGraph);
+        },
+
+        loadGraph(graph){
+        /* Import graph as serialized JSON object from localStorage.
+        */
+            const savedGraph = localStorage.getItem("graph");
+            if (savedGraph) {
+                const importedData = JSON.parse(savedGraph);
+                graph.import(importedData);
+            } 
+        },
+    },
+    mounted(){
+        console.log("mountedData", this.backend_data)
+        this.graph = ref(new Graph());
+        this.initializeGraph(this.graph, this.backend_data)
     },
     };
 </script>
