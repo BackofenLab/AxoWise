@@ -1,43 +1,25 @@
 <template>
   <div id="citation-tools" class="pathways">
     <div class="pathwaybar">
-      <div
-        id="citation-graphs"
-        v-if="sorted == 'bottom'"
-        v-show="active_function === 'citation'"
-      >
+      <div id="citation-graphs">
         <div class="tool-section-graph">
           <div class="coloumn-button">
-            <button
-              class="tool-buttons"
-              v-on:click="get_citation_graph(context_raw)"
-            >
-              <img
-                class="buttons-img"
-                src="@/assets/plus-1.png"
-                v-if="!loading_state"
-              />
+            <button class="tool-buttons" v-on:click="get_citation_graph(context_raw)">
+              <img class="buttons-img" src="@/assets/plus-1.png" v-if="!loading_state" />
               <div v-if="loading_state" class="loading_button"></div>
             </button>
           </div>
           <div class="coloumn-button">
-            <button
-              class="tool-buttons"
-              :class="{ recolor_filter: bookmark_off == false }"
-              v-on:click="bookmark_off = !bookmark_off"
-            >
+            <button class="tool-buttons" :class="{ recolor_filter: bookmark_off == false }"
+              v-on:click="bookmark_off = !bookmark_off">
               <img class="buttons-img" src="@/assets/star.png" />
             </button>
           </div>
         </div>
         <div class="graph-section">
-          <CitationGraph
-            :citation_graphs="citation_graphs"
-            :favourite_graphs="favourite_graphs"
-            :bookmark_off="bookmark_off"
-            @loading_state_changed="loading_state = $event"
-            @favourite_graphs_changed="favourite_graphs = $event"
-          ></CitationGraph>
+          <CitationGraph :citation_graphs="citation_graphs" :favourite_graphs="favourite_graphs"
+            :bookmark_off="bookmark_off" @loading_state_changed="loading_state = $event"
+            @favourite_graphs_changed="favourite_graphs = $event"></CitationGraph>
         </div>
       </div>
     </div>
@@ -49,7 +31,7 @@ import CitationGraph from "@/components/citation/CitationGraph.vue";
 
 export default {
   name: "CitationMenu",
-  props: ["active_node", "active_background", "active_function", "sorted"],
+  props: ["active_node", "active_background"],
   components: {
     CitationGraph,
   },
@@ -100,10 +82,10 @@ export default {
       return year && citations
         ? "all"
         : year
-        ? "year"
-        : citations
-        ? "citations"
-        : "all";
+          ? "year"
+          : citations
+            ? "citations"
+            : "all";
     },
     getContext(base, context, rank) {
       var com = this;
@@ -172,6 +154,7 @@ export default {
   overflow: hidden;
   font-family: "ABeeZee", sans-serif;
 }
+
 .citation-search {
   background: rgba(222, 222, 222, 0.3);
   padding: 0 0 0 0.3vw;
@@ -217,7 +200,7 @@ export default {
   display: flex;
 }
 
-.context-confirm [type="checkbox"] + label {
+.context-confirm [type="checkbox"]+label {
   display: block;
   cursor: pointer;
   font-family: sans-serif;
@@ -228,7 +211,7 @@ export default {
   margin-top: 0.7%;
 }
 
-.context-confirm [type="checkbox"] + label:before {
+.context-confirm [type="checkbox"]+label:before {
   width: 1.2vw;
   height: 0.6vw;
   border-radius: 30px;
@@ -238,7 +221,8 @@ export default {
   z-index: 5;
   position: absolute;
 }
-.context-confirm [type="checkbox"] + label:after {
+
+.context-confirm [type="checkbox"]+label:after {
   width: 0.4vw;
   height: 0.4vw;
   border-radius: 30px;
@@ -252,7 +236,7 @@ export default {
   z-index: 10;
 }
 
-.context-confirm [type="checkbox"]:checked + label:after {
+.context-confirm [type="checkbox"]:checked+label:after {
   margin: 0.09vw 0 0 0.69vw;
 }
 

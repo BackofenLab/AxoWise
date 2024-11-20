@@ -3,7 +3,7 @@
     :pt="{ label: { class: 'mx-auto' } }" @click="show_search = !show_search" />
 
   <Dialog v-model:visible="show_search" position="top" :minY="60" :minX="60" :closable="true" :pt="{
-    root: { class: 'w-[25rem] !mt-[60px] !ml-[60px]' },
+    root: { class: 'w-[20rem] !mt-[60px] !ml-[60px]' },
     headerActions: { class: '!hidden' },
     header: { class: '!p-3 order-1 cursor-move' },
     content: { class: 'order-2 !px-0' },
@@ -12,7 +12,7 @@
 
     <ul class="divide-y border-slate-200 dark:divide-slate-100/10"
       v-if="search_raw.length >= 2 && filt_search.length > 0">
-      <li class="flex !justify-between items-center px-4 hover:dark:bg-slate-100/10 hover:bg-slate-100"
+      <li class="flex !justify-between items-center px-4 hover:dark:bg-slate-100/10 hover:bg-slate-100 hover:!text-primary-400"
         v-for="(entry, index) in filt_search" :key="index">
         <a class="flex-1 py-2.5" href="#" v-on:click="select_node(entry)">{{ entry.label }}</a>
         <Divider layout="vertical" />
