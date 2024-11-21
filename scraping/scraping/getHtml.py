@@ -34,8 +34,8 @@ def scrape_publications():
                 'Nature Biomedical Engineering','Cellular & Molecular Immunology','The Lancet Microbe',
                 'The Lancet Oncology','Science Translational Medicine','Nucleic Acids Research',
                 'National Science Review','Journal of Hepatology','Military Medical Research',
-                'The Lancet Infectious Diseases','Signal Transduction and Targeted Therapy','Annals of Rheumatic Diseases',
-                'Journal of Hematology and Oncology']
+                'The Lancet Infectious Diseases','Signal Transduction and Targeted Therapy','Annals of the Rheumatic Diseases',
+                'Journal of Hematology & Oncology']
 
     for i in range(0, len(journals),3):
 
