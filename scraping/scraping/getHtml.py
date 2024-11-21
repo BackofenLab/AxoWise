@@ -52,7 +52,6 @@ def scrape_publications():
 
         try:
             driver.get(base_url)
-
             last_height = driver.execute_script("return document.body.scrollHeight")    # to get the initial height of page
 
             while True:
