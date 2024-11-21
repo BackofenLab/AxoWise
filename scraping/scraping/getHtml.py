@@ -6,11 +6,12 @@ from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 import time
 import re
+import urllib.parse
 
 def setup_chrome_driver():
     """set up Chrome driver"""
     chrome_options = Options()
-    chrome_options.add_argument('--headless') 
+    # chrome_options.add_argument('--headless') 
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
 
@@ -23,37 +24,58 @@ def setup_chrome_driver():
 
 def scrape_publications():
     """scrapes the full HTML content with infinite scroll"""
+    journals = ['Nature', 'Science','Cell', 'Immunity', 'Circulation', 
+                'Gastroenterology','Gut', 'Neuro-Oncology','Cancer Cell', 'Cell Metabolism', 
+                'Nature Immunology', 'Nature Biotechnology', 'Nature Medicine', 'Nature Genetics', 'Nature Cell Biology', 
+                'Nature Neuroscience', 'Nature Cancer', 'Nature Methods', 'Nature Metabolism', 
+                'Nature Microbiology', 'Nature Nanotechnology', 'Science Immunology', 'Science Bulletin', 
+                'Cancer Discovery', 'Cell Research', 'Bioactive Materials', 'Molecular Cancer', 
+                'Molecular Neurodegeneration','Cell Stem Cell','Cell Host & Microbe', 'Nature Cell Biology',
+                'Nature Biomedical Engineering','Cellular & Molecular Immunology','The Lancet Microbe',
+                'The Lancet Oncology','Science Translational Medicine','Nucleic Acids Research',
+                'National Science Review','Journal of Hepatology','Military Medical Research',
+                'The Lancet Infectious Diseases','Signal Transduction and Targeted Therapy','Annals of Rheumatic Diseases',
+                'Journal of Hematology and Oncology']
 
-    base_url = "https://www.10xgenomics.com/publications?refinementList%5Bspecies%5D%5B0%5D=Human&page=1"   #scrape publications related to Human species only
-    
-    driver = setup_chrome_driver()
+    for i in range(0, len(journals),3):
 
-    try:
-        driver.get(base_url)
+        driver = setup_chrome_driver()
+        base_url = f"https://www.10xgenomics.com/publications?page=1&sortBy=master%3Apublications&query="
 
-        last_height = driver.execute_script("return document.body.scrollHeight")    # to get the initial height of page
+        chunk = journals[i:i+3]
+        file_name = ""
+        for count, j in enumerate(chunk):
+            file_name += "_"+j
+            base_url = base_url + f"&refinementList%5Bjournal%5D%5B{count}%5D={urllib.parse.quote(j)}"
 
-        while True:
+        print(base_url)
 
-            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")    # scroll down to the bottom
+        try:
+            driver.get(base_url)
 
-            time.sleep(1)
+            last_height = driver.execute_script("return document.body.scrollHeight")    # to get the initial height of page
 
-            new_height = driver.execute_script("return document.body.scrollHeight") # height of new page with more content
+            while True:
 
-            publication_elements = driver.find_element(By.CLASS_NAME, "PublicationSearch")  # find and extract HTML
-            html_content = publication_elements.get_attribute("outerHTML")
+                driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")    # scroll down to the bottom
 
-            with open("publications_humans.html", "w", encoding="utf-8") as f:
-                f.write(html_content + "\n")
+                time.sleep(1.5)
 
-            if new_height == last_height:   # no change in height, all content is loaded
-                print("Reached the end of the page.")
-                break
-            last_height = new_height
+                new_height = driver.execute_script("return document.body.scrollHeight") # height of new page with more content
 
-    finally:
-        driver.quit()
+                publication_elements = driver.find_element(By.CLASS_NAME, "PublicationSearch")  # find and extract HTML
+                html_content = publication_elements.get_attribute("outerHTML")
+                
+                with open(f"{file_name}.html", "a", encoding="utf-8") as f:
+                    f.write(html_content + "\n")
+
+                if new_height == last_height:   # no change in height, all content is loaded
+                    print("Reached the end of the page.")
+                    break
+                last_height = new_height
+
+        finally:
+            driver.quit()
 
 def get_doi():
     """extracts DOI URLs from .html"""
@@ -75,4 +97,4 @@ def get_doi():
 
 if __name__ == "__main__":
     scrape_publications()
-    get_doi()
+    # get_doi()
