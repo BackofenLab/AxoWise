@@ -153,6 +153,7 @@ def chatbot_response():
     data = json.loads(request.form.get("background"))
     stopwatch = Stopwatch()
     driver = database.get_driver()
+    abstracts = None
     # Bring background data into usable format
     pmids, pmid_abstract, protein_list, funct_terms_list = populate(data)
     # If abstracts are selected, use vector search to filter for most relevant ones
@@ -164,24 +165,16 @@ def chatbot_response():
             pmid_abstract=pmid_abstract,
             protein_list=protein_list,
         )
-        message = make_prompt(
-            message=message,
-            funct_terms=funct_terms_list,
-            proteins=protein_list,
-            abstract=abstracts,
-        )
-    else:
-        message = make_prompt(
-            message=message,
-            funct_terms=funct_terms_list,
-            proteins=protein_list,
-        )
+    message = make_prompt(
+        message=message,
+        funct_terms=funct_terms_list,
+        proteins=protein_list,
+        abstract=abstracts,
+    )
     history.append({"role": "user", "content": message})
     answer = chat(history=history)
     stopwatch.round("Generating answer")
     history.append(answer)
-    with open("history.txt", "w") as f:
-        f.write(str(history))
     response = json.dumps({"message": answer["content"], "pmids": pmids})
     return Response(response, mimetype="application/json")
 
