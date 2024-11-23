@@ -13,7 +13,7 @@
           '!px-0 !py-1.5 !text-slate-500 dark:!text-slate-300 leading-tight transition-all duration-300 ease-in-out',
       },
     }" listStyle="max-height:100%" class="h-full flex flex-col !p-0 !bg-transparent !border-0"
-    @update:modelValue="select_term" :tabindex="0" emptyMessage="No terms available." >
+    @update:modelValue="select_term" :tabindex="0" emptyMessage="No terms available.">
 
     <template #footer>
       <header class="sticky top-0 bg-[var(--card-bg)] pt-3 items-center gap-2 z-[1] order-1">
@@ -90,10 +90,19 @@
     </template>
   </Listbox>
 
-  <Popover ref="op" :pt="{ content: { class: '!flex !flex-col' } }">
-    <Button @click="bookmark_off = !bookmark_off" icon="pi pi-star" text plain
-      v-tooltip="bookmark_off ? 'Filter favorite terms' : 'Remove filter'"></Button>
-    <Button @click="export_enrichment" icon="pi pi-download" text plain v-tooltip="'Export terms as csv'"></Button>
+  <Popover ref="op" class="w-[13rem]" :pt="{ content: { class: '!flex !flex-col' } }">
+    <Button class="!w-full !justify-start !gap-3" @click="bookmark_off = !bookmark_off" icon="material-symbols-rounded"
+      text plain>
+      <span :class="`material-symbols-rounded 
+          ${!bookmark_off ? 'font-variation-ico-filled text-yellow-500 hover:text-yellow-400' : ''}`">
+        star
+      </span>
+      {{ bookmark_off ? "Show only favorites" : "Show all" }}
+    </Button>
+    <Button class="!w-full !justify-start !gap-3" @click="export_enrichment" icon="material-symbols-rounded" text plain>
+      <span class="material-symbols-rounded">download</span>
+      Export terms as csv
+    </Button>
   </Popover>
 
   <!-- <div id="pathways-list">
