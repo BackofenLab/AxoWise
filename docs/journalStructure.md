@@ -1,4 +1,4 @@
-# Structure of High IF Journals
+# Structure of High IF Journals (Total number: 43)
 
 This document contains the structure of Journals having Impact Factor greater than 15 - taken from [10x Genomics](https://www.10xgenomics.com/publications). Only relevant sections from the journals are added.
 
@@ -16,7 +16,6 @@ This document contains the structure of Journals having Impact Factor greater th
 * Sequence Read Archive (SRA)
 * International Nucleotide Sequence Database Collaboration (INSDC)
 * European Nucleotide Archive (ENA)
-* Genome Sequence Archive (GSA)
 * BioStudies: ArrayExpress (Gene expression data)
 * database of Genotypes and Phenotypes (dbGaP)
 * ProteomeXchange Consortium - PRIDE: stores data related to protein and peptide identifications
@@ -25,11 +24,15 @@ This document contains the structure of Journals having Impact Factor greater th
 * Zenodo
 * China National GeneBank DataBase (CNGBdb)
 * BioProject
+* Medical Genomics Japan Variant Database (MGeND)
+* CellxGene
+* National Genomics Data Center (NGDC): Genome Warehouse, Genome Sequence Archive (GSA)
+* The Neuroscience Multi-omic Data Archive (NeMo)
 
 
 _________________________________________________________________
 
-## Cell: IF 45.5
+## Cell: IF 45.5 (6)
 _Structure 01:_
 ### Resource availability:
 #### Materials availability
@@ -47,6 +50,10 @@ _Structure 02:_
 ### Data and Code/Software Availability:
   * contains info regarding sequencing data and source code
 
+_Structure 03:_ (in publications from 04/2011 to 2016)
+### Accession Numbers
+  * mostly written in plain text without a URL
+
 ## Cell Stem Cell: IF 19.8 
 (some publications are not publicly accessible)
 ### Resource availability:
@@ -59,14 +66,17 @@ _Structure 02:_
   * 'original code'
   * 'novel code'
   * accession numbers of sequencing data & source code URL (Github/Zenodo) listed in Key Resources Table
-  * accession number stated in plain text instead of a URL
+  * accession number stated in plain text instead of hyperlinks/URLs
 
 ## Other Cell journals:
-* Cancer Cell: 48.8
-* Immunity: 43.47
+  * Cancer Cell: 48.8
+  * Immunity: 25.5
+  * Cell Host & Microbe: 20.6
+  * Cell Metabolism: 27.7
 
-## Nature Immunology: IF 27.7
-### Data availability
+## Nature Immunology: IF 27.7 (14)
+_Structure 01:_
+### Data availability 
   * uploaded on database(s) mentioned above
   * available upon request
   * fasta files found under Supplementary Information as Supplementary Data (observed in only one publication so far)
@@ -81,19 +91,162 @@ _Structure 02:_
   * available from authors upon request
   * no new code, used existing code
 
+_Structure 02:_
+### Accession codes
+  * contains URLs to sequencing data
+
+**NOTE:** before 2019: Accession Codes, in 2019: Data Availability, 2020 onwards: Data Availability, Code Availability
+
 ## Other Nature journals:
-* Nature Biotechnology: 68.2
-* Nature Medicine: 87.5
-* Nature Genetics: 31.7
-* Nature: 50.5
-* Nature Cell Biology: 17.3
-* Nature Neuroscience: 29.9
-* Nature Cancer: 38.7
-* Nature Methods: 36.1
-* Nature Metabolism: 25.5
-* Nature Protocols: 17.1
-* Nature Biomedical Engineering: 28.9
-* Nature Microbiology: 20.5
+  * Nature Biotechnology: 33.1
+  * Nature Medicine: 58.7
+  * Nature Genetics: 31.7
+  * Nature: 50.5
+  * Nature Cell Biology: 17.3
+  * Nature Neuroscience: 21.2
+  * Nature Cancer: 23.5
+  * Nature Methods: 36.1
+  * Nature Metabolism: 18.9
+  * Nature Biomedical Engineering: 26.8
+  * Nature Microbiology: 20.5
+  * Cellular & Molecular Immunology: 21.8
+  * Nature Nanotechnology: 38.1
+
+## The Lancet Microbe: IF 20.9 (3)
+### Data Sharing
+  * contains accession numbers for sequencing data and source code URLs
+  * accession numbers stated in plain text instead of hyperlink
+
+## Other Lancet Journals:
+  * The Lancet Oncology: 41.6
+  * The Lancet Infectious Diseases: 36.4
+
+## Science: 50.3 (4)
+### Acknowledgments
+#### Data and materials availability
+  * accession numbers in plain text/ links to sequencing data in References (Zenodo URLs)/ hyperlinks
+  * source code: hyperlinks, sometimes in References, not available at all
+  * several publications are not freely accessible
+
+## Science Immunology: IF 19.1
+### Data and materials availability
+  * contains accession numbers for sequencing data and source code URLs
+
+## Other Science Journals:
+  * Science Translational Medicine: 16.9
+  * Science Bulletin: 18.8
+
+## Cancer Discovery: IF 30.6
+_Structure 01:_
+### Data Availability/ Data Deposition/ Data and Software Availability/ Data and Materials Availability/ Data Reporting/ Code Available/ Data Archive (2019-present)
+  * contains accession numbers for sequencing data and source code URLs
+  * accession numbers stated in plain text instead of hyperlinks/URLs
+  * very few publications contain source code
+
+### Accession numbers
+  * contains accession numbers of publicly available data used by authors
+
+_Structure 02:_
+### Methods:
+#### Data Availability
+  * information related to sequencing data
+#### Software/Code Availability
+  * source code
+
+## Nucleic Acids Research: IF 16.6
+### Data Availability
+  * contains information regarding sequencing data
+  * few publications mention source code
+
+## Cell Research (Nature): IF 28.2
+### Data Availability/ Data Access
+  * very few mentioned source code
+  * accession numbers stated in plain text instead of hyperlink
+
+## Gastroenterology: IF 25.7
+### Data availability statement
+  * contains accession codes and source code
+
+## Gut: IF 23.0
+### Data availability statement
+  * contains accession codes (plain text) and source code (2 out of 13 publications)
+
+## Circulation: IF 35.5
+### Independent Data Access/ Data Availability/ Methods/ Data Resources
+  * accession codes (plain text)
+  * source code found (1 out of 23 publications)
+  * available upon request
+
+## Neuro-oncology: IF 16.4
+### Data Availability 
+  * contains info regarding sequencing data and source code _(1 out of 4 publications)_
+
+## Signal Transduction and Targeted Therapy: IF 40.8
+_Structure 01:_
+### Data Availability
+  * accession number/acession code/project number found in plaintext instead of hyperlink
+  * source code available upon request or not available at all - available on Github for only 1 out of 23 publications
+
+_Structure 02:_
+### Data Availability
+### Code Availability
+
+## Bioactive Materials: IF 18.0
+### Data Availability (Statement)
+  * 1 out of 7 publications stated accession number
+  * data available upon request
+  * no data available at all
+  * no source code
+
+## Annals of the Rheumatic Diseases: IF 20.3
+### Data Availability Statement:
+  * only accession numbers found (2/5 publications) - no source code 
+  * available upon request
+  * section not found
+
+## National Science Review: IF 16.3
+### Data Availability
+  * accession numbers stated in plaintext
+  * code available upon request or not available at all
+    
+## Molecular Cancer: IF 27.7
+### Data Availability/ Availability of data and materials
+  * accession numbers in plain text
+  * data available upon request
+  * source code not available for any publication
+
+## Journal of Hepatology: IF 26.8
+_Structure 01:_
+### Data Availability Statement
+  * accession numbers stated in plain text
+  * source code URLs stated (1 out of 19 publications)
+  * available upon request
+
+_Structure 02:_
+### Data Availability Statement
+### Code Availability
+
+## Journal of Hematology and Oncology: IF 29.9
+### Availability of Data and Materials
+  * data available upon request
+  * 1/4 publications stated sequencing data accession number (plain text)
+  * no source code found
+
+## Military Medical Research: IF 16.7
+### Availability of data and materials
+  * 3/4 publications contain accession numbers
+  * 1/4 publication's data is available upon request
+
+## Molecular Neurodegeneration: IF 15.1 (16)
+### Availability of data and materials
+  * data available upon request
+  * 1/7 publication shared source code URL
+  * 1/7 publication shared correct accession number with name of the Database
+
+**General Observation:** Most publications started adding source code from 2019 onwards
 
 
-Note: Most of the Science journals cannot be accessed without Institution registration.
+# ISSUES WITH 10xGenomics:
+  * results show around 8000 articles but scrapes only 999 articles
+  * search hits go till page 50, each page contains 20 articles
+  * faulty sorting: ascending starts from 1880 and goes till 2019 (page 50), descending starts from 2024 and goes till 2023 (page 50)
