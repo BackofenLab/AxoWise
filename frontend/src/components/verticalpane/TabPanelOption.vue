@@ -25,7 +25,7 @@
     </TabPanel>
 
     <TabPanel class="flex-1" value="heatmap">
-      <HeatmapTool :gephi_data="gephi_data" :filtered_terms="filtered_terms" :favourite_pathways="favourite_pathways">
+      <HeatmapTool :mode="mode" :gephi_data="gephi_data" :filtered_terms="filtered_terms" :favourite_pathways="favourite_pathways">
       </HeatmapTool>
     </TabPanel>
 

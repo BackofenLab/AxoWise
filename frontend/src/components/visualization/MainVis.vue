@@ -1,16 +1,29 @@
 <template>
-  <div class="relative flex-1 visualization">
-    <div id="sigma-heatmap" v-show="heatmap">
-      <img
+  <div class="relative flex-1 overflow-hidden visualization">
+    <div id="sigma-heatmap" class="relative w-full h-full overflow-hidden" v-show="heatmap">
+      <Button
+        class="w-8 h-8 !absolute top-2 right-2"
+        severity="secondary"
+        rounded
+        size="small"
+        plain
+        @click="two_view()"
+      >
+        <span class="text-2xl material-symbols-rounded"> close </span>
+      </Button>
+      <!-- <img
         class="twoview"
         v-on:click="two_view"
         src="@/assets/pathwaybar/cross.png"
         alt="Center Icon"
-      />
+      /> -->
       <div id="heatdemo"></div>
     </div>
-    <div id="d3tooltip">
-      <p><span id="value"> </span></p>
+    <div class="absolute p-3 rounded-lg bg-[var(--card-bg)] bg-opacity-75 backdrop-blur-sm">
+      <h6 v-show="heatmap" id="d3tooltip" class="pb-1 mb-1 text-lg font-semibold border-b text-primary-500">
+        Cluster info
+      </h6>
+      <span id="value"> </span>
     </div>
     <div id="sigma-webgl"></div>
     <div
