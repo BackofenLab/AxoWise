@@ -32,13 +32,11 @@
            Return: initializeGraph: function(), graph: graphObject
         */
 
-            console.log("provider", graph)
-
             const nodes = data.nodes;
             const edges = data.edges;
 
             for (const node of nodes) {
-                graph.addNode(node.ENSEMBL_PROTEIN, { label: node.SYMBOL });
+                graph.addNode(node.ENSEMBL_PROTEIN, { label: node.SYMBOL, borderColor: "rgb(200,200,200)",});
             }
 
             for (const edge of edges) {
@@ -60,7 +58,7 @@
 
             graph.forEachNode((node) => {
                 const size = graph.degree(node);
-                graph.setNodeAttribute(node, "size", 1 + (200 * size/graph.order));
+                graph.setNodeAttribute(node, "size", 1 + (300 * size/graph.size));
             });
             
         },
@@ -138,7 +136,6 @@
         },
     },
     mounted(){
-        console.log("mountedData", this.backend_data)
         this.graph = ref(new Graph());
         this.initializeGraph(this.graph, this.backend_data)
     },

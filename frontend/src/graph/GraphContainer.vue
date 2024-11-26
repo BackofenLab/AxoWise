@@ -1,27 +1,29 @@
 <template>
     <div class="visualization">
-
         <div id="sigma-canvas" ref="container" class="sigma-parent"></div>
     </div>
 </template>
 
 <script>
 import Sigma from "sigma";
+import { NodeBorderProgram } from "@sigma/node-border";
+import { drawHover, drawLabel } from "./utils/canvas-utils";
 
 export default {
 name: "GraphContainer",
 props: ["graph"],
 mounted() {
     
-    console.log("container",this.graph)
-    this.sigmaInstance = new Sigma(this.graph, this.$refs.container);
-    console.log("container2",this.sigmaInstance)
+    this.sigmaInstance = new Sigma(this.graph, this.$refs.container, {
+        defaultNodeType: "bordered",
+        nodeProgramClasses: {
+        bordered: NodeBorderProgram,
+        },
+    });
 
-    // Example: Add any additional customizations or styles
-    // this.sigmaInstance.getRenderer().setSettings({
-    // defaultNodeColor: "#ff5722",
-    // defaultEdgeColor: "#999999",
-    // });
+    // this.sigmaInstance.setSetting("labelColor", {color:'#FFF'})
+    this.sigmaInstance.setSetting("defaultDrawNodeLabel", drawLabel)
+    this.sigmaInstance.setSetting("defaultDrawNodeHover", drawHover)
 },
 beforeUnmount() {
     if (this.sigmaInstance) {
