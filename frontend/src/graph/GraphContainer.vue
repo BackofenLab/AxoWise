@@ -8,22 +8,95 @@
 import Sigma from "sigma";
 import { NodeBorderProgram } from "@sigma/node-border";
 import { drawHover, drawLabel } from "./utils/canvas-utils";
+import { nodeReducer, edgeReducer } from './utils/basic-reducer';
 
 export default {
 name: "GraphContainer",
 props: ["graph"],
+data(){
+    return {
+        state: {}
+    }
+},
 mounted() {
+    let com = this;
     
-    this.sigmaInstance = new Sigma(this.graph, this.$refs.container, {
+    com.renderer = new Sigma(this.graph, this.$refs.container, {
         defaultNodeType: "bordered",
         nodeProgramClasses: {
         bordered: NodeBorderProgram,
         },
     });
 
-    // this.sigmaInstance.setSetting("labelColor", {color:'#FFF'})
-    this.sigmaInstance.setSetting("defaultDrawNodeLabel", drawLabel)
-    this.sigmaInstance.setSetting("defaultDrawNodeHover", drawHover)
+    com.renderer.setSetting("defaultDrawNodeLabel", drawLabel)
+    com.renderer.setSetting("defaultDrawNodeHover", drawHover)
+    com.renderer.setSetting("nodeReducer", (node, data) => {
+    return nodeReducer(node, data, com.state);
+    });
+    com.renderer.setSetting("edgeReducer", (edge, data) => {
+    return edgeReducer(com.graph, edge, data, com.state);
+    });
+
+    /* Event handling functions call.
+       Events: ['enterNode','leaveNode','clickNode']
+    */
+    com.renderer.on("enterNode", ({ node }) => {
+    com.setHoveredNode(node);
+    });
+    com.renderer.on("leaveNode", () => {
+    com.setHoveredNode(undefined);
+    });
+    com.renderer.on("clickNode", ({ node }) => {
+    com.setClickedNode(node);
+    });
+
+},
+methods: {
+    /**
+     * Sets the currently hovered node and its neighbors in the component's state.
+     * Updates the rendering to reflect the changes.
+     *
+     * @param {string|null|undefined} node - The ID of the node to set as hovered.
+     * If `null` or `undefined`, clears the hovered node and its neighbors.
+     */
+    setHoveredNode(node) {
+    let com = this;
+
+    if (node) {
+    com.state.hoveredNode = node;
+    com.state.hoveredNeighbors = new Set(com.graph.neighbors(node));
+    }
+
+    if (!node) {
+    com.state.hoveredNode = undefined;
+    com.state.hoveredNeighbors = undefined;
+    }
+    // Refresh rendering
+    com.renderer.refresh({
+    skipIndexation: true,
+    });
+    },
+
+    /**
+    * Sets the currently clicked node and its neighbors in the component's state.
+    * Updates the rendering to reflect the changes.
+    *
+    * @param {string|null|undefined} node - The ID of the node to set as clicked.
+    * If `null` or `undefined`, clears the clicked node and its neighbors.
+    */
+    setClickedNode(node) {
+    let com = this;
+
+    if (node) {
+    com.state.clickedNode = node;
+    com.state.clickedNeighbors = new Set(com.graph.neighbors(node));
+    }
+
+    // Refresh rendering
+    com.renderer.refresh({
+    skipIndexation: true,
+    });
+  }
 },
 beforeUnmount() {
     if (this.sigmaInstance) {

@@ -36,7 +36,7 @@
             const edges = data.edges;
 
             for (const node of nodes) {
-                graph.addNode(node.ENSEMBL_PROTEIN, { label: node.SYMBOL, borderColor: "rgb(200,200,200)",});
+                graph.addNode(node.ENSEMBL_PROTEIN, { label: node.SYMBOL, borderColor: "rgb(50,50,50)",});
             }
 
             for (const edge of edges) {
