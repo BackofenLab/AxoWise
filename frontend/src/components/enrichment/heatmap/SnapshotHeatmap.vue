@@ -1,5 +1,5 @@
 <template>
-  <img :id="'heatmap-visual-' + index" />
+  <img class="object-cover w-full h-full scale-125" :id="'heatmap-visual-' + index" />
 </template>
 
 <script>
@@ -48,7 +48,7 @@ export default {
 };
 </script>
 
-<style>
+<!-- <style>
 [id^="heatmap-visual-"] {
   height: 100%;
   width: 100%;
@@ -56,4 +56,4 @@ export default {
   object-fit: scale-down;
   border: solid 0.05vw rgba(255, 255, 255, 0.3);
 }
-</style>
+</style> -->
