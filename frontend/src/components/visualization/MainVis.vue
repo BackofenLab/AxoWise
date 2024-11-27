@@ -19,8 +19,8 @@
       /> -->
       <div id="heatdemo"></div>
     </div>
-    <div class="absolute p-3 rounded-lg bg-[var(--card-bg)] bg-opacity-75 backdrop-blur-sm">
-      <h6 v-show="heatmap" id="d3tooltip" class="pb-1 mb-1 text-lg font-semibold border-b text-primary-500">
+    <div id="d3tooltip" class="absolute p-3 rounded-lg bg-[var(--card-bg)] bg-opacity-75 backdrop-blur-sm">
+      <h6 v-show="heatmap" class="pb-1 mb-1 text-lg font-semibold border-b text-primary-500">
         Cluster info
       </h6>
       <span id="value"> </span>

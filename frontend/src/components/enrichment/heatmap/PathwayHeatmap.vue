@@ -1,49 +1,83 @@
 <template>
-  <div class="loading-section">
+  <EmptyState v-if="filt_heatmap.size == 0" message="There is no generated heatmap">
+    <ul class="flex flex-col gap-2 text-sm">
+      <li>Add favorite from <strong>Pathways</strong> tab and click <strong>Generate heatmap</strong>.</li>
+    </ul>
+  </EmptyState>
+  <section v-if="filt_heatmap.size > 0" class="grid grid-cols-2 gap-2.5 pt-3">
+    <Card v-for="(entry, index) in filt_heatmap" :class="`group relative overflow-hidden border ${active_heatmap_id === entry.id
+      ? 'border-primary-600 !bg-primary-600/25'
+      : 'dark:!bg-slate-300/25 border-transparent'
+      }`" :key="index" :pt="{
+        header: { class: 'h-24 relative rounded-md mt-[6px] mx-[6px] overflow-hidden' },
+        body: { class: '!p-0 !gap-0' },
+        footer: { class: 'flex gap-2 px-2 pb-2' },
+        title: { class: 'relative' },
+      }">
+      <template #header>
+        <SnapshotHeatmap :propValue="entry" :index="entry.id" />
+
+        <div
+          class="w-full h-full flex justify-between absolute top-0 left-0 p-1.5 bg-slate-800/50 opacity-0 duration-300 group-hover:opacity-100 z-[1]">
+          <Button class="w-7 h-7" severity="secondary" rounded size="small" plain @click.stop="add_graph(entry)">
+            <span :class="`material-symbols-rounded  ${favourite_heatmaps.has(entry.id)
+              ? 'text-base font-variation-ico-filled text-yellow-500 hover:text-yellow-400'
+              : 'text-xl hover:text-yellow-600'
+              }`">
+              star
+            </span>
+          </Button>
+
+          <Button class="w-7 h-7" severity="danger" rounded size="small" plain @click.stop="remove_graph(entry)">
+            <span class="text-xl text-white material-symbols-rounded"> close </span>
+          </Button>
+        </div>
+      </template>
+
+      <template #title>
+        <h6 :class="`w-full h-full flex items-center gap-2 absolute top-0 left-0 py-2 px-2 text-sm font-medium cursor-text z-[1] 
+          ${focus_heatmap_index === entry.id ? '!hidden' : ''}`" v-on:click="setFocus(entry.id, index)">
+          {{ entry.label }} <span class="text-lg material-symbols-rounded dark:text-slate-200"> edit </span>
+        </h6>
+        <input ref="heatmapInputs" type="text" v-model="entry.label"
+          :class="`bg-transparent py-2 px-2 text-sm font-medium ${focus_heatmap_id === entry.id ? '' : 'opacity-0'}`"
+          @click.stop @blur="clearFocus" />
+      </template>
+
+      <template #footer>
+        <Button class="flex-1 h-8" severity="secondary" size="small" plain @click="switch_heatmap(entry)">
+          View <span class="text-xl material-symbols-rounded"> arrow_circle_right </span>
+        </Button>
+      </template>
+    </Card>
+  </section>
+  <!-- <div class="loading-section">
     <div class="loading-text" v-if="filt_heatmap.size == 0">
       <span>There is no generated heatmap.</span>
     </div>
     <div class="slider" tabindex="0" v-if="filt_heatmap.size != 0">
-      <div
-        v-for="(entry, index) in filt_heatmap"
-        :key="index"
-        class="graph"
-        v-on:click="switch_heatmap(entry)"
-        @mouseover="activeHeatmapIndex = index"
-        @mouseout="activeHeatmapIndex = -1"
-      >
+      <div v-for="(entry, index) in filt_heatmap" :key="index" class="graph" v-on:click="switch_heatmap(entry)"
+        @mouseover="activeHeatmapIndex = index" @mouseout="activeHeatmapIndex = -1">
         <SnapshotHeatmap :propValue="entry" :index="entry.id" />
         <div class="graph-options">
-          <div
-            class="bookmark-graph"
-            v-show="activeHeatmapIndex == index"
-            v-on:click.stop="add_graph(entry)"
-            :class="{ checked: favourite_heatmaps.has(entry.id) }"
-            ref="checkboxStatesHeatmap"
-          ></div>
-          <img
-            class="remove-graph"
-            v-show="activeHeatmapIndex == index"
-            src="@/assets/pathwaybar/cross.png"
-            v-on:click.stop="remove_graph(entry)"
-          />
+          <div class="bookmark-graph" v-show="activeHeatmapIndex == index" v-on:click.stop="add_graph(entry)"
+            :class="{ checked: favourite_heatmaps.has(entry.id) }" ref="checkboxStatesHeatmap"></div>
+          <img class="remove-graph" v-show="activeHeatmapIndex == index" src="@/assets/pathwaybar/cross.png"
+            v-on:click.stop="remove_graph(entry)" />
           <div class="graph-name">
-            <input
-              type="text"
-              v-model="entry.label"
-              class="empty"
-              @click.stop
-            />
+            <input type="text" v-model="entry.label" class="empty" @click.stop />
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>
 import * as d3 from "d3";
+import { nextTick } from "vue";
 import { agnes } from "ml-hclust";
+import EmptyState from "@/components/EmptyState.vue";
 import heatmapDendro from "@/components/enrichment/heatmap/drawHeatmap.js";
 import SnapshotHeatmap from "@/components/enrichment/heatmap/SnapshotHeatmap.vue";
 
@@ -52,15 +86,18 @@ export default {
   props: ["bookmark_off"],
   components: {
     SnapshotHeatmap,
+    EmptyState,
   },
   data() {
     return {
       favourite_heatmaps: new Set(),
-      activeHeatmapIndex: -1,
+      // activeHeatmapIndex: -1,
       heatmap_number: 0,
       heatmap_dict: [],
       heatmap_dict_array: [],
       export_image: null,
+      focus_heatmap_id: null,
+      active_heatmap_id: null
     };
   },
   mounted() {
@@ -96,6 +133,19 @@ export default {
     this.emitter.off("exportHeatmap");
   },
   methods: {
+    setFocus(id, index) {
+      this.focus_heatmap_id = id;
+      nextTick(() => {
+        // Focus the input if focus_heatmap_index matches the current id
+        const input = this.$refs.heatmapInputs[index];
+        if (input) {
+          input.focus();
+        }
+      });
+    },
+    clearFocus() {
+      this.focus_heatmap_id = null;
+    },
     draw_heatmap(pathway_data) {
       var matrix = this.generateMatrix([...pathway_data]);
       const clusterTree = this.createClusterTree(
@@ -156,9 +206,9 @@ export default {
 
     removeColoumns(matrix, colLabels) {
       var hasValues = matrix.reduce(
-          (r, a) => a.map((value, i) => r[i] || value),
-          []
-        ),
+        (r, a) => a.map((value, i) => r[i] || value),
+        []
+      ),
         newMatrix = matrix.map((a) => a.filter((_, i) => hasValues[i])),
         newcolLabels = colLabels.filter((_, i) => hasValues[i]);
 
@@ -190,6 +240,7 @@ export default {
       }
     },
     switch_heatmap(entry) {
+      this.active_heatmap_id = entry.id;
       this.emitter.emit("heatmapView");
       this.export_image = heatmapDendro(entry.graph, "#sigma-heatmap", false);
       this.draw_legend();
@@ -352,7 +403,7 @@ export default {
 </script>
 
 <style>
-#sigma-heatmap {
+/* #sigma-heatmap {
   display: block;
   position: absolute;
   cursor: default;
@@ -364,7 +415,7 @@ export default {
   overflow: hidden;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-}
+} 
 
 #d3tooltip {
   position: absolute;
@@ -382,6 +433,7 @@ export default {
   opacity: 0;
   z-index: 999;
 }
+*/
 
 #d3tooltip.hidden {
   display: none;
