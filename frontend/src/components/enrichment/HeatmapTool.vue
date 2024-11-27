@@ -1,23 +1,20 @@
 <template>
-  <header
-    class="flex items-center sticky top-0 gap-2 py-3 bg-[var(--card-bg)] shadow-curve-dark dark:shadow-curve-light z-[1]">
-    <h5 class="mb-0 mr-auto">List of Heatmap ({{ favourite_graphs.length || 0 }})</h5>
-
+  <ListActionHeader :title="`List of Heatmap`">
     <Button severity="secondary" rounded size="small" plain class="w-8 h-8" v-on:click="get_svg()"
       v-tooltip.bottom="'Download heatmap'">
       <span class="text-2xl material-symbols-rounded"> download </span>
     </Button>
 
     <Button severity="secondary" rounded size="small" plain v-on:click="bookmark_off = !bookmark_off" class="w-8 h-8"
-      v-tooltip.bottom="bookmark_off ? 'Show all' : 'Show favorites'">
+      v-tooltip.bottom="bookmark_off ? 'Show only favorites' : 'Show all'">
       <span :class="`material-symbols-rounded text-2xl
           ${bookmark_off ? '' : 'font-variation-ico-filled text-yellow-500 hover:text-yellow-400'}`">
         star
       </span>
     </Button>
-
+    
     <Button severity="secondary" label="Generate heatmap" icon="pi pi-plus" size="small" v-on:click="get_heatmap()" />
-  </header>
+  </ListActionHeader>
 
   <PathwayHeatmap :bookmark_off="bookmark_off"></PathwayHeatmap>
 
@@ -51,16 +48,18 @@
 
 <script>
 import PathwayHeatmap from "@/components/enrichment/heatmap/PathwayHeatmap.vue";
+import ListActionHeader from "@/components/ListActionHeader.vue";
 
 export default {
   name: "HeatmapTool",
   props: ["gephi_data", "filtered_terms", "favourite_pathways", "mode"],
   components: {
     PathwayHeatmap,
+    ListActionHeader
   },
   data() {
     return {
-      favourite_graphs: new Set(),
+      // favourite_graphs: new Set(),
       bookmark_off: true,
       // tool_selecting: false
     };
