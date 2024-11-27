@@ -192,7 +192,7 @@ _Structure 02:_
 ### Code Availability
 
 ## Bioactive Materials: IF 18.0
-### Data Availability (Statement)
+### Data availability/ Availability of data and materials/ Data and materials availability
   * 1 out of 7 publications stated accession number
   * data available upon request
   * no data available at all
