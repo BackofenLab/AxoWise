@@ -25,7 +25,7 @@ export default {
       fontVariationSettings: {
         "ico-filled": '"FILL" 1, "wght" 700, "GRAD" 0, "opsz" 48', // set Material icon as filled
       },
-      boxShadow: { "curve-dark": "0 10px 30px -23px #34343D", "curve-light": "0 10px 30px -23px #ffffff" },
+      boxShadow: { "curve-dark": "0 0.95rem 1.4rem -1.65rem #34343D", "curve-light": "0 0.95rem 1.4rem -1.65rem #ffffff" },
     },
   },
   // eslint-disable-next-line no-undef

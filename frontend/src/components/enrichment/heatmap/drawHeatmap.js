@@ -186,16 +186,18 @@ function drawHeatmap(
     .style("fill", (d) => colorScale(d.value))
     .on("mouseover", function (event, d) {
       d3.select(this).classed("cell-hover", true);
-      const mouseX = event.pageX;
-      const mouseY = event.pageY;
+      // const mouseX = event.pageX;
+      // const mouseY = event.pageY;
+      const mouseX = event.offsetX;
+      const mouseY = event.offsetY;
       d3.select("#d3tooltip")
-        .style("left", `${mouseX + 10}px`)
+        .style("left", `${mouseX + 30}px`)
         .style("top", `${mouseY - 10}px`)
         .select("#value")
         .html(
-          `Cluster: ${colLabel[d.col - 1]}<br>Pathway: ${
+          `<strong class="w-20 inline-block">Cluster:</strong> ${colLabel[d.col - 1]}<br><strong class="w-20 inline-block">Pathway:</strong> ${
             rowLabel[d.row - 1]
-          }<br>Value: ${d.value / 100}`
+          }<br><strong class="w-20 inline-block">Value:</strong> ${d.value / 100}`
         );
       d3.select("#d3tooltip").transition().duration(200).style("opacity", 0.9);
     })
