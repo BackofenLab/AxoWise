@@ -71,7 +71,7 @@ _Structure 03:_ (in publications from 04/2011 to 2016)
 ## Other Cell journals:
   * Cancer Cell: 48.8
   * Immunity: 25.5
-  * Cell Host & Microbe: 20.6
+  * Cell Host & Microbe: 20.6 (no publication has added source code or accession codes - resources available upon request)
   * Cell Metabolism: 27.7
 
 ## Nature Immunology: IF 27.7 (14)
