@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 import time
 import re
 import urllib.parse
+import urllib.request
 
 def setup_chrome_driver():
     """set up Chrome driver"""
@@ -96,6 +97,5 @@ def extract_doi(html_content):
     
     return doi
 
-
 if __name__ == "__main__":
-    scrape_publications()
+    # scrape_publications()
