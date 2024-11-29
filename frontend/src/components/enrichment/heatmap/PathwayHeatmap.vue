@@ -35,8 +35,8 @@
       </template>
 
       <template #title>
-        <h6 :class="`w-full h-full flex items-center gap-2 absolute top-0 left-0 py-2 px-2 text-sm font-medium cursor-text z-[1] 
-          ${focus_heatmap_index === entry.id ? '!hidden' : ''}`" v-on:click="setFocus(entry.id, index)">
+        <h6 :class="`w-full h-full flex items-center gap-2 absolute top-0 left-0 py-2 px-2 text-sm font-medium cursor-text z-[1]
+          ${focus_heatmap_id === entry.id ? '!hidden' : ''}`" v-on:click="setFocus(entry.id, index)">
           {{ entry.label }} <span class="text-lg material-symbols-rounded dark:text-slate-200"> edit </span>
         </h6>
         <input ref="heatmapInputs" type="text" v-model="entry.label"
@@ -136,7 +136,7 @@ export default {
     setFocus(id, index) {
       this.focus_heatmap_id = id;
       nextTick(() => {
-        // Focus the input if focus_heatmap_index matches the current id
+        // Focus the input if focus_heatmap_id matches the current id
         const input = this.$refs.heatmapInputs[index];
         if (input) {
           input.focus();
