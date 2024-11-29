@@ -186,18 +186,18 @@ export default {
       terms_list: [],
       await_load: false,
       dragged_to_container: "",
-      active_tabA: 'list',
-      active_tabB: 'set',
+      active_tabA: 'set',
+      active_tabB: 'list',
       containerA: [
+        { id: 5, name: "Subsets", value: "set" },
+        { id: 6, name: "Path layers", value: "layers" },
+        { id: 7, name: "Diff exp", value: "difexp" }
+      ],
+      containerB: [
         { id: 1, name: "Pathways", value: "list" },
         { id: 2, name: "Enrichment", value: "graph" },
         { id: 3, name: "Heatmap", value: "heatmap" },
         { id: 4, name: "Citation", value: "citation" },
-        { id: 5, name: "Subsets", value: "set" },
-        { id: 6, name: "Path layers", value: "layers" },
-        { id: 7, name: "Dif exp", value: "difexp" }
-      ],
-      containerB: [
       ],
     };
   },
