@@ -38,14 +38,14 @@
         <img src="@/assets/toolbar/logout.png" alt="3D Icon" />
       </li>
     </ul>
-    <MenuWindow
+    <!-- <MenuWindow
       v-show="tools_active"
       v-on:mouseover="tools_active = true"
       v-on:mouseleave="tools_active = false"
       :tools_active="tools_active"
       :mode="mode"
       @tools_active_changed="tools_active = $event"
-    ></MenuWindow>
+    ></MenuWindow> -->
     <SelectionList
       v-show="selection_active"
       :selection_active="selection_active"
@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import MenuWindow from "@/components/toolbar/windows/MenuWindow.vue";
+// import MenuWindow from "@/components/toolbar/windows/MenuWindow.vue";
 import ProteinList from "@/components/toolbar/modules/ProteinList.vue";
 import SelectionList from "@/components/toolbar/modules/SelectionList.vue";
 
@@ -74,7 +74,7 @@ export default {
   name: "CitationToolBar",
   props: ["data", "active_subset"],
   components: {
-    MenuWindow,
+    // MenuWindow,
     ProteinList,
     SelectionList,
   },

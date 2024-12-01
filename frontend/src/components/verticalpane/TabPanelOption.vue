@@ -1,21 +1,8 @@
 <template>
   <TabPanels class="h-[calc(100%-34px)] flex flex-col !p-0 !px-3 overflow-auto">
-    <TabPanel class="flex-1" value="set">
-      <PathwaySet :gephi_data="gephi_data" :api="api" :mode="mode"></PathwaySet>
-    </TabPanel>
-
-    <TabPanel class="flex-1" value="layers">
-      <PathwayLayers :active_termlayers="active_termlayers" :gephi_data="gephi_data" />
-    </TabPanel>
-
-    <TabPanel class="flex-1" value="difexp" v-if="dcoloumns">
-      <DifExpMenu :active_decoloumn="active_decoloumn" :gephi_data="gephi_data" />
-    </TabPanel>
-
     <TabPanel class="flex-1" value="list">
       <PathwayList :gephi_data="gephi_data" :terms="terms" :await_load="await_load"
-        :favourite_pathways="favourite_pathways" 
-        @favourite_pathways_changed="favourite_pathways = $event"
+        :favourite_pathways="favourite_pathways" @favourite_pathways_changed="favourite_pathways = $event"
         @filtered_terms_changed="filtered_terms = $event"></PathwayList>
     </TabPanel>
 
@@ -24,13 +11,26 @@
       </PathwayTools>
     </TabPanel>
 
+    <TabPanel class="flex-1" value="citation">
+      <CitationMenu :active_node="active_node" :active_background="active_background"></CitationMenu>
+    </TabPanel>
+
+    <TabPanel class="flex-1" value="set">
+      <PathwaySet :gephi_data="gephi_data" :api="api" :mode="mode"></PathwaySet>
+    </TabPanel>
+
+    <TabPanel class="flex-1" value="layers">
+      <PathwayLayers :active_termlayers="active_termlayers" :gephi_data="gephi_data" />
+    </TabPanel>
+
     <TabPanel class="flex-1" value="heatmap">
-      <HeatmapTool :mode="mode" :gephi_data="gephi_data" :filtered_terms="filtered_terms" :favourite_pathways="favourite_pathways">
+      <HeatmapTool :mode="mode" :gephi_data="gephi_data" :filtered_terms="filtered_terms"
+        :favourite_pathways="favourite_pathways">
       </HeatmapTool>
     </TabPanel>
 
-    <TabPanel class="flex-1" value="citation">
-      <CitationMenu :active_node="active_node" :active_background="active_background"></CitationMenu>
+    <TabPanel class="flex-1" value="difexp" v-if="dcoloumns">
+      <DifExpMenu :active_decoloumn="active_decoloumn" :gephi_data="gephi_data" />
     </TabPanel>
   </TabPanels>
 </template>
@@ -52,9 +52,9 @@ export default {
     PathwayList,
     PathwayTools,
     PathwaySet,
-    HeatmapTool, 
-    PathwayLayers, 
-    DifExpMenu, 
+    HeatmapTool,
+    PathwayLayers,
+    DifExpMenu,
     CitationMenu
   },
   data() {

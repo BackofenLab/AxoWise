@@ -77,7 +77,7 @@
 import * as d3 from "d3";
 import { nextTick } from "vue";
 import { agnes } from "ml-hclust";
-import EmptyState from "@/components/EmptyState.vue";
+import EmptyState from "@/components/verticalpane/EmptyState.vue";
 import heatmapDendro from "@/components/enrichment/heatmap/drawHeatmap.js";
 import SnapshotHeatmap from "@/components/enrichment/heatmap/SnapshotHeatmap.vue";
 
