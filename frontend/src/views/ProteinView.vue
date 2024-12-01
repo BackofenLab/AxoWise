@@ -42,9 +42,9 @@
 <script>
 // @ is an alias to /src
 import MainVis from "@/components/visualization/MainVis.vue";
-import VerticalPane from "@/components/verticalpane/VerticalPane.vue";
 import PaneSystem from "@/components/pane/PaneSystem.vue";
-import MainToolBar from "../components/toolbar/MainToolBar.vue";
+import VerticalPane from "@/layout/VerticalPane.vue";
+import MainToolBar from "@/layout/MainToolBar.vue";
 import AppBar from "@/layout/AppBar.vue";
 
 export default {
@@ -141,10 +141,6 @@ export default {
 
     this.emitter.on("decoloumn", (state) => {
       com.active_decoloumn = state;
-    });
-
-    this.emitter.on("widget_toggled", (state) => {
-      com.widget = state;
     });
   },
   methods: {},

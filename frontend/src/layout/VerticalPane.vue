@@ -177,8 +177,6 @@ export default {
   data() {
     return {
       dcoloumns: this.$store.state.dcoloumns,
-      // active_function_tab1: "set",
-      // active_function_tab2: "list",
       api: {
         subgraph: "api/subgraph/enrichment",
       },
@@ -186,18 +184,18 @@ export default {
       terms_list: [],
       await_load: false,
       dragged_to_container: "",
-      active_tabA: 'set',
-      active_tabB: 'list',
+      active_tabA: 'list',
+      active_tabB: 'set',
       containerA: [
-        { id: 5, name: "Subsets", value: "set" },
-        { id: 6, name: "Path layers", value: "layers" },
-        { id: 7, name: "Diff exp", value: "difexp" }
+        { id: 1, name: "Pathways", value: "list" },
+        { id: 2, name: "Enrichment graph", value: "graph" },
+        { id: 3, name: "Citation graph", value: "citation" },
       ],
       containerB: [
-        { id: 1, name: "Pathways", value: "list" },
-        { id: 2, name: "Enrichment", value: "graph" },
-        { id: 3, name: "Heatmap", value: "heatmap" },
-        { id: 4, name: "Citation", value: "citation" },
+        { id: 4, name: "Subsets", value: "set" },
+        { id: 5, name: "Path layers", value: "layers" },
+        { id: 6, name: "Heatmap", value: "heatmap" },
+        { id: 7, name: "Diff exp", value: "difexp" },
       ],
     };
   },
