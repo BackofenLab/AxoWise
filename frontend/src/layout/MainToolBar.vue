@@ -48,8 +48,9 @@
       header: { class: '!py-2.5 cursor-move' },
       title: { class: '!text-base' },
     }">
+      <!-- @selection_active_changed="selection_active = $event" -->
       <SelectionList :data="gephi_data" :selection_active="selection_active" :active_subset="active_subset"
-        :active_term="active_term" :mode="mode" @selection_active_changed="selection_active = $event">
+        :active_term="active_term" :mode="mode">
       </SelectionList>
     </Dialog>
 
@@ -58,9 +59,18 @@
       header: { class: '!py-2.5 cursor-move' },
       title: { class: '!text-base' },
     }">
-      <ProteinList v-show="protein_active" :gephi_data="gephi_data" :mode="mode"
-        @protein_active_changed="protein_active = $event">
+      <!-- @protein_active_changed="protein_active = $event" -->
+      <ProteinList v-show="protein_active" :gephi_data="gephi_data" :mode="mode">
       </ProteinList>
+    </Dialog>
+
+    <Dialog v-model:visible="protein_keyword_active" header="Highlight nodes" position="topleft" :minY="60" :minX="60" :pt="{
+      root: { class: 'w-[24rem] !mt-[60px] !ml-[60px]' },
+      header: { class: '!py-2.5 cursor-move' },
+      title: { class: '!text-base' },
+    }">
+      <ProteinKeywordList v-show="protein_keyword_active" :gephi_data="gephi_data" :mode="mode">
+      </ProteinKeywordList>
     </Dialog>
 
     <Dialog v-model:visible="tools_active" header="Graph settings" position="topleft" :minY="60" :minX="60" :pt="{
@@ -68,8 +78,9 @@
       header: { class: '!py-2.5 cursor-move' },
       title: { class: '!text-base' },
     }">
-      <MenuWindow v-show="tools_active" :gephi_data="gephi_data" :ensembl_name_index="ensembl_name_index"
-        :tools_active="tools_active" :mode="mode" @tools_active_changed="tools_active = $event"></MenuWindow>
+      <!-- @tools_active_changed="tools_active = $event" -->
+      <SettingList v-show="tools_active" :gephi_data="gephi_data" :ensembl_name_index="ensembl_name_index"
+        :tools_active="tools_active" :mode="mode"></SettingList>
     </Dialog>
 
     <Dialog v-model:visible="export_active" header="Export graph" position="topleft" :minY="60" :minX="60" :pt="{
@@ -78,25 +89,27 @@
       title: { class: '!text-base' },
       content: { class: '!px-4' }
     }">
-      <ExportWindow v-show="export_active" :gephi_data="gephi_data" :ensembl_name_index="ensembl_name_index"
-        :mode="mode"></ExportWindow>
+      <ExportList v-show="export_active" :gephi_data="gephi_data" :ensembl_name_index="ensembl_name_index"
+        :mode="mode"></ExportList>
     </Dialog>
   </aside>
 </template>
 
 <script>
-import MenuWindow from "@/components/toolbar/windows/MenuWindow.vue";
-import ExportWindow from "@/components/toolbar/windows/ExportWindow.vue";
+import SettingList from "@/components/toolbar/modules/SettingList.vue";
+import ExportList from "@/components/toolbar/modules/ExportList.vue";
 import ProteinList from "@/components/toolbar/modules/ProteinList.vue";
+import ProteinKeywordList from "@/components/toolbar/modules/ProteinKeywordList.vue";
 import SelectionList from "@/components/toolbar/modules/SelectionList.vue";
 
 export default {
-  name: "MainToolBar",
+  name: "ToolBar",
   props: ["mode", "gephi_data", "term_data", "active_subset", "active_term", "ensembl_name_index", "widget"],
   components: {
-    MenuWindow,
-    ExportWindow,
+    SettingList,
+    ExportList,
     ProteinList,
+    ProteinKeywordList,
     SelectionList,
   },
   data() {
@@ -104,9 +117,25 @@ export default {
       tools_active: false,
       export_active: false,
       protein_active: false,
+      protein_keyword_active: false,
       selection_active: false,
       label_check: true,
     };
+  },
+  mounted() {
+    var com = this;
+
+    this.emitter.on("selection_active_changed", (state) => {
+      com.selection_active = state;
+    });
+
+    this.emitter.on("protein_active_changed", (state) => {
+      com.protein_active = state;
+    });
+
+    this.emitter.on("protein_keyword_active_changed", (state) => {
+      com.protein_keyword_active = state;
+    });
   },
   methods: {
     switch_home() {
