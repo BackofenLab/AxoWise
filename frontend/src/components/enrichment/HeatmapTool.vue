@@ -48,7 +48,7 @@
 
 <script>
 import PathwayHeatmap from "@/components/enrichment/heatmap/PathwayHeatmap.vue";
-import ListActionHeader from "@/components/ListActionHeader.vue";
+import ListActionHeader from "@/components/verticalpane/ListActionHeader.vue";
 
 export default {
   name: "HeatmapTool",

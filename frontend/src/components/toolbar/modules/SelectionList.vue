@@ -249,7 +249,7 @@
 export default {
   name: "SelectionList",
   props: ["data", "mode", "active_subset", "active_term", "selection_active"],
-  emits: ["selection_active_changed"],
+  // emits: ["selection_active_changed"],
   data() {
     return {
       // once: true,
