@@ -6,16 +6,11 @@
     </IconField>
 
     <Button class="flex-shrink-0" severity="primary" label="Add subset" icon="pi pi-plus" size="small" raised
-      v-on:click="save_subset()" />
-    <!-- <Button class="flex-shrink-0" severity="primary" label="Add subset" icon="pi pi-plus" size="small" raised
-      @click="toggle" /> -->
+      @click="toggle" />
 
     <div class="grid w-full grid-cols-12 gap-x-2">
       <a class="flex items-center justify-start col-span-4 gap-1 cursor-pointer" v-on:click="
         sort_alph = sort_alph === 'asc' ? 'dsc' : 'asc';
-      sort_pr = '';
-      sort_cb = '';
-      sort_y = '';
       ">
         Subset
 
@@ -65,12 +60,12 @@
           </Button>
 
           <Button severity="danger" size="small" rounded text v-on:click.stop="remove_set(entry)"
-            v-tooltip.bottom="'Remove selection'" class="w-6 h-6 !text-slate-500 dark:!text-slate-300">
+            v-tooltip.bottom="'Remove subset'" class="w-6 h-6 !text-slate-500 dark:!text-slate-300">
             <i class="text-xl material-symbols-rounded"> delete </i>
           </Button>
 
           <Button severity="danger" size="small" rounded text v-on:click.stop="addToChatbot(entry)"
-            v-tooltip.bottom="'Chat with Axo bot'" class="w-6 h-6 !text-slate-500 dark:!text-slate-300">
+            v-tooltip.bottom="'Add to chatbot'" class="w-6 h-6 !text-slate-500 dark:!text-slate-300">
             <span class="text-xl material-symbols-rounded"> forum </span>
           </Button>
         </label>
@@ -81,6 +76,7 @@
       <span class="text-sm text-center capitalize" v-for="element in entry.stats" :key="element">{{ element }}</span>
     </div>
 
+    
     <Button v-if="!entry.stats" severity="contrast" label="Apply enrichment" icon="pi pi-plus" size="small" raised fluid
       :loading="loading_state" @click="apply_enrichment(entry)" />
   </Panel>
@@ -88,17 +84,18 @@
   <EmptyState v-if="filt_abstracts.size === 0" message="There is no generated subsets">
   </EmptyState>
 
-  <!-- <Popover ref="op" class="w-[15rem]" :pt="{ content: { class: '!flex !flex-col' } }">
-    <Button text plain severity="secondary" type="button" label="Import from selected subset"
-      class="!justify-start !py-1" />
+  <Popover ref="op" class="w-[14rem]" :pt="{ content: { class: '!flex !flex-col' } }">
+    <Button text plain severity="secondary" type="button" label="From active subset"
+      class="!justify-start !py-1" @click="save_subset();toggle();"/>
     <Button text plain severity="secondary" type="button" label="By searching in genes"
-      class="!justify-start !py-1" />
+      class="!justify-start !py-1"  @click="active_protein();toggle();"/>
     <Button text plain severity="secondary" type="button" label="By searching in keywords"
-      class="!justify-start !py-1" />
+      class="!justify-start !py-1" @click="active_keyword_protein();toggle();"/>
     <Button text plain severity="secondary" type="button" label="By parameter filtering"
-      class="!justify-start !py-1" />
-  </Popover> -->
-  `<!-- <div id="pathways-set">
+      class="!justify-start !py-1" @click="active_selection();toggle();"/>
+  </Popover>
+
+  <!-- <div id="pathways-set">
     <div class="tool-set-section-graph">
       <div class="coloumn-set-button">
         <button class="tool-buttons" v-on:click="save_subset()">
@@ -186,9 +183,9 @@
       </div>
     </div>
   </div> -->
-</template>`
+</template>
 
-<!-- <script setup>
+<script setup>
 import { ref } from "vue";
 
 const op = ref();
@@ -196,10 +193,11 @@ const op = ref();
 const toggle = (event) => {
   op.value.toggle(event);
 };
-</script> -->
+</script>
 
 <script>
-import ListActionHeader from "@/components/ListActionHeader.vue";
+import ListActionHeader from "@/components/verticalpane/ListActionHeader.vue";
+import EmptyState from "@/components/verticalpane/EmptyState.vue";
 import { nextTick } from "vue";
 
 export default {
@@ -207,10 +205,12 @@ export default {
   props: ["gephi_data", "api", "mode"],
   components: {
     ListActionHeader,
+    EmptyState
   },
-  emits: ["term_set_changed"],
+  emits: ["term_set_changed","selection_active_changed","protein_active_changed","keyword_active_changed"],
   data() {
     return {
+      sort_alph: "",
       set_dict: new Set(),
       search_raw: "",
       layer: 0,
@@ -242,6 +242,24 @@ export default {
         console.log(filtered);
       }
 
+      if (com.sort_alph == "asc") {
+        filtered.sort(function (t1, t2) {
+          return t1.name.toLowerCase() > t2.name.toLowerCase()
+            ? 1
+            : t1.name.toLowerCase() === t2.name.toLowerCase()
+              ? 0
+              : -1;
+        });
+      } else if (com.sort_alph == "dsc") {
+        filtered.sort(function (t1, t2) {
+          return t2.name.toLowerCase() > t1.name.toLowerCase()
+            ? 1
+            : t1.name.toLowerCase() === t2.name.toLowerCase()
+              ? 0
+              : -1;
+        });
+      }
+
       return new Set(filtered);
     },
   },
@@ -259,6 +277,15 @@ export default {
     },
     clearFocus() {
       this.focus_subset_id = null;
+    },
+    active_keyword_protein() {
+      this.emitter.emit("keyword_active_changed", true);
+    },
+    active_protein() {
+      this.emitter.emit("protein_active_changed", true);
+    },
+    active_selection() {
+      this.emitter.emit("selection_active_changed", true);
     },
     apply_enrichment(subset) {
       var com = this;

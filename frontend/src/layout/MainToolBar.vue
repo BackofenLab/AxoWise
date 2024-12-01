@@ -64,13 +64,13 @@
       </ProteinList>
     </Dialog>
 
-    <Dialog v-model:visible="protein_keyword_active" header="Highlight nodes" position="topleft" :minY="60" :minX="60" :pt="{
+    <Dialog v-model:visible="keyword_active" header="Highlight nodes" position="topleft" :minY="60" :minX="60" :pt="{
       root: { class: 'w-[24rem] !mt-[60px] !ml-[60px]' },
       header: { class: '!py-2.5 cursor-move' },
       title: { class: '!text-base' },
     }">
-      <ProteinKeywordList v-show="protein_keyword_active" :gephi_data="gephi_data" :mode="mode">
-      </ProteinKeywordList>
+      <KeywordList v-show="keyword_active" :gephi_data="gephi_data" :mode="mode">
+      </KeywordList>
     </Dialog>
 
     <Dialog v-model:visible="tools_active" header="Graph settings" position="topleft" :minY="60" :minX="60" :pt="{
@@ -99,7 +99,7 @@
 import SettingList from "@/components/toolbar/modules/SettingList.vue";
 import ExportList from "@/components/toolbar/modules/ExportList.vue";
 import ProteinList from "@/components/toolbar/modules/ProteinList.vue";
-import ProteinKeywordList from "@/components/toolbar/modules/ProteinKeywordList.vue";
+import KeywordList from "@/components/toolbar/modules/KeywordList.vue";
 import SelectionList from "@/components/toolbar/modules/SelectionList.vue";
 
 export default {
@@ -109,7 +109,7 @@ export default {
     SettingList,
     ExportList,
     ProteinList,
-    ProteinKeywordList,
+    KeywordList,
     SelectionList,
   },
   data() {
@@ -117,7 +117,7 @@ export default {
       tools_active: false,
       export_active: false,
       protein_active: false,
-      protein_keyword_active: false,
+      keyword_active: false,
       selection_active: false,
       label_check: true,
     };
@@ -133,8 +133,8 @@ export default {
       com.protein_active = state;
     });
 
-    this.emitter.on("protein_keyword_active_changed", (state) => {
-      com.protein_keyword_active = state;
+    this.emitter.on("keyword_active_changed", (state) => {
+      com.keyword_active = state;
     });
   },
   methods: {
