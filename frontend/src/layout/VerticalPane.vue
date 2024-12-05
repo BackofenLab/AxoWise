@@ -190,12 +190,12 @@ export default {
         { id: 1, name: "Pathways", value: "list" },
         { id: 2, name: "Enrichment graph", value: "graph" },
         { id: 3, name: "Citation graph", value: "citation" },
-      ],
-      containerB: [
         { id: 4, name: "Subsets", value: "set" },
         { id: 5, name: "Path layers", value: "layers" },
         { id: 6, name: "Heatmap", value: "heatmap" },
         { id: 7, name: "Diff exp", value: "difexp" },
+      ],
+      containerB: [
       ],
     };
   },
