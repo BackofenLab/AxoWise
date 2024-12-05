@@ -213,7 +213,6 @@ export default {
       sort_alph: "",
       set_dict: new Set(),
       search_raw: "",
-      layer: 0,
       loading_state: false,
       focus_subset_id: null
     };
@@ -239,7 +238,6 @@ export default {
             return regex.test(set.name);
           }
         });
-        console.log(filtered);
       }
 
       if (com.sort_alph == "asc") {
@@ -332,6 +330,7 @@ export default {
     save_subset() {
       var com = this;
       let genes;
+      let count = new Set(com.$store.state.favourite_subsets)?.size || 0;
       if (com.mode == "protein") {
         genes = com.$store.state.active_subset;
       } else if (com.mode == "term") {
@@ -343,7 +342,7 @@ export default {
       if (!genes) return;
 
       this.$store.commit("assign_subset", {
-        name: `subset ${com.layer}`,
+        name: `subset ${count}`,
         genes: genes,
         terms: null,
         view: com.mode,
@@ -353,7 +352,6 @@ export default {
         actions: false,
         stats: null,
       });
-      com.layer += 1;
     },
     remove_set(entry) {
       if (entry.status) this.emitter.emit("enrichTerms", null);

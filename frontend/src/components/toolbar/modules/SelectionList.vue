@@ -100,6 +100,10 @@
       </li>
   </ul>
 
+  <Button label="Create subset" severity="secondary" size="small" fluid type="button" class="mt-4 !rounded-lg"
+    @click="save_subset()">
+  </Button>
+  
   <!-- <div class="tool-item">
     <div id="selection_highlight" class="window-menu selection">
       <div id="selection_highlight_header" class="window-header">
@@ -338,6 +342,32 @@ export default {
           step: 0.01,
         };
       }
+    },
+    save_subset() {
+      var com = this;
+      let genes;
+      let count = new Set(com.$store.state.favourite_subsets)?.size || 0;
+      if (com.mode == "protein") {
+        genes = com.$store.state.active_subset;
+      } else if (com.mode == "term") {
+        genes = com.$store.state.p_active_subset;
+      } else {
+        genes = com.$store.state.c_active_subset;
+      }
+
+      if (!genes) return;
+
+      this.$store.commit("assign_subset", {
+        name: `subset ${count}`,
+        genes: genes,
+        terms: null,
+        view: com.mode,
+        abstracts: null,
+        status: false,
+        information: false,
+        actions: false,
+        stats: null,
+      });
     },
     // create_de() {
     //   var com = this;
