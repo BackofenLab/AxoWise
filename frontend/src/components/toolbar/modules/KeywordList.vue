@@ -2,7 +2,7 @@
   <InputGroup>
     <InputText v-model="search_raw" placeholder="Search by keywords..." />
     <InputGroupAddon class="!p-0">
-      <Button icon="material-symbols-rounded" text plain v-tooltip.bottom="'Search subset'"
+      <Button icon="material-symbols-rounded" text plain v-tooltip.bottom="'Select all keywords'"
         @click="search_subset(filt_keyword)">
         <span class="material-symbols-rounded">arrow_forward_ios</span>
       </Button>

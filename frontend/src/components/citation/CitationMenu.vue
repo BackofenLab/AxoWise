@@ -1,5 +1,22 @@
 <template>
-  <div id="citation-tools" class="pathways">
+  <ListActionHeader :title="`List of citation graph`">
+    <Button severity="secondary" rounded size="small" plain v-on:click="bookmark_off = !bookmark_off" class="w-8 h-8"
+      v-tooltip.bottom="bookmark_off ? 'Show only favorites' : 'Show all'">
+      <span :class="`material-symbols-rounded text-2xl
+          ${bookmark_off ? '' : 'font-variation-ico-filled text-yellow-500 hover:text-yellow-400'}`">
+        star
+      </span>
+    </Button>
+
+    <Button severity="secondary" label="Generate citation" icon="pi pi-plus" size="small" :loading="loading_state"
+      v-on:click="get_citation_graph(context_raw)" />
+  </ListActionHeader>
+
+  <CitationGraph :citation_graphs="citation_graphs" :favourite_graphs="favourite_graphs" :bookmark_off="bookmark_off"
+    @loading_state_changed="loading_state = $event" @favourite_graphs_changed="favourite_graphs = $event">
+  </CitationGraph>
+
+  <!-- <div id="citation-tools" class="pathways">
     <div class="pathwaybar">
       <div id="citation-graphs">
         <div class="tool-section-graph">
@@ -23,17 +40,19 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>
 import CitationGraph from "@/components/citation/CitationGraph.vue";
+import ListActionHeader from "@/components/verticalpane/ListActionHeader.vue";
 
 export default {
   name: "CitationMenu",
   props: ["active_node", "active_background"],
   components: {
     CitationGraph,
+    ListActionHeader
   },
   data() {
     return {
@@ -144,7 +163,7 @@ export default {
 };
 </script>
 
-<style>
+<!-- <style>
 #citation-graphs {
   width: 100%;
   height: 100%;
@@ -251,4 +270,4 @@ export default {
   right: 1vw;
   animation: button-loading-spinner 1s ease infinite;
 }
-</style>
+</style> -->

@@ -70,8 +70,6 @@
       </template>
     </Card>
   </section>
-
-
 </template>
 
 <script>

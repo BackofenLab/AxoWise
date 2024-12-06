@@ -73,10 +73,12 @@
     </template>
 
     <div class="grid grid-cols-5 gap-3">
-      <span class="text-sm text-center capitalize" v-for="element in entry.stats" :key="element">{{ element }}</span>
+      <span class="text-sm text-center capitalize" v-for="element in entry.stats" :key="element">
+        {{ element?.split(":")?.[0] }} <br />
+        {{ element?.split(":")?.[1] }}
+      </span>
     </div>
 
-    
     <Button v-if="!entry.stats" severity="contrast" label="Apply enrichment" icon="pi pi-plus" size="small" raised fluid
       :loading="loading_state" @click="apply_enrichment(entry)" />
   </Panel>
@@ -85,14 +87,14 @@
   </EmptyState>
 
   <Popover ref="op" class="w-[14rem]" :pt="{ content: { class: '!flex !flex-col' } }">
-    <Button text plain severity="secondary" type="button" label="From active subset"
-      class="!justify-start !py-1" @click="save_subset();toggle();"/>
-    <Button text plain severity="secondary" type="button" label="By searching in genes"
-      class="!justify-start !py-1"  @click="active_protein();toggle();"/>
-    <Button text plain severity="secondary" type="button" label="By searching in keywords"
-      class="!justify-start !py-1" @click="active_keyword_protein();toggle();"/>
-    <Button text plain severity="secondary" type="button" label="By parameter filtering"
-      class="!justify-start !py-1" @click="active_selection();toggle();"/>
+    <Button text plain severity="secondary" type="button" label="From active subset" class="!justify-start !py-1"
+      @click="save_subset(); toggle();" />
+    <Button text plain severity="secondary" type="button" label="By searching in genes" class="!justify-start !py-1"
+      @click="active_protein(); toggle();" />
+    <Button text plain severity="secondary" type="button" label="By searching in keywords" class="!justify-start !py-1"
+      @click="active_keyword_protein(); toggle();" />
+    <Button text plain severity="secondary" type="button" label="By parameter filtering" class="!justify-start !py-1"
+      @click="active_selection(); toggle();" />
   </Popover>
 
   <!-- <div id="pathways-set">
@@ -207,7 +209,7 @@ export default {
     ListActionHeader,
     EmptyState
   },
-  emits: ["term_set_changed","selection_active_changed","protein_active_changed","keyword_active_changed"],
+  emits: ["term_set_changed", "selection_active_changed", "protein_active_changed", "keyword_active_changed"],
   data() {
     return {
       sort_alph: "",
