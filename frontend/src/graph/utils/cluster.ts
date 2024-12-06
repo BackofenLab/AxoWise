@@ -59,7 +59,9 @@ export const generateCluster = (context: string, renderer: Sigma, graph: Graph) 
     clusterCircle.setAttribute("cy", `${viewportPos.y}`);
     clusterCircle.setAttribute("r", `${cluster.r }`);
     clusterCircle.setAttribute("fill", cluster.color || "transparent");
-    clusterCircle.setAttribute("opacity", "0.3");
+    clusterCircle.setAttribute("opacity", "0.2");
+    clusterCircle.setAttribute("stroke", "white");
+    clusterCircle.setAttribute("stroke-width", "2");
     clusterCircle.style.display = "none";
 
     // Create SVG text element for labels

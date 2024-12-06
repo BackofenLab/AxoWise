@@ -45,7 +45,7 @@
                     edge.source,
                     edge.target,
                     {
-                    color: "rgba(20,20,20,0.2)",
+                    color: "rgba(10,10,10,0.2)",
                     opacity: 0.1,
                     size: 0.1,
                     }
@@ -54,11 +54,11 @@
             this.generateGraphLayout(graph);
             this.generateGraphStatistics(graph);
             this.generateGraphColor(graph);
-            this.generateSubgraph(graph);
+            // this.generateSubgraph(graph);
 
             graph.forEachNode((node) => {
                 const size = graph.degree(node);
-                graph.setNodeAttribute(node, "size", 1 + (300 * size/graph.size));
+                graph.setNodeAttribute(node, "size", 2 + (300 * size/graph.size));
             });
             
         },

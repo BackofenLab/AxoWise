@@ -7,6 +7,8 @@ from flask import Flask, Response, request, send_from_directory
 from util.stopwatch import Stopwatch
 from werkzeug.middleware.proxy_fix import ProxyFix
 
+import enrichment
+
 app = Flask(__name__)
 history = []
 
@@ -72,13 +74,36 @@ def graph_api():
     graph_dict = {
         "nodes": nodesDF.to_dict(orient="records"),
         "edges": edgesDF.to_dict(orient="records"),
-        "settings": {"gene_alias_mapping":{}}
+        "settings": {"gene_alias_mapping": symbol_alias_mapping, "species": species_id}
     }
     
     stopwatch.round("End")
 
     json_str = json.dumps(graph_dict)
 
+    return Response(json_str, mimetype="application/json")
+
+
+# ====================== Functional Enrichment ======================
+# ______functional_enrichment_STRING_________________________________
+# TODO Refactor this
+# Request comes from functional_enrichment.js
+@app.route("/api/subgraph/enrichment", methods=["POST"])
+def proteins_enrichment():
+    driver = database.get_driver()
+    genes = request.form.get("genes").split(",")
+    symbol_alias_mapping = json.loads(request.form.get("mapping"))
+    alias_symbol_mapping = {value: key for key, value in symbol_alias_mapping.items()}
+    species_id = int(request.form.get("species_id"))
+
+    # in-house functional enrichment
+    list_enrichment = enrichment.functional_enrichment(
+        driver, genes, species_id, symbol_alias_mapping, alias_symbol_mapping
+    )
+
+    json_str = json.dumps(
+        list_enrichment.to_dict("records"), ensure_ascii=False, separators=(",", ":")
+    )
     return Response(json_str, mimetype="application/json")
 
 

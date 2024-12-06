@@ -31,7 +31,8 @@ interface Edge {
         res.label = "";
         res.color = "rgb(100,100,100)";
       }
-    } else if (state.hoveredNeighbors && !state.hoveredNeighbors.has(node) && state.hoveredNode !== node) {
+    } 
+    if (!state.clickedNode && state.hoveredNeighbors && !state.hoveredNeighbors.has(node) && state.hoveredNode !== node) {
       res.label = "";
       res.color = "rgb(100,100,100)";
     }
@@ -50,9 +51,9 @@ interface Edge {
         );
 
         if (state.hoveredNode && !state.clickedNode && !isConnected) {
-            res.hidden = true;
         } else if (isConnected) {
-            res.color = "rgba(50,50,50,0.5)";
+            res.color = "rgba(20,20,20,0.1)";
+        }if(!isConnected){
         }
     }
 
