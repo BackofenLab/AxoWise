@@ -1,5 +1,5 @@
 <template>
-  <img :id="'citation-visual-' + index" />
+  <img class="object-cover w-full h-full" :id="'citation-visual-' + index" />
 </template>
 
 <script>
@@ -77,7 +77,7 @@ export default {
 };
 </script>
 
-<style>
+<!-- <style>
 [id^="citation-visual-"] {
   height: 100%;
   width: 100%;
@@ -85,4 +85,4 @@ export default {
   object-fit: scale-down;
   border: solid 0.05vw rgba(255, 255, 255, 0.3);
 }
-</style>
+</style> -->
