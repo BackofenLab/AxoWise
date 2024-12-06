@@ -1,60 +1,60 @@
 <template>
-  <div id="pathways-graphs">
+  <ListActionHeader :title="`List of enrichment graph`">
+    <Button severity="secondary" rounded size="small" plain v-on:click="bookmark_off = !bookmark_off" class="w-8 h-8"
+      v-tooltip.bottom="bookmark_off ? 'Show only favorites' : 'Show all'">
+      <span :class="`material-symbols-rounded text-2xl
+          ${bookmark_off ? '' : 'font-variation-ico-filled text-yellow-500 hover:text-yellow-400'}`">
+        star
+      </span>
+    </Button>
+
+    <Button v-if="mode == 'protein'" severity="secondary" label="Generate enrichment" icon="pi pi-plus" size="small"
+      :loading="loading_state" v-on:click="get_term_graph()" />
+  </ListActionHeader>
+
+  <PathwayGraph :mode="mode" :gephi_data="gephi_data" :filtered_terms="filtered_terms" :bookmark_off="bookmark_off"
+    @loading_state_changed="loading_state = $event"></PathwayGraph>
+
+  <!-- <div id="pathways-graphs">
     <div class="tool-section-graph">
       <div class="coloumn-button">
-        <button
-          class="tool-buttons"
-          v-show="tool == 'Termgraph'"
-          v-on:click="get_term_graph()"
-        >
-          <img
-            class="buttons-img"
-            src="@/assets/plus-1.png"
-            v-if="!loading_state"
-          />
+        <button class="tool-buttons" v-show="tool == 'Termgraph'" v-on:click="get_term_graph()">
+          <img class="buttons-img" src="@/assets/plus-1.png" v-if="!loading_state" />
           <div v-if="loading_state" class="loading_button"></div>
         </button>
       </div>
       <div class="coloumn-button">
-        <button
-          class="tool-buttons"
-          :class="{ recolor_filter: bookmark_off == false }"
-          v-on:click="bookmark_off = !bookmark_off"
-        >
+        <button class="tool-buttons" :class="{ recolor_filter: bookmark_off == false }"
+          v-on:click="bookmark_off = !bookmark_off">
           <img class="buttons-img" src="@/assets/star.png" />
         </button>
       </div>
     </div>
     <div class="graph-section">
-      <PathwayGraph
-        v-show="tool == 'Termgraph'"
-        :mode="mode"
-        :gephi_data="gephi_data"
-        :filtered_terms="filtered_terms"
-        :bookmark_off="bookmark_off"
-        @loading_state_changed="loading_state = $event"
-      ></PathwayGraph>
+      <PathwayGraph v-show="tool == 'Termgraph'" :mode="mode" :gephi_data="gephi_data" :filtered_terms="filtered_terms"
+        :bookmark_off="bookmark_off" @loading_state_changed="loading_state = $event"></PathwayGraph>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>
 import PathwayGraph from "@/components/enrichment/graph/PathwayGraph.vue";
+import ListActionHeader from "@/components/verticalpane/ListActionHeader.vue";
 
 export default {
   name: "PathwayTools",
-  props: ["gephi_data", "filtered_terms", "favourite_pathways"],
+  props: ["gephi_data", "filtered_terms", "favourite_pathways", "mode"],
   components: {
     PathwayGraph,
+    ListActionHeader
   },
   data() {
     return {
-      tool: "Termgraph",
-      favourite_graphs: new Set(),
+      // tool: "Termgraph",
+      // favourite_graphs: new Set(),
       bookmark_off: true,
-      tool_selecting: false,
-      mode: "protein",
-      tools: [{ id: "Termgraph" }, { id: "Heatmap" }],
+      // tool_selecting: false,
+      // tools: [{ id: "Termgraph" }, { id: "Heatmap" }],
       loading_state: false,
     };
   },
@@ -71,7 +71,7 @@ export default {
 };
 </script>
 
-<style>
+<!-- <style>
 #pathways-graphs {
   width: 100%;
   height: 100%;
@@ -81,11 +81,13 @@ export default {
   overflow: hidden;
   font-family: "ABeeZee", sans-serif;
 }
+
 .generate {
   width: 50%;
   cursor: default;
   background: #d9d9d9;
 }
+
 .generate .generate-text {
   width: 100%;
   height: 100%;
@@ -166,6 +168,7 @@ export default {
   margin: 0% 2% 0% 2%;
   overflow: hidden;
 }
+
 #pathway-tools-filter-categories .element:hover {
   background: rgba(217, 217, 217, 0.47);
 }
@@ -175,7 +178,8 @@ export default {
   grid-template-columns: 0.5fr 0.5fr 0.7fr 0.7fr 0.7fr 0.7fr;
   padding: 0.5vw 1vw 0.5vw 1vw;
   width: 100%;
-  flex-shrink: 0; /* Prevents the tool-section-graph from shrinking */
+  flex-shrink: 0;
+  /* Prevents the tool-section-graph from shrinking */
 }
 
 .tool-section-term {
@@ -224,6 +228,7 @@ export default {
   text-align: center;
   justify-content: center;
 }
+
 .loading_button::after {
   content: "";
   position: absolute;
@@ -239,6 +244,7 @@ export default {
   border-radius: 50%;
   animation: button-loading-spinner 1s ease infinite;
 }
+
 .graph-section {
   flex-grow: 1;
   overflow-y: auto;
@@ -251,4 +257,4 @@ export default {
   height: 0.6vw;
   filter: invert(80%);
 }
-</style>
+</style> -->

@@ -7,7 +7,8 @@
     </TabPanel>
 
     <TabPanel class="flex-1" value="graph">
-      <PathwayTools :gephi_data="gephi_data" :filtered_terms="filtered_terms" :favourite_pathways="favourite_pathways">
+      <PathwayTools :gephi_data="gephi_data" :filtered_terms="filtered_terms" :favourite_pathways="favourite_pathways"
+        :mode="mode">
       </PathwayTools>
     </TabPanel>
 

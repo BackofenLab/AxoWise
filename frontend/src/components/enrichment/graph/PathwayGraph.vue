@@ -1,48 +1,83 @@
 <template>
-  <div class="loading-section">
+  <EmptyState v-if="term_graphs.size == 0" message="There is no generated enrichment graph">
+  </EmptyState>
+
+  <!-- <div class="loading-section">
     <div class="loading-text" v-if="term_graphs.size == 0">
       <span>There is no generated pathway graph.</span>
     </div>
     <div class="slider" tabindex="0" v-if="term_graphs.size != 0">
-      <div
-        v-for="(entry, index) in filt_graphs"
-        :key="index"
-        class="graph"
-        v-on:click="switch_graph(entry)"
-        @mouseover="activeGraphIndex = index"
-        @mouseout="activeGraphIndex = -1"
-      >
+      <div v-for="(entry, index) in filt_graphs" :key="index" class="graph" v-on:click="switch_graph(entry)"
+        @mouseover="activeGraphIndex = index" @mouseout="activeGraphIndex = -1">
         <SnapshotGraph :propValue="entry" :index="entry.id" />
         <div class="graph-options">
-          <div
-            class="bookmark-graph"
-            v-show="activeGraphIndex == index"
-            v-on:click.stop="add_graph(entry)"
-            :class="{ checked: favourite_graphs.has(entry.id) }"
-            ref="checkboxStatesGraph"
-          ></div>
-          <img
-            class="remove-graph"
-            v-show="activeGraphIndex == index"
-            src="@/assets/pathwaybar/cross.png"
-            v-on:click.stop="remove_graph(entry)"
-          />
+          <div class="bookmark-graph" v-show="activeGraphIndex == index" v-on:click.stop="add_graph(entry)"
+            :class="{ checked: favourite_graphs.has(entry.id) }" ref="checkboxStatesGraph"></div>
+          <img class="remove-graph" v-show="activeGraphIndex == index" src="@/assets/pathwaybar/cross.png"
+            v-on:click.stop="remove_graph(entry)" />
           <div class="graph-name">
-            <input
-              type="text"
-              v-model="entry.label"
-              class="empty"
-              @click.stop
-            />
+            <input type="text" v-model="entry.label" class="empty" @click.stop />
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
+
+  <section v-if="term_graphs.size != 0" class="grid grid-cols-2 gap-2.5 pt-3">
+    <Card v-for="(entry, index) in filt_graphs" :class="`group relative overflow-hidden border ${active_enrichment_id === entry.id
+      ? 'border-primary-600 !bg-primary-600/25'
+      : 'dark:!bg-slate-300/25 border-transparent'
+      }`" :key="index" :pt="{
+        header: { class: 'h-30 relative rounded-md mt-[6px] mx-[6px] overflow-hidden' },
+        body: { class: '!p-0 !gap-0' },
+        footer: { class: 'flex gap-2 px-2 pb-2' },
+        title: { class: 'relative' },
+      }">
+      <template #header>
+        <SnapshotGraph :propValue="entry" :index="entry.id" />
+
+        <div
+          class="w-full h-full flex justify-between absolute top-0 left-0 p-1.5 bg-slate-800/50 opacity-0 duration-300 group-hover:opacity-100 z-[1]">
+          <Button class="w-7 h-7" severity="secondary" rounded size="small" plain @click.stop="add_graph(entry)">
+            <span :class="`material-symbols-rounded  ${favourite_graphs.has(entry.id)
+              ? 'text-base font-variation-ico-filled text-yellow-500 hover:text-yellow-400'
+              : 'text-xl hover:text-yellow-600'
+              }`">
+              star
+            </span>
+          </Button>
+
+          <Button class="w-7 h-7" severity="danger" rounded size="small" plain @click.stop="remove_graph(entry)">
+            <span class="text-xl text-white material-symbols-rounded"> close </span>
+          </Button>
+        </div>
+      </template>
+
+      <template #title>
+        <h6 :class="`w-full h-full flex items-center gap-2 absolute top-0 left-0 py-2 px-2 text-sm font-medium cursor-text z-[1]
+          ${focus_enrichment_id === entry.id ? '!hidden' : ''}`" v-on:click="setFocus(entry.id, index)">
+          {{ entry.label }} <span class="text-lg material-symbols-rounded dark:text-slate-200"> edit </span>
+        </h6>
+        <input ref="enrichmentInputs" type="text" v-model="entry.label"
+          :class="`bg-transparent py-2 px-2 text-sm font-medium ${focus_enrichment_id === entry.id ? '' : 'opacity-0'}`"
+          @click.stop @blur="clearFocus" />
+      </template>
+
+      <template #footer>
+        <Button class="flex-1 h-8" severity="secondary" size="small" plain @click="switch_graph(entry)">
+          View <span class="text-xl material-symbols-rounded"> arrow_circle_right </span>
+        </Button>
+      </template>
+    </Card>
+  </section>
+
+
 </template>
 
 <script>
 import SnapshotGraph from "@/components/enrichment/graph/SnapshotGraph.vue";
+import EmptyState from "@/components/verticalpane/EmptyState.vue";
+import { nextTick } from "vue";
 
 export default {
   name: "PathwayGraphs",
@@ -50,6 +85,7 @@ export default {
   emits: ["loading_state_changed"],
   components: {
     SnapshotGraph,
+    EmptyState
   },
   data() {
     return {
@@ -59,9 +95,11 @@ export default {
       term_graphs: [],
       term_graphs_array: [],
       favourite_graphs: new Set(),
-      activeGraphIndex: -1,
+      // activeGraphIndex: -1,
       graph_number: -1,
-      species: null,
+      // species: null,
+      focus_enrichment_id: null,
+      active_enrichment_id: null
     };
   },
   mounted() {
@@ -93,6 +131,19 @@ export default {
     this.favourite_graphs = this.$store.state.favourite_graph_dict;
   },
   methods: {
+    setFocus(id, index) {
+      this.focus_enrichment_id = id;
+      nextTick(() => {
+        // Focus the input if focus_enrichment_id matches the current id
+        const input = this.$refs.enrichmentInputs[index];
+        if (input) {
+          input.focus();
+        }
+      });
+    },
+    clearFocus() {
+      this.focus_enrichment_id = null;
+    },
     get_term_data(set) {
       var com = this;
 
@@ -126,6 +177,7 @@ export default {
       });
     },
     switch_graph(entry) {
+      this.active_enrichment_id = entry.id;
       this.$store.commit("assign_term_graph", {
         id: entry.id,
         graph: entry.graph,
@@ -177,7 +229,7 @@ export default {
 };
 </script>
 
-<style>
+<!-- <style>
 .graph-section .slider {
   width: 100%;
   max-height: 100%;
@@ -196,8 +248,10 @@ export default {
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .graph-section .slider {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 .graph-section .slider .graph {
@@ -231,7 +285,8 @@ export default {
 .remove-graph {
   width: 0.9vw;
   height: 0.9vw;
-  -webkit-filter: invert(100%); /* Safari/Chrome */
+  -webkit-filter: invert(100%);
+  /* Safari/Chrome */
   filter: invert(100%);
   margin: 1% 1% 0 0;
 }
@@ -295,4 +350,4 @@ export default {
   color: rgba(255, 255, 255, 0.6);
   font-size: 0.7vw;
 }
-</style>
+</style> -->
