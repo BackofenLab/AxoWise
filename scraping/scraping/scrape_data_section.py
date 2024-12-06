@@ -29,8 +29,10 @@ def setup_chrome_driver(user_agent):
 def scrape_data(data_keywords):
     """Scrapes Data Availability section from Journals,
         Performance will be optimized in future"""
+    
+    files = [f for f in os.listdir('.') if f.startswith('_') and f.endswith('.txt')]
 
-    for filename in glob.glob(os.path.join(str(pathlib.Path().resolve()), "_*.txt")):
+    for filename in files:
         ua = UserAgent()
 
         results = []
@@ -39,6 +41,7 @@ def scrape_data(data_keywords):
         try:
             with open(filename, 'r') as f:
                 content = f.readlines()
+                print(content)
                 
                 for doi in content:
                     url = doi.strip()
@@ -88,12 +91,14 @@ def scrape_data(data_keywords):
                                                 "paragraph": paragraph.get_text()})
 
                             if data_found is not True:
+                                filename = filename.rstrip(".txt")
                                 with open(f"{filename}_no_data.txt", "a", encoding="utf-8") as f2:
                                     f2.write(doi)
 
                             save_to_json(results, output_file)
                             
                         else: 
+                            filename = filename.rstrip(".txt")
                             with open(f"{filename}_error_list.txt", "a", encoding="utf-8") as f3:
                                 f3.write(doi)
                     
@@ -107,8 +112,9 @@ def rerun_error_list(data_keywords):
     """Re-runs *_error_list.txt files,
         Code will be optimized in future"""
 
-    for filename in glob.glob(os.path.join(str(pathlib.Path().resolve()), "*error_list.txt")):
+    files = [f for f in os.listdir('.') if f.startswith('_') and f.endswith('_error_list.txt')]
 
+    for filename in files:
         ua = UserAgent()
         results = []
 
