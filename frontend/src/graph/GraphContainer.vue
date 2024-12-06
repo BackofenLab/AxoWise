@@ -9,6 +9,7 @@ import Sigma from "sigma";
 import { NodeBorderProgram } from "@sigma/node-border";
 import { drawHover, drawLabel } from "./utils/canvas-utils";
 import { nodeReducer, edgeReducer } from './utils/basic-reducer';
+import { generateCluster } from './utils/cluster';
 
 export default {
 name: "GraphContainer",
@@ -36,6 +37,9 @@ mounted() {
     com.renderer.setSetting("edgeReducer", (edge, data) => {
     return edgeReducer(com.graph, edge, data, com.state);
     });
+
+    generateCluster( "sigma-canvas", com.renderer, com.graph);
+
 
     /* Event handling functions call.
        Events: ['enterNode','leaveNode','clickNode']
@@ -117,4 +121,26 @@ beforeUnmount() {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     }
+    #clustersLayer {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    pointer-events: auto
+    }
+    .clusterLabel {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    font-family: sans-serif;
+    font-variant: small-caps;
+    font-weight: 400;
+    font-size: 1rem;
+    opacity: 100%;
+    }
+    .clusterCircle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 20%;
+    }
+
+
 </style>
