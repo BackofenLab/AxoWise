@@ -16,6 +16,7 @@ import AppState from "./plugins/appState.js";
 import { definePreset } from "@primevue/themes";
 import Aura from "@primevue/themes/aura";
 import "animate.css";
+import ToastService from "primevue/toastservice";
 
 // Create a reactive object to serve as the EventBus
 const emitter = mitt();
@@ -98,6 +99,7 @@ app.component("v-select", vSelect);
 app.config.globalProperties.emitter = emitter;
 app.directive("styleclass", StyleClass); // StyleClass manages css classes declaratively to during enter/leave animations or just to toggle classes on an element
 app.use(AppState);
+app.use(ToastService);
 app.component("ThemeSwitcher", ThemeSwitcher);
 app.mount("#app");
 

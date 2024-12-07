@@ -3,7 +3,7 @@
     :pt="{ label: { class: 'mx-auto' } }" @click="show_search = !show_search" />
 
   <Dialog v-model:visible="show_search" position="top" :minY="60" :minX="60" :closable="true" :pt="{
-    root: { class: 'w-[20rem] !mt-[60px] !ml-[60px]' },
+    root: { class: 'w-[24rem] !mt-[60px] !ml-[60px]' },
     headerActions: { class: '!hidden' },
     header: { class: '!p-3 order-1 cursor-move' },
     content: { class: 'order-2 !px-0' },

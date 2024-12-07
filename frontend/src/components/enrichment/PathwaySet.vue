@@ -200,6 +200,7 @@ const toggle = (event) => {
 <script>
 import ListActionHeader from "@/components/verticalpane/ListActionHeader.vue";
 import EmptyState from "@/components/verticalpane/EmptyState.vue";
+import { useToast } from "primevue/usetoast";
 import { nextTick } from "vue";
 
 export default {
@@ -218,6 +219,9 @@ export default {
       loading_state: false,
       focus_subset_id: null
     };
+  },
+  mounted() {
+    this.toast = useToast();
   },
   computed: {
     regex() {
@@ -289,9 +293,9 @@ export default {
     },
     apply_enrichment(subset) {
       var com = this;
-
+      
       if (!subset.genes || com.loading_state) {
-        alert("please select a subset or pathway to apply enrichment");
+        this.toast.add({ severity: 'error', summary: 'Error', detail: 'Please select a subset or pathway to apply enrichment.', life: 4000 });
         return;
       }
 
