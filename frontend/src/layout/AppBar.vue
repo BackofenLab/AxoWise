@@ -50,40 +50,39 @@ const toggle = (event) => {
 
 <script>
 import SearchField from "@/components/interface/SearchField.vue";
-import NetworkValues from "../components/interface/NetworkValues.vue";
+import NetworkValues from "@/components/interface/NetworkValues.vue";
+import { useToast } from "primevue/usetoast";
 
 export default {
   name: "AppBar",
-  props: ["isDockActive", "gephi_data", "mode", "view","widget"],
+  props: ["gephi_data", "filter_views", "mode", "view", "widget"],
   emits: ["widget_toggled"],
   components: {
     SearchField,
     NetworkValues,
   },
-  data() {
-    return { filter_views: ["term", "citation"] };
+  mounted() {
+    this.toast = useToast();
   },
   methods: {
     toggle_widget(event) {
       this.$emit("widget_toggled", event);
     },
     swap_view(entry) {
-      // FIXME: Use toast instead of alert
       if (entry == "protein") {
         this.$router.push("protein");
       }
       if (entry == "term") {
         this.$store.state.term_graph_data
           ? this.$router.push("term")
-          : alert("Please generate first a term graph via the enrichment section ");
+          : this.toast.add({ severity: 'error', summary: 'Error', detail: 'Please generate first a term graph via the enrichment section.', life: 4000 });
       }
       if (entry == "citation") {
         this.$store.state.citation_graph_data
           ? this.$router.push("citation")
-          : alert("Please generate first a citation graph via the citation section ");
+          : this.toast.add({ severity: 'error', summary: 'Error', detail: 'Please generate first a citation graph via the citation section.', life: 4000 });
       }
     },
   },
-  mounted() {},
 };
 </script>

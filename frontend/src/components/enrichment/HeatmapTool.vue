@@ -49,6 +49,7 @@
 <script>
 import PathwayHeatmap from "@/components/enrichment/heatmap/PathwayHeatmap.vue";
 import ListActionHeader from "@/components/verticalpane/ListActionHeader.vue";
+import { useToast } from "primevue/usetoast";
 
 export default {
   name: "HeatmapTool",
@@ -64,11 +65,13 @@ export default {
       // tool_selecting: false
     };
   },
+  mounted() {
+    this.toast = useToast();
+  },
   methods: {
     get_heatmap() {
       if (this.favourite_pathways.length == 0) {
-        // FIXME: Use toast instead of alert
-        alert("favorize pathways before generating heatmap");
+        this.toast.add({ severity: 'error', summary: 'Error', detail: 'Please favorize pathways before generating heatmap.', life: 4000 });
         return;
       }
       this.emitter.emit("generateHeatmap", this.favourite_pathways);
