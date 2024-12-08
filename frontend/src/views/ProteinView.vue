@@ -1,6 +1,7 @@
 <template>
   <keep-alive>
-    <AppBar :gephi_data="gephi_data" :mode="mode" @widget_toggled="widget = $event" :widget="widget" :view="view">
+    <AppBar :gephi_data="gephi_data" :filter_views="filter_views" :mode="mode" @widget_toggled="widget = $event"
+      :widget="widget" :view="view">
     </AppBar>
   </keep-alive>
   <keep-alive>
@@ -20,8 +21,9 @@
     </keep-alive>
 
     <keep-alive>
-      <VerticalPane :mode="mode" :gephi_data="gephi_data" :active_node="active_node" :active_background="active_background"
-        :active_termlayers="active_termlayers" :active_decoloumn="active_decoloumn"></VerticalPane>
+      <VerticalPane :mode="mode" :gephi_data="gephi_data" :active_node="active_node"
+        :active_background="active_background" :active_termlayers="active_termlayers"
+        :active_decoloumn="active_decoloumn"></VerticalPane>
     </keep-alive>
 
     <keep-alive>

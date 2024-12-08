@@ -17,7 +17,8 @@
       </Button>
 
 
-      <Button class="group" icon="material-symbols-rounded" text plain v-tooltip="'Export graph'" @click="export_active = !export_active">
+      <Button class="group" icon="material-symbols-rounded" text plain v-tooltip="'Export graph'"
+        @click="export_active = !export_active">
         <span class="material-symbols-rounded group-hover:font-variation-ico-filled">file_export</span>
       </Button>
 
@@ -26,20 +27,28 @@
         <span class="material-symbols-rounded group-hover:font-variation-ico-filled">filter_b_and_w</span>
       </Button>
 
-      <Button class="group" icon="material-symbols-rounded" text plain v-tooltip="'Re-center'" @click="center">
+      <Button class="group" icon="material-symbols-rounded" text plain v-tooltip="'Recenter graph'" @click="center">
         <span class="material-symbols-rounded group-hover:font-variation-ico-filled">center_focus_strong</span>
       </Button>
 
-      <Button class="group" icon="material-symbols-rounded" text plain v-tooltip="'Chat bot'" @click="chatbot">
+      <Button class="group" icon="material-symbols-rounded" text plain v-tooltip="'Open AxoBot'" @click="chatbot">
         <span class="material-symbols-rounded group-hover:font-variation-ico-filled">forum</span>
       </Button>
 
-      <Button class="group" icon="material-symbols-rounded" text plain v-tooltip="label_check ? 'Show label': 'Hide label'"
-        @click="hide_labels(label_check)">
+      <Button class="group" icon="material-symbols-rounded" text plain v-tooltip="'Open Axoword'" @click="word">
+        <span class="material-symbols-rounded group-hover:font-variation-ico-filled">docs</span>
+      </Button>
+
+      <Button class="group" icon="material-symbols-rounded" text plain
+        v-tooltip="label_check ? 'Show label' : 'Hide label'" @click="hide_labels(label_check)">
         <span v-if="!label_check"
           class="material-symbols-rounded group-hover:font-variation-ico-filled">subtitles</span>
         <span v-if="label_check"
           class="material-symbols-rounded group-hover:font-variation-ico-filled">subtitles_off</span>
+      </Button>
+
+      <Button v-if="mode != 'protein'" class="group" icon="material-symbols-rounded" text plain v-tooltip="'Switch graph'" @click="switch_graph">
+        <span class="material-symbols-rounded group-hover:font-variation-ico-filled">logout</span>
       </Button>
     </nav>
 
@@ -89,8 +98,8 @@
       title: { class: '!text-base' },
       content: { class: '!px-4' }
     }">
-      <ExportList v-show="export_active" :gephi_data="gephi_data" :ensembl_name_index="ensembl_name_index"
-        :mode="mode"></ExportList>
+      <ExportList v-show="export_active" :gephi_data="gephi_data" :ensembl_name_index="ensembl_name_index" :mode="mode">
+      </ExportList>
     </Dialog>
   </aside>
 </template>
@@ -142,6 +151,9 @@ export default {
       this.$router.push("/").then(() => {
         window.location.reload();
       });
+    },
+    switch_graph() {
+      this.$router.push("protein");
     },
     center() {
       this.emitter.emit("centerGraph", { check: true, mode: this.mode });
