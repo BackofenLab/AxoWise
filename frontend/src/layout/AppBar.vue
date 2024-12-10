@@ -49,8 +49,8 @@ const toggle = (event) => {
 </script>
 
 <script>
-import SearchField from "@/components/interface/SearchField.vue";
-import NetworkValues from "@/components/interface/NetworkValues.vue";
+import SearchField from "@/components/appbar/SearchField.vue";
+import NetworkValues from "@/components/appbar/NetworkValues.vue";
 import { useToast } from "primevue/usetoast";
 
 export default {
