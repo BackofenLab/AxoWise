@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div
     id="menu-tools"
     :class="{
@@ -235,4 +235,4 @@ export default {
   top: 50%;
   transform: translateY(-50%);
 }
-</style>
+</style> -->

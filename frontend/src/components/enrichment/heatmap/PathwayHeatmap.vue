@@ -1,5 +1,5 @@
 <template>
-  <EmptyState v-if="filt_heatmap.size == 0" message="There is no generated heatmap">
+  <EmptyState v-if="filt_heatmap.size == 0" message="There is no generated heatmap.">
     <ul class="flex flex-col gap-2 text-sm">
       <li>Add favorite from <strong>Pathways</strong> tab and click <strong>Generate heatmap</strong>.</li>
     </ul>
@@ -7,7 +7,7 @@
   <section v-if="filt_heatmap.size > 0" class="grid grid-cols-2 gap-2.5 pt-3">
     <Card v-for="(entry, index) in filt_heatmap" :class="`group relative overflow-hidden border ${active_heatmap_id === entry.id
       ? 'border-primary-600 !bg-primary-600/25'
-      : 'dark:!bg-slate-300/25 border-transparent'
+      : 'dark:!bg-slate-300/25 !bg-slate-300/10 border-transparent'
       }`" :key="index" :pt="{
         header: { class: 'h-24 relative rounded-md mt-[6px] mx-[6px] overflow-hidden' },
         body: { class: '!p-0 !gap-0' },
@@ -35,12 +35,13 @@
       </template>
 
       <template #title>
-        <h6 :class="`w-full h-full flex items-center gap-2 absolute top-0 left-0 py-2 px-2 text-sm font-medium cursor-text z-[1]
+        <h6 :class="`w-full  h-full absolute top-0 left-0 flex items-center gap-2 py-2 px-2 text-sm font-medium cursor-text z-[1]
           ${focus_heatmap_id === entry.id ? '!hidden' : ''}`" v-on:click="setFocus(entry.id, index)">
-          {{ entry.label }} <span class="text-lg material-symbols-rounded dark:text-slate-200"> edit </span>
+          <span class="max-w-[calc(100%-24px)] line-clamp-1">{{ entry.label }}</span> <span
+            class="text-lg material-symbols-rounded dark:text-slate-200"> edit </span>
         </h6>
         <input ref="heatmapInputs" type="text" v-model="entry.label"
-          :class="`bg-transparent py-2 px-2 text-sm font-medium ${focus_heatmap_id === entry.id ? '' : 'opacity-0'}`"
+          :class="`w-full bg-transparent py-2 px-2 text-sm font-medium ${focus_heatmap_id === entry.id ? '' : 'opacity-0'}`"
           @click.stop @blur="clearFocus" />
       </template>
 
@@ -51,26 +52,6 @@
       </template>
     </Card>
   </section>
-  <!-- <div class="loading-section">
-    <div class="loading-text" v-if="filt_heatmap.size == 0">
-      <span>There is no generated heatmap.</span>
-    </div>
-    <div class="slider" tabindex="0" v-if="filt_heatmap.size != 0">
-      <div v-for="(entry, index) in filt_heatmap" :key="index" class="graph" v-on:click="switch_heatmap(entry)"
-        @mouseover="activeHeatmapIndex = index" @mouseout="activeHeatmapIndex = -1">
-        <SnapshotHeatmap :propValue="entry" :index="entry.id" />
-        <div class="graph-options">
-          <div class="bookmark-graph" v-show="activeHeatmapIndex == index" v-on:click.stop="add_graph(entry)"
-            :class="{ checked: favourite_heatmaps.has(entry.id) }" ref="checkboxStatesHeatmap"></div>
-          <img class="remove-graph" v-show="activeHeatmapIndex == index" src="@/assets/pathwaybar/cross.png"
-            v-on:click.stop="remove_graph(entry)" />
-          <div class="graph-name">
-            <input type="text" v-model="entry.label" class="empty" @click.stop />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div> -->
 </template>
 
 <script>
@@ -91,7 +72,6 @@ export default {
   data() {
     return {
       favourite_heatmaps: new Set(),
-      // activeHeatmapIndex: -1,
       heatmap_number: 0,
       heatmap_dict: [],
       heatmap_dict_array: [],
@@ -403,38 +383,6 @@ export default {
 </script>
 
 <style>
-/* #sigma-heatmap {
-  display: block;
-  position: absolute;
-  cursor: default;
-  position: absolute;
-  height: 100%;
-  width: 75%;
-  left: 25%;
-  box-sizing: border-box;
-  overflow: hidden;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-} 
-
-#d3tooltip {
-  position: absolute;
-  width: 200px;
-  height: auto;
-  padding: 10px;
-  background-color: #fafafa;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  border-radius: 10px;
-  -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-  -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-  pointer-events: none;
-  opacity: 0;
-  z-index: 999;
-}
-*/
-
 #d3tooltip.hidden {
   display: none;
 }

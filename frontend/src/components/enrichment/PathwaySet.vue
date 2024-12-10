@@ -5,8 +5,8 @@
       <InputIcon class="z-10 pi pi-search" />
     </IconField>
 
-    <Button class="flex-shrink-0" severity="primary" label="Add subset" icon="pi pi-plus" size="small" raised
-      @click="toggle" />
+    <SplitButton class="flex-shrink-0" label="Add subset" severity="primary" icon="pi pi-plus" size="small" raised
+      @click="save_subset" :model="subset_options" />
 
     <div class="grid w-full grid-cols-12 gap-x-2">
       <a class="flex items-center justify-start col-span-4 gap-1 cursor-pointer" v-on:click="
@@ -28,21 +28,21 @@
     </div>
   </ListActionHeader>
 
-  <Panel v-for="(entry, index) in filt_abstracts" class="!bg-transparent !border-0 mb-1.5" :collapsed="true" toggleable
-    :key="index" :pt="{
+  <Panel v-for="(entry, index) in filt_abstracts" class="!bg-transparent !border-0 mb-1.5" :collapsed="true"
+    :toggleable="entry.view == 'protein'" :key="index" :pt="{
       header: { class: 'relative !p-0 !rounded hover:bg-slate-300/50 dark:hover:bg-slate-700/50' },
       content: { class: '!p-3 !rounded-b-lg bg-slate-200 dark:bg-slate-800' },
       headerActions: { class: 'absolute right-0' },
     }">
     <template #header>
       <div
-        class="w-full grid grid-cols-12 items-center gap-2 !py-0 !px-0 !font-normal !text-slate-500 dark:!text-slate-300 !leading-tight">
+        class="w-full h-full grid grid-cols-12 items-center gap-2 !py-0 !px-0 !font-normal !text-slate-500 dark:!text-slate-300 !leading-tight">
         <label class="relative col-span-4">
-          <span :class="`w-full h-full flex items-center gap-2 border border-transparent hover:border-slate-500/50 dark:hover:border-slate-300/50 rounded absolute top-0 left-0 py-2 px-1 text-sm font-medium cursor-text z-[1]
+          <span :class="`w-full h-full flex items-center absolute top-0 left-0 gap-2 border border-transparent hover:border-slate-500/50 dark:hover:border-slate-300/50 rounded py-2 px-1 text-sm font-medium cursor-text z-[1]
               ${focus_subset_id === index ? '!hidden' : ''}`" v-on:click="setFocus(entry.id, index)">
-            {{ entry.name }} <span class="text-lg material-symbols-rounded dark:text-slate-200"> edit </span>
-          </span>
-          <input ref="subsetInputs" type="text" v-model="entry.name" :class="`w-full border rounded border-primary-400 bg-transparent py-2 px-1 text-sm font-medium ${focus_subset_id === index ? '' : 'opacity-0'
+            <span class="max-w-[calc(100%-24px)] line-clamp-1">{{ entry.name }}</span> <span
+              class="text-lg material-symbols-rounded dark:text-slate-200"> edit </span></span>
+          <input ref="subsetInputs" type="text" v-model="entry.name" :class="`w-full h-full border rounded border-primary-400 bg-transparent py-2 px-1 text-sm font-medium ${focus_subset_id === index ? '' : 'opacity-0'
             }`" @click.stop @blur="clearFocus" />
         </label>
 
@@ -83,119 +83,9 @@
       :loading="loading_state" @click="apply_enrichment(entry)" />
   </Panel>
 
-  <EmptyState v-if="filt_abstracts.size === 0" message="There is no generated subsets">
+  <EmptyState v-if="filt_abstracts.size === 0" message="There is no generated subsets.">
   </EmptyState>
-
-  <Popover ref="op" class="w-[14rem]" :pt="{ content: { class: '!flex !flex-col' } }">
-    <Button text plain severity="secondary" type="button" label="From active subset" class="!justify-start !py-1"
-      @click="save_subset(); toggle();" />
-    <Button text plain severity="secondary" type="button" label="By searching in genes" class="!justify-start !py-1"
-      @click="active_protein(); toggle();" />
-    <Button text plain severity="secondary" type="button" label="By searching in keywords" class="!justify-start !py-1"
-      @click="active_keyword_protein(); toggle();" />
-    <Button text plain severity="secondary" type="button" label="By parameter filtering" class="!justify-start !py-1"
-      @click="active_selection(); toggle();" />
-  </Popover>
-
-  <!-- <div id="pathways-set">
-    <div class="tool-set-section-graph">
-      <div class="coloumn-set-button">
-        <button class="tool-buttons" v-on:click="save_subset()">
-          <img class="buttons-img" src="@/assets/plus-1.png" />
-        </button>
-      </div>
-      <div class="citation-search">
-        <img class="citation-search-icon" src="@/assets/toolbar/search.png" />
-        <input type="text" v-model="search_raw" class="empty" placeholder="search in sets" />
-      </div>
-    </div>
-    <div class="list-section">
-      <div class="sorting">
-        <a class="pubid_filter" v-on:click="
-          sort_alph = sort_alph === 'asc' ? 'dsc' : 'asc';
-        sort_pr = '';
-        sort_cb = '';
-        sort_y = '';
-        ">subset</a>
-        <a class="nodes_filter">nodes</a>
-        <a class="view_filter">view</a>
-      </div>
-
-      <div class="results" tabindex="0" @keydown="handleKeyDown" ref="resultsContainer">
-        <table>
-          <tbody>
-            <span v-for="(entry, index) in filt_abstracts" :key="index">
-              <tr class="set-table">
-                <td>
-                  <div class="favourite-symbol" v-on:click="set_active(entry)">
-                    <label class="custom-checkbox">
-                      <div class="active-image" :class="{ checked: entry.status }"></div>
-                    </label>
-                  </div>
-                </td>
-                <td>
-                  <div class="pathway-text">
-                    <input type="text" v-model="entry.name" class="empty" />
-                  </div>
-                </td>
-                <td>
-                  <div class="pathway-text">
-                    <span>({{ entry.genes.length }})</span>
-                  </div>
-                </td>
-                <td>
-                  <div class="pathway-text">
-                    <span>{{ entry.view }}</span>
-                  </div>
-                </td>
-                <td>
-                  <label class="custom-icons" v-if="entry.view == 'protein'">
-                    <div class="functions-image" v-on:click="entry.information = !entry.information"></div>
-                  </label>
-                  <label class="custom-icons" v-if="entry.view == 'protein'">
-                    <div class="expand-image" v-on:click="entry.actions = !entry.actions"></div>
-                  </label>
-                </td>
-                <td>
-                  <label class="custom-icons">
-                    <div class="delete-image" v-on:click="remove_set(entry)"></div>
-                  </label>
-                  <label class="custom-icons">
-                    <div class="chatbot-image" v-on:click="addToChatbot(entry)"></div>
-                  </label>
-                </td>
-              </tr>
-              <tr v-if="entry.information" class="expanded">
-                <td v-for="element in entry.stats" :key="element">
-                  <div class="information-set">{{ element }}</div>
-                </td>
-              </tr>
-              <tr v-if="entry.actions" class="expanded">
-                <div class="actions-tab">
-                  <button class="tool-buttons" v-on:click="apply_enrichment(entry)">
-                    <img class="buttons-img" src="@/assets/plus-1.png" />
-                    <div v-if="loading_state" class="loading_button"></div>
-                  </button>
-                  <span> apply enrichment {{ entry.enriched }} </span>
-                </div>
-              </tr>
-            </span>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div> -->
 </template>
-
-<script setup>
-import { ref } from "vue";
-
-const op = ref();
-
-const toggle = (event) => {
-  op.value.toggle(event);
-};
-</script>
 
 <script>
 import ListActionHeader from "@/components/verticalpane/ListActionHeader.vue";
@@ -217,7 +107,27 @@ export default {
       set_dict: new Set(),
       search_raw: "",
       loading_state: false,
-      focus_subset_id: null
+      focus_subset_id: null,
+      subset_options: [
+        {
+          label: 'By searching in genes',
+          command: () => {
+            this.active_protein();
+          }
+        },
+        {
+          label: 'By searching in keywords',
+          command: () => {
+            this.active_keyword_protein();
+          }
+        },
+        {
+          label: 'By parameter filtering',
+          command: () => {
+            this.active_selection();
+          }
+        },
+      ]
     };
   },
   mounted() {
@@ -293,7 +203,7 @@ export default {
     },
     apply_enrichment(subset) {
       var com = this;
-      
+
       if (!subset.genes || com.loading_state) {
         this.toast.add({ severity: 'error', summary: 'Error', detail: 'Please select a subset or pathway to apply enrichment.', life: 4000 });
         return;
@@ -583,322 +493,3 @@ export default {
   },
 };
 </script>
-
-<!-- <style>
-#pathways-set {
-  width: 100%;
-  height: 100%;
-  cursor: default;
-  font-family: "ABeeZee", sans-serif;
-}
-
-.pathway-apply-section {
-  width: 100%;
-  height: 87.65%;
-  border-radius: 5px;
-  position: absolute;
-}
-
-.generate-set-button {
-  display: inline-flex;
-  margin: 1vw 0 1vw 0;
-  height: 1vw;
-  width: 100%;
-  padding: 0 2vw 0 2vw;
-}
-
-.generate-set-button .export-text {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #0a0a1a;
-  font-size: 0.7vw;
-}
-
-.pathway-apply-section a {
-  color: white;
-  text-decoration: none;
-}
-
-.pathway-apply-section .results {
-  height: 100%;
-  overflow: scroll;
-}
-
-.pathway-apply-section .sorting a {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.set-table {
-  display: -webkit-flex;
-  padding-top: 0.4vw;
-}
-
-#pathways-set .pathway-text {
-  width: 80%;
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
-  overflow: hidden;
-  /* Hide overflow content */
-  text-overflow: ellipsis;
-  margin-left: 2%;
-}
-
-.nodes_filter {
-  position: absolute;
-  left: 35%;
-}
-
-.view_filter {
-  position: absolute;
-  left: 50%;
-}
-
-#pathways-set .pathway-text input[type="text"] {
-  width: 100%;
-  font-size: 0.85vw;
-  background: none;
-  color: white;
-  cursor: default;
-  font-family: "ABeeZee", sans-serif;
-  border: none;
-}
-
-#pathways-set .pathway-text span {
-  font-size: 0.7vw;
-  margin-left: 4%;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-#pathways-set .pathway-text a {
-  cursor: default;
-}
-
-/* bookmark styles */
-
-table {
-  display: flex;
-  width: 100%;
-}
-
-:focus {
-  outline: 0 !important;
-}
-
-table tbody {
-  width: 100%;
-}
-
-.set-table td:first-child {
-  width: 3.41%;
-  align-self: center;
-}
-
-.set-table td:nth-child(2) {
-  color: #fff;
-  font-size: 0.9vw;
-  width: 30%;
-  padding: 0 0 0 2px;
-  overflow: hidden;
-  align-self: center;
-}
-
-.set-table td:nth-child(3) {
-  color: #fff;
-  font-size: 0.9vw;
-  width: 15%;
-  padding: 0 0 0 2px;
-  overflow: hidden;
-  align-self: center;
-}
-
-.set-table td:nth-child(4) {
-  color: #fff;
-  font-size: 0.9vw;
-  width: 23%;
-  padding: 0 0 0 2px;
-  overflow: hidden;
-  align-self: center;
-}
-
-.set-table td:nth-child(5) {
-  font-size: 0.7vw;
-  color: white;
-  width: 13%;
-  align-self: center;
-}
-
-.set-table td:last-child {
-  font-size: 0.7vw;
-  color: white;
-  width: 13%;
-  align-self: center;
-}
-
-.favourite-symbol {
-  width: 100%;
-  height: 100%;
-  justify-content: center;
-  text-align: center;
-  position: relative;
-  display: flex;
-}
-
-.custom-checkbox {
-  position: relative;
-  display: inline-block;
-  cursor: default;
-}
-
-.checked {
-  background-color: #ffa500;
-}
-
-.expanded td:first-child,
-.expanded td:nth-child(2),
-.expanded td:nth-child(3),
-.expanded td:nth-child(4),
-.expanded td:last-child {
-  color: #fff;
-  width: 20%;
-  overflow: hidden;
-  align-self: center;
-}
-
-.custom-icons {
-  position: relative;
-  display: inline-block;
-  cursor: default;
-  padding-right: 0.5vw;
-}
-
-.active-image {
-  display: block;
-  width: 0.9vw;
-  height: 0.9vw;
-  background-color: white;
-  -webkit-mask: url(@/assets/pathwaybar/star-solid.svg) no-repeat center;
-  mask: url(@/assets/pathwaybar/star-solid.svg) no-repeat center;
-  mask-size: 0.9vw;
-  background-repeat: no-repeat;
-}
-
-.delete-image {
-  display: block;
-  width: 0.9vw;
-  height: 0.9vw;
-  background-color: white;
-  -webkit-mask: url(@/assets/pathwaybar/delete.png) no-repeat center;
-  mask: url(@/assets/pathwaybar/delete.png) no-repeat center;
-  mask-size: 0.9vw;
-  background-repeat: no-repeat;
-}
-
-.expand-image {
-  display: block;
-  width: 0.9vw;
-  height: 0.9vw;
-  background-color: white;
-  -webkit-mask: url(@/assets/toolbar/menu-burger.png) no-repeat center;
-  mask: url(@/assets/toolbar/menu-burger.png) no-repeat center;
-  mask-size: 0.9vw;
-  background-repeat: no-repeat;
-}
-
-.functions-image {
-  display: block;
-  width: 0.9vw;
-  height: 0.9vw;
-  background-color: white;
-  -webkit-mask: url(@/assets/toolbar/settings-sliders.png) no-repeat center;
-  mask: url(@/assets/toolbar/settings-sliders.png) no-repeat center;
-  mask-size: 0.9vw;
-  background-repeat: no-repeat;
-}
-
-.chatbot-image {
-  display: block;
-  width: 0.9vw;
-  height: 0.9vw;
-  background-color: white;
-  -webkit-mask: url(@/assets/toolbar/bote.png) no-repeat center;
-  mask: url(@/assets/toolbar/bote.png) no-repeat center;
-  mask-size: 0.9vw;
-  background-repeat: no-repeat;
-}
-
-.checked {
-  background-color: #ffa500;
-}
-
-.selected {
-  background-color: rgba(255, 0, 0, 0.7);
-}
-
-.tool-set-section-graph {
-  display: grid;
-  grid-template-columns: 0.5fr 0.5fr;
-  padding: 1vw 1vw 1vw 1vw;
-  width: 100%;
-  flex-shrink: 0;
-}
-
-.coloumn-set-button {
-  padding-right: 0.5vw;
-  display: grid;
-  row-gap: 1vw;
-  z-index: 9999;
-}
-
-.information-set {
-  font-size: 0.5vw;
-  display: flex;
-  justify-content: center;
-  text-align: center;
-  padding: 0.2vw;
-}
-
-.actions-tab {
-  font-size: 0.5vw;
-  display: flex;
-  justify-content: center;
-  text-align: center;
-  padding: 0.2vw;
-  color: white;
-}
-
-.expanded {
-  display: -webkit-flex;
-  padding: 0 2vw 0 2vw;
-  background: rgba(255, 255, 255, 0.1);
-  background-clip: content-box;
-}
-
-.actions-tab span {
-  align-self: center;
-  margin-left: 0.2rem;
-}
-
-.actions-tab .loading-button {
-  position: absolute;
-}
-
-.actions-tab .tool-buttons {
-  padding: 0.2vw 0.2vw 0.2vw 0.2vw;
-  border-radius: 0;
-  cursor: pointer;
-  display: flex;
-  font-size: 0.7vw;
-  align-items: center;
-  color: rgba(255, 255, 255, 0.8);
-  justify-content: center;
-  border: 0.05vw solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 2px 6px -3px rgba(255, 255, 255, 0.23);
-  transition: transform 0.25s cubic-bezier(0.7, 0.98, 0.86, 0.98),
-    box-shadow 0.25s cubic-bezier(0.7, 0.98, 0.86, 0.98);
-  background-color: #0a0a1a;
-}
-</style> -->

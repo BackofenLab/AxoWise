@@ -4,7 +4,7 @@
       class="flex-1" @update:modelValue="active_categories($event)" />
   </ListActionHeader>
 
-  <EmptyState v-if="active_decoloumn === null" message="There is no active dcoloumn">
+  <EmptyState v-if="active_decoloumn === null" message="There is no active dcoloumn.">
   </EmptyState>
 
   <div v-if="active_decoloumn !== null" class="pt-2 mt-10 overflow-hidden">
@@ -14,37 +14,6 @@
     </div>
     <svg id="demo1" class="transform translate-x-[10%] translate-y-[-10%]" width="250" height="80"></svg>
   </div>
-
-  <!-- <div id="colorbar-difexp">
-    <div class="tool-set-section-graph">
-      <div class="coloumn-set-button">
-        <button class="tool-buttons">
-          <img class="buttons-img" src="@/assets/plus-1.png" />
-          /* <div v-if="loading_state" class="loading_button"></div> */
-        </button>
-      </div>
-      <div id="pathway-filter" v-on:click="handling_filter_menu()" :class="{ full: category_filtering == true }">
-        <span>{{ category }}</span>
-        <img class="remove-filter" src="@/assets/pathwaybar/cross.png" v-on:click.stop="active_categories(null)"
-          v-if="category !== 'Selection'" />
-      </div>
-      <div id="pathway-filter-categories" v-show="category_filtering == true">
-        <div class="element" v-for="(entry, index) in dcoloumns" :key="index" v-on:click="active_categories(entry)"
-          :class="{ active_cat: category == entry }">
-          <a>{{ entry }}</a>
-        </div>
-      </div>
-    </div>
-    <div class="graph-section">
-      <div class="loading-section">
-        <div v-if="active_decoloumn !== null">
-          <svg id="demo1" width="250" height="120"></svg>
-          <input id="legend" type="range" v-bind:min="dboundary.min" v-bind:max="dboundary.max"
-            v-bind:step="dboundary.step" v-model="dboundary.value" v-on:change="check_boundary()" />
-        </div>
-      </div>
-    </div>
-  </div> -->
 </template>
 
 <script>
@@ -60,18 +29,13 @@ export default {
     return {
       selected_category: null,
       active_section: "",
-      // links: null,
-      // hide: true,
       dcoloumns: this.$store.state.dcoloumns,
-      // category: "selection",
-      // category_filtering: false,
       dboundary: {
         value: 1,
         min: 1,
         max: 10,
         step: 1,
       },
-      // expand_selected: true,
     };
   },
   watch: {
@@ -170,33 +134,6 @@ export default {
       com.draw_legend();
       com.emitter.emit("adjustDE", this.dboundary.value);
     },
-    // handling_filter_menu() {
-    //   var com = this;
-    //   if (!com.category_filtering) {
-    //     com.category_filtering = true;
-
-    //     // Add the event listener
-    //     document.addEventListener("mouseup", com.handleMouseUp);
-    //   } else {
-    //     com.category_filtering = false;
-    //     document.removeEventListener("mouseup", com.handleMouseUp);
-    //   }
-    // },
-    // handleMouseUp(e) {
-    //   var com = this;
-
-    //   var container = document.getElementById("pathway-filter-categories");
-    //   var container_button = document.getElementById("pathway-filter");
-    //   if (
-    //     !container.contains(e.target) &&
-    //     !container_button.contains(e.target)
-    //   ) {
-    //     com.category_filtering = false;
-
-    //     // Remove the event listener
-    //     document.removeEventListener("mouseup", com.handleMouseUp);
-    //   }
-    // },
   },
   mounted() {
     console.log(this.active_decoloumn);
@@ -208,73 +145,3 @@ export default {
   },
 };
 </script>
-
-<!-- <style>
-#colorbar-difexp {
-  z-index: 999;
-  width: 100%;
-  height: 100%;
-  overflow-y: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-#colorbar-difexp .colorbar-text {
-  width: 100%;
-  background: rgb(74, 45, 255);
-  background: linear-gradient(90deg,
-      rgba(74, 45, 255, 1) 0%,
-      rgba(255, 0, 0, 1) 100%);
-  border-radius: 5px;
-} 
-  
-#colorbar-difexp #pathway-filter {
-  background: rgba(222, 222, 222, 0.3);
-  padding: 0 0 0 0.3vw;
-  height: 1.4vw;
-  width: 16.8vw;
-  display: flex;
-  align-items: center;
-  align-content: center;
-  justify-content: center;
-}
-
-#colorbar-difexp #pathway-filter-categories {
-  width: 16.8vw;
-  left: 3vw;
-  top: 4vw;
-}
-
-#colorbar-difexp #pathway-filter-categories .element {
-  padding: 0;
-}
-
-#legend {
-  position: absolute;
-  top: 7%;
-  left: 30%;
-  appearance: none;
-  outline: none;
-  width: 40%;
-  height: 0.3vw;
-  border-radius: 5px;
-  background-color: #ccc;
-}
-
-#legend::-webkit-slider-thumb {
-  background: #fafafa;
-  appearance: none;
-  box-shadow: 1px 2px 26px 1px #bdbdbd;
-  width: 0.8vw;
-  height: 0.8vw;
-  border-radius: 50%;
-}
-
-#demo1 {
-  position: absolute;
-  display: block;
-  width: 100%;
-  height: 20%;
-  left: 21%;
-}
-</style> -->
