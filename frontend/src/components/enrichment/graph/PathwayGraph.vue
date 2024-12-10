@@ -1,32 +1,11 @@
 <template>
-  <EmptyState v-if="term_graphs.size == 0" message="There is no generated enrichment graph">
+  <EmptyState v-if="term_graphs.size == 0" message="There is no generated enrichment graph.">
   </EmptyState>
-
-  <!-- <div class="loading-section">
-    <div class="loading-text" v-if="term_graphs.size == 0">
-      <span>There is no generated pathway graph.</span>
-    </div>
-    <div class="slider" tabindex="0" v-if="term_graphs.size != 0">
-      <div v-for="(entry, index) in filt_graphs" :key="index" class="graph" v-on:click="switch_graph(entry)"
-        @mouseover="activeGraphIndex = index" @mouseout="activeGraphIndex = -1">
-        <SnapshotGraph :propValue="entry" :index="entry.id" />
-        <div class="graph-options">
-          <div class="bookmark-graph" v-show="activeGraphIndex == index" v-on:click.stop="add_graph(entry)"
-            :class="{ checked: favourite_graphs.has(entry.id) }" ref="checkboxStatesGraph"></div>
-          <img class="remove-graph" v-show="activeGraphIndex == index" src="@/assets/pathwaybar/cross.png"
-            v-on:click.stop="remove_graph(entry)" />
-          <div class="graph-name">
-            <input type="text" v-model="entry.label" class="empty" @click.stop />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div> -->
 
   <section v-if="term_graphs.size != 0" class="grid grid-cols-2 gap-2.5 pt-3">
     <Card v-for="(entry, index) in filt_graphs" :class="`group relative overflow-hidden border ${active_enrichment_id === entry.id
       ? 'border-primary-600 !bg-primary-600/25'
-      : 'dark:!bg-slate-300/25 border-transparent'
+      : 'dark:!bg-slate-300/25 !bg-slate-300/10 border-transparent'
       }`" :key="index" :pt="{
         header: { class: 'h-30 relative rounded-md mt-[6px] mx-[6px] overflow-hidden' },
         body: { class: '!p-0 !gap-0' },
@@ -54,12 +33,13 @@
       </template>
 
       <template #title>
-        <h6 :class="`w-full h-full flex items-center gap-2 absolute top-0 left-0 py-2 px-2 text-sm font-medium cursor-text z-[1]
+        <h6 :class="`w-full  h-full absolute top-0 left-0 flex items-center gap-2 py-2 px-2 text-sm font-medium cursor-text z-[1]
           ${focus_enrichment_id === entry.id ? '!hidden' : ''}`" v-on:click="setFocus(entry.id, index)">
-          {{ entry.label }} <span class="text-lg material-symbols-rounded dark:text-slate-200"> edit </span>
+          <span class="max-w-[calc(100%-24px)] line-clamp-1">{{ entry.label }}</span> <span
+            class="text-lg material-symbols-rounded dark:text-slate-200"> edit </span>
         </h6>
         <input ref="enrichmentInputs" type="text" v-model="entry.label"
-          :class="`bg-transparent py-2 px-2 text-sm font-medium ${focus_enrichment_id === entry.id ? '' : 'opacity-0'}`"
+          :class="`w-full bg-transparent py-2 px-2 text-sm font-medium ${focus_enrichment_id === entry.id ? '' : 'opacity-0'}`"
           @click.stop @blur="clearFocus" />
       </template>
 
@@ -93,9 +73,7 @@ export default {
       term_graphs: [],
       term_graphs_array: [],
       favourite_graphs: new Set(),
-      // activeGraphIndex: -1,
       graph_number: -1,
-      // species: null,
       focus_enrichment_id: null,
       active_enrichment_id: null
     };
@@ -226,126 +204,3 @@ export default {
   },
 };
 </script>
-
-<!-- <style>
-.graph-section .slider {
-  width: 100%;
-  max-height: 100%;
-  display: flex;
-  padding: 0.5vw 1vw 0.5vw 1vw;
-  flex-wrap: wrap;
-  overflow-y: scroll;
-  scroll-behavior: smooth;
-  scroll-snap-type: x mandatory;
-}
-
-/* Hide scrollbar for Chrome, Safari and Opera */
-.graph-section .slider::-webkit-scrollbar {
-  display: none;
-}
-
-/* Hide scrollbar for IE, Edge and Firefox */
-.graph-section .slider {
-  -ms-overflow-style: none;
-  /* IE and Edge */
-  scrollbar-width: none;
-  /* Firefox */
-}
-
-.graph-section .slider .graph {
-  position: relative;
-  width: 33%;
-  height: 7.5vw;
-  padding: 0.5vw;
-  flex-shrink: 0;
-  transform-origin: center center;
-  transform: scale(1);
-  scroll-snap-align: center;
-  display: flex;
-}
-
-.graph-section .slider .graph:hover {
-  background: rgba(217, 217, 217, 0.12);
-}
-
-.bookmark-graph {
-  display: block;
-  width: 0.9vw;
-  height: 0.9vw;
-  margin: 1% 1% 0 0;
-  background-color: rgba(255, 255, 255, 0.62);
-  -webkit-mask: url(@/assets/pathwaybar/star-solid.svg) no-repeat center;
-  mask: url(@/assets/pathwaybar/star-solid.svg) no-repeat center;
-  mask-size: 0.9vw;
-  background-repeat: no-repeat;
-}
-
-.remove-graph {
-  width: 0.9vw;
-  height: 0.9vw;
-  -webkit-filter: invert(100%);
-  /* Safari/Chrome */
-  filter: invert(100%);
-  margin: 1% 1% 0 0;
-}
-
-.graph-options {
-  position: absolute;
-  width: 100%;
-  padding: 0 0.5vw 0 0.5vw;
-  display: flex;
-  align-items: center;
-  justify-content: end;
-}
-
-.graph-name {
-  position: fixed;
-  display: flex;
-  bottom: 5%;
-  width: 100%;
-  height: 20%;
-  -webkit-backdrop-filter: blur(7.5px);
-  text-align-last: center;
-  justify-content: center;
-}
-
-.graph-name input[type="text"] {
-  font-size: 0.85vw;
-  background: none;
-  color: white;
-  cursor: default;
-  font-family: "ABeeZee", sans-serif;
-  border: none;
-  padding: 0 0.5vw 0 0.5vw;
-  overflow: hidden;
-}
-
-.checked {
-  background-color: #ffa500;
-}
-
-.slider span {
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  color: white;
-  font-size: 0.7vw;
-}
-
-.loading-section {
-  height: 100%;
-  width: 100%;
-  padding: 0.5vw;
-  border: solid 0.01vw rgba(255, 255, 255, 0.5);
-}
-
-.loading-text {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.7vw;
-}
-</style> -->
