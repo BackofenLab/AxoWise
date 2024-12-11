@@ -58,7 +58,7 @@ def process_json_files(directory):
 
     """Generalized filepath in future"""
 
-    file_path = "_Lancet Infectious Diseases, The_Signal Transduction and Targeted Therapy_Annals of the Rheumatic Diseases_udc.json"
+    file_path = "_Science Bulletin_Cancer Discovery_Cell Research_udc.json"
     with open(file_path, 'r', encoding='utf-8') as file:
         data = json.load(file)
         
@@ -70,11 +70,11 @@ def process_json_files(directory):
                 "DOI": doi,
                 "Data Availability": data_availability
             }
-            # print('Processing DOI:', doi)
+            print('Processing DOI:', doi)
 
             try:
                 # start_time = time.time()
-                # result = send_to_mistral(input_data)
+                result = send_to_mistral(input_data)
                 # end_time = time.time()
                 # print("Execution time:", end_time-start_time)
                 results.append({
@@ -87,7 +87,7 @@ def process_json_files(directory):
         
         # print(results)
         # Save results to output file
-        output_file = "extraction_results_mistral.json"
+        output_file = "extraction_results_mistral_sciBulletin.json"
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(results, f, indent=4)
 
