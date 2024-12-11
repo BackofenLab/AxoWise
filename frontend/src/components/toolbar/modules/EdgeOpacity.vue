@@ -7,16 +7,18 @@
         inputClass="w-12 h-8 text-center" />
     </div>
     <Slider class="mx-1 mt-3 mb-3" :min="opacityBackground.min" :max="opacityBackground.max"
-      :step="opacityBackground.step" v-model="opacityBackground.value" />
+      :step="opacityBackground.step" v-model="opacityBackground.value"
+      @update:modelValue="change_opacity('background')" />
   </li>
   <li class="flex flex-col gap-2 py-2 dark:text-[#c3c3c3]">
     <div class="flex items-center justify-between gap-2">
       Highlighted edge opacity
       <InputNumber :min="opacityHighlight.min" :max="opacityHighlight.max" :step="opacityHighlight.step"
-        v-model="opacityHighlight.value" @value-change="change_opacity('highlight')" inputClass="w-12 h-8 text-center" />
+        v-model="opacityHighlight.value" @value-change="change_opacity('highlight')"
+        inputClass="w-12 h-8 text-center" />
     </div>
     <Slider class="mx-1 mt-3 mb-3" :min="opacityHighlight.min" :max="opacityHighlight.max" :step="opacityHighlight.step"
-      v-model="opacityHighlight.value" />
+      v-model="opacityHighlight.value" @update:modelValue="change_opacity('highlight')" />
   </li>
 </template>
 

@@ -205,7 +205,7 @@ export default {
       var com = this;
 
       if (!subset.genes || com.loading_state) {
-        this.toast.add({ severity: 'error', summary: 'Error', detail: 'Please select a subset or pathway to apply enrichment.', life: 4000 });
+        this.toast.add({ severity: 'error', detail: 'Please select a subset or pathway to apply enrichment.', life: 4000 });
         return;
       }
 

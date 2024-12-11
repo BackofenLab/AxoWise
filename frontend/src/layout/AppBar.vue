@@ -16,10 +16,11 @@
     </template>
 
     <template #center>
-      <SearchField :data="gephi_data" :mode="mode"></SearchField>
     </template>
 
     <template #end>
+      <SearchField :data="gephi_data" :mode="mode"></SearchField>
+
       <keep-alive>
         <NetworkValues :data="gephi_data"></NetworkValues>
       </keep-alive>
@@ -30,7 +31,7 @@
 
   <Popover ref="op">
     <ul class="flex flex-col p-0 m-0 list-none">
-      <li v-for="entry in filter_views" :key="entry" v-on:click="swap_view(entry)"
+      <li v-for="entry in filter_views" :key="entry" v-on:click="swap_view(entry); hide();"
         class="flex items-center gap-2 px-2 py-3 capitalize cursor-pointer hover:bg-emphasis rounded-border">
         {{ entry + " view" }}
       </li>
@@ -45,6 +46,10 @@ const op = ref();
 
 const toggle = (event) => {
   op.value.toggle(event);
+};
+
+const hide = () => {
+  op.value.hide();
 };
 </script>
 
@@ -75,12 +80,20 @@ export default {
       if (entry == "term") {
         this.$store.state.term_graph_data
           ? this.$router.push("term")
-          : this.toast.add({ severity: 'error', summary: 'Error', detail: 'Please generate first a term graph via the enrichment section.', life: 4000 });
+          : this.toast.add({
+            severity: "info",
+            detail: "Please generate first a term graph via the enrichment section.",
+            life: 4000,
+          });
       }
       if (entry == "citation") {
         this.$store.state.citation_graph_data
           ? this.$router.push("citation")
-          : this.toast.add({ severity: 'error', summary: 'Error', detail: 'Please generate first a citation graph via the citation section.', life: 4000 });
+          : this.toast.add({
+            severity: "info",
+            detail: "Please generate first a citation graph via the citation section.",
+            life: 4000,
+          });
       }
     },
   },

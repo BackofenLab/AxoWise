@@ -20,6 +20,7 @@
 <script>
 import CitationGraph from "@/components/citation/CitationGraph.vue";
 import ListActionHeader from "@/components/verticalpane/ListActionHeader.vue";
+import { useToast } from "primevue/usetoast";
 
 export default {
   name: "CitationMenu",
@@ -43,6 +44,7 @@ export default {
     };
   },
   mounted() {
+    this.toast = useToast();
     this.citation_graphs_array = this.$store.state.citation_graph_dict;
     if (this.citation_graphs_array.length != 0) {
       this.graph_number = Math.max.apply(
@@ -126,6 +128,9 @@ export default {
             label: `Graph ${this.graph_number}`,
             graph: response.data,
           });
+          this.toast.add({ severity: 'success', detail: 'Citation graph created successfully.', life: 4000 });
+        } else {
+          this.toast.add({ severity: 'error', detail: 'Unable to create citation graph. Please try again later.', life: 4000 });
         }
         com.loading_state = false;
       });

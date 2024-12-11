@@ -25,7 +25,15 @@ export default {
       fontVariationSettings: {
         "ico-filled": '"FILL" 1, "wght" 700, "GRAD" 0, "opsz" 48', // set Material icon as filled
       },
-      boxShadow: { "curve-dark": "0 0.95rem 1.4rem -1.65rem #34343D", "curve-light": "0 0.95rem 1.4rem -1.65rem #ffffff" },
+      boxShadow: {
+        "curve-dark": "0 0.95rem 1.4rem -1.65rem #34343D",
+        "curve-light": "0 0.95rem 1.4rem -1.65rem #ffffff",
+      },
+      backgroundImage: {
+        "gradient-prime": "linear-gradient(45deg, rgba(185,45,212,1) 0%, rgba(40,207,186,1) 100%)",
+        "gradient-prime-reverse": "linear-gradient(45deg, rgba(40,207,186,1) 0%, rgba(185,45,212,1) 100%)",
+        "gradient-prime-opacity": "linear-gradient(45deg, rgba(185,45,212,0.1) 0%, rgba(40,207,186,0.1) 100%)",
+      },
     },
   },
   // eslint-disable-next-line no-undef

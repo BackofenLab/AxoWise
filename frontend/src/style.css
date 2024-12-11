@@ -1,10 +1,9 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* Start Updated Styles for PrimeVue */
-:root {
+:root:not(.p-dark) {
   --body-bg: #f3f3f3;
   --body-text-color: var(--p-surface-900);
   --card-border: 1px solid var(--border-color);
@@ -12,6 +11,14 @@
   --border-color: var(--p-surface-200);
   --text-color: var(--p-surface-700);
   --overlay-background: #ffffff;
+
+  /* #### Toast #### */
+  --p-toast-text-gap: 0;
+
+  /* Toast Info */
+  --p-toast-info-background: var(--p-blue-100);
+  --p-toast-summary-font-weight: 600;
+  --p-toast-info-detail-color: #334155;
 }
 
 :root[class="p-dark"] {
@@ -22,6 +29,28 @@
   --border-color: rgba(255, 255, 255, 0.1);
   --text-color: var(--p-surface-0);
   --overlay-background: var(--p-surface-900);
+
+  /* #### Start Toast #### */
+  --p-toast-blur: 0;
+  --p-toast-text-gap: 0;
+  --p-toast-summary-font-weight: 600;
+
+  /* Toast Success */
+  --p-toast-success-background: var(--p-green-50);
+  --p-toast-success-detail-color: #334155;
+
+  /* Toast Info */
+  --p-toast-info-background: var(--p-blue-100);
+  --p-toast-info-detail-color: #334155;
+
+  /* Toast Warn */
+  --p-toast-warn-background: var(--p-yellow-50);
+  --p-toast-warn-detail-color: #334155;
+
+  /* Toast danger */
+  --p-toast-error-background: var(--p-red-50);
+  --p-toast-error-detail-color: #334155;
+  /* #### End Toast #### */
 }
 
 body {
@@ -51,6 +80,17 @@ body {
     background-color: #334155;
     border-radius: 100px;
   }
+}
+
+.p-toast-message .p-toast-summary {
+  color: #0f172a;
+}
+.p-toast-message .p-toast-message-icon {
+  margin-top: 4px;
+}
+.p-toast-message .p-toast-close-button {
+  margin-top: 2px;
+  color: #334155;
 }
 
 .card {
@@ -90,7 +130,7 @@ body {
   background: linear-gradient(to bottom, rgba(45, 212, 191, 0) 0%, rgba(45, 212, 191, 0.3) 100%);
   z-index: -1;
 }
-.vc-sketch .vc-sketch-field .vc-input__label{
+.vc-sketch .vc-sketch-field .vc-input__label {
   color: var(--p-text-color);
   font-size: 14px;
 }

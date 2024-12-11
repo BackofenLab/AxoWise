@@ -103,152 +103,10 @@
   <Button label="Create subset" severity="secondary" size="small" fluid type="button" class="mt-4 !rounded-lg"
     @click="save_subset()">
   </Button>
-  
-  <!-- <div class="tool-item">
-    <div id="selection_highlight" class="window-menu selection">
-      <div id="selection_highlight_header" class="window-header">
-        <div class="headertext">
-          <span>graph parameter</span>
-          <img class="protein_close" src="@/assets/toolbar/cross.png" v-on:click="unactive_proteinlist()" />
-        </div>
-      </div>
-      <div class="selection_list">
-        <div class="window-label">degree value</div>
-        <div class="menu-items">
-          <div id="degree"></div>
-          <input type="number" v-bind:min="degree_boundary.min" v-bind:max="degree_boundary.max"
-            v-bind:step="degree_boundary.step" v-model="degree_boundary.minValue" v-on:change="searchSubset()"
-            v-on:input="
-              valueChanged('degree', [
-                degree_boundary.minValue,
-                degree_boundary.maxValue,
-              ])
-              " />
-          <span class="seperator">-</span>
-          <input type="number" v-bind:min="degree_boundary.min" v-bind:max="degree_boundary.max"
-            v-bind:step="degree_boundary.step" v-model="degree_boundary.maxValue" v-on:change="searchSubset()"
-            v-on:input="
-              valueChanged('degree', [
-                degree_boundary.minValue,
-                degree_boundary.maxValue,
-              ])
-              " />
-        </div>
-        <div class="window-label">betweenness centrality value</div>
-        <div class="menu-items">
-          <div id="betweenes"></div>
-          <input type="number" v-bind:min="bc_boundary.min" v-bind:max="bc_boundary.max" v-bind:step="bc_boundary.step"
-            v-model="bc_boundary.minValue" v-on:change="searchSubset()" v-on:input="
-              valueChanged('betweenes', [
-                bc_boundary.minValue,
-                bc_boundary.maxValue,
-              ])
-              " />
-          <span class="seperator">-</span>
-          <input type="number" v-bind:min="bc_boundary.min" v-bind:max="bc_boundary.max" v-bind:step="bc_boundary.step"
-            v-model="bc_boundary.maxValue" v-on:change="searchSubset()" v-on:input="
-              valueChanged('betweenes', [
-                bc_boundary.minValue,
-                bc_boundary.maxValue,
-              ])
-              " />
-        </div>
-        <div v-if="mode == 'term'">
-          <div class="window-label">padj value (log10)</div>
-          <div class="menu-items">
-            <div id="padj"></div>
-            <input type="number" v-bind:min="padj_boundary.min" v-bind:max="padj_boundary.max"
-              v-bind:step="padj_boundary.step" v-model="padj_boundary.minValue" v-on:change="searchSubset()" v-on:input="
-                valueChanged('padj', [
-                  padj_boundary.minValue,
-                  padj_boundary.maxValue,
-                ])
-                " />
-            <span class="seperator">-</span>
-            <input type="number" v-bind:min="padj_boundary.min" v-bind:max="padj_boundary.max"
-              v-bind:step="padj_boundary.step" v-model="padj_boundary.maxValue" v-on:change="searchSubset()" v-on:input="
-                valueChanged('padj', [
-                  padj_boundary.minValue,
-                  padj_boundary.maxValue,
-                ])
-                " />
-          </div>
-        </div>
-        <div class="window-label">pagerank value (log10)</div>
-        <div class="menu-items">
-          <div id="pagerank"></div>
-          <input type="number" v-bind:min="pr_boundary.min" v-bind:max="pr_boundary.max" v-bind:step="pr_boundary.step"
-            v-model="pr_boundary.minValue" v-on:change="searchSubset()" v-on:input="
-              valueChanged('pagerank', [
-                pr_boundary.minValue,
-                pr_boundary.maxValue,
-              ])
-              " />
-          <span class="seperator">-</span>
-          <input type="number" v-bind:min="pr_boundary.min" v-bind:max="pr_boundary.max" v-bind:step="pr_boundary.step"
-            v-model="pr_boundary.maxValue" v-on:change="searchSubset()" v-on:input="
-              valueChanged('pagerank', [
-                pr_boundary.minValue,
-                pr_boundary.maxValue,
-              ])
-              " />
-        </div>
-      </div>
-      <div class="dcoloumn-window" v-if="mode != 'term' && mode != 'citation'">
-        <div class="coloumn-padding">
-          <div class="class-section" v-on:click="coloumnsCheck = !coloumnsCheck">
-            <span>coloumn section</span>
-            <img src="@/assets/pane/invisible.png" v-if="!coloumnsCheck" />
-            <img src="@/assets/pane/visible.png" v-if="coloumnsCheck" />
-          </div>
-          <span v-if="!dcoloumns" class="loading-text">no selectable dcoloumns</span>
-          <div v-if="dcoloumns" class="slider-section-scroll">
-            <div class="d-section-slider" v-show="coloumnsCheck" v-for="(entry, index) in dcoloumns" :key="index">
-              <div class="window-label">{{ entry }}</div>
-              <div class="menu-items">
-                <div class="checkbox-header">
-                  <input type="checkbox" :id="'deval-check-' + index" v-on:change="
-                    change_limits(
-                      'deval-slider-' + index,
-                      'deval-check-' + index,
-                      entry
-                    );
-                  searchSubset();
-                  " />
-                  <label for="edgeCheck"> inverse selection</label>
-                </div>
-                <div class="body-selection">
-                  <div :id="'deval-slider-' + index"></div>
-                  <input type="number" v-bind:min="dboundaries[entry].min" v-bind:max="dboundaries[entry].max"
-                    v-bind:step="dboundaries[entry].step" v-model="dboundaries[entry].minValue"
-                    v-on:change="searchSubset()" v-on:input="
-                      valueChanged('deval-slider-' + index, [
-                        dboundaries[entry].minValue,
-                        dboundaries[entry].maxValue,
-                      ])
-                      " />
-                  <span class="seperator">-</span>
-                  <input type="number" v-bind:min="dboundaries[entry].min" v-bind:max="dboundaries[entry].max"
-                    v-bind:step="dboundaries[entry].step" v-model="dboundaries[entry].maxValue"
-                    v-on:change="searchSubset()" v-on:input="
-                      valueChanged('deval-slider-' + index, [
-                        dboundaries[entry].minValue,
-                        dboundaries[entry].maxValue,
-                      ])
-                      " />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div> -->
 </template>
 
 <script>
-// import * as noUiSlider from "nouislider";
-// import "@/slider.css";
+import { useToast } from "primevue/usetoast";
 
 export default {
   name: "SelectionList",
@@ -256,8 +114,6 @@ export default {
   // emits: ["selection_active_changed"],
   data() {
     return {
-      // once: true,
-      // search_data: null,
       coloumnsCheck: false,
       degree_boundary: {
         minValue: 0,
@@ -284,7 +140,6 @@ export default {
       dcoloumns: this.$store.state.dcoloumns,
       dboundaries: {},
       nodeCheck: false,
-      // formatType: null,
       check: {},
     };
   },
@@ -297,19 +152,6 @@ export default {
     },
   },
   methods: {
-    // change_limits(slider_id, check_id, entry) {
-    //   let com = this;
-    //   let slider = document.getElementById(slider_id);
-    //   com.check[entry] = document.getElementById(check_id).checked;
-
-    //   com.check[entry]
-    //     ? slider.noUiSlider.set([0, 0])
-    //     : slider.noUiSlider.reset();
-
-    //   let currentBorder = slider.noUiSlider.get();
-    //   com.dboundaries[entry].minValue = currentBorder[0];
-    //   com.dboundaries[entry].maxValue = currentBorder[1];
-    // },
     change_limits(value, entry) {
       let com = this;
       com.check[entry] = value;
@@ -368,72 +210,8 @@ export default {
         actions: false,
         stats: null,
       });
+      this.toast.add({ severity: 'success', detail: 'Subset created successfully.', life: 4000 });
     },
-    // create_de() {
-    //   var com = this;
-    //   Object.entries(com.dcoloumns).forEach(([index, coloumn]) => {
-    //     var slider = document.getElementById("deval-slider-" + index);
-    //     noUiSlider.create(slider, {
-    //       start: [com.dboundaries[coloumn].min, com.dboundaries[coloumn].max],
-    //       connect: true,
-    //       range: {
-    //         min: com.dboundaries[coloumn].min,
-    //         max: com.dboundaries[coloumn].max,
-    //       },
-    //       step: 0.01,
-    //     });
-
-    //     slider.noUiSlider.on("slide", function (values, handle) {
-    //       com.dboundaries[coloumn][handle ? "maxValue" : "minValue"] =
-    //         values[handle];
-    //       com.searchSubset();
-    //     });
-    //   });
-    // },
-    // dragElement(elmnt) {
-    //   var pos1 = 0,
-    //     pos2 = 0,
-    //     pos3 = 0,
-    //     pos4 = 0;
-    //   if (document.getElementById(elmnt.id + "_header")) {
-    //     // if present, the header is where you move the DIV from:
-    //     document.getElementById(elmnt.id + "_header").onmousedown =
-    //       dragMouseDown;
-    //   } else {
-    //     // otherwise, move the DIV from anywhere inside the DIV:
-    //     elmnt.onmousedown = dragMouseDown;
-    //   }
-
-    //   function dragMouseDown(e) {
-    //     e = e || window.event;
-    //     e.preventDefault();
-    //     // get the mouse cursor position at startup:
-    //     pos3 = e.clientX;
-    //     pos4 = e.clientY;
-    //     document.onmouseup = closeDragElement;
-    //     // call a function whenever the cursor moves:
-    //     document.onmousemove = elementDrag;
-    //   }
-
-    //   function elementDrag(e) {
-    //     e = e || window.event;
-    //     e.preventDefault();
-    //     // calculate the new cursor position:
-    //     pos1 = pos3 - e.clientX;
-    //     pos2 = pos4 - e.clientY;
-    //     pos3 = e.clientX;
-    //     pos4 = e.clientY;
-    //     // set the element's new position:
-    //     elmnt.style.top = elmnt.offsetTop - pos2 + "px";
-    //     elmnt.style.left = elmnt.offsetLeft - pos1 + "px";
-    //   }
-
-    //   function closeDragElement() {
-    //     // stop moving when mouse button is released:
-    //     document.onmouseup = null;
-    //     document.onmousemove = null;
-    //   }
-    // },
     initialize_dg: function () {
       var com = this;
 
@@ -456,34 +234,6 @@ export default {
       com.degree_boundary["min"] = 0;
       com.degree_boundary["maxValue"] = maxDeg;
       com.degree_boundary["minValue"] = 0;
-      // var slider = document.getElementById("degree");
-      // if (!slider.noUiSlider) {
-      //   noUiSlider.create(slider, {
-      //     start: [0, maxDeg],
-      //     connect: true,
-      //     range: {
-      //       min: 0,
-      //       max: maxDeg,
-      //     },
-      //     format: this.formatType,
-      //     step: 1,
-      //   });
-
-      //   slider.noUiSlider.on("slide", function (values, handle) {
-      //     com.degree_boundary[handle ? "maxValue" : "minValue"] =
-      //       values[handle];
-      //     com.searchSubset();
-      //   });
-      // } else {
-      //   console.log(slider.noUiSlider);
-      //   slider.noUiSlider.updateOptions({
-      //     start: [0, maxDeg],
-      //     range: {
-      //       min: 0,
-      //       max: maxDeg,
-      //     },
-      //   });
-      // }
     },
     initialize_bc() {
       var com = this;
@@ -505,32 +255,6 @@ export default {
       com.bc_boundary["min"] = 0;
       com.bc_boundary["maxValue"] = maxDeg;
       com.bc_boundary["minValue"] = 0;
-      // var slider = document.getElementById("betweenes");
-
-      // if (!slider.noUiSlider) {
-      //   noUiSlider.create(slider, {
-      //     start: [0, maxDeg],
-      //     connect: true,
-      //     range: {
-      //       min: 0,
-      //       max: maxDeg,
-      //     },
-      //     format: this.formatType,
-      //     step: 1,
-      //   });
-
-      //   slider.noUiSlider.on("slide", function (values, handle) {
-      //     com.bc_boundary[handle ? "maxValue" : "minValue"] = values[handle];
-      //     com.searchSubset();
-      //   });
-      // } else {
-      //   slider.noUiSlider.updateOptions({
-      //     range: {
-      //       min: 0,
-      //       max: maxDeg,
-      //     },
-      //   });
-      // }
     },
     initialize_pagerank() {
       var com = this;
@@ -552,31 +276,6 @@ export default {
       com.pr_boundary["min"] = minDeg;
       com.pr_boundary["maxValue"] = 0;
       com.pr_boundary["minValue"] = minDeg;
-
-      // var slider = document.getElementById("pagerank");
-      // if (!slider.noUiSlider) {
-      //   noUiSlider.create(slider, {
-      //     start: [minDeg, 0],
-      //     connect: true,
-      //     range: {
-      //       min: minDeg,
-      //       max: 0,
-      //     },
-      //     step: 0.01,
-      //   });
-
-      //   slider.noUiSlider.on("slide", function (values, handle) {
-      //     com.pr_boundary[handle ? "maxValue" : "minValue"] = values[handle];
-      //     com.searchSubset();
-      //   });
-      // } else {
-      //   slider.noUiSlider.updateOptions({
-      //     range: {
-      //       min: minDeg,
-      //       max: 0,
-      //     },
-      //   });
-      // }
     },
     initialize_padj() {
       var com = this;
@@ -599,30 +298,6 @@ export default {
       com.padj_boundary["minValue"] = minDeg;
       com.pr_boundary["max"] = 0;
       com.pr_boundary["min"] = minDeg;
-      // var slider = document.getElementById("padj");
-      // if (!slider.noUiSlider) {
-      //   noUiSlider.create(slider, {
-      //     start: [minDeg, 0],
-      //     connect: true,
-      //     range: {
-      //       min: minDeg,
-      //       max: 0,
-      //     },
-      //     step: 0.01,
-      //   });
-
-      //   slider.noUiSlider.on("slide", function (values, handle) {
-      //     com.padj_boundary[handle ? "maxValue" : "minValue"] = values[handle];
-      //     com.searchSubset();
-      //   });
-      // } else {
-      //   slider.noUiSlider.updateOptions({
-      //     range: {
-      //       min: minDeg,
-      //       max: 0,
-      //     },
-      //   });
-      // }
     },
     searchSubset() {
       var com = this;
@@ -698,10 +373,6 @@ export default {
         mode: this.mode,
       });
     },
-    // unactive_proteinlist() {
-    //   this.$emit("selection_active_changed", false);
-    //   // if(this.active_subset) this.emitter.emit("searchSubset", {subset:this.search_data, mode:this.mode});
-    // },
     sliderChanged(values, obj) {
       var com = this;
       com[obj]["minValue"] =
@@ -718,17 +389,6 @@ export default {
         values[1];
       com.searchSubset();
     },
-    // valueChanged(id, value) {
-    //   var slider = document.getElementById(id);
-    //   slider.noUiSlider.set(value);
-    // },
-    // term_genes(list) {
-    //   var term_genes = new Set(list);
-    //   var termlist = this.data.nodes.filter((element) =>
-    //     term_genes.has(element.attributes["Name"])
-    //   );
-    //   return termlist;
-    // },
     initialize_all() {
       this.initialize_dg();
       this.initialize_bc();
@@ -740,17 +400,7 @@ export default {
     },
   },
   mounted() {
-    // this.formatType = {
-    //   from: function (value) {
-    //     return parseInt(value);
-    //   },
-    //   to: function (value) {
-    //     return parseInt(value);
-    //   },
-    // };
-
-    // this.dragElement(document.getElementById("selection_highlight"));
-
+    this.toast = useToast();
     this.initialize_all();
   },
   created() {
@@ -758,155 +408,3 @@ export default {
   },
 };
 </script>
-
-<!-- <style>
-.selection_list {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  padding-top: 3%;
-  border-radius: 0px 0px 5px 5px;
-  backdrop-filter: blur(7.5px);
-  overflow-y: scroll;
-  overflow-x: hidden;
-}
-
-.selection .menu-items {
-  display: flex;
-  margin: 0;
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 0.5vw;
-  justify-content: center;
-  background-clip: content-box;
-}
-
-.slider-section-scroll .menu-items {
-  display: grid;
-  grid-template-rows: 1fr 1fr;
-  margin: 0;
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 0.5vw;
-  justify-content: center;
-  background-clip: content-box;
-}
-
-/* Hide scrollbar for Chrome, Safari and Opera */
-.selection_list::-webkit-scrollbar,
-.slider-section-scroll::-webkit-scrollbar {
-  display: none;
-}
-
-.selection .window-label {
-  color: white;
-  white-space: nowrap;
-  overflow-x: hidden;
-  /* Hide overflow content */
-  text-overflow: ellipsis;
-  margin: 0 0.5vw 0 0.5vw;
-  width: auto;
-}
-
-.selection input[type="number"] {
-  width: 10%;
-  border: none;
-  font-family: "ABeeZee", sans-serif;
-  font-size: 0.5vw;
-  color: white;
-  background: none;
-  -moz-appearance: textfield;
-  -webkit-appearance: textfield;
-  appearance: textfield;
-  text-align: center;
-}
-
-.selection input[type="range"] {
-  appearance: none;
-  outline: none;
-  width: 10vw;
-  height: 0.3vw;
-  border-radius: 5px;
-  background-color: #ccc;
-}
-
-.selection input[type="range"]::-webkit-slider-thumb {
-  background: #fafafa;
-  appearance: none;
-  box-shadow: 1px 2px 26px 1px #bdbdbd;
-  width: 0.8vw;
-  height: 0.8vw;
-  border-radius: 50%;
-}
-
-.seperator {
-  font-size: 0.5vw;
-  margin: 0 0.1vw 0 0.1vw;
-  align-self: center;
-  justify-content: center;
-}
-
-.dcoloumn-window {
-  width: 100%;
-  height: 100%;
-  padding: 0.7vw;
-  overflow: hidden;
-}
-
-.class-section {
-  height: 1.2vw;
-  width: 100%;
-  display: flex;
-  font-size: 0.7vw;
-  background: #d9d9d9;
-}
-
-.class-section img {
-  width: 0.7vw;
-  position: absolute;
-  justify-content: center;
-  align-self: center;
-  right: 1.1vw;
-}
-
-.class-section span {
-  width: 100%;
-  align-self: center;
-  text-align-last: center;
-}
-
-.d-section-slider {
-  padding: 4% 5% 0 5%;
-}
-
-.noUi-target {
-  margin: 0.5vw 0.9vw 0.5vw 0;
-  width: 8.5vw;
-}
-
-.coloumn-padding {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  border: solid 0.01vw rgba(255, 255, 255, 0.3);
-}
-
-.slider-section-scroll {
-  height: 100%;
-  width: 100%;
-  overflow-y: scroll;
-}
-
-.body-selection {
-  padding-left: 0.5rem;
-  display: -webkit-flex;
-}
-
-.checkbox-header {
-  padding: 0.5rem 0 0 0.3rem;
-  font-size: 0.6vw;
-}
-
-.checkbox-header input[type="checkbox"] {
-  accent-color: green;
-}
-</style> -->
