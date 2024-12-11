@@ -56,6 +56,7 @@
 import SnapshotGraph from "@/components/enrichment/graph/SnapshotGraph.vue";
 import EmptyState from "@/components/verticalpane/EmptyState.vue";
 import { nextTick } from "vue";
+import { useToast } from "primevue/usetoast";
 
 export default {
   name: "PathwayGraphs",
@@ -79,6 +80,7 @@ export default {
     };
   },
   mounted() {
+    this.toast = useToast();
     if (this.mode != "term") {
       this.emitter.on("generateGraph", (set) => {
         this.get_term_data(set);
@@ -148,8 +150,11 @@ export default {
             label: `Graph ${this.graph_number}`,
             graph: response.data,
           });
-          com.$emit("loading_state_changed", false);
+          this.toast.add({ severity: 'success', detail: 'Enrichment graph created successfully.', life: 4000 });
+        } else {
+          this.toast.add({ severity: 'error', detail: 'Unable to create enrichment graph. Please try again later.', life: 4000 });
         }
+        com.$emit("loading_state_changed", false);
       });
     },
     switch_graph(entry) {

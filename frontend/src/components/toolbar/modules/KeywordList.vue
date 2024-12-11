@@ -23,12 +23,14 @@
     No available data
   </h6>
 
-  <Button v-if="filt_keyword.length !== 0" label="Create subset" severity="secondary" size="small" fluid type="button" class="mt-4 !rounded-lg"
-    @click="save_subset()">
+  <Button v-if="filt_keyword.length !== 0" label="Create subset" severity="secondary" size="small" fluid type="button"
+    class="mt-4 !rounded-lg" @click="save_subset()">
   </Button>
 </template>
 
 <script>
+import { useToast } from "primevue/usetoast";
+
 export default {
   name: "KeywordList",
   props: ["gephi_data", "mode"],
@@ -37,6 +39,9 @@ export default {
       search_raw: "",
       active_genes: new Set(),
     };
+  },
+  mounted() {
+    this.toast = useToast();
   },
   methods: {
     select_node(node) {
@@ -72,6 +77,7 @@ export default {
         actions: false,
         stats: null,
       });
+      this.toast.add({ severity: 'success', detail: 'Subset created successfully.', life: 4000 });
     },
   },
   computed: {

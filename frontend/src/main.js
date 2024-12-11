@@ -91,6 +91,7 @@ app.use(PrimeVue, {
     options: {
       prefix: "p",
       darkModeSelector: ".p-dark", // use "system" for auto selection from system
+      lightModeSelector: ".p-light",
       cssLayer: false,
     },
   },

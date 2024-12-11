@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import { useToast } from "primevue/usetoast";
 export default {
   name: "ProteinList",
   props: ["gephi_data", "mode"],
@@ -16,6 +17,9 @@ export default {
     return {
       raw_text: "",
     };
+  },
+  mounted() {
+    this.toast = useToast();
   },
   methods: {
     highlight(proteins) {
@@ -57,6 +61,7 @@ export default {
         actions: false,
         stats: null,
       });
+      this.toast.add({ severity: 'success', detail: 'Subset created successfully.', life: 4000 });
     },
   },
 };
