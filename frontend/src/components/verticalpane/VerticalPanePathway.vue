@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div id="vertical-pane">
     <SearchField :data="term_data" :mode="mode"></SearchField>
     <div class="upper-block">
@@ -73,4 +73,4 @@ export default {
 };
 </script>
 
-<style></style>
+<style></style> -->

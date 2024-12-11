@@ -1,5 +1,5 @@
 <template>
-  <Card class="w-[26rem] !rounded-none"
+  <Card class="w-[26rem] !rounded-none order-2"
     :pt="{ body: { class: 'h-full !py-3 !px-0' }, content: { class: 'h-full flex flex-col gap-4' } }">
     <template #content>
       <section :class="`flex relative overflow-hidden transition duration-300 ease-in-out ${containerA.length > 0 ? 'flex-[1_1_50%]' : ''
@@ -10,7 +10,8 @@
             <draggable id="paneContainer1" class="min-h-[32px] w-full flex cursor-move" v-model="containerA"
               item-key="id" group="shared" :sort="true" :move="checkMove" @end="onDragEnd">
               <template #item="{ element }">
-                <Tab class="!px-2.5 !py-1 rounded" :key="element.value" :value="element.value">
+                <Tab v-show="element.view?.includes(mode)" class="!px-2.5 !py-1 rounded" :key="element.value"
+                  :value="element.value">
                   {{ element.name }}
                 </Tab>
               </template>
@@ -24,7 +25,8 @@
           <!-- @active_term_changed="active_term = $event" @active_layer_changed="active_layer = $event" -->
           <TabPanelOption v-if="containerA.length > 0" v-model="active_tabA" :gephi_data="gephi_data"
             :active_decoloumn="active_decoloumn" :active_node="active_node" :active_termlayers="active_termlayers"
-            :active_background="active_background" :terms="terms" :api="api" :mode="mode" :await_load="await_load" />
+            :active_background="active_background" :terms="terms" :api="api" :mode="mode" :await_load="await_load"
+            :node_index="node_index" />
         </Tabs>
       </section>
 
@@ -35,7 +37,8 @@
             <draggable id="paneContainer2" class="min-h-[32px] w-full flex cursor-move" v-model="containerB"
               item-key="id" group="shared" :sort="true" :move="checkMove" @end="onDragEnd">
               <template #item="{ element }">
-                <Tab class="!px-2.5 !py-1 rounded" :key="element.value" :value="element.value">
+                <Tab v-show="element.view?.includes(mode)" class="!px-2.5 !py-1 rounded" :key="element.value"
+                  :value="element.value">
                   {{ element.name }}
                 </Tab>
               </template>
@@ -49,115 +52,12 @@
           <!-- @active_term_changed="active_term = $event" @active_layer_changed="active_layer = $event" -->
           <TabPanelOption v-if="containerB.length > 0" v-model="active_tabB" :gephi_data="gephi_data"
             :active_decoloumn="active_decoloumn" :active_node="active_node" :active_termlayers="active_termlayers"
-            :active_background="active_background" :terms="terms" :api="api" :mode="mode" :await_load="await_load" />
+            :active_background="active_background" :terms="terms" :api="api" :mode="mode" :await_load="await_load"
+            :node_index="node_index" />
         </Tabs>
       </section>
     </template>
   </Card>
-  <!-- <div id="vertical-pane">
-    <div class="upper-block">
-      <div class="tab-system">
-        <ul>
-          <li
-            class="tab"
-            :class="{ tabSelected: active_function_tab1 === 'set' }"
-            v-on:click="active_function_tab1 = 'set'"
-          >
-            <a href="#">subsets</a>
-          </li>
-          <li
-            class="tab"
-            :class="{ tabSelected: active_function_tab1 === 'layers' }"
-            v-on:click="active_function_tab1 = 'layers'"
-          >
-            <a href="#">path layers</a>
-          </li>
-          <li
-            class="tab"
-            v-if="dcoloumns"
-            :class="{ tabSelected: active_function_tab1 === 'difexp' }"
-            v-on:click="active_function_tab1 = 'difexp'"
-          >
-            <a href="#">dif exp</a>
-          </li>
-        </ul>
-      </div>
-      <PathwayMenu
-        v-show="active_function_tab1 == 'set'"
-        :gephi_data="gephi_data"
-        :sorted="'top'"
-        :mode="mode"
-        :active_function="active_function_tab1"
-        @active_term_changed="active_term = $event"
-        @active_layer_changed="active_layer = $event"
-      ></PathwayMenu>
-
-      <PathwayLayers
-        v-show="active_function_tab1 == 'layers'"
-        :active_termlayers="active_termlayers"
-        :gephi_data="gephi_data"
-      ></PathwayLayers>
-
-      <DifExpMenu
-        v-show="active_function_tab1 == 'difexp'"
-        :active_decoloumn="active_decoloumn"
-        :gephi_data="gephi_data"
-      ></DifExpMenu>
-    </div>
-    <div class="lower-block">
-      <div class="tab-system">
-        <ul>
-          <li
-            class="tab"
-            :class="{ tabSelected: active_function_tab2 === 'list' }"
-            v-on:click="active_function_tab2 = 'list'"
-          >
-            <a href="#">pathways</a>
-          </li>
-          <li
-            class="tab"
-            :class="{ tabSelected: active_function_tab2 === 'graph' }"
-            v-on:click="active_function_tab2 = 'graph'"
-          >
-            <a href="#">enrichment</a>
-          </li>
-          <li
-            class="tab"
-            :class="{ tabSelected: active_function_tab2 === 'heatmap' }"
-            v-on:click="active_function_tab2 = 'heatmap'"
-          >
-            <a href="#">heatmap</a>
-          </li>
-          <li
-            class="tab"
-            :class="{ tabSelected: active_function_tab2 === 'citation' }"
-            v-on:click="active_function_tab2 = 'citation'"
-          >
-            <a href="#">citation</a>
-          </li>
-        </ul>
-      </div>
-      <PathwayMenu
-        v-show="
-          active_function_tab2 === 'list' ||
-          active_function_tab2 === 'graph' ||
-          active_function_tab2 === 'heatmap'
-        "
-        :sorted="'bottom'"
-        :gephi_data="gephi_data"
-        :active_function="active_function_tab2"
-        @active_term_changed="active_term = $event"
-        @active_layer_changed="active_layer = $event"
-      ></PathwayMenu>
-      <CitationMenu
-        v-show="active_function_tab2 === 'citation'"
-        :sorted="'bottom'"
-        :active_function="active_function_tab2"
-        :active_node="active_node"
-        :active_background="active_background"
-      ></CitationMenu>
-    </div>
-  </div> -->
 </template>
 
 <script>
@@ -172,6 +72,7 @@ export default {
     "active_background",
     "active_termlayers",
     "active_decoloumn",
+    "node_index"
   ],
   components: { draggable },
   data() {
@@ -187,13 +88,17 @@ export default {
       active_tabA: 'list',
       active_tabB: 'set',
       containerA: [
-        { id: 1, name: "Pathways", value: "list" },
-        { id: 2, name: "Enrichment graph", value: "graph" },
-        { id: 3, name: "Citation graph", value: "citation" },
-        { id: 4, name: "Subsets", value: "set" },
-        { id: 5, name: "Path layers", value: "layers" },
-        { id: 6, name: "Heatmap", value: "heatmap" },
-        { id: 7, name: "Diff exp", value: "difexp" },
+        { id: 1, name: "Pathways", value: "list", view: ['protein'] },
+        { id: 2, name: "List", value: "tlist", view: ['term'] },
+        { id: 3, name: "List", value: "clist", view: ['citation'] },
+        { id: 4, name: "Enrichment graph", value: "graph", view: ['protein', 'term'] },
+        { id: 5, name: "Citation graph", value: "citation", view: ['protein'] },
+        { id: 6, name: "Subsets", value: "set", view: ['protein', 'term', 'citation'] },
+        { id: 7, name: "Path layers", value: "layers", view: ['protein'] },
+        { id: 8, name: "Heatmap", value: "heatmap", view: ['protein'] },
+        { id: 9, name: "Diff exp", value: "difexp", view: ['protein'] },
+        { id: 10, name: "Communities", value: "communities", view: ['citation'] },
+        { id: 11, name: "Summary", value: "summary", view: ['citation'] },
       ],
       containerB: [
       ],
@@ -206,11 +111,19 @@ export default {
   },
   mounted() {
     var com = this;
-    // FIXME: Need condition according to mode?
-    com.generatePathways(
-      com.gephi_data.nodes[0].species,
-      com.gephi_data.nodes.map((node) => node.attributes["Name"])
-    );
+    if (com.mode == "protein") {
+      com.generatePathways(
+        com.gephi_data.nodes[0].species,
+        com.gephi_data.nodes.map((node) => node.attributes["Name"])
+      );
+    }
+    // Change active tab based on view
+    if (com.mode == "term") {
+      com.active_tabA = 'tlist';
+    }
+    if (com.mode == "citation") {
+      com.active_tabA = 'clist';
+    }
   },
   methods: {
     onchangeTabA(val) {
@@ -288,61 +201,6 @@ export default {
           com.await_load = false;
         });
     },
-    // abort_enrichment() {
-    //   this.sourceToken.cancel("Request canceled");
-    //   this.await_load = false;
-    // },
-    // dragElement(elmnt, val) {
-    //   var pos1 = 0,
-    //     pos2 = 0,
-    //     pos3 = 0,
-    //     pos4 = 0;
-    //   if (document.getElementById(elmnt.id + "_header")) {
-    //     // if present, the header is where you move the DIV from:
-    //     document.getElementById(elmnt.id + "_header").onmousedown =
-    //       dragMouseDown;
-    //   } else {
-    //     // otherwise, move the DIV from anywhere inside the DIV:
-    //     elmnt.onmousedown = dragMouseDown;
-    //   }
-
-    //   function dragMouseDown(e) {
-    //     e = e || window.event;
-    //     e.preventDefault();
-    //     // get the mouse cursor position at startup:
-    //     pos3 = e.clientX;
-    //     pos4 = e.clientY;
-    //     document.onmouseup = closeDragElement;
-    //     // call a function whenever the cursor moves:
-    //     document.onmousemove = elementDrag;
-    //   }
-
-    //   function elementDrag(e) {
-    //     if (!val) return;
-    //     e = e || window.event;
-    //     e.preventDefault();
-    //     // calculate the new cursor position:
-    //     pos1 = pos3 - e.clientX;
-    //     pos2 = pos4 - e.clientY;
-    //     pos3 = e.clientX;
-    //     pos4 = e.clientY;
-    //     // set the element's new position:
-    //     elmnt.style.top = elmnt.offsetTop - pos2 + "px";
-    //     elmnt.style.left = elmnt.offsetLeft - pos1 + "px";
-    //   }
-
-    //   function closeDragElement() {
-    //     // stop moving when mouse button is released:
-    //     document.onmouseup = null;
-    //     document.onmousemove = null;
-    //   }
-    // },
-    // resetElement(elmnt) {
-    //   // set the element's new position:
-    //   elmnt.style.top = null;
-    //   elmnt.style.left = null;
-    //   document.getElementById(elmnt.id + "_header").onmousedown = null;
-    // },
   },
   created() {
     this.emitter.on("enrichTerms", (terms) => {
@@ -353,106 +211,3 @@ export default {
   },
 };
 </script>
-
-<!-- <style>
-#vertical-pane {
-  left: 1%;
-  top: 1.5%;
-  height: 100%;
-  width: 24vw;
-  padding: 0.5rem;
-  -webkit-backdrop-filter: blur(7.5px);
-  border: 1px solid #e0e0e0;
-  background-color: rgba(107, 107, 107, 0.5);
-  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  z-index: 9999;
-  resize: horizontal;
-}
-
-.upper-block {
-  height: 45%;
-  top: 0%;
-  position: relative;
-  overflow-y: hidden;
-  display: flex;
-  flex-direction: column;
-  border-style: solid;
-  border-width: 1px;
-  border-color: white;
-  margin-top: 2%;
-  overflow: hidden;
-}
-
-.lower-block {
-  margin-top: 2%;
-  height: 48%;
-  position: relative;
-  overflow-y: hidden;
-  display: flex;
-  flex-direction: column;
-  border-style: solid;
-  border-width: 1px;
-  border-color: white;
-}
-
-ul {
-  display: inline-block;
-  width: 100%;
-  list-style-type: none;
-}
-
-.tab-system a {
-  font-size: 0.8vw;
-  font-family: "ABeeZee", sans-serif;
-  text-decoration: none;
-  color: white;
-}
-
-.tab-system {
-  flex-direction: column;
-}
-
-.tab {
-  float: left;
-  display: flex;
-  height: 10%;
-  padding: 0 3% 1% 3%;
-  border-right: 0.1vw solid white;
-  overflow: hidden;
-}
-
-.tab,
-.tab a {
-  transition: all 0.25s;
-}
-
-.tab a {
-  display: inline-block;
-}
-
-.tab a:first-child {
-  padding: 1%;
-  white-space: nowrap;
-}
-
-.tab:hover {
-  background: rgba(222, 222, 222, 0.71);
-}
-
-.tabSelected {
-  position: relative;
-}
-.tabSelected:before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  width: 90%;
-  transform: translateX(-50%);
-  border-bottom: 0.15vw solid #e6eaf5;
-}
-</style> -->

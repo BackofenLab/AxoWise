@@ -1,5 +1,5 @@
 <template>
-  <div class="relative flex-1 overflow-hidden visualization">
+  <div class="relative flex-1 order-3 overflow-hidden visualization">
     <div id="sigma-heatmap" class="relative w-full h-full overflow-hidden" v-show="heatmap">
       <Button
         class="w-8 h-8 !absolute top-2 right-2"
