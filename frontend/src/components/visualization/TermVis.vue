@@ -1,5 +1,5 @@
 <template>
-  <div class="relative flex-1 overflow-hidden visualization">
+  <div class="relative flex-1 order-3 overflow-hidden visualization">
     <div
       id="sigma-canvas"
       class="sigma-parent"

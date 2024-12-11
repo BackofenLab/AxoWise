@@ -14,7 +14,7 @@
       @active_combine_changed="active_combine = $event" :gephi_data="gephi_data" :node_color_index="node_color_index">
     </PaneSystem>
   </keep-alive>
-  <main class="h-[calc(100vh-65px)] flex flex-1">
+  <main class="h-[calc(100vh-65px)] flex flex-1 overflow-hidden">
     <keep-alive>
       <MainToolBar :mode="mode" :gephi_data="gephi_data" :active_subset="active_subset" :active_term="active_term"
         :ensembl_name_index="ensembl_name_index" :widget="widget"></MainToolBar>

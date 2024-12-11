@@ -1,5 +1,6 @@
 <template>
-  <aside :class="`py-4 animate__animated animate__faster ${widget ? 'animate__fadeInDown' : 'w-0 animate__fadeOutUp'}`">
+  <aside
+    :class="`py-4 animate__animated animate__faster order-1 ${widget ? 'animate__fadeInDown' : 'w-0 animate__fadeOutUp'}`">
     <nav class="w-[64px] flex flex-col items-center gap-4 overflow-auto">
       <Button class="group" icon="material-symbols-rounded" text plain v-tooltip="'Home'" @click="switch_home">
         <span class="material-symbols-rounded group-hover:font-variation-ico-filled">home</span>
@@ -47,7 +48,8 @@
           class="material-symbols-rounded group-hover:font-variation-ico-filled">subtitles_off</span>
       </Button>
 
-      <Button v-if="mode != 'protein'" class="group" icon="material-symbols-rounded" text plain v-tooltip="'Switch graph'" @click="switch_graph">
+      <Button v-if="mode != 'protein'" class="group" icon="material-symbols-rounded" text plain
+        v-tooltip="'Switch graph'" @click="switch_graph">
         <span class="material-symbols-rounded group-hover:font-variation-ico-filled">logout</span>
       </Button>
     </nav>
@@ -145,6 +147,11 @@ export default {
     this.emitter.on("keyword_active_changed", (state) => {
       com.keyword_active = state;
     });
+  },
+  beforeUnmount() {
+    this.emitter.off("selection_active_changed");
+    this.emitter.off("protein_active_changed");
+    this.emitter.off("keyword_active_changed");
   },
   methods: {
     switch_home() {
