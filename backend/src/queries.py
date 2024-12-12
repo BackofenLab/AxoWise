@@ -267,6 +267,15 @@ def get_abstracts(driver, species, query: list) -> list:
         driver.close()
         return result
 
+def get_abstract(driver, pmid) -> list:
+    neo4j_query = f"""
+        MATCH(a:abstract) where a.PMID in {pmid}
+        RETURN a.PMID as PMID, a.abstract as abstract
+        """
+    with driver.session() as session:
+        result = session.run(neo4j_query).data()
+        driver.close()
+        return result
 
 def fetch_vector_embeddings(driver, pmids: list) -> list:
     stopwatch = Stopwatch()
@@ -276,6 +285,41 @@ def fetch_vector_embeddings(driver, pmids: list) -> list:
     """
     with driver.session() as session:
         result = session.run(neo4j_query).data()
-        driver.close()
         stopwatch.round("Fetching embeddings")
         return result
+
+def cosine_similiarity(driver, embedding, pmids, limit=6):
+    """Fetch top 6 abstracts based on cosine similarity"""
+    neo4j_query = f"""
+    match(a:abstract) where a.PMID in {pmids} with a, gds.similarity.cosine(a.abstractEmbedding, {embedding}) as similarity return a.abstract as abstract, a.PMID as PMID order by similarity desc limit {limit}
+    """
+    with driver.session() as session:
+        res = session.run(neo4j_query).data()
+        return res
+
+def neo4j_vector_search(driver, embedding, limit=6):
+    neo4j_query = f"""
+    CALL db.index.vector.queryNodes('articleAbstracts', {limit}, {embedding})
+    YIELD node AS abstract, score
+    RETURN abstract.abstract AS abstract, abstract.PMID AS PMID
+    """
+    with driver.session() as session:
+        res = session.run(neo4j_query).data()
+        return res
+
+def get_abstract_pmids(driver, species, query):
+    query = [i.upper() for i in query]
+    neo4j_query = f"""
+    MATCH (n:TG:{species})-[:REFERENCES]->(a:abstract) where n.SYMBOL in {query} return a.PMID as PMID
+    """
+    with driver.session() as session:
+        res = session.run(neo4j_query).data()
+        return res
+    
+def get_functional_term_proteins(driver, funct_term):
+    neo4j_query = f"""
+    MATCH (n:FT:Mus_Musculus) where n.Term in {funct_term} return n.Term as name, n.Symbols as symbols
+    """
+    with driver.session() as session:
+        res = session.run(neo4j_query).data()
+        return res

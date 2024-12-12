@@ -2,7 +2,6 @@ import re
 
 import ollama
 
-
 def make_prompt(message="", proteins=None, funct_terms=None, abstract=None):
     """
     Create a prompt for the chatbot.
@@ -39,7 +38,6 @@ def make_prompt(message="", proteins=None, funct_terms=None, abstract=None):
 
 def populate(data):
     pmids = []
-    pmid_abstract = {}
     protein_list = []
     funct_terms_list = []
     for item in data:
@@ -48,20 +46,12 @@ def populate(data):
         entries = [item["data"]] if item["type"] != "subset" else item["data"]
         if data_mode == "citation":
             pmids.extend([j["attributes"]["Name"] for j in entries])
-            pmid_abstract.update(
-                {
-                    j["attributes"]["Name"]: j["attributes"]["Abstract"].replace(
-                        "'", ""
-                    )
-                    for j in entries
-                }
-            )
         elif data_mode == "protein":
             if data_type == "term":
-                funct_terms_list.extend([j["name"] for j in entries])
+                funct_terms_list.extend([j["id"] for j in entries])
             else:
                 protein_list.extend([j["attributes"]["Name"] for j in entries])
-    return pmids, pmid_abstract, protein_list, funct_terms_list
+    return pmids, protein_list, funct_terms_list
 
 
 def chat(history, model="llama3.1"):
@@ -98,7 +88,7 @@ def clean_abstracts(input_list):
     return cleaned_abstracts
 
 
-def summarize(input_text, proteins, model="llama3.1"):
+def summarize(input_text, proteins=None, model="llama3.1"):
     """
     Summarize abstracts obtained by Graph_RAG.
 
@@ -112,12 +102,11 @@ def summarize(input_text, proteins, model="llama3.1"):
     raw_response = [
         ollama.generate(
             model,
-            f"""{i} create a summary of each one of the {len(i)} abstracts in 30 words into a list i.e format ['summary 1', .. , 'summary n']
-                dont say anything like here are the summaries or so, make sure it has the correct format for python and make sure to keep any
-                information regarding {proteins}
+            f"""{i} create a summary of each one of the {len(i)} abstracts in around 30 words. Seperate each summary by a newline.
+                Dont say anything like here are the summaries or so, make sure to keep any information regarding {proteins} 
+                if they are present. Always keep the pmid intact.
             """,
-        )["response"]
+        )["response"].replace("[", "").replace("]", "")
         for i in input_text
     ]
-    cleaned_response = clean_abstracts(raw_response)
-    return cleaned_response
+    return raw_response

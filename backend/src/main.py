@@ -22,6 +22,8 @@ from summarization.chat_bot import chat, make_prompt, populate
 from summarization.model import overall_summary
 from util.stopwatch import Stopwatch
 from werkzeug.middleware.proxy_fix import ProxyFix
+from agent import call_agent
+import asyncio
 
 app = Flask(__name__)
 history = []
@@ -152,30 +154,23 @@ def chatbot_response():
     message = request.form.get("message")
     data = json.loads(request.form.get("background"))
     stopwatch = Stopwatch()
-    driver = database.get_driver()
-    abstracts = None
     # Bring background data into usable format
-    pmids, pmid_abstract, protein_list, funct_terms_list = populate(data)
-    # If abstracts are selected, use vector search to filter for most relevant ones
-    if len(pmids) > 0:
-        pmids_embeddings = queries.fetch_vector_embeddings(driver=driver, pmids=pmids)
-        abstracts, pmids = summarization.get_most_relevant_abstracts(
-            message=message,
-            pmids_embeddings=pmids_embeddings,
-            pmid_abstract=pmid_abstract,
-            protein_list=protein_list,
-        )
-    message = make_prompt(
-        message=message,
-        funct_terms=funct_terms_list,
-        proteins=protein_list,
-        abstract=abstracts,
-    )
+    pmids, protein_list, funct_terms_list = populate(data)
+    message += f" PMIDS supplied are: {pmids}" if pmids else ""
+    message += f" Proteins supplied are: {protein_list}" if protein_list else ""
+    message += f" Functional terms supplied are: {funct_terms_list}" if funct_terms_list else ""
     history.append({"role": "user", "content": message})
-    answer = chat(history=history)
+    #answer = chat(history=history)
+    #answer = call_agent(query=message)
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    try:
+        answer = loop.run_until_complete(call_agent(query=message))
+    finally:
+        loop.close()
     stopwatch.round("Generating answer")
-    history.append(answer)
-    response = json.dumps({"message": answer["content"], "pmids": pmids})
+    pmids = [int(i) for i in pmids]
+    response = json.dumps({"message": answer, "pmids": pmids})
     return Response(response, mimetype="application/json")
 
 
