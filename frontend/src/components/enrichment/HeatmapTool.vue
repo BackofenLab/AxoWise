@@ -41,7 +41,7 @@ export default {
   },
   methods: {
     get_heatmap() {
-      if (this.favourite_pathways.length == 0) {
+      if (!this.favourite_pathways || this.favourite_pathways?.length == 0) {
         this.toast.add({ severity: 'error', detail: 'Please favorize pathways before generating heatmap.', life: 4000 });
         return;
       }

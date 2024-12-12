@@ -7,26 +7,51 @@
         <Tabs class="flex-1 w-full tab-active-grad" scrollable :value="active_tabA" @update:value="onchangeTabA">
           <TabList :class="`flex-shrink-0 ${dragged_to_container === 'paneContainer1' ? 'opacity-50' : ''}`"
             :pt="{ activeBar: 'tab-activebar-grad' }">
-            <draggable id="paneContainer1" class="min-h-[32px] w-full flex cursor-move" v-model="containerA"
-              item-key="id" group="shared" :sort="true" :move="checkMove" @end="onDragEnd">
-              <template #item="{ element }">
-                <Tab v-show="element.view?.includes(mode)" class="!px-2.5 !py-1 rounded" :key="element.value"
-                  :value="element.value">
-                  {{ element.name }}
-                </Tab>
-              </template>
-            </draggable>
+            <!-- <draggable id="paneContainer1" class="min-h-[32px] w-full flex cursor-move" v-model="containerA"
+              item-key="id" group="shared" :sort="true" :move="checkMove" @end="onDragEnd"> -->
+            <!-- <template #item="{ element }"> -->
+            <Tab v-for="(element) in containerA" v-show="element.view?.includes(mode)" class="!px-2.5 !py-1 rounded"
+              :key="element.value" :value="element.value">
+              {{ element.name }}
+            </Tab>
+            <!-- </template> -->
+            <!-- </draggable>  -->
 
-            <h6 v-if="containerA.length === 0"
+            <!-- <h6 v-if="containerA.length === 0"
               class="w-full h-full absolute top-0 left-0 flex items-center justify-center border border-dashed border-slate-400 rounded dark:bg-[#0F182A] bg-white text-slate-400 text-sm text-center">
               Drag and drop tabs
-            </h6>
+            </h6> -->
           </TabList>
           <!-- @active_term_changed="active_term = $event" @active_layer_changed="active_layer = $event" -->
-          <TabPanelOption v-if="containerA.length > 0" v-model="active_tabA" :gephi_data="gephi_data"
-            :active_decoloumn="active_decoloumn" :active_node="active_node" :active_termlayers="active_termlayers"
-            :active_background="active_background" :terms="terms" :api="api" :mode="mode" :await_load="await_load"
-            :node_index="node_index" />
+          <TabPanels class="h-[calc(100%-34px)] flex flex-col !p-0 !px-3 overflow-auto" v-if="containerA.length > 0">
+            <TabPanel class="flex-1" value="list" v-if="mode === 'protein'">
+              <PathwayList :gephi_data="gephi_data" :terms="terms" :await_load="await_load"
+                :favourite_pathways="favourite_pathways" @favourite_pathways_changed="favourite_pathways = $event"
+                @filtered_terms_changed="filtered_terms = $event"></PathwayList>
+            </TabPanel>
+
+            <TabPanel class="flex-1" value="graph" v-if="mode !== 'citation'">
+              <PathwayTools :gephi_data="gephi_data" :filtered_terms="filtered_terms"
+                :favourite_pathways="favourite_pathways" :mode="mode">
+              </PathwayTools>
+            </TabPanel>
+
+            <TabPanel class="flex-1" value="citation" v-if="mode === 'protein'">
+              <CitationMenu :active_node="active_node" :active_background="active_background"></CitationMenu>
+            </TabPanel>
+
+            <TabPanel v-if="mode === 'term'" class="flex-1" value="tlist">
+              <PathwayGraphList :term_data="gephi_data" :mode="mode"></PathwayGraphList>
+            </TabPanel>
+
+            <TabPanel v-if="mode === 'citation'" class="flex-1" value="clist">
+              <CitationList :citation_data="gephi_data"></CitationList>
+            </TabPanel>
+
+            <TabPanel v-if="mode === 'citation'" class="flex-1" value="communities">
+              <CitationCommunities :citation_data="gephi_data" :await_community="await_community"></CitationCommunities>
+            </TabPanel>
+          </TabPanels>
         </Tabs>
       </section>
 
@@ -34,26 +59,47 @@
         }`">
         <Tabs class="flex-1 w-full tab-active-grad" scrollable :value="active_tabB" @update:value="onchangeTabB">
           <TabList :class="`flex-shrink-0 ${dragged_to_container === 'paneContainer2' ? 'opacity-50' : ''}`">
-            <draggable id="paneContainer2" class="min-h-[32px] w-full flex cursor-move" v-model="containerB"
-              item-key="id" group="shared" :sort="true" :move="checkMove" @end="onDragEnd">
-              <template #item="{ element }">
-                <Tab v-show="element.view?.includes(mode)" class="!px-2.5 !py-1 rounded" :key="element.value"
-                  :value="element.value">
-                  {{ element.name }}
-                </Tab>
-              </template>
-            </draggable>
+            <!-- <draggable id="paneContainer2" class="min-h-[32px] w-full flex cursor-move" v-model="containerB"
+              item-key="id" group="shared" :sort="true" :move="checkMove" @end="onDragEnd"> -->
+            <!-- <template #item="{ element }"> -->
+            <Tab v-for="(element) in containerB" v-show="element.view?.includes(mode)" class="!px-2.5 !py-1 rounded"
+              :key="element.value" :value="element.value">
+              {{ element.name }}
+            </Tab>
+            <!-- </template> -->
+            <!-- </draggable> -->
 
-            <h6 v-if="containerB.length === 0"
+            <!-- <h6 v-if="containerB.length === 0"
               class="w-full h-full absolute top-0 left-0 flex items-center justify-center border border-dashed border-slate-400 rounded dark:bg-[#0F182A] bg-white text-slate-400 text-sm text-center">
               Drag and drop tabs
-            </h6>
+            </h6> -->
           </TabList>
           <!-- @active_term_changed="active_term = $event" @active_layer_changed="active_layer = $event" -->
-          <TabPanelOption v-if="containerB.length > 0" v-model="active_tabB" :gephi_data="gephi_data"
-            :active_decoloumn="active_decoloumn" :active_node="active_node" :active_termlayers="active_termlayers"
-            :active_background="active_background" :terms="terms" :api="api" :mode="mode" :await_load="await_load"
-            :node_index="node_index" />
+
+          <TabPanels class="h-[calc(100%-34px)] flex flex-col !p-0 !px-3 overflow-auto" v-if="containerB.length > 0">
+            <TabPanel class="flex-1" value="set">
+              <PathwaySet :gephi_data="gephi_data" :api="api" :mode="mode"></PathwaySet>
+            </TabPanel>
+
+            <TabPanel class="flex-1" value="layers" v-if="mode === 'protein'">
+              <PathwayLayers :active_termlayers="active_termlayers" :gephi_data="gephi_data" />
+            </TabPanel>
+
+            <TabPanel class="flex-1" value="heatmap" v-if="mode === 'protein'">
+              <HeatmapTool :mode="mode" :gephi_data="gephi_data" :filtered_terms="filtered_terms"
+                :favourite_pathways="favourite_pathways">
+              </HeatmapTool>
+            </TabPanel>
+
+            <TabPanel class="flex-1" value="difexp" v-if="dcoloumns && mode === 'protein'">
+              <DifExpMenu :active_decoloumn="active_decoloumn" :gephi_data="gephi_data" />
+            </TabPanel>
+
+            <TabPanel v-if="mode === 'citation'" class="flex-1" value="summary">
+              <CitationSummary :citation_data="gephi_data" :node_index="node_index" :await_community="await_community"
+                @await_community_changed="await_community = $event"></CitationSummary>
+            </TabPanel>
+          </TabPanels>
         </Tabs>
       </section>
     </template>
@@ -61,8 +107,7 @@
 </template>
 
 <script>
-import draggable from "vuedraggable";
-
+// import draggable from "vuedraggable";
 export default {
   name: "VerticalPane",
   props: [
@@ -74,9 +119,12 @@ export default {
     "active_decoloumn",
     "node_index"
   ],
-  components: { draggable },
+  // components: { draggable },
   data() {
     return {
+      favourite_pathways: [],
+      filtered_terms: [],
+      await_community: false,
       dcoloumns: this.$store.state.dcoloumns,
       api: {
         subgraph: "api/subgraph/enrichment",
@@ -89,24 +137,30 @@ export default {
       active_tabB: 'set',
       containerA: [
         { id: 1, name: "Pathways", value: "list", view: ['protein'] },
-        { id: 2, name: "List", value: "tlist", view: ['term'] },
-        { id: 3, name: "List", value: "clist", view: ['citation'] },
         { id: 4, name: "Enrichment graph", value: "graph", view: ['protein', 'term'] },
         { id: 5, name: "Citation graph", value: "citation", view: ['protein'] },
+        { id: 2, name: "List", value: "tlist", view: ['term'] },
+        { id: 3, name: "List", value: "clist", view: ['citation'] },
+        { id: 10, name: "Communities", value: "communities", view: ['citation'] },
+      ],
+      containerB: [
         { id: 6, name: "Subsets", value: "set", view: ['protein', 'term', 'citation'] },
         { id: 7, name: "Path layers", value: "layers", view: ['protein'] },
         { id: 8, name: "Heatmap", value: "heatmap", view: ['protein'] },
         { id: 9, name: "Diff exp", value: "difexp", view: ['protein'] },
-        { id: 10, name: "Communities", value: "communities", view: ['citation'] },
         { id: 11, name: "Summary", value: "summary", view: ['citation'] },
-      ],
-      containerB: [
       ],
     };
   },
   watch: {
     dcoloumns() {
-      // FIXME: remove diffexp based on dcoloumns()
+      // FIXME: remove diffexp tab based on dcoloumns()
+    },
+    favourite_pathways: {
+      handler(newList) {
+        this.emitter.emit("updateFavouriteList", newList);
+      },
+      deep: true,
     },
   },
   mounted() {
