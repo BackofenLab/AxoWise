@@ -91,7 +91,6 @@ class ReActAgent(Workflow):
         response = await self.llm.achat(chat_history)
         try:
             reasoning_step = self.output_parser.parse(response.message.content)
-            print(reasoning_step)
             (await ctx.get("current_reasoning", default=[])).append(
                 reasoning_step
             )
@@ -152,7 +151,20 @@ class ReActAgent(Workflow):
 
             try:
                 tool_output = tool(**tool_call.tool_kwargs)
-                print(tool_output)
+                if tool.metadata.return_direct:
+                    self.sources.append(tool_output)
+                    self.memory.put(
+                    ChatMessage(
+                        role="assistant", content=tool_output.content
+                    )
+                    )
+                    return StopEvent(
+                        result={
+                            "response": tool_output.content,
+                            "sources": [*self.sources],
+                            "reasoning": await ctx.get("current_reasoning", default=[]),
+                        }
+                    )
                 self.sources.append(tool_output)
                 (await ctx.get("current_reasoning", default=[])).append(
                     ObservationReasoningStep(observation=tool_output.content)

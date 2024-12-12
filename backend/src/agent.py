@@ -25,8 +25,8 @@ def get_driver():
     return driver
 
 def vector_search_abstracts(question: str, pmids: list, protein: list = None):
-    """"Fetches protein abstracts, given a question. Not for functional terms. the first argument is the question, the second argument are the pmids to search through in format list of strings, 
-    the third argument are proteins if mentioned in the question (can be an empty list if no protein is mentioned in the question)."""
+    """"Given a question about genes or proteins, this tool will return the most relevant abstracts in a summarized format.
+    The format for this tool is query:str (the question), pmids:list (the list of given pmids), protein:list (the proteins mentioned in the question)"""
     if protein is None:
         protein = []
     driver = get_driver()
@@ -52,15 +52,9 @@ def fetch_proteins_from_functional_terms(funct_term:list):
         return ["No proteins found, is your query maybe better suited for another tool?"]
     return "\n".join(proteins)
 
-def summarize_abstracts(abstracts: list):
-    """Summarizes information extracted from provided abstracts. If only PMIDS are provided call fetch_abstracts first. The format for this tool is abstracts:list"""
-    prompt = f"{abstracts}. Summarize the information and keep all pmids"
-    response = ollama.generate(prompt=prompt, model="llama3.1")["response"]
-    return response
-
-def fetch_and_summarize_abstracts(pmids: list):
+def summarize_abstracts(pmids: list):
     """Fetches abstracts from provided pmids and summarizes the information. The format for this tool is pmids:list. where the pmids are just the ids eg. ["12345678", "12345679"]
-    not ["PMID 12345678", "PMID 12345679"]"""
+    not ["PMID 12345678", "PMID 12345679"]. Only use this tool if the user asks for a summary."""
     driver = get_driver()
     abstracts = get_abstract(driver=driver ,pmid=pmids,)
     abstracts = [f'PMID {i["PMID"]}: {i["abstract"]}' for i in abstracts]
@@ -69,10 +63,9 @@ def fetch_and_summarize_abstracts(pmids: list):
     return abstracts
 
 def setup():
-    fetch_protein_abstracts = FunctionTool.from_defaults(fn=fetch_and_summarize_abstracts, return_direct=True)
     summarize_abstract_information = FunctionTool.from_defaults(fn=vector_search_abstracts, return_direct=True)
     summarizer = FunctionTool.from_defaults(fn=summarize_abstracts, return_direct=True)
-    tools = [summarizer, fetch_protein_abstracts, summarize_abstract_information]
+    tools = [summarizer, summarize_abstract_information]
     agent = ReActAgent(tools=tools, llm=llm, timeout= 160)
     return agent
 
