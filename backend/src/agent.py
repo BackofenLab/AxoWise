@@ -52,6 +52,12 @@ def fetch_proteins_from_functional_terms(funct_term:list):
         return ["No proteins found, is your query maybe better suited for another tool?"]
     return "\n".join(proteins)
 
+'''def summarize_abstracts(abstracts: list):
+    """Summarizes information extracted from provided abstracts. If only PMIDS are provided call fetch_abstracts first. The format for this tool is abstracts:list"""
+    prompt = f"{abstracts}. Summarize the information and keep all pmids"
+    response = ollama.generate(prompt=prompt, model="llama3.1")["response"]
+    return response'''
+
 def summarize_abstracts(pmids: list):
     """Fetches abstracts from provided pmids and summarizes the information. The format for this tool is pmids:list. where the pmids are just the ids eg. ["12345678", "12345679"]
     not ["PMID 12345678", "PMID 12345679"]. Only use this tool if the user asks for a summary."""
@@ -62,14 +68,13 @@ def summarize_abstracts(pmids: list):
     abstracts = summarize(abstracts_chunked)
     return abstracts
 
-def setup():
+def setup_agent():
     summarize_abstract_information = FunctionTool.from_defaults(fn=vector_search_abstracts, return_direct=True)
     summarizer = FunctionTool.from_defaults(fn=summarize_abstracts, return_direct=True)
     tools = [summarizer, summarize_abstract_information]
     agent = ReActAgent(tools=tools, llm=llm, timeout= 160)
     return agent
 
-async def call_agent(query):
-    agent = setup()
+async def call_agent(agent, query):
     response = await agent.run(input=query)
     return response["response"]

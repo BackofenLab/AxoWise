@@ -22,7 +22,7 @@ from summarization.chat_bot import chat, make_prompt, populate
 from summarization.model import overall_summary
 from util.stopwatch import Stopwatch
 from werkzeug.middleware.proxy_fix import ProxyFix
-from agent import call_agent
+from agent import call_agent, setup_agent
 import asyncio
 
 app = Flask(__name__)
@@ -162,12 +162,16 @@ def chatbot_response():
     history.append({"role": "user", "content": message})
     #answer = chat(history=history)
     #answer = call_agent(query=message)
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
+    agent = setup_agent()
     try:
-        answer = loop.run_until_complete(call_agent(query=message))
-    finally:
-        loop.close()
+        loop = asyncio.get_event_loop()
+        if loop.is_closed():
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+    answer = loop.run_until_complete(call_agent(agent=agent, query=message))
     stopwatch.round("Generating answer")
     pmids = [int(i) for i in pmids]
     response = json.dumps({"message": answer, "pmids": pmids})
