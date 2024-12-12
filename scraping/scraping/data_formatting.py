@@ -23,7 +23,9 @@ def format_data():
         formated_data = []
         for value in new_data.values():
             formated_data.append(value)
-        with open(f"{file}_formatted.json","w") as f:
+        
+        output_file = file.rstrip('.json')
+        with open(f"{output_file}_formatted.json","w") as f:
             json.dump(formated_data, f, indent=4)
 
 if __name__ == "__main__":
