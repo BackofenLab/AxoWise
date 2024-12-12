@@ -52,21 +52,15 @@ def fetch_proteins_from_functional_terms(funct_term:list):
         return ["No proteins found, is your query maybe better suited for another tool?"]
     return "\n".join(proteins)
 
-'''def summarize_abstracts(abstracts: list):
-    """Summarizes information extracted from provided abstracts. If only PMIDS are provided call fetch_abstracts first. The format for this tool is abstracts:list"""
-    prompt = f"{abstracts}. Summarize the information and keep all pmids"
-    response = ollama.generate(prompt=prompt, model="llama3.1")["response"]
-    return response'''
-
 def summarize_abstracts(pmids: list):
-    """Fetches abstracts from provided pmids and summarizes the information. The format for this tool is pmids:list. where the pmids are just the ids eg. ["12345678", "12345679"]
-    not ["PMID 12345678", "PMID 12345679"]. Only use this tool if the user asks for a summary."""
+    """Only use this tool if the user asks for a summary. Fetches abstracts from provided pmids and summarizes the information. The format for this tool is pmids:list. where the pmids are just the ids eg. ["12345678", "12345679"]
+    not ["PMID 12345678", "PMID 12345679"]."""
     driver = get_driver()
     abstracts = get_abstract(driver=driver ,pmid=pmids,)
     abstracts = [f'PMID {i["PMID"]}: {i["abstract"]}' for i in abstracts]
     abstracts_chunked = [abstracts[i:i + 3] for i in range(0, len(abstracts), 3)]
     abstracts = summarize(abstracts_chunked)
-    return abstracts
+    return "\n".join(abstracts)
 
 def setup_agent():
     summarize_abstract_information = FunctionTool.from_defaults(fn=vector_search_abstracts, return_direct=True)
