@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div id="pathways-graphs">
     <div class="tool-section-term">
       <div
@@ -56,4 +56,4 @@ export default {
   z-index: 999;
   font-family: "ABeeZee", sans-serif;
 }
-</style>
+</style> -->

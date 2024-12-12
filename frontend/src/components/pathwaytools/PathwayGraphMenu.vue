@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div
     id="menu-tools"
     :class="{
@@ -93,4 +93,4 @@ export default {
 };
 </script>
 
-<style></style>
+<style></style> -->
