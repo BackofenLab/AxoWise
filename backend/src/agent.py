@@ -6,7 +6,6 @@ import neo4j
 from summarization.article_graph import generate_embedding
 from summarization.chat_bot import summarize
 from queries import get_functional_term_proteins, cosine_similiarity, neo4j_vector_search, get_abstract
-import ollama
 from ReactAgent import ReActAgent
 
 llm = Ollama(model="llama3.1")
@@ -26,7 +25,8 @@ def get_driver():
 
 def vector_search_abstracts(question: str, pmids: list, protein: list = None):
     """"Given a question about genes or proteins, this tool will return the most relevant abstracts in a summarized format.
-    The format for this tool is query:str (the question), pmids:list (the list of given pmids), protein:list (the proteins mentioned in the question)"""
+    The format for this tool is query:str (the question), pmids:list (the list of given pmids), protein:list (the proteins mentioned in the question)
+    Example: "What is the function of the gene TP53?", ["12345678", "12345679"], ["TP53"]"""
     if protein is None:
         protein = []
     driver = get_driver()
@@ -53,7 +53,7 @@ def fetch_proteins_from_functional_terms(funct_term:list):
     return "\n".join(proteins)
 
 def summarize_abstracts(pmids: list):
-    """Only use this tool if the user asks for a summary. Fetches abstracts from provided pmids and summarizes the information. The format for this tool is pmids:list. where the pmids are just the ids eg. ["12345678", "12345679"]
+    """Only use this tool if the user asks for a summary. Fetches abstracts from provided list of pmids and summarizes the information. The format for this tool is pmids:list. where the pmids are just the ids eg. ["12345678", "12345679"]
     not ["PMID 12345678", "PMID 12345679"]."""
     driver = get_driver()
     abstracts = get_abstract(driver=driver ,pmid=pmids,)

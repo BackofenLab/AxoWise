@@ -65,7 +65,6 @@ class ReActAgent(Workflow):
         user_input = ev.input
         user_msg = ChatMessage(role="user", content=user_input)
         self.memory.put(user_msg)
-        #print(f"User input: {user_msg}")
         # clear current reasoning
         await ctx.set("current_reasoning", [])
 
@@ -78,7 +77,6 @@ class ReActAgent(Workflow):
         # get chat history
         chat_history = self.memory.get()
         current_reasoning = await ctx.get("current_reasoning", default=[])
-        #print(current_reasoning)
         llm_input = self.formatter.format(
             self.tools, chat_history, current_reasoning=current_reasoning
         )
@@ -93,7 +91,6 @@ class ReActAgent(Workflow):
         response = await self.llm.achat(chat_history)
         try:
             reasoning_step = self.output_parser.parse(response.message.content)
-            print(reasoning_step)
             (await ctx.get("current_reasoning", default=[])).append(
                 reasoning_step
             )
