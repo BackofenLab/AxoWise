@@ -106,7 +106,7 @@
 <script>
 export default {
   name: "CitationCommunities",
-  props: ["active_node", "citation_data", "await_community"],
+  props: ["citation_data", "await_community"],
   data() {
     return {
       search_raw: "",
@@ -127,7 +127,7 @@ export default {
     },
     filt_communities() {
       var com = this;
-      var filtered = Object.values(com.citation_data.community_scores);
+      var filtered = Object.values(com.citation_data?.community_scores || {});
 
       if (com.search_raw !== "") {
         // If search term is not empty, filter by search term
