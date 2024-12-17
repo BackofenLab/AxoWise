@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div id="vertical-pane">
     <SearchField :data="citation_data" :mode="mode"></SearchField>
     <div class="upper-block">
@@ -27,13 +27,13 @@
           </li>
         </ul>
       </div>
-      <!-- <PathwayMenu
+      <PathwayMenu
         v-show="active_function_tab1 == 'set'"
         :gephi_data="citation_data"
         :mode="mode"
         :sorted="'top'"
         :active_function="active_function_tab1"
-      ></PathwayMenu> -->
+      ></PathwayMenu>
       <CitationList
         v-show="active_function_tab1 === 'list'"
         :citation_data="citation_data"
@@ -73,8 +73,8 @@
 import CitationList from "@/components/citation/CitationList.vue";
 import CitationCommunities from "@/components/citation/CitationCommunities.vue";
 import CitationSummary from "@/components/citation/CitationSummary.vue";
-// import PathwayMenu from "@/components/enrichment/PathwayMenu.vue";
-import SearchField from "@/components/appbar/SearchField.vue";
+import PathwayMenu from "@/components/enrichment/PathwayMenu.vue";
+import SearchField from "@/components/interface/SearchField.vue";
 
 export default {
   name: "VerticalPaneCitation",
@@ -83,7 +83,7 @@ export default {
     CitationList,
     CitationSummary,
     CitationCommunities,
-    // PathwayMenu,
+    PathwayMenu,
     SearchField,
   },
   data() {
@@ -97,4 +97,4 @@ export default {
 };
 </script>
 
-<style></style>
+<style></style> -->
