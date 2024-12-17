@@ -1,30 +1,17 @@
 <template>
-  <div
-    id="genchatbot"
-    class="persistent-window"
-    v-show="showPersistentComponent"
-  >
+  <div id="genchatbot" class="persistent-window" v-show="showPersistentComponent && windowCheck">
     <div id="genchatbot_header" class="header">
       <h3>AxoBot</h3>
       <span class="close-btn" @click="closeWindow">×</span>
     </div>
 
     <div class="chat-history">
-      <div
-        v-for="(msg, index) in messages"
-        :key="index"
-        :class="[
-          'message',
-          msg.sender === 'User' ? 'user-message' : 'bot-message',
-        ]"
-      >
+      <div v-for="(msg, index) in messages" :key="index" :class="[
+        'message',
+        msg.sender === 'User' ? 'user-message' : 'bot-message',
+      ]">
         <div v-if="msg.data">
-          <span
-            v-for="(element, index) in msg.data"
-            :key="index"
-            class="small-tag"
-            @click="searchInput(element)"
-          >
+          <span v-for="(element, index) in msg.data" :key="index" class="small-tag" @click="searchInput(element)">
             {{ element.id }}
           </span>
         </div>
@@ -34,36 +21,40 @@
           </span>
         </div>
         <p>{{ msg.text }}</p>
-        <img
-          src="@/assets/pane/copy.png"
-          v-on:click="copyToClipboard(msg.text)"
-        />
+        <img src="@/assets/pane/copy.png" v-on:click="copyToClipboard(msg.text)" />
         <img src="@/assets/toolbar/word.png" v-on:click="addToWord(msg.text)" />
       </div>
     </div>
 
     <div class="chat-input-container">
       <!-- Editable div with contenteditable attribute -->
-      <div
-        ref="editableDiv"
-        id="input_chatbot"
-        contenteditable="true"
-        @keydown.enter.prevent="sendMessage"
-        class="input-box"
-      ></div>
+      <div ref="editableDiv" id="input_chatbot" contenteditable="true" @keydown.enter.prevent="sendMessage"
+        class="input-box"></div>
 
       <div class="tag-container" v-if="tags.length">
-        <span
-          v-for="(tag, index) in tags"
-          :key="index"
-          class="tag"
-          @click="searchInput(tag)"
-        >
+        <span v-for="(tag, index) in tags" :key="index" class="tag" @click="searchInput(tag)">
           {{ tag.id }}
           <span class="remove-tag" @click.stop="removeTag(index)">x</span>
         </span>
       </div>
     </div>
+  </div>
+
+  <div v-show="showPersistentComponent" class="absolute peer select-none z-[9] cursor-grab"
+    :style="{ top: `650px`, right: `60px` }">
+    <Button type="button" severity="primary" rounded
+      :class="`group/chat !w-16 !h-16 relative !border-2 !border-primary-200 !text-[#d3e4ff] hover:!text-white transition-all duration-500 z-[1]`"
+      @click="windowCheck = !windowCheck">
+      <img src="@/assets/logo.png" />
+      <!-- <img
+        class="transition-all duration-300 ease-out translate-x-0 opacity-100 group-hover/chat:-translate-x-10 group-hover/chat:opacity-0"
+        src="@/assets/logo.png" />
+      <img
+        class="absolute transition-all duration-300 ease-in translate-x-10 opacity-0 group-hover/chat:translate-x-0 group-hover/chat:opacity-100"
+        src="@/assets/logo.png" /> -->
+      <span
+        class="w-full h-full absolute top-0 left-0 bg-gradient-prime rounded-full transition-all duration-500 group-hover/chat:rotate-180 z-[-1]"></span>
+    </Button>
   </div>
 </template>
 
@@ -86,7 +77,6 @@ export default {
     showPersistentComponent() {
       let route = this.$route.name;
       return (
-        this.windowCheck &&
         route !== "home" &&
         route !== "input" &&
         route !== "file" &&
@@ -96,7 +86,7 @@ export default {
   },
   mounted() {
     let com = this;
-    com.dragElement(document.getElementById("genchatbot"));
+    // com.dragElement(document.getElementById("genchatbot"));
 
     com.emitter.on("openChatbot", () => {
       com.windowCheck = !com.windowCheck;
@@ -342,9 +332,12 @@ export default {
   margin-bottom: 10px;
   border-radius: 8px;
   max-width: 80%;
-  word-wrap: break-word; /* Ensure long words or links wrap */
-  word-break: break-word; /* Break long words */
-  white-space: pre-wrap; /* Preserve formatting like newlines */
+  word-wrap: break-word;
+  /* Ensure long words or links wrap */
+  word-break: break-word;
+  /* Break long words */
+  white-space: pre-wrap;
+  /* Preserve formatting like newlines */
   line-height: 1.4;
   cursor: default;
 }
@@ -390,22 +383,32 @@ export default {
 
 .tag {
   display: inline-block;
-  background-color: #555; /* Darker background color */
-  color: #fff; /* White text for better contrast */
-  padding: 5px 8px; /* Smaller padding */
-  font-size: 14px; /* Smaller font size */
-  border-radius: 8px; /* Slightly smaller rounded corners */
+  background-color: #555;
+  /* Darker background color */
+  color: #fff;
+  /* White text for better contrast */
+  padding: 5px 8px;
+  /* Smaller padding */
+  font-size: 14px;
+  /* Smaller font size */
+  border-radius: 8px;
+  /* Slightly smaller rounded corners */
   margin: 0 5px 5px 0;
   cursor: pointer;
 }
 
 .small-tag {
   display: inline-block;
-  background-color: #555; /* Darker background color */
-  color: #fff; /* White text for better contrast */
-  padding: 3px 6px; /* Smaller padding */
-  font-size: 10px; /* Smaller font size */
-  border-radius: 8px; /* Slightly smaller rounded corners */
+  background-color: #555;
+  /* Darker background color */
+  color: #fff;
+  /* White text for better contrast */
+  padding: 3px 6px;
+  /* Smaller padding */
+  font-size: 10px;
+  /* Smaller font size */
+  border-radius: 8px;
+  /* Slightly smaller rounded corners */
   margin: 0 5px 5px 0;
   cursor: pointer;
 }
@@ -416,8 +419,10 @@ export default {
 
 .remove-tag {
   cursor: pointer;
-  color: rgb(175, 175, 175); /* Slightly darker red for remove button */
-  font-size: 12px; /* Smaller "x" size */
+  color: rgb(175, 175, 175);
+  /* Slightly darker red for remove button */
+  font-size: 12px;
+  /* Smaller "x" size */
 }
 
 .chat-history img {

@@ -1,95 +1,57 @@
 <template>
   <keep-alive>
-    <div class="citation-view">
-      <ExportScreen :mode="mode" :filter_views="filter_views"></ExportScreen>
-      <CitationVis
-        ref="CitationVis"
-        :active_node="active_node"
-        @active_node_changed="active_node = $event"
-        :active_fdr="active_fdr"
-        @active_fdr_changed="active_fdr = $event"
-        :active_subset="active_subset"
-        @active_subset_changed="active_subset = $event"
-        :active_layer="active_layer"
-        @active_layer_changed="active_layer = $event"
-        :subactive_subset="subactive_subset"
-        :citation_data="citation_data"
-        :active_combine="active_combine"
-        :centering_active="centering_active"
-        :node_color_index="node_color_index"
-        :edge_color_index="edge_color_index"
-        :node_size_index="node_size_index"
-        :node_modul_index="node_modul_index"
-        :unconnected_nodes="unconnected_nodes"
-      ></CitationVis>
-      <VerticalPaneCitation
-        :citation_data="citation_data"
-        :node_index="node_index"
-      ></VerticalPaneCitation>
-      <CitationToolBar
-        :data="citation_data"
-        :active_subset="active_subset"
-      ></CitationToolBar>
-      <NetworkValues :data="citation_data"></NetworkValues>
-      <div id="view" class="filter-section">
-        <div
-          id="pathway-filter"
-          class="pre-full"
-          v-on:click="handling_filter_menu()"
-          :class="{ full: view_filtering == true }"
-        >
-          <span>{{ view }}</span>
-        </div>
-        <div id="list-filter-categories" v-show="view_filtering == true">
-          <div
-            class="element"
-            v-for="entry in filter_views"
-            :key="entry"
-            v-on:click="swap_view(entry)"
-          >
-            <a>{{ entry + " view" }} </a>
-          </div>
-        </div>
-      </div>
-      <CitationPaneSystem
-        :gephi_data="citation_data"
-        :active_node="active_node"
-        @active_node_changed="active_node = $event"
-        :active_subset="active_subset"
-        @active_subset_changed="active_subset = $event"
-        @active_layer_changed="active_layer = $event"
-        @active_combine_changed="active_combine = $event"
-        :node_color_index="node_color_index"
-      ></CitationPaneSystem>
-      <CitationPane
-        :active_node="active_node"
-        @active_node_changed="active_node = $event"
-        :active_subset="active_subset"
-        @active_subset_changed="active_subset = $event"
-      ></CitationPane>
-    </div>
+    <AppBar :gephi_data="citation_data" :filter_views="filter_views" :mode="mode" @widget_toggled="widget = $event"
+      :widget="widget" :view="view">
+    </AppBar>
   </keep-alive>
+  <keep-alive>
+    <CitationPane :active_node="active_node" @active_node_changed="active_node = $event" :active_subset="active_subset"
+      @active_subset_changed="active_subset = $event"></CitationPane>
+  </keep-alive>
+  <keep-alive>
+    <CitationPaneSystem :gephi_data="citation_data" :active_node="active_node"
+      @active_node_changed="active_node = $event" :active_subset="active_subset"
+      @active_subset_changed="active_subset = $event" @active_layer_changed="active_layer = $event"
+      @active_combine_changed="active_combine = $event" :node_color_index="node_color_index"></CitationPaneSystem>
+  </keep-alive>
+  <main class="h-[calc(100vh-65px)] flex flex-1">
+    <keep-alive>
+      <MainToolBar :mode="mode" :gephi_data="citation_data" :active_subset="active_subset" :active_term="null"
+        :ensembl_name_index="null" :widget="widget"></MainToolBar>
+    </keep-alive>
+    <keep-alive>
+      <VerticalPane :mode="mode" :gephi_data="citation_data" :active_node="null" :active_background="null"
+        :active_termlayers="null" :active_decoloumn="null" :node_index="node_index"></VerticalPane>
+    </keep-alive>
+    <keep-alive>
+      <CitationVis ref="CitationVis" :active_node="active_node" @active_node_changed="active_node = $event"
+        :active_fdr="active_fdr" @active_fdr_changed="active_fdr = $event" :active_subset="active_subset"
+        @active_subset_changed="active_subset = $event" :active_layer="active_layer"
+        @active_layer_changed="active_layer = $event" :subactive_subset="subactive_subset"
+        :citation_data="citation_data" :active_combine="active_combine" :centering_active="centering_active"
+        :node_color_index="node_color_index" :edge_color_index="edge_color_index" :node_size_index="node_size_index"
+        :node_modul_index="node_modul_index" :unconnected_nodes="unconnected_nodes"></CitationVis>
+    </keep-alive>
+  </main>
 </template>
 
 <script>
+import AppBar from "@/layout/AppBar.vue";
+import MainToolBar from "@/layout/MainToolBar.vue";
+import VerticalPane from "@/layout/VerticalPane.vue";
 import CitationVis from "@/components/visualization/CitationVis.vue";
 import CitationPaneSystem from "@/components/pane/CitationPaneSystem.vue";
 import CitationPane from "@/components/citation/CitationPane.vue";
-import NetworkValues from "../components/appbar/NetworkValues.vue";
-import CitationToolBar from "../components/toolbar/CitationToolBar.vue";
-import VerticalPaneCitation from "@/components/verticalpane/VerticalPaneCitation.vue";
-import ExportScreen from "@/components/toolbar/modules/ExportScreen.vue";
 
 export default {
   name: "CitationView",
   components: {
+    AppBar,
+    MainToolBar,
+    VerticalPane,
     CitationVis,
-    NetworkValues,
     CitationPane,
-    CitationToolBar,
     CitationPaneSystem,
-    VerticalPaneCitation,
-    ExportScreen,
   },
   data() {
     return {
@@ -107,7 +69,8 @@ export default {
       centering_active: null,
       unconnected_nodes: null,
       view: "citation view",
-      view_filtering: false,
+      widget: true,
+      mode: "citation",
       filter_views: ["term", "protein"],
     };
   },
@@ -233,67 +196,7 @@ export default {
         }
         this.$store.commit("assign_active_enrichment_node", null);
       }
-    },
-    handling_filter_menu() {
-      var com = this;
-      if (!com.view_filtering) {
-        com.view_filtering = true;
-
-        // Add the event listener
-        document.addEventListener("mouseup", com.handleMouseUp);
-      } else {
-        com.view_filtering = false;
-        document.removeEventListener("mouseup", com.handleMouseUp);
-      }
-    },
-    handleMouseUp(e) {
-      var com = this;
-
-      var container = document.getElementById("list-filter-categories");
-      var container_button = document.getElementById("pathway-filter");
-      if (
-        !container.contains(e.target) &&
-        !container_button.contains(e.target)
-      ) {
-        com.view_filtering = false;
-
-        // Remove the event listener
-        document.removeEventListener("mouseup", com.handleMouseUp);
-      }
-    },
-    swap_view(entry) {
-      if (entry == "term") {
-        this.$store.state.term_graph_data
-          ? this.$router.push("term")
-          : alert(
-              "Please generate first a term graph via the enrichment section on protein view."
-            );
-      }
-      if (entry == "protein") {
-        this.$router.push("protein");
-      }
-    },
+    }
   },
 };
 </script>
-
-<style>
-.citation-view {
-  background-color: #1b1613;
-  display: flex;
-}
-
-.citation-view .colortype {
-  background: #1b1613;
-}
-
-.view-label {
-  position: fixed;
-  top: 0;
-  right: 0;
-  margin: 1rem;
-  color: rgba(255, 255, 255, 0.522);
-  font-size: 1rem;
-  z-index: 9999;
-}
-</style>
