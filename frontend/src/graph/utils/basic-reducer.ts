@@ -1,8 +1,9 @@
+import { color } from "d3";
 import Graph from "graphology";
 
 // basic-reducer.ts
 interface Node {
-    id: string; 
+    id: string;
   }
 
 interface Edge {
@@ -20,6 +21,7 @@ interface Edge {
     clickedNeighbors: Set<String>;
     hoveredNode?: String | null;
     hoveredNeighbors?: Set<String> | null;
+    clickedEnrichment?: Set<String> | null;
   }
   
   export const nodeReducer = (node: String, data: Data, state: State): Data => {
@@ -29,13 +31,21 @@ interface Edge {
       res.highlighted = state.clickedNode === node;
       if (!res.highlighted && !state.clickedNeighbors.has(node)) {
         res.label = "";
-        res.color = "rgb(100,100,100)";
+        res.color = "rgb(60,60,120)";
       }
     } 
     if (!state.clickedNode && state.hoveredNeighbors && !state.hoveredNeighbors.has(node) && state.hoveredNode !== node) {
       res.label = "";
-      res.color = "rgb(100,100,100)";
+      res.color = "rgb(60,60,120)";
     }
+
+    if (state.clickedEnrichment) {
+      if (!state.clickedEnrichment.has(res.label)) {
+        res.color = "rgb(60,60,120)";
+      }else{
+        res.color = "rgb(255,255,255)";
+      }
+    } 
   
     return res;
   };

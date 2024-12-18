@@ -135,4 +135,24 @@ export const generateCluster = (context: string, renderer: Sigma, graph: Graph) 
       }
     }
   });
+
+  /*
+  Attach mouse listener onto cluster layer to track if mouse position isin circle of respective cluster when click.
+  */
+  container.addEventListener("mousedown", (event: MouseEvent) => {
+    
+    const mouseX = event.offsetX;
+    const mouseY = event.offsetY;
+    
+
+    for (const cluster of clustersData) {
+      const dx = mouseX - cluster.x;
+      const dy = mouseY - cluster.y;
+      const distance = Math.sqrt(dx*dx + dy*dy);
+
+      if (distance <= (cluster.r)) {
+        return cluster
+      }
+    }
+  });
 };

@@ -8,13 +8,15 @@ import vSelect from "vue-select";
 import axios from "axios";
 import VueAxios from "vue-axios";
 import { store } from "./store";
+import { createPinia } from 'pinia'
 
 // Create a reactive object to serve as the EventBus
 const emitter = mitt();
-
+const pinia = createPinia()
 const app = createApp(App);
 app.use(router);
 app.use(store);
+app.use(pinia);
 app.use(VueAxios, axios);
 app.component("v-select", vSelect);
 app.config.globalProperties.emitter = emitter;
