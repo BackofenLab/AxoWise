@@ -68,6 +68,7 @@ export default {
       node_index: null,
       centering_active: null,
       unconnected_nodes: null,
+      node_modul_index: null,
       view: "citation view",
       widget: true,
       mode: "citation",

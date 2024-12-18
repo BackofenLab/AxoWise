@@ -60,7 +60,7 @@ import { nextTick } from "vue";
 export default {
   name: "CitationGraphs",
   props: ["citation_graphs", "favourite_graphs", "bookmark_off", "mode"],
-  emits: ["favourite_graph_changed"],
+  emits: ["favourite_graphs_changed", "loading_state_changed"],
   components: {
     SnapshotCitation,
     EmptyState

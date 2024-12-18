@@ -11,12 +11,6 @@
       >
         <span class="text-2xl material-symbols-rounded"> close </span>
       </Button>
-      <!-- <img
-        class="twoview"
-        v-on:click="two_view"
-        src="@/assets/pathwaybar/cross.png"
-        alt="Center Icon"
-      /> -->
       <div id="heatdemo"></div>
     </div>
     <div id="d3tooltip" class="absolute p-3 rounded-lg bg-[var(--card-bg)] bg-opacity-75 backdrop-blur-sm">
