@@ -7,7 +7,7 @@
       ? 'border-primary-600 !bg-primary-600/25'
       : 'dark:!bg-slate-300/25 !bg-slate-300/10 border-transparent'
       }`" :key="index" :pt="{
-        header: { class: 'h-26 relative rounded-md mt-[6px] mx-[6px] overflow-hidden' },
+        header: { class: 'h-[138px] relative rounded-md mt-[6px] mx-[6px] overflow-hidden' },
         body: { class: '!p-0 !gap-0' },
         footer: { class: 'flex gap-2 px-2 pb-2' },
         title: { class: 'relative' },
