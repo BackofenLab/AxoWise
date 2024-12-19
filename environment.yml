@@ -27,3 +27,5 @@ dependencies:
     - torch
     - ollama
     - langchain-ollama
+    - llama-index
+    - llama-index-llms-ollama
