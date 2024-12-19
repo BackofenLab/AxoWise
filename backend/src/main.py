@@ -27,6 +27,8 @@ import asyncio
 
 app = Flask(__name__)
 history = []
+agent = setup_agent()
+
 # ====================== Index page ======================
 
 _SCRIPT_DIR = os.path.dirname(__file__)
@@ -160,9 +162,6 @@ def chatbot_response():
     message += f" Proteins supplied are: {protein_list}" if protein_list else ""
     message += f" Functional terms supplied are: {funct_terms_list}" if funct_terms_list else ""
     history.append({"role": "user", "content": message})
-    #answer = chat(history=history)
-    #answer = call_agent(query=message)
-    agent = setup_agent()
     try:
         loop = asyncio.get_event_loop()
         if loop.is_closed():

@@ -6,7 +6,7 @@ import neo4j
 from summarization.article_graph import generate_embedding
 from summarization.chat_bot import summarize
 from queries import get_functional_term_proteins, cosine_similiarity, neo4j_vector_search, get_abstract
-from ReactAgent import ReActAgent
+from llama_index.core.agent import ReActAgent
 
 llm = Ollama(model="llama3.1")
 
@@ -24,8 +24,10 @@ def get_driver():
     return driver
 
 def vector_search_abstracts(question: str, pmids: list, protein: list = None):
-    """"Given a question about genes or proteins, this tool will return the most relevant abstracts in a summarized format.
-    The format for this tool is query:str (the question), pmids:list (the list of given pmids), protein:list (the proteins mentioned in the question)
+    """"Given a question about genes or proteins, this tool will return the most relevant abstracts
+    in a summarized format.
+    The format for this tool is query:str (the question), pmids:list (the list of given pmids, only to be taken from the users input) can be empty,
+    protein:list (the proteins mentioned in the question)
     Example: "What is the function of the gene TP53?", ["12345678", "12345679"], ["TP53"]"""
     if protein is None:
         protein = []
@@ -63,12 +65,14 @@ def summarize_abstracts(pmids: list):
     return "\n".join(abstracts)
 
 def setup_agent():
+    with open("react_system_header.txt", "r", encoding="utf-8") as f:
+        react_system_header_str = f.read()
     summarize_abstract_information = FunctionTool.from_defaults(fn=vector_search_abstracts, return_direct=True)
-    summarizer = FunctionTool.from_defaults(fn=summarize_abstracts, return_direct=True)
+    summarizer = FunctionTool.from_defaults(fn=summarize_abstracts)
     tools = [summarizer, summarize_abstract_information]
-    agent = ReActAgent(tools=tools, llm=llm, timeout= 160)
+    agent = ReActAgent.from_tools(tools=tools, llm=llm, context = react_system_header_str, verbose=True)
     return agent
 
 async def call_agent(agent, query):
-    response = await agent.run(input=query)
-    return response["response"]
+    response = await agent.achat(query)
+    return response.response
