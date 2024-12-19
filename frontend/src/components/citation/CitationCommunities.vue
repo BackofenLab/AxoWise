@@ -1,109 +1,106 @@
 <template>
-  <div id="citation-tools" class="pathways">
-    <div class="pathwaybar">
-      <div id="citation-list">
-        <div class="tool-section-term">
-          <div class="citation-search">
-            <img
-              class="pathway-search-icon"
-              src="@/assets/toolbar/search.png"
-            />
-            <input
-              type="text"
-              v-model="search_raw"
-              class="empty"
-              placeholder="search abstracts"
-            />
-          </div>
-          <button class="community-citation" v-on:click="top_nodes(5)">
-            <div v-if="await_community == false">top nodes</div>
-            <div v-if="await_community == true" class="loading_pane"></div>
-          </button>
-        </div>
-        <div class="list-section">
-          <div class="sorting">
-            <a
-              class="pubid_filter"
-              v-on:click="
-                sort_alph = sort_alph === 'asc' ? 'dsc' : 'asc';
-                sort_pr = '';
-                sort_cb = '';
-                sort_y = '';
-              "
-              >communities</a
-            >
-            <a
-              class="year_filter"
-              v-on:click="
-                sort_y = sort_y === 'asc' ? 'dsc' : 'asc';
-                sort_pr = '';
-                sort_cb = '';
-                sort_alph = '';
-              "
-              >nodes</a
-            >
-            <a
-              class="fdr_filter"
-              v-on:click="
-                sort_pr = sort_pr === 'asc' ? 'dsc' : 'asc';
-                sort_alph = '';
-                sort_cb = '';
-                sort_y = '';
-              "
-              >page rank</a
-            >
-          </div>
-
-          <div
-            class="results"
-            tabindex="0"
-            @keydown="handleKeyDown"
-            ref="resultsContainer"
-          >
-            <table>
-              <tbody>
-                <tr
-                  v-for="(entry, index) in filt_communities"
-                  :key="index"
-                  class="option"
-                  :class="{ selected: selectedIndex === index }"
-                  v-on:click="select_community(entry.nodes, index)"
-                >
-                  <td>
-                    <div class="pathway-text">
-                      <a href="#" ref="selectedNodes"
-                        >Community {{ entry.modularity_class }}</a
-                      >
-                    </div>
-                  </td>
-                  <td>
-                    <div class="pathway-text"></div>
-                  </td>
-                  <td>
-                    <div class="pathway-text">
-                      <a href="#">{{ entry.nodes.length }}</a>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="pathway-text">
-                      <a href="#">{{
-                        Math.log10(
-                          parseFloat(entry.cumulative_pagerank)
-                        ).toFixed(2)
-                      }}</a>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div v-if="await_load" class="flex flex-col items-center justify-center h-full gap-3">
+    <h6 class="flex items-center gap-2 dark:text-slate-300">Fetching data
+      <span class="relative flex">
+        <span class="absolute inline-flex w-full h-full rounded-full opacity-75 animate-ping bg-primary-500"></span>
+        <span
+          class="material-symbols-rounded text-primary-500 animate animate-[spin_1s_ease-in-out_infinite]">scatter_plot</span>
+      </span>
+    </h6>
   </div>
+
+  <EmptyState v-if="citation_data?.community_scores?.length == 0" message="There is no generated communities.">
+  </EmptyState>
+
+  <Listbox v-if="citation_data?.community_scores?.length != 0 && !await_load" v-model="selected_citation"
+    optionLabel="id" :options="filt_communities" :pt="{
+      header: { class: 'sticky top-0 flex-1 !px-0 bg-[var(--card-bg)] z-[1] order-1' },
+      listContainer: { class: 'order-3' },
+      list: { class: '!p-0' },
+      emptyMessage: { class: '!flex !justify-center !items-center !text-sm !text-slate-500 dark:!text-slate-300' },
+      option: {
+        class:
+          '!px-0 !py-1.5 !text-slate-500 dark:!text-slate-300 leading-tight transition-all duration-300 ease-in-out',
+      },
+    }" listStyle="max-height:100%" class="h-full flex flex-col !p-0 !bg-transparent !border-0"
+    @update:modelValue="select_community" :tabindex="0" emptyMessage="No communities available.">
+
+    <template #footer>
+      <header class="sticky top-0 bg-[var(--card-bg)] pt-3 items-center gap-2 z-[1] order-1">
+        <!-- filter -->
+        <InputGroup>
+          <IconField class="w-full">
+            <InputText v-model="search_raw" placeholder="Search abstracts" class="w-full" />
+            <InputIcon class="z-10 pi pi-search" />
+          </IconField>
+
+          <InputGroupAddon>
+            <Button @click="top_nodes(5)" icon="pi pi-plus" text plain :loading="await_community"
+              v-tooltip.bottom="'Top nodes'" />
+          </InputGroupAddon>
+        </InputGroup>
+
+        <!-- sorting -->
+        <div
+          class="grid grid-cols-12 items-center gap-2 py-2 bg-[var(--card-bg)] shadow-[0_10px_30px_-18px_#34343D] dark:shadow-[0_10px_30px_-18px_#ffffff] z-[1]">
+          <a class="flex items-center justify-start col-span-6 gap-1 cursor-pointer" v-on:click="
+            sort_alph = sort_alph === 'asc' ? 'dsc' : 'asc';
+          sort_pr = '';
+          sort_y = '';
+          ">
+            Communities
+
+            <span :class="`material-symbols-rounded text-base cursor-pointer 
+            ${sort_alph ? 'text-primary-500' : 'text-slate-600'}`">
+              {{ !sort_alph ? "swap_vert" : sort_alph === "asc" ? "south" : "north" }}
+            </span>
+          </a>
+
+          <a class="flex items-center col-span-3 gap-1 cursor-pointer" v-on:click="
+            sort_y = sort_y === 'asc' ? 'dsc' : 'asc';
+          sort_pr = '';
+          sort_alph = '';
+          ">
+            Nodes
+
+            <span :class="`material-symbols-rounded text-base cursor-pointer 
+            ${sort_y ? 'text-primary-500' : 'text-slate-600'}`">
+              {{ !sort_y ? "swap_vert" : sort_y === "asc" ? "south" : "north" }}
+            </span>
+          </a>
+
+          <a class="flex items-center col-span-3 gap-1 cursor-pointer" v-on:click="
+            sort_pr = sort_pr === 'asc' ? 'dsc' : 'asc';
+          sort_alph = '';
+          sort_y = '';
+          ">
+            Page Rank
+
+            <span :class="`material-symbols-rounded text-base cursor-pointer 
+            ${sort_pr ? 'text-primary-500' : 'text-slate-600'}`">
+              {{ !sort_pr ? "swap_vert" : sort_pr === "asc" ? "south" : "north" }}
+            </span>
+          </a>
+        </div>
+      </header>
+    </template>
+    <!-- options -->
+    <template #option="slotProps">
+      <div :class="`grid items-center w-full grid-cols-12 gap-2 ${slotProps.selected ? '!text-primary-400' : ''}`">
+        <span class="col-span-6">Community {{ slotProps.option.modularity_class }}</span>
+
+        <span class="col-span-3">{{ slotProps.option.nodes.length }}</span>
+
+        <span class="col-span-3 text-center">{{ Math.log10(
+          parseFloat(slotProps.option.cumulative_pagerank)
+        ).toFixed(2) }}</span>
+      </div>
+    </template>
+  </Listbox>
 </template>
 
 <script>
+import EmptyState from "@/components/verticalpane/EmptyState.vue";
 export default {
   name: "CitationCommunities",
   props: ["citation_data", "await_community"],
@@ -113,10 +110,12 @@ export default {
       await_load: false,
       sort_alph: "",
       sort_pr: "asc", //active filter on start
-      sort_cb: "",
       sort_y: "",
-      selectedIndex: -1,
+      selected_citation: "",
     };
+  },
+  components: {
+    EmptyState
   },
   computed: {
     regex() {
@@ -137,6 +136,12 @@ export default {
         });
       }
 
+      if (com.sort_alph == "asc") {
+        filtered.sort((t1, t2) => t2.modularity_class - t1.modularity_class);
+      } else if (com.sort_alph == "dsc") {
+        filtered.sort((t1, t2) => t1.modularity_class - t2.modularity_class);
+      }
+
       if (com.sort_y == "asc") {
         filtered.sort((t1, t2) => t2.nodes.length - t1.nodes.length);
       } else if (com.sort_y == "dsc") {
@@ -152,15 +157,15 @@ export default {
           (t1, t2) => t1.cumulative_pagerank - t2.cumulative_pagerank
         );
       }
-      return new Set(filtered);
+      return filtered;
+      // return new Set(filtered);
     },
   },
   methods: {
-    select_community(community_nodes, index) {
+    select_community(community_nodes) {
       var com = this;
       var abstract_names = new Set(community_nodes);
       const subset = [];
-      com.selectedIndex = index;
       com.citation_data.nodes.forEach((node) => {
         if (abstract_names.has(node.attributes["Name"].toUpperCase())) {
           subset.push(node);
@@ -175,7 +180,6 @@ export default {
         .sort((t1, t2) => t2.cumulative_pagerank - t1.cumulative_pagerank)
         .slice(0, count);
     },
-
     top_nodes(count) {
       var com = this;
       var sorted_communities = com.top_communities(count);
@@ -209,74 +213,6 @@ export default {
       list.sort((a, b) => b.pagerank - a.pagerank);
       return [list[0], list[1]];
     },
-
-    scrollToSelected(selectedDiv) {
-      const parent = this.$refs.resultsContainer; // Updated line to use this.$refs
-
-      if (!selectedDiv) {
-        return;
-      }
-
-      const selectedDivPosition = selectedDiv.getBoundingClientRect();
-      const parentBorders = parent.getBoundingClientRect();
-
-      if (selectedDivPosition.bottom >= parentBorders.bottom) {
-        selectedDiv.scrollIntoView(false);
-      }
-
-      if (selectedDivPosition.top <= parentBorders.top) {
-        selectedDiv.scrollIntoView(true);
-      }
-    },
-    handleKeyDown(event) {
-      const keyCode = event.keyCode;
-
-      if (keyCode === 38) {
-        event.preventDefault();
-        if (this.selectedIndex > 0) {
-          this.selectedIndex--;
-          this.scrollToSelected(this.$refs.selectedNodes[this.selectedIndex]);
-          this.clickNode();
-        }
-      } else if (keyCode === 40) {
-        event.preventDefault();
-        if (this.selectedIndex < this.filt_communities.size - 1) {
-          this.selectedIndex++;
-          this.scrollToSelected(this.$refs.selectedNodes[this.selectedIndex]);
-          this.clickNode();
-        }
-      }
-    },
-    clickNode() {
-      const selectedNode = this.$refs.selectedNodes[this.selectedIndex];
-      if (selectedNode) {
-        selectedNode.click();
-      }
-    },
   },
 };
 </script>
-
-<style>
-.community-citation {
-  position: relative;
-  display: -webkit-flex;
-  cursor: pointer;
-  border: none;
-  color: white;
-  border-style: solid;
-  border-width: 1px;
-  background: #0a0a1a;
-  border-color: white;
-  margin-left: 0.2vw;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7vw;
-  height: 1.3vw;
-  width: 4.2vw;
-}
-
-.pathway-text {
-  font-size: 0.9vw;
-}
-</style>
