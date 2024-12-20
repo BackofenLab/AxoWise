@@ -146,6 +146,7 @@ export default {
       sort_fdr: "",
       sort_alph: "",
       selected_categories: [],
+      active_categories_set: new Set(),
       filter_terms: [],
       bookmark_off: true,
       favourite_tab: new Set(),
@@ -181,7 +182,7 @@ export default {
       if (com.selected_categories?.length) {
         // If category is selected, filter by category
         filtered = filtered.filter(function (term) {
-          return com.selected_categories.some(el => el.label === term.category);
+          return com.active_categories_set.has(term.category);
         });
       }
 
@@ -230,7 +231,28 @@ export default {
     },
   },
   methods: {
+    active_categories(category) {
+      if (!category) {
+        this.reset_categories();
+        return;
+      }
+      if (this.active_categories_set.has(category)) {
+        if (this.active_categories_set.size == 1) {
+          this.reset_categories();
+          return;
+        }
+        this.active_categories_set.delete(category);
+      } else {
+        this.active_categories_set.add(category);
+      }
+      this.selected_categories = Array.from(this.active_categories_set, value => ({ label: value }));
+    },
+    reset_categories() {
+      this.selected_categories = [];
+      this.active_categories_set = new Set();
+    },
     init_categories() {
+      this.reset_categories();
       for (let element of this.filter_terms) {
         let checkCategory = element.label;
         if (
@@ -238,7 +260,7 @@ export default {
           checkCategory !== "GOMF" &&
           checkCategory !== "GOBP"
         ) {
-          this.selected_categories.push({ label: checkCategory });
+          this.active_categories(checkCategory);
         }
       }
     },
