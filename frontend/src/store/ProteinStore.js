@@ -2,22 +2,13 @@ import { defineStore } from 'pinia';
 
 export const useVisualizationStore = defineStore('visualization', {
   state: () => ({
-    hoveredNode: undefined,
-    hoveredNeighbors: undefined,
+    usedRenderer: undefined,
     clickedNode: undefined,
     clickedNeighbors: undefined,
     clickedEnrichment: undefined,
+    clickedCluster: undefined,
   }),
   actions: {
-    setHoveredNode(node, graph) {
-      if (node) {
-        this.hoveredNode = node;
-        this.hoveredNeighbors = new Set(graph.neighbors(node));
-      } else {
-        this.hoveredNode = undefined;
-        this.hoveredNeighbors = undefined;
-      }
-    },
     setClickedNode(node, graph) {
       if (node) {
         this.clickedNode = node;
@@ -26,6 +17,7 @@ export const useVisualizationStore = defineStore('visualization', {
         this.clickedNode = undefined;
         this.clickedNeighbors = undefined;
       }
+      this.usedRenderer.refresh({ skipIndexation: true });
     },
     setClickedEnrichment(enrichment) {
       if (enrichment) {
@@ -33,6 +25,17 @@ export const useVisualizationStore = defineStore('visualization', {
       } else {
         this.clickedEnrichment = undefined;
       }
+      this.usedRenderer.refresh({ skipIndexation: true });
+    },
+    setClickedCluster(cluster, graph) {
+      this.clickedCluster = new Set()
+      graph.forEachNode((node, atts) => {
+        if (atts.community == cluster) this.clickedCluster.add(node)
+      });
+      this.usedRenderer.refresh({ skipIndexation: true });
+    },
+    setRenderer(renderer) {
+      this.usedRenderer = renderer
     },
   },
 });

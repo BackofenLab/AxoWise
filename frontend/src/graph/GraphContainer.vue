@@ -29,6 +29,8 @@
           bordered: NodeBorderProgram,
         },
       });
+
+      store.setRenderer(com.renderer);
   
       com.renderer.setSetting("defaultDrawNodeLabel", drawLabel);
       com.renderer.setSetting("defaultDrawNodeHover", drawHover);
@@ -43,19 +45,10 @@
   
       /** 
        * Event handling functions call.
-       * Events: ['enterNode','leaveNode','clickNode']
+       * Events: ['clickNode']
        */
-      com.renderer.on("enterNode", ({ node }) => {
-        store.setHoveredNode(node, com.graph);
-        com.renderer.refresh({ skipIndexation: true });
-      });
-      com.renderer.on("leaveNode", () => {
-        store.setHoveredNode(undefined, com.graph);
-        com.renderer.refresh({ skipIndexation: true });
-      });
       com.renderer.on("clickNode", ({ node }) => {
         store.setClickedNode(node, com.graph);
-        com.renderer.refresh({ skipIndexation: true });
       });
   
       /* 
@@ -64,7 +57,6 @@
        */
       this.emitter.on("searchEnrichment", (enrichment) => {
         store.setClickedEnrichment(enrichment.symbols);
-        com.renderer.refresh({ skipIndexation: true });
       });
     },
     beforeUnmount() {

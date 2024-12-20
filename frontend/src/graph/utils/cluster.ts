@@ -1,3 +1,4 @@
+import { useVisualizationStore } from "../../store/ProteinStore";
 import Graph from "graphology";
 import Sigma from "sigma";
 import { Coordinates } from "sigma/types";
@@ -18,6 +19,7 @@ interface Cluster {
 Generating underlying circles and labels for graph communities by calculation the smallest enclosing circle.
 */
 export const generateCluster = (context: string, renderer: Sigma, graph: Graph) => {
+  const store = useVisualizationStore();
   const container = document.getElementById(context) as HTMLElement;
   const clustersData: { label: string; x: number; y: number; r: number }[] = [];
 
@@ -151,7 +153,7 @@ export const generateCluster = (context: string, renderer: Sigma, graph: Graph) 
       const distance = Math.sqrt(dx*dx + dy*dy);
 
       if (distance <= (cluster.r)) {
-        return cluster
+        store.setClickedCluster(cluster.label, graph)
       }
     }
   });
