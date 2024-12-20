@@ -1,32 +1,42 @@
 <template>
-  <div id="citation-tools" class="pathways">
-    <div class="pathwaybar">
-      <div class="summary-input">
-        <div class="window-label">abstracts</div>
-        <textarea v-model="raw_text" rows="10" cols="30" autofocus></textarea>
-        <button id="clear-btn" v-on:click="raw_text = ''">clear</button>
-        <button
-          id="apply-btn"
-          v-on:click="summarize_abstracts(raw_text, false)"
-        >
-          apply
-        </button>
-      </div>
-      <div class="summarized">
-        <div class="window-label">summary</div>
-        <div class="summarized-abstracts">
-          <div v-if="await_load == true" class="loading_pane"></div>
-          <div class="text" v-if="await_load == false">
-            {{ summary }}
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- <div class="summary-pop" v-if="community_check == true"> Text of Example</div> -->
+  <ListActionHeader :title="`Please separate each abstracts with comma (,)`">
+    <Button severity="secondary" rounded size="small" plain class="w-8 h-8" v-on:click="raw_text = ''; summary = ''"
+      v-tooltip.bottom="'Reset'">
+      <span class="text-2xl material-symbols-rounded"> refresh </span>
+    </Button>
+    <InputGroup>
+      <IconField class="w-full">
+        <InputText v-model="raw_text" placeholder="Enter abstracts..." class="w-full" />
+      </IconField>
+
+      <InputGroupAddon>
+        <Button severity="secondary" @click="summarize_abstracts(raw_text, false)" label="Apply" text plain
+          :loading="await_load" />
+      </InputGroupAddon>
+    </InputGroup>
+  </ListActionHeader>
+
+  <EmptyState v-if="!await_load && !summary" message="There is no generated summary.">
+  </EmptyState>
+
+  <div v-if="await_load" class="flex flex-col items-center justify-center h-full gap-3">
+    <h6 class="flex items-center gap-2 dark:text-slate-300">Fetching summary
+      <span class="relative flex">
+        <span class="absolute inline-flex w-full h-full rounded-full opacity-75 animate-ping bg-primary-500"></span>
+        <span
+          class="material-symbols-rounded text-primary-500 animate animate-[spin_1s_ease-in-out_infinite]">scatter_plot</span>
+      </span>
+    </h6>
+  </div>
+
+  <div v-if="!await_load && summary" class="mt-3 whitespace-pre-wrap">
+    {{ summary }}
   </div>
 </template>
 
 <script>
+import ListActionHeader from "@/components/verticalpane/ListActionHeader.vue";
+import EmptyState from "@/components/verticalpane/EmptyState.vue";
 export default {
   name: "CitationSummary",
   props: ["active_function", "sorted", "citation_data", "node_index"],
@@ -45,15 +55,20 @@ export default {
       graphID: null,
     };
   },
+  components: {
+    ListActionHeader,
+    EmptyState
+  },
   methods: {
     add_abstract(id) {
-      this.raw_text =
-        this.raw_text + `${this.raw_text.length != 0 ? "\n" : ""}` + id;
+      // This doesn't seem user friendly instead use ','
+      // this.raw_text = this.raw_text + `${this.raw_text.length != 0 ? "\n" : ""}` + id;
+      this.raw_text = this.raw_text + `${this.raw_text.length != 0 ? "," : ""}` + id;
     },
     add_subset(subset) {
       for (var node of subset) {
-        this.raw_text =
-          this.raw_text + `${this.raw_text.length != 0 ? "\n" : ""}` + node.id;
+        // this.raw_text = this.raw_text + `${this.raw_text.length != 0 ? "\n" : ""}` + node.id;
+        this.raw_text = this.raw_text + `${this.raw_text.length != 0 ? "," : ""}` + node.id;
       }
     },
     summarize_abstracts(abstracts, community_check) {
@@ -63,7 +78,8 @@ export default {
       if (community_check == false) {
         com.await_load = true;
         var abstractList = {};
-        for (var node of abstracts.split("\n")) {
+        // for (var node of abstracts.split("\n")) {
+        for (var node of abstracts.split(",").map(item => item.trim())) {
           if (com.node_index[node]) abstractList[node] = com.node_index[node];
         }
         com.finalList.push(abstractList);
@@ -119,79 +135,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.summary-input {
-  position: relative;
-  padding: 1vw;
-  width: 100%;
-  height: 30%;
-}
-.summary-input textarea {
-  margin-top: 3%;
-  font-size: 0.9vw;
-  width: 100%;
-  color: white;
-  background-color: rgba(255, 255, 255, 0.05);
-  text-align: center;
-  border: none;
-  padding-top: 5%;
-  resize: none;
-  outline: none;
-  height: 100%;
-}
-.summarized {
-  position: relative;
-  padding: 1vw;
-  width: 100%;
-  height: 70%;
-}
-.summarized-abstracts {
-  color: white;
-  font-family: "ABeeZee", sans-serif;
-  background-color: rgba(255, 255, 255, 0.05);
-  font-size: 1.2vw;
-  width: 100%;
-  height: 90%;
-  margin-top: 3%;
-  overflow-y: scroll;
-  padding: 1.3vw 1.3vw 0 1.3vw;
-}
-.summary-input #apply-btn {
-  position: absolute;
-  right: 2vw;
-  top: 0.8vw;
-  position: absolute;
-  display: block;
-  cursor: pointer;
-  border: none;
-  color: white;
-  border-style: solid;
-  border-width: 1px;
-  background: #0a0a1a;
-  border-color: white;
-  width: 3vw;
-  font-size: 0.7vw;
-}
-.summary-input #clear-btn {
-  position: absolute;
-  right: 5vw;
-  margin-right: 0.5rem;
-  top: 0.8vw;
-  position: absolute;
-  display: block;
-  cursor: pointer;
-  border: none;
-  color: white;
-  border-style: solid;
-  border-width: 1px;
-  background: #0a0a1a;
-  border-color: white;
-  width: 3vw;
-  font-size: 0.7vw;
-}
-
-.text {
-  white-space: pre-wrap; /* This will render whitespace and line breaks */
-}
-</style>
