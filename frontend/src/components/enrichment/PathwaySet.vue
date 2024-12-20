@@ -122,10 +122,16 @@
 </template>
 
 <script>
+import { useVisualizationStore } from "@/store/ProteinStore";
+
 export default {
   name: "PathwaySet",
   props: ["gephi_data", "api", "mode"],
   emits: ["term_set_changed"],
+  setup(){
+    const store = useVisualizationStore();
+    return { store };
+  },
   data() {
     return {
       set_dict: new Set(),
@@ -155,7 +161,6 @@ export default {
             return regex.test(set.name);
           }
         });
-        console.log(filtered);
       }
 
       return new Set(filtered);
@@ -170,10 +175,14 @@ export default {
         return;
       }
 
+      const symbolList = com.gephi_data.nodes
+      .filter((node) => subset.genes.has(node.ENSEMBL_PROTEIN))
+      .map((node) => node.label);
+
       //Adding proteins and species to formdata
       var formData = new FormData();
-      formData.append("genes", subset.genes);
-      formData.append("species_id", com.gephi_data.nodes[0].species);
+      formData.append("genes", symbolList);
+      formData.append("species_id", com.gephi_data.settings.species);
       formData.append(
         "mapping",
         JSON.stringify(com.gephi_data.settings["gene_alias_mapping"])
@@ -190,6 +199,7 @@ export default {
           subset.terms = response.data.sort(
             (t1, t2) => t1.fdr_rate - t2.fdr_rate
           );
+          console.log(response.data)
           subset.stats = com.get_significant_words(response.data);
           subset.name = subset.name + " (e)";
           com.loading_state = false;
@@ -201,18 +211,19 @@ export default {
         id: `${subset.view}:${subset.name}`,
         mode: subset.view,
         type: "subset",
-        data: this.activate_genes(subset.genes, subset.view),
+        data: subset.genes
       });
     },
     save_subset() {
       var com = this;
+      const { store } = this;
       let genes;
       if (com.mode == "protein") {
-        genes = com.$store.state.active_subset;
+        genes = store.clickedCluster;
       } else if (com.mode == "term") {
-        genes = com.$store.state.p_active_subset;
+        genes = store.clickedCluster;
       } else {
-        genes = com.$store.state.c_active_subset;
+        genes = store.clickedCluster;
       }
 
       if (!genes) return;
@@ -236,19 +247,17 @@ export default {
       this.$store.commit("delete_subset", entry);
     },
     set_active(entry) {
+      const { store } = this;
       for (var layer of this.$store.state.favourite_subsets) {
         if (layer != entry) layer.status = false;
       }
 
       this.$router.push(entry.view).then(() => {
         if (!entry.status) {
-          this.emitter.emit("searchSubset", {
-            subset: this.activate_genes(entry.genes, entry.view),
-            mode: entry.view,
-          });
+          store.setClickedSubset(entry.genes)
           this.emitter.emit("enrichTerms", entry.terms);
         } else {
-          this.emitter.emit("searchSubset", { subset: null, mode: entry.view });
+          store.setClickedSubset(new Set())
           this.emitter.emit("enrichTerms", null);
         }
         entry.status = !entry.status;
@@ -266,6 +275,8 @@ export default {
       } else if (view === "protein") {
         data = this.$store.state.gephi_json.data;
       }
+
+      console.log(data)
 
       data.nodes.forEach((node) => {
         if (genes_set.has(node.attributes["Name"])) {

@@ -21,7 +21,6 @@
     },
     mounted() {
       const com = this;
-      const { store } = this;
   
       com.renderer = new Sigma(this.graph, this.$refs.container, {
         defaultNodeType: "bordered",
@@ -30,7 +29,9 @@
         },
       });
 
+      const { store } = this;
       store.setRenderer(com.renderer);
+      store.setGraph(com.graph);
   
       com.renderer.setSetting("defaultDrawNodeLabel", drawLabel);
       com.renderer.setSetting("defaultDrawNodeHover", drawHover);
