@@ -97,32 +97,41 @@ def process_json_files():
                 # print('Processing DOI:', doi)
 
                 try:
-                    # start_time = time.time()
                     result = send_to_mistral(input_data)
-                    found1 = False
-                    found2 = False
+                    found_ac_1 = False
+                    found_ac_2 = False
 
-                    # Check for 'GEO' in accession codes
+                    # to prevent hallucination in accession codes
                     if 'GEO' in result.get('accession codes', {}):
-                        found1 = any('GSE12345' in codes for codes in result['accession codes']['GEO'])
-                        found2 = any('GSE67890' in codes for codes in result['accession codes']['GEO'])
+                        found_ac_1 = any('GSE12345' in codes for codes in result['accession codes']['GEO'])
+                        found_ac_2 = any('GSE67890' in codes for codes in result['accession codes']['GEO'])
+                    
+                    # to prevent hallucination in source code URLs
+                    new_source_code = []
+                    if result.get('source code', []) != []:
+                        for url in result.get('source code', []):
+                            if 'github.com' in url.lower():
+                                if 'github.com' in input_data['Data Availability']:
+                                    new_source_code.append(url)
+                            elif 'zenodo.org' in url.lower():
+                                if 'zenodo.org' in input_data['Data Availability'].lower():
+                                    new_source_code.append(url)
 
-                    # print(found1, found2)
+                    result['source code'] = new_source_code
 
-                    # Modify result if excluded codes are found
-                    if found1 or found2:
-                        result = {'accession codes': {}, 'source code': []}
-                    # end_time = time.time()
-                    # print("Execution time:", end_time-start_time)
+                    if found_ac_1 or found_ac_2:
+                        result = {'accession codes': {}, 'source code': {new_source_code}}
+                    
                     results.append({
                         "DOI": doi,
                         "results": result
                     })
-                    # print(f"Processed entry. Result: {result}")
+                    
                 except Exception as e:
                     print(f"Error processing DOI {doi}: {str(e)}")
             
             # print(results)
+            
             # Save results to output file
             output_file = file.rstrip('.json')
             output_file = f"{output_file}_llama3.1-8b.json"
