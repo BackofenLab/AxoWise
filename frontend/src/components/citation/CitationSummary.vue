@@ -1,34 +1,21 @@
 <template>
-  <ListActionHeader :title="`Please separate each abstracts with comma (,)`">
+  <ListActionHeader :title="`Please enter each abstracts in a new line.`">
     <Button severity="secondary" rounded size="small" plain class="w-8 h-8" v-on:click="raw_text = ''; summary = ''"
       v-tooltip.bottom="'Reset'">
       <span class="text-2xl material-symbols-rounded"> refresh </span>
     </Button>
-    <InputGroup>
-      <IconField class="w-full">
-        <InputText v-model="raw_text" placeholder="Enter abstracts..." class="w-full" />
-      </IconField>
-
-      <InputGroupAddon>
-        <Button severity="secondary" @click="summarize_abstracts(raw_text, false)" label="Apply" text plain
-          :loading="await_load" />
-      </InputGroupAddon>
-    </InputGroup>
   </ListActionHeader>
+
+  <Textarea v-model="raw_text" rows="3" fluid autofocus class="w-full text-center" />
+  <Button label="Apply" severity="secondary" size="small" fluid type="button" class="mt-2.5 !rounded-lg"
+    @click="summarize_abstracts(raw_text, false)" :loading="await_load">
+  </Button>
 
   <EmptyState v-if="!await_load && !summary" message="There is no generated summary.">
   </EmptyState>
 
-  <div v-if="await_load" class="flex flex-col items-center justify-center h-full gap-3">
-    <h6 class="flex items-center gap-2 dark:text-slate-300">Fetching summary
-      <span class="relative flex">
-        <span class="absolute inline-flex w-full h-full rounded-full opacity-75 animate-ping bg-primary-500"></span>
-        <span
-          class="material-symbols-rounded text-primary-500 animate animate-[spin_1s_ease-in-out_infinite]">scatter_plot</span>
-      </span>
-    </h6>
-  </div>
-
+  <p v-if="!await_load && summary" class="mt-3 text-md text-primary-400">Generated Summary:</p>
+  
   <div v-if="!await_load && summary" class="mt-3 whitespace-pre-wrap">
     {{ summary }}
   </div>
@@ -61,14 +48,13 @@ export default {
   },
   methods: {
     add_abstract(id) {
-      // This doesn't seem user friendly instead use ','
-      // this.raw_text = this.raw_text + `${this.raw_text.length != 0 ? "\n" : ""}` + id;
-      this.raw_text = this.raw_text + `${this.raw_text.length != 0 ? "," : ""}` + id;
+      this.raw_text =
+        this.raw_text + `${this.raw_text.length != 0 ? "\n" : ""}` + id;
     },
     add_subset(subset) {
       for (var node of subset) {
-        // this.raw_text = this.raw_text + `${this.raw_text.length != 0 ? "\n" : ""}` + node.id;
-        this.raw_text = this.raw_text + `${this.raw_text.length != 0 ? "," : ""}` + node.id;
+        this.raw_text =
+          this.raw_text + `${this.raw_text.length != 0 ? "\n" : ""}` + node.id;
       }
     },
     summarize_abstracts(abstracts, community_check) {
@@ -78,8 +64,7 @@ export default {
       if (community_check == false) {
         com.await_load = true;
         var abstractList = {};
-        // for (var node of abstracts.split("\n")) {
-        for (var node of abstracts.split(",").map(item => item.trim())) {
+        for (var node of abstracts.split("\n")) {
           if (com.node_index[node]) abstractList[node] = com.node_index[node];
         }
         com.finalList.push(abstractList);
