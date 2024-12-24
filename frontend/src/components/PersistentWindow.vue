@@ -1,5 +1,5 @@
 <template>
-  <div id="genchatbot" class="persistent-window" v-show="showPersistentComponent && windowCheck">
+  <div id="genchatbot" class="hidden persistent-window" v-show="showPersistentComponent && windowCheck">
     <div id="genchatbot_header" class="header">
       <h3>AxoBot</h3>
       <span class="close-btn" @click="closeWindow">×</span>
@@ -39,6 +39,38 @@
       </div>
     </div>
   </div>
+
+  <Dialog v-if="windowCheck" v-model:visible="showPersistentComponent" header="AxoBot" position="bottomright"
+    :closable="false" :minY="60" :minX="60" :pt="{
+      root: {
+        class:
+          '!max-h-[70vh] w-[25rem] !mt-[60px] !ml-[60px] !bg-white/75 dark:!bg-slate-900/75 !backdrop-blur overflow-y-auto',
+      },
+      header: { class: 'sticky top-0 !p-2 !px-3 !justify-start gap-3 !font-medium cursor-move backdrop-blur z-[1]' },
+      headerActions: { class: '!hidden' },
+      title: { class: '!text-base ' },
+      content: { class: '!px-3 !pb-2 !overflow-y-visible' },
+      footer: { class: 'sticky bottom-0 !px-2 !pt-1 !pb-2 cursor-move backdrop-blur-xl' },
+    }">
+    <template #header>
+      <span class="material-symbols-rounded font-variation-ico-filled text-primary-500 !text-lg"> headset_mic </span>
+      AxoBot
+
+      <Button class="ml-auto" size="small" text plain rounded @click="windowCheck = false">
+        <span class="material-symbols-rounded"> close </span>
+      </Button>
+    </template>
+    <template #footer>
+      <InputGroup>
+        <InputText placeholder="Prompt your message for AxoBot" />
+        <InputGroupAddon>
+          <Button type="button" text plain>
+            <span class="material-symbols-rounded font-variation-ico-filled !text-xl"> send </span>
+          </Button>
+        </InputGroupAddon>
+      </InputGroup>
+    </template>
+  </Dialog>
 
   <div v-show="showPersistentComponent" class="absolute peer select-none z-[9] cursor-grab"
     :style="{ top: `650px`, right: `60px` }">
@@ -280,7 +312,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<!-- <style scoped>
 .persistent-window {
   position: absolute;
   left: 1%;
@@ -432,4 +464,5 @@ export default {
   margin-top: 0.5vw;
   bottom: 0;
 }
-</style>
+
+</style> -->
