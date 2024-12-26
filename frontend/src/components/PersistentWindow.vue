@@ -60,16 +60,77 @@
         <span class="material-symbols-rounded"> close </span>
       </Button>
     </template>
-    <template #footer>
-      <InputGroup>
-        <InputText placeholder="Prompt your message for AxoBot" />
-        <InputGroupAddon>
-          <Button type="button" text plain>
-            <span class="material-symbols-rounded font-variation-ico-filled !text-xl"> send </span>
-          </Button>
-        </InputGroupAddon>
-      </InputGroup>
-    </template>
+
+    <main class="flex flex-col">
+      <ul class="flex flex-col gap-1.5">
+        <li
+          v-for="(msg, index) in messages"
+          :key="index"
+          :class="`flex flex-col p-3 rounded-lg
+          ${index !== 0 ? 'backdrop-blur shadow-md' : ''}
+          ${msg.sender === 'User' ? 'w-11/12 flex-col-reverse self-end' : ''}
+          ${msg.sender === 'Bot' && index !== 0 ? 'my-2 bg-gradient-prime-opacity dark:bg-slate-800' : ''}
+          `"
+        >
+          <!-- First welcome message -->
+          <div class="mb-8" v-show="index === 0">
+            <figure
+              class="w-16 h-16 rounded-full mx-auto mb-4 p-3 bg-gradient-prime-reverse shadow-[0_0_50px_0_rgba(68,184,166,0.26)]"
+            >
+              <img src="@/assets/logo.png" alt="Bot Icon" />
+            </figure>
+            <h6 class="text-center">{{ msg.text }}</h6>
+          </div>
+
+          <template v-if="index !== 0">
+            <div v-if="msg.data">
+              <span v-for="(element, index) in msg.data" :key="index" class="small-tag" @click="searchInput(element)">
+                {{ element.id }}
+              </span>
+            </div>
+            <div class="flex gap-3 mb-5">
+              <figure class="w-6 h-6 p-1 rounded-full bg-gradient-prime-reverse">
+                <img src="@/assets/logo.png" alt="Bot Icon" />
+              </figure>
+              <h6 class="m-0 text-center">AxoBot</h6>
+
+              <Chip
+                v-if="msg.ref"
+                :pt="{ root: { class: 'h-6 !bg-primary-500 !px-2 !py-0.5' }, label: { class: '!text-sm' } }"
+                label="Reference"
+                @click="searchRef(msg.ref)"
+              />
+
+              <Button
+                class="w-6 h-6 !p-1.5 ml-auto"
+                type="button"
+                size="small"
+                text
+                plain
+                rounded
+                v-tooltip.bottom="'Copy to clipboard'"
+                @click="copyToClipboard(msg.text)"
+              >
+                <span class="material-symbols-rounded !text-xl"> content_copy </span>
+              </Button>
+              <Button
+                class="w-6 h-6 !p-1.5"
+                type="button"
+                size="small"
+                text
+                plain
+                rounded
+                v-tooltip.bottom="'Add to AxoWord'"
+                @click="addToWord(msg.text)"
+              >
+                <span class="material-symbols-rounded !text-xl"> chat_add_on </span>
+              </Button>
+            </div>
+            <p>{{ msg.text }}</p>
+          </template>
+        </li>
+      </ul>
+    </main>
   </Dialog>
 
   <div v-show="showPersistentComponent" class="absolute peer select-none z-[9] cursor-grab"
@@ -113,13 +174,12 @@ export default {
         route !== "input" &&
         route !== "file" &&
         route !== "import"
-      ); // Example: Hide component on 'View3'
+      );
     },
   },
   mounted() {
     let com = this;
-    // com.dragElement(document.getElementById("genchatbot"));
-
+    
     com.emitter.on("openChatbot", () => {
       com.windowCheck = !com.windowCheck;
     });
@@ -188,69 +248,6 @@ export default {
       );
       return pmidlist;
     },
-    dragElement(elmnt) {
-      var pos1 = 0,
-        pos2 = 0,
-        pos3 = 0,
-        pos4 = 0;
-      if (document.getElementById(elmnt.id + "_header")) {
-        // if present, the header is where you move the DIV from:
-        document.getElementById(elmnt.id + "_header").onmousedown =
-          dragMouseDown;
-      } else {
-        // otherwise, move the DIV from anywhere inside the DIV:
-        elmnt.onmousedown = dragMouseDown;
-      }
-
-      function dragMouseDown(e) {
-        e = e || window.event;
-        e.preventDefault();
-        // get the mouse cursor position at startup:
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        document.onmouseup = closeDragElement;
-        // call a function whenever the cursor moves:
-        document.onmousemove = elementDrag;
-      }
-      function elementDrag(e) {
-        e = e || window.event;
-        e.preventDefault();
-
-        // calculate the conditions:
-        var parentWidth = window.innerWidth;
-        var parentHeight = window.innerHeight;
-        var elementWidth = elmnt.offsetWidth;
-        var elementHeight = elmnt.offsetHeight;
-
-        // calculate the new coordinates:
-        pos1 = pos3 - e.clientX;
-        pos2 = pos4 - e.clientY;
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-
-        // Calculate the new coordinates for top and left
-        var newTop = elmnt.offsetTop - pos2;
-        var newLeft = elmnt.offsetLeft - pos1;
-
-        // ensure the element stays within bounds:
-        if (newTop < 0) newTop = 0;
-        if (newLeft < 0) newLeft = 0;
-        if (newTop + elementHeight > parentHeight)
-          newTop = parentHeight - elementHeight;
-        if (newLeft + elementWidth > parentWidth)
-          newLeft = parentWidth - elementWidth;
-
-        // set the element's new position:
-        elmnt.style.top = newTop + "px";
-        elmnt.style.left = newLeft + "px";
-      }
-
-      function closeDragElement() {
-        // stop moving when mouse button is released:
-        document.onmouseup = null;
-        document.onmousemove = null;
-      }
-    },
     sendMessage() {
       const inputDiv = this.$refs.editableDiv;
       const userInput = inputDiv.innerText.trim();
@@ -267,7 +264,6 @@ export default {
         inputDiv.innerText = "";
       }
     },
-
     getAnswer(message) {
       let com = this;
       let formData = new FormData();
@@ -305,164 +301,6 @@ export default {
     abort_chatbot() {
       this.sourceToken.cancel("Request canceled");
     },
-    closeWindow() {
-      this.windowCheck = false;
-    },
   },
 };
 </script>
-
-<!-- <style scoped>
-.persistent-window {
-  position: absolute;
-  left: 1%;
-  top: 1.5%;
-  height: 97%;
-  width: 24vw;
-  -webkit-backdrop-filter: blur(7.5px);
-  border: 1px solid #e0e0e0;
-  background-color: rgb(107, 107, 107);
-  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  z-index: 99999;
-  resize: both;
-}
-
-.header {
-  background-color: rgb(57, 57, 57);
-  color: white;
-  padding: 15px;
-  cursor: move;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 16px;
-  font-weight: bold;
-  position: relative;
-}
-
-.close-btn {
-  font-size: 20px;
-  cursor: pointer;
-  padding: 0 5px;
-}
-
-.chat-history {
-  flex: 1;
-  padding: 10px 15px;
-  overflow-y: auto;
-  background-color: rgb(107, 107, 107);
-  display: flex;
-  flex-direction: column;
-}
-
-.message {
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  max-width: 80%;
-  word-wrap: break-word;
-  /* Ensure long words or links wrap */
-  word-break: break-word;
-  /* Break long words */
-  white-space: pre-wrap;
-  /* Preserve formatting like newlines */
-  line-height: 1.4;
-  cursor: default;
-}
-
-.user-message {
-  background-color: rgb(57, 57, 57);
-  align-self: flex-end;
-  color: white;
-}
-
-.bot-message {
-  background-color: #ffffff;
-  align-self: flex-start;
-  border: 1px solid #e0e0e0;
-}
-
-.chat-input-container {
-  padding: 10px 15px;
-  background-color: rgb(107, 107, 107);
-  border-top: 1px solid #e0e0e0;
-}
-
-.input-box {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #e0e0e0;
-  background-color: rgb(57, 57, 57);
-  border-radius: 30px;
-  box-sizing: border-box;
-  font-size: 14px;
-  outline: none;
-  color: white;
-}
-
-.input-box::placeholder {
-  color: rgb(237, 235, 235);
-}
-
-.tag-container {
-  padding: 10px 15px;
-  background-color: rgb(107, 107, 107);
-}
-
-.tag {
-  display: inline-block;
-  background-color: #555;
-  /* Darker background color */
-  color: #fff;
-  /* White text for better contrast */
-  padding: 5px 8px;
-  /* Smaller padding */
-  font-size: 14px;
-  /* Smaller font size */
-  border-radius: 8px;
-  /* Slightly smaller rounded corners */
-  margin: 0 5px 5px 0;
-  cursor: pointer;
-}
-
-.small-tag {
-  display: inline-block;
-  background-color: #555;
-  /* Darker background color */
-  color: #fff;
-  /* White text for better contrast */
-  padding: 3px 6px;
-  /* Smaller padding */
-  font-size: 10px;
-  /* Smaller font size */
-  border-radius: 8px;
-  /* Slightly smaller rounded corners */
-  margin: 0 5px 5px 0;
-  cursor: pointer;
-}
-
-.blue {
-  background-color: rgb(24, 37, 213);
-}
-
-.remove-tag {
-  cursor: pointer;
-  color: rgb(175, 175, 175);
-  /* Slightly darker red for remove button */
-  font-size: 12px;
-  /* Smaller "x" size */
-}
-
-.chat-history img {
-  filter: invert(50%);
-  position: relative;
-  width: 0.7vw;
-  margin-top: 0.5vw;
-  bottom: 0;
-}
-
-</style> -->
