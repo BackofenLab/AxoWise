@@ -1,45 +1,4 @@
 <template>
-  <div id="genchatbot" class="hidden persistent-window" v-show="showPersistentComponent && windowCheck">
-    <div id="genchatbot_header" class="header">
-      <h3>AxoBot</h3>
-      <span class="close-btn" @click="closeWindow">×</span>
-    </div>
-
-    <div class="chat-history">
-      <div v-for="(msg, index) in messages" :key="index" :class="[
-        'message',
-        msg.sender === 'User' ? 'user-message' : 'bot-message',
-      ]">
-        <div v-if="msg.data">
-          <span v-for="(element, index) in msg.data" :key="index" class="small-tag" @click="searchInput(element)">
-            {{ element.id }}
-          </span>
-        </div>
-        <div v-if="msg.ref">
-          <span class="small-tag blue" @click="searchRef(msg.ref)">
-            reference
-          </span>
-        </div>
-        <p>{{ msg.text }}</p>
-        <img src="@/assets/pane/copy.png" v-on:click="copyToClipboard(msg.text)" />
-        <img src="@/assets/toolbar/word.png" v-on:click="addToWord(msg.text)" />
-      </div>
-    </div>
-
-    <div class="chat-input-container">
-      <!-- Editable div with contenteditable attribute -->
-      <div ref="editableDiv" id="input_chatbot" contenteditable="true" @keydown.enter.prevent="sendMessage"
-        class="input-box"></div>
-
-      <div class="tag-container" v-if="tags.length">
-        <span v-for="(tag, index) in tags" :key="index" class="tag" @click="searchInput(tag)">
-          {{ tag.id }}
-          <span class="remove-tag" @click.stop="removeTag(index)">x</span>
-        </span>
-      </div>
-    </div>
-  </div>
-
   <Dialog v-if="windowCheck" v-model:visible="showPersistentComponent" header="AxoBot" position="bottomright"
     :closable="false" :minY="60" :minX="60" :pt="{
       root: {
@@ -63,23 +22,18 @@
 
     <main class="flex flex-col">
       <ul class="flex flex-col gap-1.5">
-        <li
-          v-for="(msg, index) in messages"
-          :key="index"
-          :class="`flex flex-col p-3 rounded-lg
+        <li v-for="(msg, index) in messages" :key="index" :class="`flex flex-col p-3 rounded-lg
           ${index !== 0 ? 'backdrop-blur shadow-md' : ''}
           ${msg.sender === 'User' ? 'w-11/12 flex-col-reverse self-end' : ''}
           ${msg.sender === 'Bot' && index !== 0 ? 'my-2 bg-gradient-prime-opacity dark:bg-slate-800' : ''}
-          `"
-        >
+          `">
           <!-- First welcome message -->
           <div class="mb-8" v-show="index === 0">
             <figure
-              class="w-16 h-16 rounded-full mx-auto mb-4 p-3 bg-gradient-prime-reverse shadow-[0_0_50px_0_rgba(68,184,166,0.26)]"
-            >
+              class="w-16 h-16 rounded-full mx-auto mb-4 p-3 bg-gradient-prime-reverse shadow-[0_0_50px_0_rgba(68,184,166,0.26)]">
               <img src="@/assets/logo.png" alt="Bot Icon" />
             </figure>
-            <h6 class="text-center">{{ msg.text }}</h6>
+            <h6 class="text-center whitespace-pre-wrap">{{ msg.text }}</h6>
           </div>
 
           <template v-if="index !== 0">
@@ -88,49 +42,51 @@
                 {{ element.id }}
               </span>
             </div>
-            <div class="flex gap-3 mb-5">
-              <figure class="w-6 h-6 p-1 rounded-full bg-gradient-prime-reverse">
+            <div :class="`flex gap-3 ${msg.sender === 'Bot' ? 'mb-5' : ''}`">
+
+              <figure v-if="msg.sender === 'Bot'" class="w-6 h-6 p-1 rounded-full bg-gradient-prime-reverse">
                 <img src="@/assets/logo.png" alt="Bot Icon" />
               </figure>
-              <h6 class="m-0 text-center">AxoBot</h6>
+              <h6 v-if="msg.sender === 'Bot'" class="m-0 text-center">AxoBot</h6>
 
-              <Chip
-                v-if="msg.ref"
+              <Chip v-if="msg.ref && msg.sender === 'Bot'" class="cursor-pointer"
                 :pt="{ root: { class: 'h-6 !bg-primary-500 !px-2 !py-0.5' }, label: { class: '!text-sm' } }"
-                label="Reference"
-                @click="searchRef(msg.ref)"
-              />
+                label="Reference" @click="searchRef(msg.ref)" />
 
-              <Button
-                class="w-6 h-6 !p-1.5 ml-auto"
-                type="button"
-                size="small"
-                text
-                plain
-                rounded
-                v-tooltip.bottom="'Copy to clipboard'"
-                @click="copyToClipboard(msg.text)"
-              >
+              <Button class="w-6 h-6 !p-1.5 ml-auto" type="button" size="small" text plain rounded
+                v-tooltip.bottom="'Copy to clipboard'" @click="copyToClipboard(msg.text)">
                 <span class="material-symbols-rounded !text-xl"> content_copy </span>
               </Button>
-              <Button
-                class="w-6 h-6 !p-1.5"
-                type="button"
-                size="small"
-                text
-                plain
-                rounded
-                v-tooltip.bottom="'Add to AxoWord'"
-                @click="addToWord(msg.text)"
-              >
+              <Button class="w-6 h-6 !p-1.5" type="button" size="small" text plain rounded
+                v-tooltip.bottom="'Add to AxoWord'" @click="addToWord(msg.text)">
                 <span class="material-symbols-rounded !text-xl"> chat_add_on </span>
               </Button>
             </div>
-            <p>{{ msg.text }}</p>
+            <p class="whitespace-pre-wrap">{{ msg.text }}</p>
           </template>
         </li>
       </ul>
     </main>
+
+    <template #footer>
+      <div class="flex flex-col w-full gap-2">
+        <InputGroup>
+          <InputText v-model="search_raw" autofocus placeholder="Prompt your message for AxoBot"
+            @keydown.enter.prevent="sendMessage" />
+          <InputGroupAddon>
+            <Button type="button" text plain @click="sendMessage">
+              <span class="material-symbols-rounded font-variation-ico-filled !text-xl"> send </span>
+            </Button>
+          </InputGroupAddon>
+        </InputGroup>
+
+        <div v-if="tags.length">
+          <Chip v-for="(tag, index) in tags" :key="index" class="cursor-pointer"
+            :pt="{ root: { class: 'h-6 !bg-primary-500 !px-3 !py-1 !mr-2 !mb-1' }, label: { class: '!text-sm' } }"
+            :label="tag.id" removable @click="searchInput(tag)" @remove="removeTag(index)" />
+        </div>
+      </div>
+    </template>
   </Dialog>
 
   <div v-show="showPersistentComponent" class="absolute peer select-none z-[9] cursor-grab"
@@ -152,6 +108,7 @@
 </template>
 
 <script>
+import { useToast } from "primevue/usetoast";
 export default {
   name: "PersistentWindow",
   data() {
@@ -164,6 +121,7 @@ export default {
         chatbot: "api/subgraph/chatbot",
       },
       sourceToken: null,
+      search_raw: "",
     };
   },
   computed: {
@@ -178,8 +136,9 @@ export default {
     },
   },
   mounted() {
+    this.toast = useToast();
     let com = this;
-    
+
     com.emitter.on("openChatbot", () => {
       com.windowCheck = !com.windowCheck;
     });
@@ -193,7 +152,7 @@ export default {
       navigator.clipboard
         .writeText(text)
         .then(() => {
-          alert("Message copied to clipboard");
+          this.toast.add({ severity: 'success', detail: 'Message copied to clipboard.', life: 4000 });
         })
         .catch((err) => {
           console.error("Could not copy text: ", err);
@@ -237,7 +196,7 @@ export default {
           });
         });
       } else {
-        alert("no citation graph");
+        this.toast.add({ severity: 'error', detail: 'No citation graph. Please try again later.', life: 4000 });
       }
     },
     pmid_nodes(list) {
@@ -249,8 +208,9 @@ export default {
       return pmidlist;
     },
     sendMessage() {
-      const inputDiv = this.$refs.editableDiv;
-      const userInput = inputDiv.innerText.trim();
+      // const inputDiv = this.$refs.editableDiv;
+      // const userInput = inputDiv.innerText.trim();
+      const userInput = this.search_raw.trim();
       if (userInput !== "") {
         const messageTags = [...this.tags];
         let message = { text: userInput, data: messageTags };
@@ -261,7 +221,8 @@ export default {
           data: messageTags,
         });
         this.getAnswer(message);
-        inputDiv.innerText = "";
+        // inputDiv.innerText = "";
+        this.search_raw = '';
       }
     },
     getAnswer(message) {
