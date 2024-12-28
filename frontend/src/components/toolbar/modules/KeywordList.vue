@@ -19,7 +19,7 @@
     </li>
   </ul>
 
-  <h6 v-if="filt_keyword.length === 0" class="text-center text-slate-300">
+  <h6 v-if="search_raw.length >= 2 && filt_keyword.length === 0" class="text-center text-slate-300">
     No available data
   </h6>
 
