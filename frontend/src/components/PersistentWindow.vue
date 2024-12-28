@@ -1,9 +1,9 @@
 <template>
-  <Dialog v-if="windowCheck" v-model:visible="showPersistentComponent" header="AxoBot" position="bottomright"
-    :closable="false" :minY="60" :minX="60" :pt="{
+  <Dialog v-model:visible="windowCheck" header="AxoBot" position="bottomright" :closable="false" :minY="60" :minX="60"
+    :pt="{
       root: {
         class:
-          '!max-h-[70vh] w-[25rem] !mt-[60px] !ml-[60px] !bg-white/75 dark:!bg-slate-900/75 !backdrop-blur overflow-y-auto',
+          '!max-h-[80vh] w-[25rem] !mt-[60px] !ml-[60px] !bg-white/75 dark:!bg-slate-900/75 !backdrop-blur overflow-y-auto',
       },
       header: { class: 'sticky top-0 !p-2 !px-3 !justify-start gap-3 !font-medium cursor-move backdrop-blur z-[1]' },
       headerActions: { class: '!hidden' },
@@ -38,9 +38,9 @@
 
           <template v-if="index !== 0">
             <div v-if="msg.data">
-              <span v-for="(element, index) in msg.data" :key="index" class="small-tag" @click="searchInput(element)">
-                {{ element.id }}
-              </span>
+              <Chip v-for="(element, index) in msg.data" :key="index" class="cursor-pointer"
+                :pt="{ root: { class: 'h-6 !bg-primary-500 !px-3 !py-1 !mr-2 !mb-1' }, label: { class: '!text-sm' } }"
+                :label="element.id" @click="searchInput(element)" />
             </div>
             <div :class="`flex gap-3 ${msg.sender === 'Bot' ? 'mb-5' : ''}`">
 
@@ -71,7 +71,7 @@
     <template #footer>
       <div class="flex flex-col w-full gap-2">
         <InputGroup>
-          <InputText v-model="search_raw" autofocus placeholder="Prompt your message for AxoBot"
+          <InputText v-model="user_input" autofocus placeholder="Type your message..."
             @keydown.enter.prevent="sendMessage" />
           <InputGroupAddon>
             <Button type="button" text plain @click="sendMessage">
@@ -95,12 +95,6 @@
       :class="`group/chat !w-16 !h-16 relative !border-2 !border-primary-200 !text-[#d3e4ff] hover:!text-white transition-all duration-500 z-[1]`"
       @click="windowCheck = !windowCheck">
       <img src="@/assets/logo.png" />
-      <!-- <img
-        class="transition-all duration-300 ease-out translate-x-0 opacity-100 group-hover/chat:-translate-x-10 group-hover/chat:opacity-0"
-        src="@/assets/logo.png" />
-      <img
-        class="absolute transition-all duration-300 ease-in translate-x-10 opacity-0 group-hover/chat:translate-x-0 group-hover/chat:opacity-100"
-        src="@/assets/logo.png" /> -->
       <span
         class="w-full h-full absolute top-0 left-0 bg-gradient-prime rounded-full transition-all duration-500 group-hover/chat:rotate-180 z-[-1]"></span>
     </Button>
@@ -113,7 +107,7 @@ export default {
   name: "PersistentWindow",
   data() {
     return {
-      userInput: "",
+      user_input: "",
       messages: [{ sender: "Bot", text: "Hello! How can I assist you today?" }],
       windowCheck: false,
       tags: [],
@@ -121,17 +115,13 @@ export default {
         chatbot: "api/subgraph/chatbot",
       },
       sourceToken: null,
-      search_raw: "",
     };
   },
   computed: {
     showPersistentComponent() {
       let route = this.$route.name;
       return (
-        route !== "home" &&
-        route !== "input" &&
-        route !== "file" &&
-        route !== "import"
+        route !== "home"
       );
     },
   },
@@ -196,7 +186,7 @@ export default {
           });
         });
       } else {
-        this.toast.add({ severity: 'error', detail: 'No citation graph. Please try again later.', life: 4000 });
+        this.toast.add({ severity: 'error', detail: 'No citation graph.', life: 4000 });
       }
     },
     pmid_nodes(list) {
@@ -208,9 +198,7 @@ export default {
       return pmidlist;
     },
     sendMessage() {
-      // const inputDiv = this.$refs.editableDiv;
-      // const userInput = inputDiv.innerText.trim();
-      const userInput = this.search_raw.trim();
+      const userInput = this.user_input.trim();
       if (userInput !== "") {
         const messageTags = [...this.tags];
         let message = { text: userInput, data: messageTags };
@@ -221,8 +209,7 @@ export default {
           data: messageTags,
         });
         this.getAnswer(message);
-        // inputDiv.innerText = "";
-        this.search_raw = '';
+        this.user_input = '';
       }
     },
     getAnswer(message) {
