@@ -20,7 +20,7 @@
       emptyMessage: { class: '!flex !justify-center !items-center !text-sm !text-slate-500 dark:!text-slate-300' },
       option: {
         class:
-          '!px-0 !py-1.5 !text-slate-500 dark:!text-slate-300 leading-tight transition-all duration-300 ease-in-out',
+          '!px-0 !py-1 !text-slate-500 dark:!text-slate-300 leading-tight transition-all duration-300 ease-in-out',
       },
     }" listStyle="max-height:100%" class="h-full flex flex-col !p-0 !bg-transparent !border-0"
     @update:modelValue="select_community" :tabindex="0" emptyMessage="No communities available.">
