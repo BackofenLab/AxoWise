@@ -31,20 +31,13 @@ export default {
           subset.push(node);
         }
       });
-      com.save_subset();
       com.emitter.emit("searchSubset", { subset: subset, mode: this.mode });
+      com.save_subset(subset);
     },
-    save_subset() {
+    save_subset(subset) {
       var com = this;
-      let genes;
+      let genes = subset;
       let count = new Set(com.$store.state.favourite_subsets)?.size || 0;
-      if (com.mode == "protein") {
-        genes = com.$store.state.active_subset;
-      } else if (com.mode == "term") {
-        genes = com.$store.state.p_active_subset;
-      } else {
-        genes = com.$store.state.c_active_subset;
-      }
 
       if (!genes) return;
 

@@ -75,15 +75,6 @@
       </ProteinList>
     </Dialog>
 
-    <Dialog v-model:visible="keyword_active" header="Highlight nodes" position="topleft" :minY="60" :minX="60" :pt="{
-      root: { class: 'w-[24rem] !mt-[60px] !ml-[60px]' },
-      header: { class: '!py-2.5 cursor-move' },
-      title: { class: '!text-base' },
-    }">
-      <KeywordList v-show="keyword_active" :gephi_data="gephi_data" :mode="mode">
-      </KeywordList>
-    </Dialog>
-
     <Dialog v-model:visible="tools_active" header="Graph settings" position="topleft" :minY="60" :minX="60" :pt="{
       root: { class: 'w-[25rem] !mt-[60px] !ml-[60px]' },
       header: { class: '!py-2.5 cursor-move' },
@@ -110,7 +101,6 @@
 import SettingList from "@/components/toolbar/modules/SettingList.vue";
 import ExportList from "@/components/toolbar/modules/ExportList.vue";
 import ProteinList from "@/components/toolbar/modules/ProteinList.vue";
-import KeywordList from "@/components/toolbar/modules/KeywordList.vue";
 import SelectionList from "@/components/toolbar/modules/SelectionList.vue";
 
 export default {
@@ -120,7 +110,6 @@ export default {
     SettingList,
     ExportList,
     ProteinList,
-    KeywordList,
     SelectionList,
   },
   data() {
@@ -128,30 +117,9 @@ export default {
       tools_active: false,
       export_active: false,
       protein_active: false,
-      keyword_active: false,
       selection_active: false,
       label_check: true,
     };
-  },
-  mounted() {
-    var com = this;
-
-    this.emitter.on("selection_active_changed", (state) => {
-      com.selection_active = state;
-    });
-
-    this.emitter.on("protein_active_changed", (state) => {
-      com.protein_active = state;
-    });
-
-    this.emitter.on("keyword_active_changed", (state) => {
-      com.keyword_active = state;
-    });
-  },
-  beforeUnmount() {
-    this.emitter.off("selection_active_changed");
-    this.emitter.off("protein_active_changed");
-    this.emitter.off("keyword_active_changed");
   },
   methods: {
     switch_home() {
