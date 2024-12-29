@@ -85,10 +85,41 @@
 
   <EmptyState v-if="filt_abstracts.size === 0" message="There is no generated subsets.">
   </EmptyState>
+
+  <Dialog v-model:visible="keyword_active" header="Highlight nodes" position="topleft" :minY="60" :minX="60" :pt="{
+    root: { class: 'w-[24rem] !mt-[60px] !ml-[60px]' },
+    header: { class: '!py-2.5 cursor-move' },
+    title: { class: '!text-base' },
+  }">
+    <KeywordList v-show="keyword_active" :gephi_data="gephi_data" :mode="mode">
+    </KeywordList>
+  </Dialog>
+
+  <Dialog v-model:visible="selection_active" header="Graph parameter" position="topleft" :minY="60" :minX="60" :pt="{
+      root: { class: 'w-[25rem] !mt-[60px] !ml-[60px]' },
+      header: { class: '!py-2.5 cursor-move' },
+      title: { class: '!text-base' },
+    }">
+      <SelectionList :data="gephi_data" :selection_active="selection_active" :active_subset="null"
+        :active_term="null" :mode="mode">
+      </SelectionList>
+    </Dialog>
+
+    <Dialog v-model:visible="protein_active" header="Highlight nodes" position="topleft" :minY="60" :minX="60" :pt="{
+      root: { class: 'w-[24rem] !mt-[60px] !ml-[60px]' },
+      header: { class: '!py-2.5 cursor-move' },
+      title: { class: '!text-base' },
+    }">
+      <ProteinList v-show="protein_active" :gephi_data="gephi_data" :mode="mode">
+      </ProteinList>
+    </Dialog>
 </template>
 
 <script>
 import ListActionHeader from "@/components/verticalpane/ListActionHeader.vue";
+import ProteinList from "@/components/toolbar/modules/ProteinList.vue";
+import SelectionList from "@/components/toolbar/modules/SelectionList.vue";
+import KeywordList from "@/components/toolbar/modules/KeywordList.vue";
 import EmptyState from "@/components/verticalpane/EmptyState.vue";
 import { useToast } from "primevue/usetoast";
 import { nextTick } from "vue";
@@ -98,9 +129,12 @@ export default {
   props: ["gephi_data", "api", "mode"],
   components: {
     ListActionHeader,
-    EmptyState
+    EmptyState,
+    ProteinList,
+    SelectionList,
+    KeywordList
   },
-  emits: ["term_set_changed", "selection_active_changed", "protein_active_changed", "keyword_active_changed"],
+  emits: ["term_set_changed"],
   data() {
     return {
       sort_alph: "",
@@ -108,23 +142,26 @@ export default {
       search_raw: "",
       loading_state: false,
       focus_subset_id: null,
+      keyword_active: false,
+      protein_active: false,
+      selection_active: false,
       subset_options: [
         {
           label: 'By searching in genes',
           command: () => {
-            this.active_protein();
+            this.protein_active = !this.protein_active
           }
         },
         {
           label: 'By searching in keywords',
           command: () => {
-            this.active_keyword_protein();
+            this.keyword_active = !this.keyword_active
           }
         },
         {
           label: 'By parameter filtering',
           command: () => {
-            this.active_selection();
+            this.selection_active = !this.selection_active
           }
         },
       ]
@@ -191,15 +228,6 @@ export default {
     },
     clearFocus() {
       this.focus_subset_id = null;
-    },
-    active_keyword_protein() {
-      this.emitter.emit("keyword_active_changed", true);
-    },
-    active_protein() {
-      this.emitter.emit("protein_active_changed", true);
-    },
-    active_selection() {
-      this.emitter.emit("selection_active_changed", true);
     },
     apply_enrichment(subset) {
       var com = this;

@@ -10,7 +10,7 @@
   </InputGroup>
 
   <ul class="max-h-[200px] flex flex-wrap gap-2 mt-5 pr-2 overflow-auto">
-    <li v-for="(entry, index) in filt_keyword" v-on:click="select_node(entry)" :key="index" :class="`w-[calc((100%-(10px*2))/3)] px-2 py-1.5 border rounded-md text-sm text-center font-semibold cursor-pointer
+    <li v-for="(entry, index) in filt_keyword" v-on:click="select_node(entry)" :key="index" :class="`${mode === 'term' ? 'w-[calc((100%-(10px*2))/2)] text-left' : 'w-[calc((100%-(10px*2))/3)] text-center '} px-2 py-1.5 border rounded-md text-sm font-semibold cursor-pointer
       ${active_genes.has(entry.label)
         ? 'border-primary-400 bg-primary-400/10'
         : 'border-slate-300'
