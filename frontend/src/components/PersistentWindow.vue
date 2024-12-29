@@ -3,13 +3,13 @@
     :pt="{
       root: {
         class:
-          '!max-h-[80vh] w-[25rem] !mt-[60px] !ml-[60px] !bg-white/75 dark:!bg-slate-900/75 !backdrop-blur overflow-y-auto',
+          '!h-[80vh] w-[25rem] !mt-[60px] !ml-[60px] !bg-white/75 dark:!bg-slate-900/75 !backdrop-blur overflow-y-auto',
       },
       header: { class: 'sticky top-0 !p-2 !px-3 !justify-start gap-3 !font-medium cursor-move backdrop-blur z-[1]' },
       headerActions: { class: '!hidden' },
       title: { class: '!text-base ' },
       content: { class: '!px-3 !pb-2 !overflow-y-visible' },
-      footer: { class: 'sticky bottom-0 !px-2 !pt-1 !pb-2 cursor-move backdrop-blur-xl' },
+      footer: { class: 'sticky bottom-0 !px-2 !pt-1 !pb-2 cursor-move backdrop-blur-xl !mt-auto' },
     }">
     <template #header>
       <span class="material-symbols-rounded font-variation-ico-filled text-primary-500 !text-lg"> headset_mic </span>
@@ -24,7 +24,7 @@
       <ul class="flex flex-col gap-1.5">
         <li v-for="(msg, index) in messages" :key="index" :class="`flex flex-col p-3 rounded-lg
           ${index !== 0 ? 'backdrop-blur shadow-md' : ''}
-          ${msg.sender === 'User' ? 'w-11/12 flex-col-reverse self-end' : ''}
+          ${msg.sender === 'User' ? 'w-11/12 self-end' : ''}
           ${msg.sender === 'Bot' && index !== 0 ? 'my-2 bg-gradient-prime-opacity dark:bg-slate-800' : ''}
           `">
           <!-- First welcome message -->
@@ -37,12 +37,19 @@
           </div>
 
           <template v-if="index !== 0">
-            <div v-if="msg.data">
-              <Chip v-for="(element, index) in msg.data" :key="index" class="cursor-pointer"
-                :pt="{ root: { class: 'h-6 !bg-primary-500 !px-3 !py-1 !mr-2 !mb-1' }, label: { class: '!text-sm' } }"
-                :label="element.id" @click="searchInput(element)" />
-            </div>
-            <div :class="`flex gap-3 ${msg.sender === 'Bot' ? 'mb-5' : ''}`">
+            <div :class="`flex gap-3 ${msg.sender === 'Bot' ? 'mb-5 flex-wrap' : 'gap-1.5 items-center'}`">
+              <template v-if="msg.data && msg.data.length">
+                <Carousel :value="msg.data" :numVisible="3" :numScroll="1" :showIndicators="false"
+                  :prevButtonProps="{ size: 'small', plain: true, text: true, rounded: true }"
+                  :nextButtonProps="{ size: 'small', plain: true, text: true, rounded: true }"
+                  :pt="{ viewport: '!flex !items-center' }" class="w-full">
+                  <template #item="slotProps">
+                    <Chip class="cursor-pointer"
+                      :pt="{ root: { class: 'h-6 !bg-slate-700 !px-3 !py-1 !mr-1.5' }, label: { class: '!text-sm' } }"
+                      :label="slotProps.data.id" @click="searchInput(slotProps.data)" />
+                  </template>
+                </Carousel>
+              </template>
 
               <figure v-if="msg.sender === 'Bot'" class="w-6 h-6 p-1 rounded-full bg-gradient-prime-reverse">
                 <img src="@/assets/logo.png" alt="Bot Icon" />
@@ -80,25 +87,31 @@
           </InputGroupAddon>
         </InputGroup>
 
-        <div v-if="tags.length">
-          <Chip v-for="(tag, index) in tags" :key="index" class="cursor-pointer"
-            :pt="{ root: { class: 'h-6 !bg-primary-500 !px-3 !py-1 !mr-2 !mb-1' }, label: { class: '!text-sm' } }"
-            :label="tag.id" removable @click="searchInput(tag)" @remove="removeTag(index)" />
-        </div>
+        <template v-if="tags.length">
+          <Carousel :value="tags" :numVisible="3" :numScroll="1" :showIndicators="false"
+            :prevButtonProps="{ size: 'small', plain: true, text: true, rounded: true }"
+            :nextButtonProps="{ size: 'small', plain: true, text: true, rounded: true }"
+            :pt="{ viewport: '!flex !items-center' }">
+            <template #item="slotProps">
+              <Chip class="cursor-pointer"
+                :pt="{ root: { class: 'h-6 !bg-slate-700 !px-3 !py-1 !mr-1.5' }, label: { class: '!text-sm' } }"
+                :label="slotProps.data.id" removable @click="searchInput(slotProps.data)"
+                @remove="removeTag(slotProps.index)" />
+            </template>
+          </Carousel>
+        </template>
+
       </div>
     </template>
   </Dialog>
 
-  <div v-show="showPersistentComponent" class="absolute peer select-none z-[9] cursor-grab"
-    :style="{ top: `650px`, right: `60px` }">
-    <Button type="button" severity="primary" rounded
-      :class="`group/chat !w-16 !h-16 relative !border-2 !border-primary-200 !text-[#d3e4ff] hover:!text-white transition-all duration-500 z-[1]`"
-      @click="windowCheck = !windowCheck">
-      <img src="@/assets/logo.png" />
-      <span
-        class="w-full h-full absolute top-0 left-0 bg-gradient-prime rounded-full transition-all duration-500 group-hover/chat:rotate-180 z-[-1]"></span>
-    </Button>
-  </div>
+  <Button v-show="showPersistentComponent" type="button" severity="primary" rounded
+    :class="`!absolute z-[9] bottom-9 right-9 group/chat !w-16 !h-16 !border-2 !border-primary-200 !text-[#d3e4ff] hover:!text-white transition-all duration-500`"
+    @click="windowCheck = !windowCheck">
+    <img src="@/assets/logo.png" />
+    <span
+      class="w-full h-full absolute top-0 left-0 bg-gradient-prime rounded-full transition-all duration-500 group-hover/chat:rotate-180 z-[-1]"></span>
+  </Button>
 </template>
 
 <script>
