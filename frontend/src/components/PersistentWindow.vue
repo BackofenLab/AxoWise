@@ -108,7 +108,7 @@
   <Button v-show="showPersistentComponent" type="button" severity="primary" rounded
     :class="`!absolute z-[9] bottom-9 right-9 group/chat !w-16 !h-16 !border-2 !border-primary-200 !text-[#d3e4ff] hover:!text-white transition-all duration-500`"
     @click="windowCheck = !windowCheck">
-    <img src="@/assets/logo.png" />
+    <img src="@/assets/logo.svg" />
     <span
       class="w-full h-full absolute top-0 left-0 bg-gradient-prime rounded-full transition-all duration-500 group-hover/chat:rotate-180 z-[-1]"></span>
   </Button>

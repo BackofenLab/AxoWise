@@ -30,6 +30,7 @@ export default {
         "curve-light": "0 0.95rem 1.4rem -1.65rem #ffffff",
       },
       backgroundImage: {
+        "gradient-front": "linear-gradient(45deg,  rgba(39,42,55,1) 0%,rgba(39,42,55,0.97) 50%,rgba(39,42,55,0.4) 100%)",
         "gradient-prime": "linear-gradient(45deg, rgba(185,45,212,1) 0%, rgba(40,207,186,1) 100%)",
         "gradient-prime-reverse": "linear-gradient(45deg, rgba(40,207,186,1) 0%, rgba(185,45,212,1) 100%)",
         "gradient-prime-opacity": "linear-gradient(45deg, rgba(185,45,212,0.1) 0%, rgba(40,207,186,0.1) 100%)",
