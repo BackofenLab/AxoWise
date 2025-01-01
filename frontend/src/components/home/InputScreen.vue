@@ -1,91 +1,50 @@
 <template>
-  <div class="w-[100vw] h-[100vh] flex justify-center items-center">
-    <div class="input-card">
-      <div class="input-card-logo">
-        <img src="@/assets/logo.png" />
-      </div>
+  <div class="flex flex-col gap-4 mb-4">
+    <fieldset class="flex flex-col gap-1.5 animate__animated animate__fadeInUp">
+      <label for="in_label" class="text-slate-400">Species</label>
+      <Select v-model="selected_species" :options="species" optionLabel="label" class="w-full !bg-[#1c2132]" />
+    </fieldset>
 
-      <div class="input-card-header">
-        <h2>Protein Graph Database</h2>
-      </div>
+    <fieldset class="flex flex-col gap-1.5 animate__animated animate__fadeInUp">
+      <div class="flex items-center justify-between">
+        <label for="protein_list" class="text-slate-400">Protein list</label>
 
-      <div class="input-card-navigation">
-        <router-link to="/input">Input</router-link>
-        <router-link to="/file">File</router-link>
-        <router-link to="/import">Import</router-link>
+        <Button label="Generate samples" icon="pi pi-refresh" size="small" text @click="random_proteins()" />
       </div>
+      <Textarea v-model="raw_text" rows="5" cols="30" class="!bg-[#1c2132] text-center" />
+    </fieldset>
 
-      <div class="input-data">
-        <div class="input field">
-          <div class="input-form-data">
-            <div class="form-selection">
-              <a>Species:</a>
-              <v-select v-model="selected_species" :options="species"></v-select>
-            </div>
-            <div class="form-selection">
-              <div class="form-heading">
-                <a>Protein list:</a>
-                <button id="test-btn" @click="random_proteins()">sample</button>
-              </div>
-              <textarea ref="protein_list_input" id="protein-list" v-model="raw_text" rows="10" cols="30" autofocus>
-              </textarea>
-            </div>
-            <div class="form-selection">
-              <div class="form-heading">
-                <input type="checkbox" id="edgeCheck" name="edgeCheck" v-model="customEdge" />
-                <label for="edgeCheck"> Use custom protein interactions.</label>
-              </div>
-              <div v-if="customEdge == true" class="file-upload-wrapper" :data-text="fileuploadText">
-                <input type="file" id="edge-file" accept=".txt" v-on:change="load_file" />
-              </div>
-            </div>
-            <div class="form-selection">
-              <div class="form-heading">
-                <a>Edge score:</a>
-                <input
-                  type="number"
-                  v-bind:min="threshold.min"
-                  v-bind:max="threshold.max"
-                  v-bind:step="threshold.step"
-                  v-model="threshold.value"
-                  v-on:input="valueChanged('scoregraph')"
-                />
-              </div>
-              <input
-                id="scoregraph"
-                type="range"
-                v-bind:min="threshold.min"
-                v-bind:max="threshold.max"
-                v-bind:step="threshold.step"
-                v-model="threshold.value"
-                v-on:input="valueChanged('scoregraph')"
-              />
-            </div>
-            <button id="submit-btn" @click="submit()" :class="{ loading: isAddClass }">
-              <span class="button__text">Submit</span>
-            </button>
-          </div>
-        </div>
+    <fieldset class="flex flex-wrap items-center gap-2 animate__animated animate__fadeInUp">
+      <Checkbox v-model="customEdge" inputId="edgeCheck" name="edgeCheck" binary />
+      <label for="edgeCheck" class="text-slate-400"> Use custom protein interactions. </label>
+      <FileUpload v-if="customEdge" :pt="{ root: { class: 'w-full !justify-start' } }" mode="basic" accept=".txt"
+        @select="load_edge_file" :maxFileSize="25000000" :chooseButtonProps="{ severity: 'secondary', class: '!bg-black' }"
+        chooseLabel="Select file" chooseIcon="pi pi-folder-open" />
+    </fieldset>
+
+    <fieldset class="flex flex-col gap-2 animate__animated animate__fadeInUp">
+      <div class="flex items-center justify-between gap-2">
+        <label for="" class="text-slate-400">Edge score</label>
+        <InputNumber inputClass="w-14 h-8 text-center" :min="threshold.min" :max="threshold.max" :step="threshold.step"
+          v-model="threshold.value" />
       </div>
-      <div class="social-media">
-        <img src="@/assets/socials/youtube.png" />
-        <img src="@/assets/socials/git.png" />
-        <img src="@/assets/socials/reddit.png" />
-        <img src="@/assets/socials/linkedin.png" />
-      </div>
-    </div>
+      <Slider class="mx-1 mt-3 mb-3" :min="threshold.min" :max="threshold.max" :step="threshold.step"
+        v-model="threshold.value" />
+    </fieldset>
   </div>
+
+  <Button fluid label="Submit" size="large" severity="secondary"
+    class="!bg-black animate__animated animate__fadeInUp animate__slow" @click="submit()" :loading="loading" />
 </template>
 
 <script>
 import validator from "validator";
-
+import { useToast } from "primevue/usetoast";
 export default {
   name: "InputScreen",
-
   data() {
     return {
-      isAddClass: false,
+      loading: false,
       species: [
         {
           label: "Mus musculus (mouse)",
@@ -109,12 +68,14 @@ export default {
         value: 0.2,
       },
       raw_text: null,
-      selected_species: "",
+      selected_species: null,
       customEdge: false,
-      fileuploadText: "Select your file",
+      edge_file: null,
     };
   },
-
+  mounted() {
+    this.toast = useToast();
+  },
   methods: {
     submit() {
       /*
@@ -128,22 +89,21 @@ export default {
       Retrieving:
         - gephi_json (data structure of graph network)
       */
-
+     
       var formData = new FormData();
-      //Detection of empty inputs
-      if (this.selected_species == "") {
-        alert("Please select a species!");
+      // Detection of empty inputs
+      if (this.selected_species == "" || this.selected_species == null) {
+        this.toast.add({ severity: 'error', detail: 'Please select a species!', life: 4000 });
         return;
       }
 
       if (this.raw_text == null || this.raw_text == "") {
-        alert("Please provide a list of proteins!");
+        this.toast.add({ severity: 'error', detail: 'Please provide a list of proteins!', life: 4000 });
         return;
       }
 
-      if (document.getElementById("edge-file")) {
-        const edge_file = document.getElementById("edge-file");
-        formData.append("edge-file", edge_file.files[0]);
+      if (this.edge_file !== null) {
+        formData.append("edge-file", this.edge_file);
       }
 
       var cleanData = validator.whitelist(this.raw_text, "a-zA-Z0-9\\s");
@@ -154,23 +114,23 @@ export default {
       formData.append("species_id", this.selected_species.code);
       formData.append("proteins", cleanData.split(/\s+/).join(";"));
 
-      this.isAddClass = true;
+      this.loading = true;
       this.axios.post(this.api.subgraph, formData).then((response) => {
         if (response.data.length != 0) {
           response.edge_thick = this.edge_thick.value;
-          this.isAddClass = false;
+          this.loading = false;
           this.$store.commit("assign", response);
           this.$router.push("protein");
         } else {
-          alert("no proteins were found.");
-          this.isAddClass = false;
+          this.toast.add({ severity: 'error', detail: 'No proteins were found.', life: 4000 });
+          this.loading = false;
         }
       });
     },
-    load_file(e) {
+    load_edge_file(e) {
+      const { originalEvent } = e;
       var com = this;
-      const file = e.target.files[0];
-      com.fileuploadText = file.name;
+      com.edge_file = originalEvent.target.files[0];
     },
     async random_proteins() {
       const response = await fetch("./mousedb.csv");
@@ -194,93 +154,6 @@ export default {
 
       return randomElements;
     },
-    valueChanged(id) {
-      var target = document.getElementById(id);
-      let a = (target.value / target.max) * 100;
-      target.style.background = `linear-gradient(to right,#0A0A1A,#0A0A1A ${a}%,#ccc ${a}%)`;
-    },
   },
 };
 </script>
-
-<style>
-#test-btn {
-  text-transform: lowercase;
-  color: #fff;
-  background: #0a0a1a57;
-  border: none;
-  padding: 0.6rem;
-  height: 59%;
-  display: flex;
-  justify-content: center;
-  -webkit-align-items: center;
-  margin-left: 0.4rem;
-  text-align: center;
-  align-self: center;
-  width: 3.5rem;
-}
-
-.input-form-data input[type="number"] {
-  text-transform: lowercase;
-  color: #fff;
-  background: #0a0a1a57;
-  border: none;
-  padding: 0.6rem;
-  height: 59%;
-  display: flex;
-  text-align: center;
-  align-self: center;
-  -webkit-align-items: center;
-  margin-left: 0.4rem;
-  -moz-appearance: textfield;
-  -webkit-appearance: textfield;
-  appearance: textfield;
-  width: 3.5rem;
-}
-
-.input-form-data input[type="range"]::-webkit-slider-thumb {
-  background: #fafafa;
-  appearance: none;
-  box-shadow: 1px 2px 26px 1px #bdbdbd;
-  width: 0.6rem;
-  height: 0.6rem;
-}
-
-.form-selection {
-  display: grid;
-  width: 100%;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1.5rem 1fr;
-  grid-row-gap: 0;
-  text-align: left;
-}
-
-.form-selection a {
-  align-self: center;
-}
-
-.form-heading {
-  display: flex;
-  grid-template-columns: 1fr 1fr;
-}
-
-.social-media {
-  position: fixed;
-  display: flex;
-  right: 1rem;
-  bottom: 1rem;
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 10px;
-}
-
-.social-media img {
-  padding: 0.5rem;
-  width: 2.5rem;
-  height: 2.5rem;
-}
-
-.form-heading label {
-  font-size: 12px;
-  margin-left: 0.5rem;
-}
-</style>
