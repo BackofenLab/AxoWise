@@ -1,60 +1,36 @@
 <template>
-  <div class="w-[100vw] h-[100vh] flex justify-center items-center">
-    <div class="input-card">
-      <div class="input-card-logo">
-        <img src="@/assets/logo.png" />
-      </div>
-
-      <div class="input-card-header">
-        <h2>Protein Graph Database</h2>
-      </div>
-
-      <div class="input-card-navigation">
-        <router-link to="/input">Input</router-link>
-        <router-link to="/file">File</router-link>
-        <router-link to="/import">Import</router-link>
-      </div>
-
-      <div class="input-data">
-        <div class="input field">
-          <div class="input-form-data">
-            <h4>Import your graph:</h4>
-            <div class="file-upload-wrapper" :data-text="fileuploadText">
-              <input type="file" id="graph-file" accept=".json" v-on:change="load_json" />
-            </div>
-            <button id="submit-btn" @click="submit()" :class="{ loading: isAddClass }">
-              <span class="button__text" onClick="this.disabled=true;">Submit</span>
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="social-media">
-        <img src="@/assets/socials/youtube.png" />
-        <img src="@/assets/socials/git.png" />
-        <img src="@/assets/socials/reddit.png" />
-        <img src="@/assets/socials/linkedin.png" />
-      </div>
-    </div>
+  <div class="flex flex-col gap-4 mb-4">
+    <fieldset class="flex flex-col gap-1.5 animate__animated animate__fadeInUp">
+      <label for="protein_list" class="text-slate-400">Import your graph</label>
+      <FileUpload :pt="{ root: { class: 'w-full !justify-start' } }" mode="basic" accept=".json" @select="load_json"
+        :maxFileSize="25000000" :chooseButtonProps="{ severity: 'secondary', class: '!bg-black' }"
+        chooseLabel="Select Json" chooseIcon="pi pi-folder-open" />
+    </fieldset>
   </div>
+
+  <Button fluid label="Submit" size="large" severity="secondary"
+    class="!bg-black animate__animated animate__fadeInUp animate__slow" @click="submit()" :loading="loading" />
 </template>
 
 <script>
+import { useToast } from "primevue/usetoast";
 export default {
   name: "ImportScreen",
   data() {
     return {
-      fileuploadText: "Select Json",
       gephi_json: null,
-      isAddClass: false,
+      loading: false,
     };
+  },
+  mounted() {
+    this.toast = useToast();
   },
   methods: {
     load_json(e) {
+      const { originalEvent } = e;
       var com = this;
-
       //Load json file and overwrite to gephi_json
-      const file = e.target.files[0];
-      com.fileuploadText = file.name;
+      const file = originalEvent.target.files[0];
       const reader = new FileReader();
       reader.onload = function (e) {
         com.gephi_json = JSON.parse(e.target.result);
@@ -65,16 +41,16 @@ export default {
       var com = this;
 
       if (com.gephi_json == null) {
-        alert("Please select a import!");
+        this.toast.add({ severity: 'error', detail: 'Please select a import!', life: 4000 });
         return;
       }
-      com.isAddClass = true;
+      com.loading = true;
 
       com.$store.commit("assign", { data: com.gephi_json });
       com.$store.commit("assign_dcoloumn", com.gephi_json.dvalues);
       com.$router.push("protein");
 
-      com.isAddClass = false;
+      com.loading = false;
     },
   },
 };
