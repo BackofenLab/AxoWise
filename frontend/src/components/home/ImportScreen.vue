@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-col gap-4 mb-4">
-    <fieldset class="flex flex-col gap-1.5 animate__animated animate__fadeInUp">
+  <div class="flex flex-col gap-4 mb-6">
+    <fieldset class="flex flex-col gap-4 animate__animated animate__fadeInUp">
       <label for="protein_list" class="text-slate-400">Import your graph</label>
       <FileUpload :pt="{ root: { class: 'w-full !justify-start' } }" mode="basic" accept=".json" @select="load_json"
         :maxFileSize="25000000" :chooseButtonProps="{ severity: 'secondary', class: '!bg-black' }"
@@ -41,7 +41,7 @@ export default {
       var com = this;
 
       if (com.gephi_json == null) {
-        this.toast.add({ severity: 'error', detail: 'Please select a import!', life: 4000 });
+        this.toast.add({ severity: 'error', detail: 'Please select an import!', life: 4000 });
         return;
       }
       com.loading = true;

@@ -1,116 +1,53 @@
 <template>
-  <div class="w-[100vw] h-[100vh] flex justify-center items-center">
-    <div class="input-card">
-      <div class="input-card-logo">
-        <img src="@/assets/logo.png" />
-      </div>
+  <div class="flex flex-col gap-5 mb-4">
+    <fieldset class="flex flex-col gap-1.5 animate__animated animate__fadeInUp">
+      <label for="in_label" class="text-slate-400">Species</label>
+      <Select v-model="selected_species" :options="species" optionLabel="label" class="w-full !bg-[#1c2132]" />
+    </fieldset>
 
-      <div class="input-card-header">
-        <h2>Protein Graph Database</h2>
-      </div>
+    <fieldset class="flex flex-col gap-1.5 animate__animated animate__fadeInUp">
+      <label for="protein_list" class="text-slate-400">Protein file</label>
+      <FileUpload :pt="{ root: { class: 'w-full !justify-start' } }" mode="basic" accept=".csv"
+        @select="load_protein_file" :maxFileSize="25000000"
+        :chooseButtonProps="{ severity: 'secondary', class: '!bg-black' }" chooseLabel="Select file"
+        chooseIcon="pi pi-folder-open" />
+    </fieldset>
 
-      <div class="input-card-navigation">
-        <router-link to="/input">Input</router-link>
-        <router-link to="/file">File</router-link>
-        <router-link to="/import">Import</router-link>
-      </div>
+    <fieldset v-if="dcoloumns != null" class="flex flex-col gap-1.5 animate__animated animate__fadeInUp">
+      <label for="dcoloumns" class="text-slate-400">De-coloumns:</label>
+      <MultiSelect v-model="selected_categories" optionLabel="" placeholder="Select" showClear resetFilterOnClear
+        filterPlaceholder="Search De-coloumns" filter class="!w-full" emptyMessage="No De-coloumns available"
+        emptyFilterMessage="No De-coloumns available" :selectedItemsLabel="`${selected_categories?.length} De-coloumns`"
+        :options="dcoloumns" :maxSelectedLabels="3" />
+    </fieldset>
 
-      <div class="input-data">
-        <div class="input field">
-          <div class="input-form-data">
-            <div class="form-selection">
-              <a>Species:</a>
-              <v-select v-model="selected_species" :options="species"></v-select>
-            </div>
-            <div class="form-selection">
-              <a>Protein file:</a>
-              <div class="file-upload-wrapper" :data-text="fileuploadText">
-                <input type="file" id="protein-file" accept=".csv" v-on:change="load_file($event, false)" />
-              </div>
-            </div>
-            <div id="coloumn-selection" v-if="dcoloumns != null">
-              <div class="form-selection">
-                <div class="form-heading">
-                  <a>De-coloumns:</a>
-                  <button id="test-btn" @click="select_all">all</button>
-                </div>
-                <div class="filter-section">
-                  <div
-                    id="pathway-filter"
-                    class="pre-full colortype"
-                    v-on:click="handling_filter_menu()"
-                    :class="{ full: dcoloumn_filtering == true }"
-                  >
-                    <span>{{ coloumn }}</span>
-                    <img
-                      class="remove-filter"
-                      src="@/assets/pathwaybar/cross.png"
-                      v-on:click.stop="active_categories(null)"
-                      v-if="coloumn !== 'Filter'"
-                    />
-                  </div>
-                  <div id="home-filter-categories" class="colortype" v-show="dcoloumn_filtering == true">
-                    <div
-                      class="element"
-                      v-for="(entry, index) in dcoloumns"
-                      :key="index"
-                      v-on:click="active_categories(entry)"
-                      :class="{ active_cat: active_categories_set.has(entry) }"
-                    >
-                      <a>{{ entry }}</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="form-selection">
-              <div class="form-heading">
-                <input type="checkbox" id="edgeCheck" name="edgeCheck" v-model="customEdge" />
-                <label for="edgeCheck"> Use custom protein interactions.</label>
-              </div>
-              <div v-if="customEdge == true" class="file-upload-wrapper" :data-text="fileuploadTextEdge">
-                <input type="file" id="edge-file" accept=".txt" v-on:change="load_file($event, true)" />
-              </div>
-            </div>
-            <div class="form-selection">
-              <div class="form-heading">
-                <a>Edge score:</a>
-                <input
-                  type="number"
-                  v-bind:min="threshold.min"
-                  v-bind:max="threshold.max"
-                  v-bind:step="threshold.step"
-                  v-model="threshold.value"
-                  v-on:input="valueChanged('scoregraph')"
-                />
-              </div>
-              <input
-                id="scoregraph"
-                type="range"
-                v-bind:min="threshold.min"
-                v-bind:max="threshold.max"
-                v-bind:step="threshold.step"
-                v-model="threshold.value"
-                v-on:input="valueChanged('scoregraph')"
-              />
-            </div>
-            <button id="submit-btn" @click="submit()" :class="{ loading: isAddClass }">
-              <span class="button__text" onClick="this.disabled=true;">Submit</span>
-            </button>
-          </div>
-        </div>
+    <fieldset class="flex flex-wrap items-center gap-2 animate__animated animate__fadeInUp">
+      <Checkbox v-model="customEdge" inputId="edgeCheck" name="edgeCheck" binary />
+      <label for="edgeCheck" class="text-slate-400"> Use custom protein interactions. </label>
+      <FileUpload v-if="customEdge" :pt="{ root: { class: 'w-full !justify-start' } }" mode="basic" accept=".txt"
+        @select="load_edge_file" :maxFileSize="25000000"
+        :chooseButtonProps="{ severity: 'secondary', class: '!bg-black' }" chooseLabel="Select file"
+        chooseIcon="pi pi-folder-open" />
+    </fieldset>
+
+    <fieldset class="animate__animated animate__fadeInUp">
+      <div class="flex items-center justify-between gap-2">
+        <label for="" class="text-slate-400">Edge score</label>
+
+        <InputNumber inputClass="w-14 h-8 text-center" :min="threshold.min" :max="threshold.max" :step="threshold.step"
+          v-model="threshold.value" />
       </div>
-      <div class="social-media">
-        <img src="@/assets/socials/youtube.png" />
-        <img src="@/assets/socials/git.png" />
-        <img src="@/assets/socials/reddit.png" />
-        <img src="@/assets/socials/linkedin.png" />
-      </div>
-    </div>
+      <Slider class="mx-1 mt-3 mb-3" :min="threshold.min" :max="threshold.max" :step="threshold.step"
+        v-model="threshold.value" />
+    </fieldset>
   </div>
+
+  <Button fluid label="Submit" size="large" severity="secondary"
+    class="!bg-black animate__animated animate__fadeInUp animate__slow" @click="submit()" :loading="loading" />
 </template>
 
 <script>
+import { useToast } from "primevue/usetoast";
 export default {
   name: "FileScreen",
   data() {
@@ -134,75 +71,31 @@ export default {
         max: 0.9999,
         step: 0.01,
       },
-      fileuploadText: "Select your file",
-      fileuploadTextEdge: "Select your file",
       dcoloumns: null,
-      selected_d: [],
       selected_species: null,
-      isAddClass: false,
-      dcoloumn_filtering: false,
-      coloumn: "Select...",
+      loading: false,
       customEdge: false,
-      active_categories_set: new Set(),
+      selected_categories: null,
+      edge_file: null,
+      protein_file: null
     };
   },
+  mounted() {
+    this.toast = useToast();
+  },
   methods: {
-    select_all() {
-      this.active_categories_set = new Set(this.dcoloumns);
-      this.coloumn = [...this.active_categories_set].join(", ");
-    },
-    active_categories(coloumn) {
-      if (!coloumn) {
-        this.reset_categories();
-        return;
-      }
-      if (this.active_categories_set.has(coloumn)) {
-        if (this.active_categories_set.size == 1) {
-          this.reset_categories();
-          return;
-        }
-        this.active_categories_set.delete(coloumn);
-      } else {
-        this.active_categories_set.add(coloumn);
-      }
-      this.coloumn = [...this.active_categories_set].join(", ");
-    },
-    reset_categories() {
-      this.coloumn = "Filter";
-      this.active_categories_set = new Set();
-    },
-    handling_filter_menu() {
+    load_edge_file(e) {
+      const { originalEvent } = e;
       var com = this;
-      if (!com.dcoloumn_filtering) {
-        com.dcoloumn_filtering = true;
-
-        // Add the event listener
-        document.addEventListener("mouseup", com.handleMouseUp);
-      } else {
-        com.category_filtering = false;
-        document.removeEventListener("mouseup", com.handleMouseUp);
-      }
+      com.edge_file = originalEvent.target.files[0];
     },
-    handleMouseUp(e) {
+    load_protein_file(e) {
+      const { originalEvent } = e;
       var com = this;
-
-      var container = document.getElementById("home-filter-categories");
-      var container_button = document.getElementById("pathway-filter");
-      if (!container.contains(e.target) && !container_button.contains(e.target)) {
-        com.dcoloumn_filtering = false;
-
-        // Remove the event listener
-        document.removeEventListener("mouseup", com.handleMouseUp);
-      }
-    },
-    load_file(e, edgeCheck) {
-      var com = this;
+      com.protein_file = originalEvent.target.files[0];
 
       //Read csv file to get coloumn information
-      const file = e.target.files[0];
-      edgeCheck ? (com.fileuploadTextEdge = file.name) : (com.fileuploadText = file.name);
-
-      if (edgeCheck) return;
+      const file = originalEvent.target.files[0];
 
       com.dcoloumns = [];
       const reader = new FileReader();
@@ -229,78 +122,35 @@ export default {
       var com = this;
       var formData = new FormData();
 
-      if (com.selected_species == "") {
-        alert("Please select a species!");
+      if (com.selected_species == "" || com.selected_species == null) {
+        this.toast.add({ severity: 'error', detail: 'Please select a species!', life: 4000 });
         return;
       }
 
-      const protein_file = document.getElementById("protein-file");
-
-      if (protein_file.files.length == 0 || protein_file == null) {
-        alert("Please supply a file!");
+      if (com.protein_file == null) {
+        this.toast.add({ severity: 'error', detail: 'Please supply a file!', life: 4000 });
         return;
       }
 
-      if (document.getElementById("edge-file")) {
-        const edge_file = document.getElementById("edge-file");
-        formData.append("edge-file", edge_file.files[0]);
+      if (com.edge_file !== null) {
+        formData.append("edge-file", com.edge_file);
       }
 
       formData.append("threshold", com.threshold.value);
       formData.append("species_id", com.selected_species.code);
-      formData.append("file", protein_file.files[0]);
-      formData.append("selected_d", [...com.active_categories_set]);
+      formData.append("file", com.protein_file);
+      formData.append("selected_d", com.selected_categories);
 
-      this.$store.commit("assign_dcoloumn", [...this.active_categories_set]);
+      this.$store.commit("assign_dcoloumn", com.selected_categories);
 
-      com.isAddClass = true;
+      com.loading = true;
       this.axios.post(this.api.subgraph, formData).then((response) => {
-        com.isAddClass = false;
+        com.loading = false;
         response.edge_thick = 0.01;
         com.$store.commit("assign", response);
         com.$router.push("protein");
       });
     },
-    valueChanged(id) {
-      var target = document.getElementById(id);
-      let a = (target.value / target.max) * 100;
-      target.style.background = `linear-gradient(to right,#0A0A1A,#0A0A1A ${a}%,#ccc ${a}%)`;
-    },
   },
 };
 </script>
-<style>
-#home-filter-categories {
-  position: absolute;
-  max-height: 600%;
-  width: 100%;
-  left: 0;
-  top: 100%;
-  padding: 0.3% 0 0.3% 0;
-  border-radius: 0 0 5px 5px;
-  -webkit-backdrop-filter: blur(7.5px);
-  backdrop-filter: blur(7.5px);
-  overflow-y: scroll;
-  overflow-x: hidden;
-  color: #fff;
-  border-color: hsla(0, 0%, 100%, 0.3);
-  border-width: 1px;
-  border-style: solid;
-  z-index: 999;
-}
-
-#coloumn-selection .filter-section {
-  width: unset;
-  max-width: 100%;
-  height: 30px;
-  display: flex;
-  position: relative;
-  left: 0;
-  background: rgba(255, 255, 255, 0.5);
-  color: black;
-}
-
-#coloumn-selection #pathway-filter span {
-  color: #0a0a1a53;
-}
-</style>
