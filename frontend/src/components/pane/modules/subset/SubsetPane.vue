@@ -1,6 +1,46 @@
 <template>
-  <div class="text" v-show="active_subset !== null">
-    <div class="gene_attribute" v-if="active_subset !== null">
+  <template v-if="active_subset !== null">
+
+    <div class="flex justify-between gap-2 mb-3 bg-[var(--card-bg)] z-[2]">
+      <span class="flex items-center gap-1 text-sm">
+        <strong class="font-normal text-primary-400">Nodes:</strong>
+        {{ number_prot }}
+      </span>
+      <span class="flex items-center gap-1 text-sm">
+        <strong class="font-normal text-primary-400">Edges:</strong>
+        {{ number_asc }}
+      </span>
+      <Button class="w-6 h-6" size="small" text plain rounded @click="show_layer()" v-tooltip.bottom="hide ? '' : ''">
+        <span class="material-symbols-rounded">
+          {{ hide ? "visibility" : "visibility_off" }}
+        </span>
+      </Button>
+    </div>
+
+    <Divider />
+
+    <Tabs :value="active_function" @update:value="onChangeTab">
+      <TabList class="sticky top-0">
+        <Tab value="statistics" class="!pt-0 !pb-2 text-sm">Selection</Tab>
+        <Tab value="connections" class="!pt-0 !pb-2 text-sm">Connections</Tab>
+      </TabList>
+
+      <TabPanels class="!px-0 !pb-0">
+        <TabPanel value="statistics">
+          <SubsetLinks :active_subset="active_subset" :mode="mode"></SubsetLinks>
+        </TabPanel>
+
+        <TabPanel value="connections">
+          <Button class="w-6 h-6 !p-1.5 ml-auto" type="button" size="small" text plain rounded
+            v-tooltip.bottom="'Copy to clipboard'" @click="copyclipboard()">
+            <span class="material-symbols-rounded !text-xl"> content_copy </span>
+          </Button>
+          <SubsetConnections :active_subset="subset"></SubsetConnections>
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
+
+    <!-- <div class="gene_attribute" v-if="active_subset !== null">
       <div id="colorbar" :style="{ backgroundColor: '#0A0A1A' }"></div>
       <div class="gene_attr">Nodes:{{ number_prot }}</div>
       <div class="gene_attr">Edges:{{ number_asc }}</div>
@@ -8,7 +48,7 @@
         <img src="@/assets/pane/invisible.png" v-if="!hide" />
         <img src="@/assets/pane/visible.png" v-if="hide" />
       </div>
-    </div>
+    </div> 
     <div
       :class="{
         'tool-section': !tool_active,
@@ -59,11 +99,12 @@
       </div>
     </div>
     <div class="nodeattributes">
-      <!-- <img
+      // No
+      <img
         class="icons"
         src="@/assets/toolbar/menu-burger.png"
         v-on:click="change_section('information')"
-      /> -->
+      /> 
       <img
         class="icons"
         src="@/assets/toolbar/settings-sliders.png"
@@ -79,14 +120,16 @@
         src="@/assets/toolbar/bote.png"
         v-on:click="call_chatbot(mode)"
       />
-      <!-- <img  class="icons" src="@/assets/toolbar/logout.png" v-on:click="change_section(!tool_active,'routing')"> -->
-    </div>
-  </div>
+      // No
+      <img  class="icons" src="@/assets/toolbar/logout.png" v-on:click="change_section(!tool_active,'routing')"> 
+    </div> -->
+  </template>
 </template>
 
 <script>
 import SubsetConnections from "@/components/pane/modules/subset/SubsetConnections.vue";
 import SubsetLinks from "@/components/pane/modules/subset/SubsetLinks.vue";
+import { useToast } from "primevue/usetoast";
 
 export default {
   name: "SubsetPane",
@@ -102,6 +145,7 @@ export default {
   },
   data() {
     return {
+      active_function: "",
       active_section: "",
       subset: null,
       hide: true,
@@ -168,7 +212,14 @@ export default {
       com.$emit("active_item_changed", { Subset: com.subset_item });
     },
   },
+  mounted() {
+    this.toast = useToast();
+  },
   methods: {
+    onChangeTab(tab) {
+      var com = this;
+      com.active_function = tab;
+    },
     change_section(val) {
       var com = this;
 
@@ -193,6 +244,7 @@ export default {
       var textToCopy = [];
       for (var link of com.subset) textToCopy.push(link.label);
       navigator.clipboard.writeText(textToCopy.join("\n"));
+      this.toast.add({ severity: 'success', detail: 'Message copied to clipboard.', life: 4000 });
     },
     show_layer() {
       var com = this;
@@ -232,7 +284,7 @@ export default {
 };
 </script>
 
-<style>
+<!-- <style>
 #colorbar-subset {
   position: relative;
   display: flex;
@@ -268,4 +320,4 @@ export default {
   height: 100%;
   right: 3%;
 }
-</style>
+</style> -->
