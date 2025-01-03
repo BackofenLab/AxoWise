@@ -5,7 +5,7 @@
     </AppBar>
   </keep-alive>
   <keep-alive>
-    <PaneSystem :active_node="active_node" @active_node_changed="active_node = $event" :active_term="active_term"
+    <PaneSystem :mode="mode" :active_node="active_node" @active_node_changed="active_node = $event" :active_term="active_term"
       @active_term_changed="active_term = $event" :active_background="active_background"
       @active_background_changed="active_background = $event" :active_subset="active_subset"
       @active_subset_changed="active_subset = $event" :active_decoloumn="active_decoloumn"
