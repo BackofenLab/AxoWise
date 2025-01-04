@@ -14,8 +14,7 @@
 
   <Listbox v-if="citation_data?.nodes?.length != 0 && !await_load" v-model="selected_citation" optionLabel="id"
     :options="filt_abstracts" :pt="{
-      header: { class: 'sticky top-0 flex-1 !px-0 bg-[var(--card-bg)] z-[1] order-1' },
-      listContainer: { class: 'order-3' },
+      listContainer: { class: 'order-2' },
       list: { class: '!p-0' },
       emptyMessage: { class: '!flex !justify-center !items-center !text-sm !text-slate-500 dark:!text-slate-300' },
       option: {
