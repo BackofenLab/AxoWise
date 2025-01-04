@@ -1,60 +1,47 @@
 <template>
-  <Dialog v-model:visible="paneVisible" :closable="false" @hide="close_pane()" position="bottomright" :minY="60"
-    :minX="60" :pt="{
-      root: { class: 'w-[18rem] !mt-[60px] !ml-[60px]' },
-      header: { class: '!py-1' },
-      content: { class: '!max-h-[14rem]' },
-    }">
-    <template #header>
-      <h3 class="text-sm cursor-move">
-        {{ active_tab }}
-      </h3>
-      <div class="flex items-center gap-1 ml-auto">
-        <Button class="w-8 h-8" size="small" text rounded plain v-tooltip.bottom="'Add to AxoBot'"
-          @click="call_chatbot()">
-          <span class="dark:text-white material-symbols-rounded">forum</span>
-        </Button>
-        <Button class="w-8 h-8" size="small" text rounded plain @click="close_pane()">
-          <span class="dark:text-white material-symbols-rounded"> close </span>
-        </Button>
-      </div>
-    </template>
-
-    <NodePane v-show="active_tab === 'Protein'" :mode="mode" :tool_active="tool_active"
-      @tool_active_changed="tool_active = $event" :active_node="active_node" :node_color_index="node_color_index"
-      :gephi_data="gephi_data" @active_item_changed="active_item = $event"></NodePane>
-    <SubsetPane v-show="active_tab === 'Subset'" :mode="mode" :tool_active="tool_active"
-      @tool_active_changed="tool_active = $event" :active_subset="active_subset" :gephi_data="gephi_data"
-      @active_item_changed="active_item = $event" @highlight_subset_changed="highlight_subset = $event"
-      @active_layer_changed="active_layer = $event"></SubsetPane>
-    <TermPane v-show="active_tab === 'Pathway'" :mode="mode" :tool_active="tool_active"
-      @tool_active_changed="tool_active = $event" :active_term="active_term" :gephi_data="gephi_data"
-      @active_item_changed="active_item = $event" @highlight_subset_changed="highlight_subset = $event"></TermPane>
-    <DEValuePane v-show="active_tab === 'Differential expression'" :mode="mode" :tool_active="tool_active"
-      @tool_active_changed="tool_active = $event" :active_decoloumn="active_decoloumn" :gephi_data="gephi_data"
-      @active_item_changed="active_item = $event"></DEValuePane>
-    <EnrichmentLayerPane v-show="active_tab === 'Pathway layers'" :mode="mode" :tool_active="tool_active"
-      @tool_active_changed="tool_active = $event" :active_termlayers="active_termlayers" :gephi_data="gephi_data"
-      @active_item_changed="active_item = $event"></EnrichmentLayerPane>
-  </Dialog>
-
-  <!-- <div v-show="active_node !== null ||
+  <div v-show="active_node !== null ||
     active_subset !== null ||
     active_term !== null ||
     active_decoloumn !== null ||
     active_termlayers !== null ||
-    paneVisible
+    paneHidden == false
     ">
-    <div class="pane" id="pane" :class="{ active: tool_active }">
-      <div class="pane_header" id="pane_header">
-        <span>{{ active_tab }}</span>
-        <img class="pane_close" src="@/assets/toolbar/cross.png" v-on:click="close_pane()" />
-      </div>
-      <div class="pane-window">
-
-      </div>
-    </div>
-  </div> -->
+    <Dialog :visible="active_node !== null ||
+      active_subset !== null ||
+      active_term !== null ||
+      active_decoloumn !== null ||
+      active_termlayers !== null ||
+      paneHidden == false" @hide="close_pane()" position="bottomright" :closable="false" :minY="60" :minX="60" :pt="{
+        root: { class: 'w-[18rem] !mt-[60px] !ml-[60px]' },
+        header: { class: '!px-2.5 !py-1.5 cursor-move' },
+        content: { class: '!px-2.5 !py-0' },
+      }">
+      <template #header>
+        <h3 class="text-sm font-bold">
+          {{ active_tab }}
+        </h3>
+        <Button class="w-5 h-5 ml-auto" size="small" text rounded plain @click="close_pane()">
+          <span class="dark:text-white !text-lg material-symbols-rounded"> close </span>
+        </Button>
+      </template>
+      <NodePane v-show="active_tab === 'Protein'" :mode="mode" :tool_active="tool_active"
+        @tool_active_changed="tool_active = $event" :active_node="active_node" :node_color_index="node_color_index"
+        :gephi_data="gephi_data" @active_item_changed="active_item = $event"></NodePane>
+      <SubsetPane v-show="active_tab === 'Subset'" :mode="mode" :tool_active="tool_active"
+        @tool_active_changed="tool_active = $event" :active_subset="active_subset" :gephi_data="gephi_data"
+        @active_item_changed="active_item = $event" @highlight_subset_changed="highlight_subset = $event"
+        @active_layer_changed="active_layer = $event"></SubsetPane>
+      <TermPane v-show="active_tab === 'Pathway'" :mode="mode" :tool_active="tool_active"
+        @tool_active_changed="tool_active = $event" :active_term="active_term" :gephi_data="gephi_data"
+        @active_item_changed="active_item = $event" @highlight_subset_changed="highlight_subset = $event"></TermPane>
+      <DEValuePane v-show="active_tab === 'Differential expression'" :mode="mode" :tool_active="tool_active"
+        @tool_active_changed="tool_active = $event" :active_decoloumn="active_decoloumn" :gephi_data="gephi_data"
+        @active_item_changed="active_item = $event"></DEValuePane>
+      <EnrichmentLayerPane v-show="active_tab === 'Pathway layers'" :mode="mode" :tool_active="tool_active"
+        @tool_active_changed="tool_active = $event" :active_termlayers="active_termlayers" :gephi_data="gephi_data"
+        @active_item_changed="active_item = $event"></EnrichmentLayerPane>
+    </Dialog>
+  </div>
 </template>
 
 <script>
@@ -100,40 +87,16 @@ export default {
       active_dict: {},
       active_tab: "Protein",
       highlight_subset: null,
-      paneVisible: false,
+      paneHidden: true,
       tool_active: false,
     };
   },
   watch: {
-    active_node() {
-      if (this.active_node !== null) {
-        this.paneVisible = true;
-      }
-    },
-    active_subset() {
-      if (this.active_subset !== null) {
-        this.paneVisible = true;
-      }
-    },
-    active_term() {
-      if (this.active_term !== null) {
-        this.paneVisible = true;
-      }
-    },
-    active_decoloumn() {
-      if (this.active_decoloumn !== null) {
-        this.paneVisible = true;
-      }
-    },
-    active_termlayers() {
-      if (this.active_termlayers !== null) {
-        this.paneVisible = true;
-      }
-    },
     active_item(val) {
       this.$emit("active_background_changed", val);
       if (this.active_tab != Object.keys(val)[0]) this.tool_active = false;
       this.active_tab = Object.keys(val)[0];
+      console.log('00', this.active_tab);
       if (val == null) {
         delete this.active_dict.val;
         return;
@@ -197,17 +160,6 @@ export default {
     //     document.onmousemove = null;
     //   }
     // },
-    call_chatbot() {
-      let addedSubset = this.active_subset.selection
-        ? this.active_subset.genes
-        : this.active_subset;
-      this.emitter.emit("addToChatbot", {
-        id: `${this.mode}:subset${addedSubset.length}`,
-        mode: this.mode,
-        type: "subset",
-        data: addedSubset,
-      });
-    },
     open_pane() {
       // const div = document.getElementById("attributepane");
       // const paneButton = document.getElementById("panebutton");
@@ -220,7 +172,7 @@ export default {
       //   paneCloseButton.style.visibility = "hidden";
       //   collapseIcon.classList.add("rotate");
 
-      //   this.paneVisible = true;
+      //   this.paneHidden = false;
 
       //   this.$emit("active_node_changed", null);
       //   this.$emit("active_term_changed", null);
@@ -235,14 +187,13 @@ export default {
       //   paneCloseButton.style.visibility = "visible";
       //   paneButton.style.height = "25px";
       //   collapseIcon.classList.remove("rotate");
-      //   this.paneVisible = false;
+      //   this.paneHidden = true;
       //   var nameKey = Object.keys(this.active_dict)[0];
       //   this.selectTab(nameKey, this.active_dict[nameKey].value);
       // }
     },
     close_pane() {
       this.active_dict = {};
-      this.paneVisible = false;
 
       this.$emit("active_node_changed", null);
       this.$emit("active_term_changed", null);
@@ -284,6 +235,8 @@ export default {
   mounted() {
     // this.dragElement(document.getElementById("pane"));
     this.emitter.on("reset_protein", (state) => {
+      console.log('00', state);
+
       this.selectTab("node", state);
     });
   },

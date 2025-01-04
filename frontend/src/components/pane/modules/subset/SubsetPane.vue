@@ -1,43 +1,60 @@
 <template>
-  <template v-if="active_subset !== null">
-
-    <div class="flex justify-between gap-2 mb-3 bg-[var(--card-bg)] z-[2]">
-      <span class="flex items-center gap-1 text-sm">
-        <strong class="font-normal text-primary-400">Nodes:</strong>
+  <div v-show="active_subset !== null">
+    <header v-if="active_subset !== null" class="flex flex-wrap items-center gap-2">
+      <span class="flex items-center gap-1 text-sm font-medium">
+        <small class="w-3 h-3 border rounded-full border-slate-400" :style="{ backgroundColor: '#0A0A1A' }"></small>
+        <strong class="font-normal dark:text-slate-300">Nodes:</strong>
         {{ number_prot }}
       </span>
-      <span class="flex items-center gap-1 text-sm">
-        <strong class="font-normal text-primary-400">Edges:</strong>
+      <span class="flex items-center gap-1 text-sm font-medium">
+        <strong class="font-normal dark:text-slate-300">Edges:</strong>
         {{ number_asc }}
       </span>
-      <Button class="w-6 h-6" size="small" text plain rounded @click="show_layer()" v-tooltip.bottom="hide ? '' : ''">
-        <span class="material-symbols-rounded">
-          {{ hide ? "visibility" : "visibility_off" }}
-        </span>
-      </Button>
-    </div>
+      <div class="flex items-center gap-2 ml-auto">
+        <Button v-if="active_function == 'connections'" class="w-5 h-5" size="small" text plain rounded
+          v-tooltip.bottom="'Copy to clipboard'" @click="copyToClipboard()">
+          <span class="dark:text-white material-symbols-rounded !text-lg"> content_copy </span>
+        </Button>
+        <Button class="w-5 h-5" size="small" text plain rounded @click="show_layer()" v-tooltip.bottom="hide ? '' : ''">
+          <span class="dark:text-white material-symbols-rounded !text-lg">
+            {{ hide ? "visibility" : "visibility_off" }}
+          </span>
+        </Button>
+      </div>
+    </header>
 
-    <Divider />
+    <Tabs :value="active_function" @update:value="onChangeTab" v-if="active_subset !== null">
+      <div
+        :class="`${active_function ? '!pt-2 !border-t !border-slate-700 !mt-2' : ''} px-2.5 -mx-2.5 max-h-[10rem] overflow-auto overflow-x-visible`">
+        <TabPanels class="!p-0">
+          <TabPanel value="statistics">
+            <SubsetLinks :active_subset="active_subset" :mode="mode"></SubsetLinks>
+          </TabPanel>
+          <TabPanel value="connections">
 
-    <Tabs :value="active_function" @update:value="onChangeTab">
-      <TabList class="sticky top-0">
-        <Tab value="statistics" class="!pt-0 !pb-2 text-sm">Selection</Tab>
-        <Tab value="connections" class="!pt-0 !pb-2 text-sm">Connections</Tab>
-      </TabList>
+            <SubsetConnections :active_subset="subset"></SubsetConnections>
+          </TabPanel>
+        </TabPanels>
+      </div>
 
-      <TabPanels class="!px-0 !pb-0">
-        <TabPanel value="statistics">
-          <SubsetLinks :active_subset="active_subset" :mode="mode"></SubsetLinks>
-        </TabPanel>
+      <footer class="flex items-end !mt-2 !border-t !border-slate-600 py-2">
+        <TabList class="" :pt="{
+          tabList: { class: '!border-0 !gap-4' },
+          activeBar: { class: '!hidden' }
+        }">
+          <Tab value="statistics" class="!p-0 text-sm !border-0 flex items-center gap-1"><span
+              :class="`material-symbols-rounded !text-lg ${active_function == 'statistics' ? 'font-variation-ico-filled' : ''}`">insert_chart</span>Statistics
+          </Tab>
+          <Tab value="connections" class="!p-0 text-sm !border-0 flex items-center gap-1"><span
+              :class="`material-symbols-rounded !text-lg ${active_function == 'connections' ? 'font-variation-ico-filled' : ''}`">list_alt</span>Connections
+          </Tab>
+        </TabList>
 
-        <TabPanel value="connections">
-          <Button class="w-6 h-6 !p-1.5 ml-auto" type="button" size="small" text plain rounded
-            v-tooltip.bottom="'Copy to clipboard'" @click="copyclipboard()">
-            <span class="material-symbols-rounded !text-xl"> content_copy </span>
-          </Button>
-          <SubsetConnections :active_subset="subset"></SubsetConnections>
-        </TabPanel>
-      </TabPanels>
+        <Button class="w-5 h-5 !ml-auto" size="small" text rounded plain v-tooltip.bottom="'Add to AxoBot'"
+          @click="call_chatbot()">
+          <span class="dark:text-white material-symbols-rounded !text-lg">forum</span>
+        </Button>
+      </footer>
     </Tabs>
 
     <!-- <div class="gene_attribute" v-if="active_subset !== null">
@@ -123,7 +140,7 @@
       // No
       <img  class="icons" src="@/assets/toolbar/logout.png" v-on:click="change_section(!tool_active,'routing')"> 
     </div> -->
-  </template>
+  </div>
 </template>
 
 <script>
@@ -238,7 +255,7 @@ export default {
         }
       }
     },
-    copyclipboard() {
+    copyToClipboard() {
       var com = this;
 
       var textToCopy = [];
