@@ -45,7 +45,7 @@
                   :pt="{ viewport: '!flex !items-center' }" class="w-full">
                   <template #item="slotProps">
                     <Chip class="cursor-pointer"
-                      :pt="{ root: { class: 'h-6 !bg-slate-700 !px-3 !py-1 !mr-1.5' }, label: { class: '!text-sm' } }"
+                      :pt="{ root: { class: 'h-6 dark:!bg-slate-700 !px-3 !py-1 !mr-1.5' }, label: { class: '!text-sm' } }"
                       :label="slotProps.data.id" @click="searchInput(slotProps.data)" />
                   </template>
                 </Carousel>
@@ -94,7 +94,7 @@
             :pt="{ viewport: '!flex !items-center' }">
             <template #item="slotProps">
               <Chip class="cursor-pointer"
-                :pt="{ root: { class: 'h-6 !bg-slate-700 !px-3 !py-1 !mr-1.5' }, label: { class: '!text-sm' } }"
+                :pt="{ root: { class: 'h-6 dark:!bg-slate-700 !px-3 !py-1 !mr-1.5' }, label: { class: '!text-sm' } }"
                 :label="slotProps.data.id" removable @click="searchInput(slotProps.data)"
                 @remove="removeTag(slotProps.index)" />
             </template>

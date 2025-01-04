@@ -1,7 +1,7 @@
 <template>
-  <ul class="list-none p-0 m-0 mt-2 flex flex-col divide-y dark:divide-[#343b4c]">
-    <li class="flex flex-col gap-2 pb-5 dark:text-[#c3c3c3]">
-      <div class="flex items-center justify-between gap-2 mb-2 text-sm">
+  <ul class="list-none p-0 m-0 flex flex-col divide-y dark:divide-[#343b4c]">
+    <li class="flex flex-col gap-2 px-2.5 pb-3 dark:text-[#c3c3c3]">
+      <div class="flex items-center justify-between -mx-2.5 gap-2 mb-2 text-sm">
         Degree value
         <fieldset class="flex gap-1">
           <InputNumber :useGrouping="false" :min="degree_boundary.min" :max="degree_boundary.max"
@@ -17,8 +17,8 @@
         :modelValue=[degree_boundary.minValue,degree_boundary.maxValue] />
     </li>
 
-    <li class="flex flex-col gap-2 py-5 dark:text-[#c3c3c3]">
-      <div class="flex items-center justify-between gap-2 mb-2 text-sm">
+    <li class="flex flex-col gap-2 px-2.5 py-3 dark:text-[#c3c3c3]">
+      <div class="flex items-center justify-between -mx-2.5 gap-2 mb-2 text-sm">
         Betweenness centrality value
         <fieldset class="flex gap-1">
           <InputNumber :useGrouping="false" :min="bc_boundary.min" :max="bc_boundary.max" :step="bc_boundary.step"
@@ -30,12 +30,11 @@
         </fieldset>
       </div>
       <Slider name="bc_boundary" :min="bc_boundary.min" :max="bc_boundary.max" range :step="bc_boundary.step"
-        @update:modelValue="sliderChanged($event, 'bc_boundary')"
-        :modelValue=[bc_boundary.minValue,bc_boundary.maxValue] />
+        @update:modelValue="sliderChanged($event, 'bc_boundary')" :modelValue=[bc_boundary.minValue,bc_boundary.maxValue] />
     </li>
 
-    <li v-if="mode == 'term'" class="flex flex-col gap-2 py-5 dark:text-[#c3c3c3]">
-      <div class="flex items-center justify-between gap-2 mb-2 text-sm">
+    <li v-if="mode == 'term'" class="flex flex-col gap-2 py-3 dark:text-[#c3c3c3]">
+      <div class="flex items-center justify-between -mx-2.5 gap-2 mb-2 text-sm">
         padj value (log10)
         <fieldset class="flex gap-1">
           <InputNumber :useGrouping="false" :min="padj_boundary.min" :max="padj_boundary.max" :step="padj_boundary.step"
@@ -47,12 +46,11 @@
         </fieldset>
       </div>
       <Slider name="padj_boundary" :min="padj_boundary.min" :max="padj_boundary.max" range :step="padj_boundary.step"
-        @update:modelValue="sliderChanged($event, 'padj_boundary')"
-        :modelValue=[padj_boundary.minValue,padj_boundary.maxValue] />
+        @update:modelValue="sliderChanged($event, 'padj_boundary')" :modelValue=[padj_boundary.minValue,padj_boundary.maxValue] />
     </li>
 
-    <li class="flex flex-col gap-2 py-5 dark:text-[#c3c3c3]">
-      <div class="flex items-center justify-between gap-2 mb-2 text-sm">
+    <li class="flex flex-col gap-2 px-2.5 py-3 dark:text-[#c3c3c3]">
+      <div class="flex items-center justify-between -mx-2.5 gap-2 mb-2 text-sm">
         pagerank value (log10)
         <fieldset class="flex gap-1">
           <InputNumber :useGrouping="false" :min="pr_boundary.min" :max="pr_boundary.max" :step="pr_boundary.step"
@@ -64,41 +62,32 @@
         </fieldset>
       </div>
       <Slider name="pr_boundary" :min="pr_boundary.min" :max="pr_boundary.max" range :step="pr_boundary.step"
-        @update:modelValue="sliderChanged($event, 'pr_boundary')"
-        :modelValue=[pr_boundary.minValue,pr_boundary.maxValue] />
+        @update:modelValue="sliderChanged($event, 'pr_boundary')" :modelValue=[pr_boundary.minValue,pr_boundary.maxValue] />
     </li>
-  </ul>
 
-  <div v-if="mode != 'term' && mode != 'citation'" class="flex justify-between mt-5 text-sm font-medium">
-    Coloumn section
-    <ToggleSwitch class="toggle-xs" v-model="coloumnsCheck" />
-  </div>
-
-  <span v-if="!dcoloumns" class="flex justify-center pt-2 text-sm dark:text-[#c3c3c3]">No selectable dcoloumns</span>
-
-  <ul v-if="dcoloumns" v-show="coloumnsCheck"
-    class="max-h-[240px] overflow-auto overflow-x-visible list-none mb-4 p-0 m-0 mt-1 px-2.5 flex flex-col divide-y dark:divide-[#343b4c]">
-    <li class="flex flex-col gap-2 py-5 dark:text-[#c3c3c3]" v-for="(entry, index) in dcoloumns" :key="index">
-      <div class="flex items-center justify-between gap-2 mb-2">
-        <span class="text-sm">{{ entry }}</span>
-        <fieldset class="flex gap-1">
-          <InputNumber :useGrouping="false" :min="dboundaries[entry].min" :max="dboundaries[entry].max"
-            :step="dboundaries[entry].step" v-model="dboundaries[entry].minValue" @value-change="searchSubset()"
-            inputClass="w-14 h-7 !px-1.5 !text-xs text-center" />-
-          <InputNumber :useGrouping="false" :min="dboundaries[entry].min" :max="dboundaries[entry].max"
-            :step="dboundaries[entry].step" v-model="dboundaries[entry].maxValue" @value-change="searchSubset()"
-            inputClass="w-14 h-7 !px-1.5 !text-xs text-center" />
-        </fieldset>
-      </div>
-      <span class="flex items-center justify-end gap-2 mb-2 text-sm">
-        Inverse selection
-        <ToggleSwitch :id="'deval-check-' + index" class="toggle-xs"
-          @value-change="change_limits($event, entry); searchSubset();" />
-      </span>
-      <Slider :name="'deval-slider-' + index" :min="dboundaries[entry].min" :max="dboundaries[entry].max" range
-        :step="dboundaries[entry].step" @update:modelValue="devalSliderChanged($event, entry)"
-        :modelValue=[dboundaries[entry].minValue,dboundaries[entry].maxValue] />
-    </li>
+    <template v-if="dcoloumns && mode != 'term' && mode != 'citation'">
+      <li class="flex flex-col gap-2 px-2.5 py-3 dark:text-[#c3c3c3]" v-for="(entry, index) in dcoloumns" :key="index">
+        <div class="flex items-center justify-between -mx-2.5 gap-2 mb-2">
+          <span class="text-sm">{{ entry }}</span>
+          <fieldset class="flex gap-1">
+            <InputNumber :useGrouping="false" :min="dboundaries[entry].min" :max="dboundaries[entry].max"
+              :step="dboundaries[entry].step" v-model="dboundaries[entry].minValue" @value-change="searchSubset()"
+              inputClass="w-14 h-7 !px-1.5 !text-xs text-center" />-
+            <InputNumber :useGrouping="false" :min="dboundaries[entry].min" :max="dboundaries[entry].max"
+              :step="dboundaries[entry].step" v-model="dboundaries[entry].maxValue" @value-change="searchSubset()"
+              inputClass="w-14 h-7 !px-1.5 !text-xs text-center" />
+          </fieldset>
+        </div>
+        <span class="flex items-center justify-end gap-2 mb-2 text-sm">
+          Inverse selection
+          <ToggleSwitch :id="'deval-check-' + index" class="toggle-xs"
+            @value-change="change_limits($event, entry); searchSubset();" />
+        </span>
+        <Slider :name="'deval-slider-' + index" :min="dboundaries[entry].min" :max="dboundaries[entry].max" range
+          :step="dboundaries[entry].step" @update:modelValue="devalSliderChanged($event, entry)"
+          :modelValue=[dboundaries[entry].minValue,dboundaries[entry].maxValue] />
+      </li>
+    </template>
   </ul>
 
   <!-- <div id="subset-statistics" class="subset-statistics">
@@ -622,7 +611,7 @@ export default {
 };
 </script>
 
-<style>
+<!-- <style>
 .subset-statistics .menu-items {
   display: flex;
   margin: 0;
@@ -651,4 +640,4 @@ export default {
   font-family: "ABeeZee", sans-serif;
   padding: 0.5vw;
 }
-</style>
+</style> -->
