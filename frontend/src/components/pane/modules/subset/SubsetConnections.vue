@@ -1,8 +1,8 @@
 <template>
-  <p v-if="!filt_links.length" class="flex items-center justify-center py-1 text-sm text-slate-300">No nodes
+  <p v-if="!filt_links?.length" class="flex items-center justify-center py-1 text-sm text-slate-300">No nodes
   </p>
 
-  <Listbox v-if="filt_links !== null" optionLabel="" :options="filt_links" :pt="{
+  <Listbox v-if="filt_links?.length" optionLabel="" :options="filt_links" :pt="{
     listContainer: { class: 'order-2' },
     list: { class: '!p-0' },
     emptyMessage: { class: '!flex !justify-center !items-center !text-sm !text-slate-500 dark:!text-slate-300' },
@@ -146,6 +146,6 @@ export default {
       return filtered;
       // return new Set(filtered);
     },
-  },
+  }
 };
 </script>

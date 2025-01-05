@@ -39,7 +39,6 @@ export const store = createStore({
   },
   mutations: {
     assign_sigma_instance(state, value) {
-      console.log(value);
       state.sigma_instance = value;
     },
     assign(state, value) {

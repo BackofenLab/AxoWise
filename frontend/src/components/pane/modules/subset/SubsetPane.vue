@@ -10,28 +10,33 @@
         <strong class="font-normal dark:text-slate-300">Edges:</strong>
         {{ number_asc }}
       </span>
-      <div class="flex items-center gap-2 ml-auto">
-        <Button v-if="active_function == 'connections'" class="w-5 h-5" size="small" text plain rounded
-          v-tooltip.bottom="'Copy to clipboard'" @click="copyToClipboard()">
-          <span class="dark:text-white material-symbols-rounded !text-lg"> content_copy </span>
-        </Button>
-        <Button class="w-5 h-5" size="small" text plain rounded @click="show_layer()" v-tooltip.bottom="hide ? '' : ''">
-          <span class="dark:text-white material-symbols-rounded !text-lg">
-            {{ hide ? "visibility" : "visibility_off" }}
-          </span>
-        </Button>
-      </div>
+      <Button class="w-5 h-5 ml-auto" size="small" text plain rounded @click="show_layer()">
+        <span class="dark:text-white material-symbols-rounded !text-lg">
+          {{ hide ? "visibility" : "visibility_off" }}
+        </span>
+      </Button>
     </header>
 
-    <Tabs :value="active_function" @update:value="onChangeTab" v-if="active_subset !== null">
+    <Tabs :value="active_section" @update:value="change_section">
       <div
-        :class="`${active_function ? '!pt-2 !border-t !border-slate-700 !mt-2' : ''} px-2.5 -mx-2.5 max-h-[10rem] overflow-auto overflow-x-visible`">
+        :class="`${active_section ? '!pt-2 !border-t !border-slate-700 !mt-2' : ''} px-2.5 -mx-2.5 max-h-[10rem] overflow-auto overflow-x-visible`">
         <TabPanels class="!p-0">
-          <TabPanel value="statistics">
+          <TabPanel value="statistics" v-if="active_subset !== null">
+            <h3 class="mb-3 text-sm font-medium">
+              Parameter Selection
+            </h3>
             <SubsetLinks :active_subset="active_subset" :mode="mode"></SubsetLinks>
           </TabPanel>
           <TabPanel value="connections">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-medium">
+                Connections
+              </h3>
 
+              <Button class="w-5 h-5" size="small" text plain rounded @click="copyclipboard()">
+                <span class="dark:text-white material-symbols-rounded !text-lg"> content_copy </span>
+              </Button>
+            </div>
             <SubsetConnections :active_subset="subset"></SubsetConnections>
           </TabPanel>
         </TabPanels>
@@ -42,16 +47,15 @@
           tabList: { class: '!border-0 !gap-4' },
           activeBar: { class: '!hidden' }
         }">
-          <Tab value="statistics" class="!p-0 text-sm !border-0 flex items-center gap-1"><span
-              :class="`material-symbols-rounded !text-lg ${active_function == 'statistics' ? 'font-variation-ico-filled' : ''}`">insert_chart</span>Statistics
+          <Tab value="statistics" class="!p-0 !border-0" v-if="active_subset !== null"><span
+              :class="`material-symbols-rounded !text-lg ${active_section == 'statistics' ? 'font-variation-ico-filled' : ''}`">tune</span>
           </Tab>
-          <Tab value="connections" class="!p-0 text-sm !border-0 flex items-center gap-1"><span
-              :class="`material-symbols-rounded !text-lg ${active_function == 'connections' ? 'font-variation-ico-filled' : ''}`">list_alt</span>Connections
+          <Tab value="connections" class="!p-0 !border-0"><span
+              :class="`material-symbols-rounded !text-base ${active_section == 'connections' ? 'font-variation-ico-filled' : ''}`">hub</span>
           </Tab>
         </TabList>
 
-        <Button class="w-5 h-5 !ml-auto" size="small" text rounded plain v-tooltip.bottom="'Add to AxoBot'"
-          @click="call_chatbot()">
+        <Button class="w-5 h-5 !ml-auto" size="small" text rounded plain @click="call_chatbot()">
           <span class="dark:text-white material-symbols-rounded !text-lg">forum</span>
         </Button>
       </footer>
@@ -160,9 +164,11 @@ export default {
     SubsetConnections,
     SubsetLinks,
   },
+  mounted() {
+    this.toast = useToast();
+  },
   data() {
     return {
-      active_function: "",
       active_section: "",
       subset: null,
       hide: true,
@@ -229,14 +235,7 @@ export default {
       com.$emit("active_item_changed", { Subset: com.subset_item });
     },
   },
-  mounted() {
-    this.toast = useToast();
-  },
   methods: {
-    onChangeTab(tab) {
-      var com = this;
-      com.active_function = tab;
-    },
     change_section(val) {
       var com = this;
 
@@ -254,14 +253,6 @@ export default {
           com.$emit("tool_active_changed", true);
         }
       }
-    },
-    copyToClipboard() {
-      var com = this;
-
-      var textToCopy = [];
-      for (var link of com.subset) textToCopy.push(link.label);
-      navigator.clipboard.writeText(textToCopy.join("\n"));
-      this.toast.add({ severity: 'success', detail: 'Message copied to clipboard.', life: 4000 });
     },
     show_layer() {
       var com = this;
@@ -285,6 +276,14 @@ export default {
         type: "subset",
         data: addedSubset,
       });
+    },
+    copyclipboard() {
+      var com = this;
+
+      var textToCopy = [];
+      for (var link of com.subset) textToCopy.push(link.label);
+      navigator.clipboard.writeText(textToCopy.join("\n"));
+      this.toast.add({ severity: 'success', detail: 'Message copied to clipboard.', life: 4000 });
     },
     /**
      * Calling the procedure in component MainVis to highlight a specific node

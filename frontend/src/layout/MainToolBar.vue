@@ -25,7 +25,7 @@
 
       <Button class="group" icon="material-symbols-rounded" text plain v-tooltip="'Graph parameter'"
         @click="selection_active = !selection_active">
-        <span class="material-symbols-rounded group-hover:font-variation-ico-filled">filter_b_and_w</span>
+        <span class="material-symbols-rounded group-hover:font-variation-ico-filled">tune</span>
       </Button>
 
       <Button class="group" icon="material-symbols-rounded" text plain v-tooltip="'Recenter graph'" @click="center">
