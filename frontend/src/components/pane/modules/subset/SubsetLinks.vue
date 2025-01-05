@@ -301,8 +301,6 @@ export default {
     // create_de() {
     //   var com = this;
 
-    //   console.log(com.dcoloumns);
-
     //   Object.entries(com.dcoloumns).forEach(([index, coloumn]) => {
     //     var slider = document.getElementById("subset-deval-slider-" + index);
     //     noUiSlider.create(slider, {
@@ -581,7 +579,6 @@ export default {
       this.parameter_data = this.active_subset.selection
         ? this.active_subset.genes
         : this.active_subset;
-      console.log(this.parameter_data);
     },
   },
   mounted() {
@@ -593,8 +590,6 @@ export default {
     //     return parseInt(value);
     //   },
     // };
-
-    // console.log(this.parameter_data);
 
     this.initialize_dg();
     this.initialize_bc();

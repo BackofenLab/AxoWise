@@ -42,6 +42,80 @@
         @active_item_changed="active_item = $event"></EnrichmentLayerPane>
     </Dialog>
   </div>
+
+  <!-- <div
+    v-show="
+      active_node !== null ||
+      active_subset !== null ||
+      active_term !== null ||
+      active_decoloumn !== null ||
+      active_termlayers !== null ||
+      paneHidden == false
+    "
+  >
+    <div class="pane" id="pane" :class="{ active: tool_active }">
+      <div class="pane_header" id="pane_header">
+        <span>{{ active_tab }}</span>
+        <img
+          class="pane_close"
+          src="@/assets/toolbar/cross.png"
+          v-on:click="close_pane()"
+        />
+      </div>
+      <div class="pane-window">
+        <NodePane
+          v-show="active_tab === 'Protein'"
+          :mode="mode"
+          :tool_active="tool_active"
+          @tool_active_changed="tool_active = $event"
+          :active_node="active_node"
+          :node_color_index="node_color_index"
+          :gephi_data="gephi_data"
+          @active_item_changed="active_item = $event"
+        ></NodePane>
+        <SubsetPane
+          v-show="active_tab === 'Subset'"
+          :mode="mode"
+          :tool_active="tool_active"
+          @tool_active_changed="tool_active = $event"
+          :active_subset="active_subset"
+          :gephi_data="gephi_data"
+          @active_item_changed="active_item = $event"
+          @highlight_subset_changed="highlight_subset = $event"
+          @active_layer_changed="active_layer = $event"
+        ></SubsetPane>
+        <TermPane
+          v-show="active_tab === 'Pathway'"
+          :mode="mode"
+          :tool_active="tool_active"
+          @tool_active_changed="tool_active = $event"
+          :active_term="active_term"
+          :gephi_data="gephi_data"
+          @active_item_changed="active_item = $event"
+          @highlight_subset_changed="highlight_subset = $event"
+        ></TermPane>
+        <DEValuePane
+          v-show="active_tab === 'Differential expression'"
+          :mode="mode"
+          :tool_active="tool_active"
+          @tool_active_changed="tool_active = $event"
+          :active_decoloumn="active_decoloumn"
+          :gephi_data="gephi_data"
+          @active_item_changed="active_item = $event"
+        ></DEValuePane>
+
+        <EnrichmentLayerPane
+          v-show="active_tab === 'Pathway layers'"
+          :mode="mode"
+          :tool_active="tool_active"
+          @tool_active_changed="tool_active = $event"
+          :active_termlayers="active_termlayers"
+          :gephi_data="gephi_data"
+          @active_item_changed="active_item = $event"
+        ></EnrichmentLayerPane>
+      </div>
+    </div>
+  </div> -->
 </template>
 
 <script>
@@ -96,7 +170,7 @@ export default {
       this.$emit("active_background_changed", val);
       if (this.active_tab != Object.keys(val)[0]) this.tool_active = false;
       this.active_tab = Object.keys(val)[0];
-      console.log('00', this.active_tab);
+      console.log('active pane',this.active_tab);
       if (val == null) {
         delete this.active_dict.val;
         return;
@@ -105,61 +179,6 @@ export default {
     },
   },
   methods: {
-    // dragElement(elmnt) {
-    //   var pos1 = 0,
-    //     pos2 = 0,
-    //     pos3 = 0,
-    //     pos4 = 0;
-    //   if (document.getElementById(elmnt.id + "_header")) {
-    //     // if present, the header is where you move the DIV from:
-    //     document.getElementById(elmnt.id + "_header").onmousedown =
-    //       dragMouseDown;
-    //   } else {
-    //     // otherwise, move the DIV from anywhere inside the DIV:
-    //     elmnt.onmousedown = dragMouseDown;
-    //   }
-
-    //   function dragMouseDown(e) {
-    //     e = e || window.event;
-    //     e.preventDefault();
-    //     // get the mouse cursor position at startup:
-    //     pos3 = e.clientX;
-    //     pos4 = e.clientY;
-    //     document.onmouseup = closeDragElement;
-    //     // call a function whenever the cursor moves:
-    //     document.onmousemove = elementDrag;
-    //   }
-
-    //   function elementDrag(e) {
-    //     e = e || window.event;
-    //     e.preventDefault();
-    //     // calculate the conditions:
-    //     var parentWidth = window.innerWidth;
-    //     var parentHeight = window.innerHeight;
-    //     var elementWidth = elmnt.offsetWidth;
-    //     var elementHeight = elmnt.offsetHeight;
-
-    //     // calculate the new coordinates:
-    //     pos1 = pos3 - e.clientX;
-    //     pos2 = pos4 - e.clientY;
-    //     pos3 = e.clientX;
-    //     pos4 = e.clientY;
-
-    //     // Calculate the new coordinates for bottom and right
-    //     var newBottom = parentHeight - (elmnt.offsetTop - pos2 + elementHeight);
-    //     var newRight = parentWidth - (elmnt.offsetLeft - pos1 + elementWidth);
-
-    //     // set the element's new position:
-    //     elmnt.style.bottom = newBottom + "px";
-    //     elmnt.style.right = newRight + "px";
-    //   }
-
-    //   function closeDragElement() {
-    //     // stop moving when mouse button is released:
-    //     document.onmouseup = null;
-    //     document.onmousemove = null;
-    //   }
-    // },
     open_pane() {
       // const div = document.getElementById("attributepane");
       // const paneButton = document.getElementById("panebutton");
@@ -235,8 +254,6 @@ export default {
   mounted() {
     // this.dragElement(document.getElementById("pane"));
     this.emitter.on("reset_protein", (state) => {
-      console.log('00', state);
-
       this.selectTab("node", state);
     });
   },
