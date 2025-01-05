@@ -1,5 +1,21 @@
 <template>
-  <div id="route">
+  <IconField class="w-full mb-3">
+    <InputText v-model="search_raw" placeholder="Enter target protein" class="w-full"
+      @keyup.enter="retrieve_path(search_raw)" />
+    <InputIcon class="z-10 pi pi-search" />
+  </IconField>
+
+  <div class="flex items-center gap-1.5">
+    <strong class="text-sm font-normal dark:text-slate-400">Connection:</strong>
+    <span class="flex items-center gap-1 capitalize">
+      <span :class="`material-symbols-rounded !text-lg ${path ? 'text-primary-500' : 'text-red-500'}`">
+        {{ path ? 'check_circle' : 'cancel' }}
+      </span>
+      {{ path }}
+    </span>
+  </div>
+
+  <!-- <div id="route">
     <div class="search-field">
       <img class="search-field-icon" src="@/assets/toolbar/search.png" />
       <input
@@ -13,7 +29,7 @@
     <div class="request_answer">
       <span>connection: {{ path }}</span>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>
@@ -64,7 +80,7 @@ export default {
 };
 </script>
 
-<style>
+<!-- <style>
 #route {
   color: white;
   font-family: "ABeeZee", sans-serif;
@@ -111,4 +127,4 @@ export default {
   float: left;
   clear: left;
 }
-</style>
+</style> -->

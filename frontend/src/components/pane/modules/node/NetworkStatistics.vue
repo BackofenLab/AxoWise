@@ -1,5 +1,12 @@
 <template>
-  <div id="statistics">
+  <ul class="list-none p-0 m-0 flex flex-col divide-y dark:divide-[#343b4c]">
+    <li class="grid grid-cols-2 gap-1.5 py-1 dark:text-[#c3c3c3]" v-for="(key, entry, index) in statistics"
+      :key="index">
+      <strong class="text-sm font-normal dark:text-slate-400">{{ entry }}</strong>
+      <span class="text-sm break-all">{{ key }}</span>
+    </li>
+  </ul>
+  <!-- <div id="statistics">
     <div class="network-results" tabindex="0" @keydown="handleKeyDown">
       <table>
         <tbody>
@@ -20,7 +27,7 @@
         </tbody>
       </table>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>
@@ -81,7 +88,7 @@ export default {
 };
 </script>
 
-<style>
+<!-- <style>
 #statistics {
   width: 100%;
   height: 100%;
@@ -156,4 +163,4 @@ export default {
   overflow: hidden; /* Hide overflow content */
   text-overflow: ellipsis;
 }
-</style>
+</style> -->
