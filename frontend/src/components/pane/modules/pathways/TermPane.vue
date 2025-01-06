@@ -1,13 +1,82 @@
 <template>
-  <div class="text" v-show="active_term !== null">
+  <div v-show="active_term !== null">
+    <header v-if="active_term !== null" class="flex flex-wrap items-center gap-2">
+      <span class="flex items-center gap-1 text-sm font-medium">
+        <span v-on:click.stop="bookmark_pathway()" :class="`text-xl material-symbols-rounded text-slate-600 cursor-pointer 
+          ${favourite_pathways.has(active_term)
+            ? 'font-variation-ico-filled text-yellow-500 hover:text-yellow-400'
+            : 'hover:text-yellow-600'
+          }`">
+          star
+        </span>
+        <strong class="font-normal">{{ active_term.clean }}</strong>
+      </span>
+      <Button class="w-5 h-5 ml-auto" size="small" text plain rounded @click="to_term()">
+        <span class="dark:text-white material-symbols-rounded !text-lg">
+          open_in_new
+        </span>
+      </Button>
+    </header>
+
+    <Tabs :value="active_section" @update:value="change_section">
+      <div
+        :class="`${active_section ? '!pt-2 !border-t !border-slate-700 !mt-2' : ''} px-2.5 -mx-2.5 max-h-[10rem] overflow-auto overflow-x-visible`">
+        <TabPanels class="!p-0">
+          <TabPanel value="informations">
+            <h3 class="mb-3 text-sm font-medium">
+              Informations
+            </h3>
+            <PathwayStatistics :active_term="active_term"></PathwayStatistics>
+          </TabPanel>
+          <TabPanel value="statistics" v-if="active_term !== null">
+            <h3 class="mb-3 text-sm font-medium">
+              Parameter Selection
+            </h3>
+            <PathwayLinks :active_term="active_term" :mode="mode"></PathwayLinks>
+          </TabPanel>
+          <TabPanel value="connections">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-medium">
+                Connections
+              </h3>
+              <Button class="w-5 h-5" size="small" text plain rounded @click="copyToClipboard()">
+                <span class="dark:text-white material-symbols-rounded !text-lg"> content_copy </span>
+              </Button>
+            </div>
+            <PathwayConnections :active_term="active_term" :gephi_data="gephi_data"></PathwayConnections>
+          </TabPanel>
+        </TabPanels>
+      </div>
+
+      <footer class="flex items-end !mt-2 !border-t !border-slate-600 py-2">
+        <TabList class="" :pt="{
+          tabList: { class: '!border-0 !gap-4' },
+          activeBar: { class: '!hidden' }
+        }">
+          <Tab value="informations" class="!p-0 !border-0"><span
+              :class="`material-symbols-rounded !text-lg ${active_section == 'informations' ? 'font-variation-ico-filled' : ''}`">info</span>
+          </Tab>
+          <Tab value="statistics" class="!p-0 !border-0" v-if="active_term !== null"><span
+              :class="`material-symbols-rounded !text-lg ${active_section == 'statistics' ? 'font-variation-ico-filled' : ''}`">tune</span>
+          </Tab>
+          <Tab value="connections" class="!p-0 !border-0"><span
+              :class="`material-symbols-rounded !text-base ${active_section == 'connections' ? 'font-variation-ico-filled' : ''}`">hub</span>
+          </Tab>
+        </TabList>
+
+        <Button class="w-5 h-5 !ml-auto" size="small" text rounded plain @click="call_chatbot()">
+          <span class="dark:text-white material-symbols-rounded !text-lg">forum</span>
+        </Button>
+      </footer>
+    </Tabs>
+  </div>
+
+  <!-- <div class="hidden text" v-show="active_term !== null">
     <div class="path_attribute" v-if="active_term !== null">
       <div class="favourite-pane-symbol">
         <label class="custom-checkbox">
-          <div
-            class="checkbox-image"
-            v-on:click="bookmark_pathway()"
-            :class="{ checked: favourite_pathways.has(active_term) }"
-          ></div>
+          <div class="checkbox-image" v-on:click="bookmark_pathway()"
+            :class="{ checked: favourite_pathways.has(active_term) }"></div>
         </label>
       </div>
       <div class="term">{{ active_term.clean }}</div>
@@ -16,41 +85,11 @@
       </div>
     </div>
 
-    <!-- <div class="nodeattributes">
-            <div id="network" class="subsection">
-                <div class="subsection-header">
-                    <span>pathway statistics</span>
-                </div>
-                <div class="subsection-main colortype">
-
-                </div>
-            </div>
-            <div id="pathway-connections" class="subsection">
-                <div class="subsection-header">
-                    <span>connections</span>
-                    <div id='vis-button'>
-                        <img src="@/assets/pane/invisible.png" v-if="!hide" v-on:click="show_layer()">
-                        <img src="@/assets/pane/visible.png" v-if="hide" v-on:click="show_layer()">
-                        <img src="@/assets/pane/copy.png" v-on:click="copyclipboard()">
-                    </div>
-                </div>
-                <div class="subsection-main colortype">
-
-                </div>
-            </div>
-        </div> -->
-
-    <div
-      :class="{
-        'tool-section': !tool_active,
-        'tool-section-active': tool_active,
-      }"
-    >
-      <div
-        id="informations"
-        class="subsection"
-        v-show="tool_active && active_section == 'information'"
-      >
+    <div :class="{
+      'tool-section': !tool_active,
+      'tool-section-active': tool_active,
+    }">
+      <div id="informations" class="subsection" v-show="tool_active && active_section == 'information'">
         <div class="subsection-header">
           <span>information</span>
         </div>
@@ -58,13 +97,9 @@
           <PathwayStatistics :active_term="active_term"></PathwayStatistics>
         </div>
       </div>
-      <div
-        id="network"
-        class="subsection"
-        v-if="
-          tool_active && active_section == 'statistics' && active_term !== null
-        "
-      >
+      <div id="network" class="subsection" v-if="
+        tool_active && active_section == 'statistics' && active_term !== null
+      ">
         <div class="subsection-header">
           <span>parameter selection</span>
         </div>
@@ -72,54 +107,33 @@
           <PathwayLinks :active_term="active_term" :mode="mode"></PathwayLinks>
         </div>
       </div>
-      <div
-        id="connections"
-        class="subsection"
-        v-show="tool_active && active_section == 'connections'"
-      >
+      <div id="connections" class="subsection" v-show="tool_active && active_section == 'connections'">
         <div class="subsection-header">
           <span>connections</span>
           <img src="@/assets/pane/copy.png" v-on:click="copyclipboard()" />
         </div>
         <div class="subsection-main colortype">
-          <PathwayConnections
-            :active_term="active_term"
-            :gephi_data="gephi_data"
-          ></PathwayConnections>
+          <PathwayConnections :active_term="active_term" :gephi_data="gephi_data"></PathwayConnections>
         </div>
       </div>
     </div>
 
     <div class="nodeattributes">
-      <img
-        class="icons"
-        src="@/assets/toolbar/menu-burger.png"
-        v-on:click="change_section('information')"
-      />
-      <img
-        class="icons"
-        src="@/assets/toolbar/settings-sliders.png"
-        v-on:click="change_section('statistics')"
-      />
-      <img
-        class="icons"
-        src="@/assets/toolbar/proteinselect.png"
-        v-on:click="change_section('connections')"
-      />
-      <img
-        class="icons"
-        src="@/assets/toolbar/bote.png"
-        v-on:click="call_chatbot(mode)"
-      />
-      <!-- <img  class="icons" src="@/assets/toolbar/logout.png" v-on:click="change_section(!tool_active,'routing')"> -->
+      <img class="icons" src="@/assets/toolbar/menu-burger.png" v-on:click="change_section('information')" />
+      <img class="icons" src="@/assets/toolbar/settings-sliders.png" v-on:click="change_section('statistics')" />
+      <img class="icons" src="@/assets/toolbar/proteinselect.png" v-on:click="change_section('connections')" />
+      <img class="icons" src="@/assets/toolbar/bote.png" v-on:click="call_chatbot(mode)" />
+      // No
+      <img  class="icons" src="@/assets/toolbar/logout.png" v-on:click="change_section(!tool_active,'routing')">
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>
 import PathwayStatistics from "@/components/pane/modules/pathways/PathwayStatistics.vue";
 import PathwayConnections from "@/components/pane/modules/pathways/PathwayConnections.vue";
 import PathwayLinks from "@/components/pane/modules/pathways/PathwayLinks.vue";
+import { useToast } from "primevue/usetoast";
 
 export default {
   name: "TermPane",
@@ -179,11 +193,12 @@ export default {
     },
     copyclipboard() {
       this.emitter.emit("copyConnections");
+      this.toast.add({ severity: 'success', detail: 'Message copied to clipboard.', life: 4000 });
     },
     to_term() {
       var com = this;
       if (!com.$store.state.term_graph_data) {
-        alert("There is no term graph");
+        this.toast.add({ severity: 'error', detail: 'There is no term graph.', life: 4000 });
         return;
       }
 
@@ -208,7 +223,6 @@ export default {
       com.hide = !com.hide;
     },
     call_chatbot(mode) {
-      console.log(this.active_term);
       this.emitter.emit("addToChatbot", {
         id: this.active_term.id,
         mode: mode,
@@ -218,6 +232,7 @@ export default {
     },
   },
   mounted() {
+    this.toast = useToast();
     this.emitter.on("updateFavouriteList", (value) => {
       this.favourite_pathways = value;
     });
@@ -225,7 +240,7 @@ export default {
 };
 </script>
 
-<style>
+<!-- <style>
 .term {
   width: 70%;
   margin-left: 0.3vw;
@@ -303,4 +318,4 @@ export default {
   right: unset;
   padding: 0%;
 }
-</style>
+</style> -->

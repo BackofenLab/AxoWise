@@ -1,5 +1,80 @@
 <template>
-  <div id="term-statistics" class="term-statistics">
+  <ul class="list-none p-0 m-0 flex flex-col divide-y dark:divide-[#343b4c]">
+    <li class="flex flex-col gap-2 px-2.5 pb-3 dark:text-[#c3c3c3]">
+      <div class="flex items-center justify-between -mx-2.5 gap-2 mb-2 text-sm">
+        Degree value
+        <fieldset class="flex gap-1">
+          <InputNumber :useGrouping="false" :min="degree_boundary.min" :max="degree_boundary.max"
+            :step="degree_boundary.step" v-model="degree_boundary.minValue" @value-change="searchSubset()"
+            inputClass="w-14 h-7 !px-1.5 !text-xs text-center" />-
+          <InputNumber :useGrouping="false" :min="degree_boundary.min" :max="degree_boundary.max"
+            :step="degree_boundary.step" v-model="degree_boundary.maxValue" @value-change="searchSubset()"
+            inputClass="w-14 h-7 !px-1.5 !text-xs text-center" />
+        </fieldset>
+      </div>
+      <Slider name="degree_boundary" :min="degree_boundary.min" :max="degree_boundary.max" range
+        :step="degree_boundary.step" @update:modelValue="sliderChanged($event, 'degree_boundary')"
+        :modelValue=[degree_boundary.minValue,degree_boundary.maxValue] />
+    </li>
+
+    <li class="flex flex-col gap-2 px-2.5 py-3 dark:text-[#c3c3c3]">
+      <div class="flex items-center justify-between -mx-2.5 gap-2 mb-2 text-sm">
+        Betweenness centrality value
+        <fieldset class="flex gap-1">
+          <InputNumber :useGrouping="false" :min="bc_boundary.min" :max="bc_boundary.max" :step="bc_boundary.step"
+            v-model="bc_boundary.minValue" @value-change="searchSubset()"
+            inputClass="w-14 h-7 !px-1.5 !text-xs text-center" />-
+          <InputNumber :useGrouping="false" :min="bc_boundary.min" :max="bc_boundary.max" :step="bc_boundary.step"
+            v-model="bc_boundary.maxValue" @value-change="searchSubset()"
+            inputClass="w-14 h-7 !px-1.5 !text-xs text-center" />
+        </fieldset>
+      </div>
+      <Slider name="bc_boundary" :min="bc_boundary.min" :max="bc_boundary.max" range :step="bc_boundary.step"
+        @update:modelValue="sliderChanged($event, 'bc_boundary')" :modelValue=[bc_boundary.minValue,bc_boundary.maxValue] />
+    </li>
+
+    <li class="flex flex-col gap-2 px-2.5 py-3 dark:text-[#c3c3c3]">
+      <div class="flex items-center justify-between -mx-2.5 gap-2 mb-2 text-sm">
+        pagerank value (log10)
+        <fieldset class="flex gap-1">
+          <InputNumber :useGrouping="false" :min="pr_boundary.min" :max="pr_boundary.max" :step="pr_boundary.step"
+            v-model="pr_boundary.minValue" @value-change="searchSubset()"
+            inputClass="w-14 h-7 !px-1.5 !text-xs text-center" />-
+          <InputNumber :useGrouping="false" :min="pr_boundary.min" :max="pr_boundary.max" :step="pr_boundary.step"
+            v-model="pr_boundary.maxValue" @value-change="searchSubset()"
+            inputClass="w-14 h-7 !px-1.5 !text-xs text-center" />
+        </fieldset>
+      </div>
+      <Slider name="pr_boundary" :min="pr_boundary.min" :max="pr_boundary.max" range :step="pr_boundary.step"
+        @update:modelValue="sliderChanged($event, 'pr_boundary')" :modelValue=[pr_boundary.minValue,pr_boundary.maxValue] />
+    </li>
+
+    <template v-if="dcoloumns && mode != 'term' && mode != 'citation'">
+      <li class="flex flex-col gap-2 px-2.5 py-3 dark:text-[#c3c3c3]" v-for="(entry, index) in dcoloumns" :key="index">
+        <div class="flex items-center justify-between -mx-2.5 gap-2 mb-2">
+          <span class="text-sm">{{ entry }}</span>
+          <fieldset class="flex gap-1">
+            <InputNumber :useGrouping="false" :min="dboundaries[entry].min" :max="dboundaries[entry].max"
+              :step="dboundaries[entry].step" v-model="dboundaries[entry].minValue" @value-change="searchSubset()"
+              inputClass="w-14 h-7 !px-1.5 !text-xs text-center" />-
+            <InputNumber :useGrouping="false" :min="dboundaries[entry].min" :max="dboundaries[entry].max"
+              :step="dboundaries[entry].step" v-model="dboundaries[entry].maxValue" @value-change="searchSubset()"
+              inputClass="w-14 h-7 !px-1.5 !text-xs text-center" />
+          </fieldset>
+        </div>
+        <span class="flex items-center justify-end gap-2 mb-2 text-sm">
+          Inverse selection
+          <ToggleSwitch :id="'deval-check-' + index" class="toggle-xs"
+            @value-change="change_limits($event, entry); searchSubset();" />
+        </span>
+        <Slider :name="'deval-slider-' + index" :min="dboundaries[entry].min" :max="dboundaries[entry].max" range
+          :step="dboundaries[entry].step" @update:modelValue="devalSliderChanged($event, entry)"
+          :modelValue=[dboundaries[entry].minValue,dboundaries[entry].maxValue] />
+      </li>
+    </template>
+  </ul>
+    
+  <!-- <div id="term-statistics" class="term-statistics">
     <div class="selection_list">
       <div class="window-label">degree value</div>
       <div class="menu-items">
@@ -158,12 +233,12 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>
-import * as noUiSlider from "nouislider";
-import "@/slider.css";
+// import * as noUiSlider from "nouislider";
+// import "@/slider.css";
 
 export default {
   name: "PathwayLinks",
@@ -176,17 +251,17 @@ export default {
         minValue: 0,
         maxValue: 0,
         min: 0,
-        max: Number,
+        max: 0,
         step: 1,
       },
       pr_boundary: {
         minValue: 0,
         maxValue: 0,
         min: 0,
-        max: Number,
+        max: 0,
         step: 0.01,
       },
-      bc_boundary: { minValue: 0, maxValue: 0, min: 0, max: Number, step: 1 },
+      bc_boundary: { minValue: 0, maxValue: 0, min: 0, max: 0, step: 1 },
       dcoloumns: this.$store.state.dcoloumns,
       dboundaries: {},
       nodeCheck: false,
@@ -195,19 +270,25 @@ export default {
     };
   },
   methods: {
-    change_limits(slider_id, check_id, entry) {
+    change_limits(value, entry) {
       let com = this;
-      let slider = document.getElementById(slider_id);
-      com.check[entry] = document.getElementById(check_id).checked;
-
-      com.check[entry]
-        ? slider.noUiSlider.set([0, 0])
-        : slider.noUiSlider.reset();
-
-      let currentBorder = slider.noUiSlider.get();
-      com.dboundaries[entry].minValue = currentBorder[0];
-      com.dboundaries[entry].maxValue = currentBorder[1];
+      com.check[entry] = value;
+      com.dboundaries[entry].minValue = com.check[entry] ? 0.001 : com.dboundaries[entry].min;
+      com.dboundaries[entry].maxValue = com.check[entry] ? 0 : com.dboundaries[entry].max;
     },
+    // change_limits(slider_id, check_id, entry) {
+    //   let com = this;
+    //   let slider = document.getElementById(slider_id);
+    //   com.check[entry] = document.getElementById(check_id).checked;
+
+    //   com.check[entry]
+    //     ? slider.noUiSlider.set([0, 0])
+    //     : slider.noUiSlider.reset();
+
+    //   let currentBorder = slider.noUiSlider.get();
+    //   com.dboundaries[entry].minValue = currentBorder[0];
+    //   com.dboundaries[entry].maxValue = currentBorder[1];
+    // },
     initialize_de() {
       var com = this;
       var dataForm = com.parameter_data;
@@ -235,28 +316,28 @@ export default {
         };
       }
     },
-    create_de() {
-      var com = this;
+    // create_de() {
+    //   var com = this;
 
-      Object.entries(com.dcoloumns).forEach(([index, coloumn]) => {
-        var slider = document.getElementById("term-deval-slider-" + index);
-        noUiSlider.create(slider, {
-          start: [com.dboundaries[coloumn].min, com.dboundaries[coloumn].max],
-          connect: true,
-          range: {
-            min: com.dboundaries[coloumn].min,
-            max: com.dboundaries[coloumn].max,
-          },
-          step: 0.01,
-        });
+    //   Object.entries(com.dcoloumns).forEach(([index, coloumn]) => {
+    //     var slider = document.getElementById("term-deval-slider-" + index);
+    //     noUiSlider.create(slider, {
+    //       start: [com.dboundaries[coloumn].min, com.dboundaries[coloumn].max],
+    //       connect: true,
+    //       range: {
+    //         min: com.dboundaries[coloumn].min,
+    //         max: com.dboundaries[coloumn].max,
+    //       },
+    //       step: 0.01,
+    //     });
 
-        slider.noUiSlider.on("slide", function (values, handle) {
-          com.dboundaries[coloumn][handle ? "maxValue" : "minValue"] =
-            values[handle];
-          com.searchSubset();
-        });
-      });
-    },
+    //     slider.noUiSlider.on("slide", function (values, handle) {
+    //       com.dboundaries[coloumn][handle ? "maxValue" : "minValue"] =
+    //         values[handle];
+    //       com.searchSubset();
+    //     });
+    //   });
+    // },
     initialize_dg: function () {
       var com = this;
 
@@ -275,25 +356,27 @@ export default {
       });
 
       var maxDeg = Math.max(...result); // Need to use spread operator!
+      com.degree_boundary["max"] = maxDeg;
+      com.degree_boundary["min"] = 0;
       com.degree_boundary["maxValue"] = maxDeg;
       com.degree_boundary["minValue"] = 0;
 
-      var slider = document.getElementById("term-degree");
-      noUiSlider.create(slider, {
-        start: [0, maxDeg],
-        connect: true,
-        range: {
-          min: 0,
-          max: maxDeg,
-        },
-        format: this.formatType,
-        step: 1,
-      });
+      // var slider = document.getElementById("term-degree");
+      // noUiSlider.create(slider, {
+      //   start: [0, maxDeg],
+      //   connect: true,
+      //   range: {
+      //     min: 0,
+      //     max: maxDeg,
+      //   },
+      //   format: this.formatType,
+      //   step: 1,
+      // });
 
-      slider.noUiSlider.on("slide", function (values, handle) {
-        com.degree_boundary[handle ? "maxValue" : "minValue"] = values[handle];
-        com.searchSubset();
-      });
+      // slider.noUiSlider.on("slide", function (values, handle) {
+      //   com.degree_boundary[handle ? "maxValue" : "minValue"] = values[handle];
+      //   com.searchSubset();
+      // });
     },
     initialize_bc() {
       var com = this;
@@ -311,25 +394,27 @@ export default {
         return parseFloat(x, 10);
       });
       var maxDeg = Math.max(...result) + 10; // Need to use spread operator!
+      com.bc_boundary["max"] = maxDeg;
+      com.bc_boundary["min"] = 0;
       com.bc_boundary["maxValue"] = maxDeg;
       com.bc_boundary["minValue"] = 0;
 
-      var slider = document.getElementById("term-betweenes");
-      noUiSlider.create(slider, {
-        start: [0, maxDeg],
-        connect: true,
-        range: {
-          min: 0,
-          max: maxDeg,
-        },
-        format: this.formatType,
-        step: 1,
-      });
+      // var slider = document.getElementById("term-betweenes");
+      // noUiSlider.create(slider, {
+      //   start: [0, maxDeg],
+      //   connect: true,
+      //   range: {
+      //     min: 0,
+      //     max: maxDeg,
+      //   },
+      //   format: this.formatType,
+      //   step: 1,
+      // });
 
-      slider.noUiSlider.on("slide", function (values, handle) {
-        com.bc_boundary[handle ? "maxValue" : "minValue"] = values[handle];
-        com.searchSubset();
-      });
+      // slider.noUiSlider.on("slide", function (values, handle) {
+      //   com.bc_boundary[handle ? "maxValue" : "minValue"] = values[handle];
+      //   com.searchSubset();
+      // });
     },
     initialize_pagerank() {
       var com = this;
@@ -347,26 +432,26 @@ export default {
         return parseFloat(x);
       });
       var minDeg = Math.log10(Math.min(...result)) - 1;
+      com.pr_boundary["max"] = 0;
+      com.pr_boundary["min"] = minDeg;
       com.pr_boundary["maxValue"] = 0;
       com.pr_boundary["minValue"] = minDeg;
 
-      this.pr_boundary.min = minDeg;
-      this.pr_boundary.max = 0;
-      var slider = document.getElementById("term-pagerank");
-      noUiSlider.create(slider, {
-        start: [minDeg, 0],
-        connect: true,
-        range: {
-          min: minDeg,
-          max: 0,
-        },
-        step: 0.01,
-      });
+      // var slider = document.getElementById("term-pagerank");
+      // noUiSlider.create(slider, {
+      //   start: [minDeg, 0],
+      //   connect: true,
+      //   range: {
+      //     min: minDeg,
+      //     max: 0,
+      //   },
+      //   step: 0.01,
+      // });
 
-      slider.noUiSlider.on("slide", function (values, handle) {
-        com.pr_boundary[handle ? "maxValue" : "minValue"] = values[handle];
-        com.searchSubset();
-      });
+      // slider.noUiSlider.on("slide", function (values, handle) {
+      //   com.pr_boundary[handle ? "maxValue" : "minValue"] = values[handle];
+      //   com.searchSubset();
+      // });
     },
     searchSubset() {
       var com = this;
@@ -444,10 +529,26 @@ export default {
         mode: this.mode,
       });
     },
-    valueChanged(id, value) {
-      var slider = document.getElementById(id);
-      slider.noUiSlider.set(value);
+    sliderChanged(values, obj) {
+      var com = this;
+      com[obj]["minValue"] =
+        values[0];
+      com[obj]["maxValue"] =
+        values[1];
+      com.searchSubset();
     },
+    devalSliderChanged(values, entry) {
+      var com = this;
+      com.dboundaries[entry]["minValue"] =
+        values[0];
+      com.dboundaries[entry]["maxValue"] =
+        values[1];
+      com.searchSubset();
+    },
+    // valueChanged(id, value) {
+    //   var slider = document.getElementById(id);
+    //   slider.noUiSlider.set(value);
+    // },
     term_genes(list) {
       var term_genes = new Set(list);
       var termlist = this.$store.state.gephi_json.data.nodes.filter((element) =>
@@ -456,27 +557,24 @@ export default {
       return termlist;
     },
     load_data() {
-      console.log("Links");
       this.parameter_data = this.term_genes(this.active_term.symbols);
-
-      console.log(this.parameter_data);
     },
   },
   mounted() {
-    this.formatType = {
-      from: function (value) {
-        return parseInt(value);
-      },
-      to: function (value) {
-        return parseInt(value);
-      },
-    };
+    // this.formatType = {
+    //   from: function (value) {
+    //     return parseInt(value);
+    //   },
+    //   to: function (value) {
+    //     return parseInt(value);
+    //   },
+    // };
 
     this.initialize_dg();
     this.initialize_bc();
     this.initialize_pagerank();
-    if (this.dcoloumns && this.mode != "term" && this.mode != "citation")
-      this.create_de();
+    // if (this.dcoloumns && this.mode != "term" && this.mode != "citation")
+    //   this.create_de();
     this.searchSubset();
   },
   created() {
@@ -486,7 +584,7 @@ export default {
 };
 </script>
 
-<style>
+<!-- <style>
 .term-statistics .menu-items {
   display: flex;
   margin: 0;
@@ -515,4 +613,4 @@ export default {
   font-family: "ABeeZee", sans-serif;
   padding: 0.5vw;
 }
-</style>
+</style> -->
