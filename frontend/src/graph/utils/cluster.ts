@@ -86,7 +86,7 @@ export const generateCluster = (context: string, renderer: Sigma, graph: Graph) 
     svgLayer.appendChild(clusterLabel);
   }
 
-  container.insertBefore(svgLayer, container.getElementsByClassName("sigma-nodes")[0]);   
+  container.insertBefore(svgLayer, container.getElementsByClassName("sigma-nodes")[0]); 
 
   //Updating circle and label position on camera ratio.
   renderer.on("afterRender", () => {
@@ -138,6 +138,16 @@ export const generateCluster = (context: string, renderer: Sigma, graph: Graph) 
     }
   });
 
+    // Check if mouse is overlaying node on click
+    let nodeclick = false
+
+    renderer.on("enterNode", () => {
+        nodeclick = true
+    });
+
+    renderer.on("leaveNode", () => {
+        nodeclick = false
+    });
   /*
   Attach mouse listener onto cluster layer to track if mouse position isin circle of respective cluster when click.
   */
@@ -153,7 +163,7 @@ export const generateCluster = (context: string, renderer: Sigma, graph: Graph) 
       const distance = Math.sqrt(dx*dx + dy*dy);
 
       if (distance <= (cluster.r)) {
-        store.setClickedCluster(cluster.label, graph)
+        if(!nodeclick) store.setClickedCluster(cluster.label)
       }
     }
   });
