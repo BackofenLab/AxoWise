@@ -5,10 +5,10 @@
     </AppBar>
   </keep-alive>
   <keep-alive>
-    <TermPaneSystem :gephi_data="term_data" :active_node="active_node" @active_node_changed="active_node = $event"
-      :active_subset="active_subset" @active_subset_changed="active_subset = $event"
-      @active_layer_changed="active_layer = $event" @active_combine_changed="active_combine = $event"
-      :node_color_index="node_color_index"></TermPaneSystem>
+    <TermPaneSystem :mode="mode" :gephi_data="term_data" :active_node="active_node"
+      @active_node_changed="active_node = $event" :active_subset="active_subset"
+      @active_subset_changed="active_subset = $event" @active_layer_changed="active_layer = $event"
+      @active_combine_changed="active_combine = $event" :node_color_index="node_color_index"></TermPaneSystem>
   </keep-alive>
   <main class="h-[calc(100vh-65px)] flex flex-1 overflow-hidden">
     <keep-alive>
