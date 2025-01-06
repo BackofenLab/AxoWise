@@ -1,5 +1,11 @@
 <template>
-  <div id="statistics">
+  <ul class="list-none p-0 m-0 flex flex-col divide-y dark:divide-[#343b4c]">
+    <li class="flex gap-1.5 py-1 dark:text-[#c3c3c3]" v-for="(key, entry, index) in statistics" :key="index">
+      <strong class="flex-shrink-0 text-sm font-normal w-[20%] dark:text-slate-400">{{ entry }}</strong>
+      <span class="flex-shrink-0 text-sm break-all w-[80%]">{{ key }}</span>
+    </li>
+  </ul>
+  <!-- <div id="statistics">
     <div class="network-results" tabindex="0" @keydown="handleKeyDown">
       <table>
         <tbody>
@@ -20,7 +26,7 @@
         </tbody>
       </table>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>
@@ -44,5 +50,3 @@ export default {
   },
 };
 </script>
-
-<style></style>
