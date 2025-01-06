@@ -1,47 +1,39 @@
 <template>
-  <div v-show="active_node !== null ||
+  <Dialog :visible="active_node !== null ||
     active_subset !== null ||
     active_term !== null ||
     active_decoloumn !== null ||
     active_termlayers !== null ||
-    paneHidden == false
-    ">
-    <Dialog :visible="active_node !== null ||
-      active_subset !== null ||
-      active_term !== null ||
-      active_decoloumn !== null ||
-      active_termlayers !== null ||
-      paneHidden == false" @hide="close_pane()" position="bottomright" :closable="false" :minY="60" :minX="60" :pt="{
-        root: { class: 'w-[18rem] !mt-[60px] !ml-[60px]' },
-        header: { class: '!px-2.5 !py-1.5 cursor-move' },
-        content: { class: '!px-2.5 !py-0' },
-      }">
-      <template #header>
-        <h3 class="text-sm font-bold">
-          {{ active_tab }}
-        </h3>
-        <Button class="w-5 h-5 ml-auto" size="small" text rounded plain @click="close_pane()">
-          <span class="dark:text-white !text-lg material-symbols-rounded"> close </span>
-        </Button>
-      </template>
-      <NodePane v-show="active_tab === 'Protein'" :mode="mode" :tool_active="tool_active"
-        @tool_active_changed="tool_active = $event" :active_node="active_node" :node_color_index="node_color_index"
-        :gephi_data="gephi_data" @active_item_changed="active_item = $event"></NodePane>
-      <SubsetPane v-show="active_tab === 'Subset'" :mode="mode" :tool_active="tool_active"
-        @tool_active_changed="tool_active = $event" :active_subset="active_subset" :gephi_data="gephi_data"
-        @active_item_changed="active_item = $event" @highlight_subset_changed="highlight_subset = $event"
-        @active_layer_changed="active_layer = $event"></SubsetPane>
-      <TermPane v-show="active_tab === 'Pathway'" :mode="mode" :tool_active="tool_active"
-        @tool_active_changed="tool_active = $event" :active_term="active_term" :gephi_data="gephi_data"
-        @active_item_changed="active_item = $event" @highlight_subset_changed="highlight_subset = $event"></TermPane>
-      <DEValuePane v-show="active_tab === 'Differential expression'" :mode="mode" :tool_active="tool_active"
-        @tool_active_changed="tool_active = $event" :active_decoloumn="active_decoloumn" :gephi_data="gephi_data"
-        @active_item_changed="active_item = $event"></DEValuePane>
-      <EnrichmentLayerPane v-show="active_tab === 'Pathway layers'" :mode="mode" :tool_active="tool_active"
-        @tool_active_changed="tool_active = $event" :active_termlayers="active_termlayers" :gephi_data="gephi_data"
-        @active_item_changed="active_item = $event"></EnrichmentLayerPane>
-    </Dialog>
-  </div>
+    paneHidden == false" @hide="close_pane()" position="bottom" :closable="false" :minY="60" :minX="60" :pt="{
+      root: { class: 'w-[18rem] !mt-[60px] !ml-[60px]' },
+      header: { class: '!px-2.5 !py-1.5 cursor-move' },
+      content: { class: '!px-2.5 !py-0' },
+    }">
+    <template #header>
+      <h3 class="text-sm font-bold">
+        {{ active_tab }}
+      </h3>
+      <Button class="w-5 h-5 ml-auto" size="small" text rounded plain @click="close_pane()">
+        <span class="dark:text-white !text-lg material-symbols-rounded"> close </span>
+      </Button>
+    </template>
+    <NodePane v-show="active_tab === 'Protein'" :mode="mode" :tool_active="tool_active"
+      @tool_active_changed="tool_active = $event" :active_node="active_node" :node_color_index="node_color_index"
+      :gephi_data="gephi_data" @active_item_changed="active_item = $event"></NodePane>
+    <SubsetPane v-show="active_tab === 'Subset'" :mode="mode" :tool_active="tool_active"
+      @tool_active_changed="tool_active = $event" :active_subset="active_subset" :gephi_data="gephi_data"
+      @active_item_changed="active_item = $event" @highlight_subset_changed="highlight_subset = $event"
+      @active_layer_changed="active_layer = $event"></SubsetPane>
+    <TermPane v-show="active_tab === 'Pathway'" :mode="mode" :tool_active="tool_active"
+      @tool_active_changed="tool_active = $event" :active_term="active_term" :gephi_data="gephi_data"
+      @active_item_changed="active_item = $event" @highlight_subset_changed="highlight_subset = $event"></TermPane>
+    <DEValuePane v-show="active_tab === 'Differential expression'" :mode="mode" :tool_active="tool_active"
+      @tool_active_changed="tool_active = $event" :active_decoloumn="active_decoloumn" :gephi_data="gephi_data"
+      @active_item_changed="active_item = $event"></DEValuePane>
+    <EnrichmentLayerPane v-show="active_tab === 'Pathway layers'" :mode="mode" :tool_active="tool_active"
+      @tool_active_changed="tool_active = $event" :active_termlayers="active_termlayers" :gephi_data="gephi_data"
+      @active_item_changed="active_item = $event"></EnrichmentLayerPane>
+  </Dialog>
 
   <!-- <div
     v-show="
@@ -170,7 +162,6 @@ export default {
       this.$emit("active_background_changed", val);
       if (this.active_tab != Object.keys(val)[0]) this.tool_active = false;
       this.active_tab = Object.keys(val)[0];
-      console.log('active pane',this.active_tab);
       if (val == null) {
         delete this.active_dict.val;
         return;
@@ -213,7 +204,7 @@ export default {
     },
     close_pane() {
       this.active_dict = {};
-
+      
       this.$emit("active_node_changed", null);
       this.$emit("active_term_changed", null);
       this.$emit("active_subset_changed", null);

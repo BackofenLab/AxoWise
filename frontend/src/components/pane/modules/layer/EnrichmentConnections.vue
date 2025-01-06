@@ -1,5 +1,42 @@
 <template>
-  <div id="pathway-layer-connect" class="connect">
+  <Listbox v-if="intersectingDicts?.length" optionLabel="" :options="intersectingDicts" :pt="{
+    listContainer: { class: 'order-2' },
+    list: { class: '!p-0' },
+    emptyMessage: { class: '!flex !justify-center !items-center !text-sm !text-slate-500 dark:!text-slate-300' },
+    option: {
+      class:
+        '!px-0 !py-1 !text-slate-500 dark:!text-slate-300 leading-tight transition-all duration-300 ease-in-out',
+    },
+  }" listStyle="max-height:100%" class="h-full flex flex-col !p-0 !bg-transparent !border-0" :tabindex="0"
+    emptyMessage="No nodes available.">
+
+    <template #footer>
+      <header class="sticky -top-2 bg-[var(--card-bg)] items-center gap-2 z-[1] order-1">
+        <!-- sorting -->
+        <div
+          class="grid grid-cols-2 py-1 bg-[var(--card-bg)] shadow-[0_10px_30px_-18px_#34343D] dark:shadow-[0_10px_30px_-18px_#ffffff] z-[1]">
+
+          <a class="text-sm">
+            Pathway
+          </a>
+
+          <a class="text-sm">
+            Pathway
+          </a>
+        </div>
+      </header>
+    </template>
+    <!-- options -->
+    <template #option="slotProps">
+      <div :class="`grid items-center w-full grid-cols-2 gap-2`">
+        <span class="text-xs">{{ slotProps.option?.[0]?.name }}</span>
+
+        <span class="text-xs">{{ slotProps.option?.[1]?.name }}</span>
+      </div>
+    </template>
+  </Listbox>
+
+  <!-- <div id="pathway-layer-connect" class="connect">
     <div class="sorting">
       <a class="enrichment_filter">pathway</a>
       <a class="cluster_filter">pathway</a>
@@ -21,7 +58,7 @@
         </tbody>
       </table>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>
@@ -80,7 +117,7 @@ export default {
 };
 </script>
 
-<style>
+<!-- <style>
 #pathway-layer-connect {
   width: 100%;
   height: 100%;
@@ -122,4 +159,4 @@ export default {
   overflow: hidden; /* Hide overflow content */
   text-overflow: ellipsis;
 }
-</style>
+</style> -->
