@@ -10,7 +10,8 @@
         <span class="material-symbols-rounded !text-lg"> keep_off </span>
       </Button>
       <Button v-if="!is_minimized" class="w-5 h-5 !p-1.5" type="button" size="small" severity="success" rounded
-        v-tooltip.bottom="'Stack pane right'" @click="changePanePosition">
+        v-tooltip.bottom="`${stacked === 'left' ? 'Stack pane right' : 'Stack pane left'}`"
+        @click="changePanePosition">
         <span class="material-symbols-rounded !text-lg">
           {{ stacked === "left" ? "arrow_right_alt" : "arrow_left_alt" }}
         </span>
