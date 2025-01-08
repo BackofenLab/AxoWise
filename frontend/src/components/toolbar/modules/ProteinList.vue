@@ -1,11 +1,13 @@
 <template>
-  <h6 class="mb-2 text-sm text-slate-300">
-    To find multiple nodes separate each node in a new line.
-  </h6>
-  <Textarea v-model="raw_text" rows="4" fluid autofocus placeholder="Search by gene..." class="text-center"/>
-  <Button label="Apply & Create subset" severity="secondary" size="small" fluid type="button" class="mt-2.5 !rounded-lg"
-    @click="highlight(raw_text)">
-  </Button>
+  <div>
+    <h6 class="mb-2 text-sm text-slate-300">
+      To find multiple nodes separate each node in a new line.
+    </h6>
+    <Textarea v-model="raw_text" rows="4" fluid autofocus placeholder="Search by gene..." class="text-center" />
+    <Button label="Apply & Create subset" severity="secondary" size="small" fluid type="button"
+      class="mt-2.5 !rounded-lg" @click="highlight(raw_text)">
+    </Button>
+  </div>
 </template>
 
 <script>

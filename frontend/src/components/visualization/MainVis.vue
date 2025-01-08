@@ -126,6 +126,7 @@ export default {
     "active_decoloumn_changed",
     "active_termlayers_changed",
     "subactive_subset_changed",
+    "active_layer_changed"
   ],
   data() {
     return {

@@ -2,12 +2,13 @@
   <Dialog v-model:visible="windowCheck" header="AxoBot" position="bottomright" :closable="false" :minY="60" :minX="60"
     :pt="{
       root: {
+        id: 'scrollBox',
         class:
           '!h-[80vh] w-[25rem] !mt-[60px] !ml-[60px] !bg-white/75 dark:!bg-slate-900/75 !backdrop-blur overflow-y-auto',
       },
       header: { class: 'sticky top-0 !p-2 !px-3 !justify-start gap-3 !font-medium cursor-move backdrop-blur z-[1]' },
       headerActions: { class: '!hidden' },
-      title: { class: '!text-base ' },
+      title: { class: '!text-base' },
       content: { class: '!px-3 !pb-2 !overflow-y-visible' },
       footer: { class: 'sticky bottom-0 !px-2 !pt-1 !pb-2 cursor-move backdrop-blur-xl !mt-auto' },
     }">
@@ -26,6 +27,7 @@
           ${index !== 0 ? 'backdrop-blur shadow-md' : ''}
           ${msg.sender === 'User' ? 'w-11/12 self-end' : ''}
           ${msg.sender === 'Bot' && index !== 0 ? 'my-2 bg-gradient-prime-opacity dark:bg-slate-800' : ''}
+          ${msg.data && msg.data.length > 0 ? '!pt-0' : ''}
           `">
           <!-- First welcome message -->
           <div class="mb-8" v-show="index === 0">
@@ -39,14 +41,15 @@
           <template v-if="index !== 0">
             <div :class="`flex gap-3 ${msg.sender === 'Bot' ? 'mb-5 flex-wrap' : 'gap-1.5 items-center'}`">
               <template v-if="msg.data && msg.data.length">
-                <Carousel :value="msg.data" :numVisible="3" :numScroll="1" :showIndicators="false"
+                <Carousel :value="msg.data" :numVisible="2" :numScroll="1" :showIndicators="false"
                   :prevButtonProps="{ size: 'small', plain: true, text: true, rounded: true }"
                   :nextButtonProps="{ size: 'small', plain: true, text: true, rounded: true }"
-                  :pt="{ viewport: '!flex !items-center' }" class="w-full">
+                  :pt="{ content: '!items-center' }" :class="`${msg.sender === 'Bot' ? '-mx-3' : 'w-[80%] -ml-3'}`">
                   <template #item="slotProps">
-                    <Chip class="cursor-pointer"
-                      :pt="{ root: { class: 'h-6 dark:!bg-slate-700 !px-3 !py-1 !mr-1.5' }, label: { class: '!text-sm' } }"
-                      :label="slotProps.data.id" @click="searchInput(slotProps.data)" />
+                    <Chip class="cursor-pointer" :pt="{
+                      root: { class: 'h-6 !grid grid-cols-[1fr_auto] dark:!bg-slate-700 !px-2 !py-1 !mx-1' },
+                      label: { class: '!text-sm !line-clamp-1' },
+                    }" :label="slotProps.data.id" @click="searchInput(slotProps.data)" />
                   </template>
                 </Carousel>
               </template>
@@ -62,7 +65,7 @@
 
               <Button class="w-6 h-6 !p-1.5 ml-auto" type="button" size="small" text plain rounded
                 v-tooltip.bottom="'Copy to clipboard'" @click="copyToClipboard(msg.text)">
-                <span class="material-symbols-rounded !text-xl"> content_copy </span>
+                <span class="material-symbols-rounded !text-lg"> content_copy </span>
               </Button>
               <Button class="w-6 h-6 !p-1.5" type="button" size="small" text plain rounded
                 v-tooltip.bottom="'Add to AxoWord'" @click="addToWord(msg.text)">
@@ -87,15 +90,16 @@
           </InputGroupAddon>
         </InputGroup>
 
-        <template v-if="tags.length">
+        <template v-if="tags && tags.length > 0">
           <Carousel :value="tags" :numVisible="3" :numScroll="1" :showIndicators="false"
             :prevButtonProps="{ size: 'small', plain: true, text: true, rounded: true }"
             :nextButtonProps="{ size: 'small', plain: true, text: true, rounded: true }"
-            :pt="{ viewport: '!flex !items-center' }">
+            :pt="{ content: '!items-center' }">
             <template #item="slotProps">
-              <Chip class="cursor-pointer"
-                :pt="{ root: { class: 'h-6 dark:!bg-slate-700 !px-3 !py-1 !mr-1.5' }, label: { class: '!text-sm' } }"
-                :label="slotProps.data.id" removable @click="searchInput(slotProps.data)"
+              <Chip class="cursor-pointer" :pt="{
+                root: { class: 'h-6 !grid grid-cols-[1fr_auto] dark:!bg-slate-700 !px-2 !py-1 !mx-1' },
+                label: { class: '!text-sm !line-clamp-1' },
+              }" :label="slotProps.data.id" removable @click="searchInput(slotProps.data)"
                 @remove="removeTag(slotProps.index)" />
             </template>
           </Carousel>
@@ -133,9 +137,7 @@ export default {
   computed: {
     showPersistentComponent() {
       let route = this.$route.name;
-      return (
-        route !== "home"
-      );
+      return route !== "home";
     },
   },
   mounted() {
@@ -151,6 +153,15 @@ export default {
     });
   },
   methods: {
+    scrollToEnd() {
+      setTimeout(() => {
+        const box = document.getElementById("scrollBox");
+        box.scrollTo({
+          top: box.scrollHeight,
+          behavior: "smooth", // Add smooth scrolling
+        });
+      }, 1); // 1ms delay to render new item and allow the scroll to complete
+    },
     copyToClipboard(text) {
       navigator.clipboard
         .writeText(text)
@@ -163,6 +174,7 @@ export default {
     },
     addToWord(text) {
       this.emitter.emit("addToWord", text);
+      this.toast.add({ severity: 'success', detail: 'Message added to AxoWord.', life: 4000 });
     },
     addLink(tag) {
       if (!this.windowCheck) this.windowCheck = true;
@@ -223,6 +235,7 @@ export default {
         });
         this.getAnswer(message);
         this.user_input = '';
+        this.scrollToEnd();
       }
     },
     getAnswer(message) {
