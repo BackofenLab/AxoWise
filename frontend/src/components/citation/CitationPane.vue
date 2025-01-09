@@ -15,7 +15,7 @@
       <div class="flex items-center gap-1 ml-auto">
         <Button class="w-8 h-8" size="small" text rounded plain v-tooltip.bottom="'Add to summary'"
           @click="add_abstract(active_node.id)">
-          <span class="material-symbols-rounded"> add </span>
+          <span class="material-symbols-rounded"> note_add </span>
         </Button>
         <Button class="w-8 h-8 group" icon="material-symbols-rounded" size="small" text plain rounded
           v-tooltip.bottom="'Add to AxoBot'" @click="call_chatbot('citation')">
@@ -53,39 +53,51 @@
     <Divider />
 
     <Tabs :value="active_function" @update:value="onChangeTab">
-      <TabList class="sticky top-0">
-        <Tab value="abstract" class="!pt-0 !pb-2">Abstract</Tab>
-        <Tab value="summary" class="!pt-0 !pb-2">Summary</Tab>
-      </TabList>
+      <div class="h-[10rem] overflow-auto overflow-x-visible">
+        <TabPanels class="!p-0 !h-full">
+          <TabPanel value="abstract">
+            <p class="m-0 whitespace-pre-wrap">
+              {{ active_node.attributes["Abstract"] }}
+            </p>
+          </TabPanel>
+          <TabPanel value="summary" class="!h-full">
+            <div v-if="await_load" class="flex flex-col items-center justify-center h-full gap-3">
+              <h6 class="flex items-center gap-2 dark:text-slate-300">Fetching summary
+                <span class="relative flex">
+                  <span
+                    class="absolute inline-flex w-full h-full rounded-full opacity-75 animate-ping bg-primary-500"></span>
+                  <span
+                    class="material-symbols-rounded text-primary-500 animate animate-[spin_1s_ease-in-out_infinite]">scatter_plot</span>
+                </span>
+              </h6>
+            </div>
+            <p class="m-0 whitespace-pre-wrap" v-if="!await_load">
+              {{ summary_dict[active_node.id] }}
+            </p>
+          </TabPanel>
+        </TabPanels>
+      </div>
 
-      <TabPanels class="!px-0 !pb-0">
-        <TabPanel value="abstract">
-          <p class="m-0 whitespace-pre-wrap">
-            {{ active_node.attributes["Abstract"] }}
-          </p>
-        </TabPanel>
-
-        <TabPanel value="summary">
-          <div v-if="await_load" class="flex flex-col items-center justify-center h-full gap-3">
-            <h6 class="flex items-center gap-2 dark:text-slate-300">Fetching summary
-              <span class="relative flex">
-                <span
-                  class="absolute inline-flex w-full h-full rounded-full opacity-75 animate-ping bg-primary-500"></span>
-                <span
-                  class="material-symbols-rounded text-primary-500 animate animate-[spin_1s_ease-in-out_infinite]">scatter_plot</span>
-              </span>
-            </h6>
-          </div>
-          <p class="m-0 whitespace-pre-wrap" v-if="!await_load">
-            {{ summary_dict[active_node.id] }}
-          </p>
-        </TabPanel>
-      </TabPanels>
+      <footer class="flex items-end !border-t !border-slate-600 pt-2">
+        <TabList class="" :pt="{
+          tabList: { class: '!border-0 !gap-4' },
+          activeBar: { class: '!hidden' }
+        }">
+          <Tab value="abstract" class="!p-0 !border-0 !flex !items-center !gap-2"><span
+              :class="`material-symbols-rounded !text-xl ${active_function == 'abstract' ? 'font-variation-ico-filled' : ''}`">summarize</span>Abstract
+          </Tab>
+          <Tab value="summary" class="!p-0 !border-0 !flex !items-center !gap-2"><span
+              :class="`material-symbols-rounded !text-xl ${active_function == 'summary' ? 'font-variation-ico-filled' : ''}`">description
+            </span>Summary
+          </Tab>
+        </TabList>
+      </footer>
     </Tabs>
   </Dialog>
 </template>
 
 <script>
+import { useToast } from "primevue/usetoast";
 export default {
   name: "CitationPane",
   props: ["active_node", "active_subset"],
@@ -108,12 +120,16 @@ export default {
       }
     },
   },
+  mounted() {
+    this.toast = useToast();
+  },
   methods: {
     google_search(id) {
       window.open(`http://www.ncbi.nlm.nih.gov/pubmed/${id}`, "_blank");
     },
     add_abstract(id) {
       this.emitter.emit("addNodeToSummary", id);
+      this.toast.add({ severity: 'success', detail: 'Node added to summary.', life: 4000 });
     },
     close_pane() {
       this.$emit("active_node_changed", null);
