@@ -29,9 +29,9 @@
     <!-- options -->
     <template #option="slotProps">
       <div :class="`grid items-center w-full grid-cols-2 gap-2`">
-        <span class="text-xs">{{ slotProps.option?.[0]?.name }}</span>
+        <span class="text-xs line-clamp-2">{{ slotProps.option?.[0]?.name }}</span>
 
-        <span class="text-xs">{{ slotProps.option?.[1]?.name }}</span>
+        <span class="text-xs line-clamp-2">{{ slotProps.option?.[1]?.name }}</span>
       </div>
     </template>
   </Listbox>

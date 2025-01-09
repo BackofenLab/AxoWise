@@ -2,15 +2,15 @@
   <div v-show="active_node !== null">
     <header v-if="active_node !== null" class="flex flex-wrap items-center gap-2">
       <span class="flex items-center gap-1 text-sm font-medium">
-        <small class="w-3 h-3 border rounded-full border-slate-400" :style="{ backgroundColor: colornode }"></small>
+        <small class="flex-shrink-0 w-3 h-3 border rounded-full border-slate-400" :style="{ backgroundColor: colornode }"></small>
         <strong class="font-normal">{{ active_node.attributes["Name"] }}</strong>
       </span>
       <span class="flex items-center gap-1 text-sm font-medium">
-        <strong class="font-normal dark:text-slate-300">deg:</strong>
+        <strong class="font-normal dark:text-slate-300">Deg:</strong>
         {{ active_node.attributes["Degree"] }}
       </span>
       <span class="flex items-center gap-1 text-sm font-medium">
-        <strong class="font-normal dark:text-slate-300">pr:</strong>
+        <strong class="font-normal dark:text-slate-300">Pr:</strong>
         {{ Math.abs(active_node.attributes["PageRank"]).toExponential(2) }}
       </span>
     </header>
