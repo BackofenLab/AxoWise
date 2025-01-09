@@ -7,7 +7,7 @@
 
   <div class="flex items-center gap-1.5">
     <strong class="text-sm font-normal dark:text-slate-400">Connection:</strong>
-    <span class="flex items-center gap-1 capitalize">
+    <span class="flex items-center gap-1 capitalize" v-if="path !== null">
       <span :class="`material-symbols-rounded !text-lg ${path ? 'text-primary-500' : 'text-red-500'}`">
         {{ path ? 'check_circle' : 'cancel' }}
       </span>

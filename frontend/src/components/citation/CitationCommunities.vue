@@ -32,10 +32,11 @@
             <InputText v-model="search_raw" placeholder="Search abstracts" class="w-full" />
             <InputIcon class="z-10 pi pi-search" />
           </IconField>
-
           <InputGroupAddon>
-            <Button @click="top_nodes(5)" icon="pi pi-plus" text plain :loading="await_community"
-              v-tooltip.bottom="'Top nodes'" />
+            <Button class="w-8 h-8" icon="material-symbols-rounded" size="small" :loading="await_community" text plain
+              rounded v-tooltip.bottom="'Top nodes'" @click="top_nodes(5)">
+              <span class="material-symbols-rounded !text-lg">hub</span>
+            </Button>
           </InputGroupAddon>
         </InputGroup>
 
@@ -163,7 +164,8 @@ export default {
   methods: {
     select_community(community_nodes) {
       var com = this;
-      var abstract_names = new Set(community_nodes);
+      var abstract_names = new Set(community_nodes.nodes);
+
       const subset = [];
       com.citation_data.nodes.forEach((node) => {
         if (abstract_names.has(node.attributes["Name"].toUpperCase())) {

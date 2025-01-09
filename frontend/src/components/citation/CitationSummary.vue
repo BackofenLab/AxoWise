@@ -15,7 +15,7 @@
   </EmptyState>
 
   <p v-if="!await_load && summary" class="mt-3 text-md text-primary-400">Generated Summary:</p>
-  
+
   <div v-if="!await_load && summary" class="mt-3 whitespace-pre-wrap">
     {{ summary }}
   </div>
@@ -26,7 +26,7 @@ import ListActionHeader from "@/components/verticalpane/ListActionHeader.vue";
 import EmptyState from "@/components/verticalpane/EmptyState.vue";
 export default {
   name: "CitationSummary",
-  props: ["active_function", "sorted", "citation_data", "node_index"],
+  props: ["await_community", "active_function", "sorted", "citation_data", "node_index"],
   emits: ["await_community_changed"],
   data() {
     return {

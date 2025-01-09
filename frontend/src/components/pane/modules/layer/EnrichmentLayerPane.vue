@@ -2,7 +2,7 @@
   <div v-show="active_termlayers !== null">
     <header v-if="active_termlayers !== null" class="flex flex-wrap items-center gap-2">
       <span class="flex items-center gap-1 text-sm font-medium">
-        <strong class="font-normal dark:text-slate-300">pathways:</strong>
+        <strong class="font-normal dark:text-slate-300">Pathways:</strong>
         {{ active_termlayers.main.size }}
       </span>
     </header>

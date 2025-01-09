@@ -11,7 +11,7 @@
       </h3>
       <div class="flex items-center gap-1 ml-auto">
         <Button class="w-5 h-5 ml-auto" size="small" text rounded plain @click="add_subset(active_subset)">
-          <span class="dark:text-white !text-lg material-symbols-rounded"> add </span>
+          <span class="dark:text-white !text-lg material-symbols-rounded"> note_add </span>
         </Button>
         <Button class="w-5 h-5" size="small" text rounded plain @click="close_pane()">
           <span class="dark:text-white !text-lg material-symbols-rounded"> close </span>
@@ -44,7 +44,7 @@
 
 <script>
 import SubsetPane from "@/components/pane/modules/subset/SubsetPane.vue";
-
+import { useToast } from "primevue/usetoast";
 export default {
   name: "TermPaneSystem",
   props: ["mode","gephi_data", "active_subset", "active_node", "node_color_index"],
@@ -149,6 +149,7 @@ export default {
       } else {
         this.emitter.emit("addSubsetToSummary", subset);
       }
+      this.toast.add({ severity: 'success', detail: 'Subset added to summary.', life: 4000 });
     },
     selectTab(name, tab) {
       if (name == "node") {
@@ -165,7 +166,7 @@ export default {
   },
   mounted() {
     // this.dragElement(document.getElementById("pane"));
-
+    this.toast = useToast();
     this.emitter.on("reset_protein", (state) => {
       this.selectTab("node", state);
     });

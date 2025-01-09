@@ -19,7 +19,7 @@
         <div
           class="grid grid-cols-12 items-center gap-2 py-2 bg-[var(--card-bg)] shadow-[0_10px_30px_-18px_#34343D] dark:shadow-[0_10px_30px_-18px_#ffffff] z-[1]">
 
-          <a class="flex items-center justify-start col-span-4 gap-1 text-sm cursor-pointer" v-on:click="
+          <a class="flex items-center justify-start col-span-6 gap-1 text-sm cursor-pointer" v-on:click="
             sort_node = sort_node === 'asc' ? 'dsc' : 'asc';
           sort_cluster = '';
           sort_degree = '';
@@ -31,7 +31,7 @@
             </span>
           </a>
 
-          <a class="flex items-center justify-center col-span-4 gap-1 text-sm text-center cursor-pointer" v-on:click="
+          <a class="flex items-center justify-center col-span-3 gap-1 text-sm text-center cursor-pointer" v-on:click="
             sort_cluster = sort_cluster === 'asc' ? 'dsc' : 'asc';
           sort_node = '';
           sort_degree = '';
@@ -43,7 +43,7 @@
             </span>
           </a>
 
-          <a class="flex items-center justify-center col-span-4 gap-1 text-sm text-center cursor-pointer" v-on:click="
+          <a class="flex items-center justify-center col-span-3 gap-1 text-sm text-center cursor-pointer" v-on:click="
             sort_degree = sort_degree === 'asc' ? 'dsc' : 'asc';
           sort_cluster = '';
           sort_node = '';
@@ -60,11 +60,11 @@
     <!-- options -->
     <template #option="slotProps">
       <div :class="`grid items-center w-full grid-cols-12 gap-2`">
-        <span class="col-span-4 text-xs">{{ slotProps.option?.attributes?.["Name"] }}</span>
+        <span class="col-span-6 text-xs line-clamp-2">{{ slotProps.option?.attributes?.["Name"] }}</span>
 
-        <span class="col-span-4 text-xs text-center">{{ slotProps.option?.attributes?.["Modularity Class"] }}</span>
+        <span class="col-span-3 text-xs text-center">{{ slotProps.option?.attributes?.["Modularity Class"] }}</span>
 
-        <span class="col-span-4 text-xs text-center">{{ slotProps.option?.attributes?.["Degree"] }}</span>
+        <span class="col-span-3 text-xs text-center">{{ slotProps.option?.attributes?.["Degree"] }}</span>
       </div>
     </template>
   </Listbox>
