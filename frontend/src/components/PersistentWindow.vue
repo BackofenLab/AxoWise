@@ -4,7 +4,7 @@
       root: {
         id: 'scrollBox',
         class:
-          '!h-[80vh] w-[25rem] !mt-[60px] !ml-[60px] !bg-white/75 dark:!bg-slate-900/75 !backdrop-blur overflow-y-auto',
+          '!resize !h-full w-[26rem] !mt-[60px] !ml-[60px] !bg-white/75 dark:!bg-slate-900/75 !backdrop-blur overflow-y-auto',
       },
       header: { class: 'sticky top-0 !p-2 !px-3 !justify-start gap-3 !font-medium cursor-move backdrop-blur z-[1]' },
       headerActions: { class: '!hidden' },
@@ -13,7 +13,10 @@
       footer: { class: 'sticky bottom-0 !px-2 !pt-1 !pb-2 cursor-move backdrop-blur-xl !mt-auto' },
     }">
     <template #header>
-      <span class="material-symbols-rounded font-variation-ico-filled text-primary-500 !text-lg"> headset_mic </span>
+
+      <figure class="w-6 h-6 p-1 rounded-full bg-gradient-prime-reverse">
+        <img src="@/assets/logo.png" alt="Bot Icon" />
+      </figure>
       AxoBot
 
       <Button class="ml-auto" size="small" text plain rounded @click="windowCheck = false">
@@ -80,15 +83,8 @@
 
     <template #footer>
       <div class="flex flex-col w-full gap-2">
-        <InputGroup>
-          <InputText v-model="user_input" autofocus placeholder="Type your message..."
-            @keydown.enter.prevent="sendMessage" />
-          <InputGroupAddon>
-            <Button type="button" text plain @click="sendMessage">
-              <span class="material-symbols-rounded font-variation-ico-filled !text-xl"> send </span>
-            </Button>
-          </InputGroupAddon>
-        </InputGroup>
+        <Textarea autoResize rows="1" v-model="user_input" fluid autofocus placeholder="Type your message..."
+          @keydown.enter.prevent="sendMessage" />
 
         <template v-if="tags && tags.length > 0">
           <Carousel :value="tags" :numVisible="3" :numScroll="1" :showIndicators="false"

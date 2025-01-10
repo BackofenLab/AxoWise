@@ -20,7 +20,7 @@
       class:
         '!px-0 !py-1 !text-slate-500 dark:!text-slate-300 leading-tight transition-all duration-300 ease-in-out',
     },
-  }" listStyle="max-height:100%" class="h-full flex flex-col !p-0 !bg-transparent !border-0"
+  }" :virtualScrollerOptions="{ itemSize: 38 }" listStyle="max-height:100%" class="h-full flex flex-col !p-0 !bg-transparent !border-0"
     @update:modelValue="select_term" :tabindex="0" emptyMessage="No terms available.">
 
     <template #footer>
@@ -177,7 +177,7 @@ export default {
     filt_terms() {
       var com = this;
       var filtered = com.terms;
-
+      
       if (com.selected_categories?.length) {
         // If category is selected, filter by category
         filtered = filtered.filter(function (term) {
