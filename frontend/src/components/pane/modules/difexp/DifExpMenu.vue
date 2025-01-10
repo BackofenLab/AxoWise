@@ -135,12 +135,10 @@ export default {
       com.emitter.emit("adjustDE", this.dboundary.value);
     },
   },
-  mounted() {
-    console.log(this.active_decoloumn);
-  },
   updated() {
     if (this.active_decoloumn != null) {
       this.draw_legend();
+      this.emitter.emit("adjustDE", this.dboundary.value);
     }
   },
 };
