@@ -20,8 +20,8 @@
       class:
         '!px-0 !py-1 !text-slate-500 dark:!text-slate-300 leading-tight transition-all duration-300 ease-in-out',
     },
-  }" :virtualScrollerOptions="{ itemSize: 38 }" listStyle="max-height:100%" class="h-full flex flex-col !p-0 !bg-transparent !border-0"
-    @update:modelValue="select_term" :tabindex="0" emptyMessage="No terms available.">
+  }" :virtualScrollerOptions="{ itemSize: 28 }" listStyle="max-height:100%" class="h-full flex flex-col !p-0 !bg-transparent !border-0"
+    @value-change="select_term" :tabindex="0" emptyMessage="No terms available.">
 
     <template #footer>
       <header class="sticky top-0 bg-[var(--card-bg)] pt-3 items-center gap-2 z-[1] order-1">
@@ -83,7 +83,7 @@
     <!-- options -->
     <template #option="slotProps">
       <div :class="`grid items-center w-full grid-cols-12 gap-2 ${slotProps.selected ? '!text-primary-400' : ''}`">
-        <span class="col-span-8">{{ slotProps.option.name }}</span>
+        <span class="col-span-8 line-clamp-1">{{ slotProps.option.name }}</span>
 
         <span class="col-span-3 text-right">{{ slotProps.option.fdr_rate.toExponential(2) }}</span>
 

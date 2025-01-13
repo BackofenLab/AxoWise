@@ -2,6 +2,8 @@ import { createApp } from "vue";
 import mitt from "mitt";
 import App from "./App.vue";
 import router from "./router";
+import "@splidejs/vue-splide/css/core";
+import "@splidejs/vue-splide/css";
 import "vue-select/dist/vue-select.css";
 import "./style.css";
 import "primeicons/primeicons.css";
@@ -17,6 +19,7 @@ import { definePreset } from "@primevue/themes";
 import Aura from "@primevue/themes/aura";
 import "animate.css";
 import ToastService from "primevue/toastservice";
+import VueSplide from "@splidejs/vue-splide";
 
 // Create a reactive object to serve as the EventBus
 const emitter = mitt();
@@ -25,6 +28,7 @@ const app = createApp(App);
 app.use(router);
 app.use(store);
 app.use(VueAxios, axios);
+app.use(VueSplide);
 app.use(PrimeVue, {
   theme: {
     preset: definePreset(Aura, {

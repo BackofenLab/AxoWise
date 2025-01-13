@@ -144,6 +144,27 @@ body {
 }
 /* End Updated Styles for PrimeVue */
 
+/* Start Splide Js */
+.splide__track {
+  margin: 0 30px;
+}
+.splide__arrow {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+}
+.splide__arrow--prev {
+  left: 0px !important;
+}
+.splide__arrow--next {
+  right: 0px !important;
+}
+.splide__arrow svg {
+  width: 15px;
+  height: 15px;
+}
+/* End Splide Js */
+
 * {
   padding: 0px;
   margin: 0px;
