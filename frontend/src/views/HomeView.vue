@@ -54,8 +54,9 @@
         <footer class="flex items-center justify-center gap-3 pt-8 mt-auto">
           <Button class="animate__animated animate__bounce" icon="pi pi-youtube" severity="secondary" rounded
             aria-label="Youtube" />
-          <Button class="animate__animated animate__bounce animate__fast" icon="pi pi-github" severity="secondary"
-            rounded aria-label="Github" />
+          <Button as="a" href="https://github.com/BackofenLab/AxoWise" target="_blank" rel="noopener"
+            class="animate__animated animate__bounce animate__fast" icon="pi pi-github" severity="secondary" rounded
+            aria-label="Github" />
           <Button class="animate__animated animate__bounce animate__slow" icon="pi pi-reddit" severity="secondary"
             rounded aria-label="Reddit" />
           <Button class="animate__animated animate__bounce animate__slower" icon="pi pi-linkedin" severity="secondary"

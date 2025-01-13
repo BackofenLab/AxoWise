@@ -4,7 +4,7 @@
       root: {
         id: 'scrollBox',
         class:
-          '!resize !h-full w-[26rem] !mt-[60px] !ml-[60px] !bg-white/75 dark:!bg-slate-900/75 !backdrop-blur overflow-y-auto',
+          '!h-full w-[26rem] !mt-[60px] !ml-[60px] !bg-white/75 dark:!bg-slate-900/75 !backdrop-blur overflow-y-auto',
       },
       header: { class: 'sticky top-0 !p-2 !px-3 !justify-start gap-3 !font-medium cursor-move backdrop-blur z-[1]' },
       headerActions: { class: '!hidden' },
@@ -13,12 +13,7 @@
       footer: { class: 'sticky bottom-0 !px-2 !pt-1 !pb-2 cursor-move backdrop-blur-xl !mt-auto' },
     }">
     <template #header>
-
-      <figure class="w-6 h-6 p-1 rounded-full bg-gradient-prime-reverse">
-        <img src="@/assets/logo.png" alt="Bot Icon" />
-      </figure>
       AxoBot
-
       <Button class="ml-auto" size="small" text plain rounded @click="windowCheck = false">
         <span class="material-symbols-rounded"> close </span>
       </Button>
@@ -44,17 +39,15 @@
           <template v-if="index !== 0">
             <div :class="`flex gap-3 ${msg.sender === 'Bot' ? 'mb-5 flex-wrap' : 'gap-1.5 items-center'}`">
               <template v-if="msg.data && msg.data.length">
-                <Carousel :value="msg.data" :numVisible="2" :numScroll="1" :showIndicators="false"
-                  :prevButtonProps="{ size: 'small', plain: true, text: true, rounded: true }"
-                  :nextButtonProps="{ size: 'small', plain: true, text: true, rounded: true }"
-                  :pt="{ content: '!items-center' }" :class="`${msg.sender === 'Bot' ? '-mx-3' : 'w-[80%] -ml-3'}`">
-                  <template #item="slotProps">
+                <Splide :options="{ autoWidth: true, pagination: false }"
+                  :class="`mb-1.5 ${msg.sender === 'Bot' ? 'w-[calc(100%+(12px*2))] -mx-3' : 'w-[80%] -ml-3'}`">
+                  <SplideSlide v-for="(element, index) in msg.data" :key="index">
                     <Chip class="cursor-pointer" :pt="{
-                      root: { class: 'h-6 !grid grid-cols-[1fr_auto] dark:!bg-slate-700 !px-2 !py-1 !mx-1' },
-                      label: { class: '!text-sm !line-clamp-1' },
-                    }" :label="slotProps.data.id" @click="searchInput(slotProps.data)" />
-                  </template>
-                </Carousel>
+                      root: { class: 'h-6 !grid grid-cols-[1fr_auto] dark:!bg-slate-700 !px-2 !py-1' },
+                      label: { class: 'max-w-[150px] !text-sm !line-clamp-1' },
+                    }" :label="element.id" @click="searchInput(element)" />
+                  </SplideSlide>
+                </Splide>
               </template>
 
               <figure v-if="msg.sender === 'Bot'" class="w-6 h-6 p-1 rounded-full bg-gradient-prime-reverse">
@@ -83,24 +76,29 @@
 
     <template #footer>
       <div class="flex flex-col w-full gap-2">
-        <Textarea autoResize rows="1" v-model="user_input" fluid autofocus placeholder="Type your message..."
-          @keydown.enter.prevent="sendMessage" />
+        <fieldset class="relative">
+          <!-- Allow shift enter -->
+          <Textarea autoResize rows="1" class="!pr-[40.98px] !leading-tight" v-model="user_input" fluid autofocus
+            placeholder="Type your message..." @keydown.enter.prevent="sendMessage" />
+          <Button class="!absolute !bottom-1.5 !right-0 !border-0 !p-2 !h-9 hover:!bg-transparent" type="button" text
+            plain @click="sendMessage">
+            <span class="material-symbols-rounded font-variation-ico-filled !text-xl"> send </span>
+          </Button>
+        </fieldset>
 
-        <template v-if="tags && tags.length > 0">
-          <Carousel :value="tags" :numVisible="3" :numScroll="1" :showIndicators="false"
-            :prevButtonProps="{ size: 'small', plain: true, text: true, rounded: true }"
-            :nextButtonProps="{ size: 'small', plain: true, text: true, rounded: true }"
-            :pt="{ content: '!items-center' }">
-            <template #item="slotProps">
+        <template v-if="tags && tags.length">
+          <Splide :options="{ autoWidth: true, pagination: false }">
+            <SplideSlide v-for="(tag, index) in tags" :key="index">
               <Chip class="cursor-pointer" :pt="{
-                root: { class: 'h-6 !grid grid-cols-[1fr_auto] dark:!bg-slate-700 !px-2 !py-1 !mx-1' },
-                label: { class: '!text-sm !line-clamp-1' },
-              }" :label="slotProps.data.id" removable @click="searchInput(slotProps.data)"
-                @remove="removeTag(slotProps.index)" />
-            </template>
-          </Carousel>
+                root: { class: 'h-6 !grid grid-cols-[1fr_auto] dark:!bg-slate-700 !px-2 !py-1' },
+                label: { class: 'max-w-[150px] !text-sm !line-clamp-1' },
+              }" :label="tag.id">
+                <span @click="searchInput(tag)">{{ tag.id }}</span>
+                <span class="material-symbols-rounded !text-lg" @click="removeTag(index)"> cancel </span>
+              </Chip>
+            </SplideSlide>
+          </Splide>
         </template>
-
       </div>
     </template>
   </Dialog>
@@ -116,8 +114,13 @@
 
 <script>
 import { useToast } from "primevue/usetoast";
+import { Splide, SplideSlide } from "@splidejs/vue-splide";
 export default {
   name: "PersistentWindow",
+  components: {
+    Splide,
+    SplideSlide,
+  },
   data() {
     return {
       user_input: "",

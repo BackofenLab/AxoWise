@@ -28,7 +28,6 @@ export default {
   data() {
     return {
       selected_category: null,
-      active_section: "",
       dcoloumns: this.$store.state.dcoloumns,
       dboundary: {
         value: 1,
@@ -40,7 +39,9 @@ export default {
   },
   watch: {
     active_decoloumn() {
-      console.log(this.active_decoloumn);
+      if (this.active_decoloumn === null) {
+        this.selected_category = null;
+      }
     },
   },
   methods: {
@@ -53,16 +54,6 @@ export default {
     },
     reset_categories() {
       this.emitter.emit("decoloumn", null);
-    },
-    change_section(bool, val) {
-      var com = this;
-      if (com.active_section == val) {
-        com.active_section = "";
-        com.$emit("tool_active_changed", bool);
-      } else {
-        if (com.active_section == "") com.$emit("tool_active_changed", bool);
-        com.active_section = val;
-      }
     },
     draw_legend: function () {
       var com = this;

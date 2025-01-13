@@ -55,7 +55,7 @@
           </Tab>
         </TabList>
 
-        <Button class="w-5 h-5 !ml-auto" size="small" text rounded plain @click="call_chatbot()">
+        <Button class="w-5 h-5 !ml-auto" size="small" text rounded plain @click="call_chatbot(mode)">
           <span class="dark:text-white material-symbols-rounded !text-lg">forum</span>
         </Button>
       </footer>

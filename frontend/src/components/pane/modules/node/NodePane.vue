@@ -70,7 +70,7 @@
           </Tab>
         </TabList>
 
-        <Button class="w-5 h-5 !ml-auto" size="small" text rounded plain @click="call_chatbot()">
+        <Button class="w-5 h-5 !ml-auto" size="small" text rounded plain @click="call_chatbot(mode)">
           <span class="dark:text-white material-symbols-rounded !text-lg">forum</span>
         </Button>
       </footer>
@@ -225,10 +225,10 @@ export default {
     select_node(value) {
       this.emitter.emit("searchNode", { node: value, mode: this.mode });
     },
-    call_chatbot() {
+    call_chatbot(mode) {
       this.emitter.emit("addToChatbot", {
         id: this.active_node.attributes["Name"],
-        mode: this.mode,
+        mode: mode,
         type: "protein",
         data: this.active_node,
       });
