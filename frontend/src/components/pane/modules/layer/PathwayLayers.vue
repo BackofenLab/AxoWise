@@ -6,9 +6,9 @@
 
   <ul class="p-0 m-0 list-none">
     <li
-      class="w-full h-9 grid grid-cols-12 items-center gap-2 !py-0 !px-0 !font-normal !text-slate-500 dark:!text-slate-300 !leading-tight"
+      class="w-full h-8 grid grid-cols-12 items-center gap-2 !py-0 !px-0 !font-normal !text-slate-500 dark:!text-slate-300 !leading-tight"
       v-for="entry in terms" :key="entry">
-      <label class="col-span-9">{{ entry.name }}</label>
+      <label class="col-span-9 line-clamp-1">{{ entry.name }}</label>
       <span class="w-4 h-4 col-start-11 rounded-full cursor-pointer" id="color_rect" @click="open_picker($event, entry)"
         :style="{ backgroundColor: colorpalette[entry.name] }"></span>
       <Button severity="secondary" rounded size="small" plain class="w-5 h-5" @click="hide_termlayer(entry)"

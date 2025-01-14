@@ -10,7 +10,7 @@
       class:
         '!px-0 !py-1 !text-slate-500 dark:!text-slate-300 leading-tight transition-all duration-300 ease-in-out',
     },
-  }" listStyle="max-height:100%" class="h-full flex flex-col !p-0 !bg-transparent !border-0"
+  }" :virtualScrollerOptions="{ itemSize: 28 }" listStyle="max-height:100%" class="h-full flex flex-col !p-0 !bg-transparent !border-0"
     @update:modelValue="select_term" :tabindex="0" emptyMessage="No terms available.">
 
     <template #footer>
@@ -69,9 +69,9 @@
     <!-- options -->
     <template #option="slotProps">
       <div :class="`grid items-center w-full grid-cols-12 gap-2 ${slotProps.selected ? '!text-primary-400' : ''}`">
-        <span class="col-span-8">{{ slotProps.option?.attributes?.["Name"] }}</span>
+        <span class="col-span-8 line-clamp-1">{{ slotProps.option?.attributes?.["Name"] }}</span>
 
-        <span class="col-span-3 text-right">{{ slotProps.option?.attributes?.["FDR"]?.toExponential(2) }}</span>
+        <span class="col-span-3 text-right line-clamp-1">{{ slotProps.option?.attributes?.["FDR"]?.toExponential(2) }}</span>
 
       </div>
     </template>

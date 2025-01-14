@@ -13,7 +13,7 @@
   </EmptyState>
 
   <Listbox v-if="citation_data?.community_scores?.length != 0 && !await_load" v-model="selected_citation"
-    optionLabel="id" :options="filt_communities" :pt="{
+    optionLabel="name" :options="filt_communities" :pt="{
       listContainer: { class: 'order-2' },
       list: { class: '!p-0' },
       emptyMessage: { class: '!flex !justify-center !items-center !text-sm !text-slate-500 dark:!text-slate-300' },
@@ -21,7 +21,7 @@
         class:
           '!px-0 !py-1 !text-slate-500 dark:!text-slate-300 leading-tight transition-all duration-300 ease-in-out',
       },
-    }" listStyle="max-height:100%" class="h-full flex flex-col !p-0 !bg-transparent !border-0"
+    }" :virtualScrollerOptions="{ itemSize: 28 }" listStyle="max-height:100%" class="h-full flex flex-col !p-0 !bg-transparent !border-0"
     @update:modelValue="select_community" :tabindex="0" emptyMessage="No communities available.">
 
     <template #footer>
@@ -87,11 +87,11 @@
     <!-- options -->
     <template #option="slotProps">
       <div :class="`grid items-center w-full grid-cols-12 gap-2 ${slotProps.selected ? '!text-primary-400' : ''}`">
-        <span class="col-span-6">Community {{ slotProps.option.modularity_class }}</span>
+        <span class="col-span-6 line-clamp-1">Community {{ slotProps.option.modularity_class }}</span>
 
-        <span class="col-span-3">{{ slotProps.option.nodes.length }}</span>
+        <span class="col-span-3 line-clamp-1">{{ slotProps.option.nodes.length }}</span>
 
-        <span class="col-span-3 text-center">{{ Math.log10(
+        <span class="col-span-3 text-center line-clamp-1">{{ Math.log10(
           parseFloat(slotProps.option.cumulative_pagerank)
         ).toFixed(2) }}</span>
       </div>
@@ -127,7 +127,7 @@ export default {
     filt_communities() {
       var com = this;
       var filtered = Object.values(com.citation_data?.community_scores || {});
-
+      console.log('00',filtered)
       if (com.search_raw !== "") {
         // If search term is not empty, filter by search term
         var regex = new RegExp(com.regex, "i");

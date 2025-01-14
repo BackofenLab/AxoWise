@@ -85,7 +85,7 @@
       <div :class="`grid items-center w-full grid-cols-12 gap-2 ${slotProps.selected ? '!text-primary-400' : ''}`">
         <span class="col-span-8 line-clamp-1">{{ slotProps.option.name }}</span>
 
-        <span class="col-span-3 text-right">{{ slotProps.option.fdr_rate.toExponential(2) }}</span>
+        <span class="col-span-3 text-right line-clamp-1">{{ slotProps.option.fdr_rate.toExponential(2) }}</span>
 
         <span v-on:click.stop="add_enrichment(slotProps.option)" :class="`material-symbols-rounded text-slate-600 cursor-pointer 
           ${favourite_tab.has(slotProps.option)

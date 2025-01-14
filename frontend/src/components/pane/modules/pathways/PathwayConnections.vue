@@ -60,11 +60,11 @@
     <!-- options -->
     <template #option="slotProps">
       <div :class="`grid items-center w-full grid-cols-12 gap-2`">
-        <span class="col-span-6 text-xs line-clamp-2">{{ slotProps.option?.attributes?.["Name"] }}</span>
+        <span class="col-span-6 text-xs line-clamp-1">{{ slotProps.option?.attributes?.["Name"] }}</span>
 
-        <span class="col-span-3 text-xs text-center">{{ slotProps.option?.attributes?.["Modularity Class"] }}</span>
+        <span class="col-span-3 text-xs text-center line-clamp-1">{{ slotProps.option?.attributes?.["Modularity Class"] }}</span>
 
-        <span class="col-span-3 text-xs text-center">{{ slotProps.option?.attributes?.["Degree"] }}</span>
+        <span class="col-span-3 text-xs text-center line-clamp-1">{{ slotProps.option?.attributes?.["Degree"] }}</span>
       </div>
     </template>
   </Listbox>
