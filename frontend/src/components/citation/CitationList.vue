@@ -21,8 +21,9 @@
         class:
           '!px-0 !py-1 !text-slate-500 dark:!text-slate-300 leading-tight transition-all duration-300 ease-in-out',
       },
-    }" listStyle="max-height:100%" class="h-full flex flex-col !p-0 !bg-transparent !border-0"
-    @update:modelValue="select_abstract" :tabindex="0" emptyMessage="No abstracts available.">
+    }" :virtualScrollerOptions="{ itemSize: 28 }" listStyle="max-height:100%"
+    class="h-full flex flex-col !p-0 !bg-transparent !border-0" @update:modelValue="select_abstract" :tabindex="0"
+    emptyMessage="No abstracts available.">
 
     <template #footer>
       <header class="sticky top-0 bg-[var(--card-bg)] pt-3 items-center gap-2 z-[1] order-1">
@@ -96,13 +97,13 @@
     <!-- options -->
     <template #option="slotProps">
       <div :class="`grid items-center w-full grid-cols-12 gap-2 ${slotProps.selected ? '!text-primary-400' : ''}`">
-        <span class="col-span-4">{{ slotProps.option.id }}</span>
+        <span class="col-span-4 line-clamp-1">{{ slotProps.option.id }}</span>
 
-        <span class="col-span-3">{{ slotProps.option.attributes["Citation"] }}</span>
+        <span class="col-span-3 line-clamp-1">{{ slotProps.option.attributes["Citation"] }}</span>
 
-        <span class="col-span-2">{{ slotProps.option.attributes["Year"] }}</span>
+        <span class="col-span-2 line-clamp-1">{{ slotProps.option.attributes["Year"] }}</span>
 
-        <span class="col-span-3 text-center">{{ Math.log10(
+        <span class="col-span-3 text-center line-clamp-1">{{ Math.log10(
           parseFloat(slotProps.option.attributes["PageRank"])
         ).toFixed(2) }}</span>
       </div>
