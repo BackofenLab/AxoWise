@@ -12,6 +12,7 @@ import random
 import json
 import os
 from ast import literal_eval
+import re
 
 
 def setup_chrome_driver(user_agent):
@@ -49,16 +50,15 @@ def scrape_data(data_keywords):
         Performance will be optimized in future"""
     
     files = [f for f in os.listdir('.') if f.startswith('_') and f.endswith('.txt')]
-    # files = ['_Nature Microbiology_Nature Nanotechnology_Science Immunology.txt']
+    # files = ['_Bioactive materials_Molecular Cancer_Molecular Neurodegeneration.txt']
     for filename in files:
         # print("filename:", filename)
         ua = UserAgent()
 
         results = []
-        output_file = f"{filename.rstrip(".txt")}_udc.json"
+        output_file = "scrape_ds_test.json"
         content = []
         with open(filename, 'r') as f:
-            # content = f.readlines()
             for line in f:
                 items = literal_eval(line)
                 content.append(items[0])
@@ -93,27 +93,23 @@ def scrape_data(data_keywords):
                                     parent_div = heading.find_parent('div')
                                     text = str(parent_div)
                                     start_phrase = heading.get_text()
-                                    # start_phrase = heading
                                     end_phrase = "</div>"
 
                                     substring = text[text.find(start_phrase):text.find(end_phrase) + len(end_phrase)]
                                     substring = substring.split('</b>', 1)[1].strip()
                                     substring = substring.rstrip('</div>')
 
-                                    # print(heading.get_text(), substring)
                                     results.append({"DOI": url, 
                                         "header": heading.get_text(), 
                                         "paragraph": str(substring)})
                                     
                                 elif '/nar' in url or '/neuonc' in url or '/nsr' in url:
                                     paragraph = heading.find_next_siblings("p", limit=3)
-                                    # print(heading.get_text(), paragraph)
                                     results.append({"DOI": url, 
                                         "header": heading.get_text(), 
                                         "paragraph": str(paragraph)})
 
                                 else:
-                                    # print(heading.get_text(), paragraph)    
                                     results.append({"DOI": url, 
                                         "header": heading.get_text(), 
                                         "paragraph": str(paragraph)})
@@ -138,12 +134,11 @@ def scrape_data(data_keywords):
                 driver.quit()
 
 
-
 def rerun_error_list(data_keywords):
     """Re-runs *_error_list.txt files,
         Code will be optimized in future"""
 
-    files = [f for f in os.listdir('.') if f.startswith('_') and f.endswith('_error_list.txt')]
+    files = [os.path.join("files", f) for f in os.listdir("files") if f.startswith('_') and f.endswith('f_clean.json')]
 
     for filename in files:
         # print("Filename:", filename)
@@ -152,7 +147,7 @@ def rerun_error_list(data_keywords):
 
         if filename.endswith('_error_list.txt'):
             base_filename = filename[:-len('_error_list.txt')]
-        output_file = f"{base_filename}_udc.json"
+        output_file = f"files/{base_filename}_udc.json"
 
         with open(output_file, 'r', encoding='utf-8') as f:
             results = json.load(f)
@@ -218,16 +213,18 @@ def rerun_error_list(data_keywords):
                                             results.append(new_entry) 
 
                             if not data_found:
-                                base_filename = base_filename.rstrip(".txt")
-                                with open(f"{base_filename}_no_data.txt", "a", encoding="utf-8") as f2:
-                                    f2.write(doi)
+                                no_data_file = os.path.splitext(os.path.basename(file))[0] + "_no_data.txt"
+                                no_data_path = os.path.join("files", no_data_file)
+                                with open(no_data_path, "a", encoding="utf-8") as f2:
+                                    f2.write(doi + "\n")
 
                             save_to_json(results, output_file)
                             
                         else: 
-                            base_filename = base_filename.rstrip(".txt")
-                            with open(f"{base_filename}_error_list_retry.txt", "a", encoding="utf-8") as f3:
-                                f3.write(doi)
+                            error_file = os.path.splitext(os.path.basename(file))[0] + "_error_list_retry.txt"
+                            error_path = os.path.join("files", error_file)
+                            with open(error_path, "a", encoding="utf-8") as f2:
+                                f2.write(doi + "\n")
 
                     finally:
                         driver.quit()
@@ -249,7 +246,7 @@ def merge_data_code_section():
     """Publications having Data Availability and Code Availability separate are merged in a single entry"""
 
     files = [f for f in os.listdir('.') if f.startswith('_') and f.endswith('udc.json')]
-
+    # files = ['scrape_ds_test.json']
     for file in files:
         with open(file,'r', encoding="utf-8") as f:
             data = json.load(f)
@@ -271,6 +268,39 @@ def merge_data_code_section():
         output_file = file.rstrip('.json')
         with open(f"{output_file}_formatted.json","w") as f:
             json.dump(formated_data, f, indent=4)
+
+
+
+def clean_html():
+    """Remove unnecessary HTML elements from 'paragraph' """
+
+    
+    files = [f for f in os.listdir('.') if f.startswith('_') and f.endswith('udc_formatted.json')]
+    # files = ['scrape_ds_test.json']
+    for file in files:
+        results = []
+        try:
+            with open(file,'r', encoding="utf-8") as f:
+                data = json.load(f)
+            
+            for each in data:
+                para = each["paragraph"]
+                text_no_html = re.sub(r'<[^>]+>', '', para)
+                text_clean = re.sub(r'\s+', ' ', text_no_html).strip()
+
+                result_entry = {
+                    "DOI": each["DOI"],
+                    "header": each["header"],
+                    "paragraph": text_clean
+                }
+                results.append(result_entry)
+
+            output_file = file.rstrip(".json")
+            with open(f"{output_file}_f_clean.json","w") as f:
+                json.dump(results, f, indent=4, ensure_ascii=False)
+
+        except Exception as e:
+            print(f"An error occurred: {str(e)}")
 
 
 
@@ -321,4 +351,4 @@ if __name__ == "__main__":
    
     # scrape_data(data_keywords)
     # merge_data_code_section()
-    rerun_error_list(data_keywords)
+    # clean_html()
