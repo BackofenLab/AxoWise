@@ -77,7 +77,8 @@ export default {
       heatmap_dict_array: [],
       export_image: null,
       focus_heatmap_id: null,
-      active_heatmap_id: null
+      active_heatmap_id: null,
+      current_legend: null
     };
   },
   mounted() {
@@ -248,6 +249,18 @@ export default {
       );
     },
     export_svg() {
+
+      this.export_image = this.export_image.replace(/<\/svg>$/, '');
+
+      let legend = new XMLSerializer().serializeToString(this.current_legend.node());
+      
+      legend = legend.replace('<g transform="translate(200, 50)">', '<g transform="translate(200, 300)">');
+
+      this.export_image += legend
+
+      // Step 3: Re-add the </svg> tag at the end
+      this.export_image += '</svg>';
+
       this.download(this.export_image, "heatmap.svg");
     },
     createBlob(data) {
@@ -299,25 +312,29 @@ export default {
       var svgWidth = 320; // Define the SVG width
       var svgHeight = 100; // Define the SVG height
 
+      // Create the SVG element and assign it to svg
       var svg = d3
         .select("#heatdemo")
         .append("svg")
         .attr("width", "100%")
         .attr("height", "100%")
-        .attr("viewBox", `0 0 ${svgWidth * 2.2} ${svgHeight}`)
+        .attr("viewBox", `0 0 ${svgWidth * 2.2} ${svgHeight}`);
+
+      // Create a <g> element inside the SVG and center the content
+      var g = svg
         .append("g")
-        .attr("transform", `translate(${svgWidth / 1.6}, ${svgHeight / 2})`); // Center the SVG content
+        .attr("transform", `translate(${svgWidth / 1.6}, ${svgHeight / 2})`);
 
       var xScale = d3.scaleLinear().domain([0, 1]).range([0, 300]); // Adjust the range to center it
 
       var xAxis = d3.axisBottom(xScale).tickValues(listB);
 
-      svg.append("g").attr("transform", "translate(0, 5)").call(xAxis);
+      g.append("g").attr("transform", "translate(0, 5)").call(xAxis);
 
-      svg.selectAll("text").style("fill", "white");
+      g.selectAll("text").style("fill", "#aaa");
 
       // Remove the domain (the line along the x-axis)
-      svg.select(".domain").remove();
+      g.select(".domain").remove();
 
       // Create a linear gradient for the legend bar using the existing colorScale
       var gradient = svg
@@ -343,17 +360,15 @@ export default {
         .attr("stop-color", colorScale(100));
 
       // Create the legend bar using the linear gradient
-      svg
-        .append("rect")
+      g.append("rect")
         .attr("x", 0) // Adjust the x-coordinate to center it
         .attr("y", -10) // Adjust the y-coordinate to center it vertically
         .attr("width", 300)
         .attr("height", 15)
-        .style("fill", "url(#legendGradient");
+        .style("fill", "url(#legendGradient)");
 
       // Optionally, you can add a border to the legend bar
-      svg
-        .append("rect")
+      g.append("rect")
         .attr("x", 0)
         .attr("y", -10)
         .attr("width", 300)
@@ -362,8 +377,10 @@ export default {
         .attr("stroke-width", 0.5)
         .attr("fill", "none");
 
-      return svg;
-    },
+      console.log(svg)
+      this.current_legend = svg;
+    }
+
   },
   computed: {
     filt_heatmap() {
