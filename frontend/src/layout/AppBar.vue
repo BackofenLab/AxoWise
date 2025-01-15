@@ -16,6 +16,10 @@
     </template>
 
     <template #center>
+      <Button @click="center" plain text class="capitalize">
+        <span class="material-symbols-rounded">center_focus_strong</span>
+        Recenter graph
+      </Button>
     </template>
 
     <template #end>
@@ -70,6 +74,9 @@ export default {
     this.toast = useToast();
   },
   methods: {
+    center() {
+      this.emitter.emit("centerGraph", { check: true, mode: this.mode });
+    },
     toggle_widget(event) {
       this.$emit("widget_toggled", event);
     },
