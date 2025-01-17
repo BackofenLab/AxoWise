@@ -4,12 +4,17 @@
       <span class="text-sm font-normal">{{ active_decoloumn }}</span>
     </header>
 
-    <Tabs :value="active_section" @update:value="change_section">
+    <Tabs :value="active_section">
       <div
         :class="`${active_section ? '!pt-2 !border-t !border-slate-700 !mt-2' : ''} px-2.5 -mx-2.5 max-h-[10rem] overflow-auto overflow-x-visible`">
         <TabPanels class="!p-0">
-          <TabPanel value="statistics">
-            <h3 class="mb-3 text-sm font-medium">
+          <TabPanel value="informations" v-show="tool_active && active_section == 'informations'">
+            <h3 class="mb-1 text-sm font-medium">
+              Informations
+            </h3>
+          </TabPanel>
+          <TabPanel value="statistics" v-show="tool_active && active_section == 'statistics'">
+            <h3 class="mb-1 text-sm font-medium">
               Contained nodes
             </h3>
             <RegulatedProteins :active_decoloumn="active_decoloumn" :gephi_data="gephi_data"></RegulatedProteins>
@@ -22,42 +27,16 @@
           tabList: { class: '!border-0 !gap-4' },
           activeBar: { class: '!hidden' }
         }">
-          <Tab value="statistics" class="!p-0 !border-0"><span
+          <Tab v-on:click="change_section('informations')" value="informations" class="!p-0 !border-0"><span
+              :class="`material-symbols-rounded !text-lg ${active_section == 'informations' ? 'font-variation-ico-filled' : ''}`">info</span>
+          </Tab>
+          <Tab v-on:click="change_section('statistics')" value="statistics" class="!p-0 !border-0"><span
               :class="`material-symbols-rounded !text-lg ${active_section == 'statistics' ? 'font-variation-ico-filled' : ''}`">tune</span>
           </Tab>
         </TabList>
       </footer>
     </Tabs>
   </div>
-
-  <!-- <div class="text" v-show="active_decoloumn !== null">
-    <div class="gene_attribute" v-if="active_decoloumn !== null">
-      <div class="deval">{{ active_decoloumn }}</div>
-    </div>
-    <div :class="{
-      'tool-section': !tool_active,
-      'tool-section-active': tool_active,
-    }">
-      <div id="informations" class="subsection" v-show="tool_active && active_section == 'information'">
-        <div class="subsection-header">
-          <span>informations</span>
-        </div>
-        <div class="subsection-main colortype"></div>
-      </div>
-      <div id="network" class="subsection" v-show="tool_active && active_section == 'statistics'">
-        <div class="subsection-header">
-          <span>contained nodes</span>
-        </div>
-        <div class="subsection-main colortype">
-          <RegulatedProteins :active_decoloumn="active_decoloumn" :gephi_data="gephi_data"></RegulatedProteins>
-        </div>
-      </div>
-    </div>
-    <div class="nodeattributes">
-      <img class="icons" src="@/assets/toolbar/menu-burger.png" v-on:click="change_section('information')" />
-      <img class="icons" src="@/assets/toolbar/settings-sliders.png" v-on:click="change_section('statistics')" />
-    </div>
-  </div> -->
 </template>
 
 <script>
@@ -124,15 +103,3 @@ export default {
   },
 };
 </script>
-
-<!-- <style>
-.gene_attribute .deval {
-  width: 100%;
-  margin-left: 0.3vw;
-  font-size: 0.8vw;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: center;
-}
-</style> -->
