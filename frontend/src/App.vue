@@ -1,5 +1,5 @@
 <template>
-  <PersistentWindow />
+  <AxoChatBot />
   <DocumentWindow />
   <Toast />
   <router-view v-slot="{ Component }">
@@ -14,7 +14,7 @@ import TermView from "@/views/TermView.vue";
 import CitationView from "@/views/CitationView.vue";
 import ProteinView from "@/views/ProteinView.vue";
 import HomeView from "@/views/HomeView.vue";
-import PersistentWindow from "@/components/PersistentWindow.vue";
+import AxoChatBot from "@/components/AxoChatBot.vue";
 import DocumentWindow from "@/components/DocumentWindow.vue";
 import Toast from 'primevue/toast';
 
@@ -25,7 +25,7 @@ export default {
     ProteinView,
     HomeView,
     CitationView,
-    PersistentWindow,
+    AxoChatBot,
     DocumentWindow,
     Toast
   },

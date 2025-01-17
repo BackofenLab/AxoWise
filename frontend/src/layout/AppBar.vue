@@ -17,7 +17,7 @@
 
     <template #center>
       <Button @click="center" plain text class="capitalize">
-        <span class="material-symbols-rounded">center_focus_strong</span>
+        <span class="material-symbols-rounded">fullscreen</span>
         Recenter graph
       </Button>
     </template>

@@ -29,7 +29,7 @@
       </Button>
 
       <Button class="group" icon="material-symbols-rounded" text plain v-tooltip="'Recenter graph'" @click="center">
-        <span class="material-symbols-rounded group-hover:font-variation-ico-filled">center_focus_strong</span>
+        <span class="material-symbols-rounded group-hover:font-variation-ico-filled">fullscreen</span>
       </Button>
 
       <Button class="group" icon="material-symbols-rounded" text plain v-tooltip="'Open AxoBot'" @click="chatbot">
