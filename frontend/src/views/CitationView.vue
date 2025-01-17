@@ -14,7 +14,7 @@
       @active_subset_changed="active_subset = $event" @active_layer_changed="active_layer = $event"
       @active_combine_changed="active_combine = $event" :node_color_index="node_color_index"></CitationPaneSystem>
   </keep-alive>
-  <main class="h-[calc(100vh-65px)] flex flex-1">
+  <main class="h-[calc(100vh-65px)] flex flex-1 overflow-hidden">
     <keep-alive>
       <MainToolBar :mode="mode" :gephi_data="citation_data" :active_subset="active_subset" :active_term="null"
         :ensembl_name_index="null" :widget="widget"></MainToolBar>
@@ -40,7 +40,7 @@ import AppBar from "@/layout/AppBar.vue";
 import MainToolBar from "@/layout/MainToolBar.vue";
 import VerticalPane from "@/layout/VerticalPane.vue";
 import CitationVis from "@/components/visualization/CitationVis.vue";
-import CitationPaneSystem from "@/components/pane/CitationPaneSystem.vue";
+import CitationPaneSystem from "@/layout/CitationPaneSystem.vue";
 import CitationPane from "@/components/citation/CitationPane.vue";
 
 export default {

@@ -35,7 +35,7 @@
 import AppBar from "@/layout/AppBar.vue";
 import MainToolBar from "@/layout/MainToolBar.vue";
 import VerticalPane from "@/layout/VerticalPane.vue";
-import TermPaneSystem from "@/components/pane/TermPaneSystem.vue";
+import TermPaneSystem from "@/layout/TermPaneSystem.vue";
 import TermVis from "@/components/visualization/TermVis.vue";
 
 export default {
