@@ -7,16 +7,16 @@
       </span>
     </header>
 
-    <Tabs :value="active_section">
+    <Tabs v-model:value="active_section">
       <div
         :class="`${active_section ? '!pt-2 !border-t !border-slate-700 !mt-2' : ''} px-2.5 -mx-2.5 max-h-[10rem] overflow-auto overflow-x-visible`">
         <TabPanels class="!p-0">
-          <TabPanel value="statistics" v-show="tool_active && active_section == 'informations'">
+          <TabPanel value="informations">
             <h3 class="mb-1 text-sm font-medium">
               Informations
             </h3>
           </TabPanel>
-          <TabPanel value="statistics" v-show="tool_active && active_section == 'statistics'">
+          <TabPanel value="statistics">
             <div class="flex items-center justify-between mb-1">
               <h3 class="text-sm font-medium">
                 Contained proteins
@@ -27,7 +27,7 @@
             </div>
             <LayerProteins :active_termlayers="active_termlayers" :gephi_data="gephi_data"></LayerProteins>
           </TabPanel>
-          <TabPanel value="connections" v-show="tool_active && active_section == 'connections'">
+          <TabPanel value="connections">
             <h3 class="mb-1 text-sm font-medium">
               Connections
             </h3>
@@ -41,13 +41,13 @@
           tabList: { class: '!border-0 !gap-4' },
           activeBar: { class: '!hidden' }
         }">
-          <Tab v-on:click="change_section('information')" value="informations" class="!p-0 !border-0"><span
+          <Tab value="informations" class="!p-0 !border-0"><span
               :class="`material-symbols-rounded !text-lg ${active_section == 'informations' ? 'font-variation-ico-filled' : ''}`">info</span>
           </Tab>
-          <Tab v-on:click="change_section('statistics')" value="statistics" class="!p-0 !border-0"><span
+          <Tab value="statistics" class="!p-0 !border-0"><span
               :class="`material-symbols-rounded !text-lg ${active_section == 'statistics' ? 'font-variation-ico-filled' : ''}`">tune</span>
           </Tab>
-          <Tab v-on:click="change_section('connections')" value="connections" class="!p-0 !border-0"><span
+          <Tab value="connections" class="!p-0 !border-0"><span
               :class="`material-symbols-rounded !text-base ${active_section == 'connections' ? 'font-variation-ico-filled' : ''}`">hub</span>
           </Tab>
         </TabList>
@@ -62,8 +62,8 @@ import EnrichmentConnections from "@/components/pane/modules/layer/EnrichmentCon
 
 export default {
   name: "EnrichmentLayerPane",
-  props: ["active_termlayers", "gephi_data", "node_color_index", "tool_active"],
-  emits: ["active_item_changed", "tool_active_changed"],
+  props: ["active_termlayers", "gephi_data", "node_color_index"],
+  emits: ["active_item_changed"],
   components: {
     LayerProteins,
     EnrichmentConnections,
@@ -98,24 +98,6 @@ export default {
     },
   },
   methods: {
-    change_section(val) {
-      var com = this;
-
-      if (com.tool_active && com.active_section == val) {
-        com.active_section = "";
-        com.$emit("tool_active_changed", false);
-      } else {
-        if (!com.tool_active) {
-          com.active_section = val;
-          com.$emit("tool_active_changed", true);
-        }
-
-        if (com.tool_active && com.active_section != val) {
-          com.active_section = val;
-          com.$emit("tool_active_changed", true);
-        }
-      }
-    },
     copyclipboard() {
       this.emitter.emit("copyLayerConnections");
     },

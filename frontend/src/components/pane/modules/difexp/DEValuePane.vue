@@ -4,16 +4,16 @@
       <span class="text-sm font-normal">{{ active_decoloumn }}</span>
     </header>
 
-    <Tabs :value="active_section">
+    <Tabs v-model:value="active_section">
       <div
         :class="`${active_section ? '!pt-2 !border-t !border-slate-700 !mt-2' : ''} px-2.5 -mx-2.5 max-h-[10rem] overflow-auto overflow-x-visible`">
         <TabPanels class="!p-0">
-          <TabPanel value="informations" v-show="tool_active && active_section == 'informations'">
+          <TabPanel value="informations">
             <h3 class="mb-1 text-sm font-medium">
               Informations
             </h3>
           </TabPanel>
-          <TabPanel value="statistics" v-show="tool_active && active_section == 'statistics'">
+          <TabPanel value="statistics">
             <h3 class="mb-1 text-sm font-medium">
               Contained nodes
             </h3>
@@ -27,10 +27,10 @@
           tabList: { class: '!border-0 !gap-4' },
           activeBar: { class: '!hidden' }
         }">
-          <Tab v-on:click="change_section('informations')" value="informations" class="!p-0 !border-0"><span
+          <Tab value="informations" class="!p-0 !border-0"><span
               :class="`material-symbols-rounded !text-lg ${active_section == 'informations' ? 'font-variation-ico-filled' : ''}`">info</span>
           </Tab>
-          <Tab v-on:click="change_section('statistics')" value="statistics" class="!p-0 !border-0"><span
+          <Tab value="statistics" class="!p-0 !border-0"><span
               :class="`material-symbols-rounded !text-lg ${active_section == 'statistics' ? 'font-variation-ico-filled' : ''}`">tune</span>
           </Tab>
         </TabList>
@@ -44,8 +44,8 @@ import RegulatedProteins from "@/components/pane/modules/difexp/RegulatedProtein
 import { useToast } from "primevue/usetoast";
 export default {
   name: "DEValuePane",
-  props: ["active_decoloumn", "gephi_data", "tool_active"],
-  emits: ["active_item_changed", "tool_active_changed"],
+  props: ["active_decoloumn", "gephi_data"],
+  emits: ["active_item_changed"],
   components: {
     RegulatedProteins,
   },
@@ -74,24 +74,6 @@ export default {
     },
   },
   methods: {
-    change_section(val) {
-      var com = this;
-
-      if (com.tool_active && com.active_section == val) {
-        com.active_section = "";
-        com.$emit("tool_active_changed", false);
-      } else {
-        if (!com.tool_active) {
-          com.active_section = val;
-          com.$emit("tool_active_changed", true);
-        }
-
-        if (com.tool_active && com.active_section != val) {
-          com.active_section = val;
-          com.$emit("tool_active_changed", true);
-        }
-      }
-    },
     copyclipboard() {
       var com = this;
 

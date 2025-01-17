@@ -16,23 +16,23 @@
       </span>
     </header>
 
-    <Tabs :value="active_section">
+    <Tabs v-model:value="active_section">
       <div
         :class="`${active_section ? '!pt-2 !border-t !border-slate-700 !mt-2' : ''} px-2.5 -mx-2.5 max-h-[10rem] overflow-auto overflow-x-visible`">
         <TabPanels class="!p-0">
-          <TabPanel value="informations" v-show="tool_active && active_section == 'informations'">
+          <TabPanel value="informations">
             <h3 class="mb-1 text-sm font-medium">
               Information
             </h3>
             <ChatbotInformation :active_node="active_node"></ChatbotInformation>
           </TabPanel>
-          <TabPanel value="statistics" v-show="tool_active && active_section == 'statistics'">
+          <TabPanel value="statistics">
             <h3 class="mb-1 text-sm font-medium">
               Network statistics
             </h3>
             <NetworkStatistics :active_node="active_node" :mode="mode"></NetworkStatistics>
           </TabPanel>
-          <TabPanel value="connections" v-show="tool_active && active_section == 'connections'">
+          <TabPanel value="connections">
             <div class="flex items-center justify-between mb-1">
               <h3 class="text-sm font-medium">
                 Connections
@@ -43,7 +43,7 @@
             </div>
             <NodeConnections :active_node="active_node" :links="links"></NodeConnections>
           </TabPanel>
-          <TabPanel value="routing" v-show="tool_active && active_section == 'routing'">
+          <TabPanel value="routing">
             <h3 class="mb-1 text-sm font-medium">
               Routing
             </h3>
@@ -57,16 +57,16 @@
           tabList: { class: '!border-0 !gap-4' },
           activeBar: { class: '!hidden' }
         }">
-          <Tab v-on:click="change_section('informations')" value="informations" class="!p-0 !border-0"><span
+          <Tab value="informations" class="!p-0 !border-0"><span
               :class="`material-symbols-rounded !text-lg ${active_section == 'informations' ? 'font-variation-ico-filled' : ''}`">info</span>
           </Tab>
-          <Tab v-on:click="change_section('statistics')" value="statistics" class="!p-0 !border-0"><span
+          <Tab value="statistics" class="!p-0 !border-0"><span
               :class="`material-symbols-rounded !text-lg ${active_section == 'statistics' ? 'font-variation-ico-filled' : ''}`">tune</span>
           </Tab>
-          <Tab v-on:click="change_section('connections')" value="connections" class="!p-0 !border-0"><span
+          <Tab value="connections" class="!p-0 !border-0"><span
               :class="`material-symbols-rounded !text-base ${active_section == 'connections' ? 'font-variation-ico-filled' : ''}`">hub</span>
           </Tab>
-          <Tab v-on:click="change_section('routing')" value="routing" class="!p-0 !border-0"><span
+          <Tab value="routing" class="!p-0 !border-0"><span
               :class="`material-symbols-rounded !text-lg ${active_section == 'routing' ? 'font-variation-ico-filled' : ''}`">logout</span>
           </Tab>
         </TabList>
@@ -92,10 +92,9 @@ export default {
     "active_node",
     "gephi_data",
     "node_color_index",
-    "mode",
-    "tool_active",
+    "mode"
   ],
-  emits: ["active_item_changed", "tool_active_changed"],
+  emits: ["active_item_changed"],
   components: {
     NetworkStatistics,
     ChatbotInformation,
@@ -149,24 +148,6 @@ export default {
     },
   },
   methods: {
-    change_section(val) {
-      var com = this;
-
-      if (com.tool_active && com.active_section == val) {
-        com.active_section = "";
-        com.$emit("tool_active_changed", false);
-      } else {
-        if (!com.tool_active) {
-          com.active_section = val;
-          com.$emit("tool_active_changed", true);
-        }
-
-        if (com.tool_active && com.active_section != val) {
-          com.active_section = val;
-          com.$emit("tool_active_changed", true);
-        }
-      }
-    },
     to_proteins() {
       var com = this;
       this.$store.commit(

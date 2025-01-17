@@ -1,38 +1,31 @@
 <template>
-  <div v-show="(active_subset !== null && active_node == null) || paneHidden == false
-    ">
-    <DraggableView dragHandle="#pane-drag-handle" :initialPosition="initial_drag_btn_position" :minY="60" :minX="60"
-      wrapperClass="!w-[18rem] border dark:border-slate-700 rounded-xl bg-[var(--card-bg)] shadow-curve-dark dark:shadow-curve-light"
-      contentClass="!px-2.5 !py-0">
-      <template #handler>
-        <header id="pane-drag-handle" class="flex justify-between items-center !px-2.5 !py-1.5 cursor-move">
-          <h3 class="text-sm font-bold">
-            {{ active_tab }}
-          </h3>
-          <div class="flex items-center gap-1 ml-auto">
-            <Button class="w-5 h-5" size="small" text rounded plain @click="close_pane()">
-              <span class="dark:text-white !text-xl material-symbols-rounded"> close </span>
-            </Button>
-          </div>
-        </header>
-      </template>
-      <template #content>
-        <PathwayPane v-show="active_tab === 'Protein'" :mode="mode" :tool_active="tool_active"
-          @tool_active_changed="tool_active = $event" :active_node="active_node" :node_color_index="node_color_index"
-          :gephi_data="gephi_data" @active_item_changed="active_item = $event"></PathwayPane>
-        <SubsetPane v-show="active_tab === 'Subset'" :mode="mode" :tool_active="tool_active"
-          @tool_active_changed="tool_active = $event" :active_subset="active_subset" :gephi_data="gephi_data"
-          @active_item_changed="active_item = $event" @highlight_subset_changed="highlight_subset = $event"
-          @active_layer_changed="active_layer = $event"></SubsetPane>
-      </template>
-    </DraggableView>
+  <div v-show="active_node !== null || active_subset !== null || paneHidden == false
+    "
+    class="!absolute !z-[9] !bottom-[6px] !left-[50%] !-translate-x-[50%] !w-[18rem] border dark:border-slate-700 rounded-xl bg-[var(--card-bg)] shadow-curve-dark dark:shadow-curve-light">
+    <header class="flex justify-between items-center !px-2.5 !py-1.5 cursor-move">
+      <h3 class="text-sm font-bold">
+        {{ active_tab }}
+      </h3>
+      <div class="flex items-center gap-1 ml-auto">
+        <Button class="w-5 h-5" size="small" text rounded plain @click="close_pane()">
+          <span class="dark:text-white !text-xl material-symbols-rounded"> close </span>
+        </Button>
+      </div>
+    </header>
+    <div class="!px-2.5 !py-0">
+      <PathwayPane v-show="active_tab === 'Protein'" :mode="mode" :active_node="active_node"
+        :node_color_index="node_color_index" :gephi_data="gephi_data" @active_item_changed="active_item = $event">
+      </PathwayPane>
+      <SubsetPane v-show="active_tab === 'Subset'" :mode="mode" :active_subset="active_subset" :gephi_data="gephi_data"
+        @active_item_changed="active_item = $event" @highlight_subset_changed="highlight_subset = $event"
+        @active_layer_changed="active_layer = $event"></SubsetPane>
+    </div>
   </div>
 </template>
 
 <script>
 import PathwayPane from "@/components/pane/modules/pathway/PathwayPane.vue";
 import SubsetPane from "@/components/pane/modules/subset/SubsetPane.vue";
-import DraggableView from "@/components/DraggableView.vue";
 import { useToast } from "primevue/usetoast";
 export default {
   name: "PaneSystem",
@@ -47,7 +40,6 @@ export default {
     "active_layer_changed",
   ],
   components: {
-    DraggableView,
     PathwayPane,
     SubsetPane,
   },
@@ -58,13 +50,11 @@ export default {
       active_tab: "Protein",
       highlight_subset: null,
       paneHidden: true,
-      tool_active: false,
-      initial_drag_btn_position: { top: window.innerHeight - 115, left: window.innerWidth / 2 },
+      // initial_drag_btn_position: { top: window.innerHeight - 115, left: window.innerWidth / 2 },
     };
   },
   watch: {
     active_item(val) {
-      if (this.active_tab != Object.keys(val)[0]) this.tool_active = false;
       this.active_tab = Object.keys(val)[0];
       if (val == null) {
         delete this.active_dict.val;
