@@ -1,24 +1,18 @@
 <template>
-  <Dialog v-model:visible="windowCheck" header="AxoBot" position="bottomright" :closable="false" :minY="60" :minX="60"
+  <!-- :minY="60" :minX="60" -->
+  <Dialog v-model:visible="windowCheck" header="AxoBot" position="bottomright" :maximizable="true" 
     :pt="{
       root: {
         id: 'scrollBox',
         class:
-          '!h-full w-[26rem] !mt-[60px] !ml-[60px] !bg-white/75 dark:!bg-slate-900/75 !backdrop-blur overflow-y-auto',
+          '!h-full w-[26rem] !bg-white/75 dark:!bg-slate-900/75 !backdrop-blur overflow-y-auto', // !mt-[60px] !ml-[60px]
       },
       header: { class: 'sticky top-0 !p-2 !px-3 !justify-start gap-3 !font-medium cursor-move backdrop-blur z-[1]' },
-      headerActions: { class: '!hidden' },
+      headerActions: { class: '!ml-auto' },
       title: { class: '!text-base' },
       content: { class: '!px-3 !pb-2 !overflow-y-visible' },
       footer: { class: 'sticky bottom-0 !px-2 !pt-1 !pb-2 cursor-move backdrop-blur-xl !mt-auto' },
-    }">
-    <template #header>
-      AxoBot
-      <Button class="ml-auto" size="small" text plain rounded @click="windowCheck = false">
-        <span class="material-symbols-rounded"> close </span>
-      </Button>
-    </template>
-
+    }" @hide="windowCheck = false">
     <main class="flex flex-col">
       <ul class="flex flex-col gap-1.5">
         <li v-for="(msg, index) in messages" :key="index" :class="`flex flex-col p-3 rounded-lg
@@ -39,12 +33,12 @@
           <template v-if="index !== 0">
             <div :class="`flex gap-3 ${msg.sender === 'Bot' ? 'mb-5 flex-wrap' : 'gap-1.5 items-center'}`">
               <template v-if="msg.data && msg.data.length">
-                <Splide :options="{ autoWidth: true, pagination: false }"
+                <Splide :options="{ autoWidth: true, pagination: false, gap: '8px' }"
                   :class="`mb-1.5 ${msg.sender === 'Bot' ? 'w-[calc(100%+(12px*2))] -mx-3' : 'w-[80%] -ml-3'}`">
                   <SplideSlide v-for="(element, index) in msg.data" :key="index">
                     <Chip class="cursor-pointer" :pt="{
-                      root: { class: 'h-6 !grid grid-cols-[1fr_auto] dark:!bg-slate-700 !px-2 !py-1' },
-                      label: { class: 'max-w-[150px] !text-sm !line-clamp-1' },
+                      root: { class: 'h-6 dark:!bg-slate-700 !px-2' },
+                      label: { class: '!text-sm' },
                     }" :label="element.id" @click="searchInput(element)" />
                   </SplideSlide>
                 </Splide>
@@ -87,15 +81,12 @@
         </fieldset>
 
         <template v-if="tags && tags.length">
-          <Splide :options="{ autoWidth: true, pagination: false }">
+          <Splide :options="{ autoWidth: true, pagination: false, gap: '8px' }">
             <SplideSlide v-for="(tag, index) in tags" :key="index">
-              <Chip class="cursor-pointer" :pt="{
-                root: { class: 'h-6 !grid grid-cols-[1fr_auto] dark:!bg-slate-700 !px-2 !py-1' },
-                label: { class: 'max-w-[150px] !text-sm !line-clamp-1' },
-              }" :label="tag.id">
-                <span @click="searchInput(tag)">{{ tag.id }}</span>
+              <div class="flex items-center gap-2 rounded-2xl cursor-pointer !h-6 dark:!bg-slate-700 !px-2">
+                <span @click="searchInput(tag)" class="!text-sm">{{ tag.id }}</span>
                 <span class="material-symbols-rounded !text-lg" @click="removeTag(index)"> cancel </span>
-              </Chip>
+              </div>
             </SplideSlide>
           </Splide>
         </template>
@@ -116,7 +107,7 @@
 import { useToast } from "primevue/usetoast";
 import { Splide, SplideSlide } from "@splidejs/vue-splide";
 export default {
-  name: "PersistentWindow",
+  name: "AxoChatBot",
   components: {
     Splide,
     SplideSlide,

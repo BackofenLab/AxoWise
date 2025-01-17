@@ -13,14 +13,14 @@
   </EmptyState>
 
   <Listbox v-if="terms !== null && !await_load" v-model="selected_pathway" optionLabel="name" :options="filt_terms" :pt="{
-    listContainer: { class: 'order-2' },
+    listContainer: { class: '!h-full !order-2' },
     list: { class: '!p-0' },
     emptyMessage: { class: '!flex !justify-center !items-center !text-sm !text-slate-500 dark:!text-slate-300' },
     option: {
       class:
         '!px-0 !py-1 !text-slate-500 dark:!text-slate-300 leading-tight transition-all duration-300 ease-in-out',
     },
-  }" :virtualScrollerOptions="{ itemSize: 28 }" listStyle="max-height:100%" class="h-full flex flex-col !p-0 !bg-transparent !border-0"
+  }" :virtualScrollerOptions="{ itemSize: 28 }" scrollHeight="100%" listStyle="max-height:100%" class="h-full flex flex-col !p-0 !bg-transparent !border-0"
     @value-change="select_term" :tabindex="0" emptyMessage="No terms available.">
 
     <template #footer>
