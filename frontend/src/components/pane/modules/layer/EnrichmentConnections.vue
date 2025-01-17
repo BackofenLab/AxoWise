@@ -7,7 +7,7 @@
       class:
         '!px-0 !py-1 !text-slate-500 dark:!text-slate-300 leading-tight transition-all duration-300 ease-in-out',
     },
-  }" listStyle="max-height:100%" class="h-full flex flex-col !p-0 !bg-transparent !border-0" :tabindex="0"
+  }" :virtualScrollerOptions="{ itemSize: 28 }" scrollHeight="4.5rem" listStyle="max-height:100%" class="h-full flex flex-col !p-0 !bg-transparent !border-0" :tabindex="0"
     emptyMessage="No nodes available.">
 
     <template #footer>
@@ -35,30 +35,6 @@
       </div>
     </template>
   </Listbox>
-
-  <!-- <div id="pathway-layer-connect" class="connect">
-    <div class="sorting">
-      <a class="enrichment_filter">pathway</a>
-      <a class="cluster_filter">pathway</a>
-    </div>
-
-    <div class="network-results" tabindex="0" @keydown="handleKeyDown">
-      <table>
-        <tbody>
-          <tr v-for="entry in intersectingDicts" :key="entry" class="option">
-            <td>
-              <div class="statistics-attr">
-                <a href="#">{{ entry[0].name }}</a>
-              </div>
-            </td>
-            <td>
-              <a class="statistics-val">{{ entry[1].name }}</a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div> -->
 </template>
 
 <script>
@@ -116,47 +92,3 @@ export default {
   },
 };
 </script>
-
-<!-- <style>
-#pathway-layer-connect {
-  width: 100%;
-  height: 100%;
-  font-family: "ABeeZee", sans-serif;
-  padding: 1.3vw 1.3vw 1vw 1.3vw;
-}
-
-#pathway-layer-connect .pane_values {
-  position: absolute;
-  left: 50.5%;
-}
-#pathway-layer-connect .statistics-val {
-  left: 50.6%;
-}
-#pathway-layer-connect .statistics-attr a {
-  align-self: center;
-  white-space: nowrap;
-  overflow: hidden; /* Hide overflow content */
-  text-overflow: ellipsis;
-}
-#pathway-layer-connect .network-results td:first-child {
-  margin-left: 0.5%;
-  font-size: 0.7vw;
-  margin-bottom: 1%;
-  color: white;
-  width: 50%;
-  align-self: center;
-  white-space: nowrap;
-  overflow: hidden; /* Hide overflow content */
-  text-overflow: ellipsis;
-}
-#pathway-layer-connect .network-results td:last-child {
-  font-size: 0.7vw;
-  margin-bottom: 1%;
-  color: white;
-  width: 50%;
-  align-self: center;
-  white-space: nowrap;
-  overflow: hidden; /* Hide overflow content */
-  text-overflow: ellipsis;
-}
-</style> -->

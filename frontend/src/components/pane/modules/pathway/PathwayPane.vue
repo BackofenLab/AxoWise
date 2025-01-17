@@ -2,7 +2,8 @@
   <div v-show="active_node !== null">
     <header v-if="active_node !== null" class="flex gap-2">
       <span class="flex gap-1 text-sm font-medium">
-        <small class="flex-shrink-0 w-3 h-3 mt-1 border rounded-full border-slate-400" :style="{ backgroundColor: colornode }"></small>
+        <small class="flex-shrink-0 w-3 h-3 mt-1 border rounded-full border-slate-400"
+          :style="{ backgroundColor: colornode }"></small>
         <strong class="font-normal line-clamp-1">{{ active_node.attributes["Name"] }}</strong>
       </span>
       <Button class="flex-shrink-0 w-5 h-5 ml-auto" size="small" text plain rounded @click="to_proteins()">
@@ -11,23 +12,23 @@
         </span>
       </Button>
     </header>
-    <Tabs :value="active_section" @update:value="change_section">
+    <Tabs :value="active_section">
       <div
         :class="`${active_section ? '!pt-2 !border-t !border-slate-700 !mt-2' : ''} px-2.5 -mx-2.5 max-h-[10rem] overflow-auto overflow-x-visible`">
         <TabPanels class="!p-0">
           <TabPanel value="informations">
-            <h3 class="mb-3 text-sm font-medium">
+            <h3 class="mb-3 text-sm font-medium" v-show="tool_active && active_section == 'informations'">
               Informations
             </h3>
 
           </TabPanel>
-          <TabPanel value="statistics" v-if="active_node !== null">
+          <TabPanel value="statistics" v-show="tool_active && active_section == 'statistics'">
             <h3 class="mb-3 text-sm font-medium">
               Network statistics
             </h3>
             <NetworkStatistics :active_node="active_node" :mode="mode"></NetworkStatistics>
           </TabPanel>
-          <TabPanel value="connections">
+          <TabPanel value="connections" v-show="tool_active && active_section == 'connections'">
             <div class="flex items-center justify-between mb-3">
               <h3 class="text-sm font-medium">
                 Connections
@@ -46,13 +47,14 @@
           tabList: { class: '!border-0 !gap-4' },
           activeBar: { class: '!hidden' }
         }">
-          <Tab value="informations" class="!p-0 !border-0"><span
+          <Tab v-on:click="change_section('informations')" value="informations" class="!p-0 !border-0"><span
               :class="`material-symbols-rounded !text-lg ${active_section == 'informations' ? 'font-variation-ico-filled' : ''}`">info</span>
           </Tab>
-          <Tab value="statistics" class="!p-0 !border-0" v-if="active_node !== null"><span
+          <Tab v-on:click="change_section('statistics')" value="statistics" class="!p-0 !border-0"
+            v-if="active_node !== null"><span
               :class="`material-symbols-rounded !text-lg ${active_section == 'statistics' ? 'font-variation-ico-filled' : ''}`">tune</span>
           </Tab>
-          <Tab value="connections" class="!p-0 !border-0"><span
+          <Tab v-on:click="change_section('connections')" value="connections" class="!p-0 !border-0"><span
               :class="`material-symbols-rounded !text-base ${active_section == 'connections' ? 'font-variation-ico-filled' : ''}`">hub</span>
           </Tab>
         </TabList>
@@ -63,50 +65,6 @@
       </footer>
     </Tabs>
   </div>
-
-  <!-- <div class="text" v-show="active_node !== null">
-    <div class="path_attribute" v-if="active_node !== null">
-      <div id="colorbar" :style="{ backgroundColor: colornode }"></div>
-      <div class="term">{{ active_node.attributes["Name"] }};</div>
-      <div class="colorbar-img" v-on:click="to_proteins()">
-        <img src="@/assets/pane/follow.png" />
-      </div>
-    </div>
-    <div :class="{
-      'tool-section': !tool_active,
-      'tool-section-active': tool_active,
-    }">
-      <div id="informations" class="subsection" v-show="tool_active && active_section == 'information'">
-        <div class="subsection-header">
-          <span>informations</span>
-        </div>
-        <div class="subsection-main colortype"></div>
-      </div>
-      <div id="network" class="subsection" v-show="tool_active && active_section == 'statistics'">
-        <div class="subsection-header">
-          <span>network statistics</span>
-        </div>
-        <div class="subsection-main colortype">
-          <NetworkStatistics :active_node="active_node" :mode="mode"></NetworkStatistics>
-        </div>
-      </div>
-      <div id="connections" class="subsection" v-show="tool_active && active_section == 'connections'">
-        <div class="subsection-header">
-          <span>connections</span>
-          <img src="@/assets/pane/copy.png" v-on:click="copyclipboard()" />
-        </div>
-        <div class="subsection-main colortype">
-          <NodeConnections :active_node="active_node" :links="links"></NodeConnections>
-        </div>
-      </div>
-    </div>
-    <div class="nodeattributes">
-      <img class="icons" src="@/assets/toolbar/menu-burger.png" v-on:click="change_section('information')" />
-      <img class="icons" src="@/assets/toolbar/settings-sliders.png" v-on:click="change_section('statistics')" />
-      <img class="icons" src="@/assets/toolbar/proteinselect.png" v-on:click="change_section('connections')" />
-      <img class="icons" src="@/assets/toolbar/bote.png" v-on:click="call_chatbot(mode)" />
-    </div>
-  </div> -->
 </template>
 
 <script>
@@ -215,5 +173,3 @@ export default {
   },
 };
 </script>
-
-<!-- <style></style> -->

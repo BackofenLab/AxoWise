@@ -10,7 +10,7 @@
       class:
         '!px-0 !py-1 !text-slate-500 dark:!text-slate-300 leading-tight transition-all duration-300 ease-in-out',
     },
-  }" listStyle="max-height:100%" class="h-full flex flex-col !p-0 !bg-transparent !border-0" :tabindex="0"
+  }" :virtualScrollerOptions="{ itemSize: 28 }" scrollHeight="4.5rem" listStyle="max-height:100%" class="h-full flex flex-col !p-0 !bg-transparent !border-0" :tabindex="0"
     emptyMessage="No nodes available.">
 
     <template #footer>
