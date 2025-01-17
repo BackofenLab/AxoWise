@@ -2,6 +2,7 @@
   <p v-if="!filt_links?.length" class="flex items-center justify-center py-1 text-sm text-slate-300">No nodes
   </p>
 
+  <!-- :virtualScrollerOptions="{ itemSize: 28 }" scrollHeight="4.5rem"  -->
   <Listbox v-if="filt_links?.length" optionLabel="" :options="filt_links" :pt="{
     listContainer: { class: 'order-2' },
     list: { class: '!p-0' },
@@ -10,7 +11,7 @@
       class:
         '!px-0 !py-1 !text-slate-500 dark:!text-slate-300 leading-tight transition-all duration-300 ease-in-out',
     },
-  }" :virtualScrollerOptions="{ itemSize: 28 }" scrollHeight="4.5rem" listStyle="max-height:100%" class="h-full flex flex-col !p-0 !bg-transparent !border-0" :tabindex="0"
+  }" listStyle="max-height:100%" class="h-full flex flex-col !p-0 !bg-transparent !border-0" :tabindex="0"
     emptyMessage="No nodes available.">
 
     <template #footer>
@@ -62,7 +63,8 @@
       <div :class="`grid items-center w-full grid-cols-12 gap-2`">
         <span class="col-span-6 text-xs line-clamp-1">{{ slotProps.option?.attributes?.["Name"] }}</span>
 
-        <span class="col-span-3 text-xs text-center line-clamp-1">{{ slotProps.option?.attributes?.["Modularity Class"] }}</span>
+        <span class="col-span-3 text-xs text-center line-clamp-1">{{ slotProps.option?.attributes?.["Modularity Class"]
+          }}</span>
 
         <span class="col-span-3 text-xs text-center line-clamp-1">{{ slotProps.option?.attributes?.["Degree"] }}</span>
       </div>

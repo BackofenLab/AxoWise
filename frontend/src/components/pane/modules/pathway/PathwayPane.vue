@@ -12,23 +12,23 @@
         </span>
       </Button>
     </header>
-    <Tabs :value="active_section">
+    
+    <Tabs v-model:value="active_section">
       <div
         :class="`${active_section ? '!pt-2 !border-t !border-slate-700 !mt-2' : ''} px-2.5 -mx-2.5 max-h-[10rem] overflow-auto overflow-x-visible`">
         <TabPanels class="!p-0">
           <TabPanel value="informations">
-            <h3 class="mb-3 text-sm font-medium" v-show="tool_active && active_section == 'informations'">
+            <h3 class="mb-3 text-sm font-medium">
               Informations
             </h3>
-
           </TabPanel>
-          <TabPanel value="statistics" v-show="tool_active && active_section == 'statistics'">
+          <TabPanel value="statistics">
             <h3 class="mb-3 text-sm font-medium">
               Network statistics
             </h3>
             <NetworkStatistics :active_node="active_node" :mode="mode"></NetworkStatistics>
           </TabPanel>
-          <TabPanel value="connections" v-show="tool_active && active_section == 'connections'">
+          <TabPanel value="connections">
             <div class="flex items-center justify-between mb-3">
               <h3 class="text-sm font-medium">
                 Connections
@@ -47,14 +47,13 @@
           tabList: { class: '!border-0 !gap-4' },
           activeBar: { class: '!hidden' }
         }">
-          <Tab v-on:click="change_section('informations')" value="informations" class="!p-0 !border-0"><span
+          <Tab value="informations" class="!p-0 !border-0"><span
               :class="`material-symbols-rounded !text-lg ${active_section == 'informations' ? 'font-variation-ico-filled' : ''}`">info</span>
           </Tab>
-          <Tab v-on:click="change_section('statistics')" value="statistics" class="!p-0 !border-0"
-            v-if="active_node !== null"><span
+          <Tab value="statistics" class="!p-0 !border-0" v-if="active_node !== null"><span
               :class="`material-symbols-rounded !text-lg ${active_section == 'statistics' ? 'font-variation-ico-filled' : ''}`">tune</span>
           </Tab>
-          <Tab v-on:click="change_section('connections')" value="connections" class="!p-0 !border-0"><span
+          <Tab value="connections" class="!p-0 !border-0"><span
               :class="`material-symbols-rounded !text-base ${active_section == 'connections' ? 'font-variation-ico-filled' : ''}`">hub</span>
           </Tab>
         </TabList>
@@ -77,10 +76,9 @@ export default {
     "active_node",
     "gephi_data",
     "node_color_index",
-    "mode",
-    "tool_active",
+    "mode"
   ],
-  emits: ["active_item_changed", "tool_active_changed"],
+  emits: ["active_item_changed"],
   components: {
     NetworkStatistics,
     NodeConnections,
@@ -126,24 +124,6 @@ export default {
     },
   },
   methods: {
-    change_section(val) {
-      var com = this;
-
-      if (com.tool_active && com.active_section == val) {
-        com.active_section = "";
-        com.$emit("tool_active_changed", false);
-      } else {
-        if (!com.tool_active) {
-          com.active_section = val;
-          com.$emit("tool_active_changed", true);
-        }
-
-        if (com.tool_active && com.active_section != val) {
-          com.active_section = val;
-          com.$emit("tool_active_changed", true);
-        }
-      }
-    },
     copyclipboard() {
       var com = this;
 

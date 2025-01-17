@@ -65,7 +65,7 @@
           </Button>
 
           <Button severity="danger" size="small" rounded text v-on:click.stop="addToChatbot(entry)"
-            v-tooltip.bottom="'Add to chatbot'" class="w-6 h-6 !text-slate-500 dark:!text-slate-300">
+            v-tooltip.bottom="'Add to AxoBot'" class="w-6 h-6 !text-slate-500 dark:!text-slate-300">
             <span class="text-xl material-symbols-rounded"> forum </span>
           </Button>
         </label>

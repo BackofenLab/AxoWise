@@ -2,6 +2,7 @@
   <p v-if="!filt_links?.length" class="flex items-center justify-center py-1 text-sm text-slate-300">No nodes
   </p>
 
+  <!-- :virtualScrollerOptions="{ itemSize: 28 }" scrollHeight="4.5rem" -->
   <Listbox v-if="filt_links?.length" optionLabel="" :options="filt_links" :pt="{
     listContainer: { class: 'order-2' },
     list: { class: '!p-0' },
