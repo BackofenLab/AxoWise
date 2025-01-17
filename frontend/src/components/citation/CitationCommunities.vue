@@ -127,7 +127,7 @@ export default {
     filt_communities() {
       var com = this;
       var filtered = Object.values(com.citation_data?.community_scores || {});
-      console.log('00',filtered)
+      
       if (com.search_raw !== "") {
         // If search term is not empty, filter by search term
         var regex = new RegExp(com.regex, "i");

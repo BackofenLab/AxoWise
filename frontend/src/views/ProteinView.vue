@@ -44,7 +44,7 @@
 <script>
 // @ is an alias to /src
 import MainVis from "@/components/visualization/MainVis.vue";
-import PaneSystem from "@/components/pane/PaneSystem.vue";
+import PaneSystem from "@/layout/PaneSystem.vue";
 import VerticalPane from "@/layout/VerticalPane.vue";
 import MainToolBar from "@/layout/MainToolBar.vue";
 import AppBar from "@/layout/AppBar.vue";
