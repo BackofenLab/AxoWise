@@ -17,18 +17,18 @@
       </Button>
     </header>
 
-    <Tabs :value="active_section" @update:value="change_section">
+    <Tabs :value="active_section">
       <div
         :class="`${active_section ? '!pt-2 !border-t !border-slate-700 !mt-2' : ''} px-2.5 -mx-2.5 max-h-[10rem] overflow-auto overflow-x-visible`">
         <TabPanels class="!p-0">
-          <TabPanel value="statistics" v-if="active_subset !== null">
-            <h3 class="mb-3 text-sm font-medium">
+          <TabPanel value="statistics" v-if="tool_active && active_subset !== null">
+            <h3 class="mb-1 text-sm font-medium">
               Parameter Selection
             </h3>
             <SubsetLinks :active_subset="active_subset" :mode="mode"></SubsetLinks>
           </TabPanel>
-          <TabPanel value="connections">
-            <div class="flex items-center justify-between mb-3">
+          <TabPanel value="connections" v-show="tool_active">
+            <div class="flex items-center justify-between mb-1">
               <h3 class="text-sm font-medium">
                 Connections
               </h3>
@@ -47,10 +47,11 @@
           tabList: { class: '!border-0 !gap-4' },
           activeBar: { class: '!hidden' }
         }">
-          <Tab value="statistics" class="!p-0 !border-0" v-if="active_subset !== null"><span
+          <Tab v-on:click="change_section('statistics')" value="statistics" class="!p-0 !border-0"
+            v-if="active_subset !== null"><span
               :class="`material-symbols-rounded !text-lg ${active_section == 'statistics' ? 'font-variation-ico-filled' : ''}`">tune</span>
           </Tab>
-          <Tab value="connections" class="!p-0 !border-0"><span
+          <Tab v-on:click="change_section('connections')" value="connections" class="!p-0 !border-0"><span
               :class="`material-symbols-rounded !text-base ${active_section == 'connections' ? 'font-variation-ico-filled' : ''}`">hub</span>
           </Tab>
         </TabList>
@@ -60,90 +61,6 @@
         </Button>
       </footer>
     </Tabs>
-
-    <!-- <div class="gene_attribute" v-if="active_subset !== null">
-      <div id="colorbar" :style="{ backgroundColor: '#0A0A1A' }"></div>
-      <div class="gene_attr">Nodes:{{ number_prot }}</div>
-      <div class="gene_attr">Edges:{{ number_asc }}</div>
-      <div class="colorbar-img" v-on:click="show_layer()">
-        <img src="@/assets/pane/invisible.png" v-if="!hide" />
-        <img src="@/assets/pane/visible.png" v-if="hide" />
-      </div>
-    </div> 
-    <div
-      :class="{
-        'tool-section': !tool_active,
-        'tool-section-active': tool_active,
-      }"
-    >
-      <div
-        id="informations"
-        class="subsection"
-        v-show="tool_active && active_section == 'information'"
-      >
-        <div class="subsection-header">
-          <span>informations</span>
-        </div>
-        <div class="subsection-main colortype"></div>
-      </div>
-      <div
-        id="network"
-        class="subsection"
-        v-if="
-          tool_active &&
-          active_section == 'statistics' &&
-          active_subset !== null
-        "
-      >
-        <div class="subsection-header">
-          <span>parameter selection</span>
-        </div>
-        <div class="subsection-main colortype">
-          <SubsetLinks
-            :active_subset="active_subset"
-            :mode="mode"
-          ></SubsetLinks>
-        </div>
-      </div>
-      <div
-        id="connections"
-        class="subsection"
-        v-show="tool_active && active_section == 'connections'"
-      >
-        <div class="subsection-header">
-          <span>connections</span>
-          <img src="@/assets/pane/copy.png" v-on:click="copyclipboard()" />
-        </div>
-        <div class="subsection-main colortype">
-          <SubsetConnections :active_subset="subset"></SubsetConnections>
-        </div>
-      </div>
-    </div>
-    <div class="nodeattributes">
-      // No
-      <img
-        class="icons"
-        src="@/assets/toolbar/menu-burger.png"
-        v-on:click="change_section('information')"
-      /> 
-      <img
-        class="icons"
-        src="@/assets/toolbar/settings-sliders.png"
-        v-on:click="change_section('statistics')"
-      />
-      <img
-        class="icons"
-        src="@/assets/toolbar/proteinselect.png"
-        v-on:click="change_section('connections')"
-      />
-      <img
-        class="icons"
-        src="@/assets/toolbar/bote.png"
-        v-on:click="call_chatbot(mode)"
-      />
-      // No
-      <img  class="icons" src="@/assets/toolbar/logout.png" v-on:click="change_section(!tool_active,'routing')"> 
-    </div> -->
   </div>
 </template>
 
@@ -238,7 +155,6 @@ export default {
   methods: {
     change_section(val) {
       var com = this;
-
       if (com.tool_active && com.active_section == val) {
         com.active_section = "";
         com.$emit("tool_active_changed", false);
@@ -247,7 +163,6 @@ export default {
           com.active_section = val;
           com.$emit("tool_active_changed", true);
         }
-
         if (com.tool_active && com.active_section != val) {
           com.active_section = val;
           com.$emit("tool_active_changed", true);
@@ -292,48 +207,9 @@ export default {
     select_node(value) {
       this.emitter.emit("searchNode", { node: value, mode: this.mode });
     },
-
     // select_subset (nodes){
     //     this.emitter.emit("searchSubset", {subset:nodes, mode:this.mode});
     // }
   },
 };
 </script>
-
-<!-- <style>
-#colorbar-subset {
-  position: relative;
-  display: flex;
-  border-radius: 5px;
-  margin-top: 5%;
-  width: 70%;
-  color: white;
-  align-items: center;
-  text-align: center;
-  justify-content: center;
-  transform: translate(13.5%);
-  font-family: "ABeeZee", sans-serif;
-  font-size: 0.9vw;
-}
-#colorbar-subset .colorbar-text {
-  background-color: rgb(0, 100, 100);
-}
-
-#subset-connections {
-  height: 40%;
-}
-
-#subset {
-  right: -10%;
-}
-
-.colorbar-img {
-  position: absolute;
-  display: flex;
-  width: 0.9vw;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  right: 3%;
-}
-</style> -->

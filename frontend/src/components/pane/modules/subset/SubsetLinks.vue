@@ -89,132 +89,9 @@
       </li>
     </template>
   </ul>
-
-  <!-- <div id="subset-statistics" class="subset-statistics">
-    <div class="selection_list">
-      <div class="window-label">degree value</div>
-      <div class="menu-items">
-        <div id="subset-degree"></div>
-        <input type="number" v-bind:min="degree_boundary.min" v-bind:max="degree_boundary.max"
-          v-bind:step="degree_boundary.step" v-model="degree_boundary.minValue" v-on:change="searchSubset()" v-on:input="
-            valueChanged('subset-degree', [
-              degree_boundary.minValue,
-              degree_boundary.maxValue,
-            ])
-            " />
-        <span class="seperator">-</span>
-        <input type="number" v-bind:min="degree_boundary.min" v-bind:max="degree_boundary.max"
-          v-bind:step="degree_boundary.step" v-model="degree_boundary.maxValue" v-on:change="searchSubset()" v-on:input="
-            valueChanged('subset-degree', [
-              degree_boundary.minValue,
-              degree_boundary.maxValue,
-            ])
-            " />
-      </div>
-      <div class="window-label">betweenness centrality value</div>
-      <div class="menu-items">
-        <div id="subset-betweenes"></div>
-        <input type="number" v-bind:min="bc_boundary.min" v-bind:max="bc_boundary.max" v-bind:step="bc_boundary.step"
-          v-model="bc_boundary.minValue" v-on:change="searchSubset()" v-on:input="
-            valueChanged('subset-betweenes', [
-              bc_boundary.minValue,
-              bc_boundary.maxValue,
-            ])
-            " />
-        <span class="seperator">-</span>
-        <input type="number" v-bind:min="bc_boundary.min" v-bind:max="bc_boundary.max" v-bind:step="bc_boundary.step"
-          v-model="bc_boundary.maxValue" v-on:change="searchSubset()" v-on:input="
-            valueChanged('subset-betweenes', [
-              bc_boundary.minValue,
-              bc_boundary.maxValue,
-            ])
-            " />
-      </div>
-      <div v-if="mode == 'term'">
-        <div class="window-label">padj value (log10)</div>
-        <div class="menu-items">
-          <div id="subset-padj"></div>
-          <input type="number" v-bind:min="padj_boundary.min" v-bind:max="padj_boundary.max"
-            v-bind:step="padj_boundary.step" v-model="padj_boundary.minValue" v-on:change="searchSubset()" v-on:input="
-              valueChanged('subset-padj', [
-                padj_boundary.minValue,
-                padj_boundary.maxValue,
-              ])
-              " />
-          <span class="seperator">-</span>
-          <input type="number" v-bind:min="padj_boundary.min" v-bind:max="padj_boundary.max"
-            v-bind:step="padj_boundary.step" v-model="padj_boundary.maxValue" v-on:change="searchSubset()" v-on:input="
-              valueChanged('subset-padj', [
-                padj_boundary.minValue,
-                padj_boundary.maxValue,
-              ])
-              " />
-        </div>
-      </div>
-      <div class="window-label">pagerank value (log10)</div>
-      <div class="menu-items">
-        <div id="subset-pagerank"></div>
-        <input type="number" v-bind:min="pr_boundary.min" v-bind:max="pr_boundary.max" v-bind:step="pr_boundary.step"
-          v-model="pr_boundary.minValue" v-on:change="searchSubset()" v-on:input="
-            valueChanged('subset-pagerank', [
-              pr_boundary.minValue,
-              pr_boundary.maxValue,
-            ])
-            " />
-        <span class="seperator">-</span>
-        <input type="number" v-bind:min="pr_boundary.min" v-bind:max="pr_boundary.max" v-bind:step="pr_boundary.step"
-          v-model="pr_boundary.maxValue" v-on:change="searchSubset()" v-on:input="
-            valueChanged('subset-pagerank', [
-              pr_boundary.minValue,
-              pr_boundary.maxValue,
-            ])
-            " />
-      </div>
-      <div v-if="dcoloumns && mode != 'term' && mode != 'citation'" class="slider-section-scroll">
-        <div v-for="(entry, index) in dcoloumns" :key="index">
-          <div class="window-label">{{ entry }}</div>
-          <div class="menu-items">
-            <div class="checkbox-header">
-              <input type="checkbox" :id="'subset-deval-check-' + index" v-on:change="
-                change_limits(
-                  'subset-deval-slider-' + index,
-                  'subset-deval-check-' + index,
-                  entry
-                );
-              searchSubset();
-              " />
-              <label for="edgeCheck"> inverse selection</label>
-            </div>
-            <div class="body-selection">
-              <div :id="'subset-deval-slider-' + index"></div>
-              <input type="number" v-bind:min="dboundaries[entry].min" v-bind:max="dboundaries[entry].max"
-                v-bind:step="dboundaries[entry].step" v-model="dboundaries[entry].minValue" v-on:change="searchSubset()"
-                v-on:input="
-                  valueChanged('subset-deval-slider-' + index, [
-                    dboundaries[entry].minValue,
-                    dboundaries[entry].maxValue,
-                  ])
-                  " />
-              <span class="seperator">-</span>
-              <input type="number" v-bind:min="dboundaries[entry].min" v-bind:max="dboundaries[entry].max"
-                v-bind:step="dboundaries[entry].step" v-model="dboundaries[entry].maxValue" v-on:change="searchSubset()"
-                v-on:input="
-                  valueChanged('subset-deval-slider-' + index, [
-                    dboundaries[entry].minValue,
-                    dboundaries[entry].maxValue,
-                  ])
-                  " />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div> -->
 </template>
 
 <script>
-// import * as noUiSlider from "nouislider";
-// import "@/slider.css";
 
 export default {
   name: "SubsetLinks",
@@ -258,19 +135,6 @@ export default {
       com.dboundaries[entry].minValue = com.check[entry] ? 0.001 : com.dboundaries[entry].min;
       com.dboundaries[entry].maxValue = com.check[entry] ? 0 : com.dboundaries[entry].max;
     },
-    // change_limits(slider_id, check_id, entry) {
-    //   let com = this;
-    //   let slider = document.getElementById(slider_id);
-    //   com.check[entry] = document.getElementById(check_id).checked;
-
-    //   com.check[entry]
-    //     ? slider.noUiSlider.set([0, 0])
-    //     : slider.noUiSlider.reset();
-
-    //   let currentBorder = slider.noUiSlider.get();
-    //   com.dboundaries[entry].minValue = currentBorder[0];
-    //   com.dboundaries[entry].maxValue = currentBorder[1];
-    // },
     initialize_de() {
       var com = this;
       var dataForm = com.parameter_data;
@@ -298,28 +162,6 @@ export default {
         };
       }
     },
-    // create_de() {
-    //   var com = this;
-
-    //   Object.entries(com.dcoloumns).forEach(([index, coloumn]) => {
-    //     var slider = document.getElementById("subset-deval-slider-" + index);
-    //     noUiSlider.create(slider, {
-    //       start: [com.dboundaries[coloumn].min, com.dboundaries[coloumn].max],
-    //       connect: true,
-    //       range: {
-    //         min: com.dboundaries[coloumn].min,
-    //         max: com.dboundaries[coloumn].max,
-    //       },
-    //       step: 0.01,
-    //     });
-
-    //     slider.noUiSlider.on("slide", function (values, handle) {
-    //       com.dboundaries[coloumn][handle ? "maxValue" : "minValue"] =
-    //         values[handle];
-    //       com.searchSubset();
-    //     });
-    //   });
-    // },
     initialize_dg: function () {
       var com = this;
 
@@ -380,23 +222,6 @@ export default {
       com.bc_boundary["min"] = 0;
       com.bc_boundary["maxValue"] = maxDeg;
       com.bc_boundary["minValue"] = 0;
-
-      // var slider = document.getElementById("subset-betweenes");
-      // noUiSlider.create(slider, {
-      //   start: [0, maxDeg],
-      //   connect: true,
-      //   range: {
-      //     min: 0,
-      //     max: maxDeg,
-      //   },
-      //   format: this.formatType,
-      //   step: 1,
-      // });
-
-      // slider.noUiSlider.on("slide", function (values, handle) {
-      //   com.bc_boundary[handle ? "maxValue" : "minValue"] = values[handle];
-      //   com.searchSubset();
-      // });
     },
     initialize_pagerank() {
       var com = this;
@@ -418,22 +243,6 @@ export default {
       com.pr_boundary["min"] = minDeg;
       com.pr_boundary["maxValue"] = 0;
       com.pr_boundary["minValue"] = minDeg;
-
-      // var slider = document.getElementById("subset-pagerank");
-      // noUiSlider.create(slider, {
-      //   start: [minDeg, 0],
-      //   connect: true,
-      //   range: {
-      //     min: minDeg,
-      //     max: 0,
-      //   },
-      //   step: 0.01,
-      // });
-
-      // slider.noUiSlider.on("slide", function (values, handle) {
-      //   com.pr_boundary[handle ? "maxValue" : "minValue"] = values[handle];
-      //   com.searchSubset();
-      // });
     },
     initialize_padj() {
       var com = this;
@@ -457,22 +266,6 @@ export default {
       com.padj_boundary["minValue"] = minDeg;
       com.pr_boundary["max"] = 0;
       com.pr_boundary["min"] = minDeg;
-
-      // var slider = document.getElementById("subset-padj");
-      // noUiSlider.create(slider, {
-      //   start: [minDeg, 0],
-      //   connect: true,
-      //   range: {
-      //     min: minDeg,
-      //     max: 0,
-      //   },
-      //   step: 0.01,
-      // });
-
-      // slider.noUiSlider.on("slide", function (values, handle) {
-      //   com.padj_boundary[handle ? "maxValue" : "minValue"] = values[handle];
-      //   com.searchSubset();
-      // });
     },
     searchSubset() {
       var com = this;
@@ -564,10 +357,6 @@ export default {
         values[1];
       com.searchSubset();
     },
-    // valueChanged(id, value) {
-    //   var slider = document.getElementById(id);
-    //   slider.noUiSlider.set(value);
-    // },
     term_genes(list) {
       var term_genes = new Set(list);
       var termlist = this.$store.state.gephi_json.data.nodes.filter((element) =>
@@ -582,20 +371,9 @@ export default {
     },
   },
   mounted() {
-    // this.formatType = {
-    //   from: function (value) {
-    //     return parseInt(value);
-    //   },
-    //   to: function (value) {
-    //     return parseInt(value);
-    //   },
-    // };
-
     this.initialize_dg();
     this.initialize_bc();
     this.initialize_pagerank();
-    // if (this.dcoloumns && this.mode != "term" && this.mode != "citation")
-    //   this.create_de();
     if (this.mode == "term") this.initialize_padj();
     this.searchSubset();
   },
@@ -606,33 +384,3 @@ export default {
 };
 </script>
 
-<!-- <style>
-.subset-statistics .menu-items {
-  display: flex;
-  margin: 0;
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 0.5vw;
-  justify-content: center;
-  background-clip: content-box;
-}
-
-.subset-statistics input[type="number"] {
-  width: 10%;
-  border: none;
-  font-family: "ABeeZee", sans-serif;
-  font-size: 0.5vw;
-  color: white;
-  background: none;
-  -moz-appearance: textfield;
-  -webkit-appearance: textfield;
-  appearance: textfield;
-  text-align: center;
-}
-
-#subset-statistics {
-  width: 100%;
-  height: 100%;
-  font-family: "ABeeZee", sans-serif;
-  padding: 0.5vw;
-}
-</style> -->
