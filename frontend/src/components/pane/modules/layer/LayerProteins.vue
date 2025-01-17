@@ -10,7 +10,7 @@
       class:
         '!px-0 !py-1 !text-slate-500 dark:!text-slate-300 leading-tight transition-all duration-300 ease-in-out',
     },
-  }" listStyle="max-height:100%" class="h-full flex flex-col !p-0 !bg-transparent !border-0" :tabindex="0"
+  }" :virtualScrollerOptions="{ itemSize: 28 }" scrollHeight="4.5rem" listStyle="max-height:100%" class="h-full flex flex-col !p-0 !bg-transparent !border-0" :tabindex="0"
     emptyMessage="No proteins available.">
 
     <template #footer>
@@ -68,59 +68,6 @@
       </div>
     </template>
   </Listbox>
-
-  <!-- <div id="layer-connect" class="connect">
-    <div class="sorting">
-      <a
-        class="node_filter"
-        v-on:click="
-          sort_node = sort_node === 'asc' ? 'dsc' : 'asc';
-          sort_cluster = '';
-          sort_degree = '';
-        "
-        >nodes</a
-      >
-      <a
-        class="cluster_filter"
-        v-on:click="
-          sort_cluster = sort_cluster === 'asc' ? 'dsc' : 'asc';
-          sort_node = '';
-          sort_degree = '';
-        "
-        >cluster</a
-      >
-      <a
-        class="degree_filter"
-        v-on:click="
-          sort_degree = sort_degree === 'asc' ? 'dsc' : 'asc';
-          sort_cluster = '';
-          sort_node = '';
-        "
-        >degree</a
-      >
-    </div>
-    <div class="network-results" tabindex="0" @keydown="handleKeyDown">
-      <table>
-        <tbody>
-          <tr v-for="(entry, index) in filt_links" :key="index" class="option">
-            <td>
-              <div class="statistics-attr">
-                <a href="#">{{ entry.attributes["Name"] }}</a>
-              </div>
-            </td>
-            <td>
-              <a class="statistics-val">{{
-                entry.attributes["Modularity Class"]
-              }}</a>
-            </td>
-            <td>
-              <a class="statistics-val">{{ entry.attributes["Degree"] }}</a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div> -->
 </template>
 
 <script>
@@ -254,12 +201,3 @@ export default {
   },
 };
 </script>
-
-<!-- <style>
-#layer-connect {
-  width: 100%;
-  height: 100%;
-  font-family: "ABeeZee", sans-serif;
-  padding: 1.3vw 1.3vw 1vw 1.3vw;
-}
-</style> -->

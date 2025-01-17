@@ -5,28 +5,6 @@
       <span class="flex-shrink-0 text-sm break-all w-[80%]">{{ key }}</span>
     </li>
   </ul>
-  <!-- <div id="statistics">
-    <div class="network-results" tabindex="0" @keydown="handleKeyDown">
-      <table>
-        <tbody>
-          <tr
-            v-for="(key, entry, index) in statistics"
-            :key="index"
-            class="option"
-          >
-            <td>
-              <div class="statistics-attr">
-                <a href="#">{{ entry }}</a>
-              </div>
-            </td>
-            <td>
-              <a class="statistics-val">{{ key }}</a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div> -->
 </template>
 
 <script>
