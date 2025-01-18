@@ -1,8 +1,8 @@
 <template>
   <ListActionHeader :title="`Please enter each abstracts in a new line.`">
     <Button severity="secondary" rounded size="small" plain class="w-8 h-8" v-on:click="raw_text = ''; summary = ''"
-      v-tooltip.bottom="'Reset'">
-      <span class="text-2xl material-symbols-rounded"> refresh </span>
+      v-tooltip.bottom="{ value: 'Reset summary', pt: { text: '!text-sm' } }">
+      <span class="text-2xl material-symbols-rounded"> delete_forever </span>
     </Button>
   </ListActionHeader>
 

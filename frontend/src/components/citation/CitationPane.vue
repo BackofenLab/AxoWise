@@ -13,12 +13,13 @@
       </h3>
 
       <div class="flex items-center gap-1 ml-auto">
-        <Button class="w-8 h-8" size="small" text rounded plain v-tooltip.bottom="'Add to summary'"
+        <Button class="w-8 h-8" size="small" text rounded plain
+          v-tooltip.bottom="{ value: 'Add to summary', pt: { text: '!text-sm' } }"
           @click="add_abstract(active_node.id)">
           <span class="material-symbols-rounded"> note_add </span>
         </Button>
         <Button class="w-8 h-8 group" icon="material-symbols-rounded" size="small" text plain rounded
-          v-tooltip.bottom="'Add to AxoBot'" @click="call_chatbot('citation')">
+          v-tooltip.bottom="{ value: 'Add to AxoBot', pt: { text: '!text-sm' } }" @click="call_chatbot('citation')">
           <span class="material-symbols-rounded">forum</span>
         </Button>
         <Button class="w-8 h-8" size="small" text rounded plain @click="close_pane()">

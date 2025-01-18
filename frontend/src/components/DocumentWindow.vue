@@ -182,7 +182,6 @@ export default {
     addImage(imgURL) {
       var selection = quill.getSelection(true);
       if (selection) {
-        console.log(selection.index);
         quill.insertEmbed(selection.index, "image", imgURL);
       } else {
         // If there is no selection, insert at the end of the document

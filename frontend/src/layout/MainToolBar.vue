@@ -59,7 +59,6 @@
       header: { class: '!py-2.5 cursor-move' },
       title: { class: '!text-base' },
     }">
-      <!-- @selection_active_changed="selection_active = $event" -->
       <SelectionList :data="gephi_data" :selection_active="selection_active" :active_subset="active_subset"
         :active_term="active_term" :mode="mode">
       </SelectionList>
@@ -70,7 +69,6 @@
       header: { class: '!py-2.5 cursor-move' },
       title: { class: '!text-base' },
     }">
-      <!-- @protein_active_changed="protein_active = $event" -->
       <ProteinList v-show="protein_active" :gephi_data="gephi_data" :mode="mode">
       </ProteinList>
     </Dialog>
@@ -80,7 +78,6 @@
       header: { class: '!py-2.5 cursor-move' },
       title: { class: '!text-base' },
     }">
-      <!-- @tools_active_changed="tools_active = $event" -->
       <SettingList v-show="tools_active" :gephi_data="gephi_data" :ensembl_name_index="ensembl_name_index"
         :tools_active="tools_active" :mode="mode"></SettingList>
     </Dialog>

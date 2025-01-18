@@ -12,7 +12,7 @@
       <span class="w-4 h-4 col-start-11 rounded-full cursor-pointer" id="color_rect" @click="open_picker($event, entry)"
         :style="{ backgroundColor: colorpalette[entry.name] }"></span>
       <Button severity="secondary" rounded size="small" plain class="w-5 h-5" @click="hide_termlayer(entry)"
-        v-tooltip.bottom="hiding_terms.has(entry) ? 'Show' : 'Hide'">
+        v-tooltip.bottom="{ value: hiding_terms.has(entry) ? 'Show' : 'Hide', pt: { text: '!text-sm' } }">
         <span class="text-xl material-symbols-rounded">
           {{ hiding_terms.has(entry) ? "visibility_off" : "visibility" }}
         </span>
@@ -93,14 +93,12 @@ export default {
     open_picker(event, term) {
       var com = this;
 
-      console.log("in");
       com.color_picker = true;
       com.active_term = term;
       com.colors = this.colorpalette[term.name];
     },
     hide_termlayer(term) {
       var com = this;
-      console.log("in2");
 
       if (com.hiding_terms.has(term)) com.hiding_terms.delete(term);
       else com.hiding_terms.add(term);

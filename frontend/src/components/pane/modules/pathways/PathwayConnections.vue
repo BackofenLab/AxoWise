@@ -70,60 +70,6 @@
       </div>
     </template>
   </Listbox>
-
-  <!-- <div id="pathway-connect" class="connect">
-    <div class="sorting">
-      <a
-        class="node_filter"
-        v-on:click="
-          sort_node = sort_node === 'asc' ? 'dsc' : 'asc';
-          sort_cluster = '';
-          sort_degree = '';
-        "
-        >nodes</a
-      >
-      <a
-        class="cluster_filter"
-        v-on:click="
-          sort_cluster = sort_cluster === 'asc' ? 'dsc' : 'asc';
-          sort_node = '';
-          sort_degree = '';
-        "
-        >cluster</a
-      >
-      <a
-        class="degree_filter"
-        v-on:click="
-          sort_degree = sort_degree === 'asc' ? 'dsc' : 'asc';
-          sort_cluster = '';
-          sort_node = '';
-        "
-        >degree</a
-      >
-    </div>
-
-    <div class="network-results" tabindex="0" @keydown="handleKeyDown">
-      <table>
-        <tbody>
-          <tr v-for="(entry, index) in filt_links" :key="index" class="option">
-            <td>
-              <div class="statistics-attr">
-                <a href="#">{{ entry.attributes["Name"] }}</a>
-              </div>
-            </td>
-            <td>
-              <a class="statistics-val">{{
-                entry.attributes["Modularity Class"]
-              }}</a>
-            </td>
-            <td>
-              <a class="statistics-val">{{ entry.attributes["Degree"] }}</a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div> -->
 </template>
 
 <script>
@@ -221,12 +167,3 @@ export default {
   },
 };
 </script>
-
-<!-- <style>
-#pathway-connect {
-  width: 100%;
-  height: 100%;
-  font-family: "ABeeZee", sans-serif;
-  padding: 1.3vw 1.3vw 1vw 1.3vw;
-}
-</style> -->

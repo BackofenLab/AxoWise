@@ -1,18 +1,17 @@
 <template>
-  <!-- :minY="60" :minX="60" -->
-  <Dialog v-model:visible="windowCheck" header="AxoBot" position="bottomright" :maximizable="true" 
-    :pt="{
+  <Dialog v-model:visible="windowCheck" header="AxoBot" position="bottomright" :minY="minVal" :minX="minVal"
+    :maximizable="true" :pt="{
       root: {
         id: 'scrollBox',
         class:
-          '!h-full w-[26rem] !bg-white/75 dark:!bg-slate-900/75 !backdrop-blur overflow-y-auto', // !mt-[60px] !ml-[60px]
+          `!h-full w-[26rem] !bg-white/75 dark:!bg-slate-900/75 !backdrop-blur overflow-y-auto !mt-[${minVal}px] !ml-[${minVal}px]`,
       },
       header: { class: 'sticky top-0 !p-2 !px-3 !justify-start gap-3 !font-medium cursor-move backdrop-blur z-[1]' },
       headerActions: { class: '!ml-auto' },
       title: { class: '!text-base' },
       content: { class: '!px-3 !pb-2 !overflow-y-visible' },
       footer: { class: 'sticky bottom-0 !px-2 !pt-1 !pb-2 cursor-move backdrop-blur-xl !mt-auto' },
-    }" @hide="windowCheck = false">
+    }" @maximize="minVal = 0" @unmaximize="minVal = 60" @hide="windowCheck = false">
     <main class="flex flex-col">
       <ul class="flex flex-col gap-1.5">
         <li v-for="(msg, index) in messages" :key="index" :class="`flex flex-col p-3 rounded-lg
@@ -54,11 +53,12 @@
                 label="Reference" @click="searchRef(msg.ref)" />
 
               <Button class="w-6 h-6 !p-1.5 ml-auto" type="button" size="small" text plain rounded
-                v-tooltip.bottom="'Copy to clipboard'" @click="copyToClipboard(msg.text)">
+                v-tooltip.left="{ value: 'Copy to clipboard', pt: { text: '!text-sm' } }"
+                @click="copyToClipboard(msg.text)">
                 <span class="material-symbols-rounded !text-lg"> content_copy </span>
               </Button>
               <Button class="w-6 h-6 !p-1.5" type="button" size="small" text plain rounded
-                v-tooltip.bottom="'Add to AxoWord'" @click="addToWord(msg.text)">
+                v-tooltip.left="{ value: 'Add to AxoWord', pt: { text: '!text-sm' } }" @click="addToWord(msg.text)">
                 <span class="material-symbols-rounded !text-xl"> chat_add_on </span>
               </Button>
             </div>
@@ -71,7 +71,6 @@
     <template #footer>
       <div class="flex flex-col w-full gap-2">
         <fieldset class="relative">
-          <!-- Allow shift enter -->
           <Textarea autoResize rows="1" class="!pr-[40.98px] !leading-tight" v-model="user_input" fluid autofocus
             placeholder="Type your message..." @keydown.enter.prevent="sendMessage" />
           <Button class="!absolute !bottom-1.5 !right-0 !border-0 !p-2 !h-9 hover:!bg-transparent" type="button" text
@@ -122,6 +121,7 @@ export default {
         chatbot: "api/subgraph/chatbot",
       },
       sourceToken: null,
+      minVal: 60
     };
   },
   computed: {

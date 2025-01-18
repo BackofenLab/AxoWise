@@ -6,11 +6,11 @@
     <div :class="`flex flex-col gap-2 absolute top-2 p-1 z-[1] opacity-0 duration-300 group-hover/parent:opacity-100
           ${stacked === 'left' ? 'left-full rounded-tr-lg rounded-br-lg' : 'right-full rounded-tl-lg rounded-bl-lg'}`">
       <Button class="w-5 h-5 !p-1.5" type="button" size="small" severity="warn" rounded
-        v-tooltip.right="'Minimize pane'" @click="minimizePane">
+        v-tooltip.right="{ value: 'Minimize pane', pt: { text: '!text-sm' } }" @click="minimizePane">
         <span class="material-symbols-rounded !text-lg"> keep_off </span>
       </Button>
       <Button v-if="!is_minimized" class="w-5 h-5 !p-1.5" type="button" size="small" severity="success" rounded
-        v-tooltip.right="`${stacked === 'left' ? 'Stack pane right' : 'Stack pane left'}`"
+        v-tooltip.right="{ value: stacked === 'left' ? 'Stack pane right' : 'Stack pane left', pt: { text: '!text-sm' } }"
         @click="changePanePosition">
         <span class="material-symbols-rounded !text-lg">
           {{ stacked === "left" ? "arrow_right_alt" : "arrow_left_alt" }}

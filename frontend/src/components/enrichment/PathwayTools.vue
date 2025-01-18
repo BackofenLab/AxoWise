@@ -1,7 +1,7 @@
 <template>
   <ListActionHeader :title="`List of enrichment graph`">
     <Button severity="secondary" rounded size="small" plain v-on:click="bookmark_off = !bookmark_off" class="w-8 h-8"
-      v-tooltip.bottom="bookmark_off ? 'Show only favorites' : 'Show all'">
+      v-tooltip.bottom="{ value: bookmark_off ? 'Show only favorites' : 'Show all', pt: { text: '!text-sm' } }">
       <span :class="`material-symbols-rounded text-2xl
           ${bookmark_off ? '' : 'font-variation-ico-filled text-yellow-500 hover:text-yellow-400'}`">
         star
