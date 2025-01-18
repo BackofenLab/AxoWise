@@ -21,8 +21,9 @@
         class:
           '!px-0 !py-1 !text-slate-500 dark:!text-slate-300 leading-tight transition-all duration-300 ease-in-out',
       },
-    }" :virtualScrollerOptions="{ itemSize: 28 }"  scrollHeight="100%" listStyle="max-height:100%" class="h-full flex flex-col !p-0 !bg-transparent !border-0"
-    @update:modelValue="select_community" :tabindex="0" emptyMessage="No communities available.">
+    }" :virtualScrollerOptions="{ itemSize: 28 }" scrollHeight="100%" listStyle="max-height:100%"
+    class="h-full flex flex-col !p-0 !bg-transparent !border-0" @update:modelValue="select_community" :tabindex="0"
+    emptyMessage="No communities available.">
 
     <template #footer>
       <header class="sticky top-0 bg-[var(--card-bg)] pt-3 items-center gap-2 z-[1] order-1">
@@ -34,7 +35,7 @@
           </IconField>
           <InputGroupAddon>
             <Button class="w-8 h-8" icon="material-symbols-rounded" size="small" :loading="await_community" text plain
-              rounded v-tooltip.bottom="'Top nodes'" @click="top_nodes(5)">
+              rounded v-tooltip.bottom="{ value: 'Top nodes', pt: { text: '!text-sm' } }" @click="top_nodes(5)">
               <span class="material-symbols-rounded !text-lg">hub</span>
             </Button>
           </InputGroupAddon>
@@ -127,7 +128,7 @@ export default {
     filt_communities() {
       var com = this;
       var filtered = Object.values(com.citation_data?.community_scores || {});
-      
+
       if (com.search_raw !== "") {
         // If search term is not empty, filter by search term
         var regex = new RegExp(com.regex, "i");

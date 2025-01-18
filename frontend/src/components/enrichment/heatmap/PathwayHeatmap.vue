@@ -103,11 +103,6 @@ export default {
     } else {
       this.heatmap_dict = new Set();
     }
-    console.log(
-      "mounted",
-      this.favourite_heatmaps,
-      this.$store.state.favourite_heatmaps_dict
-    );
   },
   beforeUnmount() {
     this.emitter.off("generateHeatmap");
@@ -242,11 +237,6 @@ export default {
         this.favourite_heatmaps.delete(entry.id);
       }
       this.$store.commit("assign_favourite_heatmap", this.favourite_heatmaps);
-      console.log(
-        "added",
-        this.favourite_heatmaps,
-        this.$store.state.favourite_heatmaps_dict
-      );
     },
     export_svg() {
 
@@ -377,7 +367,6 @@ export default {
         .attr("stroke-width", 0.5)
         .attr("fill", "none");
 
-      console.log(svg)
       this.current_legend = svg;
     }
 

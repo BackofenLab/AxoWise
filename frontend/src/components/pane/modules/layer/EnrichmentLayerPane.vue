@@ -85,7 +85,6 @@ export default {
       handler(newList) {
         var com = this;
 
-        console.log(com.active_termlayers);
         if (newList == null) {
           return;
         }

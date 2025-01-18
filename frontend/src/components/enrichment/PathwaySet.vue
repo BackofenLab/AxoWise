@@ -52,7 +52,8 @@
 
         <label class="col-span-4 flex gap-1.5">
           <Button severity="secondary" rounded size="small" text plain v-on:click.stop="set_active(entry)"
-            v-tooltip.bottom="'View on graph'" class="w-6 h-6 !text-slate-500 dark:!text-slate-300">
+            v-tooltip.bottom="{ value: 'View on graph', pt: { text: '!text-sm' } }"
+            class="w-6 h-6 !text-slate-500 dark:!text-slate-300">
             <i :class="`material-symbols-rounded text-xl
             ${entry.status ? 'font-variation-ico-filled text-primary-500 hover:text-primary-400' : ''}`">
               graph_3
@@ -60,12 +61,14 @@
           </Button>
 
           <Button severity="danger" size="small" rounded text v-on:click.stop="remove_set(entry)"
-            v-tooltip.bottom="'Remove subset'" class="w-6 h-6 !text-slate-500 dark:!text-slate-300">
+            v-tooltip.bottom="{ value: 'Remove subset', pt: { text: '!text-sm' } }"
+            class="w-6 h-6 !text-slate-500 dark:!text-slate-300">
             <i class="text-xl material-symbols-rounded"> delete </i>
           </Button>
 
           <Button severity="danger" size="small" rounded text v-on:click.stop="addToChatbot(entry)"
-            v-tooltip.bottom="'Add to AxoBot'" class="w-6 h-6 !text-slate-500 dark:!text-slate-300">
+            v-tooltip.bottom="{ value: 'Add to AxoBot', pt: { text: '!text-sm' } }"
+            class="w-6 h-6 !text-slate-500 dark:!text-slate-300">
             <span class="text-xl material-symbols-rounded"> forum </span>
           </Button>
         </label>
@@ -96,23 +99,23 @@
   </Dialog>
 
   <Dialog v-model:visible="selection_active" header="Graph parameter" position="topleft" :minY="60" :minX="60" :pt="{
-      root: { class: 'w-[25rem] !mt-[60px] !ml-[60px]' },
-      header: { class: '!py-2.5 cursor-move' },
-      title: { class: '!text-base' },
-    }">
-      <SelectionList :data="gephi_data" :selection_active="selection_active" :active_subset="null"
-        :active_term="null" :mode="mode">
-      </SelectionList>
-    </Dialog>
+    root: { class: 'w-[25rem] !mt-[60px] !ml-[60px]' },
+    header: { class: '!py-2.5 cursor-move' },
+    title: { class: '!text-base' },
+  }">
+    <SelectionList :data="gephi_data" :selection_active="selection_active" :active_subset="null" :active_term="null"
+      :mode="mode">
+    </SelectionList>
+  </Dialog>
 
-    <Dialog v-model:visible="protein_active" header="Highlight nodes" position="topleft" :minY="60" :minX="60" :pt="{
-      root: { class: 'w-[24rem] !mt-[60px] !ml-[60px]' },
-      header: { class: '!py-2.5 cursor-move' },
-      title: { class: '!text-base' },
-    }">
-      <ProteinList v-show="protein_active" :gephi_data="gephi_data" :mode="mode">
-      </ProteinList>
-    </Dialog>
+  <Dialog v-model:visible="protein_active" header="Highlight nodes" position="topleft" :minY="60" :minX="60" :pt="{
+    root: { class: 'w-[24rem] !mt-[60px] !ml-[60px]' },
+    header: { class: '!py-2.5 cursor-move' },
+    title: { class: '!text-base' },
+  }">
+    <ProteinList v-show="protein_active" :gephi_data="gephi_data" :mode="mode">
+    </ProteinList>
+  </Dialog>
 </template>
 
 <script>
