@@ -1,14 +1,22 @@
 <template>
   <div class="relative flex-1 order-3 overflow-hidden visualization">
+    <div
+      class="flex flex-col gap-0 absolute top-3 right-3 z-[1] border dark:border-slate-700 rounded-xl bg-[var(--card-bg)] shadow-curve-dark dark:shadow-curve-light">
+      <Button class="w-7 h-7" variant="text" size="small" plain @click="center()">
+        <span class="!text-lg material-symbols-rounded"> fullscreen </span>
+      </Button>
+      <Divider class="!p-0 !m-0"/>
+      <Button class="w-7 h-7" variant="text" size="small" plain>
+        <span class="!text-xl material-symbols-rounded"> add </span>
+      </Button>
+      <Divider class="!p-0 !m-0"/>
+      <Button class="w-7 h-7" variant="text" size="small" plain>
+        <span class="!text-xl material-symbols-rounded"> remove </span>
+      </Button>
+    </div>
     <div id="sigma-heatmap" class="relative w-full h-full overflow-hidden" v-show="heatmap">
-      <Button
-        class="w-8 h-8 !absolute top-2 right-2"
-        severity="secondary"
-        rounded
-        size="small"
-        plain
-        @click="two_view()"
-      >
+      <Button class="w-8 h-8 !absolute top-2 right-2" severity="secondary" rounded size="small" plain
+        @click="two_view()">
         <span class="text-2xl material-symbols-rounded"> close </span>
       </Button>
       <div id="heatdemo"></div>
@@ -20,49 +28,27 @@
       <span id="value"> </span>
     </div>
     <div id="sigma-webgl"></div>
-    <div
-      id="sigma-canvas"
-      :class="{ loading: threeview, split: heatmap, normal: !heatmap }"
-      class="sigma-parent"
-      ref="sigmaContainer"
-      @contextmenu.prevent="handleSigmaContextMenu"
-      @mouseleave="sigmaFocus = false"
-      @mouseenter="sigmaFocus = true"
-    >
-      <div
-        v-show="moduleSelectionActive === true"
-        v-for="(circle, index) in moduleSet"
-        :key="index"
-      >
-        <div
-          class="modules"
-          v-if="
-            (isMouseInside(circle.data) &&
-              !unconnectedActive(circle.modularity) &&
-              !mousedownrightCheck &&
-              !(mousedownleftCheck && mousemoveCheck) &&
-              sigmaFocus) ||
-            (showCluster && !unconnectedActive(circle.modularity))
-          "
-        >
+    <div id="sigma-canvas" :class="{ loading: threeview, split: heatmap, normal: !heatmap }" class="sigma-parent"
+      ref="sigmaContainer" @contextmenu.prevent="handleSigmaContextMenu" @mouseleave="sigmaFocus = false"
+      @mouseenter="sigmaFocus = true">
+      <div v-show="moduleSelectionActive === true" v-for="(circle, index) in moduleSet" :key="index">
+        <div class="modules" v-if="
+          (isMouseInside(circle.data) &&
+            !unconnectedActive(circle.modularity) &&
+            !mousedownrightCheck &&
+            !(mousedownleftCheck && mousemoveCheck) &&
+            sigmaFocus) ||
+          (showCluster && !unconnectedActive(circle.modularity))
+        ">
           <div class="inside" v-bind:style="getCircleStyle(circle.data)">
-            <div
-              class="modularity-class"
-              v-bind:style="getTextStyle(circle.data)"
-            >
+            <div class="modularity-class" v-bind:style="getTextStyle(circle.data)">
               {{ circle.modularity }}
             </div>
           </div>
         </div>
       </div>
 
-      <img
-        class="twoview"
-        v-show="threeview"
-        v-on:click="two_view"
-        src="@/assets/share-2.png"
-        alt="Center Icon"
-      />
+      <img class="twoview" v-show="threeview" v-on:click="two_view" src="@/assets/share-2.png" alt="Center Icon" />
     </div>
   </div>
 </template>
@@ -257,10 +243,10 @@ export default {
         const newPos =
           node.x || node.y || node.z
             ? {
-                x: node.x * distRatio,
-                y: node.y * distRatio,
-                z: node.z * distRatio,
-              }
+              x: node.x * distRatio,
+              y: node.y * distRatio,
+              z: node.z * distRatio,
+            }
             : { x: 0, y: 0, z: distance }; // special case if node is in (0,0,0)
 
         three_instance.cameraPosition(
@@ -607,6 +593,15 @@ export default {
     },
   },
   methods: {
+    center() {
+      sigma_instance.camera.goTo({
+        x: 0,
+        y: 0,
+        ratio: 1,
+        angle: sigma_instance.camera.angle,
+      });
+      this.get_module_circles();
+    },
     activeNode(event, special) {
       this.special_label = special;
       this.$emit("active_node_changed", event);
@@ -1090,7 +1085,7 @@ export default {
     isMouseInside(circle) {
       const distance = Math.sqrt(
         Math.pow(circle.x - this.mouseX, 2) +
-          Math.pow(circle.y - this.mouseY, 2)
+        Math.pow(circle.y - this.mouseY, 2)
       );
       return distance < circle.r + 10;
     },
@@ -1338,13 +1333,7 @@ export default {
 
       this.emitter.on("centerGraph", (state) => {
         if (state.mode == "protein") {
-          sigma_instance.camera.goTo({
-            x: 0,
-            y: 0,
-            ratio: 1,
-            angle: sigma_instance.camera.angle,
-          });
-          this.get_module_circles();
+          this.center();
         }
       });
 
@@ -1437,6 +1426,7 @@ export default {
 #sigma-canvas.split {
   display: none;
 }
+
 #sigma-canvas.normal {
   display: flex;
 }
@@ -1461,7 +1451,8 @@ export default {
 }
 
 .sigma-label {
-  color: #fff; /* set the font color to white */
+  color: #fff;
+  /* set the font color to white */
 }
 
 .inside {
