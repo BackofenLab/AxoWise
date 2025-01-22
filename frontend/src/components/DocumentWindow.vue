@@ -1,46 +1,60 @@
 <template>
-  <div
-    id="expdocument"
-    class="persistent-window"
-    v-show="showPersistentComponent"
-  >
+  <Dialog v-model:visible="windowCheck" header="AxoWord" position="bottomleft" :minY="60" :minX="60" :maximizable="true"
+    :pt="{
+      root: {
+        class:
+          `!h-full w-[50rem]`,
+      },
+      headerActions: { class: '!ml-auto' },
+      content: { class: '!pr-4 !pl-0 !pb-3 !overflow-y-visible flex-1 grid grid-cols-1 md:grid-cols-12' },
+    }" @hide="closeWindow" @show="initialize_quill">
+    <aside class="p-2 md:col-span-4">
+      <PanelMenu :model="items" class="!gap-0" :pt="{ panel: '!border-0 !p-0' }">
+        <template #item="{ item }">
+          <a v-ripple class="flex items-center px-4 py-2 cursor-pointer group">
+            <span :class="[item.icon, 'text-primary group-hover:text-inherit']" />
+            <span :class="['ml-2', { 'font-semibold': item.items }]">{{ item.label }}</span>
+            <Badge class="ml-auto" :value="item.badge" />
+          </a>
+        </template>
+      </PanelMenu>
+    </aside>
+    <div class="flex flex-col p-2 md:col-span-8">
+      <div class="border rounded-xl dark:!border-[#020617] flex-1 dark:!bg-[#020617] bg-[#f3f3f3] border-[#f3f3f3]">
+        <div ref="editor"></div>
+      </div>
+      <div class="flex items-center justify-end gap-4 mt-4">
+        <Button severity="info" outlined label="AI improve" icon="pi pi-plus" size="small"  @click="textImprove" />
+        <Button severity="secondary" outlined label="Export Document" icon="pi pi-plus" size="small"  @click="exportdocX" />
+      </div>
+    </div>
+  </Dialog>
+
+  <!-- <div id="expdocument" class="persistent-window" v-show="showPersistentComponent">
     <div id="expdocument_header" class="header">
       <h3>AxoWord</h3>
       <span class="close-btn" @click="closeWindow">×</span>
     </div>
     <div class="content-wrapper">
-      <!-- Bullet Section -->
       <div class="bullet-section">
         <br />
         <h4>Protein history</h4>
         <ul>
-          <li
-            v-for="(bullet, index) in proteins"
-            :key="index"
-            @click="addBullet(bullet.label)"
-          >
+          <li v-for="(bullet, index) in proteins" :key="index" @click="addBullet(bullet.label)">
             {{ bullet.label }}
           </li>
         </ul>
         <br /><br />
         <h4>Abstract history</h4>
         <ul>
-          <li
-            v-for="(bullet, index) in abstracts"
-            :key="index"
-            @click="addBullet(bullet.label)"
-          >
+          <li v-for="(bullet, index) in abstracts" :key="index" @click="addBullet(bullet.label)">
             {{ bullet.label }}
           </li>
         </ul>
         <br /><br />
         <h4>Favourite terms</h4>
         <ul>
-          <li
-            v-for="(bullet, index) in pathways"
-            :key="index"
-            @click="addBullet(bullet.name)"
-          >
+          <li v-for="(bullet, index) in pathways" :key="index" @click="addBullet(bullet.name)">
             {{ bullet.name }}
           </li>
         </ul>
@@ -52,26 +66,20 @@
         <br /><br />
         <h4>Chatbot tag history</h4>
         <ul>
-          <li
-            v-for="(bullet, index) in tags"
-            :key="index"
-            @click="addBullet(bullet)"
-          >
+          <li v-for="(bullet, index) in tags" :key="index" @click="addBullet(bullet)">
             {{ bullet.id }}
           </li>
         </ul>
       </div>
-      <!-- Quill Editor Section -->
       <div class="editor-section">
         <div ref="editor"></div>
-        <!-- Editor container -->
       </div>
     </div>
     <div class="export-bar">
       <button @click="textImprove">AI improve</button>
       <button @click="exportdocX">Export Document</button>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>
@@ -93,6 +101,69 @@ export default {
       api: {
         textenrich: "api/subgraph/textenrich",
       },
+      items: [
+        {
+          label: 'Protein history',
+          icon: 'pi pi-envelope',
+          badge: 5,
+          items: [
+            {
+              label: 'Compose',
+              icon: 'pi pi-file-edit',
+              shortcut: '⌘+N'
+            },
+            {
+              label: 'Inbox',
+              icon: 'pi pi-inbox',
+              badge: 5
+            },
+            {
+              label: 'Sent',
+              icon: 'pi pi-send',
+              shortcut: '⌘+S'
+            },
+            {
+              label: 'Trash',
+              icon: 'pi pi-trash',
+              shortcut: '⌘+T'
+            }
+          ]
+        },
+        {
+          label: 'Reports',
+          icon: 'pi pi-chart-bar',
+          badge: 5,
+          items: [
+            {
+              label: 'Sales',
+              icon: 'pi pi-chart-line',
+              badge: 3
+            },
+            {
+              label: 'Products',
+              icon: 'pi pi-list',
+              badge: 6
+            }
+          ]
+        },
+        {
+          label: 'Profile',
+          icon: 'pi pi-user',
+          badge: 5,
+          items: [
+            {
+              label: 'Settings',
+              icon: 'pi pi-cog',
+              shortcut: '⌘+O'
+            },
+            {
+              label: 'Privacy',
+              icon: 'pi pi-shield',
+              shortcut: '⌘+P'
+            }
+          ]
+        }
+      ]
     };
   },
   computed: {
@@ -100,29 +171,29 @@ export default {
       let route = this.$route.name;
       return (
         this.windowCheck &&
-        route !== "home" &&
-        route !== "input" &&
-        route !== "file" &&
-        route !== "import"
+        route !== "home"
       );
     },
-    quillEditor() {
-      return new Quill(this.$refs.editor, {
-        theme: "snow",
-        placeholder: "Start with your journey...",
-        modules: {
-          toolbar: [
-            [{ header: [1, 2, false] }],
-            ["bold", "italic", "underline"],
-            ["link", "image"],
-          ],
-        },
-      });
-    },
+    // quillEditor() {
+    //   if (!this.showPersistentComponent) {
+    //     return;
+    //   }
+    //   return new Quill(this.$refs.editor, {
+    //     theme: "snow",
+    //     placeholder: "Start with your journey...",
+    //     modules: {
+    //       toolbar: [
+    //         [{ header: [1, 2, false] }],
+    //         ["bold", "italic", "underline"],
+    //         ["link", "image"],
+    //       ],
+    //     },
+    //   });
+    // },
   },
   mounted() {
     let com = this;
-    com.dragElement(document.getElementById("expdocument"));
+    // com.dragElement(document.getElementById("expdocument"));
 
     com.emitter.on("openWord", () => {
       com.windowCheck = !com.windowCheck;
@@ -154,10 +225,21 @@ export default {
     });
 
     com.pathways = com.$store.state.favourite_enrichments;
-
-    quill = this.quillEditor;
   },
   methods: {
+    initialize_quill() {
+      new Quill(this.$refs.editor, {
+        theme: "snow",
+        placeholder: "Start with your journey...",
+        modules: {
+          toolbar: [
+            [{ header: [1, 2, false] }],
+            ["bold", "italic", "underline"],
+            ["link", "image"],
+          ],
+        },
+      });
+    },
     addBullet(bullet) {
       // Get the current selection or place the bullet at the end
       if (typeof bullet === "object") this.addTag(bullet);
@@ -403,5 +485,43 @@ export default {
 <style>
 .ql-snow {
   background-color: rgba(255, 255, 255, 0.4);
+}
+
+.ql-toolbar.ql-snow,
+.ql-container.ql-snow {
+  background-color: transparent;
+  border: none;
+}
+
+.ql-toolbar.ql-snow {
+  border-bottom: 1px solid #b1b1b1;
+}
+
+.ql-formats .ql-picker-options {
+  background-color: #f3f3f3;
+  border: none;
+  border-radius: 6px;
+}
+
+.p-dark .ql-toolbar.ql-snow,
+.p-dark .ql-container.ql-snow {
+  background-color: transparent;
+}
+
+.p-dark .ql-toolbar.ql-snow {
+  border-bottom: 1px solid #10172b;
+}
+
+.p-dark .ql-formats .ql-header.ql-picker {
+  color: white;
+}
+
+.p-dark .ql-formats button .ql-stroke,
+.p-dark .ql-formats button .ql-fill {
+  stroke: white;
+}
+
+.p-dark .ql-formats .ql-picker-options {
+  background-color: #10172b;
 }
 </style>
