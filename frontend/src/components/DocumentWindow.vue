@@ -1,85 +1,40 @@
 <template>
-  <Dialog v-model:visible="windowCheck" header="AxoWord" position="bottomleft" :minY="60" :minX="60" :maximizable="true"
-    :pt="{
-      root: {
-        class:
-          `!h-full w-[50rem]`,
-      },
-      headerActions: { class: '!ml-auto' },
-      content: { class: '!pr-4 !pl-0 !pb-3 !overflow-y-visible flex-1 grid grid-cols-1 md:grid-cols-12' },
-    }" @hide="closeWindow" @show="initialize_quill">
-    <aside class="p-2 md:col-span-4">
-      <PanelMenu :model="items" class="!gap-0" :pt="{ panel: '!border-0 !p-0' }">
-        <template #item="{ item }">
-          <a v-ripple class="flex items-center px-4 py-2 cursor-pointer group">
-            <span :class="[item.icon, 'text-primary group-hover:text-inherit']" />
-            <span :class="['ml-2', { 'font-semibold': item.items }]">{{ item.label }}</span>
-            <Badge class="ml-auto" :value="item.badge" />
-          </a>
-        </template>
-      </PanelMenu>
-    </aside>
-    <div class="flex flex-col p-2 md:col-span-8">
-      <div class="border rounded-xl dark:!border-[#020617] flex-1 dark:!bg-[#020617] bg-[#f3f3f3] border-[#f3f3f3]">
-        <div ref="editor"></div>
+  <div v-show="showPersistentComponent"
+    class="!absolute !z-[9] !bottom-[10px] !left-0 !h-[calc(100vh-70px)] !w-[45rem] !mt-[60px] !ml-[60px] border dark:border-slate-700 rounded-xl bg-[var(--card-bg)] shadow-curve-dark dark:shadow-curve-light">
+    <header class="flex items-center !justify-start !py-4 !px-4 cursor-move">
+      <h3 class="text-base font-bold">
+        AxoWord
+      </h3>
+      <div class="flex items-center gap-1 ml-auto">
+        <Button class="w-8 h-8" size="small" text rounded plain @click="closeWindow()">
+          <span class="dark:text-white !text-2xl material-symbols-rounded"> close </span>
+        </Button>
       </div>
-      <div class="flex items-center justify-end gap-4 mt-4">
-        <Button severity="info" outlined label="AI improve" icon="pi pi-plus" size="small"  @click="textImprove" />
-        <Button severity="secondary" outlined label="Export Document" icon="pi pi-plus" size="small"  @click="exportdocX" />
-      </div>
-    </div>
-  </Dialog>
-
-  <!-- <div id="expdocument" class="persistent-window" v-show="showPersistentComponent">
-    <div id="expdocument_header" class="header">
-      <h3>AxoWord</h3>
-      <span class="close-btn" @click="closeWindow">×</span>
-    </div>
-    <div class="content-wrapper">
-      <div class="bullet-section">
-        <br />
-        <h4>Protein history</h4>
-        <ul>
-          <li v-for="(bullet, index) in proteins" :key="index" @click="addBullet(bullet.label)">
-            {{ bullet.label }}
-          </li>
-        </ul>
-        <br /><br />
-        <h4>Abstract history</h4>
-        <ul>
-          <li v-for="(bullet, index) in abstracts" :key="index" @click="addBullet(bullet.label)">
-            {{ bullet.label }}
-          </li>
-        </ul>
-        <br /><br />
-        <h4>Favourite terms</h4>
-        <ul>
-          <li v-for="(bullet, index) in pathways" :key="index" @click="addBullet(bullet.name)">
-            {{ bullet.name }}
-          </li>
-        </ul>
-        <br /><br />
-        <h4>Current graphs</h4>
-        <ul>
-          <li @click="addScreen('black', 'png')">add current graph</li>
-        </ul>
-        <br /><br />
-        <h4>Chatbot tag history</h4>
-        <ul>
-          <li v-for="(bullet, index) in tags" :key="index" @click="addBullet(bullet)">
-            {{ bullet.id }}
-          </li>
-        </ul>
-      </div>
-      <div class="editor-section">
-        <div ref="editor"></div>
+    </header>
+    <div class="!pr-4 !pl-0 !pb-3 !overflow-y-visible flex-1 grid grid-cols-1 md:grid-cols-12">
+      <aside class="p-2 md:col-span-4">
+        <PanelMenu :model="items" class="!gap-0" :pt="{ panel: '!border-0 !p-0' }">
+          <template #item="{ item }">
+            <a v-ripple class="flex items-center px-4 py-2 cursor-pointer group">
+              <span :class="[item.icon, 'text-primary group-hover:text-inherit']" />
+              <span :class="['ml-2', { 'font-semibold': item.items }]">{{ item.label }}</span>
+              <Badge class="ml-auto" :value="item.badge" />
+            </a>
+          </template>
+        </PanelMenu>
+      </aside>
+      <div class="flex flex-col p-2 md:col-span-8">
+        <div class="border rounded-xl dark:!border-[#020617] flex-1 dark:!bg-[#020617] bg-[#f3f3f3] border-[#f3f3f3]">
+          <div ref="editor"></div>
+        </div>
+        <div class="flex items-center justify-end gap-4 mt-4">
+          <Button severity="info" outlined label="AI improve" icon="pi pi-plus" size="small" @click="textImprove" />
+          <Button severity="secondary" outlined label="Export Document" icon="pi pi-plus" size="small"
+            @click="exportdocX" />
+        </div>
       </div>
     </div>
-    <div class="export-bar">
-      <button @click="textImprove">AI improve</button>
-      <button @click="exportdocX">Export Document</button>
-    </div>
-  </div> -->
+  </div>
 </template>
 
 <script>
@@ -104,7 +59,7 @@ export default {
       items: [
         {
           label: 'Protein history',
-          icon: 'pi pi-envelope',
+          icon: 'pi pi-history',
           badge: 5,
           items: [
             {
@@ -112,57 +67,37 @@ export default {
               icon: 'pi pi-file-edit',
               shortcut: '⌘+N'
             },
-            {
-              label: 'Inbox',
-              icon: 'pi pi-inbox',
-              badge: 5
-            },
-            {
-              label: 'Sent',
-              icon: 'pi pi-send',
-              shortcut: '⌘+S'
-            },
-            {
-              label: 'Trash',
-              icon: 'pi pi-trash',
-              shortcut: '⌘+T'
-            }
           ]
         },
         {
-          label: 'Reports',
+          label: 'Abstract history',
+          icon: 'pi pi-history',
+          badge: 5,
+          items: [
+          ]
+        },
+        {
+          label: 'Favourite terms',
+          icon: 'pi pi-star-fill',
+          badge: 5,
+          items: [
+          ]
+        },
+        {
+          label: 'Current graphs',
           icon: 'pi pi-chart-bar',
           badge: 5,
           items: [
-            {
-              label: 'Sales',
-              icon: 'pi pi-chart-line',
-              badge: 3
-            },
-            {
-              label: 'Products',
-              icon: 'pi pi-list',
-              badge: 6
-            }
           ]
         },
         {
-          label: 'Profile',
-          icon: 'pi pi-user',
+          label: 'Chatbot tag history',
+          icon: 'pi pi-chart-bar',
           badge: 5,
           items: [
-            {
-              label: 'Settings',
-              icon: 'pi pi-cog',
-              shortcut: '⌘+O'
-            },
-            {
-              label: 'Privacy',
-              icon: 'pi pi-shield',
-              shortcut: '⌘+P'
-            }
+            
           ]
-        }
+        },
       ]
     };
   },
@@ -174,22 +109,19 @@ export default {
         route !== "home"
       );
     },
-    // quillEditor() {
-    //   if (!this.showPersistentComponent) {
-    //     return;
-    //   }
-    //   return new Quill(this.$refs.editor, {
-    //     theme: "snow",
-    //     placeholder: "Start with your journey...",
-    //     modules: {
-    //       toolbar: [
-    //         [{ header: [1, 2, false] }],
-    //         ["bold", "italic", "underline"],
-    //         ["link", "image"],
-    //       ],
-    //     },
-    //   });
-    // },
+    quillEditor() {
+      return new Quill(this.$refs.editor, {
+        theme: "snow",
+        placeholder: "Start with your journey...",
+        modules: {
+          toolbar: [
+            [{ header: [1, 2, false] }],
+            ["bold", "italic", "underline"],
+            ["link", "image"],
+          ],
+        },
+      });
+    },
   },
   mounted() {
     let com = this;
@@ -225,21 +157,10 @@ export default {
     });
 
     com.pathways = com.$store.state.favourite_enrichments;
+
+    quill = this.quillEditor;
   },
   methods: {
-    initialize_quill() {
-      new Quill(this.$refs.editor, {
-        theme: "snow",
-        placeholder: "Start with your journey...",
-        modules: {
-          toolbar: [
-            [{ header: [1, 2, false] }],
-            ["bold", "italic", "underline"],
-            ["link", "image"],
-          ],
-        },
-      });
-    },
     addBullet(bullet) {
       // Get the current selection or place the bullet at the end
       if (typeof bullet === "object") this.addTag(bullet);
@@ -364,123 +285,6 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.persistent-window {
-  position: absolute;
-  right: 1%;
-  top: 1.5%;
-  height: 97%;
-  width: 50%;
-  -webkit-backdrop-filter: blur(7.5px);
-  border: 1px solid #e0e0e0;
-  background-color: rgb(57, 57, 57);
-  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  z-index: 99999;
-  resize: horizontal;
-}
-
-/* Header styles remain the same */
-.header {
-  background-color: rgb(57, 57, 57);
-  color: white;
-  padding: 15px;
-  cursor: move;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 16px;
-  font-weight: bold;
-  position: relative;
-}
-
-.close-btn {
-  font-size: 20px;
-  cursor: pointer;
-  padding: 0 5px;
-}
-
-/* Flexbox layout for bullet section and editor */
-.content-wrapper {
-  display: flex;
-  height: 100%;
-}
-
-/* Bullet section styles */
-.bullet-section {
-  width: 30%;
-  height: 45vw;
-  overflow-y: scroll;
-  background-color: rgb(57, 57, 57);
-  padding: 10px;
-  color: white;
-}
-
-.bullet-section ul {
-  list-style: none;
-  padding: 0;
-  overflow-y: scroll;
-  height: 15%;
-}
-
-.bullet-section li {
-  padding: 5px 0;
-  font-size: 0.7vw;
-  margin-left: 5px;
-  cursor: pointer;
-  color: white;
-}
-
-.bullet-section li:hover {
-  color: #00aaff;
-}
-
-/* Editor styles */
-#editor {
-  width: 100%;
-  padding: 10px;
-  overflow-y: auto;
-  z-index: 999999999;
-}
-
-.editor-section {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 45vw;
-}
-
-.export-bar {
-  color: white;
-  padding: 1%;
-  width: 99%;
-  display: flex;
-  justify-content: end;
-  cursor: move;
-  display: flex;
-  font-size: 16px;
-  font-weight: bold;
-  position: relative;
-}
-
-.export-bar button {
-  padding: 8px 16px;
-  margin-left: 2%;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 4px;
-}
-
-.export-bar button:hover {
-  background-color: #0056b3;
-}
-</style>
 
 <style>
 .ql-snow {
