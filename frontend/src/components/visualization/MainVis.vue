@@ -601,6 +601,7 @@ export default {
         angle: sigma_instance.camera.angle,
       });
       this.get_module_circles();
+      sigma_instance.refresh()
     },
     activeNode(event, special) {
       this.special_label = special;
