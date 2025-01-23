@@ -367,6 +367,7 @@ export default {
         angle: sigma_instance.camera.angle,
       });
       this.get_module_circles();
+      sigma_instance.refresh();
     },
     activeNode(event, special) {
       this.special_label = special;
@@ -749,6 +750,7 @@ export default {
     sigma_instance = new sigma();
     var camera = sigma_instance.addCamera();
 
+    this.$nextTick(() => {
     sigma_instance.addRenderer({
       container: this.$refs.sigmaContainer,
       type: "canvas",
@@ -895,6 +897,7 @@ export default {
     });
 
     sigma_instance.refresh();
+  });
   },
   activated() {
     sigma_instance.refresh();
