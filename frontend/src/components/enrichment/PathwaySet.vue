@@ -36,7 +36,19 @@
     }">
     <template #header>
       <div
-        class="w-full h-full grid grid-cols-12 items-center gap-2 !py-0 !px-0 !font-normal !text-slate-500 dark:!text-slate-300 !leading-tight">
+        :class="`w-full h-full grid grid-cols-12 items-center gap-2 !py-0 !px-0 !font-normal !leading-tight rounded
+        ${entry.status && entry.view == mode ? '!text-primary-400 dark:!bg-primary-400/25 !bg-primary-50' : '!text-slate-500 dark:!text-slate-300'}`">
+        <label class="col-span-1">
+          <Button severity="secondary" rounded size="small" text plain v-on:click.stop="set_active(entry)"
+            v-tooltip.bottom="{ value: 'View on graph', pt: { text: '!text-sm' } }"
+            class="w-6 h-6 !text-slate-500 dark:!text-slate-300 hover:!bg-transparent">
+            <i :class="`material-symbols-rounded text-xl
+            ${entry.status && entry.view == mode ? 'font-variation-ico-filled text-primary-500' : ''}`">
+              graph_3
+            </i>
+          </Button>
+        </label>
+
         <label class="relative col-span-4">
           <span :class="`w-full h-full flex items-center absolute top-0 left-0 gap-2 border border-transparent hover:border-slate-500/50 dark:hover:border-slate-300/50 rounded py-2 px-1 text-sm font-medium cursor-text z-[1]
               ${focus_subset_id === index ? '!hidden' : ''}`" v-on:click="setFocus(entry.id, index)">
@@ -50,16 +62,7 @@
 
         <label class="col-span-2 capitalize">{{ entry.view }}</label>
 
-        <label class="col-span-4 flex gap-1.5">
-          <Button severity="secondary" rounded size="small" text plain v-on:click.stop="set_active(entry)"
-            v-tooltip.bottom="{ value: 'View on graph', pt: { text: '!text-sm' } }"
-            class="w-6 h-6 !text-slate-500 dark:!text-slate-300">
-            <i :class="`material-symbols-rounded text-xl
-            ${entry.status ? 'font-variation-ico-filled text-primary-500 hover:text-primary-400' : ''}`">
-              graph_3
-            </i>
-          </Button>
-
+        <label class="col-span-3 flex gap-1.5">
           <Button severity="danger" size="small" rounded text v-on:click.stop="remove_set(entry)"
             v-tooltip.bottom="{ value: 'Remove subset', pt: { text: '!text-sm' } }"
             class="w-6 h-6 !text-slate-500 dark:!text-slate-300">
