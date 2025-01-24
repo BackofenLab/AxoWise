@@ -1,6 +1,6 @@
 <template>
   <div v-show="showPersistentComponent"
-    class="!absolute !z-[9] !bottom-[10px] !left-0 !h-[calc(100vh-70px)] !w-[45rem] !mt-[60px] !ml-[60px] border dark:border-slate-700 rounded-xl bg-[var(--card-bg)] shadow-curve-dark dark:shadow-curve-light">
+    class="!absolute !z-[9] !bottom-[10px] !left-0 !h-[calc(100vh-70px)] !w-[45rem] !mt-[60px] !ml-[60px] border dark:border-slate-700 rounded-xl bg-[var(--card-bg)] shadow-curve-dark dark:shadow-curve-light !overflow-hidden">
     <header class="flex items-center !justify-start !py-4 !px-4 cursor-move">
       <h3 class="text-base font-bold">
         AxoWord
@@ -13,15 +13,74 @@
     </header>
     <div class="!pr-4 !pl-0 !pb-3 !overflow-y-visible flex-1 grid grid-cols-1 md:grid-cols-12">
       <aside class="p-2 md:col-span-4">
-        <PanelMenu :model="items" class="!gap-0" :pt="{ panel: '!border-0 !p-0' }">
-          <template #item="{ item }">
-            <a v-ripple class="flex items-center px-4 py-2 cursor-pointer group">
-              <span :class="[item.icon, 'text-primary group-hover:text-inherit']" />
-              <span :class="['ml-2', { 'font-semibold': item.items }]">{{ item.label }}</span>
-              <Badge class="ml-auto" :value="item.badge" />
-            </a>
-          </template>
-        </PanelMenu>
+        <Accordion :value="['0']" multiple>
+          <AccordionPanel value="0" class="!border-0">
+            <AccordionHeader class='!px-4 !py-2'>
+              <span class="material-symbols-rounded !text-xl">history </span>Protein history
+            </AccordionHeader>
+            <AccordionContent>
+              <ul class="divide-y border-slate-200 dark:divide-slate-100/10">
+                <li
+                  class="flex !justify-between items-center px-4 hover:dark:bg-slate-100/10 hover:bg-slate-100 hover:!text-primary-400"
+                  v-for="(bullet, index) in proteins" :key="index" @click="addBullet(bullet.label)">
+                  {{ bullet.label }}
+                </li>
+              </ul>
+            </AccordionContent>
+          </AccordionPanel>
+          <AccordionPanel value="1" class="!border-0">
+            <AccordionHeader class='!px-4 !py-2'><span class="material-symbols-rounded !text-xl">summarize
+              </span>Abstract history</AccordionHeader>
+            <AccordionContent>
+              <ul class="divide-y border-slate-200 dark:divide-slate-100/10">
+                <li
+                  class="flex !justify-between items-center px-4 hover:dark:bg-slate-100/10 hover:bg-slate-100 hover:!text-primary-400"
+                  v-for="(bullet, index) in abstracts" :key="index" @click="addBullet(bullet.label)">
+                  {{ bullet.label }}
+                </li>
+              </ul>
+            </AccordionContent>
+          </AccordionPanel>
+          <AccordionPanel value="2" class="!border-0">
+            <AccordionHeader class='!px-4 !py-2'><span class="material-symbols-rounded !text-xl">star
+              </span>Favourite terms</AccordionHeader>
+            <AccordionContent>
+              <ul class="">
+                <li
+                  class="flex !justify-between items-center cursor-pointer !text-sm !py-1 rounded !px-2 hover:dark:bg-slate-100/10 hover:bg-slate-100 hover:!text-primary-400"
+                  v-for="(bullet, index) in pathways" :key="index" @click="addBullet(bullet.name)">
+                  {{ bullet.name }}
+                </li>
+              </ul>
+            </AccordionContent>
+          </AccordionPanel>
+          <AccordionPanel value="3" class="!border-0">
+            <AccordionHeader class='!px-4 !py-2'><span class="material-symbols-rounded !text-xl">graph_3
+              </span>Current graphs</AccordionHeader>
+            <AccordionContent>
+              <ul class="">
+                <li
+                  class="flex !justify-between items-center cursor-pointer !text-sm !py-1 rounded !px-2 hover:dark:bg-slate-100/10 hover:bg-slate-100 hover:!text-primary-400"
+                  @click="addScreen('black', 'png')">
+                  Add current graph
+                </li>
+              </ul>
+            </AccordionContent>
+          </AccordionPanel>
+          <AccordionPanel value="4" class="!border-0">
+            <AccordionHeader class='!px-4 !py-2'><span class="material-symbols-rounded !text-xl">forum
+              </span>Chatbot tag history</AccordionHeader>
+            <AccordionContent>
+              <ul class="">
+                <li
+                  class="flex !justify-between items-center cursor-pointer !text-sm !py-1 rounded !px-2 hover:dark:bg-slate-100/10 hover:bg-slate-100 hover:!text-primary-400"
+                  v-for="(bullet, index) in tags" :key="index" @click="addBullet(bullet)">
+                  {{ bullet.id }}
+                </li>
+              </ul>
+            </AccordionContent>
+          </AccordionPanel>
+        </Accordion>
       </aside>
       <div class="flex flex-col p-2 md:col-span-8">
         <div class="border rounded-xl dark:!border-[#020617] flex-1 dark:!bg-[#020617] bg-[#f3f3f3] border-[#f3f3f3]">
@@ -55,50 +114,7 @@ export default {
       tags: [],
       api: {
         textenrich: "api/subgraph/textenrich",
-      },
-      items: [
-        {
-          label: 'Protein history',
-          icon: 'pi pi-history',
-          badge: 5,
-          items: [
-            {
-              label: 'Compose',
-              icon: 'pi pi-file-edit',
-              shortcut: '⌘+N'
-            },
-          ]
-        },
-        {
-          label: 'Abstract history',
-          icon: 'pi pi-history',
-          badge: 5,
-          items: [
-          ]
-        },
-        {
-          label: 'Favourite terms',
-          icon: 'pi pi-star-fill',
-          badge: 5,
-          items: [
-          ]
-        },
-        {
-          label: 'Current graphs',
-          icon: 'pi pi-chart-bar',
-          badge: 5,
-          items: [
-          ]
-        },
-        {
-          label: 'Chatbot tag history',
-          icon: 'pi pi-chart-bar',
-          badge: 5,
-          items: [
-            
-          ]
-        },
-      ]
+      }
     };
   },
   computed: {
