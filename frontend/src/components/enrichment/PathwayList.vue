@@ -181,7 +181,7 @@ export default {
       if (com.selected_categories?.length) {
         // If category is selected, filter by category
         filtered = filtered.filter(function (term) {
-          return com.active_categories_set.has(term.category);
+          return com.selected_categories.some(el => el.label === term.category);
         });
       }
 

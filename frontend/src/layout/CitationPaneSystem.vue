@@ -8,7 +8,7 @@
       </h3>
       <div class="flex items-center gap-1 ml-auto">
         <Button class="w-5 h-5 ml-auto" size="small" text rounded plain @click="add_subset(active_subset)">
-          <span class="dark:text-white !text-lg material-symbols-rounded"> note_add </span>
+          <span class="dark:text-white !text-lg material-symbols-rounded"> add_circle </span>
         </Button>
         <Button class="w-5 h-5" size="small" text rounded plain @click="close_pane()">
           <span class="dark:text-white !text-xl material-symbols-rounded"> close </span>

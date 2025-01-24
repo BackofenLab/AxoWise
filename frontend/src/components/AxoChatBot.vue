@@ -46,7 +46,6 @@
               <figure v-if="msg.sender === 'Bot'" class="w-6 h-6 p-1 rounded-full bg-gradient-prime-reverse">
                 <img src="@/assets/logo.png" alt="Bot Icon" />
               </figure>
-              <h6 v-if="msg.sender === 'Bot'" class="m-0 text-center">AxoBot</h6>
 
               <Chip v-if="msg.ref && msg.sender === 'Bot'" class="cursor-pointer"
                 :pt="{ root: { class: 'h-6 !bg-primary-500 !px-2 !py-0.5' }, label: { class: '!text-sm' } }"
