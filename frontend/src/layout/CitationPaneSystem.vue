@@ -1,8 +1,9 @@
 <template>
-  <div v-show="(active_subset !== null && active_node == null) || paneHidden == false
-    "
-    class="!absolute !z-[9] !bottom-[6px] !left-[50%] !-translate-x-[50%] !w-[18rem] border dark:border-slate-700 rounded-xl bg-[var(--card-bg)] shadow-curve-dark dark:shadow-curve-light">
-    <header class="flex justify-between items-center !px-2.5 !py-1.5 cursor-move">
+  <DraggableView v-show="(active_subset !== null && active_node == null) || paneHidden == false
+    " :initialPosition="initial_drag_position"
+    wrapperClass="!w-[18rem] border dark:border-slate-700 rounded-xl bg-[var(--card-bg)] shadow-curve-dark dark:shadow-curve-light"
+    contentClass="!px-2.5 !py-0" handlerClass="flex justify-between items-center !px-3 !py-2">
+    <template #handler>
       <h3 class="text-sm font-bold">
         {{ active_tab }}
       </h3>
@@ -14,17 +15,18 @@
           <span class="dark:text-white !text-xl material-symbols-rounded"> close </span>
         </Button>
       </div>
-    </header>
-    <div class="!px-2.5 !py-0">
+    </template>
+    <template #content>
       <SubsetPane v-show="active_tab === 'Subset'" :mode="mode" :active_subset="active_subset" :gephi_data="gephi_data"
         @active_item_changed="active_item = $event" @highlight_subset_changed="highlight_subset = $event"
         @active_layer_changed="active_layer = $event"></SubsetPane>
-    </div>
-  </div>
+    </template>
+  </DraggableView>
 </template>
 
 <script>
 import SubsetPane from "@/components/pane/modules/subset/SubsetPane.vue";
+import DraggableView from "@/components/DraggableView.vue";
 import { useToast } from "primevue/usetoast";
 export default {
   name: "PaneSystem",
@@ -40,6 +42,7 @@ export default {
   ],
   components: {
     SubsetPane,
+    DraggableView
   },
   data() {
     return {
@@ -48,7 +51,7 @@ export default {
       active_tab: "Subset",
       highlight_subset: null,
       paneHidden: true,
-      // initial_drag_btn_position: { top: window.innerHeight - 115, left: window.innerWidth / 2 },
+      initial_drag_position: { top: window.innerHeight - 115, left: window.innerWidth / 2 },
     };
   },
   watch: {

@@ -1,13 +1,14 @@
 <template>
-  <div v-show="active_node !== null ||
+  <DraggableView v-show="active_node !== null ||
     active_subset !== null ||
     active_term !== null ||
     active_decoloumn !== null ||
     active_termlayers !== null ||
     paneHidden == false
-    "
-    class="!absolute !z-[9] !bottom-[6px] !left-[50%] !-translate-x-[50%] !w-[18rem] border dark:border-slate-700 rounded-xl bg-[var(--card-bg)] shadow-curve-dark dark:shadow-curve-light">
-    <header class="flex justify-between items-center !px-2.5 !py-1.5 cursor-move">
+    " :initialPosition="initial_drag_position"
+    wrapperClass="!w-[18rem] border dark:border-slate-700 rounded-xl bg-[var(--card-bg)] shadow-curve-dark dark:shadow-curve-light"
+    contentClass="!px-2.5 !py-0" handlerClass="flex justify-between items-center !px-3 !py-2">
+    <template #handler>
       <h3 class="text-sm font-bold">
         {{ active_tab }}
       </h3>
@@ -16,8 +17,8 @@
           <span class="dark:text-white !text-xl material-symbols-rounded"> close </span>
         </Button>
       </div>
-    </header>
-    <div class="!px-2.5 !py-0">
+    </template>
+    <template #content>
       <NodePane v-show="active_tab === 'Protein'" :mode="mode" :active_node="active_node"
         :node_color_index="node_color_index" :gephi_data="gephi_data" @active_item_changed="active_item = $event">
       </NodePane>
@@ -31,8 +32,8 @@
         :gephi_data="gephi_data" @active_item_changed="active_item = $event"></DEValuePane>
       <EnrichmentLayerPane v-show="active_tab === 'Pathway layers'" :mode="mode" :active_termlayers="active_termlayers"
         :gephi_data="gephi_data" @active_item_changed="active_item = $event"></EnrichmentLayerPane>
-    </div>
-  </div>
+    </template>
+  </DraggableView>
 </template>
 
 <script>
@@ -41,6 +42,7 @@ import SubsetPane from "@/components/pane/modules/subset/SubsetPane.vue";
 import TermPane from "@/components/pane/modules/pathways/TermPane.vue";
 import DEValuePane from "@/components/pane/modules/difexp/DEValuePane.vue";
 import EnrichmentLayerPane from "@/components/pane/modules/layer/EnrichmentLayerPane.vue";
+import DraggableView from "@/components/DraggableView.vue";
 import { useToast } from "primevue/usetoast";
 export default {
   name: "PaneSystem",
@@ -70,7 +72,8 @@ export default {
     SubsetPane,
     TermPane,
     DEValuePane,
-    EnrichmentLayerPane
+    EnrichmentLayerPane,
+    DraggableView
   },
   data() {
     return {
@@ -79,7 +82,7 @@ export default {
       active_tab: "Protein",
       highlight_subset: null,
       paneHidden: true,
-      // initial_drag_btn_position: { top: window.innerHeight - 115, left: window.innerWidth / 2 },
+      initial_drag_position: { top: window.innerHeight - 115, left: window.innerWidth / 2 },
     };
   },
   watch: {
@@ -94,38 +97,6 @@ export default {
     },
   },
   methods: {
-    // open_pane() {
-    //   const div = document.getElementById("attributepane");
-    //   const paneButton = document.getElementById("panebutton");
-    //   const paneCloseButton = document.getElementById("paneclosebutton");
-    //   const collapseIcon = document.getElementById("collapse-icon");
-
-    //   if (!div.classList.contains("pane-show")) {
-    //     div.classList.add("pane-show");
-    //     paneButton.style.height = "100%";
-    //     paneCloseButton.style.visibility = "hidden";
-    //     collapseIcon.classList.add("rotate");
-
-    //     this.paneHidden = false;
-
-    //     this.$emit("active_node_changed", null);
-    //     this.$emit("active_term_changed", null);
-    //     this.$emit("active_subset_changed", null);
-    //     this.$emit("active_layer_changed", null);
-    //     this.$emit("active_decoloumn_changed", null);
-    //     this.$emit("active_termlayers_changed", null);
-    //     this.emitter.emit("enrichTerms", null);
-    //     this.emitter.emit("enrichSubset", null);
-    //   } else {
-    //     div.classList.remove("pane-show");
-    //     paneCloseButton.style.visibility = "visible";
-    //     paneButton.style.height = "25px";
-    //     collapseIcon.classList.remove("rotate");
-    //     this.paneHidden = true;
-    //     var nameKey = Object.keys(this.active_dict)[0];
-    //     this.selectTab(nameKey, this.active_dict[nameKey].value);
-    //   }
-    // },
     close_pane() {
       this.active_dict = {};
       this.$emit("active_node_changed", null);

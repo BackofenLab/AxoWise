@@ -1,9 +1,11 @@
 <template>
   <section :class="`absolute peer select-none z-[9] ${wrapperClass}`"
     :style="{ top: `${position.top}px`, left: `${position.left}px` }" ref="dragWrapper">
-    <header :class="`cursor-grab ${handlerClass}`" @mousedown="onMouseDown" ref="draggable">
-      <slot name="handler" />
-    </header>
+    <div ref="draggable">
+      <header :class="`cursor-move ${handlerClass}`" @mousedown="onMouseDown" id="drag-handle">
+        <slot name="handler" />
+      </header>
+    </div>
     <div v-if="$slots.content" :class="contentClass">
       <slot name="content" />
     </div>
@@ -27,19 +29,19 @@ export default {
     },
     initialPosition: {
       type: Object,
-      default: () => ({ top: 100, left: 100 }),
+      default: () => ({ top: 60, left: 60 }),
     },
     minX: {
       type: Number,
-      default: 0, // Minimum left coordinate
+      default: 60, // Minimum left coordinate
     },
     minY: {
       type: Number,
-      default: 0, // Minimum top coordinate
+      default: 60, // Minimum top coordinate
     },
     dragHandle: {
       type: String,
-      default: null, // CSS selector for the drag handle
+      default: '#drag-handle', // CSS selector for the drag handle
     },
   },
   data() {
@@ -49,35 +51,14 @@ export default {
       dragOffset: { x: 0, y: 0 },
     };
   },
-  mounted() {
-    // Safely access the handler element after DOM updates
-    this.$nextTick(() => {
-      if (this.dragHandle && this.$refs.handler) {
-        const handle = this.$refs.handler.querySelector(this.dragHandle);
-        if (handle) {
-          // Add mousedown listener only to the handle
-          handle.addEventListener("mousedown", this.onMouseDown);
-        }
-      }
-    });
-  },
-  beforeUnmount() {
-    // Remove event listener safely if handler exists
-    if (this.dragHandle && this.$refs.handler) {
-      const handle = this.$refs.handler.querySelector(this.dragHandle);
-      if (handle) {
-        handle.removeEventListener("mousedown", this.onMouseDown);
-      }
-    }
-  },
   methods: {
     onMouseDown(event) {
       // Prevent default behavior (like clicking) when dragging starts
       event.preventDefault();
 
       // Ensure the drag starts only from the handle and avoid errors
-      if (this.dragHandle && this.$refs.handler) {
-        const handle = this.$refs.handler.querySelector(this.dragHandle);
+      if (this.dragHandle && this.$refs.draggable) {
+        const handle = this.$refs.draggable.querySelector(this.dragHandle);
         if (!handle || !handle.contains(event.target)) {
           return; // Stop if the event is not from the handle
         }
