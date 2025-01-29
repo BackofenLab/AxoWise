@@ -1,7 +1,9 @@
 <template>
-  <div v-show="showPersistentComponent"
-    class="!absolute !z-[9] !bottom-[10px] !left-0 !h-[calc(100vh-70px)] !w-[45rem] !mt-[60px] !ml-[60px] border dark:border-slate-700 rounded-xl bg-[var(--card-bg)] shadow-curve-dark dark:shadow-curve-light !overflow-hidden">
-    <header class="flex items-center !justify-start !py-4 !px-4 cursor-move">
+  <DraggableView v-show="showPersistentComponent" :initialPosition="initial_drag_position"
+    contentClass="!pr-4 !pl-0 !pb-3 !overflow-y-visible flex-1 grid grid-cols-1 md:grid-cols-12"
+    handlerClass="flex items-center !justify-start !py-4 !px-4"
+    wrapperClass="!h-[70vh] !w-[38rem] border dark:border-slate-700 rounded-xl bg-[var(--card-bg)] shadow-curve-dark dark:shadow-curve-light !overflow-hidden">
+    <template #handler>
       <h3 class="text-base font-bold">
         AxoWord
       </h3>
@@ -10,18 +12,18 @@
           <span class="dark:text-white !text-2xl material-symbols-rounded"> close </span>
         </Button>
       </div>
-    </header>
-    <div class="!pr-4 !pl-0 !pb-3 !overflow-y-visible flex-1 grid grid-cols-1 md:grid-cols-12">
+    </template>
+    <template #content>
       <aside class="p-2 md:col-span-4">
         <Accordion :value="['0']" multiple>
           <AccordionPanel value="0" class="!border-0">
-            <AccordionHeader class='!px-4 !py-2'>
+            <AccordionHeader class=''>
               <span class="material-symbols-rounded !text-xl">history </span>Protein history
             </AccordionHeader>
             <AccordionContent>
-              <ul class="divide-y border-slate-200 dark:divide-slate-100/10">
+              <ul class="">
                 <li
-                  class="flex !justify-between items-center px-4 hover:dark:bg-slate-100/10 hover:bg-slate-100 hover:!text-primary-400"
+                  class="flex !justify-between items-center cursor-pointer !text-sm !line-clamp-2 !py-1 rounded !px-2 hover:dark:bg-slate-100/10 hover:bg-slate-100 hover:!text-primary-400"
                   v-for="(bullet, index) in proteins" :key="index" @click="addBullet(bullet.label)">
                   {{ bullet.label }}
                 </li>
@@ -29,12 +31,12 @@
             </AccordionContent>
           </AccordionPanel>
           <AccordionPanel value="1" class="!border-0">
-            <AccordionHeader class='!px-4 !py-2'><span class="material-symbols-rounded !text-xl">summarize
+            <AccordionHeader class=''><span class="material-symbols-rounded !text-xl">summarize
               </span>Abstract history</AccordionHeader>
             <AccordionContent>
-              <ul class="divide-y border-slate-200 dark:divide-slate-100/10">
+              <ul class="">
                 <li
-                  class="flex !justify-between items-center px-4 hover:dark:bg-slate-100/10 hover:bg-slate-100 hover:!text-primary-400"
+                  class="flex !justify-between items-center cursor-pointer !text-sm !line-clamp-2 !py-1 rounded !px-2 hover:dark:bg-slate-100/10 hover:bg-slate-100 hover:!text-primary-400"
                   v-for="(bullet, index) in abstracts" :key="index" @click="addBullet(bullet.label)">
                   {{ bullet.label }}
                 </li>
@@ -42,12 +44,12 @@
             </AccordionContent>
           </AccordionPanel>
           <AccordionPanel value="2" class="!border-0">
-            <AccordionHeader class='!px-4 !py-2'><span class="material-symbols-rounded !text-xl">star
+            <AccordionHeader class=''><span class="material-symbols-rounded !text-xl">star
               </span>Favourite terms</AccordionHeader>
             <AccordionContent>
               <ul class="">
                 <li
-                  class="flex !justify-between items-center cursor-pointer !text-sm !py-1 rounded !px-2 hover:dark:bg-slate-100/10 hover:bg-slate-100 hover:!text-primary-400"
+                  class="flex !justify-between items-center cursor-pointer !text-sm !line-clamp-2 !py-1 rounded !px-2 hover:dark:bg-slate-100/10 hover:bg-slate-100 hover:!text-primary-400"
                   v-for="(bullet, index) in pathways" :key="index" @click="addBullet(bullet.name)">
                   {{ bullet.name }}
                 </li>
@@ -55,12 +57,12 @@
             </AccordionContent>
           </AccordionPanel>
           <AccordionPanel value="3" class="!border-0">
-            <AccordionHeader class='!px-4 !py-2'><span class="material-symbols-rounded !text-xl">graph_3
+            <AccordionHeader class=''><span class="material-symbols-rounded !text-xl">graph_3
               </span>Current graphs</AccordionHeader>
             <AccordionContent>
               <ul class="">
                 <li
-                  class="flex !justify-between items-center cursor-pointer !text-sm !py-1 rounded !px-2 hover:dark:bg-slate-100/10 hover:bg-slate-100 hover:!text-primary-400"
+                  class="flex !justify-between items-center cursor-pointer !text-sm !line-clamp-2 !py-1 rounded !px-2 hover:dark:bg-slate-100/10 hover:bg-slate-100 hover:!text-primary-400"
                   @click="addScreen('black', 'png')">
                   Add current graph
                 </li>
@@ -68,12 +70,12 @@
             </AccordionContent>
           </AccordionPanel>
           <AccordionPanel value="4" class="!border-0">
-            <AccordionHeader class='!px-4 !py-2'><span class="material-symbols-rounded !text-xl">forum
+            <AccordionHeader class=''><span class="material-symbols-rounded !text-xl">forum
               </span>Chatbot tag history</AccordionHeader>
             <AccordionContent>
               <ul class="">
                 <li
-                  class="flex !justify-between items-center cursor-pointer !text-sm !py-1 rounded !px-2 hover:dark:bg-slate-100/10 hover:bg-slate-100 hover:!text-primary-400"
+                  class="flex !justify-between items-center cursor-pointer !text-sm !line-clamp-2 !py-1 rounded !px-2 hover:dark:bg-slate-100/10 hover:bg-slate-100 hover:!text-primary-400"
                   v-for="(bullet, index) in tags" :key="index" @click="addBullet(bullet)">
                   {{ bullet.id }}
                 </li>
@@ -92,11 +94,12 @@
             @click="exportdocX" />
         </div>
       </div>
-    </div>
-  </div>
+    </template>
+  </DraggableView>
 </template>
 
 <script>
+import DraggableView from "@/components/DraggableView.vue";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import { saveAs } from "file-saver";
@@ -105,6 +108,9 @@ let quill = null;
 
 export default {
   name: "DocumentWindow",
+  components: {
+    DraggableView
+  },
   data() {
     return {
       windowCheck: false,
@@ -114,7 +120,8 @@ export default {
       tags: [],
       api: {
         textenrich: "api/subgraph/textenrich",
-      }
+      },
+      initial_drag_position: { top: 60, left: 60 },
     };
   },
   computed: {
@@ -141,7 +148,6 @@ export default {
   },
   mounted() {
     let com = this;
-    // com.dragElement(document.getElementById("expdocument"));
 
     com.emitter.on("openWord", () => {
       com.windowCheck = !com.windowCheck;
@@ -241,59 +247,6 @@ export default {
       com.axios.post(com.api.textenrich, formData).then((response) => {
         console.log(response);
       });
-    },
-    dragElement(elmnt) {
-      var pos1 = 0,
-        pos2 = 0,
-        pos3 = 0,
-        pos4 = 0;
-      if (document.getElementById(elmnt.id + "_header")) {
-        document.getElementById(elmnt.id + "_header").onmousedown =
-          dragMouseDown;
-      } else {
-        elmnt.onmousedown = dragMouseDown;
-      }
-
-      function dragMouseDown(e) {
-        e = e || window.event;
-        e.preventDefault();
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        document.onmouseup = closeDragElement;
-        document.onmousemove = elementDrag;
-      }
-
-      function elementDrag(e) {
-        e = e || window.event;
-        e.preventDefault();
-        var parentWidth = window.innerWidth;
-        var parentHeight = window.innerHeight;
-        var elementWidth = elmnt.offsetWidth;
-        var elementHeight = elmnt.offsetHeight;
-
-        pos1 = pos3 - e.clientX;
-        pos2 = pos4 - e.clientY;
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-
-        var newTop = elmnt.offsetTop - pos2;
-        var newLeft = elmnt.offsetLeft - pos1;
-
-        if (newTop < 0) newTop = 0;
-        if (newLeft < 0) newLeft = 0;
-        if (newTop + elementHeight > parentHeight)
-          newTop = parentHeight - elementHeight;
-        if (newLeft + elementWidth > parentWidth)
-          newLeft = parentWidth - elementWidth;
-
-        elmnt.style.top = newTop + "px";
-        elmnt.style.left = newLeft + "px";
-      }
-
-      function closeDragElement() {
-        document.onmouseup = null;
-        document.onmousemove = null;
-      }
     },
     closeWindow() {
       this.windowCheck = false;
