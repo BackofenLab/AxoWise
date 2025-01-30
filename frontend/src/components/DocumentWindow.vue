@@ -1,8 +1,8 @@
 <template>
   <DraggableView v-show="showPersistentComponent" :initialPosition="initial_drag_position"
-    contentClass="!pr-4 !pl-0 !pb-3 !overflow-y-visible flex-1 grid grid-cols-1 md:grid-cols-12"
+    contentClass="!pr-4 !pl-0 !pb-3 flex-1 grid grid-cols-1 md:grid-cols-12"
     handlerClass="flex items-center !justify-start !py-4 !px-4"
-    wrapperClass="!h-[70vh] !w-[38rem] border dark:border-slate-700 rounded-xl bg-[var(--card-bg)] shadow-curve-dark dark:shadow-curve-light !overflow-hidden">
+    wrapperClass="!h-[calc(100vh-77px)] !w-[44rem] !max-full border dark:border-slate-700 rounded-xl bg-[var(--card-bg)] shadow-curve-dark dark:shadow-curve-light !overflow-hidden">
     <template #handler>
       <h3 class="text-base font-bold">
         AxoWord
@@ -15,69 +15,84 @@
     </template>
     <template #content>
       <aside class="p-2 md:col-span-4">
-        <Accordion :value="['0']" multiple>
+        <Accordion :value="['0']" multiple class="!flex !flex-col !gap-4 !max-h-[77vh] !overflow-auto !pl-2">
           <AccordionPanel value="0" class="!border-0">
-            <AccordionHeader class=''>
-              <span class="material-symbols-rounded !text-xl">history </span>Protein history
+            <AccordionHeader class='!p-0 !gap-3' :pt="{ toggleicon: '!flex-shrink-0' }">
+              <span class="material-symbols-rounded !text-xl !flex-shrink-0">history </span><span
+                class="!flex-1 !leading-tight !line-clamp-2">Protein history</span>
             </AccordionHeader>
-            <AccordionContent>
-              <ul class="">
+            <AccordionContent :pt="{ content: '!pl-6 !pt-3 !pb-0' }">
+              <ul class="!flex !flex-col !gap-1">
                 <li
-                  class="flex !justify-between items-center cursor-pointer !text-sm !line-clamp-2 !py-1 rounded !px-2 hover:dark:bg-slate-100/10 hover:bg-slate-100 hover:!text-primary-400"
+                  class="!flex !items-center !gap-1.5 !cursor-pointer !py-1 rounded !px-2 hover:dark:bg-slate-100/10 hover:bg-slate-100 hover:!text-primary-400"
                   v-for="(bullet, index) in proteins" :key="index" @click="addBullet(bullet.label)">
-                  {{ bullet.label }}
+                  <span class="material-symbols-rounded font-variation-ico-filled !text-[6px] !flex-shrink-0">circle
+                  </span><span class="!text-sm !line-clamp-2">{{ bullet.label }}</span>
                 </li>
               </ul>
             </AccordionContent>
           </AccordionPanel>
           <AccordionPanel value="1" class="!border-0">
-            <AccordionHeader class=''><span class="material-symbols-rounded !text-xl">summarize
-              </span>Abstract history</AccordionHeader>
-            <AccordionContent>
-              <ul class="">
+            <AccordionHeader class='!p-0 !gap-3' :pt="{ toggleicon: '!flex-shrink-0' }">
+              <span class="material-symbols-rounded !text-xl !flex-shrink-0">summarize </span><span
+                class="!flex-1 !leading-tight !line-clamp-2">Abstract history</span>
+            </AccordionHeader>
+            <AccordionContent :pt="{ content: '!pl-6 !pt-3 !pb-0' }">
+              <ul class="!flex !flex-col !gap-1">
                 <li
-                  class="flex !justify-between items-center cursor-pointer !text-sm !line-clamp-2 !py-1 rounded !px-2 hover:dark:bg-slate-100/10 hover:bg-slate-100 hover:!text-primary-400"
+                  class="!flex !items-center !gap-1.5 !cursor-pointer !py-1 rounded !px-2 hover:dark:bg-slate-100/10 hover:bg-slate-100 hover:!text-primary-400"
                   v-for="(bullet, index) in abstracts" :key="index" @click="addBullet(bullet.label)">
-                  {{ bullet.label }}
+                  <span class="material-symbols-rounded font-variation-ico-filled !text-[6px] !flex-shrink-0">circle
+                  </span><span class="!text-sm !line-clamp-2">{{ bullet.label }}</span>
                 </li>
               </ul>
             </AccordionContent>
           </AccordionPanel>
           <AccordionPanel value="2" class="!border-0">
-            <AccordionHeader class=''><span class="material-symbols-rounded !text-xl">star
-              </span>Favourite terms</AccordionHeader>
-            <AccordionContent>
-              <ul class="">
+            <AccordionHeader class='!p-0 !gap-3' :pt="{ toggleicon: '!flex-shrink-0' }">
+              <span class="material-symbols-rounded !text-xl !flex-shrink-0">star </span><span
+                class="!flex-1 !leading-tight !line-clamp-2">Favourite terms</span>
+            </AccordionHeader>
+            <AccordionContent :pt="{ content: '!pl-6 !pt-3 !pb-0' }">
+              <ul class="!flex !flex-col !gap-1">
                 <li
-                  class="flex !justify-between items-center cursor-pointer !text-sm !line-clamp-2 !py-1 rounded !px-2 hover:dark:bg-slate-100/10 hover:bg-slate-100 hover:!text-primary-400"
+                  class="!flex !items-center !gap-1.5 !cursor-pointer !py-1 rounded !px-2 hover:dark:bg-slate-100/10 hover:bg-slate-100 hover:!text-primary-400"
                   v-for="(bullet, index) in pathways" :key="index" @click="addBullet(bullet.name)">
-                  {{ bullet.name }}
+                  <span class="material-symbols-rounded font-variation-ico-filled !text-[6px] !flex-shrink-0">circle
+                  </span><span class="!text-sm !line-clamp-2">{{ bullet.name }}</span>
                 </li>
               </ul>
             </AccordionContent>
           </AccordionPanel>
           <AccordionPanel value="3" class="!border-0">
-            <AccordionHeader class=''><span class="material-symbols-rounded !text-xl">graph_3
-              </span>Current graphs</AccordionHeader>
-            <AccordionContent>
-              <ul class="">
+            <AccordionHeader class='!p-0 !gap-3' :pt="{ toggleicon: '!flex-shrink-0' }">
+              <span class="material-symbols-rounded !text-xl !flex-shrink-0">graph_3 </span><span
+                class="!flex-1 !leading-tight !line-clamp-2">Current graphs</span>
+            </AccordionHeader>
+            <AccordionContent :pt="{ content: '!pl-6 !pt-3 !pb-0' }">
+              <ul class="!flex !flex-col !gap-1">
                 <li
-                  class="flex !justify-between items-center cursor-pointer !text-sm !line-clamp-2 !py-1 rounded !px-2 hover:dark:bg-slate-100/10 hover:bg-slate-100 hover:!text-primary-400"
+                  class="!flex !items-center !gap-1.5 !cursor-pointer !py-1 rounded !px-2 hover:dark:bg-slate-100/10 hover:bg-slate-100 hover:!text-primary-400"
                   @click="addScreen('black', 'png')">
-                  Add current graph
+                  <span class="material-symbols-rounded font-variation-ico-filled !text-[6px] !flex-shrink-0">circle
+                  </span><span class="!text-sm !line-clamp-2">Add current graph</span>
                 </li>
+
               </ul>
             </AccordionContent>
           </AccordionPanel>
           <AccordionPanel value="4" class="!border-0">
-            <AccordionHeader class=''><span class="material-symbols-rounded !text-xl">forum
-              </span>Chatbot tag history</AccordionHeader>
-            <AccordionContent>
-              <ul class="">
+            <AccordionHeader class='!p-0 !gap-3' :pt="{ toggleicon: '!flex-shrink-0' }">
+              <span class="material-symbols-rounded !text-xl !flex-shrink-0">forum </span><span
+                class="!flex-1 !leading-tight !line-clamp-2">Chatbot tag history</span>
+            </AccordionHeader>
+            <AccordionContent :pt="{ content: '!pl-6 !pt-3 !pb-0' }">
+              <ul class="!flex !flex-col !gap-1">
                 <li
-                  class="flex !justify-between items-center cursor-pointer !text-sm !line-clamp-2 !py-1 rounded !px-2 hover:dark:bg-slate-100/10 hover:bg-slate-100 hover:!text-primary-400"
+                  class="!flex !items-center !gap-1.5 !cursor-pointer !py-1 rounded !px-2 hover:dark:bg-slate-100/10 hover:bg-slate-100 hover:!text-primary-400"
                   v-for="(bullet, index) in tags" :key="index" @click="addBullet(bullet)">
-                  {{ bullet.id }}
+                  <span class="material-symbols-rounded font-variation-ico-filled !text-[6px] !flex-shrink-0">circle
+                  </span><span class="!text-sm !line-clamp-2">{{ bullet.id }}</span>
                 </li>
               </ul>
             </AccordionContent>
@@ -85,7 +100,8 @@
         </Accordion>
       </aside>
       <div class="flex flex-col p-2 md:col-span-8">
-        <div class="border rounded-xl dark:!border-[#020617] flex-1 dark:!bg-[#020617] bg-[#f3f3f3] border-[#f3f3f3]">
+        <div
+          class="max-h-[70vh] min-h-[40vh] border rounded-xl dark:!border-[#020617] dark:!bg-[#020617] bg-[#f3f3f3] border-[#f3f3f3]">
           <div ref="editor"></div>
         </div>
         <div class="flex items-center justify-end gap-4 mt-4">
@@ -121,7 +137,7 @@ export default {
       api: {
         textenrich: "api/subgraph/textenrich",
       },
-      initial_drag_position: { top: 60, left: 60 },
+      initial_drag_position: { top: 65, left: 60 },
     };
   },
   computed: {
@@ -256,6 +272,10 @@ export default {
 </script>
 
 <style>
+.ql-container {
+  height: calc(100% - 40px);
+}
+
 .ql-snow {
   background-color: rgba(255, 255, 255, 0.4);
 }
