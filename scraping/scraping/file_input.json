@@ -1,0 +1,303 @@
+[
+    {
+        "DOI": "https://doi.org/10.1016/j.bioactmat.2021.08.009",
+        "header": "Data availability",
+        "paragraph": "The raw sequencing data are deposited in NCBI Sequence Read Archive (SRA), accession number PRJNA623696.",
+        "PubMed_ID": "34820571",
+        "journal": "Bioactive Materials"
+    },
+    {
+        "DOI": "https://doi.org/10.1186/s13024-021-00507-7",
+        "header": "Availability of data and materials",
+        "paragraph": "The MEGENA co-expression networks and gene modules for 50 tissues are available through GitHub (https://github.com/penguab/GTEx-Networks-For-Senescence). The age-adjusted networks are shared in https://github.com/penguab/GTEx-Networks.",
+        "PubMed_ID": "35000600",
+        "journal": "Molecular Neurodegeneration"
+    },
+    {
+        "DOI": "https://doi.org/10.1186/s12943-024-02117-5",
+        "header": "Data availability",
+        "paragraph": "Public RNA-seq datasets for growth hormone-secreting pituitary neuroendocrine tumors are accessible under GEO accessions: GSE214226. Public scRNA-seq datasets for growth hormone-secreting pituitary neuroendocrine tumors are generously provided by Professor Zhao\u2019s team at Huashan Hospital (https://pubmed.ncbi.nlm.nih.gov/36754052/). The raw sequence data reported in this paper have been deposited in the Genome Sequence Archive in BIG Data Center, Beijing Institute of Genomics (BIG), Chinese Academy of Sciences [http://bigd.big.ac.cn/] and GEO database under restricted access: HRA007337 (MeRIP-seq for growth hormone-secreting pituitary neuroendocrine tumors samples, https://ngdc.cncb.ac.cn/gsa-human/s/v52im56T for review only), CRA016311 or GSE269321 (MeRIP-seq for GH3 cell line, https://ngdc.cncb.ac.cn/gsa/s/8WVmDLmV or https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE269321 for review only), CRA016340 or GSE269044 (RNA-seq for GH3 cell line, https://ngdc.cncb.ac.cn/gsa/s/zpBrK8CM or https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE269044 for review only). The researchers can register and login to the GSA database website [https://ngdc.cncb.ac.cn/gsa-human/] and follow the guidance of \u201cRequest Data\u201d to request the data step by step [https://ngdc.cncb.ac.cn/gsa-human/document/GSA-Human_Request_Guide_for_Users_us.pdf] and/or by contacting zuozhx@sysucc.org.cn or jiangxiaob1@sysucc.org.cn. All requests will be reviewed by corresponding authors and the SYSUCC institutional review board. The approximate response time for accession requests is about two weeks. The access authority can be obtained for scientific research and not-for-profit use only. Once access has been granted, the data will be available to download for two months. All data supporting the findings of this work are included in this article and the supplementary materials files.",
+        "PubMed_ID": "39304899",
+        "journal": "Molecular Cancer"
+    },
+    {
+        "DOI": "https://doi.org/10.1016/j.cmet.2024.09.006",
+        "header": "Data and code availability",
+        "paragraph": "\u2022All cadaveric human islet ATAC-seq, RNA-seq, and scRNA-seq data generated in this study are available via the Gene Expression Omnibus under study accession GEO: GSE251913.\u2022Data used to generate manuscript figures are provided in Tables S1, S2, S3, S4, and S5 and Data S1, and at https://doi.org/10.5281/zenodo.13730232.\u2022Scripts used to generate manuscript figures can be found at https://github.com/UcarLab/ERS-vs-CYT-Islet-Stress-Responses.\u2022This paper does not report original code.\u2022Any additional information required to reanalyze data reported in this paper is available from the lead contact upon request.",
+        "PubMed_ID": "39383866",
+        "journal": "Cell Metabolism"
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41590-024-01992-w",
+        "header": "Data availability",
+        "paragraph": "IMC data files have been deposited and are available via Zenodo at https://doi.org/10.5281/zenodo.10020271 (ref. 69). Processed bulk RNA sequencing and single-cell RNA/TCR/BCR sequencing data have been deposited in the National Center for Biotechnology Information Gene Expression Omnibus database under accession code GSE272348. Bulk TCR-\u03b2 and IGH sequencing data are available from the Adaptive Biotechnologies ImmuneACCESS repository (https://clients.adaptivebiotech.com/pub/shu-2024-ni). All other data are present in the Article and its supplementary files or can be obtained from the corresponding authors upon reasonable request. All custom code used to generate the results in this study has been deposited and is available via GitHub at https://github.com/FertigLab/HCCTLS.",
+        "PubMed_ID": "39455893",
+        "journal": "Nature Immunology"
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41587-023-01937-y",
+        "header": "Data availability",
+        "paragraph": "The databases GRCh38 for human data and mm10 for mouse data, v 32, Ensembl 98 were used for the alignment of the sequencing data. All data required to replicate the analyses, including spaceranger output files, H&amp;E images and additional files are available at Mendeley Data (https://doi.org/10.17632/w7nw4km7xd.1). The MALDI-MSI raw data in imzML format and MS/MS spectra collected from tissue in mzML and vendor-specific baf format are available at Figshare (https://doi.org/10.17044/scilifelab.22770161). In situ sequencing data are available at Zenodo (https://doi.org/10.5281/zenodo.7861508). Spatial transcriptomics raw sequencing data, microscope images and spaceranger output files of the mouse and human samples are available at Figshare (https://doi.org/10.17044/scilifelab.22778920). The same data, with the exception of the human sequencing data, is available at Gene Expression Omnibus (GEO) with the accession number GSE232910. The sequencing data in FASTQ format of the human sample is provided upon request by Per Svenningsson (per.svenningsson@ki.se). The mouse brain atlas (http://mousebrain.org/) dataset and the GEO repository with accession number GSE178265 were used for the ST data deconvolution. The code used to generate the figures is available at https://github.com/marcovito/sma.",
+        "PubMed_ID": "37667091",
+        "journal": "Nature Biotechnology"
+    },
+    {
+        "DOI": "https://doi.org/10.1016/j.stem.2024.05.007",
+        "header": "Data and code availability",
+        "paragraph": "\u2022Single-cell RNA-seq data have been deposited at GEO and are publicly available as of the date of publication. Accession numbers are listed in the key resources table. This paper analyzes existing, publicly available data. Accession numbers for the datasets are listed in the key resources table.\u2022This paper does not report original code.\u2022Any additional information required to reanalyze the data reported in this paper is available from the lead contact upon request.",
+        "PubMed_ID": "38876106",
+        "journal": "Cell Stem Cell"
+    },
+    {
+        "DOI": "https://doi.org/10.1016/j.chom.2024.06.013",
+        "header": "Data and code availability",
+        "paragraph": "\u2022The demultiplexed reads for the 16S rRNA amplicon sequencing dataset of the Biotherapy cohort have been deposited in the NCBI Sequence Read Archive and are publically available under the project number PRJNA701749. Raw data from HSCT and Enable cohorts have been deposited to the NCBI Sequence Read Archive [http://www.ncbi.nlm.nih.gov/sra] under the accession No. PRJNA565903 and No. PRJNA701859, respectively. Data from the UC cohort have been deposited to EMBL-EBI BioStudies database under the accession No. S-EPMC7599849. Software used to analyze the data are either freely or commercially available. Source code data are available from the corresponding author on request. Accession numbers are listed in the key resources table.\u2022Raw mass spectrometry proteomics data of bacterial metaproteomics have been deposited to the ProteomeXchange Consortium via the PRIDE partner repository (https://www.ebi.ac.uk/pride/) and are publicly available as of the date of publication under the dataset identifier PXD052829. Accession numbers are listed in the key resources table.\u2022Single-cell RNA-sequencing raw data of mouse colonic tissue have been deposited at the EMBL-EBI ArrayExpress repository (https://www.ebi.ac.uk/biostudies/arrayexpress) and are publicly available as of the date of publication under the accession no. E-MTAB-14206 . Accession numbers are listed in the key resources table.\u2022This paper does not report original code. All used tools are cited in the respective methods and key resources table.\u2022Any additional information required to reanalyze the data reported in this paper is available from the lead contact upon request.",
+        "PubMed_ID": "39013472",
+        "journal": "Cell Host & Microbe"
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41556-024-01524-6",
+        "header": "Data availability",
+        "paragraph": "Sequencing data that support the findings of this study have been deposited in the Gene Expression Omnibus (GEO)76 under accession code GSE255274. Source data are provided with this paper. All other data supporting the findings of this study are available from the corresponding author on reasonable request. Scripts for data processing and visualization of scRNA-seq data are available from https://gitlab.gwdg.de/schuh-meiosis/ovulation/-/tree/main.",
+        "PubMed_ID": "39415041",
+        "journal": "Nature Cell Biology"
+    },
+    {
+        "DOI": "https://doi.org/10.1016/j.ccell.2020.06.012",
+        "header": "Data and Code Availability",
+        "paragraph": "Processed scRNAseq data are available for download or interactive exploration at the Broad Single Cell Portal at the following URLs: https://singlecell.broadinstitute.org/single_cell/study/SCP971,https://singlecell.broadinstitute.org/single_cell/study/SCP972/,https://singlecell.broadinstitute.org/single_cell/study/SCP973/. Raw data for SmartSeq2 scRNA-Seq, 10x scRNA-Seq, CNVs, scDNA-Seq, scATAC-Seq and bulk ATAC-Seq are available on GEO: GSE152607.",
+        "PubMed_ID": "32707077",
+        "journal": "Cancer Cell"
+    },
+    {
+        "DOI": "https://doi.org/10.1136/gutjnl-2021-324321",
+        "header": "Data availability statement",
+        "paragraph": "Data is available on GEO (GSE181515). We uploaded our raw data to GEO (GSE181515), which will be open to public access upon paper acceptance. The following secure token has been created to allow review of record GSE181515 while it remains in private status: mxwnsyuwjnexbaj. We also uploaded the scripts for all the analysis performed in the paper onto Github (https://github.com/holab-hku/HCC_Stem_scRNAseq). Data is available on GEO (GSE181515). We uploaded our raw data to GEO (GSE181515), which will be open to public access upon paper acceptance. The following secure token has been created to allow review of record GSE181515 while it remains in private status: mxwnsyuwjnexbaj. We also uploaded the scripts for all the analysis performed in the paper onto Github (https://github.com/holab-hku/HCC_Stem_scRNAseq).",
+        "PubMed_ID": "34588223",
+        "journal": "Gut"
+    },
+    {
+        "DOI": "https://doi.org/10.1093/neuonc/noad101",
+        "header": "Data Availability",
+        "paragraph": "[The single-cell sequencing and spatially resolved transcriptomic data underlying this article are available in Dryad Digital Repository, at https://zenodo.org/record/6962901 and https://datadryad.org/stash/dataset/doi:10.5061/dryad.h70rxwdmj. Used code and software is available at https://github.com/theMILOlab/SPATA2. Imaging and bulk RNA-sequencing data available on request., No potential conflicts of interest were disclosed by the authors., U.K., D.H.H., U.N. conceived the idea, designed the experiments, and composed the paper. J.K., J.K.B. conducted the computational analysis of RNA-seq. K.J. and U.K. single cell transcripomics, J.S. and A. V. performed and analyzed electronmicroscopy, D.H.H. conducted the development of the NeuroPhysiology software pipeline. U.K. conducted cell and slice culture experiments. U.K., K.J. conducted calcium imaging. A.U.A., O.S., J.B., J.Z., V.M.R., K.J. contributed to the interpretation of the results. D.H.H., U.N. supervised the project.]",
+        "PubMed_ID": "37288604",
+        "journal": "Neuro-Oncology"
+    },
+    {
+        "DOI": "https://doi.org/10.1016/j.immuni.2023.12.001",
+        "header": "Data and code availability",
+        "paragraph": "\u2022Collectively, all new sequencing data generated in this study are available on GEO under SuperSeries GSE239999. All raw data, Cell Ranger outputs, and processed Seurat and Signac structures for the atlas and multiome dataset are available on GEO under accession number GSE225503. All raw data, Cell Ranger outputs, and processed Seurat structures for the aducanumab treatment experiments are available on GEO under accession number GSE239975. All raw data, Cell Ranger outputs, and processed Seurat structures for the A\u03b2 uptake experiments are available on GEO under accession number GSE239974. All raw data and counts matrices from bulk sequencing of aged AD\u2217APOE mice are available on GEO under accession number GSE239977. All Xenium raw data, the processed Squidpy structure, and full-slide scans after post-Xenium methoxy-X04 staining are available on Zenodo at https://doi.org/10.5281/zenodo.8206638. The ROSMAP DLPFC-1 and DLPFC-2 data used in this analysis are available at Synapse under accession codes syn16780177 and syn31512863.\u2022All R and Python code necessary to reproduce the analysis and figures in this manuscript has been annotated and uploaded to GitHub at https://github.com/alonmillet/apoe-ad-age-atlas.\u2022Any additional information required to reanalyze the data reported in this paper is available from the lead contact upon request.",
+        "PubMed_ID": "38159571",
+        "journal": " Immunity"
+    },
+    {
+        "DOI": "https://doi.org/10.1161/CIRCULATIONAHA.119.045401",
+        "header": "Data Availability",
+        "paragraph": "Raw sequence data will be made available through dbGaP (the database of Genotypes and Phenotypes) accession number phs001539.v1.p1. Processed data with interactivity for gene search functions will be available through the Broad Institute\u2019s Single Cell Portal (https://singlecell.broadinstitute.org/single_cell/study/SCP498/transcriptional-and-cellular-diversity-of-the-human-heart) under study ID SCP498.",
+        "PubMed_ID": "32403949",
+        "journal": "Circulation"
+    },
+    {
+        "DOI": "https://doi.org/10.1053/j.gastro.2020.11.010",
+        "header": "Data Access",
+        "paragraph": "The interactive exploration tool and data download are available at http://singlecell.charite.de/pancreas. Raw sequencing access-protected data on the European Genome-Phenome Archive are available at https://www.ebi.ac.uk/ega/home under EGAS00001004653. In situ sequencing raw data are available at https://doi.org/10.6084/m9.figshare.12173232.",
+        "PubMed_ID": "33212097",
+        "journal": "Gastroenterology"
+    },
+    {
+        "DOI": "https://doi.org/10.1186/s13045-020-01008-8",
+        "header": "Availability of data and materials",
+        "paragraph": "The datasets used and/or analyzed during the current study are available from the corresponding author on reasonable request.",
+        "PubMed_ID": "33302977",
+        "journal": "Journal of Hematology and Oncology"
+    },
+    {
+        "DOI": "https://doi.org/10.1136/annrheumdis-2021-220209",
+        "header": "Data availability statement",
+        "paragraph": "Data are available in a public, open access repository. All scRNA-seq data have been deposited in the Gene Expression Omnibus: GSE138669.",
+        "PubMed_ID": "34031030",
+        "journal": "Annals of Rheumatic Diseases"
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41392-022-01264-9",
+        "header": "Data availability",
+        "paragraph": "Raw and processed scRNA-seq data of three normal cervical samples and five post-RCT advanced-stage CC samples were uploaded to the Genome Sequence Archive (GSA) of the National Genomics Data Center (PRJCA011382), which are publicly accessible at https://ngdc.cncb.ac.cn/gsa-human and https://ngdc.cncb.ac.cn/omix, respectively. Raw and processed scRNA-seq data of five pre-RCT advanced-stage CC samples had been previously deposited and publicly accessible in the GSA (PRJCA008573). The data analysis script is available from the corresponding author upon reasonable request.",
+        "PubMed_ID": "36710358",
+        "journal": "Signal Transduction and Targeted Therapy"
+    },
+    {
+        "DOI": "https://doi.org/10.1016/S1473-3099(23)00352-3",
+        "header": "Data sharing",
+        "paragraph": "Sequencing data were deposited in the NCBI SRA database under the accession number PRJNA956545. Additional de-identified data may be made available to investigators whose proposed use of the data has been approved by the Icahn School of Medicine Ethics Review Board upon request to the corresponding authors.",
+        "PubMed_ID": "37475115",
+        "journal": "Lancet Infectious Diseases"
+    },
+    {
+        "DOI": "https://doi.org/10.1016/S1470-2045(23)00468-0",
+        "header": "Data sharing",
+        "paragraph": "The codes used for gene expression analysis, deep learning, and spatial transcriptomics processing are available according to GitHub criteria at https://github.com/qinghezeng/ABRS-P, and the full commands used are provided at https://github.com/qinghezeng/ABRS-P/blob/main/docs/tutorial.md. Raw spatial sequencing data will be available 3 months after publication (by Feb 8, 2024) at the European Nucleotide Archive (accession number PRJEB62485, accession according to European Nucleotide Archive criteria). Data from proprietary cohorts cannot be made available due to privacy and ethical or legal issues.",
+        "PubMed_ID": "37951222",
+        "journal": "Lancet Oncology"
+    },
+    {
+        "DOI": "https://doi.org/10.1126/scitranslmed.adg5252",
+        "header": "Data and materials availability:",
+        "paragraph": "All data associated with this study are in the paper or Supplementary Materials. Sequencing data have been deposited in Genome Expression Omnibus (GEO) under accession number GSE235743 (www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE235743). Scripts for reproducing the analysis can be accessed via Zenodo (DOI 10.5281/zenodo.8011746).",
+        "PubMed_ID": "37878672",
+        "journal": "Science Translational Medicine"
+    },
+    {
+        "DOI": "https://doi.org/10.1093/nar/gkad885",
+        "header": "Data availability",
+        "paragraph": "[The research community can access information freely in the scGRN without registration or logging in. The URL for scGRN is https://bio.liclab.net/scGRN/., Supplementary Data are available at NAR Online., National Natural Science Foundation of China [62171166]; Research Foundation of the First Affiliated Hospital of University of South China for Advanced Talents [20210002-1005 USCAT-2021-01]; China Postdoctoral Science Foundation [2019M661311]; Postdoctoral Science Foundation of Heilongjiang Province of China [LBH-Z19075]; Natural Science Foundation of Hunan Province [2023JJ40594, 2023JJ30536]; Clinical Research 4310 Program of the University of South China [20224310NHYCG05]; Funding for open access charge: National Natural Science Foundation of China [62171166].]",
+        "PubMed_ID": "37889053",
+        "journal": "Nucleic Acids Research"
+    },
+    {
+        "DOI": "https://doi.org/10.1016/j.jhep.2024.02.017",
+        "header": "Data availability statement",
+        "paragraph": "All sequencing data has been uploaded to the SRA under BioProject PRJNA1096305 and Study SRP499879 with accessions from SRR28562212-SRR28562261. Metadata for this study can be viewed on the SRA Run Selector at https://www.ncbi.nlm.nih.gov/Traces/study/?acc=SRP499879.",
+        "PubMed_ID": "38423478",
+        "journal": "Journal of Hepatology"
+    },
+    {
+        "DOI": "https://doi.org/10.1093/nsr/nwad256",
+        "header": "DATA AVAILABILITY",
+        "paragraph": "[Sequencing data is deposited in the Genome Sequence Archive (GSA) database (GSA accession number: CRA007790). Code is available on request. All other data are available in the main text or the Supplementary materials., We thank professor Kui Zhu from China Agricultural University for providing B. cereus. All data are archived in Guangzhou National Laboratory and Bioland Laboratory., This work was supported by the National Key R&amp;D Program of China (STI2030-Major Projects-2021ZD0202400 to C.S.), the National Natural Science Foundation of China (32271069 to C.S.), the Research Foundation for Advanced Talents from Guangzhou National Laboratory (YW-JCYJ0603 to C.S.) and Bioland Laboratory (1102101217 to C.S.), the Young Elite Scientist Sponsorship Program by CAST (YESS20200122 to C.S.), the China Postdoctoral Science Foundation fellowship (PDXM29424801 to L.H.).]",
+        "PubMed_ID": "38288368",
+        "journal": "National Science Review"
+    },
+    {
+        "DOI": "https://doi.org/10.1186/s40779-023-00441-3",
+        "header": "Availability of data and materials",
+        "paragraph": "All the sequencing data are deposited in Genome Sequence Archive (GSA) (https://bigd.big.ac.cn/gsa/) with the accession number of CRA005439.",
+        "PubMed_ID": "36814339",
+        "journal": "Military Medical Research"
+    },
+    {
+        "DOI": "https://doi.org/10.1016/S2666-5247(23)00368-3",
+        "header": "Data sharing",
+        "paragraph": "Raw sequencing reads of the scRNA-seq experiments generated for this study are deposited in the EGA European Genome-Phenome Archive database under EGAD00001011342 and will be released under controlled access upon publication along with the count data on the website of Lambrechts lab: https://lambrechtslab.sites.vib.be/en/data-access. Data of the NET analyses can be shared upon reasonable request. Publicly available datasets used in this manuscript are available from EGAS00001004717, GEO GSE145926, and GEO GSE122960, and from ArrayExpress E-MTAB-6149/E-MTAB-6653.",
+        "PubMed_ID": "38280387",
+        "journal": "The Lancet Microbe"
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41551-020-0594-x",
+        "header": "Data availability",
+        "paragraph": "The main data supporting the results in this study are available within the paper and its Supplementary Information. The ImMunoGeneTics database is available from http://www.imgt.org/. The raw and analysed datasets generated during the study are too large to be publicly shared, yet they are available for research purposes from the corresponding authors on reasonable request. The 10x Genomics Cell Ranger (v.2.1.1) bioinformatics processing pipeline is available from https://support.10xgenomics.com/single-cell-gene-expression/software/overview/welcome. Our PyIR (v.1.0) processing pipeline is freely available at GitHub (https://github.com/crowelab/PyIR). Prism v.8.0 (GraphPad) is commercially available from https://www.graphpad.com.",
+        "PubMed_ID": "32747832",
+        "journal": "Nature Biomedical Engineering"
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41423-020-00599-z",
+        "header": "Data availability",
+        "paragraph": "The scRNA-seq data that support the findings of this study have been submitted to the National Center for Biotechnology Information/Gene Expression Omnibus database (https://www.ncbi.nlm.nih.gov/geo) under accession number GSE161345. The source data underlying Figs. 1c, e\u2013h, 2b\u2013e, 3a\u2013h, 4a, b, d, 6a, b, 7b, and 8a, c\u2013e, g, and Supplementary Figs. 3a\u2013c, 4a\u2013e, 5a, b, 6, and 8a, b are provided as a Source Data file. All other data that support the findings of this study are available from the corresponding author upon reasonable request.",
+        "PubMed_ID": "33408345",
+        "journal": "Cellular & Molecular Immunology"
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41593-024-01742-z",
+        "header": "Data availability",
+        "paragraph": "DNAm data (EPIC arrays) have been deposited into the Gene Expression Omnibus (GEO) database under accession number GSE254293. snRNA-seq data (raw data and anndata object) have been deposited into the GEO database under the accession number GSE254569. For cell-type assignments of the snRNA-seq data, cell-type labels from the Allen Brain Atlas (Human Multiple Cortical Areas SMART-seq, available at https://portal.brain-map.org/atlases-and-data/rnaseq/human-multiple-cortical-areas-smart-seq) were taken as a reference for our dataset. The snRNA-seq replication dataset from Chatzinakos et al.39 is available at https://www.synapse.org/Synapse:syn33235943 (raw data) and https://www.synapse.org/Synapse:syn39718968 (metadata). For PRS calculation, GWAS summary statistics for SCZ57 (available at https://figshare.com/articles/dataset/scz2022/19426775) and a psychiatric cross-disorder phenotype58 (available at https://figshare.com/articles/dataset/cdg2019/14672034) were used. For the GWAS enrichment analysis using H-MAGMA, significant GWAS hits were mapped to genes based on GWAS summary statistics for AD111 (available at https://vu.data.surfsara.nl/index.php/s/l7aiRr1UEgdoJfZ), SCZ57 (available at https://figshare.com/articles/dataset/scz2022/19426775), bipolar disorder112 (available at https://figshare.com/articles/dataset/PGC3_bipolar_disorder_GWAS_summary_statistics/14102594), MDD113 (available at https://datashare.ed.ac.uk/handle/10283/3203) and hypertension (http://www.nealelab.is/uk-biobank, \u2018GWAS round 2 results can be found here\u2019; available at https://broad-ukb-sumstats-us-east-1.s3.amazonaws.com/round2/additive-tsvs/I9_HYPERTENSION.gwas.imputed_v3.both_sexes.tsv.bgz) and the European 1,000 genomes reference panel (available at https://github.com/thewonlab/H-MAGMA). All analysis scripts are accessible in the following GitHub repository: https://github.com/AnnaSophieFroehlich/single_cell_aging.",
+        "PubMed_ID": "39227716",
+        "journal": "Nature Neuroscience"
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41591-024-03122-3",
+        "header": "Data availability",
+        "paragraph": "Our snRNA-seq data have been deposited into the Gene Expression Omnibus (GEO) GSE260461. Our Smartseq2 RNA-seq data that support the findings of this study have been deposited into GEO under SuperSeries GSE239603, GSE243750 and GSE262632. The raw data from Olah et al.39 are available through the AD Knowledge Portal (https://www.synapse.org/#!Synapse:syn21438358). Whole-blood RNA-seq data of MCSA are available through the AD Knowledge Portal (https://www.synapse.org/#!Synapse:syn22024536). Pre-processed scRNA-seq data from Schulte-Schrepping et al.22 were downloaded from https://beta.fastgenomics.org/datasets/detail-dataset-1ad2967be372494a9fdba621610ad3f3#Files. The MGnD signature is available in Supplementary Table 6. The code for analysis and generating the figures is available on GitHub at https://github.com/The-Butovsky-Lab/Neutrophils_manuscript_code_availability.",
+        "PubMed_ID": "38961225",
+        "journal": "Nature Medicine"
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41588-024-01852-1",
+        "header": "Data availability",
+        "paragraph": "Raw single-cell sequencing data were processed by aligning with the mouse genome mm10. The raw and processed data are available through Gene Expression Omnibus accession codes GSE264649 (scRNA-seq) and GSE266089 (scATAC-seq). Merged counts tables generated from scRNA-seq experiments need to be downloaded and arranged according to their associated annotation files to replicate gene coexpression patterns, while ATAC peak files need to be downloaded and arranged to replicate chromatin coaccessibility patterns. Raw image data from Airyscan imaging, intron-seqFISH, 3D ATAC-PALM and single-particle tracking experiments, due to their massive volumes, were not deposited but will be available upon request. We have deposited associated image quantifications (processed seqFISH, 3D ATAC-PALM and single-particle tracking data) and flow cytometry data at Zenodo at https://doi.org/10.5281/zenodo.11406939 (ref. 63). For analysis of Extended Data Fig. 1d, our identified ACDs were aligned with LADs, compartments and ChromHMM-identified genomic regions of mouse ES cells downloaded from previous publications26,27,28. Source data are provided with this paper. All custom MATLAB codes and relevant datasets have been deposited in Zenodo (https://doi.org/10.5281/zenodo.11406939) (ref. 63). The software (VVD-viewer) for spatial genome imaging data visualization is available via GitHub (https://github.com/takashi310/VVD_Viewer) and Zenodo (https://doi.org/10.5281/zenodo.11259043) (ref. 64).",
+        "PubMed_ID": "39048795",
+        "journal": "Nature Genetics"
+    },
+    {
+        "DOI": "https://doi.org/10.1126/sciimmunol.adp6529",
+        "header": "Data and materials availability:",
+        "paragraph": "All data needed to evaluate the conclusions in the paper are present in the paper or the Supplementary Materials and in data file S1. Materials used to conduct this study will be made available upon request. Sequencing data are accessible at the Sequence Read Archive (SRA). Project number PRJNA1113628 includes original TCR-sequencing data, and project number PRJNA1113704 includes original whole-exome-sequencing data for reisolated and readapted 6132A cancer cell lines referenced in table S2.",
+        "PubMed_ID": "39270007",
+        "journal": "Science Immunology"
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41565-023-01560-7",
+        "header": "Data availability",
+        "paragraph": "Sequencing data from this study can be found on the Gene Expression Omnibus with the accession number GSE223550. Source data are provided with this paper. R scripts used for generating the hypoxic gene signature can be found at https://github.com/Teneth/GEND_Scrip t.",
+        "PubMed_ID": "38082117",
+        "journal": "Nature Nanotechnology"
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41564-024-01750-6",
+        "header": "Data availability",
+        "paragraph": "DNA sequences and raw data used for the graphs and for statistical analyses are available in the manuscript source data and supplementary materials. The single-cell transcriptomic sequencing data are available at: https://www.ncbi.nlm.nih.gov/bioproject/PRJNA934842. The 3D whole-brain image data used for the quantification and statistical analysis in Fig. 6, Extended Data Fig. 5 and 6, as well as video rendering of the 3D imaging data are available via Zenodo at https://doi.org/10.5281/zenodo.10835741 (ref. 119) and GitHub at https://github.com/aecon/toxoplasma3D (ref. 117). Other raw imaging data and metadata are available in GitHub at https://github.com/shaharbr/Bracha_et_al_2024 (ref. 94). Source data are provided with this paper. Custom code generated during this study is available in GitHub at https://github.com/shaharbr/Bracha_et_al_2024 (ref. 94), https://github.com/GiuseppeTestaLab/toxo-organoids (ref. 100) and https://github.com/aecon/toxoplasma3D (ref. 117).",
+        "PubMed_ID": "39075233",
+        "journal": "Nature Microbiology"
+    },
+    {
+        "DOI": "https://doi.org/10.1016/j.cell.2024.09.032",
+        "header": "Data and code availability",
+        "paragraph": "\u2022All datasets generated in this study are publicly available, and accession numbers are also listed in the key resources table.\u2022Raw fastq files resulting from the bulk RNA-seq and dsRIP-seq studies of 2153L GEM tumors with indicated treatment are deposited in the National Center for Biotechnology Information (NCBI) Gene Expression Omnibus (GEO: GSE220315).\u2022Bulk RNA-seq data from empty vector (EV) or Trp53ERTAM-transduced 2153L GEM tumors upon indicated treatment are deposited at NCBI GEO (GEO: GSE276354).\u2022Single-cell RNA-seq data are deposited at NCBI GEO (GEO: GSE276356).\u2022ChIP-seq data are deposited at NCBI GEO (GEO: GSE276358).\u2022CyTOF data are deposited at FlowRepository (repository ID: FR-FCM-Z87Z).\u2022This paper analyzes existing, publicly available datasets. Accession numbers for these datasets are listed in the key resources table.\u2022This paper does not report original code. Software and algorithms used in this study are listed in key resources table.\u2022Any additional information required to reanalyze the data reported in this paper is available from the lead contact upon request.",
+        "PubMed_ID": "39419025",
+        "journal": "Cell"
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41586-024-07493-y",
+        "header": "Data availability",
+        "paragraph": "All data are now accessible under Gene Expression Omnibus accession number GSE256493. An interactive website is available at https://waelchli-lab-human-brain-vasculature-atlas.ethz.ch, https://brain-vasc.cells.ucsc.edu and https://cellxgene.cziscience.com/collections/c95ca269-68a7-47c5-82db-da227f31b598 on which the data can visualized and downloaded. Most of our analyses are standard workflows and we have now deposited the source code at GitHub (https://github.com/Waelchli-lab/Single-cell-atlas-of-the-human-brain-vasculature-accross-development-adulthood-and-disease) to improve reproducibility our results. The generated Seurat objects of FACS-sorted (CD31+CD45\u2212) ECs for the individual entities can be downloaded from https://doi.org/10.5281/zenodo.10058183, and for the overall merges from https://doi.org/10.5281/zenodo.10057779. The generated Seurat objects of unsorted ECs and PVCs for individual entities can be downloaded from https://doi.org/10.5281/zenodo.10058371, and for the overall merges from https://doi.org/10.5281/zenodo.10058563. The generated Monocle 3 CDS pseudotime objects of FACS-sorted (CD31+CD45\u2212) ECs can be downloaded from https://doi.org/10.5281/zenodo.10058766. The generated diffusion map objects of FACS-sorted (CD31+CD45\u2212) ECs can be downloaded from https://doi.org/10.5281/zenodo.10060876. The generated RNA velocity objects of FACS-sorted (CD31+CD45\u2212) ECs of individual pathological entities can be downloaded from https://doi.org/10.5281/zenodo.10065659; the fetal and adult/control brains from https://doi.org/10.5281/zenodo.10066390; the overall merge of brain tumours from https://doi.org/10.5281/zenodo.10066538; and the overall merge of pathological entities from https://doi.org/10.5281/zenodo.10066703.",
+        "PubMed_ID": "38987604",
+        "journal": "Nature"
+    },
+    {
+        "DOI": "https://doi.org/10.1126/science.adm9802",
+        "header": "Data and materials availability:",
+        "paragraph": "All data are available in the main text and in the supplementary materials, and all reagents can be made available from the corresponding author upon request. Source data have been deposited in NCBI\u2019s Gene Expression Omnibus (GEO) and are accessible through GEO Series accession no. GSE249430. Code can be found at Zenodo (61). All data are available in the main text and in the supplementary materials, and all reagents can be made available from the corresponding author upon request. Source data have been deposited in NCBI\u2019s Gene Expression Omnibus (GEO) and are accessible through GEO Series accession no. GSE249430. Code can be found at Zenodo (61).",
+        "PubMed_ID": "39052779",
+        "journal": "Science"
+    },
+    {
+        "DOI": "https://doi.org/10.1016/j.scib.2023.09.003",
+        "header": "Data availability",
+        "paragraph": "Raw sequencing data and processed data are available through the NCBI Gene Expression Omnibus (GEO) under accession number \u201cGSE206919\u201d. All other data are available in the main text or the supplementary materials. All analysis codes are available on GitHub at https://github.com/lj-bio/Macaque-POP.",
+        "PubMed_ID": "37714805",
+        "journal": "Science Bulletin"
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41422-023-00909-w",
+        "header": "Data availability",
+        "paragraph": "Sequence data have been deposited in the NCBI Gene Expression Omnibus (OncoScan array; GEO: GSE118527) and Sequence Read Archive (WES and RNA-seq; SRA: SRP157974). Other data that support the findings of this study are presented in the main text and in the online Supplementary information. Sequencing coverage for our datasets is detailed in Supplementary information, Table S10, while quality control metrics are provided in Supplementary information, Table S11. Further information and requests for resources and reagents should be directed to and will be fulfilled by the corresponding authors.",
+        "PubMed_ID": "38168642",
+        "journal": "Cell Research"
+    },
+    {
+        "DOI": "https://doi.org/10.1158/2159-8290.CD-23-1379",
+        "header": "Data Availability",
+        "paragraph": "",
+        "PubMed_ID": "38885349",
+        "journal": "Cancer Discovery"
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s43018-024-00811-3",
+        "header": "Data availability",
+        "paragraph": "The scRNAseq, scBCRseq and scTCRseq data that support the findings of this study were deposited to the GEO under accession code GSE225352. MS data were deposited to Zenodo (https://doi.org/10.5281/zenodo.7641622)44. The full study protocol is publicly available and provided in the Supplementary Information. All other requests regarding data supporting the findings of this study or related to this paper should be addressed to cdinardo@mdanderson.org. Source data are provided with this paper. No custom algorithms were used in this study. Open-source software was used to analyze the data. Details of software versions are specified in Methods.",
+        "PubMed_ID": "39300320",
+        "journal": "Nature Cancer"
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s42255-023-00937-1",
+        "header": "Data availability",
+        "paragraph": "All RNA-seq data and single-cell RNA-seq data are publicly available as of the date of this publication. The datasets produced in this study are available in the following databases: SuperSeries: Notch Signaling in the Thyroid is Essential for Adult Homeostasis GSE200268. SubSeries: Notch Signaling in the Thyroid is Essential for Adult Homeostasis (RNA-seq thyroid) GSE200265. SubSeries: Notch Signaling in the Thyroid is Essential for Adult Homeostasis (RNA-seq BAT) GSE200266. SubSeries: Notch Signaling in the Thyroid is Essential for Adult Homeostasis (scRNA-seq thyroid) GSE200267. The primary human single-cell sequencing is deposited in the Sequence Read Archive under BioProject ID PRJNA1006400. The reference genome used in this study was the Mus musculus (GRCm38) RefSeq assembly and the Homo sapiens (GRCh38) RefSeq assembly, deposited and publicly available in the NCBI BioProject databank under accession code GCF_000001635.20 and GCF_000001405.26. All raw data in this manuscript are available from the corresponding author upon reasonable request. This paper does not report original code. Any additional information required to reanalyze the data reported in this paper is available from the corresponding author upon request.",
+        "PubMed_ID": "38123718",
+        "journal": "Nature Metabolism"
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41592-023-02080-x",
+        "header": "Data availability",
+        "paragraph": "Bulk and single-cell RNA-seq data generated in this study have been made available at NCBI Gene Expression Omnibus (GEO) under the accession number GSE219247. Data and other unique reagents or biological materials generated in this study are available from the lead contact, J.A.K. (juergen.knoblich@imba.oeaw.ac.at) in compliance with Material Transfer Agreements (MTA). An STL CAD file for the embedding mold negative is provided in Supplementary Data 1. Source data are provided with this paper. Code used for analysis of data in this study has been deposited in a Github repository and is publicly available (https://github.com/bardylab/miscos_org_ephys).",
+        "PubMed_ID": "38052989",
+        "journal": "Nature Methods"
+    }
+]
