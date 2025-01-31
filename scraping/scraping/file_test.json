@@ -3,12 +3,10 @@
         "DOI": "https://doi.org/10.1016/j.bioactmat.2021.08.009",
         "PubMed_ID": "34820571",
         "results": {
-            "accession_codes": {
-                "SRA": [
-                    "PRJNA623696"
-                ]
-            },
-            "sequencing_data": [],
+            "accession_codes": [
+                "PRJNA623696"
+            ],
+            "analysis_data": [],
             "source_code": []
         }
     },
@@ -16,29 +14,27 @@
         "DOI": "https://doi.org/10.1186/s13024-021-00507-7",
         "PubMed_ID": "35000600",
         "results": {
-            "accession_codes": {},
-            "sequencing_data": [],
-            "source_code": [
+            "accession_codes": [],
+            "analysis_data": [
                 "https://github.com/penguab/GTEx-Networks-For-Senescence",
                 "https://github.com/penguab/GTEx-Networks"
-            ]
+            ],
+            "source_code": []
         }
     },
     {
         "DOI": "https://doi.org/10.1186/s12943-024-02117-5",
         "PubMed_ID": "39304899",
         "results": {
-            "accession_codes": {
-                "GEO": [
-                    "GSE214226",
-                    "HRA007337",
-                    "CRA016311",
-                    "GSE269321",
-                    "CRA016340",
-                    "GSE269044"
-                ]
-            },
-            "sequencing_data": [
+            "accession_codes": [
+                "GSE214226",
+                "HRA007337",
+                "CRA016311",
+                "GSE269321",
+                "CRA016340",
+                "GSE269044"
+            ],
+            "analysis_data": [
                 "https://pubmed.ncbi.nlm.nih.gov/36754052/",
                 "https://ngdc.cncb.ac.cn/gsa-human/s/v52im56T",
                 "https://ngdc.cncb.ac.cn/gsa/s/8WVmDLmV",
@@ -53,28 +49,24 @@
         "DOI": "https://doi.org/10.1016/j.cmet.2024.09.006",
         "PubMed_ID": "39383866",
         "results": {
-            "accession_codes": {
-                "GEO": [
-                    "GSE251913"
-                ]
-            },
-            "sequencing_data": [],
-            "source_code": [
-                "https://github.com/UcarLab/ERS-vs-CYT-Islet-Stress-Responses",
-                "https://doi.org/10.5281/zenodo.13730232"
-            ]
+            "accession_codes": [
+                "GEO: GSE251913"
+            ],
+            "analysis_data": [
+                "https://doi.org/10.5281/zenodo.13730232",
+                "https://github.com/UcarLab/ERS-vs-CYT-Islet-Stress-Responses"
+            ],
+            "source_code": []
         }
     },
     {
         "DOI": "https://doi.org/10.1038/s41590-024-01992-w",
         "PubMed_ID": "39455893",
         "results": {
-            "accession_codes": {
-                "GEO": [
-                    "GSE272348"
-                ]
-            },
-            "sequencing_data": [
+            "accession_codes": [
+                "GSE272348"
+            ],
+            "analysis_data": [
                 "https://doi.org/10.5281/zenodo.10020271",
                 "https://clients.adaptivebiotech.com/pub/shu-2024-ni"
             ],
@@ -87,20 +79,18 @@
         "DOI": "https://doi.org/10.1038/s41587-023-01937-y",
         "PubMed_ID": "37667091",
         "results": {
-            "accession_codes": {
-                "GEO": [
-                    "GSE232910",
-                    "GSE178265"
-                ]
-            },
-            "sequencing_data": [
+            "accession_codes": [
+                "GSE232910",
+                "GSE178265"
+            ],
+            "analysis_data": [
+                "https://doi.org/10.17632/w7nw4km7xd.1",
                 "https://doi.org/10.17044/scilifelab.22770161",
                 "https://doi.org/10.5281/zenodo.7861508",
                 "https://doi.org/10.17044/scilifelab.22778920"
             ],
             "source_code": [
-                "https://github.com/marcovito/sma",
-                "https://doi.org/10.17632/w7nw4km7xd.1"
+                "https://github.com/marcovito/sma"
             ]
         }
     },
@@ -108,8 +98,8 @@
         "DOI": "https://doi.org/10.1016/j.stem.2024.05.007",
         "PubMed_ID": "38876106",
         "results": {
-            "accession_codes": {},
-            "sequencing_data": [],
+            "accession_codes": [],
+            "analysis_data": [],
             "source_code": []
         }
     },
@@ -117,23 +107,14 @@
         "DOI": "https://doi.org/10.1016/j.chom.2024.06.013",
         "PubMed_ID": "39013472",
         "results": {
-            "accession_codes": {
-                "SRA": [
-                    "PRJNA701749",
-                    "PRJNA565903",
-                    "PRJNA701859"
-                ],
-                "EMBL-EBI BioStudies": [
-                    "S-EPMC7599849"
-                ],
-                "ProteomeXchange Consortium PRIDE": [
-                    "PXD052829"
-                ],
-                "EMBL-EBI ArrayExpress": [
-                    "E-MTAB-14206"
-                ]
-            },
-            "sequencing_data": [],
+            "accession_codes": [
+                "PRJNA701749",
+                "PRJNA565903",
+                "PRJNA701859",
+                "S-EPMC7599849",
+                "E-MTAB-14206"
+            ],
+            "analysis_data": [],
             "source_code": []
         }
     },
@@ -141,55 +122,49 @@
         "DOI": "https://doi.org/10.1038/s41556-024-01524-6",
         "PubMed_ID": "39415041",
         "results": {
-            "accession_codes": {
-                "GEO": [
-                    "GSE255274"
-                ]
-            },
+            "accession_codes": [
+                "GSE255274"
+            ],
+            "analysis_data": [],
             "source_code": [
                 "https://gitlab.gwdg.de/schuh-meiosis/ovulation/-/tree/main"
-            ],
-            "sequencing_data": []
+            ]
         }
     },
     {
         "DOI": "https://doi.org/10.1016/j.ccell.2020.06.012",
         "PubMed_ID": "32707077",
         "results": {
-            "accession_codes": {
-                "GEO": [
-                    "GSE152607"
-                ]
-            },
-            "source_code": [],
-            "sequencing_data": [
+            "accession_codes": [
+                "GSE152607"
+            ],
+            "analysis_data": [
                 "https://singlecell.broadinstitute.org/single_cell/study/SCP971",
                 "https://singlecell.broadinstitute.org/single_cell/study/SCP972/",
                 "https://singlecell.broadinstitute.org/single_cell/study/SCP973/"
-            ]
+            ],
+            "source_code": []
         }
     },
     {
         "DOI": "https://doi.org/10.1136/gutjnl-2021-324321",
         "PubMed_ID": "34588223",
         "results": {
-            "accession_codes": {
-                "GEO": [
-                    "GSE181515"
-                ]
-            },
+            "accession_codes": [
+                "GSE181515"
+            ],
+            "analysis_data": [],
             "source_code": [
                 "https://github.com/holab-hku/HCC_Stem_scRNAseq"
-            ],
-            "sequencing_data": []
+            ]
         }
     },
     {
         "DOI": "https://doi.org/10.1093/neuonc/noad101",
         "PubMed_ID": "37288604",
         "results": {
-            "accession_codes": {},
-            "sequencing_data": [
+            "accession_codes": [],
+            "analysis_data": [
                 "https://zenodo.org/record/6962901",
                 "https://datadryad.org/stash/dataset/doi:10.5061/dryad.h70rxwdmj"
             ],
@@ -202,20 +177,16 @@
         "DOI": "https://doi.org/10.1016/j.immuni.2023.12.001",
         "PubMed_ID": "38159571",
         "results": {
-            "accession_codes": {
-                "GEO": [
-                    "GSE239999",
-                    "GSE225503",
-                    "GSE239975",
-                    "GSE239974",
-                    "GSE239977"
-                ],
-                "Synapse": [
-                    "syn16780177",
-                    "syn31512863"
-                ]
-            },
-            "sequencing_data": [
+            "accession_codes": [
+                "GSE239999",
+                "GSE225503",
+                "GSE239975",
+                "GSE239974",
+                "GSE239977",
+                "syn16780177",
+                "syn31512863"
+            ],
+            "analysis_data": [
                 "https://doi.org/10.5281/zenodo.8206638"
             ],
             "source_code": [
@@ -227,40 +198,35 @@
         "DOI": "https://doi.org/10.1161/CIRCULATIONAHA.119.045401",
         "PubMed_ID": "32403949",
         "results": {
-            "accession_codes": {
-                "dbGaP": [
-                    "phs001539.v1.p1"
-                ]
-            },
-            "sequencing_data": [],
-            "source_code": [
+            "accession_codes": [
+                "phs001539.v1.p1"
+            ],
+            "analysis_data": [
                 "https://singlecell.broadinstitute.org/single_cell/study/SCP498/transcriptional-and-cellular-diversity-of-the-human-heart"
-            ]
+            ],
+            "source_code": []
         }
     },
     {
         "DOI": "https://doi.org/10.1053/j.gastro.2020.11.010",
         "PubMed_ID": "33212097",
         "results": {
-            "accession_codes": {
-                "EGA": [
-                    "EGAS00001004653"
-                ]
-            },
-            "sequencing_data": [
+            "accession_codes": [
+                "EGAS00001004653"
+            ],
+            "analysis_data": [
+                "http://singlecell.charite.de/pancreas",
                 "https://doi.org/10.6084/m9.figshare.12173232"
             ],
-            "source_code": [
-                "http://singlecell.charite.de/pancreas"
-            ]
+            "source_code": []
         }
     },
     {
         "DOI": "https://doi.org/10.1186/s13045-020-01008-8",
         "PubMed_ID": "33302977",
         "results": {
-            "accession_codes": {},
-            "sequencing_data": [],
+            "accession_codes": [],
+            "analysis_data": [],
             "source_code": []
         }
     },
@@ -268,12 +234,10 @@
         "DOI": "https://doi.org/10.1136/annrheumdis-2021-220209",
         "PubMed_ID": "34031030",
         "results": {
-            "accession_codes": {
-                "GEO": [
-                    "GSE138669"
-                ]
-            },
-            "sequencing_data": [],
+            "accession_codes": [
+                "GSE138669"
+            ],
+            "analysis_data": [],
             "source_code": []
         }
     },
@@ -281,13 +245,11 @@
         "DOI": "https://doi.org/10.1038/s41392-022-01264-9",
         "PubMed_ID": "36710358",
         "results": {
-            "accession_codes": {
-                "GSA": [
-                    "PRJCA011382",
-                    "PRJCA008573"
-                ]
-            },
-            "sequencing_data": [],
+            "accession_codes": [
+                "PRJCA011382",
+                "PRJCA008573"
+            ],
+            "analysis_data": [],
             "source_code": []
         }
     },
@@ -295,12 +257,10 @@
         "DOI": "https://doi.org/10.1016/S1473-3099(23)00352-3",
         "PubMed_ID": "37475115",
         "results": {
-            "accession_codes": {
-                "NCBI SRA": [
-                    "PRJNA956545"
-                ]
-            },
-            "sequencing_data": [],
+            "accession_codes": [
+                "PRJNA956545"
+            ],
+            "analysis_data": [],
             "source_code": []
         }
     },
@@ -308,41 +268,35 @@
         "DOI": "https://doi.org/10.1016/S1470-2045(23)00468-0",
         "PubMed_ID": "37951222",
         "results": {
-            "accession_codes": {
-                "ENA": [
-                    "PRJEB62485"
-                ]
-            },
-            "source_code": [
-                "https://github.com/qinghezeng/ABRS-P",
-                "https://github.com/qinghezeng/ABRS-P/blob/main/docs/tutorial.md"
+            "accession_codes": [
+                "PRJEB62485"
             ],
-            "sequencing_data": []
+            "analysis_data": [],
+            "source_code": [
+                "https://github.com/qinghezeng/ABRS-P"
+            ]
         }
     },
     {
         "DOI": "https://doi.org/10.1126/scitranslmed.adg5252",
         "PubMed_ID": "37878672",
         "results": {
-            "accession_codes": {
-                "GEO": [
-                    "GSE235743"
-                ]
-            },
-            "source_code": [
+            "accession_codes": [
+                "GSE235743"
+            ],
+            "analysis_data": [
+                "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE235743",
                 "https://doi.org/10.5281/zenodo.8011746"
             ],
-            "sequencing_data": [
-                "www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE235743"
-            ]
+            "source_code": []
         }
     },
     {
         "DOI": "https://doi.org/10.1093/nar/gkad885",
         "PubMed_ID": "37889053",
         "results": {
-            "accession_codes": {},
-            "sequencing_data": [],
+            "accession_codes": [],
+            "analysis_data": [],
             "source_code": []
         }
     },
@@ -350,15 +304,12 @@
         "DOI": "https://doi.org/10.1016/j.jhep.2024.02.017",
         "PubMed_ID": "38423478",
         "results": {
-            "accession_codes": {
-                "SRA": [
-                    "PRJNA1096305",
-                    "SRP499879",
-                    "SRR28562212",
-                    "SRR28562261"
-                ]
-            },
-            "sequencing_data": [
+            "accession_codes": [
+                "PRJNA1096305",
+                "SRP499879",
+                "SRR28562212-SRR28562261"
+            ],
+            "analysis_data": [
                 "https://www.ncbi.nlm.nih.gov/Traces/study/?acc=SRP499879"
             ],
             "source_code": []
@@ -368,12 +319,10 @@
         "DOI": "https://doi.org/10.1093/nsr/nwad256",
         "PubMed_ID": "38288368",
         "results": {
-            "accession_codes": {
-                "GSA": [
-                    "CRA007790"
-                ]
-            },
-            "sequencing_data": [],
+            "accession_codes": [
+                "CRA007790"
+            ],
+            "analysis_data": [],
             "source_code": []
         }
     },
@@ -381,12 +330,10 @@
         "DOI": "https://doi.org/10.1186/s40779-023-00441-3",
         "PubMed_ID": "36814339",
         "results": {
-            "accession_codes": {
-                "GSA": [
-                    "CRA005439"
-                ]
-            },
-            "sequencing_data": [],
+            "accession_codes": [
+                "CRA005439"
+            ],
+            "analysis_data": [],
             "source_code": []
         }
     },
@@ -394,21 +341,15 @@
         "DOI": "https://doi.org/10.1016/S2666-5247(23)00368-3",
         "PubMed_ID": "38280387",
         "results": {
-            "accession_codes": {
-                "EGA": [
-                    "EGAD00001011342",
-                    "EGAS00001004717"
-                ],
-                "GEO": [
-                    "GSE145926",
-                    "GSE122960"
-                ],
-                "ArrayExpress": [
-                    "E-MTAB-6149",
-                    "E-MTAB-6653"
-                ]
-            },
-            "sequencing_data": [],
+            "accession_codes": [
+                "EGAD00001011342",
+                "EGAS00001004717",
+                "GSE145926",
+                "GSE122960",
+                "E-MTAB-6149",
+                "E-MTAB-6653"
+            ],
+            "analysis_data": [],
             "source_code": []
         }
     },
@@ -416,10 +357,11 @@
         "DOI": "https://doi.org/10.1038/s41551-020-0594-x",
         "PubMed_ID": "32747832",
         "results": {
-            "accession_codes": {},
-            "sequencing_data": [],
+            "accession_codes": [],
+            "analysis_data": [
+                "https://support.10xgenomics.com/single-cell-gene-expression/software/overview/welcome"
+            ],
             "source_code": [
-                "https://support.10xgenomics.com/single-cell-gene-expression/software/overview/welcome",
                 "https://github.com/crowelab/PyIR"
             ]
         }
@@ -428,12 +370,10 @@
         "DOI": "https://doi.org/10.1038/s41423-020-00599-z",
         "PubMed_ID": "33408345",
         "results": {
-            "accession_codes": {
-                "GEO": [
-                    "GSE161345"
-                ]
-            },
-            "sequencing_data": [],
+            "accession_codes": [
+                "GSE161345"
+            ],
+            "analysis_data": [],
             "source_code": []
         }
     },
@@ -441,19 +381,24 @@
         "DOI": "https://doi.org/10.1038/s41593-024-01742-z",
         "PubMed_ID": "39227716",
         "results": {
-            "accession_codes": {
-                "GEO": [
-                    "GSE254293",
-                    "GSE254569"
-                ]
-            },
-            "sequencing_data": [
+            "accession_codes": [
+                "GSE254293",
+                "GSE254569"
+            ],
+            "analysis_data": [
                 "https://portal.brain-map.org/atlases-and-data/rnaseq/human-multiple-cortical-areas-smart-seq",
                 "https://www.synapse.org/Synapse:syn33235943",
-                "https://www.synapse.org/Synapse:syn39718968"
+                "https://www.synapse.org/Synapse:syn39718968",
+                "https://figshare.com/articles/dataset/scz2022/19426775",
+                "https://figshare.com/articles/dataset/cdg2019/14672034",
+                "https://vu.data.surfsara.nl/index.php/s/l7aiRr1UEgdoJfZ",
+                "https://figshare.com/articles/dataset/PGC3_bipolar_disorder_GWAS_summary_statistics/14102594",
+                "https://datashare.ed.ac.uk/handle/10283/3203",
+                "https://broad-ukb-sumstats-us-east-1.s3.amazonaws.com/round2/additive-tsvs/I9_HYPERTENSION.gwas.imputed_v3.both_sexes.tsv.bgz"
             ],
             "source_code": [
-                "https://github.com/AnnaSophieFroehlich/single_cell_aging"
+                "https://github.com/AnnaSophieFroehlich/single_cell_aging",
+                "https://github.com/thewonlab/H-MAGMA"
             ]
         }
     },
@@ -461,15 +406,13 @@
         "DOI": "https://doi.org/10.1038/s41591-024-03122-3",
         "PubMed_ID": "38961225",
         "results": {
-            "accession_codes": {
-                "GEO": [
-                    "GSE260461",
-                    "GSE239603",
-                    "GSE243750",
-                    "GSE262632"
-                ]
-            },
-            "sequencing_data": [
+            "accession_codes": [
+                "GSE260461",
+                "GSE239603",
+                "GSE243750",
+                "GSE262632"
+            ],
+            "analysis_data": [
                 "https://www.synapse.org/#!Synapse:syn21438358",
                 "https://www.synapse.org/#!Synapse:syn22024536",
                 "https://beta.fastgenomics.org/datasets/detail-dataset-1ad2967be372494a9fdba621610ad3f3#Files"
@@ -483,30 +426,26 @@
         "DOI": "https://doi.org/10.1038/s41588-024-01852-1",
         "PubMed_ID": "39048795",
         "results": {
-            "accession_codes": {
-                "GEO": [
-                    "GSE264649",
-                    "GSE266089"
-                ]
-            },
-            "sequencing_data": [],
-            "source_code": [
-                "https://github.com/takashi310/VVD_Viewer",
-                "https://doi.org/10.5281/zenodo.11406939"
-            ]
+            "accession_codes": [
+                "GSE264649",
+                "GSE266089"
+            ],
+            "analysis_data": [
+                "https://doi.org/10.5281/zenodo.11406939",
+                "https://doi.org/10.5281/zenodo.11259043"
+            ],
+            "source_code": []
         }
     },
     {
         "DOI": "https://doi.org/10.1126/sciimmunol.adp6529",
         "PubMed_ID": "39270007",
         "results": {
-            "accession_codes": {
-                "SRA": [
-                    "PRJNA1113628",
-                    "PRJNA1113704"
-                ]
-            },
-            "sequencing_data": [],
+            "accession_codes": [
+                "PRJNA1113628",
+                "PRJNA1113704"
+            ],
+            "analysis_data": [],
             "source_code": []
         }
     },
@@ -514,12 +453,10 @@
         "DOI": "https://doi.org/10.1038/s41565-023-01560-7",
         "PubMed_ID": "38082117",
         "results": {
-            "accession_codes": {
-                "GEO": [
-                    "GSE223550"
-                ]
-            },
-            "sequencing_data": [],
+            "accession_codes": [
+                "GSE223550"
+            ],
+            "analysis_data": [],
             "source_code": [
                 "https://github.com/Teneth/GEND_Script"
             ]
@@ -529,12 +466,16 @@
         "DOI": "https://doi.org/10.1038/s41564-024-01750-6",
         "PubMed_ID": "39075233",
         "results": {
-            "accession_codes": {},
-            "sequencing_data": [
-                "https://www.ncbi.nlm.nih.gov/bioproject/PRJNA934842"
+            "accession_codes": [
+                "PRJNA934842"
+            ],
+            "analysis_data": [
+                "https://www.ncbi.nlm.nih.gov/bioproject/PRJNA934842",
+                "https://doi.org/10.5281/zenodo.10835741",
+                "https://github.com/shaharbr/Bracha_et_al_2024",
+                "https://github.com/aecon/toxoplasma3D"
             ],
             "source_code": [
-                "https://doi.org/10.5281/zenodo.10835741",
                 "https://github.com/aecon/toxoplasma3D",
                 "https://github.com/GiuseppeTestaLab/toxo-organoids",
                 "https://github.com/shaharbr/Bracha_et_al_2024"
@@ -545,18 +486,13 @@
         "DOI": "https://doi.org/10.1016/j.cell.2024.09.032",
         "PubMed_ID": "39419025",
         "results": {
-            "accession_codes": {
-                "GEO": [
-                    "GSE220315",
-                    "GSE276354",
-                    "GSE276356",
-                    "GSE276358"
-                ],
-                "FlowRepository": [
-                    "FR-FCM-Z87Z"
-                ]
-            },
-            "sequencing_data": [],
+            "accession_codes": [
+                "GSE220315",
+                "GSE276354",
+                "GSE276356",
+                "GSE276358"
+            ],
+            "analysis_data": [],
             "source_code": []
         }
     },
@@ -564,17 +500,13 @@
         "DOI": "https://doi.org/10.1038/s41586-024-07493-y",
         "PubMed_ID": "38987604",
         "results": {
-            "accession_codes": {
-                "GEO": [
-                    "GSE256493"
-                ]
-            },
-            "sequencing_data": [],
-            "source_code": [
+            "accession_codes": [
+                "GSE256493"
+            ],
+            "analysis_data": [
                 "https://waelchli-lab-human-brain-vasculature-atlas.ethz.ch",
                 "https://brain-vasc.cells.ucsc.edu",
                 "https://cellxgene.cziscience.com/collections/c95ca269-68a7-47c5-82db-da227f31b598",
-                "https://github.com/Waelchli-lab/Single-cell-atlas-of-the-human-brain-vasculature-accross-development-adulthood-and-disease",
                 "https://doi.org/10.5281/zenodo.10058183",
                 "https://doi.org/10.5281/zenodo.10057779",
                 "https://doi.org/10.5281/zenodo.10058371",
@@ -585,6 +517,9 @@
                 "https://doi.org/10.5281/zenodo.10066390",
                 "https://doi.org/10.5281/zenodo.10066538",
                 "https://doi.org/10.5281/zenodo.10066703"
+            ],
+            "source_code": [
+                "https://github.com/Waelchli-lab/Single-cell-atlas-of-the-human-brain-vasculature-accross-development-adulthood-and-disease"
             ]
         }
     },
@@ -592,12 +527,10 @@
         "DOI": "https://doi.org/10.1126/science.adm9802",
         "PubMed_ID": "39052779",
         "results": {
-            "accession_codes": {
-                "GEO": [
-                    "GSE249430"
-                ]
-            },
-            "sequencing_data": [],
+            "accession_codes": [
+                "GSE249430"
+            ],
+            "analysis_data": [],
             "source_code": []
         }
     },
@@ -605,12 +538,10 @@
         "DOI": "https://doi.org/10.1016/j.scib.2023.09.003",
         "PubMed_ID": "37714805",
         "results": {
-            "accession_codes": {
-                "GEO": [
-                    "GSE206919"
-                ]
-            },
-            "sequencing_data": [],
+            "accession_codes": [
+                "GSE206919"
+            ],
+            "analysis_data": [],
             "source_code": [
                 "https://github.com/lj-bio/Macaque-POP"
             ]
@@ -620,15 +551,11 @@
         "DOI": "https://doi.org/10.1038/s41422-023-00909-w",
         "PubMed_ID": "38168642",
         "results": {
-            "accession_codes": {
-                "GEO": [
-                    "GSE118527"
-                ],
-                "SRA": [
-                    "SRP157974"
-                ]
-            },
-            "sequencing_data": [],
+            "accession_codes": [
+                "GSE118527",
+                "SRP157974"
+            ],
+            "analysis_data": [],
             "source_code": []
         }
     },
@@ -636,8 +563,8 @@
         "DOI": "https://doi.org/10.1158/2159-8290.CD-23-1379",
         "PubMed_ID": "38885349",
         "results": {
-            "accession_codes": {},
-            "sequencing_data": [],
+            "accession_codes": [],
+            "analysis_data": [],
             "source_code": []
         }
     },
@@ -645,37 +572,29 @@
         "DOI": "https://doi.org/10.1038/s43018-024-00811-3",
         "PubMed_ID": "39300320",
         "results": {
-            "accession_codes": {
-                "GEO": [
-                    "GSE225352"
-                ]
-            },
-            "source_code": [],
-            "sequencing_data": [
+            "accession_codes": [
+                "GSE225352"
+            ],
+            "analysis_data": [
                 "https://doi.org/10.5281/zenodo.7641622"
-            ]
+            ],
+            "source_code": []
         }
     },
     {
         "DOI": "https://doi.org/10.1038/s42255-023-00937-1",
         "PubMed_ID": "38123718",
         "results": {
-            "accession_codes": {
-                "GEO": [
-                    "GSE200268",
-                    "GSE200265",
-                    "GSE200266",
-                    "GSE200267"
-                ],
-                "SRA": [
-                    "PRJNA1006400"
-                ],
-                "NCBI BioProject": [
-                    "GCF_000001635.20",
-                    "GCF_000001405.26"
-                ]
-            },
-            "sequencing_data": [],
+            "accession_codes": [
+                "GSE200268",
+                "GSE200265",
+                "GSE200266",
+                "GSE200267",
+                "PRJNA1006400",
+                "GCF_000001635.20",
+                "GCF_000001405.26"
+            ],
+            "analysis_data": [],
             "source_code": []
         }
     },
@@ -683,15 +602,13 @@
         "DOI": "https://doi.org/10.1038/s41592-023-02080-x",
         "PubMed_ID": "38052989",
         "results": {
-            "accession_codes": {
-                "GEO": [
-                    "GSE219247"
-                ]
-            },
+            "accession_codes": [
+                "GSE219247"
+            ],
+            "analysis_data": [],
             "source_code": [
                 "https://github.com/bardylab/miscos_org_ephys"
-            ],
-            "sequencing_data": []
+            ]
         }
     }
 ]
