@@ -30,7 +30,7 @@ def extract_data(text: str) -> str:
     """Extracts source code URLs and accession codes from scientific text."""
     
     prompt = f"""
-        You are a highly precise extraction tool. I will provide you with a scientific text and you have to extract source code and analysis data URLs, and accession codes for sequencing data from it.
+        You are a highly precise extraction tool. I will provide you with a scientific text and you have to extract source code and sequencing data URLs, and accession codes for sequencing data from it.
         Your task:
         1. Extract **only** explicitly stated sequencing data accession codes and their respective database names (e.g., GEO, ENA, SRA, etc.). Do **not** infer or guess accession codes if they are not explicitly mentioned in the text.
         2. Identify **all** sequencing data URLs, including URLs from **Zenodo**. For Zenodo, include any URL explicitly mentioned. Sequencing data URLs are of hosting services where sequencing data in the field of Bioinformatics is uploaded.
@@ -361,11 +361,3 @@ if __name__ == "__main__":
                 "run_number": 1,
                 "execution_time": exec_time
             }], f, indent=2)
-
-
-
-
-    # result = process_paper(sample_text["paragraph"])
-    # end_time = time.time()
-    # print(f"Extracted and validated data: {json.dumps(result, indent=2)}")
-    # print("total execution time: ", end_time-start_time)
