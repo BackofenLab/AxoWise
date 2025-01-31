@@ -34,6 +34,11 @@
               :class="`material-symbols-rounded !text-lg ${active_section == 'statistics' ? 'font-variation-ico-filled' : ''}`">tune</span>
           </Tab>
         </TabList>
+
+        <Button class="w-5 h-5 !ml-auto" size="small" text rounded plain @click="expand_collapse_tab()">
+          <span :class="`dark:text-white material-symbols-rounded !text-lg`">{{ active_section ? 'expand_circle_up' :
+            'expand_circle_down' }}</span>
+        </Button>
       </footer>
     </Tabs>
   </div>
@@ -81,6 +86,13 @@ export default {
       for (var node of com.dvalueNodes) textToCopy.push(node.label);
       navigator.clipboard.writeText(textToCopy.join("\n"));
       this.toast.add({ severity: 'success', detail: 'Message copied to clipboard.', life: 4000 });
+    },
+    expand_collapse_tab() {
+      if (this.active_section) {
+        this.active_section = null;
+      } else {
+        this.active_section = 'informations'
+      }
     },
   },
 };

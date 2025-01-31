@@ -55,9 +55,15 @@
           </Tab>
         </TabList>
 
-        <Button class="w-5 h-5 !ml-auto" size="small" text rounded plain @click="call_chatbot(mode)">
-          <span class="dark:text-white material-symbols-rounded !text-lg">forum</span>
-        </Button>
+        <div class="ml-auto">
+          <Button class="w-5 h-5 !mr-1" size="small" text rounded plain @click="expand_collapse_tab()">
+            <span :class="`dark:text-white material-symbols-rounded !text-lg`">{{ active_section ? 'expand_circle_up' :
+              'expand_circle_down' }}</span>
+          </Button>
+          <Button class="w-5 h-5" size="small" text rounded plain @click="call_chatbot(mode)">
+            <span class="dark:text-white material-symbols-rounded !text-lg">forum</span>
+          </Button>
+        </div>
       </footer>
     </Tabs>
   </div>
@@ -172,6 +178,13 @@ export default {
         type: "subset",
         data: addedSubset,
       });
+    },
+    expand_collapse_tab() {
+      if (this.active_section) {
+        this.active_section = null;
+      } else {
+        this.active_section = 'statistics'
+      }
     },
     copyclipboard() {
       var com = this;
