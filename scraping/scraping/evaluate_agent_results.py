@@ -27,7 +27,7 @@ def evaluate_accession_codes(gt_codes, pred_codes):
     if gt_codes is None and pred_codes is None:
         return None
     
-    # if one is None but not the other, treat the None as empty dict
+    # if one is None but not the other, treat the None as empty list
     gt_codes = gt_codes or {}
     pred_codes = pred_codes or {}
     
@@ -65,7 +65,7 @@ def evaluate_accession_codes(gt_codes, pred_codes):
         "f1": f1_score(y_true, y_pred, zero_division=1)
     }
 
-def evaluate_seqdata_srccode(gt_list, pred_list):
+def evaluate_analysis_srccode(gt_list, pred_list):
     # if both are None, we can't compare
     if gt_list is None and pred_list is None:
         return None
@@ -128,24 +128,24 @@ def evaluate_results(ground_truth_path, prediction_path):
         gt_acc_codes = get_field(gt_item, ["results", "accession_codes"])
         pred_acc_codes = get_field(pred_item, ["results", "accession_codes"])
         
-        gt_seq_data = get_field(gt_item, ["results", "sequencing_data"])
-        pred_seq_data = get_field(pred_item, ["results", "sequencing_data"])
+        gt_seq_data = get_field(gt_item, ["results", "analysis_data"])
+        pred_seq_data = get_field(pred_item, ["results", "analysis_data"])
         
         gt_src_code = get_field(gt_item, ["results", "source_code"])
         pred_src_code = get_field(pred_item, ["results", "source_code"])
         
         # evaluate accession codes if either exists
-        acc_metrics = evaluate_accession_codes(gt_acc_codes, pred_acc_codes)
+        acc_metrics = evaluate_analysis_srccode(gt_acc_codes, pred_acc_codes)
         if acc_metrics is not None:
             results["accession_codes"].append(acc_metrics)
         
-        # evaluate sequencing data if either exists
-        seq_metrics = evaluate_seqdata_srccode(gt_seq_data, pred_seq_data)
+        # evaluate analysis data if either exists
+        seq_metrics = evaluate_analysis_srccode(gt_seq_data, pred_seq_data)
         if seq_metrics is not None:
-            results["sequencing_data"].append(seq_metrics)
+            results["analysis_data"].append(seq_metrics)
         
         # evaluate source code if either exists
-        src_metrics = evaluate_seqdata_srccode(gt_src_code, pred_src_code)
+        src_metrics = evaluate_analysis_srccode(gt_src_code, pred_src_code)
         if src_metrics is not None:
             results["source_code"].append(src_metrics)
     
@@ -190,7 +190,7 @@ def save_results(results, output_path):
             # Update the last entry with accuracy results
             current_entry.update({
                 "accession_codes": results.get("accession_codes", {}),
-                "sequencing_data": results.get("sequencing_data", {}),
+                "analysis_data": results.get("analysis_data", {}),
                 "source_code": results.get("source_code", {})
             })
             
@@ -202,10 +202,10 @@ def save_results(results, output_path):
         # If file doesn't exist, create new entry
         with open(output_path, 'w') as f:
             json.dump([{
-                "run_number": 1,
+                "prompt_number": 1,
                 "execution_time": 0,  # placeholder
                 "accession_codes": results.get("accession_codes", {}),
-                "sequencing_data": results.get("sequencing_data", {}),
+                "analysis_data": results.get("analysis_data", {}),
                 "source_code": results.get("source_code", {})
             }], f, indent=2)
 
@@ -219,7 +219,7 @@ def evaluate():
     print("\nEvaluation Results:")
     print("-" * 50)
 
-    for category in ["accession_codes", "sequencing_data", "source_code"]:
+    for category in ["accession_codes", "analysis_data", "source_code"]:
         if category not in results:
             print(f"\n{category.upper()}: No data available")
             continue
