@@ -51,6 +51,11 @@
               :class="`material-symbols-rounded !text-base ${active_section == 'connections' ? 'font-variation-ico-filled' : ''}`">hub</span>
           </Tab>
         </TabList>
+
+        <Button class="w-5 h-5 !ml-auto" size="small" text rounded plain @click="expand_collapse_tab()">
+          <span :class="`dark:text-white material-symbols-rounded !text-lg`">{{ active_section ? 'expand_circle_up' :
+            'expand_circle_down' }}</span>
+        </Button>
       </footer>
     </Tabs>
   </div>
@@ -99,6 +104,13 @@ export default {
   methods: {
     copyclipboard() {
       this.emitter.emit("copyLayerConnections");
+    },
+    expand_collapse_tab() {
+      if (this.active_section) {
+        this.active_section = null;
+      } else {
+        this.active_section = 'informations'
+      }
     },
   },
 };

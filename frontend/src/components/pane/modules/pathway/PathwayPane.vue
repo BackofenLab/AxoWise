@@ -12,7 +12,7 @@
         </span>
       </Button>
     </header>
-    
+
     <Tabs v-model:value="active_section">
       <div
         :class="`${active_section ? '!pt-2 !border-t !border-slate-700 !mt-2' : ''} px-2.5 -mx-2.5 max-h-[10rem] overflow-auto overflow-x-visible`">
@@ -58,9 +58,15 @@
           </Tab>
         </TabList>
 
-        <Button class="w-5 h-5 !ml-auto" size="small" text rounded plain @click="call_chatbot(mode)">
-          <span class="dark:text-white material-symbols-rounded !text-lg">forum</span>
-        </Button>
+        <div class="ml-auto">
+          <Button class="w-5 h-5 !mr-1" size="small" text rounded plain @click="expand_collapse_tab()">
+            <span :class="`dark:text-white material-symbols-rounded !text-lg`">{{ active_section ? 'expand_circle_up' :
+              'expand_circle_down' }}</span>
+          </Button>
+          <Button class="w-5 h-5" size="small" text rounded plain @click="call_chatbot(mode)">
+            <span class="dark:text-white material-symbols-rounded !text-lg">forum</span>
+          </Button>
+        </div>
       </footer>
     </Tabs>
   </div>
@@ -130,6 +136,13 @@ export default {
       var textToCopy = [];
       for (var link of com.links) textToCopy.push(link.label);
       navigator.clipboard.writeText(textToCopy.join("\n"));
+    },
+    expand_collapse_tab() {
+      if (this.active_section) {
+        this.active_section = null;
+      } else {
+        this.active_section = 'statistics'
+      }
     },
     select_node(value) {
       this.emitter.emit("searchNode", { node: value, mode: this.mode });
