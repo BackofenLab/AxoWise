@@ -21,9 +21,8 @@
         class:
           '!px-0 !py-1 !text-slate-500 dark:!text-slate-300 leading-tight transition-all duration-300 ease-in-out',
       },
-    }" :virtualScrollerOptions="{ itemSize: 28 }" scrollHeight="100%" listStyle="max-height:100%"
-    class="h-full flex flex-col !p-0 !bg-transparent !border-0" @update:modelValue="select_community" :tabindex="0"
-    emptyMessage="No communities available.">
+    }" listStyle="max-height:100%" class="h-full flex flex-col !p-0 !bg-transparent !border-0"
+    @update:modelValue="select_community" :tabindex="0" emptyMessage="No communities available.">
 
     <template #footer>
       <header class="sticky top-0 bg-[var(--card-bg)] pt-3 items-center gap-2 z-[1] order-1">
