@@ -223,7 +223,7 @@ export default {
       var com = this;
       var proteins = null;
 
-      if (subset == null) {
+      if (subset == null || subset.length == 0) {
         com.reset();
         this.$store.commit("assign_active_cgraph_subset", null);
         return;
