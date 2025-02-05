@@ -7,7 +7,7 @@
                 "PRJNA623696"
             ],
             "analysis_data": [],
-            "source_code": []
+            "scripts": []
         }
     },
     {
@@ -15,11 +15,11 @@
         "PubMed_ID": "35000600",
         "results": {
             "accession_codes": [],
-            "analysis_data": [
+            "analysis_data": [],
+            "scripts": [
                 "https://github.com/penguab/GTEx-Networks-For-Senescence",
                 "https://github.com/penguab/GTEx-Networks"
-            ],
-            "source_code": []
+            ]
         }
     },
     {
@@ -42,7 +42,37 @@
                 "https://ngdc.cncb.ac.cn/gsa/s/zpBrK8CM",
                 "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE269044"
             ],
-            "source_code": []
+            "scripts": []
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1186/s12943-023-01876-x",
+        "PubMed_ID": "37833788",
+        "results": {
+            "accession_codes": [
+                "HRA004998",
+                "syn51758773",
+                "GSE176078",
+                "GSE166555",
+                "GSE149614",
+                "GSE184880",
+                "GSE203612",
+                "GSE207422",
+                "GSE215120",
+                "GSE181919",
+                "GSE91061"
+            ],
+            "analysis_data": [
+                "https://www.synapse.org/#!Synapse:syn51758773/",
+                "https://chenxisd.shinyapps.io/pancaf/",
+                "https://lambrechtslab.sites.vib.be/en/single-cell",
+                "http://www.cancerdiversity.asia/scCRLM/",
+                "http://lifeome.net/supp/livercancer-st/data.htm",
+                "https://www.10xgenomics.com/resources/datasets/human-ovarian-cancer-1-standard",
+                "https://www.10xgenomics.com/resources/datasets/human-prostate-cancer-acinar-cell-carcinoma-ffpe-1-standard",
+                "https://www.10xgenomics.com/resources/datasets/human-prostate-cancer-adenocarcinoma-with-invasive-carcinoma-ffpe-1-standard-1-3-0"
+            ],
+            "scripts": []
         }
     },
     {
@@ -50,13 +80,38 @@
         "PubMed_ID": "39383866",
         "results": {
             "accession_codes": [
-                "GEO: GSE251913"
+                "GSE251913"
             ],
             "analysis_data": [
-                "https://doi.org/10.5281/zenodo.13730232",
-                "https://github.com/UcarLab/ERS-vs-CYT-Islet-Stress-Responses"
+                "https://doi.org/10.5281/zenodo.13730232"
             ],
-            "source_code": []
+            "scripts": [
+                "https://github.com/UcarLab/ERS-vs-CYT-Islet-Stress-Responses"
+            ]
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1016/j.cmet.2020.03.009",
+        "PubMed_ID": "32268117",
+        "results": {
+            "accession_codes": [
+                "E-MTAB-8119",
+                "E-MTAB-8604",
+                "PXD016678",
+                "E-MTAB-7458",
+                "E-MTAB-6308",
+                "GSE77199",
+                "E-GEOD-41614",
+                "E-GEOD-51401",
+                "E-GEOD-73753",
+                "E-MTAB-4842"
+            ],
+            "analysis_data": [
+                "https://www.vibcancer.be/software-tools/Murine_ECTax",
+                "https://www.vibcancer.be/software-tools/endodb",
+                "https://www.vibcancer.be/software-tools/scCycle"
+            ],
+            "scripts": []
         }
     },
     {
@@ -70,8 +125,28 @@
                 "https://doi.org/10.5281/zenodo.10020271",
                 "https://clients.adaptivebiotech.com/pub/shu-2024-ni"
             ],
-            "source_code": [
+            "scripts": [
                 "https://github.com/FertigLab/HCCTLS"
+            ]
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41590-023-01692-x",
+        "PubMed_ID": "38057617",
+        "results": {
+            "accession_codes": [
+                "OP245920-OP245935",
+                "OR239787-OR239798"
+            ],
+            "analysis_data": [
+                "https://doi.org/10.5281/zenodo.7698787",
+                "https://doi.org/10.5281/zenodo.7686500",
+                "https://zenodo.org/record/6909380",
+                "https://doi.org/10.5281/zenodo.8088178",
+                "https://www.immunoseq.com/cmv-classifier/"
+            ],
+            "scripts": [
+                "https://github.com/kmayerb/NIA34780B"
             ]
         }
     },
@@ -89,8 +164,56 @@
                 "https://doi.org/10.5281/zenodo.7861508",
                 "https://doi.org/10.17044/scilifelab.22778920"
             ],
-            "source_code": [
+            "scripts": [
                 "https://github.com/marcovito/sma"
+            ]
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41587-024-02241-z",
+        "PubMed_ID": "38724668",
+        "results": {
+            "accession_codes": [
+                "PRJNA494280",
+                "PRJNA394846",
+                "GSE178969",
+                "GSE190130",
+                "GSE178324",
+                "GSE178966",
+                "GSE142745",
+                "GSE129785",
+                "GSE162170",
+                "GSE166547",
+                "GSE139136",
+                "GSE163655",
+                "GSE163656",
+                "GSE74912",
+                "GSE89895",
+                "GSE179606",
+                "GSE65360",
+                "GSE163579",
+                "GSE137115",
+                "GSE152423",
+                "GSE164978",
+                "GSE100272",
+                "GSE183760",
+                "PRJNA522707",
+                "GSE102395",
+                "GSE103590",
+                "GSE121862",
+                "CNP0001454",
+                "OMIX005823",
+                "OMIX005824"
+            ],
+            "analysis_data": [
+                "https://figshare.com/s/ff707bf8242f7b3ed8f5",
+                "https://figshare.com/s/760d3ff54f1214a50cc2",
+                "https://figshare.com/s/9c01c3b58d34b80de230"
+            ],
+            "scripts": [
+                "https://github.com/caleblareau/mtscATACpaper_reproducibility",
+                "https://github.com/GreenleafLab/MPAL-Single-Cell-2019",
+                "https://github.com/GreenleafLab/brainchromatin"
             ]
         }
     },
@@ -100,7 +223,7 @@
         "results": {
             "accession_codes": [],
             "analysis_data": [],
-            "source_code": []
+            "scripts": []
         }
     },
     {
@@ -115,7 +238,7 @@
                 "E-MTAB-14206"
             ],
             "analysis_data": [],
-            "source_code": []
+            "scripts": []
         }
     },
     {
@@ -126,7 +249,7 @@
                 "GSE255274"
             ],
             "analysis_data": [],
-            "source_code": [
+            "scripts": [
                 "https://gitlab.gwdg.de/schuh-meiosis/ovulation/-/tree/main"
             ]
         }
@@ -143,7 +266,45 @@
                 "https://singlecell.broadinstitute.org/single_cell/study/SCP972/",
                 "https://singlecell.broadinstitute.org/single_cell/study/SCP973/"
             ],
-            "source_code": []
+            "scripts": []
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1016/j.ccell.2024.03.003",
+        "PubMed_ID": "38593781",
+        "results": {
+            "accession_codes": [
+                "EGAS00001007473",
+                "GSE235787"
+            ],
+            "analysis_data": [
+                "https://data.humancellatlas.org/explore/projects/cc95ff89-2e68-4a08-a234-480eca21ce79?catalog=dcp1",
+                "https://platform.stjude.cloud/data/cohorts?dataset_accession=SJC-DS-1009",
+                "https://permalinks.stjude.cloud/permalinks/b-cell-de"
+            ],
+            "scripts": [
+                "https://github.com/jyyulab/Asparaginase-Venetoclax-in-B-ALL"
+            ]
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1016/j.ccell.2022.01.003",
+        "PubMed_ID": "34588223",
+        "results": {
+            "accession_codes": [
+                "GSE190103",
+                "GSE190468",
+                "SAMN23523449",
+                "SAMN23523450",
+                "SAMN23523451",
+                "SAMN23523452",
+                "SAMN23523453",
+                "SAMN23523454",
+                "SAMN23523455",
+                "SAMN23523456"
+            ],
+            "analysis_data": [],
+            "scripts": []
         }
     },
     {
@@ -154,7 +315,7 @@
                 "GSE181515"
             ],
             "analysis_data": [],
-            "source_code": [
+            "scripts": [
                 "https://github.com/holab-hku/HCC_Stem_scRNAseq"
             ]
         }
@@ -168,7 +329,7 @@
                 "https://zenodo.org/record/6962901",
                 "https://datadryad.org/stash/dataset/doi:10.5061/dryad.h70rxwdmj"
             ],
-            "source_code": [
+            "scripts": [
                 "https://github.com/theMILOlab/SPATA2"
             ]
         }
@@ -189,8 +350,24 @@
             "analysis_data": [
                 "https://doi.org/10.5281/zenodo.8206638"
             ],
-            "source_code": [
+            "scripts": [
                 "https://github.com/alonmillet/apoe-ad-age-atlas"
+            ]
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1016/j.immuni.2019.11.014",
+        "PubMed_ID": "31924475",
+        "results": {
+            "accession_codes": [
+                "PRJNA579178",
+                "GSE139324"
+            ],
+            "analysis_data": [],
+            "scripts": [
+                "https://github.com/arc85/dragonsc",
+                "https://github.com/arc85/singleseqgset",
+                "https://github.com/arc85/celltalker"
             ]
         }
     },
@@ -204,7 +381,18 @@
             "analysis_data": [
                 "https://singlecell.broadinstitute.org/single_cell/study/SCP498/transcriptional-and-cellular-diversity-of-the-human-heart"
             ],
-            "source_code": []
+            "scripts": []
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1161/CIRCULATIONAHA.118.038362",
+        "PubMed_ID": "31146585",
+        "results": {
+            "accession_codes": [],
+            "analysis_data": [
+                "https://portals.broadinstitute.org/single_cell/study/SCP289/single-cell-analysis-of-the-normal-mouse-aorta-reveals-functionally-distinct-endothelial-cell-populations"
+            ],
+            "scripts": []
         }
     },
     {
@@ -218,7 +406,16 @@
                 "http://singlecell.charite.de/pancreas",
                 "https://doi.org/10.6084/m9.figshare.12173232"
             ],
-            "source_code": []
+            "scripts": []
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1053/j.gastro.2020.09.010",
+        "PubMed_ID": "33007300",
+        "results": {
+            "accession_codes": [],
+            "analysis_data": [],
+            "scripts": []
         }
     },
     {
@@ -227,7 +424,19 @@
         "results": {
             "accession_codes": [],
             "analysis_data": [],
-            "source_code": []
+            "scripts": []
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1186/s13045-024-01610-0",
+        "PubMed_ID": "39380002",
+        "results": {
+            "accession_codes": [
+                "PRJNA1100482",
+                "PRJNA1100482"
+            ],
+            "analysis_data": [],
+            "scripts": []
         }
     },
     {
@@ -238,7 +447,7 @@
                 "GSE138669"
             ],
             "analysis_data": [],
-            "source_code": []
+            "scripts": []
         }
     },
     {
@@ -250,7 +459,32 @@
                 "PRJCA008573"
             ],
             "analysis_data": [],
-            "source_code": []
+            "scripts": []
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41392-023-01634-x",
+        "PubMed_ID": "37816708",
+        "results": {
+            "accession_codes": [
+                "GSE237749",
+                "HRA005107"
+            ],
+            "analysis_data": [],
+            "scripts": []
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41392-021-00730-0",
+        "PubMed_ID": "34417435",
+        "results": {
+            "accession_codes": [
+                "SUB9924819"
+            ],
+            "analysis_data": [
+                "https://figshare.com/s/970ed37d44f9ac3489db"
+            ],
+            "scripts": []
         }
     },
     {
@@ -261,7 +495,7 @@
                 "PRJNA956545"
             ],
             "analysis_data": [],
-            "source_code": []
+            "scripts": []
         }
     },
     {
@@ -272,8 +506,9 @@
                 "PRJEB62485"
             ],
             "analysis_data": [],
-            "source_code": [
-                "https://github.com/qinghezeng/ABRS-P"
+            "scripts": [
+                "https://github.com/qinghezeng/ABRS-P",
+                "https://github.com/qinghezeng/ABRS-P/blob/main/docs/tutorial.md"
             ]
         }
     },
@@ -288,7 +523,7 @@
                 "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE235743",
                 "https://doi.org/10.5281/zenodo.8011746"
             ],
-            "source_code": []
+            "scripts": []
         }
     },
     {
@@ -297,7 +532,7 @@
         "results": {
             "accession_codes": [],
             "analysis_data": [],
-            "source_code": []
+            "scripts": []
         }
     },
     {
@@ -312,7 +547,28 @@
             "analysis_data": [
                 "https://www.ncbi.nlm.nih.gov/Traces/study/?acc=SRP499879"
             ],
-            "source_code": []
+            "scripts": []
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1016/j.jhep.2023.12.023",
+        "PubMed_ID": "38199298",
+        "results": {
+            "accession_codes": [
+                "GSE240429",
+                "GSE243977",
+                "GSE1154691",
+                "GSE185477",
+                "GSE136103",
+                "GSE245620",
+                "GSE247128"
+            ],
+            "analysis_data": [
+                "https://cellxgene.cziscience.com/collections/0c8a364b-97b5-4cc8-a593-23c38c6f0ac5"
+            ],
+            "scripts": [
+                "https://github.com/tallulandrews/LiverMap2.0"
+            ]
         }
     },
     {
@@ -323,7 +579,7 @@
                 "CRA007790"
             ],
             "analysis_data": [],
-            "source_code": []
+            "scripts": []
         }
     },
     {
@@ -334,7 +590,7 @@
                 "CRA005439"
             ],
             "analysis_data": [],
-            "source_code": []
+            "scripts": []
         }
     },
     {
@@ -346,11 +602,10 @@
                 "EGAS00001004717",
                 "GSE145926",
                 "GSE122960",
-                "E-MTAB-6149",
-                "E-MTAB-6653"
+                "E-MTAB-6149/E-MTAB-6653"
             ],
             "analysis_data": [],
-            "source_code": []
+            "scripts": []
         }
     },
     {
@@ -361,8 +616,23 @@
             "analysis_data": [
                 "https://support.10xgenomics.com/single-cell-gene-expression/software/overview/welcome"
             ],
-            "source_code": [
+            "scripts": [
                 "https://github.com/crowelab/PyIR"
+            ]
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41551-023-01143-w",
+        "PubMed_ID": "32747832",
+        "results": {
+            "accession_codes": [
+                "syn52457643"
+            ],
+            "analysis_data": [
+                "https://www.synapse.org/#!Synapse:syn52457643"
+            ],
+            "scripts": [
+                "https://github.com/Jorge-Ibanez-StJude/AutomatedImageAnalysis"
             ]
         }
     },
@@ -374,7 +644,7 @@
                 "GSE161345"
             ],
             "analysis_data": [],
-            "source_code": []
+            "scripts": []
         }
     },
     {
@@ -396,7 +666,7 @@
                 "https://datashare.ed.ac.uk/handle/10283/3203",
                 "https://broad-ukb-sumstats-us-east-1.s3.amazonaws.com/round2/additive-tsvs/I9_HYPERTENSION.gwas.imputed_v3.both_sexes.tsv.bgz"
             ],
-            "source_code": [
+            "scripts": [
                 "https://github.com/AnnaSophieFroehlich/single_cell_aging",
                 "https://github.com/thewonlab/H-MAGMA"
             ]
@@ -417,8 +687,40 @@
                 "https://www.synapse.org/#!Synapse:syn22024536",
                 "https://beta.fastgenomics.org/datasets/detail-dataset-1ad2967be372494a9fdba621610ad3f3#Files"
             ],
-            "source_code": [
+            "scripts": [
                 "https://github.com/The-Butovsky-Lab/Neutrophils_manuscript_code_availability"
+            ]
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41591-024-03075-7",
+        "PubMed_ID": "38942992",
+        "results": {
+            "accession_codes": [
+                "GSE245535",
+                "GSE267209"
+            ],
+            "analysis_data": [
+                "https://apps.cytoscape.org/apps/cluego",
+                "https://metascape.org/gp/index.html#/main/step1",
+                "https://www.gsea-msigdb.org/gsea/msigdb/human/genesets.jsp?collection=H"
+            ],
+            "scripts": [
+                "https://github.com/czambir/PC_pml_code",
+                "https://github.com/ElementoLab/imc"
+            ]
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41591-024-02979-8",
+        "PubMed_ID": "38867077",
+        "results": {
+            "accession_codes": [],
+            "analysis_data": [
+                "https://www.dropbox.com/scl/fo/rhgr2y28az1e2h0avaj0l/h?rlkey=6a4wlnus0png19mb80g42uja1&amp;dl=0"
+            ],
+            "scripts": [
+                "https://github.com/pachterlab/DBALLSMRDMCMGWSTPMBDKPFP_2023"
             ]
         }
     },
@@ -434,7 +736,23 @@
                 "https://doi.org/10.5281/zenodo.11406939",
                 "https://doi.org/10.5281/zenodo.11259043"
             ],
-            "source_code": []
+            "scripts": []
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41588-024-01802-x",
+        "PubMed_ID": "39048792",
+        "results": {
+            "accession_codes": [
+                "GSE211785",
+                "GSE115098",
+                "GSE173343"
+            ],
+            "analysis_data": [],
+            "scripts": [
+                "https://github.com/amin69upenn/Human_Kidney_Multiomics_and_Spatial_Atlas_",
+                "https://github.com/jlevins2010/FME_atlas"
+            ]
         }
     },
     {
@@ -446,7 +764,7 @@
                 "PRJNA1113704"
             ],
             "analysis_data": [],
-            "source_code": []
+            "scripts": []
         }
     },
     {
@@ -457,9 +775,33 @@
                 "GSE223550"
             ],
             "analysis_data": [],
-            "source_code": [
+            "scripts": [
                 "https://github.com/Teneth/GEND_Script"
             ]
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41565-024-01722-1",
+        "PubMed_ID": "39054386",
+        "results": {
+            "accession_codes": [
+                "PRJNA1102105"
+            ],
+            "analysis_data": [
+                "https://www.ncbi.nlm.nih.gov/sra/PRJNA1102105"
+            ],
+            "scripts": []
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41565-022-01249-3",
+        "PubMed_ID": "36456644",
+        "results": {
+            "accession_codes": [
+                "GSE209819"
+            ],
+            "analysis_data": [],
+            "scripts": []
         }
     },
     {
@@ -471,11 +813,9 @@
             ],
             "analysis_data": [
                 "https://www.ncbi.nlm.nih.gov/bioproject/PRJNA934842",
-                "https://doi.org/10.5281/zenodo.10835741",
-                "https://github.com/shaharbr/Bracha_et_al_2024",
-                "https://github.com/aecon/toxoplasma3D"
+                "https://doi.org/10.5281/zenodo.10835741"
             ],
-            "source_code": [
+            "scripts": [
                 "https://github.com/aecon/toxoplasma3D",
                 "https://github.com/GiuseppeTestaLab/toxo-organoids",
                 "https://github.com/shaharbr/Bracha_et_al_2024"
@@ -493,7 +833,36 @@
                 "GSE276358"
             ],
             "analysis_data": [],
-            "source_code": []
+            "scripts": []
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1016/j.cell.2024.10.006",
+        "PubMed_ID": "39481380",
+        "results": {
+            "accession_codes": [
+                "GSE263461"
+            ],
+            "analysis_data": [
+                "https://doi.org/10.5281/zenodo.13785168"
+            ],
+            "scripts": [
+                "https://github.com/Noamrab/priism"
+            ]
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1016/j.cell.2020.04.048",
+        "PubMed_ID": "32413320",
+        "results": {
+            "accession_codes": [
+                "GSE146972"
+            ],
+            "analysis_data": [],
+            "scripts": [
+                "https://gitlab.com/hormozlab/carlin",
+                "https://gitlab.com/hormozlab/cell_2020_carlin"
+            ]
         }
     },
     {
@@ -518,8 +887,44 @@
                 "https://doi.org/10.5281/zenodo.10066538",
                 "https://doi.org/10.5281/zenodo.10066703"
             ],
-            "source_code": [
+            "scripts": [
                 "https://github.com/Waelchli-lab/Single-cell-atlas-of-the-human-brain-vasculature-accross-development-adulthood-and-disease"
+            ]
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41586-024-07955-3",
+        "PubMed_ID": "39385020",
+        "results": {
+            "accession_codes": [
+                "phs001087.v4.p1",
+                "SUB14118668",
+                "PRJNA1061081"
+            ],
+            "analysis_data": [
+                "https://doi.org/10.5281/zenodo.11121869129",
+                "https://bit.ly/4cjAYof",
+                "https://urothelial-cancer-wcm-2023.nygenome.org/"
+            ],
+            "scripts": [
+                "https://github.com/nygenome/UrothelialCancer_WGS_paper_figures"
+            ]
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41586-024-07292-5",
+        "PubMed_ID": "38600385",
+        "results": {
+            "accession_codes": [
+                "PRJNA799597",
+                "PRJNA660493"
+            ],
+            "analysis_data": [
+                "http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/",
+                "https://portal.brain-map.org/atlases-and-data/rnaseq/human-multiple-cortical-areas-smart-seq"
+            ],
+            "scripts": [
+                "https://github.com/shishenyxx/Human_Inhibitory_Neurons"
             ]
         }
     },
@@ -531,7 +936,56 @@
                 "GSE249430"
             ],
             "analysis_data": [],
-            "source_code": []
+            "scripts": []
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1126/science.adk9217",
+        "PubMed_ID": "39236169",
+        "results": {
+            "accession_codes": [],
+            "analysis_data": [
+                "https://gdc.cancer.gov/about-data/publications/TCGA-ATAC-Seq-2024"
+            ],
+            "scripts": [
+                "https://github.com/NCICCGPO/scATAC-Manuscript"
+            ]
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1126/science.adk0582",
+        "PubMed_ID": "38753770",
+        "results": {
+            "accession_codes": [
+                "EMD-28941",
+                "EMD-28942",
+                "EMD-28945",
+                "EMD-43190",
+                "8F92",
+                "8F9G",
+                "8F9M",
+                "8VFV",
+                "EMD-28937",
+                "EMD-28938",
+                "EMD-28939",
+                "EMD-28940",
+                "EMD-29330",
+                "EMD-29333",
+                "EMD-29334",
+                "EMD-29335",
+                "EMD-43191",
+                "EMD-43192",
+                "PP324161",
+                "PP325746",
+                "PP321345",
+                "PP322350",
+                "PP322351",
+                "PP324160",
+                "MSV000094176",
+                "PXD050174"
+            ],
+            "analysis_data": [],
+            "scripts": []
         }
     },
     {
@@ -542,7 +996,7 @@
                 "GSE206919"
             ],
             "analysis_data": [],
-            "source_code": [
+            "scripts": [
                 "https://github.com/lj-bio/Macaque-POP"
             ]
         }
@@ -556,7 +1010,20 @@
                 "SRP157974"
             ],
             "analysis_data": [],
-            "source_code": []
+            "scripts": []
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41422-023-00810-6",
+        "PubMed_ID": "37142671",
+        "results": {
+            "accession_codes": [
+                "OEP002689"
+            ],
+            "analysis_data": [
+                "https://data.mendeley.com/v1/datasets/jkpn67jwsd/draft?preview=1"
+            ],
+            "scripts": []
         }
     },
     {
@@ -565,7 +1032,16 @@
         "results": {
             "accession_codes": [],
             "analysis_data": [],
-            "source_code": []
+            "scripts": []
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1158/2159-8290.CD-22-0872",
+        "PubMed_ID": "37067911",
+        "results": {
+            "accession_codes": [],
+            "analysis_data": [],
+            "scripts": []
         }
     },
     {
@@ -578,7 +1054,7 @@
             "analysis_data": [
                 "https://doi.org/10.5281/zenodo.7641622"
             ],
-            "source_code": []
+            "scripts": []
         }
     },
     {
@@ -595,7 +1071,7 @@
                 "GCF_000001405.26"
             ],
             "analysis_data": [],
-            "source_code": []
+            "scripts": []
         }
     },
     {
@@ -606,8 +1082,52 @@
                 "GSE219247"
             ],
             "analysis_data": [],
-            "source_code": [
+            "scripts": [
                 "https://github.com/bardylab/miscos_org_ephys"
+            ]
+        }
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41592-024-02429-w",
+        "PubMed_ID": "39322753",
+        "results": {
+            "accession_codes": [
+                "GSE128639",
+                "GSE194122",
+                "GSE201048",
+                "GSE100866",
+                "GSM4972212",
+                "GSE163120",
+                "GSE175702",
+                "GSE149544",
+                "GSE148127",
+                "GSE164378",
+                "GSE150599",
+                "GSE100501",
+                "GSE156478",
+                "GSE158013",
+                "GSE163480",
+                "GSE140203",
+                "GSE126074",
+                "GSE201402",
+                "GSE194122",
+                "GSE132901",
+                "GSE181251",
+                "GSE246147"
+            ],
+            "analysis_data": [
+                "https://support.10xgenomics.com/single-cell-gene-expression/datasets/3.0.0/malt_10k_protein_v3",
+                "https://zenodo.org/record/6348128#.Y5f40LJBzDU",
+                "https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-11264/",
+                "https://www.10xgenomics.com/resources/datasets/frozen-human-healthy-brain-tissue-3-k-1-standard-2-0-0/",
+                "https://www.10xgenomics.com/resources/datasets/pbmc-from-a-healthy-donor-granulocytes-removed-through-cell-sorting-10-k-1-standard-2-0-0/",
+                "https://www.10xgenomics.com/resources/datasets/pbmc-from-a-healthy-donor-granulocytes-removed-through-cell-sorting-3-k-1-standard-2-0-0/",
+                "https://www.10xgenomics.com/resources/datasets/pbmc-from-a-healthy-donor-no-cell-sorting-10-k-1-standard-2-0-0/",
+                "https://www.10xgenomics.com/resources/datasets/pbmc-from-a-healthy-donor-no-cell-sorting-3-k-1-standard-2-0-0/",
+                "https://doi.org/10.5281/zenodo.10540843"
+            ],
+            "scripts": [
+                "https://github.com/QuKunLab/MultiomeBenchmarking/"
             ]
         }
     }

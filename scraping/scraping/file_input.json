@@ -21,10 +21,24 @@
         "journal": "Molecular Cancer"
     },
     {
+        "DOI": "https://doi.org/10.1186/s12943-023-01876-x",
+        "header": "Availability of data and materials",
+        "paragraph": "The raw sequence data reported in this paper have been deposited in the Genome Sequence Archive in National Genomics Data Center, China National Center for Bioinformation / Beijing Institute of Genomics, Chinese Academy of Sciences (GSA-Human: HRA004998) that are publicly accessible at https://ngdc.cncb.ac.cn/gsa-human. The integrated ST data from 22 tissue slices and their corresponding scRNA-seq data have been deposited in Synapse under the accession code syn51758773 (https://www.synapse.org/#!Synapse:syn51758773/). The analysis and visualization of CAFs in pan-cancer can be performed at https://chenxisd.shinyapps.io/pancaf/. Reanalyzed publicly available scRNA-seq data can be accessed from the GEO database under accession codes: GSE176078 [97], GSE166555 [98], GSE149614 [99], GSE184880 [100], GSE203612 [101], GSE207422 [18], GSE215120 [19], GSE181919 [7]. The scRNA-seq data of PRAD from Chen et al. were downloaded from http://www.pradcellatlas.com/. The scRNA-seq data of BRCA patients receiving pembrolizumab from Bassez et al. were downloaded from https://lambrechtslab.sites.vib.be/en/single-cell [41]. Reanalyzed publicly available ST data can be accessed from the GEO database under accession codes: GSE176078 [97], GSE203612 [101]. The ST data of CRC from Wu et al. were downloaded from http://www.cancerdiversity.asia/scCRLM/ [79]. The ST data for LIHC1, LIHC2, LIHC3, and LIHC4 from Wu et al. were downloaded from http://lifeome.net/supp/livercancer-st/data.htm [102]. The ST data for OVCA_10x were downloaded from https://www.10xgenomics.com/resources/datasets/human-ovarian-cancer-1-standard. The ST data for PRAD1 were downloaded from https://www.10xgenomics.com/resources/datasets/human-prostate-cancer-acinar-cell-carcinoma-ffpe-1-standard. The ST data for PRAD2 were downloaded from https://www.10xgenomics.com/resources/datasets/human-prostate-cancer-adenocarcinoma-with-invasive-carcinoma-ffpe-1-standard-1-3-0. Reanalyzed publicly available RNA-seq data of melanoma patients undergoing immunotherapy (Riaz cohort) can be accessed from the GEO database under accession code GSE91061 [85]. Reanalyzed publicly available RNA-seq data of melanoma patients undergoing immunotherapy (Gide cohort [86] and Nathanson cohort [87]) were downloaded from TIDE database (http://tide.dfci.harvard.edu/) [88].",
+        "PubMed_ID": "37833788",
+        "journal": "Molecular Cancer"
+    },
+    {
         "DOI": "https://doi.org/10.1016/j.cmet.2024.09.006",
         "header": "Data and code availability",
         "paragraph": "\u2022All cadaveric human islet ATAC-seq, RNA-seq, and scRNA-seq data generated in this study are available via the Gene Expression Omnibus under study accession GEO: GSE251913.\u2022Data used to generate manuscript figures are provided in Tables S1, S2, S3, S4, and S5 and Data S1, and at https://doi.org/10.5281/zenodo.13730232.\u2022Scripts used to generate manuscript figures can be found at https://github.com/UcarLab/ERS-vs-CYT-Islet-Stress-Responses.\u2022This paper does not report original code.\u2022Any additional information required to reanalyze data reported in this paper is available from the lead contact upon request.",
         "PubMed_ID": "39383866",
+        "journal": "Cell Metabolism"
+    },
+    {
+        "DOI": "https://doi.org/10.1016/j.cmet.2020.03.009",
+        "header": "Data and Code Availability",
+        "paragraph": "Data ResourcesThe accession number for the raw sequencing data of choroidal ECs reported in this paper is ArrayExpress: E-MTAB-8119; for the bulk RNA-seq data of ALDH18A1 and SQLE-silenced human endothelial cells ArrayExpress: E-MTAB-8604. The mass spectrometry proteomics data have been deposited to the ProteomeXchange Consortium via the PRIDE (Perez-Riverol et al., 2019) partner repository with the accession number PRIDE: PXD016678. Publicly available single cell transcriptome data from murine lung TECs were derived from ArrayExpress: E-MTAB-7458 and from human cultured TECs from ArrayExpress: E-MTAB-6308. Processed publicly available endothelial transcriptomics data were derived from the EndoDB, raw data can be obtained from GEO (accession number GEO: GSE77199) or ArrayExpress (accession numbers ArrayExpress: E-GEOD-41614, E-GEOD-51401, E-GEOD-73753, E-MTAB-4842). To ensure data accessibility to non-bioinformaticians, reproducibility, and resource value, we made our scRNA-seq data available for further exploration via an interactive web tool at https://www.vibcancer.be/software-tools/Murine_ECTax and the EndoDB (https://www.vibcancer.be/software-tools/endodb). With this tool users can interactively visualize gene expression and clustering on t-SNE, search marker genes for all subclusters, and export gene expression data. A database of cell cycle data is freely available at https://www.vibcancer.be/software-tools/scCycle. The accession number for the raw sequencing data of choroidal ECs reported in this paper is ArrayExpress: E-MTAB-8119; for the bulk RNA-seq data of ALDH18A1 and SQLE-silenced human endothelial cells ArrayExpress: E-MTAB-8604. The mass spectrometry proteomics data have been deposited to the ProteomeXchange Consortium via the PRIDE (Perez-Riverol et al., 2019) partner repository with the accession number PRIDE: PXD016678. Publicly available single cell transcriptome data from murine lung TECs were derived from ArrayExpress: E-MTAB-7458 and from human cultured TECs from ArrayExpress: E-MTAB-6308. Processed publicly available endothelial transcriptomics data were derived from the EndoDB, raw data can be obtained from GEO (accession number GEO: GSE77199) or ArrayExpress (accession numbers ArrayExpress: E-GEOD-41614, E-GEOD-51401, E-GEOD-73753, E-MTAB-4842). To ensure data accessibility to non-bioinformaticians, reproducibility, and resource value, we made our scRNA-seq data available for further exploration via an interactive web tool at https://www.vibcancer.be/software-tools/Murine_ECTax and the EndoDB (https://www.vibcancer.be/software-tools/endodb). With this tool users can interactively visualize gene expression and clustering on t-SNE, search marker genes for all subclusters, and export gene expression data. A database of cell cycle data is freely available at https://www.vibcancer.be/software-tools/scCycle.",
+        "PubMed_ID": "32268117",
         "journal": "Cell Metabolism"
     },
     {
@@ -35,10 +49,24 @@
         "journal": "Nature Immunology"
     },
     {
+        "DOI": "https://doi.org/10.1038/s41590-023-01692-x",
+        "header": "Data availability",
+        "paragraph": "The whole PBMC and nasal TRB repertoires are available at https://doi.org/10.5281/zenodo.7698787. Sorted naive and memory PBMC T cell subset TRB repertoires from the time point E00, sorted total CD4+ T cells and AIM-sorted CD4+ T cell subsets from the time point E03 are available at https://doi.org/10.5281/zenodo.7686500. Processed single-cell CD69+CD137+ AIM-scTCR\u0251\u03b2-seq and feature barcode oligonucleotide-labeled mAb data are available at https://zenodo.org/record/6909380. The flow cytometry results from the intracellular cytokine staining of CD4+ and CD8+ S-reactive T cells are available at https://doi.org/10.5281/zenodo.8088178. The sequences of CD8+ and CD4+ T cell-origin TCRs expressed in reporter cells are available from GenBank (OP245920-OP245935 and OR239787-OR239798, respectively). The reference dataset for Cell Ranger used was GRCh-Alts-ensembl-5.0.0 and is available at 10xgenomics.com/support/software/cell-ranger/downloads. Source data are provided with this paper. The code used to analyze and present the data is based on Python v.3.8 or R v.4.1.2 and is available at https://github.com/kmayerb/NIA34780B. The availability of the tool used to classify PBMC TRB repertoires for evidence of CMV infection is discussed at https://www.immunoseq.com/cmv-classifier/.",
+        "PubMed_ID": "38057617",
+        "journal": "Nature Immunology"
+    },
+    {
         "DOI": "https://doi.org/10.1038/s41587-023-01937-y",
         "header": "Data availability",
         "paragraph": "The databases GRCh38 for human data and mm10 for mouse data, v 32, Ensembl 98 were used for the alignment of the sequencing data. All data required to replicate the analyses, including spaceranger output files, H&amp;E images and additional files are available at Mendeley Data (https://doi.org/10.17632/w7nw4km7xd.1). The MALDI-MSI raw data in imzML format and MS/MS spectra collected from tissue in mzML and vendor-specific baf format are available at Figshare (https://doi.org/10.17044/scilifelab.22770161). In situ sequencing data are available at Zenodo (https://doi.org/10.5281/zenodo.7861508). Spatial transcriptomics raw sequencing data, microscope images and spaceranger output files of the mouse and human samples are available at Figshare (https://doi.org/10.17044/scilifelab.22778920). The same data, with the exception of the human sequencing data, is available at Gene Expression Omnibus (GEO) with the accession number GSE232910. The sequencing data in FASTQ format of the human sample is provided upon request by Per Svenningsson (per.svenningsson@ki.se). The mouse brain atlas (http://mousebrain.org/) dataset and the GEO repository with accession number GSE178265 were used for the ST data deconvolution. The code used to generate the figures is available at https://github.com/marcovito/sma.",
         "PubMed_ID": "37667091",
+        "journal": "Nature Biotechnology"
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41587-024-02241-z",
+        "header": "Data availability",
+        "paragraph": "A full list of downloaded and generated data used in this study, including their access IDs, references, usage in this paper and/or download links, is provided in Supplementary Table 2. Accession codes for the publicly available datasets used in this study are as follows: (National Center for Biotechnology Information (NCBI)): PRJNA494280; PRJNA394846; GSE178969; GSE190130; GSE178324; GSE178966; GSE142745; GSE129785; GSE162170; GSE166547; GSE139136; GSE163655; GSE163656; GSE74912; GSE89895; GSE179606; GSE65360; GSE163579; GSE137115; GSE152423; GSE164978; GSE100272; GSE183760; PRJNA522707; GSE102395; GSE103590; and GSE121862. (China National GeneBank DataBase (CNGB)): CNP0001454. Chemical induction of eight-cell-like state data was downloaded from https://figshare.com/s/ff707bf8242f7b3ed8f5, https://figshare.com/s/760d3ff54f1214a50cc2 and https://figshare.com/s/9c01c3b58d34b80de230. mtscATAC data were downloaded from https://github.com/caleblareau/mtscATACpaper_reproducibility. anti-PD1-treated cancer biopsy data were downloaded from https://github.com/GreenleafLab/MPAL-Single-Cell-2019. Cortical scMultiomic data were downloaded from https://github.com/GreenleafLab/brainchromatin. In-house-generated datasets were uploaded to the OMIX database in the CNGB (https://ngdc.cncb.ac.cn/omix/): human data: OMIX005823 (ref. 98) and mouse/in vitro data: OMIX005824 (ref. 99). No restrictions will be applied on using the in-house-generated mouse and in vitro datasets. Due to local legal requirements, the in-house-generated human dataset will be available only in processed data format and will require a case-by-case application through the China Human Genetic Resources Management Office. Contact Kaiyu Qian, Wuhan University, via the CNGB OMIX website (\u2018Request for this data\u2019) for the access. The data manager will respond within 1 week. EpiTrace and accompanying testing data are available on GitHub100. Tutorials and usage manuals for EpiTrace are provided on readthedocs101. Codes to reproduce the analysis, along with the original and processed data for reproducibility purposes, are provided on OSF102.",
+        "PubMed_ID": "38724668",
         "journal": "Nature Biotechnology"
     },
     {
@@ -70,6 +98,20 @@
         "journal": "Cancer Cell"
     },
     {
+        "DOI": "https://doi.org/10.1016/j.ccell.2024.03.003",
+        "header": "Data and code availability",
+        "paragraph": "Human Cell Atlas Census of Immune Cells dataset is available at https://data.humancellatlas.org/explore/projects/cc95ff89-2e68-4a08-a234-480eca21ce79?catalog=dcp1. RNA-seq data of pediatric samples in this study is part of St. Jude Cloud Genomics Platform for the Pan-Acute Lymphoblastic Leukemia dataset (https://platform.stjude.cloud/data/cohorts?dataset_accession=SJC-DS-1009). RNA-seq data of adult samples were deposited in the European Genome-Phenome Archive: EGAS00001007473. The interactive web portal of single-cell network activity landscape of human B cell development can be accessed via https://permalinks.stjude.cloud/permalinks/b-cell-dev. The 10x Genomics scRNA-seq and scMultiome data generated in this study is available at NCBI GEO: GSE235787, Token: orgbuscarvqddaz. The code for analyzing the data has been deposited to GitHub (https://github.com/jyyulab/Asparaginase-Venetoclax-in-B-ALL).",
+        "PubMed_ID": "38593781",
+        "journal": "Cancer Cell"
+    },
+    {
+        "DOI": "https://doi.org/10.1016/j.ccell.2022.01.003",
+        "header": "Data and code availability",
+        "paragraph": "Processed single-cell RNA-seq and RNA-seq data of this study can be obtained from Gene Expression Omnibus (GEO) with an accession number of GSE190103 and GSE190468, respectively. 18s rRNA seq data can be obtained from BioSample accessions: SAMN23523449, SAMN23523450, SAMN23523451, SAMN23523452, SAMN23523453, SAMN23523454, SAMN23523455, SAMN23523456.",
+        "PubMed_ID": "35120601",
+        "journal": "Cancer Cell"
+    },
+    {
         "DOI": "https://doi.org/10.1136/gutjnl-2021-324321",
         "header": "Data availability statement",
         "paragraph": "Data is available on GEO (GSE181515). We uploaded our raw data to GEO (GSE181515), which will be open to public access upon paper acceptance. The following secure token has been created to allow review of record GSE181515 while it remains in private status: mxwnsyuwjnexbaj. We also uploaded the scripts for all the analysis performed in the paper onto Github (https://github.com/holab-hku/HCC_Stem_scRNAseq). Data is available on GEO (GSE181515). We uploaded our raw data to GEO (GSE181515), which will be open to public access upon paper acceptance. The following secure token has been created to allow review of record GSE181515 while it remains in private status: mxwnsyuwjnexbaj. We also uploaded the scripts for all the analysis performed in the paper onto Github (https://github.com/holab-hku/HCC_Stem_scRNAseq).",
@@ -91,10 +133,24 @@
         "journal": " Immunity"
     },
     {
+        "DOI": "https://doi.org/10.1016/j.immuni.2019.11.014",
+        "header": "Data and Code Availability",
+        "paragraph": "Data availabilityRaw sequencing data are available through the NCBI Sequence Read Archive: PRJNA579178 and processed gene barcode matrices will be available through the Gene Expression Omnibus: GSE139324. Raw sequencing data are available through the NCBI Sequence Read Archive: PRJNA579178 and processed gene barcode matrices will be available through the Gene Expression Omnibus: GSE139324. Code for all custom algorithms are publically available in GitHub repositories. DRAGON is available at https://github.com/arc85/dragonsc, SingleSeqGSet is available at https://github.com/arc85/singleseqgset, and CellTalker is available at https://github.com/arc85/celltalker.",
+        "PubMed_ID": "31924475",
+        "journal": " Immunity"
+    },
+    {
         "DOI": "https://doi.org/10.1161/CIRCULATIONAHA.119.045401",
         "header": "Data Availability",
         "paragraph": "Raw sequence data will be made available through dbGaP (the database of Genotypes and Phenotypes) accession number phs001539.v1.p1. Processed data with interactivity for gene search functions will be available through the Broad Institute\u2019s Single Cell Portal (https://singlecell.broadinstitute.org/single_cell/study/SCP498/transcriptional-and-cellular-diversity-of-the-human-heart) under study ID SCP498.",
         "PubMed_ID": "32403949",
+        "journal": "Circulation"
+    },
+    {
+        "DOI": "https://doi.org/10.1161/CIRCULATIONAHA.118.038362",
+        "header": "Data Sharing",
+        "paragraph": "The raw counts table and the normalized expression table for the high-depth normal mouse aorta transcriptional profile are publicly available via the Broad Institute Single Cell Portal: https://portals.broadinstitute.org/single_cell/study/SCP289/single-cell-analysis-of-the-normal-mouse-aorta-reveals-functionally-distinct-endothelial-cell-populations.",
+        "PubMed_ID": "31146585",
         "journal": "Circulation"
     },
     {
@@ -105,10 +161,24 @@
         "journal": "Gastroenterology"
     },
     {
+        "DOI": "https://doi.org/10.1053/j.gastro.2020.09.010",
+        "header": "Data Availability",
+        "paragraph": "The authors declare that all data supporting the results of this study are available within the article or its supplementary information files. Please also see the Supplementary Experimental Procedures for details.",
+        "PubMed_ID": "33007300",
+        "journal": "Gastroenterology"
+    },
+    {
         "DOI": "https://doi.org/10.1186/s13045-020-01008-8",
         "header": "Availability of data and materials",
         "paragraph": "The datasets used and/or analyzed during the current study are available from the corresponding author on reasonable request.",
         "PubMed_ID": "33302977",
+        "journal": "Journal of Hematology and Oncology"
+    },
+    {
+        "DOI": "https://doi.org/10.1186/s13045-024-01610-0",
+        "header": "Data sharing",
+        "paragraph": "Raw sequencing files and processed data are available in GEO (PRJNA1100482). Raw sequencing files and processed data are available in GEO (PRJNA1100482).",
+        "PubMed_ID": "39380002",
         "journal": "Journal of Hematology and Oncology"
     },
     {
@@ -123,6 +193,20 @@
         "header": "Data availability",
         "paragraph": "Raw and processed scRNA-seq data of three normal cervical samples and five post-RCT advanced-stage CC samples were uploaded to the Genome Sequence Archive (GSA) of the National Genomics Data Center (PRJCA011382), which are publicly accessible at https://ngdc.cncb.ac.cn/gsa-human and https://ngdc.cncb.ac.cn/omix, respectively. Raw and processed scRNA-seq data of five pre-RCT advanced-stage CC samples had been previously deposited and publicly accessible in the GSA (PRJCA008573). The data analysis script is available from the corresponding author upon reasonable request.",
         "PubMed_ID": "36710358",
+        "journal": "Signal Transduction and Targeted Therapy"
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41392-023-01634-x",
+        "header": "Data availability",
+        "paragraph": "The single-cell RNA and Bulk RNA sequencing data from mice generated in this study have been deposited in the GEO database under accession code \u201cGSE 237749\u201d; Bulk RNA sequencing data from humans is available under accession number \u201cHRA005107\u201d in the GSA (Genome Sequence Archive) database. Matrices or other relevant data are available from the corresponding author upon a reasonable request.",
+        "PubMed_ID": "37816708",
+        "journal": "Signal Transduction and Targeted Therapy"
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41392-021-00730-0",
+        "header": "Data availability",
+        "paragraph": "Public Data Resources: The TCGA datasets, including COAD and READ, were downloaded from cBioPortal (http://www.cbioportal.org/). Human scRNA-seq data accession number: SUB9924819. All high-throughput data, flow cytometry data, and immunohistochemical data supporting the current study have been deposited in https://figshare.com/s/970ed37d44f9ac3489db. The custom code used in the manuscript is published at https://figshare.com/s/970ed37d44f9ac3489db.",
+        "PubMed_ID": "34417435",
         "journal": "Signal Transduction and Targeted Therapy"
     },
     {
@@ -161,6 +245,13 @@
         "journal": "Journal of Hepatology"
     },
     {
+        "DOI": "https://doi.org/10.1016/j.jhep.2023.12.023",
+        "header": "Data availability statement",
+        "paragraph": "The NDD liver map data and the spatial transcriptomics data are available for exploration with our interaction shiny tools (see links below). Seurat objects and raw count matrices for all of these data and the PSC sc- and sn-RNA-seq data have been uploaded to CELLxGENE Discover and can be found at: https://cellxgene.cziscience.com/collections/0c8a364b-97b5-4cc8-a593-23c38c6f0ac5. CELLxGENE Discover allows users to visually explore patterns of gene expression and corresponding clinical metadata using an interactive interface, including differences between healthy and disease samples. The NDD spatial data is currently available at GSE240429, NDD sc- and sn-RNA-seq raw data and raw count matrices are available at GSE243977, previously published NDD liver data included in this study can be found at GSE1154691 and GSE185477,2 and incorporated data from Ramachandran et al.3 can be found at GSE136103. The PSC spatial data is currently available at GSE245620, and the PSC and PBC sc- and snRNA-seq raw count matrices are available at GSE247128. Scripts used to analyze these data are available on our GitHub: https://github.com/tallulandrews/LiverMap2.0.",
+        "PubMed_ID": "38199298",
+        "journal": "Journal of Hepatology"
+    },
+    {
         "DOI": "https://doi.org/10.1093/nsr/nwad256",
         "header": "DATA AVAILABILITY",
         "paragraph": "[Sequencing data is deposited in the Genome Sequence Archive (GSA) database (GSA accession number: CRA007790). Code is available on request. All other data are available in the main text or the Supplementary materials., We thank professor Kui Zhu from China Agricultural University for providing B. cereus. All data are archived in Guangzhou National Laboratory and Bioland Laboratory., This work was supported by the National Key R&amp;D Program of China (STI2030-Major Projects-2021ZD0202400 to C.S.), the National Natural Science Foundation of China (32271069 to C.S.), the Research Foundation for Advanced Talents from Guangzhou National Laboratory (YW-JCYJ0603 to C.S.) and Bioland Laboratory (1102101217 to C.S.), the Young Elite Scientist Sponsorship Program by CAST (YESS20200122 to C.S.), the China Postdoctoral Science Foundation fellowship (PDXM29424801 to L.H.).]",
@@ -189,6 +280,13 @@
         "journal": "Nature Biomedical Engineering"
     },
     {
+        "DOI": "https://doi.org/10.1038/s41551-023-01143-w",
+        "header": "Data availability",
+        "paragraph": "The RNA-seq data files are available through Synapse (https://www.synapse.org/#!Synapse:syn52457643). The raw and analysed datasets generated during the study are available for research purposes from the corresponding authors on reasonable request. Source data are provided with this paper. The code used to analyse the cluster size of colocalized Zip receptors can be accessed in the AutomatedImageAnalysis repository at https://github.com/Jorge-Ibanez-StJude/AutomatedImageAnalysis.",
+        "PubMed_ID": "38036617",
+        "journal": "Nature Biomedical Engineering"
+    },
+    {
         "DOI": "https://doi.org/10.1038/s41423-020-00599-z",
         "header": "Data availability",
         "paragraph": "The scRNA-seq data that support the findings of this study have been submitted to the National Center for Biotechnology Information/Gene Expression Omnibus database (https://www.ncbi.nlm.nih.gov/geo) under accession number GSE161345. The source data underlying Figs. 1c, e\u2013h, 2b\u2013e, 3a\u2013h, 4a, b, d, 6a, b, 7b, and 8a, c\u2013e, g, and Supplementary Figs. 3a\u2013c, 4a\u2013e, 5a, b, 6, and 8a, b are provided as a Source Data file. All other data that support the findings of this study are available from the corresponding author upon reasonable request.",
@@ -210,10 +308,31 @@
         "journal": "Nature Medicine"
     },
     {
+        "DOI": "https://doi.org/10.1038/s41591-024-03075-7",
+        "header": "Data availability",
+        "paragraph": "Gene expression data have been deposited to the National Institutes of Health Gene Expression Omnibus repository and can be accessed as GSE245535 (bulk mRNA-seq) and GSE267209 (scRNA-seq). Cytoscape ClueGO with GO Immune System Process was used for gene clustering (https://apps.cytoscape.org/apps/cluego), and Metascape (https://metascape.org/gp/index.html#/main/step1) was used for Gene Ontology analysis. Gene set enrichement analysis was performed using the Hallmark gene sets from the MSigDB (https://www.gsea-msigdb.org/gsea/msigdb/human/genesets.jsp?collection=H). The LM22 dataset was used for deconvolution of bulk mRNA-seq by CIBERSORTx (matrix provided in Supplementary_Tables_1.xlsx). Metabolomics source data can be accessed in Supplementary Dataset 1. Clinical data in this study can be found in Extended Data Table 1 and Supplementary Tables 1, 8 and 11. Code used for image quantifications and generation of the prediction models is available at https://github.com/czambir/PC_pml_code. Code used for imaging mass cytometry analysis can be found at https://github.com/ElementoLab/imc, version 0.1.4.",
+        "PubMed_ID": "38942992",
+        "journal": "Nature Medicine"
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41591-024-02979-8",
+        "header": "Data availability",
+        "paragraph": "All required clinical data have been uploaded to ClinicalTrials.gov. All requests for raw and analyzed data and materials should be addressed to the corresponding authors and will be reviewed by the institution to verify whether the request is subject to any intellectual property or confidentiality obligations. Patient data may be subject to patient confidentiality. Any data and materials that can be shared will be released via a material transfer agreement. Source data are provided with this paper. A description of the methods and the code used to process and analyze the scRNA-seq and TCR-seq data is available at https://github.com/pachterlab/DBALLSMRDMCMGWSTPMBDKPFP_2023. The TCR and single-cell RNA-seq data can be accessed at https://www.dropbox.com/scl/fo/rhgr2y28az1e2h0avaj0l/h?rlkey=6a4wlnus0png19mb80g42uja1&amp;dl=0 (using password \u2018coh_128781\u2019).",
+        "PubMed_ID": "38867077",
+        "journal": "Nature Medicine"
+    },
+    {
         "DOI": "https://doi.org/10.1038/s41588-024-01852-1",
         "header": "Data availability",
         "paragraph": "Raw single-cell sequencing data were processed by aligning with the mouse genome mm10. The raw and processed data are available through Gene Expression Omnibus accession codes GSE264649 (scRNA-seq) and GSE266089 (scATAC-seq). Merged counts tables generated from scRNA-seq experiments need to be downloaded and arranged according to their associated annotation files to replicate gene coexpression patterns, while ATAC peak files need to be downloaded and arranged to replicate chromatin coaccessibility patterns. Raw image data from Airyscan imaging, intron-seqFISH, 3D ATAC-PALM and single-particle tracking experiments, due to their massive volumes, were not deposited but will be available upon request. We have deposited associated image quantifications (processed seqFISH, 3D ATAC-PALM and single-particle tracking data) and flow cytometry data at Zenodo at https://doi.org/10.5281/zenodo.11406939 (ref. 63). For analysis of Extended Data Fig. 1d, our identified ACDs were aligned with LADs, compartments and ChromHMM-identified genomic regions of mouse ES cells downloaded from previous publications26,27,28. Source data are provided with this paper. All custom MATLAB codes and relevant datasets have been deposited in Zenodo (https://doi.org/10.5281/zenodo.11406939) (ref. 63). The software (VVD-viewer) for spatial genome imaging data visualization is available via GitHub (https://github.com/takashi310/VVD_Viewer) and Zenodo (https://doi.org/10.5281/zenodo.11259043) (ref. 64).",
         "PubMed_ID": "39048795",
+        "journal": "Nature Genetics"
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41588-024-01802-x",
+        "header": "Data availability",
+        "paragraph": "Raw data, processed data and metadata from the snRNA-seq, scRNA-seq, snATAC\u2013seq and spRNA-seq have been deposited in Gene Expression Omnibus with the accession code GSE211785. The human bulk kidney RNA-seq data are available under the following accession numbers: GSE115098 and GSE173343. The single-cell and nuclear expression and open chromatin and spatial data are also available at www.susztaklab.com (https://susztaklab.com/hk_genemap/). All the codes used for the analysis were deposited on GitHub (https://github.com/amin69upenn/Human_Kidney_Multiomics_and_Spatial_Atlas_ and https://github.com/jlevins2010/FME_atlas).",
+        "PubMed_ID": "39048792",
         "journal": "Nature Genetics"
     },
     {
@@ -231,6 +350,20 @@
         "journal": "Nature Nanotechnology"
     },
     {
+        "DOI": "https://doi.org/10.1038/s41565-024-01722-1",
+        "header": "Data availability",
+        "paragraph": "Source data are provided with this paper. The authors declare that all other data supporting the findings of this study are available within the paper or Supplementary Information. Single-cell RNA-sequencing data have been deposited at Sequence Read Archive (SRA). SRA records are accessible with the following link: https://www.ncbi.nlm.nih.gov/sra/PRJNA1102105.",
+        "PubMed_ID": "39054386",
+        "journal": "Nature Nanotechnology"
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41565-022-01249-3",
+        "header": "Data availability",
+        "paragraph": "The single-cell RNA-seq data are available in the Gene Expression Omnibus (GEO) database under accession number GSE209819. Sample information and sequencing statistics are described in Supplementary Tables 1 and 2. All the remaining data are available from the corresponding authors upon reasonable request. Source data are provided with this paper.",
+        "PubMed_ID": "36456644",
+        "journal": "Nature Nanotechnology"
+    },
+    {
         "DOI": "https://doi.org/10.1038/s41564-024-01750-6",
         "header": "Data availability",
         "paragraph": "DNA sequences and raw data used for the graphs and for statistical analyses are available in the manuscript source data and supplementary materials. The single-cell transcriptomic sequencing data are available at: https://www.ncbi.nlm.nih.gov/bioproject/PRJNA934842. The 3D whole-brain image data used for the quantification and statistical analysis in Fig. 6, Extended Data Fig. 5 and 6, as well as video rendering of the 3D imaging data are available via Zenodo at https://doi.org/10.5281/zenodo.10835741 (ref. 119) and GitHub at https://github.com/aecon/toxoplasma3D (ref. 117). Other raw imaging data and metadata are available in GitHub at https://github.com/shaharbr/Bracha_et_al_2024 (ref. 94). Source data are provided with this paper. Custom code generated during this study is available in GitHub at https://github.com/shaharbr/Bracha_et_al_2024 (ref. 94), https://github.com/GiuseppeTestaLab/toxo-organoids (ref. 100) and https://github.com/aecon/toxoplasma3D (ref. 117).",
@@ -245,6 +378,20 @@
         "journal": "Cell"
     },
     {
+        "DOI": "https://doi.org/10.1016/j.cell.2024.10.006",
+        "header": "Data and code availability",
+        "paragraph": "The original code used in the analysis of immune cell infiltration can be found at Zenodo (https://doi.org/10.5281/zenodo.13785168) as well as GitHub (https://github.com/Noamrab/priism). The single-cell transcriptomics data are available at the Gene Expression Omnibus (GEO) webserver under accession ID GSE263461.",
+        "PubMed_ID": "39481380",
+        "journal": "Cell"
+    },
+    {
+        "DOI": "https://doi.org/10.1016/j.cell.2020.04.048",
+        "header": "Data and Code Availability",
+        "paragraph": "The accession number for the sequencing data reported in this paper is NCBI GEO: GSE146972. The CARLIN software package, together with the allele bank, is available at https://gitlab.com/hormozlab/carlin. Instructions and code to reproduce all results, numerics and figures in the paper can be found at https://gitlab.com/hormozlab/cell_2020_carlin.",
+        "PubMed_ID": "32413320",
+        "journal": "Cell"
+    },
+    {
         "DOI": "https://doi.org/10.1038/s41586-024-07493-y",
         "header": "Data availability",
         "paragraph": "All data are now accessible under Gene Expression Omnibus accession number GSE256493. An interactive website is available at https://waelchli-lab-human-brain-vasculature-atlas.ethz.ch, https://brain-vasc.cells.ucsc.edu and https://cellxgene.cziscience.com/collections/c95ca269-68a7-47c5-82db-da227f31b598 on which the data can visualized and downloaded. Most of our analyses are standard workflows and we have now deposited the source code at GitHub (https://github.com/Waelchli-lab/Single-cell-atlas-of-the-human-brain-vasculature-accross-development-adulthood-and-disease) to improve reproducibility our results. The generated Seurat objects of FACS-sorted (CD31+CD45\u2212) ECs for the individual entities can be downloaded from https://doi.org/10.5281/zenodo.10058183, and for the overall merges from https://doi.org/10.5281/zenodo.10057779. The generated Seurat objects of unsorted ECs and PVCs for individual entities can be downloaded from https://doi.org/10.5281/zenodo.10058371, and for the overall merges from https://doi.org/10.5281/zenodo.10058563. The generated Monocle 3 CDS pseudotime objects of FACS-sorted (CD31+CD45\u2212) ECs can be downloaded from https://doi.org/10.5281/zenodo.10058766. The generated diffusion map objects of FACS-sorted (CD31+CD45\u2212) ECs can be downloaded from https://doi.org/10.5281/zenodo.10060876. The generated RNA velocity objects of FACS-sorted (CD31+CD45\u2212) ECs of individual pathological entities can be downloaded from https://doi.org/10.5281/zenodo.10065659; the fetal and adult/control brains from https://doi.org/10.5281/zenodo.10066390; the overall merge of brain tumours from https://doi.org/10.5281/zenodo.10066538; and the overall merge of pathological entities from https://doi.org/10.5281/zenodo.10066703.",
@@ -252,10 +399,38 @@
         "journal": "Nature"
     },
     {
+        "DOI": "https://doi.org/10.1038/s41586-024-07955-3",
+        "header": "Data availability",
+        "paragraph": "All BAM files and associated sample information are deposited in dbGaP under accession phs001087.v4.p1. Single-cell RNA sequencing datasets from this study have been deposited in the Sequence Read Archive with the accession number SUB14118668 (BioProject PRJNA1061081). The analysis files from single-cell RNA sequencing, ecDNA amplicon reconstructions, Incucyte live-cell images, immunofluorescence pRPA and \u03b3H2AX foci images, and the according analysis files have been deposited into Zenodo https://doi.org/10.5281/zenodo.11121869129. The TCGA/PCAWG pan-cancer human cancer data22 used for CCND1 amplification analysis was obtained and modified from the supplementary information of that article22. Data for the CCND1 pan-cancer survival analysis was obtained from cBioPortal (https://bit.ly/4cjAYof). Source data are provided with this paper. The following open-source code and databases were used in this article: JaBbA (v.1.1) (https://github.com/mskilab/JaBbA), gGnome (commit c390d80) (https://github.com/mskilab/gGnome), AmpliconArchitect (https://github.com/virajbdeshpande/AmpliconArchitect), FishHook (commit 06e3927) (https://github.com/mskilab/fishHook), MutationTimeR (v.1.00.2) (https://github.com/gerstung-lab/MutationTimeR), deconstructSigs (v.1.9) (https://github.com/raerose01/deconstructSigs), SigProfilerClusters (v.1.1.2) (https://github.com/AlexandrovLab/SigProfilerClusters), Pileup (v.0.15.0) (https://github.com/pysam-developers/pysam), ShortAlignmentMarking (v.2.1) (https://github.com/nygenome/nygc-short-alignment-marking), BWA-MEM (v.0.7.15) (https://github.com/lh3/bwa), GATK (v.4.1.0) (https://github.com/broadinstitute/gatk), MuTect2 (v.4.0.5.1) (https://github.com/broadinstitute/gatk), Strelka2 (v.2.9.3) (https://github.com/Illumina/strelka), Lancet (v.1.0.7) (https://github.com/nygenome/lancet), Svaba (v.0.2.1) (https://github.com/walaj/svaba), Manta (v1.4.0) (https://github.com/Illumina/manta), Lumpy (v.0.2.13) (https://github.com/arq5x/lumpy-sv), SplazerS (v.1.1) (https://github.com/seqan/seqan/tree/master/apps/splazers), Ensembl (v.93) (https://www.ensembl.org), COSMIC (v.86) (https://cancer.sanger.ac.uk), COSMIC Cancer Gene Consensus (v.95) (https://cancer.sanger.ac.uk/census), ClinVar (201706) (https://www.ncbi.nlm.nih.gov/clinvar/), PolyPhen (v.2.2.2) (http://genetics.bwh.harvard.edu/pph2/index.shtml), SIFT (v.5.2.2) (http://sift-dna.org/sift4g), FATHMM (v.2.1) (http://fathmm.biocompute.org.uk), gnomAD (r.2.0.1) (https://gnomad.broadinstitute.org/), gnomAD-SV (v2.0.1) (https://gnomad.broadinstitute.org/, https://github.com/talkowski-lab/gnomad-sv-pipeline), dbSNP (v.150) (https://www.ncbi.nlm.nih.gov/snp/), Variant Effect Predictor (VEP) (v.93.2) (http://www.ensembl.org/vep), Database of Genomic Variants (DGV) (2020-02-25 release) (http://dgv.tcag.ca/), AscatNGS (v.4.2.1) (https://github.com/cancerit/ascatNgs), Sequenza (v.3.0.0) (http://www.cbs.dtu.dk/biotools/sequenza), LICHeE (v1.0) (https://github.com/viq854/lichee), fragCounter (https://github.com/mskilab/fragCounter), dryclean (commit bda8065) (https://github.com/mskilab/dryclean), RepeatMasker (created in 2010 with the original RepBase library from 2010-03-02 and RepeatMasker 3.0.1) (https://www.repeatmasker.org/species/hg.html). Scanpy (v.1.9.6) (https://github.com/scverse/scanpy), GSEApy (v.1.1.1) (https://github.com/zqfang/GSEApy), CycleViz (v.0.1.5) (https://github.com/AmpliconSuite/CycleViz) and CellRanger (v.7.1.0) (https://github.com/10XGenomics/cellranger). Custom analysis scripts and scripts to reproduce figures are available at GitHub (https://github.com/nygenome/UrothelialCancer_WGS_paper_figures). The JaBbA SV browser includes detailed interactive maps of our structure variant calls (https://urothelial-cancer-wcm-2023.nygenome.org/). Image Lab (Bio-Rad v6.1.0) (https://www.bio-rad.com/) was used for western blot image processing and analysis. CytoVision (v.7.3.1) (https://www.leicabiosystems.com/) was used for FISH imaging. Zeiss deconvolution software (Zen desk v.3.7) (https://www.zeiss.com/microscopy/en/products/software/zeiss-zen-desk.html), Fiji ImageJ (v.154f) (https://imagej.net/software/fiji/) and GraphPad Prism (v.10.2.0) (https://www.graphpad.com/) were used for immunofluorescence image processing and analysis. Incucyte software (2022B, Rev2) (https://www.sartorius.com) was used for competitive assays. FlowJo (v.10.10.0) (https://www.flowjo.com/) was used for the analysis of FACS data. R (v.4.0.0) software was used for statistical tests.",
+        "PubMed_ID": "39385020",
+        "journal": "Nature"
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41586-024-07292-5",
+        "header": "Data availability",
+        "paragraph": "Raw WGS and MPAS and snMPAS are available through the Sequence Read Archive (accession number PRJNA799597) and NDA (accession number study 919) for ID01 and ID05. The 300\u00d7 WGS panel of normal is available on the Sequence Read Archive (accession number PRJNA660493). human_g1k_v37 reference: http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/. gnomAD: https://gnomad.broadinstitute.org/. Human multiple cortical areas SMART-seq dataset: https://portal.brain-map.org/atlases-and-data/rnaseq/human-multiple-cortical-areas-smart-seq. Details and codes for the data processing and annotation are provided on GitHub (https://github.com/shishenyxx/Human_Inhibitory_Neurons)52.",
+        "PubMed_ID": "38600385",
+        "journal": "Nature"
+    },
+    {
         "DOI": "https://doi.org/10.1126/science.adm9802",
         "header": "Data and materials availability:",
         "paragraph": "All data are available in the main text and in the supplementary materials, and all reagents can be made available from the corresponding author upon request. Source data have been deposited in NCBI\u2019s Gene Expression Omnibus (GEO) and are accessible through GEO Series accession no. GSE249430. Code can be found at Zenodo (61). All data are available in the main text and in the supplementary materials, and all reagents can be made available from the corresponding author upon request. Source data have been deposited in NCBI\u2019s Gene Expression Omnibus (GEO) and are accessible through GEO Series accession no. GSE249430. Code can be found at Zenodo (61).",
         "PubMed_ID": "39052779",
+        "journal": "Science"
+    },
+    {
+        "DOI": "https://doi.org/10.1126/science.adk9217",
+        "header": "Data and materials availability:",
+        "paragraph": "Processed data not provided in the supplementary data files, including scATAC aligned fragments files, neural network trained model weights, peak sets, processed bigwig, cleaned motif instances, access controlled aligned BAM files and access controlled mutation files are available through the TCGA Publication Page available at https://gdc.cancer.gov/about-data/publications/TCGA-ATAC-Seq-2024. Raw scATAC data as fastq are available through the NIH Genomic Data Commons portal (https://portal.gdc.cancer.gov/). The code base for replicating all the analysis is available at https://github.com/NCICCGPO/scATAC-Manuscript. Processed data not provided in the supplementary data files, including scATAC aligned fragments files, neural network trained model weights, peak sets, processed bigwig, cleaned motif instances, access controlled aligned BAM files and access controlled mutation files are available through the TCGA Publication Page available at https://gdc.cancer.gov/about-data/publications/TCGA-ATAC-Seq-2024. Raw scATAC data as fastq are available through the NIH Genomic Data Commons portal (https://portal.gdc.cancer.gov/). The code base for replicating all the analysis is available at https://github.com/NCICCGPO/scATAC-Manuscript.",
+        "PubMed_ID": "39236169",
+        "journal": "Science"
+    },
+    {
+        "DOI": "https://doi.org/10.1126/science.adk0582",
+        "header": "Data and materials availability:",
+        "paragraph": "Cryo-EM maps were deposited to the Electron Microscopy Data Bank (EMDB) under accession codes EMD-28941, EMD-28942, EMD-28945, and EMD-43190, and corresponding atomic coordinates were deposited to the Protein Data Bank (PDB) under accession codes 8F92, 8F9G, 8F9M, and 8VFV. Negative-stain EMPEM maps were deposited to the EMDB under accession codes EMD-28937, EMD-28938, EMD-28939, EMD-28940, EMD-29330, EMD-29333, EMD-29334, EMD-29335, EMD-43191, and EMD-43192. BCR sequence data were deposited to GenBank: PP324161\u2013PP325746, PP321345\u2013PP322350, and PP322351\u2013PP324160. B11 glycosylation data were deposited to the MassIVE repository (ID# MSV000094176 or PXD050174). Model animals are available from corresponding author F.D.B. upon request, subject to standard material transfer agreements. Cryo-EM maps were deposited to the Electron Microscopy Data Bank (EMDB) under accession codes EMD-28941, EMD-28942, EMD-28945, and EMD-43190, and corresponding atomic coordinates were deposited to the Protein Data Bank (PDB) under accession codes 8F92, 8F9G, 8F9M, and 8VFV. Negative-stain EMPEM maps were deposited to the EMDB under accession codes EMD-28937, EMD-28938, EMD-28939, EMD-28940, EMD-29330, EMD-29333, EMD-29334, EMD-29335, EMD-43191, and EMD-43192. BCR sequence data were deposited to GenBank: PP324161\u2013PP325746, PP321345\u2013PP322350, and PP322351\u2013PP324160. B11 glycosylation data were deposited to the MassIVE repository (ID# MSV000094176 or PXD050174). Model animals are available from corresponding author F.D.B. upon request, subject to standard material transfer agreements.",
+        "PubMed_ID": "38753770",
         "journal": "Science"
     },
     {
@@ -273,10 +448,24 @@
         "journal": "Cell Research"
     },
     {
+        "DOI": "https://doi.org/10.1038/s41422-023-00810-6",
+        "header": "Data availability",
+        "paragraph": "The sequence data of osteoblasts were deposited in the National Omics Data Encyclopedia (NODE) with the primary accession number OEP002689. Original data of all figures were deposited in Mendeley Data (https://data.mendeley.com/v1/datasets/jkpn67jwsd/draft?preview=1). Other data of this study are available from the corresponding author upon reasonable request.",
+        "PubMed_ID": "37142671",
+        "journal": "Cell Research"
+    },
+    {
         "DOI": "https://doi.org/10.1158/2159-8290.CD-23-1379",
         "header": "Data Availability",
         "paragraph": "",
         "PubMed_ID": "38885349",
+        "journal": "Cancer Discovery"
+    },
+    {
+        "DOI": "https://doi.org/10.1158/2159-8290.CD-22-0872",
+        "header": "Data Availability",
+        "paragraph": "",
+        "PubMed_ID": "37067911",
         "journal": "Cancer Discovery"
     },
     {
@@ -298,6 +487,13 @@
         "header": "Data availability",
         "paragraph": "Bulk and single-cell RNA-seq data generated in this study have been made available at NCBI Gene Expression Omnibus (GEO) under the accession number GSE219247. Data and other unique reagents or biological materials generated in this study are available from the lead contact, J.A.K. (juergen.knoblich@imba.oeaw.ac.at) in compliance with Material Transfer Agreements (MTA). An STL CAD file for the embedding mold negative is provided in Supplementary Data 1. Source data are provided with this paper. Code used for analysis of data in this study has been deposited in a Github repository and is publicly available (https://github.com/bardylab/miscos_org_ephys).",
         "PubMed_ID": "38052989",
+        "journal": "Nature Methods"
+    },
+    {
+        "DOI": "https://doi.org/10.1038/s41592-024-02429-w",
+        "header": "Data availability",
+        "paragraph": "A summary of the multi-omics datasets used in the benchmark study, including the sequencing technologies and the websites where the raw data are available as follows: dataset 1 (human BMMCs): CITE-seq, GSE128639 (ref. 5); dataset 2 (human BMMCs): CITE-seq, GSE194122 (ref. 79); dataset 3 (human brain immune cells): CITE-seq, GSE201048 (ref. 80); dataset 4 (human CBMCs): CITE-seq, GSE100866 (ref. 1); dataset 5 (human glioblastomas): CITE-seq, GSM4972212 (ref. 81); dataset 6 (mouse glioblastomas): CITE-seq, GSE163120 (ref. 81); dataset 7 (mouse HSPCs): CITE-seq, GSE175702 (ref. 82); dataset 8 (human MALT tumor): CITE-seq, https://support.10xgenomics.com/single-cell-gene-expression/datasets/3.0.0/malt_10k_protein_v3; dataset 9\u201310 (mouse murine splenic myeloid cells): CITE-seq, GSE149544 (ref. 83); dataset 11 (mouse naive brains): CITE-seq, GSE148127 (ref. 84); dataset 12\u201313 (human PBMCs): CITE-seq, GSE164378 (ref. 5); dataset 14\u201315 (human PBMCs): CITE-seq, https://zenodo.org/record/6348128#.Y5f40LJBzDU (ref. 30); dataset 21\u201322 (mouse spleen and lymph nodes): CITE-seq, GSE150599 (ref. 6); dataset 23\u201324 (human PBMCs): REAP-seq, GSE100501 (ref. 2); dataset 25\u201326 and dataset 40\u201341 (human PBMCs): DOGMA-seq, GSE156478 (ref. 18); datasets 27 and 42 (human PBMCs): TEA-seq, GSE158013 (ref. 71); dataset 28 (human PBMCs): inCITE-seq, GSE163480 (ref. 85); dataset 29 (skin of mouse): SHARE-seq, GSE140203 (ref. 3); dataset 30 (adult brain of mouse): SHARE-seq, GSE140203 (ref. 3); dataset 31 (adult brain of mouse): SNARE-seq, GSE126074 (ref. 4); dataset 32 (adult brain of mouse): ISSAAC-seq, https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-11264/ (ref. 12); dataset 33 (adult brain of mouse): 10x Multiome, https://www.10xgenomics.com/resources/datasets/frozen-human-healthy-brain-tissue-3-k-1-standard-2-0-0/; dataset 34 (10,000 PBMCs with granulocytes removed): 10x Multiome, https://www.10xgenomics.com/resources/datasets/pbmc-from-a-healthy-donor-granulocytes-removed-through-cell-sorting-10-k-1-standard-2-0-0/; dataset 35 (3,000 PBMCs with granulocytes removed): 10x Multiome, https://www.10xgenomics.com/resources/datasets/pbmc-from-a-healthy-donor-granulocytes-removed-through-cell-sorting-3-k-1-standard-2-0-0/; dataset 36 (10,000 PBMCs): 10x Multiome, https://www.10xgenomics.com/resources/datasets/pbmc-from-a-healthy-donor-no-cell-sorting-10-k-1-standard-2-0-0/; dataset 37 (3,000 PBMCs): 10x Multiome, https://www.10xgenomics.com/resources/datasets/pbmc-from-a-healthy-donor-no-cell-sorting-3-k-1-standard-2-0-0/; dataset 38 (mouse retina): 10x Multiome, GSE201402 (ref. 86); dataset 39 (human BMMCs): 10x Multiome, GSE194122 (ref. 79); dataset 43 (mouse spleen): scRNA-seq, GSE132901 (ref. 87); dataset 44 (mouse retain): scRNA-seq, GSE181251 (ref. 88); dataset 45 (mouse adult brain): scRNA-seq, GSE246147 (ref. 89); dataset 46 (mouse HSPCs): scRNA-seq, GSE175702 (ref. 82); dataset 47 (mouse retain): scATAC-seq, GSE181251 (ref. 88). Source data are provided with this paper. We have uploaded the codes and scripts used for the benchmark study and figure plotting to a GitHub website, which can be accessed at https://github.com/QuKunLab/MultiomeBenchmarking/. Code is also available in the Zenodo repository via https://doi.org/10.5281/zenodo.10540843 (ref. 90).",
+        "PubMed_ID": "39322753",
         "journal": "Nature Methods"
     }
 ]
