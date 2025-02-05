@@ -6,11 +6,11 @@
         <span class="!text-lg material-symbols-rounded"> fullscreen </span>
       </Button>
       <Divider class="!p-0 !m-0"/>
-      <Button class="w-7 h-7" variant="text" size="small" plain>
+      <Button class="w-7 h-7" variant="text" size="small" plain @click="zoom('in')">
         <span class="!text-xl material-symbols-rounded"> add </span>
       </Button>
       <Divider class="!p-0 !m-0"/>
-      <Button class="w-7 h-7" variant="text" size="small" plain>
+      <Button class="w-7 h-7" variant="text" size="small" plain @click="zoom('out')">
         <span class="!text-xl material-symbols-rounded"> remove </span>
       </Button>
     </div>
@@ -221,7 +221,7 @@ export default {
       var com = this;
       var proteins = null;
 
-      if (subset == null) {
+      if (subset == null || subset.length == 0) {
         com.reset();
         this.$store.commit("assign_active_pgraph_subset", null);
         return;
@@ -364,6 +364,16 @@ export default {
         x: 0,
         y: 0,
         ratio: 1,
+        angle: sigma_instance.camera.angle,
+      });
+      this.get_module_circles();
+      sigma_instance.refresh();
+    },
+    zoom(mode, factor = 0.8) { 
+      sigma_instance.camera.goTo({
+        x: sigma_instance.camera.x,
+        y: sigma_instance.camera.y,
+        ratio: mode=='in' ? sigma_instance.camera.ratio * factor : sigma_instance.camera.ratio / factor,
         angle: sigma_instance.camera.angle,
       });
       this.get_module_circles();

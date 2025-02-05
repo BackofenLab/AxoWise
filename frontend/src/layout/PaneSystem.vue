@@ -1,6 +1,6 @@
 <template>
   <DraggableView v-show="active_node !== null ||
-    active_subset !== null ||
+    (active_subset !== null && active_subset.length !== 0) ||
     active_term !== null ||
     active_decoloumn !== null ||
     active_termlayers !== null ||
