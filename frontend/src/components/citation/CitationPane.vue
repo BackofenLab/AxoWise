@@ -1,6 +1,6 @@
 <template>
   <DraggableView v-if="active_node !== null" :initialPosition="initial_drag_position"
-    wrapperClass="!w-[25rem] border dark:border-slate-700 rounded-xl bg-[var(--card-bg)] shadow-curve-dark dark:shadow-curve-light"
+    wrapperClass="animate__animated animate__fadeInRight animate__faster !w-[25rem] border dark:border-slate-700 rounded-xl bg-[var(--card-bg)] shadow-curve-dark dark:shadow-curve-light"
     contentClass="!max-h-[20rem] !px-4 !py-1.5" handlerClass="!py-1.5 !px-4 !flex !items-center">
     <template #handler>
       <h3 class="flex items-center gap-2 text-sm cursor-pointer hover:text-primary-500"

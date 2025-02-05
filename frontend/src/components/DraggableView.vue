@@ -44,17 +44,45 @@ export default {
       default: '#drag-handle', // CSS selector for the drag handle
     },
   },
+  emits: ["active_resize_changed"],
   data() {
     return {
       position: { ...this.initialPosition },
       isDragging: false,
       dragOffset: { x: 0, y: 0 },
+      resizeObserver: null
     };
+  },
+  mounted() {
+    // Create a ResizeObserver instance
+    const observer = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        // Handle the resize event
+        this.$emit("active_resize_changed", entry.contentRect);
+      }
+    });
+
+    // Start observing the element
+    observer.observe(this.$refs.dragWrapper);
+
+    // Store the observer in the component instance for cleanup
+    this.resizeObserver = observer;
+  },
+  beforeUnmount() {
+    // Stop observing when the component is destroyed
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+    }
   },
   methods: {
     onMouseDown(event) {
       // Prevent default behavior (like clicking) when dragging starts
       event.preventDefault();
+
+      if (event.button === 2) {
+        // Prevent drag from right click
+        return;
+      }
 
       // Ensure the drag starts only from the handle and avoid errors
       if (this.dragHandle && this.$refs.draggable) {

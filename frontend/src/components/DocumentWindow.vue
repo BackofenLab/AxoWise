@@ -1,8 +1,10 @@
 <template>
-  <DraggableView v-show="showPersistentComponent" :initialPosition="initial_drag_position"
-    contentClass="!pr-4 !pl-0 !pb-3 flex-1 grid grid-cols-1 md:grid-cols-12"
+  <DraggableView @active_resize_changed="active_resize = $event" v-show="showPersistentComponent"
+    :initialPosition="initial_drag_position"
+    contentClass="!pr-4 !pl-0 !pb-3 flex-1 grid grid-cols-1 md:grid-cols-12 h-[calc(100%-70px)]"
     handlerClass="flex items-center !justify-start !py-4 !px-4"
-    wrapperClass="!h-[calc(100vh-77px)] !w-[44rem] !max-full border dark:border-slate-700 rounded-xl bg-[var(--card-bg)] shadow-curve-dark dark:shadow-curve-light !overflow-hidden">
+    wrapperClass="resize animate__animated animate__fadeInLeft animate__faster
+     w-[44rem] min-w-[32rem] max-w-[calc(100%-70px)] h-[calc(100vh-77px)] min-h-[28rem] max-h-[calc(100%-70px)] border dark:border-slate-700 rounded-xl bg-[var(--card-bg)] shadow-curve-dark dark:shadow-curve-light !overflow-hidden">
     <template #handler>
       <h3 class="text-base font-bold">
         AxoWord
@@ -13,9 +15,12 @@
         </Button>
       </div>
     </template>
+
     <template #content>
       <aside class="p-2 md:col-span-4">
-        <Accordion :value="['0']" multiple class="!flex !flex-col !gap-4 !max-h-[77vh] !overflow-auto !pl-2">
+        <Accordion :value="['0']" multiple
+          :style="{ maxHeight: active_resize?.height ? `${active_resize.height - 100}px` : '' }"
+          class="!flex !flex-col !gap-4 max-h-[77vh] !overflow-auto !pl-2">
           <AccordionPanel value="0" class="!border-0">
             <AccordionHeader class='!p-0 !gap-3' :pt="{ toggleicon: '!flex-shrink-0' }">
               <span class="material-symbols-rounded !text-xl !flex-shrink-0">history </span><span
@@ -100,7 +105,7 @@
         </Accordion>
       </aside>
       <div class="flex flex-col p-2 md:col-span-8">
-        <div
+        <div :style="{ maxHeight: active_resize?.height ? `${active_resize?.height - 160}px` : '' }"
           class="max-h-[70vh] min-h-[40vh] border rounded-xl dark:!border-[#020617] dark:!bg-[#020617] bg-[#f3f3f3] border-[#f3f3f3]">
           <div ref="editor"></div>
         </div>
@@ -138,6 +143,7 @@ export default {
         textenrich: "api/subgraph/textenrich",
       },
       initial_drag_position: { top: 65, left: 60 },
+      active_resize: null,
     };
   },
   computed: {

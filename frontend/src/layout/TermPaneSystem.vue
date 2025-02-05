@@ -1,7 +1,7 @@
 <template>
   <DraggableView v-show="active_node !== null || active_subset !== null || paneHidden == false
     " :initialPosition="initial_drag_position"
-    wrapperClass="!w-[18rem] border dark:border-slate-700 rounded-xl bg-[var(--card-bg)] shadow-curve-dark dark:shadow-curve-light"
+    wrapperClass="animate__animated animate__fadeInUp animate__faster !w-[18rem] border dark:border-slate-700 rounded-xl bg-[var(--card-bg)] shadow-curve-dark dark:shadow-curve-light"
     contentClass="!px-2.5 !py-0" handlerClass="flex justify-between items-center !px-3 !py-2">
     <template #handler>
       <h3 class="text-sm font-bold">
