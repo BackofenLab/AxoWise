@@ -4,7 +4,7 @@
       root: {
         id: 'scrollBox',
         class:
-          `!h-full w-[26rem] !bg-white/75 dark:!bg-slate-900/75 !backdrop-blur overflow-y-auto !mt-[${minVal}px] !ml-[${minVal}px]`,
+          `resize min-w-[26rem] max-w-[calc(100%-70px)] h-full min-h-[24rem] max-h-[calc(100%-70px)] !bg-white/75 dark:!bg-slate-900/75 !backdrop-blur overflow-y-auto !mt-[${minVal}px] !ml-[${minVal}px]`,
       },
       header: { class: 'sticky top-0 !p-2 !px-3 !justify-start gap-3 !font-medium cursor-move backdrop-blur z-[1]' },
       headerActions: { class: '!ml-auto' },

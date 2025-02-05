@@ -25,20 +25,10 @@
           <Tabs class="flex-1 w-full tab-active-grad" scrollable :value="active_tabA" @update:value="onchangeTabA">
             <TabList :class="`flex-shrink-0 ${dragged_to_container === 'paneContainer1' ? 'opacity-50' : ''}`"
               :pt="{ activeBar: 'tab-activebar-grad' }">
-              <!-- <draggable id="paneContainer1" class="min-h-[32px] w-full flex cursor-move" v-model="containerA"
-              item-key="id" group="shared" :sort="true" :move="checkMove" @end="onDragEnd"> -->
-              <!-- <template #item="{ element }"> -->
               <Tab v-for="(element) in containerA" v-show="element.view?.includes(mode)" class="!px-2.5 !py-1 rounded"
                 :key="element.value" :value="element.value">
                 {{ element.name }}
               </Tab>
-              <!-- </template> -->
-              <!-- </draggable>  -->
-
-              <!-- <h6 v-if="containerA.length === 0"
-              class="w-full h-full absolute top-0 left-0 flex items-center justify-center border border-dashed border-slate-400 rounded dark:bg-[#0F182A] bg-white text-slate-400 text-sm text-center">
-              Drag and drop tabs
-            </h6> -->
             </TabList>
             <!-- @active_term_changed="active_term = $event" @active_layer_changed="active_layer = $event" -->
             <TabPanels class="h-[calc(100%-34px)] flex flex-col !p-0 !px-3 overflow-auto" v-if="containerA.length > 0">
@@ -78,23 +68,12 @@
           }`">
           <Tabs class="flex-1 w-full tab-active-grad" scrollable :value="active_tabB" @update:value="onchangeTabB">
             <TabList :class="`flex-shrink-0 ${dragged_to_container === 'paneContainer2' ? 'opacity-50' : ''}`">
-              <!-- <draggable id="paneContainer2" class="min-h-[32px] w-full flex cursor-move" v-model="containerB"
-              item-key="id" group="shared" :sort="true" :move="checkMove" @end="onDragEnd"> -->
-              <!-- <template #item="{ element }"> -->
               <Tab v-for="(element) in containerB" v-show="element.view?.includes(mode)" class="!px-2.5 !py-1 rounded"
                 :key="element.value" :value="element.value">
                 {{ element.name }}
               </Tab>
-              <!-- </template> -->
-              <!-- </draggable> -->
-
-              <!-- <h6 v-if="containerB.length === 0"
-              class="w-full h-full absolute top-0 left-0 flex items-center justify-center border border-dashed border-slate-400 rounded dark:bg-[#0F182A] bg-white text-slate-400 text-sm text-center">
-              Drag and drop tabs
-            </h6> -->
             </TabList>
             <!-- @active_term_changed="active_term = $event" @active_layer_changed="active_layer = $event" -->
-
             <TabPanels class="h-[calc(100%-34px)] flex flex-col !p-0 !px-3 overflow-auto" v-if="containerB.length > 0">
               <TabPanel class="flex-1" value="set">
                 <PathwaySet :gephi_data="gephi_data" :api="api" :mode="mode"></PathwaySet>
