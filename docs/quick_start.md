@@ -27,4 +27,3 @@ To get started with AxoWise quickly, follow the [Quick Start Guide](quick_start.
 6. **[Troubleshooting](troubleshooting.md)** → Common issues and solutions.
 
 For a full explanation of how AxoWise works, refer to the sections above.
-
