@@ -3,7 +3,7 @@
 .idea
 pid-info.txt
 malek/*
-.vscode/*
+.vscode/
 .env
 # Created by https://www.toptal.com/developers/gitignore/api/node,maven,python,pycharm,intellij,visualstudiocode,macos,windows,linux
 # Edit at https://www.toptal.com/developers/gitignore?templates=node,maven,python,pycharm,intellij,visualstudiocode,macos,windows,linux
