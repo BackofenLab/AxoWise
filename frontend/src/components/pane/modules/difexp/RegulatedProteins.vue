@@ -3,7 +3,7 @@
     <li class="flex items-center justify-between  py-1 dark:text-[#c3c3c3]" v-for="(key, entry, index) in selectionattr"
       :key="index">
       <strong class="text-sm font-normal capitalize dark:text-slate-400">{{ entry }}</strong>
-      <InputNumber :useGrouping="false" :min="key.min" :max="key.max" :step="key.step" v-model="key.value"
+      <InputNumber :minFractionDigits="1" :maxFractionDigits="5" :useGrouping="false" :min="key.min" :max="key.max" :step="key.step" v-model="key.value"
         @value-change="select_proteins()" inputClass="w-16 h-5 !px-1.5 !text-xs text-center" />
     </li>
   </ul>
