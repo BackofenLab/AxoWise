@@ -34,8 +34,8 @@
       <div class="flex items-center justify-between gap-2">
         <label for="" class="text-slate-400">Edge score</label>
 
-        <InputNumber inputClass="w-14 h-8 text-center" :min="threshold.min" :max="threshold.max" :step="threshold.step"
-          v-model="threshold.value" />
+        <InputNumber inputClass="w-14 h-8 text-center" :minFractionDigits="2" :maxFractionDigits="2"
+          :min="threshold.min" :max="threshold.max" :step="threshold.step" v-model="threshold.value" />
       </div>
       <Slider class="mx-1 mt-3 mb-3" :min="threshold.min" :max="threshold.max" :step="threshold.step"
         v-model="threshold.value" />
@@ -66,7 +66,7 @@ export default {
         subgraph: "api/subgraph/proteins",
       },
       threshold: {
-        value: 0,
+        value: 0.7,
         min: 0,
         max: 0.9999,
         step: 0.01,
@@ -149,6 +149,21 @@ export default {
         response.edge_thick = 0.01;
         com.$store.commit("assign", response);
         com.$router.push("protein");
+      }).catch(function (error) {
+        com.loading = false;
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          console.log(error.response);
+          com.toast.add({ severity: 'error', detail: error?.message ? error.message + '. Please check your inputs and try again!' : 'Something went wrong. Please check your inputs and try again!', life: 4000 });
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.log(error.request);
+          com.toast.add({ severity: 'error', detail: 'Something went wrong. Please check your inputs and try again!', life: 4000 });
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log(error.message);
+          com.toast.add({ severity: 'error', detail: 'Something went wrong. Please check your inputs and try again!', life: 4000 });
+        }
       });
     },
   },

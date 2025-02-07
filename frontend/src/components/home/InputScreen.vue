@@ -18,15 +18,16 @@
       <Checkbox v-model="customEdge" inputId="edgeCheck" name="edgeCheck" binary />
       <label for="edgeCheck" class="text-slate-400"> Use custom protein interactions. </label>
       <FileUpload v-if="customEdge" :pt="{ root: { class: 'w-full !justify-start' } }" mode="basic" accept=".txt"
-        @select="load_edge_file" :maxFileSize="25000000" :chooseButtonProps="{ severity: 'secondary', class: '!bg-black' }"
-        chooseLabel="Select file" chooseIcon="pi pi-folder-open" />
+        @select="load_edge_file" :maxFileSize="25000000"
+        :chooseButtonProps="{ severity: 'secondary', class: '!bg-black' }" chooseLabel="Select file"
+        chooseIcon="pi pi-folder-open" />
     </fieldset>
 
     <fieldset class="flex flex-col gap-2 animate__animated animate__fadeInUp">
       <div class="flex items-center justify-between gap-2">
         <label for="" class="text-slate-400">Edge score</label>
-        <InputNumber inputClass="w-14 h-8 text-center" :min="threshold.min" :max="threshold.max" :step="threshold.step"
-          v-model="threshold.value" />
+        <InputNumber inputClass="w-14 h-8 text-center" :minFractionDigits="2" :maxFractionDigits="2"
+          :min="threshold.min" :max="threshold.max" :step="threshold.step" v-model="threshold.value" />
       </div>
       <Slider class="mx-1 mt-3 mb-3" :min="threshold.min" :max="threshold.max" :step="threshold.step"
         v-model="threshold.value" />
@@ -59,7 +60,7 @@ export default {
         subgraph: "api/subgraph/proteins",
       },
       threshold: {
-        value: 0,
+        value: 0.7,
         min: 0,
         max: 1,
         step: 0.01,
@@ -89,24 +90,24 @@ export default {
       Retrieving:
         - gephi_json (data structure of graph network)
       */
-     
+      var com = this;
       var formData = new FormData();
       // Detection of empty inputs
-      if (this.selected_species == "" || this.selected_species == null) {
-        this.toast.add({ severity: 'error', detail: 'Please select a species!', life: 4000 });
+      if (com.selected_species == "" || com.selected_species == null) {
+        com.toast.add({ severity: 'error', detail: 'Please select a species!', life: 4000 });
         return;
       }
 
-      if (this.raw_text == null || this.raw_text == "") {
-        this.toast.add({ severity: 'error', detail: 'Please provide a list of proteins!', life: 4000 });
+      if (com.raw_text == null || com.raw_text == "") {
+        com.toast.add({ severity: 'error', detail: 'Please provide a list of proteins!', life: 4000 });
         return;
       }
 
-      if (this.edge_file !== null) {
-        formData.append("edge-file", this.edge_file);
+      if (com.edge_file !== null) {
+        formData.append("edge-file", com.edge_file);
       }
 
-      var cleanData = validator.whitelist(this.raw_text, "a-zA-Z0-9\\s");
+      var cleanData = validator.whitelist(com.raw_text, "a-zA-Z0-9\\s");
 
       // Creating FormData to send files & parameters with an ajax call
 
@@ -114,16 +115,31 @@ export default {
       formData.append("species_id", this.selected_species.code);
       formData.append("proteins", cleanData.split(/\s+/).join(";"));
 
-      this.loading = true;
+      com.loading = true;
       this.axios.post(this.api.subgraph, formData).then((response) => {
         if (response.data.length != 0) {
           response.edge_thick = this.edge_thick.value;
-          this.loading = false;
-          this.$store.commit("assign", response);
-          this.$router.push("protein");
+          com.loading = false;
+          com.$store.commit("assign", response);
+          com.$router.push("protein");
         } else {
-          this.toast.add({ severity: 'error', detail: 'No proteins were found.', life: 4000 });
-          this.loading = false;
+          com.toast.add({ severity: 'error', detail: 'No proteins were found.', life: 4000 });
+          com.loading = false;
+        }
+      }).catch(function (error) {
+        com.loading = false;
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          console.log(error.response);
+          com.toast.add({ severity: 'error', detail: error?.message ? error.message + '. Please check your inputs and try again!' : 'Something went wrong. Please check your inputs and try again!', life: 4000 });
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.log(error.request);
+          com.toast.add({ severity: 'error', detail: 'Something went wrong. Please check your inputs and try again!', life: 4000 });
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log(error.message);
+          com.toast.add({ severity: 'error', detail: 'Something went wrong. Please check your inputs and try again!', life: 4000 });
         }
       });
     },
