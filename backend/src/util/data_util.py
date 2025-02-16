@@ -111,11 +111,7 @@ def get(url, timeout=10, wait=1):
         raise ValueError("URL scheme must be http or https")
 
     try:
-        return (
-            urlopen(url, timeout=timeout)  # nosec
-            .read()
-            .decode(encoding="utf-8", errors="ignore")
-        )
+        return urlopen(url, timeout=timeout).read().decode(encoding="utf-8", errors="ignore")  # nosec
     except:
         return None
 
@@ -315,10 +311,7 @@ def get_latest_release_date_bader(text):
     if not matches:
         return None
     # Convert the matches to datetime objects
-    dates = [
-        datetime.datetime.strptime(f"{month} {day} {year}", "%B %d %Y")
-        for month, day, year in matches
-    ]
+    dates = [datetime.datetime.strptime(f"{month} {day} {year}", "%B %d %Y") for month, day, year in matches]
     # Find the maximum (most recent) date
     latest_date = max(dates)
     # Format the latest date as a string and return it

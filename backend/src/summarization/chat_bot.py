@@ -14,19 +14,11 @@ def make_prompt(message="", proteins=None, funct_terms=None, abstract=None):
     Returns:
         prompt: The prompt to be used for response generation.
     """
-    functional_term_background = (
-        f"Functional terms: {funct_terms} \n" if funct_terms else ""
-    )
+    functional_term_background = f"Functional terms: {funct_terms} \n" if funct_terms else ""
     protein_background = f"Proteins: {proteins} \n" if proteins else ""
     abstracts = f"Scientific Abstracts: {abstract} \n" if abstract else ""
-    functional_term_prompt = (
-        "with the background of the provided functional terms, " if funct_terms else ""
-    )
-    protein_prompt = (
-        "using only the provided proteins stating a synonym if used."
-        if proteins
-        else ""
-    )
+    functional_term_prompt = "with the background of the provided functional terms, " if funct_terms else ""
+    protein_prompt = "using only the provided proteins stating a synonym if used." if proteins else ""
     abstract_prompt = (
         f"use the information from the {len(abstract)} provided abstracts and state the pmids if used."
         if abstract
@@ -49,12 +41,7 @@ def populate(data):
         if data_mode == "citation":
             pmids.extend([j["attributes"]["Name"] for j in entries])
             pmid_abstract.update(
-                {
-                    j["attributes"]["Name"]: j["attributes"]["Abstract"].replace(
-                        "'", ""
-                    )
-                    for j in entries
-                }
+                {j["attributes"]["Name"]: j["attributes"]["Abstract"].replace("'", "") for j in entries}
             )
         elif data_mode == "protein":
             if data_type == "term":

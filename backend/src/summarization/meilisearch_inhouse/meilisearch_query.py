@@ -20,9 +20,7 @@ def build_query(client, index, user_input, sort_by, limit=20000):
     """
 
     # Dict full name links symbols to their full names
-    with open(
-        "summarization/meilisearch_inhouse/Dict_full_name.json", "r", encoding="utf-8"
-    ) as json_file:
+    with open("summarization/meilisearch_inhouse/Dict_full_name.json", "r", encoding="utf-8") as json_file:
         full_name = json.load(json_file)
 
     found_full_name = False

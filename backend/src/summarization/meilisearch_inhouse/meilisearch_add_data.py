@@ -66,9 +66,7 @@ def add_data(client):
         task_id = task.task_uid
 
         while task.status == "enqueued" or task.status == "processing":
-            time.sleep(
-                10
-            )  # we use sleep to avoid spamming the server with status requests
+            time.sleep(10)  # we use sleep to avoid spamming the server with status requests
             task = client.get_task(task_id)
 
         if task.status == "failed":

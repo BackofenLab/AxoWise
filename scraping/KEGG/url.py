@@ -12,10 +12,6 @@ def get(url, timeout=10, wait=1):
         raise ValueError("URL scheme must be http or https")
 
     try:
-        return (
-            urlopen(url, timeout=timeout)  # nosec
-            .read()
-            .decode(encoding="utf-8", errors="ignore")
-        )
+        return urlopen(url, timeout=timeout).read().decode(encoding="utf-8", errors="ignore")  # nosec
     except:
         return None

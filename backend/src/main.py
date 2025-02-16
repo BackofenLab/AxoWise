@@ -80,9 +80,7 @@ def proteins_enrichment():
             fdr_rate=row["fdr"]
         ))"""
 
-    json_str = json.dumps(
-        list_enrichment.to_dict("records"), ensure_ascii=False, separators=(",", ":")
-    )
+    json_str = json.dumps(list_enrichment.to_dict("records"), ensure_ascii=False, separators=(",", ":"))
     return Response(json_str, mimetype="application/json")
 
 
@@ -102,9 +100,7 @@ def proteins_context():
     base = [i.upper() for i in base.split(" ") if i]
     query = base + context
     # in-house context summary
-    edges, nodes = summarization.create_citations_graph(
-        driver, species="Mus_Musculus", search_query=query
-    )
+    edges, nodes = summarization.create_citations_graph(driver, species="Mus_Musculus", search_query=query)
     graph = citation_graph.get_citation_graph(nodes, edges)
     return Response(graph, mimetype="application/json")
 
@@ -117,18 +113,11 @@ def abstract_summary():
         request.form.get("abstracts"),
     )
     abstracts = json.loads(abstracts)
-    is_community = (
-        json.loads(request.form.get("community_check"))
-        if request.form.get("community_check")
-        else False
-    )
+    is_community = json.loads(request.form.get("community_check")) if request.form.get("community_check") else False
     abstracts_list = (
         [[j["attributes"]["Abstract"] for j in i.values()] for i in abstracts]
         if is_community
-        else [
-            [(j["attributes"]["Abstract"], j["label"]) for j in i.values()]
-            for i in abstracts
-        ]
+        else [[(j["attributes"]["Abstract"], j["label"]) for j in i.values()] for i in abstracts]
     )
     summaries = (
         overall_summary(abstracts_list, base, context, True)
@@ -209,16 +198,10 @@ def proteins_subgraph_api():
         input_mapping[i.upper()] = i
     species_id = int(request.form.get("species_id"))
     # DColoumns
-    selected_d = (
-        request.form.get("selected_d").split(",")
-        if request.form.get("selected_d")
-        else None
-    )
+    selected_d = request.form.get("selected_d").split(",") if request.form.get("selected_d") else None
     threshold = int(float(request.form.get("threshold")) * 1000)
 
-    proteins, protein_ids, symbol_alias_mapping = queries.get_protein_ids_for_names(
-        driver, protein_names, species_id
-    )
+    proteins, protein_ids, symbol_alias_mapping = queries.get_protein_ids_for_names(driver, protein_names, species_id)
 
     keys = list(symbol_alias_mapping.keys())
     for num, i in enumerate(symbol_alias_mapping.values()):
@@ -227,15 +210,12 @@ def proteins_subgraph_api():
     stopwatch.round("Setup")
 
     if not request.files.get("edge-file"):
-
         if len(protein_ids) > 1:
             proteins, source, target, score = queries.get_protein_associations(
                 driver, protein_ids, threshold, species_id
             )
         else:
-            proteins, source, target, score = queries.get_protein_neighbours(
-                driver, protein_ids, threshold, species_id
-            )
+            proteins, source, target, score = queries.get_protein_neighbours(driver, protein_ids, threshold, species_id)
 
         nodes = (
             pd.DataFrame(proteins)
@@ -245,7 +225,6 @@ def proteins_subgraph_api():
 
         edges = pd.DataFrame({"source": source, "target": target, "score": score})
     else:
-
         nodes = (
             pd.DataFrame(proteins)
             .rename(columns={"ENSEMBL_PROTEIN": "external_id"})
@@ -261,9 +240,7 @@ def proteins_subgraph_api():
         ]
 
         # Get unique values from 'source' and 'target' columns
-        unique_sources, unique_targets = set(edges["source"].unique()), set(
-            edges["target"].unique()
-        )
+        unique_sources, unique_targets = set(edges["source"].unique()), set(edges["target"].unique())
 
         # Combine both sets to get all unique values
         all_unique_values = unique_sources.union(unique_targets)
@@ -329,9 +306,7 @@ def proteins_subgraph_api():
             if ensembl_id in node_mapping:
                 mapped_node_id = node_mapping[ensembl_id]
                 # Use node mapping to add corresponding values of betweenness and pagerank
-                node["attributes"]["Betweenness Centrality"] = str(
-                    betweenness[mapped_node_id]
-                )
+                node["attributes"]["Betweenness Centrality"] = str(betweenness[mapped_node_id])
                 node["attributes"]["PageRank"] = str(pagerank[mapped_node_id])
             node["attributes"]["Description"] = df_node.annotation
             node["attributes"]["Ensembl ID"] = df_node.external_id
@@ -398,9 +373,7 @@ def terms_subgraph_api():
     list_enrichment = ast.literal_eval(request.form.get("func-terms"))
     species_id = int(request.form.get("species_id"))
 
-    json_str = enrichment_graph.get_functional_graph(
-        list_enrichment=list_enrichment, species_id=species_id
-    )
+    json_str = enrichment_graph.get_functional_graph(list_enrichment=list_enrichment, species_id=species_id)
 
     stopwatch.total("terms_subgraph_api")
 

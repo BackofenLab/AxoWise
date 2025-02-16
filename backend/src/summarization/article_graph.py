@@ -164,10 +164,7 @@ def create_citations_graph(driver, species, search_query):
         community = communities[i]
         top_nodes.append(
             sorted(
-                [
-                    (abstracts[str(graph.vs(i)["name"][0])]["abstract"])
-                    for i in community
-                ],
+                [(abstracts[str(graph.vs(i)["name"][0])]["abstract"]) for i in community],
                 key=lambda x: x[1],
                 reverse=True,
             )[:2]
@@ -175,9 +172,7 @@ def create_citations_graph(driver, species, search_query):
     edge_list = []
     edge_mapping = dict((v, k) for k, v in node_mapping.items())
     for source, target in edges:
-        edge_list.append(
-            {"source": edge_mapping[source], "target": edge_mapping[target], "score": 1}
-        )
+        edge_list.append({"source": edge_mapping[source], "target": edge_mapping[target], "score": 1})
     return edge_list, nodes
 
 
@@ -201,14 +196,8 @@ def get_most_relevant_abstracts(message, pmids_embeddings, pmid_abstract, protei
     stopwatch.round("Embedding query")
     top_n_similiar = top_n_similar_vectors(embedded_query, pmids_embeddings, 6)
     stopwatch.round("Vector search")
-    unsummarized = [
-        [pmid_abstract[i] for i in top_n_similiar[j : j + 3]]
-        for j in range(0, len(top_n_similiar), 3)
-    ]
+    unsummarized = [[pmid_abstract[i] for i in top_n_similiar[j : j + 3]] for j in range(0, len(top_n_similiar), 3)]
     summarized = summarize(unsummarized, protein_list)
     stopwatch.round("Summarize in batches")
-    abstracts = [
-        f"Abstract {num+1} with PMID {i}: {summarized[num]}"
-        for num, i in enumerate(top_n_similiar)
-    ]
+    abstracts = [f"Abstract {num+1} with PMID {i}: {summarized[num]}" for num, i in enumerate(top_n_similiar)]
     return abstracts, top_n_similiar

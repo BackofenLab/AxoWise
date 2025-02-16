@@ -55,9 +55,7 @@ def create_gene_abstracts(df, chunk_size=100000):
         # Check if the current chunk size has been reached
         if len(genes_for_csv) >= chunk_size:
             # Create a DataFrame for the current chunk
-            genes_abstracts_df = pd.DataFrame(
-                {"symbol": genes_for_csv, "abstracts": abstracts}
-            )
+            genes_abstracts_df = pd.DataFrame({"symbol": genes_for_csv, "abstracts": abstracts})
 
             # Write the DataFrame to a CSV file
             genes_abstracts_df.to_csv(f"genes_abstracts_{file_index}.gz", index=False)
@@ -69,9 +67,7 @@ def create_gene_abstracts(df, chunk_size=100000):
 
     # Handle any remaining rows not written to file
     if genes_for_csv:
-        genes_abstracts_df = pd.DataFrame(
-            {"symbol": genes_for_csv, "abstracts": abstracts}
-        )
+        genes_abstracts_df = pd.DataFrame({"symbol": genes_for_csv, "abstracts": abstracts})
         genes_abstracts_df.to_csv(f"genes_abstracts_{file_index}.gz", index=False)
 
 
