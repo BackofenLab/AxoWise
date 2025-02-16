@@ -57,7 +57,7 @@ backend-test:
 
 # Check Python formatting without modifying files
 check-format:
-	find . -name "*.py" | xargs black --check -l 120 --target-version=py311
+	black --check -l 120 --target-version=py311 . --exclude "frontend/node_modules|venv|build|dist"
 
 # Automatically fix Python formatting issues
 format:
