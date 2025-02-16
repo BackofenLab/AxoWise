@@ -10,7 +10,7 @@ AxoWise is designed around the theme of "Bridging Knowledge and Wisdom through N
 
 ## Current Status
 
-Currently, AxoWise supports biological networks by integrating protein networks along with networks of functional terms and publication abstracts. These interconnected layers of knowledge provide a robust foundation for exploring the interactions and functions within biological systems, delivering contextual insights. In the next phase of development, we aim to expand AxoWise by incorporating regulatory networks, which are crucial for understanding gene regulation and cellular processes. By adding regulatory network data, AxoWise will further enhance its ability to reveal complex interactions, such as transcriptional regulation and signaling pathways, offering users a deeper and more contextualized view of biological networks.
+AxoWise is actively under development, with the current version still evolving to enhance biological network analysis. At this stage, it integrates protein interaction networks with functional term networks and publication abstracts, creating interconnected layers of knowledge. While the platform already provides valuable insights into biological interactions and functions, it remains a work in progress, with ongoing efforts focused on expanding features, improving data integration, and refining analytical capabilities. Future updates will continue to enhance its functionality and usability.
 
 
 
