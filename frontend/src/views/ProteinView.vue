@@ -79,7 +79,7 @@ export default {
       ensembl_name_index: null,
       view: "protein view",
       filter_views: ["term", "citation"],
-      widget: true,
+      widget: window.innerWidth < 1024 ? false : true,
       mode: "protein",
     };
   },

@@ -3,13 +3,15 @@
       ${stacked === 'left' ? 'order-2' : 'order-4'}
       ${is_minimized ? 'w-0 animate__fadeOutDown' : 'animate__fadeInUp'}`">
 
-    <div :class="`flex flex-col gap-2 absolute top-2 p-1 z-[1] opacity-0 duration-300 group-hover/parent:opacity-100
-          ${stacked === 'left' ? 'left-full rounded-tr-lg rounded-br-lg' : 'right-full rounded-tl-lg rounded-bl-lg'}`">
+    <div
+      :class="`flex lg:flex-col gap-2 absolute top-2 p-1 z-[1] lg:opacity-0 duration-300 group-hover/parent:opacity-100
+          ${stacked === 'left' ? 'right-5 lg:left-full rounded-tr-lg rounded-br-lg' : 'right-full rounded-tl-lg rounded-bl-lg'}`">
       <Button class="w-5 h-5 !p-1.5" type="button" size="small" severity="warn" rounded
         v-tooltip.right="{ value: 'Minimize pane', pt: { text: '!text-sm' } }" @click="minimizePane">
         <span class="material-symbols-rounded !text-lg"> keep_off </span>
       </Button>
-      <Button v-if="!is_minimized" class="w-5 h-5 !p-1.5" type="button" size="small" severity="success" rounded
+      
+      <Button v-if="!is_minimized" class="!hidden lg:!flex w-5 h-5 !p-1.5" type="button" size="small" severity="success" rounded
         v-tooltip.right="{ value: stacked === 'left' ? 'Stack pane right' : 'Stack pane left', pt: { text: '!text-sm' } }"
         @click="changePanePosition">
         <span class="material-symbols-rounded !text-lg">
@@ -17,7 +19,7 @@
         </span>
       </Button>
     </div>
-    <Card class="w-[26rem] !rounded-none"
+    <Card class="w-screen md:w-[26rem] !rounded-none pt-5 lg:pt-0"
       :pt="{ body: { class: 'h-full !py-3 !px-0' }, content: { class: 'h-full flex flex-col gap-4' } }">
       <template #content>
         <section :class="`flex relative overflow-hidden transition duration-300 ease-in-out ${containerA.length > 0 ? 'flex-[1_1_47%]' : ''
@@ -157,7 +159,7 @@ export default {
         { id: 9, name: "Diff exp", value: "difexp", view: ['protein'] },
         { id: 11, name: "Summary", value: "summary", view: ['citation'] },
       ],
-      is_minimized: false,
+      is_minimized: window.innerWidth < 1024 ? true : false,
       stacked: "left",
       initial_drag_btn_position: { top: window.innerHeight - 80, left: 100 },
     };

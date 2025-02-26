@@ -2,14 +2,17 @@
   <Toolbar class="h-[58px] !py-1.5 relative !rounded-none dark:!border-0 dark:!bg-[#34343D] z-[1]"
     :pt="{ end: { class: 'flex items-center gap-4' } }">
     <template #start>
-      <div class="flex gap-4">
-        <Button icon="material-symbols-rounded" aria-label="menu" severity="secondary" @click="toggle_widget(!widget)">
-          <span v-if="widget" class="material-symbols-rounded font-variation-ico-filled">widgets</span>
-          <span v-if="!widget" class="material-symbols-rounded font-variation-ico-filled">dashboard</span>
+      <div class="flex items-center gap-2 lg:gap-4">
+        <Button icon="material-symbols-rounded" aria-label="menu" severity="secondary"
+          class="!w-8 h-8 md:!w-10 md:!h-[42px]" @click="toggle_widget(!widget)">
+          <span v-if="widget"
+            class="material-symbols-rounded font-variation-ico-filled !text-base md:!text-2xl">widgets</span>
+          <span v-if="!widget"
+            class="material-symbols-rounded font-variation-ico-filled !text-base md:!text-2xl">dashboard</span>
         </Button>
 
-        <Button @click="toggle" plain text class="capitalize">
-          <span class="material-symbols-rounded">display_settings</span>
+        <Button @click="toggle" plain text class="capitalize !text-sm md:!text-base">
+          <span class="text-base material-symbols-rounded md:text-2xl">display_settings</span>
           {{ view }}
         </Button>
       </div>

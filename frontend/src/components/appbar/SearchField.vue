@@ -1,6 +1,6 @@
 <template>
-  <Button label="Find your node" icon="pi pi-search" severity="secondary" class="w-[180px] dark:!bg-[#020617]"
-    :pt="{ label: { class: 'mr-auto' } }" @click="show_search = !show_search" />
+    <Button label="Find your node" icon="pi pi-search" severity="secondary" class="md:w-[180px] !border-0 md:!border !bg-transparent md:dark:!bg-[#020617]"
+    :pt="{ label: { class: 'hidden md:block mr-auto' } }" @click="show_search = !show_search" />
 
   <Dialog v-model:visible="show_search" position="topright" :minY="60" :minX="60" :closable="true" :pt="{
     root: { class: 'w-[22rem] !mt-[60px] !ml-[60px] !mr-[7rem]' },

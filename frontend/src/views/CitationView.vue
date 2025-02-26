@@ -70,7 +70,7 @@ export default {
       unconnected_nodes: null,
       node_modul_index: null,
       view: "citation view",
-      widget: true,
+      widget: window.innerWidth < 1024 ? false : true,
       mode: "citation",
       filter_views: ["term", "protein"],
     };
