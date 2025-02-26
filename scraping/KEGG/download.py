@@ -11,9 +11,7 @@ from scraping.KEGG import api, parse
 
 
 def parse_cli_args():
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter
-    )
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument(
         "species_name",
@@ -116,16 +114,12 @@ def main():
         has_genes = pathway_genes is not None
         if has_genes:
             gene_ids, gene_short_names, gene_long_names = zip(*pathway_genes)
-            gene_ids = list(
-                map(lambda gene_id: "{}:{}".format(kegg_id, gene_id), list(gene_ids))
-            )
+            gene_ids = list(map(lambda gene_id: "{}:{}".format(kegg_id, gene_id), list(gene_ids)))
             print("\tGenes:", len(gene_ids))
 
             # Map KEGG gene identifiers to STRING external identifiers
             kegg2external = dict()
-            for mapped_identifiers, idx_offset in api.map_identifiers_to_STRING(
-                gene_ids, ncbi_id
-            ):
+            for mapped_identifiers, idx_offset in api.map_identifiers_to_STRING(gene_ids, ncbi_id):
                 for (
                     idx,
                     external_id,
@@ -133,9 +127,7 @@ def main():
                     species_name,
                     preferred_name,
                     annotation,
-                ) in read_table(
-                    mapped_identifiers, (int, str, int, str, str, str), delimiter="\t"
-                ):
+                ) in read_table(mapped_identifiers, (int, str, int, str, str, str), delimiter="\t"):
                     gene_id = gene_ids[idx + idx_offset]
                     if gene_id in kegg2external:
                         print("\tMapping for {} not unique!".format(gene_id))
@@ -144,11 +136,7 @@ def main():
 
             num_not_mapped = len(gene_ids) - len(kegg2external)
             if num_not_mapped > 0:
-                print(
-                    "\t{} gene(s) could not be mapped to STRING external ID!".format(
-                        num_not_mapped
-                    )
-                )
+                print("\t{} gene(s) could not be mapped to STRING external ID!".format(num_not_mapped))
 
         # Diseases
         has_diseases = pathway_diseases is not None

@@ -42,9 +42,7 @@ def version():
             release_number = match.group(1)
             return release_number  # Returns the matched date string in "%b %d" format
         else:
-            raise ValueError(
-                f"Could not find the release number of KEGG in\n{content}."
-            )
+            raise ValueError(f"Could not find the release number of KEGG in\n{content}.")
     except requests.exceptions.Timeout:
         raise TimeoutError(f"The request to {url} timed out. Please try again later.")
 
@@ -106,9 +104,7 @@ def symbols_to_ensemble(symbols, species, specifier):
     """
     mg = mygene.MyGeneInfo()
     ensembl_list = []
-    results = mg.querymany(
-        symbols, scopes="symbol", fields=f"ensembl.{specifier}", species=f"{species}"
-    )
+    results = mg.querymany(symbols, scopes="symbol", fields=f"ensembl.{specifier}", species=f"{species}")
     for result in results:
         if "ensembl" in result:
             res = result["ensembl"]
@@ -217,15 +213,11 @@ def scrapping(path, species):
             for i in pathway_genes:
                 if i:
                     pathway_gene_symbols.append(i[1])
-            kegg2external_genes = symbols_to_ensemble(
-                pathway_gene_symbols, species, "gene"
-            )
+            kegg2external_genes = symbols_to_ensemble(pathway_gene_symbols, species, "gene")
         # Diseases
         has_diseases = pathway_diseases is not None
         if has_diseases:
-            disease_ids = write_diseases(
-                pathway_diseases, diseases_file, written_diseases
-            )
+            disease_ids = write_diseases(pathway_diseases, diseases_file, written_diseases)
 
         # Drugs
         has_drugs = pathway_drugs is not None
@@ -235,9 +227,7 @@ def scrapping(path, species):
         # Compounds
         has_compounds = pathway_compounds is not None
         if has_compounds:
-            compound_ids = write_compounds(
-                pathway_compounds, compounds_file, written_compounds
-            )
+            compound_ids = write_compounds(pathway_compounds, compounds_file, written_compounds)
 
         # Save the pathway
         description_column = pathway_description if has_description else ""

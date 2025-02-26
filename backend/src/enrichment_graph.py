@@ -34,11 +34,7 @@ def get_functional_graph(list_enrichment, species_id):
     if len(edges) == 0:
         return
 
-    nodes = (
-        pd.DataFrame(list_enrichment)
-        .rename(columns={"id": "external_id"})
-        .drop_duplicates(subset="external_id")
-    )
+    nodes = pd.DataFrame(list_enrichment).rename(columns={"id": "external_id"}).drop_duplicates(subset="external_id")
     # Create nk_graph and needed stats
     nk_graph, node_mapping = graph.nk_graph(nodes, edges)
     pagerank = graph.pagerank(nk_graph)
@@ -88,15 +84,11 @@ def get_functional_graph(list_enrichment, species_id):
                 mapped_node_id = node_mapping[ensembl_id]
                 # Use node mapping to add corresponding values of betweenness and pagerank
                 node["attributes"]["Eigenvector Centrality"] = str(ec[mapped_node_id])
-                node["attributes"]["Betweenness Centrality"] = str(
-                    betweenness[mapped_node_id]
-                )
+                node["attributes"]["Betweenness Centrality"] = str(betweenness[mapped_node_id])
                 node["attributes"]["PageRank"] = str(pagerank[mapped_node_id])
             node["attributes"]["Ensembl ID"] = df_node.external_id
             node["attributes"]["Name"] = df_node.name
-            node["label"] = (
-                df_node.name
-            )  # Comment this out if you want no node labels displayed
+            node["label"] = df_node.name  # Comment this out if you want no node labels displayed
             node["attributes"]["Category"] = df_node.category
             node["attributes"]["FDR"] = df_node.fdr_rate
             node["attributes"]["P Value"] = df_node.p_value

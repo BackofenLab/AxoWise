@@ -32,9 +32,7 @@ def pathways(organism_id):
 
 
 def pathway(pathway_id, kgml=False):
-    endpoint = _get_template.substitute(
-        entries=pathway_id, kgml="/kgml" if kgml else ""
-    )
+    endpoint = _get_template.substitute(entries=pathway_id, kgml="/kgml" if kgml else "")
     pathway_file = get(endpoint)
     if pathway_file is None:
         raise ValueError("pathway_file cannot be None")
@@ -50,9 +48,7 @@ def map_identifiers_to_STRING(identifiers, species=None, split=10):
         i = 0
         while True:
             identifiers_chunk = identifiers[i : i + split]
-            endpoint = template.substitute(
-                format="tsv", identifiers="%0d".join(identifiers_chunk), species=species
-            )
+            endpoint = template.substitute(format="tsv", identifiers="%0d".join(identifiers_chunk), species=species)
             identifiers_file = get(endpoint)
             if identifiers_file is None:
                 raise ValueError("identifiers_file cannot be None")
@@ -62,9 +58,7 @@ def map_identifiers_to_STRING(identifiers, species=None, split=10):
             else:
                 i += split
     else:
-        endpoint = template.substitute(
-            format="tsv", identifiers="%0d".join(identifiers), species=species
-        )
+        endpoint = template.substitute(format="tsv", identifiers="%0d".join(identifiers), species=species)
         identifiers_file = get(endpoint)
         if identifiers_file is None:
             raise ValueError("identifiers_file cannot be None")

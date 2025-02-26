@@ -12,9 +12,7 @@ import queries
 from util.stopwatch import Stopwatch
 
 
-def calc_genes_pval(
-    curr, alpha, in_gene, bg_genes, num_in_genes, mapping, symbol_alias_mapping
-):
+def calc_genes_pval(curr, alpha, in_gene, bg_genes, num_in_genes, mapping, symbol_alias_mapping):
     # Lists are read as strings, evaluate to lists using JSON.
     # alternative is using eval() which is slower
     gene_list = curr.replace("'", '"')
@@ -24,10 +22,7 @@ def calc_genes_pval(
 
     # Get intersection of proteins
     gene_term = list(set(gene_list) & in_gene)
-    gene_term = [
-        mapping[i] if i in mapping else mapping[symbol_alias_mapping[i]]
-        for i in gene_term
-    ]
+    gene_term = [mapping[i] if i in mapping else mapping[symbol_alias_mapping[i]] for i in gene_term]
     num_inter = len(gene_term)
 
     if num_inter == 0:
@@ -86,10 +81,7 @@ def functional_enrichment(
     stopwatch = Stopwatch()
     mapping = {i.upper(): i for i in in_genes}
     genes = set(mapping.keys())
-    genes = {
-        gene if gene not in alias_symbol_mapping else alias_symbol_mapping[gene]
-        for gene in genes
-    }
+    genes = {gene if gene not in alias_symbol_mapping else alias_symbol_mapping[gene] for gene in genes}
     # Get number of all proteins in the organism (from Cypher)
     bg_proteins = queries.get_number_of_genes(driver, species_id)
     num_in_gene = len(in_genes)
@@ -109,8 +101,7 @@ def functional_enrichment(
     new_genes = []
     new_p = []
     arguments = [
-        (value, alpha, genes, bg_proteins, num_in_gene, mapping, symbol_alias_mapping)
-        for value in df_terms["symbols"]
+        (value, alpha, genes, bg_proteins, num_in_gene, mapping, symbol_alias_mapping) for value in df_terms["symbols"]
     ]
 
     with multiprocessing.Pool() as pool:
@@ -140,9 +131,7 @@ def functional_enrichment(
         if prev < p_adj and i != 0:
             p_adj = prev
         prev = p_adj
-        val, p_adj = (
-            (cutoff, cutoff) if val <= cutoff or p_adj <= cutoff else (val, p_adj)
-        )
+        val, p_adj = (cutoff, cutoff) if val <= cutoff or p_adj <= cutoff else (val, p_adj)
         p_vals += [val]
         rank_lst += [p_adj]
     # Update Dataframe

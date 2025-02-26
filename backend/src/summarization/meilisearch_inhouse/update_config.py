@@ -26,9 +26,7 @@ def main():
     check_status(client, task)
 
     # update the ranking rules --> moved sort higher up
-    task = client.index(index).update_ranking_rules(
-        ["words", "sort", "typo", "proximity", "attribute", "exactness"]
-    )
+    task = client.index(index).update_ranking_rules(["words", "sort", "typo", "proximity", "attribute", "exactness"])
     check_status(client, task)
 
     print("Settings updated")

@@ -77,9 +77,7 @@ try:
     start_time = time.time()
     with gzip.open(score_file, "wb") as f:
         pool = multiprocessing.Pool()
-        results = pool.map(
-            cal_overlap_score_worker, itertools.combinations(range(len(df)), 2)
-        )
+        results = pool.map(cal_overlap_score_worker, itertools.combinations(range(len(df)), 2))
         # remove None from the list
         # None corresponds to overlap sta < 0.5
         results_ = set(results)

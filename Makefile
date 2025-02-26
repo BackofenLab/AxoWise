@@ -42,12 +42,26 @@ restart:
 	sudo kill `cat backend/src/process.pid` > /home/ubuntu/logs/kill.log 2>&1 || true
 	cd backend/src; nohup sudo env "PATH=$$PATH" python main.py --pid > /home/ubuntu/logs/server.log 2>&1
 
-lint:
+.PHONY: test format check-format all frontend-audit backend-test
+
+# Run all tests (frontend + backend + formatting check)
+test: frontend-audit backend-test check-format
+
+# Frontend security audit
+frontend-audit:
+	cd frontend && npm audit --audit-level high
+
+# Backend unit tests
+backend-test:
+	python -m unittest discover backend
+
+# Check Python formatting without modifying files
+check-format:
+	black --check -l 120 --target-version=py311 . --exclude "frontend/node_modules|venv|build|dist"
+
+# Automatically fix Python formatting issues
+format:
 	find . -name "*.py" | xargs black -l 120 --target-version=py311
 
-test:
-	# frontend
-	cd frontend && npm audit --audit-level high
-	# backend
-	python -m unittest discover backend
-	find . -name "*.py" | xargs black -l 120 --check --target-version=py311
+# Run everything (check formatting, frontend audit, backend tests)
+all: test

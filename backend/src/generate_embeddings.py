@@ -41,8 +41,6 @@ for i in range(0, total_rows, chunk_size):
     chunk_file_name = f"genes_abstract_with_embeddings_part_{i // chunk_size + 1}.gz"
     df_chunk.to_csv(chunk_file_name, index=False)
 
-    print(
-        f"Saved {chunk_file_name} with {len(df_chunk)} rows in {time.time() - time_begin}s."
-    )
+    print(f"Saved {chunk_file_name} with {len(df_chunk)} rows in {time.time() - time_begin}s.")
 
 print("Splitting and embedding generation completed.")
