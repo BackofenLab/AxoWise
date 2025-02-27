@@ -21,6 +21,12 @@
         :options="dcoloumns" :maxSelectedLabels="3" />
     </fieldset>
 
+    <fieldset v-if="primarycoloumns != null" class="flex flex-col gap-1.5 animate__animated animate__fadeInUp">
+      <label for="primarycoloumns" class="text-slate-400">Primary-coloumns:</label>
+      <Select v-model="selected_primary_categories" optionLabel="" placeholder="Select" showClear class="!w-full"
+        emptyMessage="No Primary-coloumns available" :options="primarycoloumns" />
+    </fieldset>
+
     <fieldset class="flex flex-wrap items-center gap-2 animate__animated animate__fadeInUp">
       <Checkbox v-model="customEdge" inputId="edgeCheck" name="edgeCheck" binary />
       <label for="edgeCheck" class="text-slate-400"> Use custom protein interactions. </label>
@@ -72,10 +78,12 @@ export default {
         step: 0.01,
       },
       dcoloumns: null,
+      primarycoloumns: null,
       selected_species: null,
       loading: false,
       customEdge: false,
       selected_categories: null,
+      selected_primary_categories: null,
       edge_file: null,
       protein_file: null
     };
@@ -98,12 +106,12 @@ export default {
       const file = originalEvent.target.files[0];
 
       com.dcoloumns = [];
+      com.primarycoloumns = [];
       const reader = new FileReader();
       reader.onload = function (e) {
         var allTextLines = e.target.result.split(/\n|\n/);
         var save_dcoloumns = allTextLines[0].split(",");
         var type_coloumns = allTextLines[1].split(",");
-
         //Return only coloumns that contends for d-value
         for (var i = 0; i < save_dcoloumns.length; i++) {
           type_coloumns[i] = type_coloumns[i].trim();
@@ -111,12 +119,19 @@ export default {
             save_dcoloumns[i] = save_dcoloumns[i].trim();
             com.dcoloumns.push(save_dcoloumns[i].replace(/^"(.*)"$/, "$1"));
           }
+          if (com.onlyLetters(type_coloumns[i])) {
+            save_dcoloumns[i] = save_dcoloumns[i].trim();
+            com.primarycoloumns.push(save_dcoloumns[i].replace(/^"(.*)"$/, "$1"));
+          }
         }
       };
       reader.readAsText(file);
     },
     onlyNumbers(possibleNumber) {
       return /^[0-9.,-]+$/.test(possibleNumber);
+    },
+    onlyLetters(possibleLetter) {
+      return /^[A-Za-z]+$/.test(possibleLetter.replace(/^"(.*)"$/, "$1"));
     },
     submit() {
       var com = this;
@@ -140,6 +155,7 @@ export default {
       formData.append("species_id", com.selected_species.code);
       formData.append("file", com.protein_file);
       formData.append("selected_d", com.selected_categories);
+      formData.append("selected_p", com.selected_primary_categories);
 
       this.$store.commit("assign_dcoloumn", com.selected_categories);
 
