@@ -1,17 +1,16 @@
 <template>
-  <Dialog v-model:visible="windowCheck" header="AxoBot" position="bottomright" :minY="minVal" :minX="minVal"
-    :maximizable="true" :pt="{
-      root: {
-        id: 'scrollBox',
-        class:
-          `resize min-w-[26rem] max-w-[calc(100%-70px)] h-full min-h-[24rem] max-h-[calc(100%-70px)] !bg-white/75 dark:!bg-slate-900/75 !backdrop-blur overflow-y-auto !mt-[${minVal}px] !ml-[${minVal}px]`,
-      },
-      header: { class: 'sticky top-0 !p-2 !px-3 !justify-start gap-3 !font-medium cursor-move backdrop-blur z-[1]' },
-      headerActions: { class: '!ml-auto' },
-      title: { class: '!text-base' },
-      content: { class: '!px-3 !pb-2 !overflow-y-visible' },
-      footer: { class: 'sticky bottom-0 !px-2 !pt-1 !pb-2 cursor-move backdrop-blur-xl !mt-auto' },
-    }" @maximize="minVal = 0" @unmaximize="minVal = 60" @hide="windowCheck = false">
+  <Dialog v-model:visible="windowCheck" header="AxoBot" position="bottomright" :minY="minVal" :minX="minVal" :pt="{
+    root: {
+      id: 'scrollBox',
+      class:
+        `resize w-[26rem] min-w-[26rem] max-w-[calc(100%-70px)] h-full min-h-[24rem] max-h-[calc(100%-70px)] !bg-white/75 dark:!bg-slate-900/75 !backdrop-blur overflow-y-auto`,
+    },
+    header: { class: 'sticky top-0 !p-2 !px-3 !justify-start gap-3 !font-medium cursor-move backdrop-blur z-[1]' },
+    headerActions: { class: '!ml-auto' },
+    title: { class: '!text-base' },
+    content: { class: '!px-3 !pb-2 !overflow-y-visible' },
+    footer: { class: 'sticky bottom-0 !px-2 !pt-1 !pb-2 cursor-move backdrop-blur-xl !mt-auto' },
+  }" @hide="windowCheck = false">
     <main class="flex flex-col">
       <ul class="flex flex-col gap-1.5">
         <li v-for="(msg, index) in messages" :key="index" :class="`flex flex-col p-3 rounded-lg
