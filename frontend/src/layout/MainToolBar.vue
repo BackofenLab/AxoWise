@@ -53,45 +53,80 @@
         <span class="material-symbols-rounded group-hover:font-variation-ico-filled">logout</span>
       </Button>
     </nav>
-
-    <Dialog v-model:visible="selection_active" header="Graph parameter" position="topleft" :minY="60" :minX="60" :pt="{
-      root: { class: 'w-[25rem] !mt-[60px] !ml-[60px]' },
-      header: { class: '!py-2.5 cursor-move' },
-      title: { class: '!text-base' },
-    }">
+  </aside>
+  <DraggableView v-show="selection_active" :initialPosition="initial_drag_position"
+    wrapperClass="animate__animated animate__fadeInLeft animate__faster !w-[25rem] border dark:border-slate-700 rounded-xl bg-[var(--card-bg)] shadow-curve-dark dark:shadow-curve-light"
+    contentClass="!px-4 !py-1.5" handlerClass="!py-2.5 !px-4 !flex !items-center">
+    <template #handler>
+      <h3 class="text-base font-bold">
+        Graph parameter
+      </h3>
+      <div class="flex items-center gap-1 ml-auto">
+        <Button class="w-8 h-8" size="small" text rounded plain @click="selection_active = !selection_active">
+          <span class="dark:text-white !text-2xl material-symbols-rounded"> close </span>
+        </Button>
+      </div>
+    </template>
+    <template #content>
       <SelectionList :data="gephi_data" :selection_active="selection_active" :active_subset="active_subset"
         :active_term="active_term" :mode="mode">
       </SelectionList>
-    </Dialog>
-
-    <Dialog v-model:visible="protein_active" header="Highlight nodes" position="topleft" :minY="60" :minX="60" :pt="{
-      root: { class: 'w-[24rem] !mt-[60px] !ml-[60px]' },
-      header: { class: '!py-2.5 cursor-move' },
-      title: { class: '!text-base' },
-    }">
+    </template>
+  </DraggableView>
+  <DraggableView v-show="protein_active" :initialPosition="initial_drag_position"
+    wrapperClass="animate__animated animate__fadeInLeft animate__faster !w-[24rem] border dark:border-slate-700 rounded-xl bg-[var(--card-bg)] shadow-curve-dark dark:shadow-curve-light"
+    contentClass="!px-4 !py-1.5" handlerClass="!py-2.5 !px-4 !flex !items-center">
+    <template #handler>
+      <h3 class="text-base font-bold">
+        Highlight nodes
+      </h3>
+      <div class="flex items-center gap-1 ml-auto">
+        <Button class="w-8 h-8" size="small" text rounded plain @click="protein_active = !protein_active">
+          <span class="dark:text-white !text-2xl material-symbols-rounded"> close </span>
+        </Button>
+      </div>
+    </template>
+    <template #content>
       <ProteinList v-show="protein_active" :gephi_data="gephi_data" :mode="mode">
       </ProteinList>
-    </Dialog>
-
-    <Dialog v-model:visible="tools_active" header="Graph settings" position="topleft" :minY="60" :minX="60" :pt="{
-      root: { class: 'w-[25rem] !mt-[60px] !ml-[60px]' },
-      header: { class: '!py-2.5 cursor-move' },
-      title: { class: '!text-base' },
-    }">
+    </template>
+  </DraggableView>
+  <DraggableView v-show="tools_active" :initialPosition="initial_drag_position"
+    wrapperClass="animate__animated animate__fadeInLeft animate__faster !w-[25rem] border dark:border-slate-700 rounded-xl bg-[var(--card-bg)] shadow-curve-dark dark:shadow-curve-light"
+    contentClass="!px-4 !py-1.5" handlerClass="!py-2.5 !px-4 !flex !items-center">
+    <template #handler>
+      <h3 class="text-base font-bold">
+        Graph settings
+      </h3>
+      <div class="flex items-center gap-1 ml-auto">
+        <Button class="w-8 h-8" size="small" text rounded plain @click="tools_active = !tools_active">
+          <span class="dark:text-white !text-2xl material-symbols-rounded"> close </span>
+        </Button>
+      </div>
+    </template>
+    <template #content>
       <SettingList v-show="tools_active" :gephi_data="gephi_data" :ensembl_name_index="ensembl_name_index"
         :tools_active="tools_active" :mode="mode"></SettingList>
-    </Dialog>
-
-    <Dialog v-model:visible="export_active" header="Export graph" position="topleft" :minY="60" :minX="60" :pt="{
-      root: { class: 'w-[18rem] !mt-[60px] !ml-[60px]' },
-      header: { class: '!py-2.5 cursor-move' },
-      title: { class: '!text-base' },
-      content: { class: '!px-4' }
-    }">
+    </template>
+  </DraggableView>
+  <DraggableView v-show="export_active" :initialPosition="initial_drag_position"
+    wrapperClass="animate__animated animate__fadeInLeft animate__faster !w-[18rem] border dark:border-slate-700 rounded-xl bg-[var(--card-bg)] shadow-curve-dark dark:shadow-curve-light"
+    contentClass="!px-4 !py-1.5" handlerClass="!py-2.5 !px-4 !flex !items-center">
+    <template #handler>
+      <h3 class="text-base font-bold">
+        Export graph
+      </h3>
+      <div class="flex items-center gap-1 ml-auto">
+        <Button class="w-8 h-8" size="small" text rounded plain @click="export_active = !export_active">
+          <span class="dark:text-white !text-2xl material-symbols-rounded"> close </span>
+        </Button>
+      </div>
+    </template>
+    <template #content>
       <ExportList v-show="export_active" :gephi_data="gephi_data" :ensembl_name_index="ensembl_name_index" :mode="mode">
       </ExportList>
-    </Dialog>
-  </aside>
+    </template>
+  </DraggableView>
 </template>
 
 <script>
@@ -99,6 +134,7 @@ import SettingList from "@/components/toolbar/modules/SettingList.vue";
 import ExportList from "@/components/toolbar/modules/ExportList.vue";
 import ProteinList from "@/components/toolbar/modules/ProteinList.vue";
 import SelectionList from "@/components/toolbar/modules/SelectionList.vue";
+import DraggableView from "@/components/DraggableView.vue";
 
 export default {
   name: "ToolBar",
@@ -108,6 +144,7 @@ export default {
     ExportList,
     ProteinList,
     SelectionList,
+    DraggableView
   },
   data() {
     return {
@@ -116,6 +153,7 @@ export default {
       protein_active: false,
       selection_active: false,
       label_check: true,
+      initial_drag_position: { top: 60, left: 60 },
     };
   },
   methods: {
