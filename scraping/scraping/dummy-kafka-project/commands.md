@@ -7,7 +7,7 @@
 #### to create a new topic
 * kafka-topics.sh --bootstrap-server localhost:9092 --topic {topic_name} --create
   
-### to check logs of a topic
+#### to check logs of a topic
 * kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic {topic_name} --from-beginning
   
 #### to create Kibana container (to visualize elasticsearch results)
