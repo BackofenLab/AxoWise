@@ -10,6 +10,8 @@ Run `python main.py`
 #### Step 4:
 Go to `localhost:5601` to view logs in Kibana
 
+!!! If `localhost:5601` does not work, run `ssh -L 5601:localhost:5601 ubuntu@{remote-server}` on local terminal
+
 In sidebar, scroll down to $Stack Management$:
 
 ![Screenshot 2025-05-11 223520](https://github.com/user-attachments/assets/f1e01312-371c-45c3-897d-c6075d64c578)
