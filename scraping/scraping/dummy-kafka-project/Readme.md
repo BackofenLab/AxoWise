@@ -2,7 +2,7 @@
 This is a dummy project for Kafka and elasticsearch implementation. In this project, logs are given as input to LLM which detects anomalies in the logs.
 
 #### Step 1:
-Download logs from https://github.com/logpai/loghub
+Download logs from https://github.com/logpai/loghub and put them in a `logs` directory.
 
 #### Step 2: creates all the required containers
 Run `docker compose up -d`
