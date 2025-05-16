@@ -14,7 +14,6 @@ class LogProducer(KafkaBase):
         self.producer = self._create_producer()
         
     def _create_producer(self):
-        """Create and return a Kafka producer."""
         try:
             # Create producer that serializes messages as JSON
             producer = KafkaProducer(
@@ -29,16 +28,13 @@ class LogProducer(KafkaBase):
             raise
     
     def send_message(self, message):
-        """Send a message to the Kafka topic."""
         try:
-            # Add timestamp to message if not present
             if 'timestamp' not in message:
                 message['timestamp'] = time.time()
             
-            # Send message to topic
             future = self.producer.send(self.topic, message)
             
-            # Block until message is sent (or timeout)
+            # block until message is sent (or timeout)
             record_metadata = future.get(timeout=10)
             
             self.logger.info(f"Message sent to {record_metadata.topic}:{record_metadata.partition}:{record_metadata.offset}")
@@ -59,13 +55,11 @@ class LogProducer(KafkaBase):
             self.logger.error(f"Logs directory '{logs_dir}' does not exist")
             return log_files
         
-        # Iterate through each subdirectory (which represents a log type)
         for log_type_dir in logs_path.iterdir():
             if log_type_dir.is_dir():
-                log_type = log_type_dir.name  # Use directory name as the log type
+                log_type = log_type_dir.name
                 log_files[log_type] = []
                 
-                # Find all .log files in this directory
                 for file_path in log_type_dir.glob('*.log'):
                     if file_path.is_file():
                         log_files[log_type].append(file_path)
@@ -86,7 +80,6 @@ class LogProducer(KafkaBase):
                 try:
                     with open(file_path, 'r', encoding='utf-8') as f:
                         lines = f.readlines()
-                        # Strip newlines and add non-empty lines
                         log_lines[log_type].extend([line.strip() for line in lines if line.strip()])
                         self.logger.info(f"Read {len(lines)} lines from {file_path}")
                 except Exception as e:
@@ -99,22 +92,17 @@ class LogProducer(KafkaBase):
         try:
             self.logger.info("Kafka producer created successfully")
             
-            # Get all log files by type
             log_files = self.get_log_files()
             if not log_files:
                 self.logger.error("No log files found. Exiting.")
                 return
             
-            # Read all log lines from files
             log_lines_by_type = self.read_log_lines(log_files)
             
-            # Track the last position in each log type's list
             log_positions = {log_type: 0 for log_type in log_lines_by_type.keys()}
             
-            # Send messages continuously
             count = 0
             while True:
-                # Select a random log type that has logs
                 available_types = [lt for lt, lines in log_lines_by_type.items() if lines]
                 if not available_types:
                     self.logger.error("No log lines available. Exiting.")
@@ -123,12 +111,12 @@ class LogProducer(KafkaBase):
                 log_type = random.choice(available_types)
                 log_lines = log_lines_by_type[log_type]
                 
-                # Get next log line in a round-robin fashion
+                # get next log line in a round-robin fashion
                 position = log_positions[log_type] % len(log_lines)
                 log_message = log_lines[position]
                 log_positions[log_type] += 1
                 
-                # Create message with metadata
+                # create message with metadata
                 message = {
                     "type": log_type,
                     "message": log_message,
@@ -136,13 +124,10 @@ class LogProducer(KafkaBase):
                     "file_source": True
                 }
                 
-                # Send to topic
                 self.send_message(message)
                 
-                # Increment counter
                 count += 1
                 
-                # Wait a bit (random interval between 1-3 seconds)
                 delay = random.uniform(1, 3)
                 time.sleep(delay)
                 
