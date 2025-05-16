@@ -60,7 +60,7 @@ networks:
   kafka-net:
     driver: bridge
   kafka-elastic:
-    external: true
+    driver: bridge
 
 volumes:
   es-data:
