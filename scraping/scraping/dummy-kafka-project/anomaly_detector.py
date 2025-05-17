@@ -144,9 +144,8 @@ class AnomalyDetector(KafkaBase):
             self.send_result(result)
             
             if anomaly_result.get('is_anomaly', False):
-                severity = anomaly_result.get('severity', 'UNKNOWN')
                 explanation = anomaly_result.get('explanation', 'No explanation provided')
-                self.logger.warning(f"ANOMALY DETECTED ({severity}): {explanation}")
+                self.logger.warning(f"ANOMALY DETECTED: {explanation}")
             
             return True
         except Exception as e:
