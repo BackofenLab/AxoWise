@@ -5,7 +5,6 @@ from kafka import KafkaConsumer
 from elasticsearch import Elasticsearch, helpers
 import datetime
 
-# Configure logging
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
@@ -62,7 +61,7 @@ class ElasticsearchConnector:
         """Create the Elasticsearch index if it doesn't exist."""
         try:
             if not self.es_client.indices.exists(index=self.index_name):
-                # Define index mapping
+                # index mapping
                 mappings = {
                     "mappings": {
                         "properties": {
@@ -75,7 +74,6 @@ class ElasticsearchConnector:
                     }
                 }
                 
-                # Create the index
                 self.es_client.indices.create(index=self.index_name, body=mappings)
                 logger.info(f"Created Elasticsearch index: {self.index_name}")
             else:
@@ -87,19 +85,15 @@ class ElasticsearchConnector:
     def _prepare_document(self, result):
         """Prepare the document for indexing in Elasticsearch."""
         try:
-            # Extract the original log information
             original_log = result.get('original_log', {})
             anomaly_detection = result.get('anomaly_detection', {})
             
-            # Parse timestamps
             timestamp = datetime.datetime.now().isoformat()
             
             log_timestamp = None
             if 'timestamp' in original_log and original_log['timestamp']:
                 try:
-                    # Try to parse the timestamp into a proper date format for Elasticsearch
-                    # This depends on the format of your timestamps
-                    # Attempt multiple common formats
+                    # parse the timestamp into a proper date format for Elasticsearch
                     timestamp_formats = [
                         "%Y-%m-%d %H:%M:%S",
                         "%d-%m %H:%M:%S.%f",
@@ -119,7 +113,6 @@ class ElasticsearchConnector:
                 except Exception as e:
                     logger.warning(f"Could not parse timestamp: {original_log.get('timestamp')}, error: {e}")
             
-            # Create the document
             document = {
                 "timestamp": timestamp,
                 "log_timestamp": log_timestamp,
@@ -133,7 +126,7 @@ class ElasticsearchConnector:
             return document
         except Exception as e:
             logger.error(f"Error preparing document: {e}")
-            # Return a basic document to prevent pipeline failure
+            # a basic document to prevent pipeline failure
             return {
                 "timestamp": datetime.datetime.now().isoformat(),
                 "message": "Error preparing document",
@@ -144,19 +137,14 @@ class ElasticsearchConnector:
     def process_message(self, message):
         """Process a message from Kafka and store it in Elasticsearch."""
         try:
-            # Extract data from message
             value = message.value
             
-            # Prepare the document
             document = self._prepare_document(value)
-            
-            # Index the document
+
             response = self.es_client.index(index=self.index_name, document=document)
             
-            # Log the response
             logger.info(f"Document indexed in Elasticsearch: id={response['_id']}")
             
-            # Log more details if it's an anomaly
             if document.get('is_anomaly', False):
                 logger.warning(
                     f"message={document.get('message')[:100]}..."
@@ -172,7 +160,6 @@ class ElasticsearchConnector:
         try:
             logger.info(f"Elasticsearch connector started, listening to topic: {self.topic}")
             
-            # Process messages continuously
             for message in self.consumer:
                 self.process_message(message)
                 
