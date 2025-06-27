@@ -138,7 +138,7 @@ _Structure 02:_
 
 ## Cancer Discovery: IF 30.6
 _Structure 01:_
-### Data Availability/ Data Deposition/ Data and Software Availability/ Data and Materials Availability/ Data Reporting/ Code Available/ Data Archive (2019-present)
+### Data Availability/ Data Deposition/ Data and Software Availability/ Data and Materials Availability/ Data Reporting/ Code Available/ Data Archive/ Public Data (2019-present)
   * contains accession numbers for sequencing data and source code URLs
   * accession numbers stated in plain text instead of hyperlinks/URLs
   * very few publications contain source code
@@ -246,6 +246,8 @@ _Structure 02:_
 ## Circulation Research: IF 16.2 (17)
 ### Data Availability
 ### Methods
+
+## American Journal of Respiratory and Critical Care Medicine: IF 24.7
 
 **General Observation:** Most publications started adding source code from 2019 onwards
 
