@@ -1,4 +1,4 @@
-# Structure of High IF Journals (Total number: 43)
+# Structure of High IF Journals (Total number: 44)
 
 This document contains the structure of Journals having Impact Factor greater than 15 - taken from [10x Genomics](https://www.10xgenomics.com/publications). Only relevant sections from the journals are added.
 
@@ -237,11 +237,15 @@ _Structure 02:_
   * 3/4 publications contain accession numbers
   * 1/4 publication's data is available upon request
 
-## Molecular Neurodegeneration: IF 15.1 (16)
+## Molecular Neurodegeneration: IF 15.1
 ### Availability of data and materials
   * data available upon request
   * 1/7 publication shared source code URL
   * 1/7 publication shared correct accession number with name of the Database
+
+## Circulation Research: IF 16.2 (17)
+### Data Availability
+### Methods
 
 **General Observation:** Most publications started adding source code from 2019 onwards
 
