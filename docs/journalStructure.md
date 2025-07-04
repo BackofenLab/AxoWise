@@ -1,4 +1,4 @@
-# Structure of High IF Journals (Total number: 44)
+# Structure of High IF Journals (Total number: 45)
 
 This document contains the structure of Journals having Impact Factor greater than 15 - taken from [10x Genomics](https://www.10xgenomics.com/publications). Only relevant sections from the journals are added.
 
@@ -243,11 +243,11 @@ _Structure 02:_
   * 1/7 publication shared source code URL
   * 1/7 publication shared correct accession number with name of the Database
 
-## Circulation Research: IF 16.2 (17)
+## Circulation Research: IF 16.2
 ### Data Availability
 ### Methods
 
-## American Journal of Respiratory and Critical Care Medicine: IF 24.7
+## American Journal of Respiratory and Critical Care Medicine: IF 24.7 (18)
 
 **General Observation:** Most publications started adding source code from 2019 onwards
 
